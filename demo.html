@@ -6,12 +6,11 @@
 <title>풋메이트 | AI Agent Workflow 인터랙티브 프로토타입</title>
 <meta name="description" content="5개 입력 기반 동적 ELO, 설명 가능한 추천, 예외 복구와 규칙 기반 AI Agent Workflow·데이터 품질 로그를 연결한 FootMate 인터랙티브 프로토타입입니다.">
 <meta name="theme-color" content="#1a2d6e">
-<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=9621"></script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="canonical" href="https://footmate-black.vercel.app/demo.html">
+<link rel="canonical" href="https://footmate-black.vercel.app/demo">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
-<meta property="og:url" content="https://footmate-black.vercel.app/demo.html">
+<meta property="og:url" content="https://footmate-black.vercel.app/demo">
 <meta property="og:title" content="FootMate | AI Agent Workflow 프로토타입">
 <meta property="og:description" content="동적 ELO, 설명 가능한 추천, 예외 복구와 데이터 품질 게이트를 39개 화면에서 체험해 보세요.">
 <meta property="og:image" content="https://footmate-black.vercel.app/og-footmate.png">
@@ -3381,7 +3380,9 @@ const screens = [
   { id:'s-loading', sid:'S2-3', name:'개인화 매칭 로딩', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
   { id:'s-results', sid:'S3-1', name:'개인화 추천 목록', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
   { id:'s-detail', sid:'S3-2', name:'팀 상세 보기', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
+  { id:'s-playstyle', sid:'S3-3', name:'플레이 성향', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
   { id:'s-reason', sid:'S3-4', name:'개인화 추천 이유', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
+  { id:'s-venue', sid:'S3-5', name:'구장 상세 정보', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
   { id:'s-pay', sid:'S4-1', name:'참가 신청·결제', phase:'pay', phaseLabel:'③ 결제', color:'#1D9E75' },
   { id:'s-pay-low', sid:'S4-1B', name:'크레딧 부족', phase:'pay', phaseLabel:'③ 결제', color:'#1D9E75' },
   { id:'s-charge', sid:'S4-1C', name:'크레딧 충전', phase:'pay', phaseLabel:'③ 결제', color:'#1D9E75' },
@@ -3389,20 +3390,18 @@ const screens = [
   { id:'s-confirm', sid:'S4-2', name:'참가 확정', phase:'pay', phaseLabel:'③ 결제', color:'#1D9E75' },
   { id:'s-notifs', sid:'S4-3', name:'Push 알림', phase:'pay', phaseLabel:'③ 결제', color:'#1D9E75' },
   { id:'s-gameday', sid:'S5-1', name:'경기 당일 메인', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
-  { id:'s-noshow', sid:'S5-3', name:'노쇼 자동 처리', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
   { id:'s-postgame', sid:'S5-2', name:'경기 종료 직후', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
+  { id:'s-noshow', sid:'S5-3', name:'노쇼 자동 처리', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
+  { id:'s-chat', sid:'S5-4', name:'팀 채팅', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
+  { id:'s-motivation', sid:'S5-5', name:'당일 동기부여', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
   { id:'s-eval', sid:'S6-1', name:'팀원 매너 평가', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
   { id:'s-eloUpdate', sid:'S6-2', name:'ELO 업데이트', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
   { id:'s-lockin', sid:'S6-3', name:'재참여 홈', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
-  { id:'s-chat', sid:'S5-4', name:'팀 채팅', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
-  { id:'s-playstyle', sid:'S3-3', name:'플레이 성향', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
-  { id:'s-regular', sid:'S7-1', name:'정기 매칭 구독', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
-  { id:'s-venue', sid:'S3-5', name:'구장 상세 정보', phase:'match', phaseLabel:'② 개인화 매칭', color:'#EF9F27' },
   { id:'s-friends', sid:'S6-4', name:'팀원 친구 추가', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
-  { id:'s-motivation', sid:'S5-5', name:'당일 동기부여', phase:'game', phaseLabel:'④ 경기 당일', color:'#6C63FF' },
+  { id:'s-regular', sid:'S7-1', name:'정기 매칭 구독', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
   { id:'s-growth', sid:'S7-2', name:'성장 피드', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
-  { id:'s-roadmap', sid:'ROAD', name:'프로토타입 범위', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#6C63FF' },
   { id:'s-profile', sid:'프로필', name:'프로필 탭', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#D85A30' },
+  { id:'s-roadmap', sid:'ROAD', name:'프로토타입 범위', phase:'eval', phaseLabel:'⑤ 평가·재참여', color:'#6C63FF' },
   { id:'s-v2-priority', sid:'EXT-1', name:'추천 우선순위 설정', phase:'v2', phaseLabel:'⑥ 서비스 확장', color:'#0F766E' },
   { id:'s-v2-compare', sid:'EXT-2', name:'추천 결과 비교', phase:'v2', phaseLabel:'⑥ 서비스 확장', color:'#0F766E' },
   { id:'s-v2-waitlist', sid:'EXT-3', name:'대기 신청', phase:'v2', phaseLabel:'⑥ 서비스 확장', color:'#0F766E' },
@@ -4154,14 +4153,14 @@ function goScreen(id) {
   }
   if (id === 's-gameday') {
     requestAnimationFrame(() => {
-      applyRandomUsers();
+      applyScenarioUsers();
       startKickoffCountdown();
     });
   } else if (prev && prev.id === 's-gameday') {
     stopKickoffCountdown();
   }
   if (id === 's-postgame') {
-    requestAnimationFrame(applyRandomPostgameCase);
+    requestAnimationFrame(applyPostgameScenario);
   }
   requestAnimationFrame(() => { enhanceInteractiveElements(); focusActiveScreen(el); });
 }
@@ -4333,8 +4332,8 @@ function animateElo() {
 
 
 // ── SSO 시뮬레이션
-// ── SSO 로그인 유저 랜덤 선택 (fakeUsers 배열 기반)
-function getRandomLoginUser() {
+// ── SSO 데모 로그인 유저 선택 (대표 페르소나 고정)
+function getDemoLoginUser() {
   return fakeUsers[0];
 }
 
@@ -4356,10 +4355,10 @@ const ssoProviderBase = {
   }
 };
 
-// startSSO 호출 시 랜덤 유저 선택 후 provider에 합성
+// startSSO 호출 시 대표 페르소나를 provider 정보와 합성
 function buildProvider(key) {
   const base = ssoProviderBase[key];
-  const u = getRandomLoginUser();
+  const u = getDemoLoginUser();
   const emailId = u.name.replace(/ /g,'').toLowerCase();
   return {
     ...base,
@@ -4486,9 +4485,9 @@ const chatMessages = [
   '화이팅입니다 🔥',
 ];
 
-// 화면 초기화 시 랜덤 유저 적용
+// 화면 초기화 시 고정 시나리오 팀원 적용
 const scenarioTeamMembers = [fakeUsers[2], fakeUsers[4], fakeUsers[3], fakeUsers[8]];
-function applyRandomUsers() {
+function applyScenarioUsers() {
   const teamMembers = scenarioTeamMembers;
   syncScenarioPosition();
   applyTeamDetail(teamMembers);
@@ -4976,7 +4975,7 @@ function applyPostgameCase() {
   renderV3Inspector();
 }
 
-function applyRandomPostgameCase() {
+function applyPostgameScenario() {
   applyPostgameCase();
 }
 
@@ -5333,7 +5332,7 @@ syncScenarioPosition();
 syncParticipationState();
 renderV3Inspector();
 requestAnimationFrame(function() {
-  setTimeout(function(){ applyRandomUsers(); enhanceInteractiveElements(); }, 80);
+  setTimeout(function(){ applyScenarioUsers(); enhanceInteractiveElements(); }, 80);
 });
 </script>
 </body>

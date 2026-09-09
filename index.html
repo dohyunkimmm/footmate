@@ -1900,7 +1900,7 @@ h2,.root,.donut span{font-weight:900}
 <span class="toc-n">13</span>
 <div>
 <span class="toc-t">Prototype Build · QA · Deployment</span>
-<span class="toc-s">요구사항부터 Vercel 검증까지</span>
+<span class="toc-s">GitHub 버전 관리부터 Vercel 검증까지</span>
 </div>
 </div>
 <div class="toc-item" data-i="13" onclick="goTo(13)">
@@ -2004,7 +2004,7 @@ h2,.root,.donut span{font-weight:900}
 </div>
 </div>
 <div class="cover-actions">
-<a class="cover-demo-btn" href="demo.html" target="_blank" rel="noopener" aria-label="FootMate 인터랙티브 데모 새 창에서 열기">인터랙티브 데모 바로 체험 <span aria-hidden="true">↗</span></a>
+<a class="cover-demo-btn" href="/demo" target="_blank" rel="noopener" aria-label="FootMate 인터랙티브 데모 새 창에서 열기">인터랙티브 데모 바로 체험 <span aria-hidden="true">↗</span></a>
 </div>
 <div class="cover-guide">← → 키 또는 좌우 버튼으로 이동 · 전체 기획 흐름 20장</div>
 </div>
@@ -2320,13 +2320,13 @@ h2,.root,.donut span{font-weight:900}
 <section class="content">
 <div class="phase-kicker"><div class="kicker">PROTOTYPE BUILD · QA · DEPLOYMENT</div><span class="phase-pill original">EVIDENCE-BASED BUILD</span></div>
 <h2>아이디어를 작동하는 증거로 바꾸고, 검증 기준으로 다듬었습니다</h2>
-<p class="lead">요구사항을 프롬프트와 인수 기준으로 세분화하고, 작은 동작 단위로 구현한 뒤 반응형·접근성·상태 정합성을 점검해 Vercel Production에 배포했습니다.</p>
-<p class="note" style="margin:-4px 0 12px;font-size:12px;color:#A7B8D0;line-height:1.6;"><b style="color:#fff;">단독 수행 범위</b> · 서비스 기획·요구사항 정의·UX/IA·운영·예외 정책·프롬프트 설계·HTML/CSS/JavaScript 구현·QA·Vercel 배포까지 전 과정을 직접 수행했습니다. <span style="color:#5EEAD4;">AI는 구현을 가속하기 위한 도구로 활용했습니다.</span></p>
+<p class="lead">요구사항을 프롬프트와 인수 기준으로 세분화하고 작은 동작 단위로 구현한 뒤, 반응형·접근성·상태 정합성을 점검했습니다. GitHub <code>main</code>을 Source of Truth로 관리하고 Vercel Production 배포·검증 흐름으로 연결했습니다.</p>
+<p class="note" style="margin:-4px 0 12px;font-size:12px;color:#A7B8D0;line-height:1.6;"><b style="color:#fff;">단독 수행 범위</b> · 서비스 기획·요구사항 정의·UX/IA·운영·예외 정책·프롬프트 설계·HTML/CSS/JavaScript 구현·QA·GitHub 버전 관리·Vercel 배포까지 전 과정을 직접 수행했습니다. <span style="color:#5EEAD4;">AI는 구현을 가속하기 위한 도구로 활용했습니다.</span></p>
 <div class="build-proof-grid">
   <article class="build-proof"><em>01 · PROMPT</em><h3>요구사항 구조화</h3><p>사용자 문제·정상/예외 흐름·문구·완료 조건을 프롬프트로 분리하고 변경 범위를 고정했습니다.</p></article>
   <article class="build-proof"><em>02 · AI-ASSISTED BUILD</em><h3>동작 단위 구현</h3><p><code>HTML · CSS · JavaScript</code>로 5개 입력, 추천 점수, ELO 갱신과 복구 상태를 연결했습니다.</p></article>
   <article class="build-proof"><em>03 · QA</em><h3>교차·역검증</h3><p>입력→결과와 결과→입력을 모두 확인하고, 키보드·터치·모바일 동작과 문구·상태 정합성을 점검했습니다.</p></article>
-  <article class="build-proof"><em>04 · DEPLOY</em><h3>배포·검증 기준</h3><p>Vercel 배포본과 수정 소스를 대조하고, 재배포 후 핵심 경로·딥링크·콘솔 오류·데모 임베드를 확인합니다.</p></article>
+  <article class="build-proof"><em>04 · DEPLOY</em><h3>버전 관리·배포 검증</h3><p>GitHub <code>main</code>을 기준 소스로 관리하고, commit 이후 Vercel Production 배포본에서 핵심 경로·딥링크·콘솔 오류·데모 임베드를 확인합니다.</p></article>
 </div>
 <div class="evidence-strip" aria-label="구현 증거">
   <div><b>39</b><span>상태 기반 화면</span></div><div><b>5</b><span>연결된 입력</span></div><div><b>5</b><span>퍼널 이벤트</span></div><div><b>20</b><span>기획 케이스 스터디</span></div>
@@ -2633,7 +2633,7 @@ h2,.root,.donut span{font-weight:900}
 
       <div class="showcase-device-wrap">
         <div class="device">
-<iframe id="demoFrame" data-src="demo.html" src="about:blank" title="FootMate 인터랙티브 데모">
+<iframe id="demoFrame" data-src="/demo" src="about:blank" title="FootMate 인터랙티브 데모">
 </iframe>
 </div>
       </div>
@@ -2642,7 +2642,7 @@ h2,.root,.donut span{font-weight:900}
         앱 우측 하단의 ‘AI 로직’에서 Agent Workflow와 이벤트 로그도 확인할 수 있습니다.
       </div>
       <div class="showcase-actions">
-        <a class="demo-open-btn" href="demo.html" target="_blank" rel="noopener">새 창에서 데모 열기 ↗</a>
+        <a class="demo-open-btn" href="/demo" target="_blank" rel="noopener">새 창에서 데모 열기 ↗</a>
       </div>
     </div>
   </section>
