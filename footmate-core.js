@@ -9,6 +9,13 @@
   const skillTargets = new Map([
     [0, 1050], [1, 1160], [1.5, 1235], [2, 1300], [3, 1425]
   ]);
+  const defaultFunnel = [
+    'quiz_complete',
+    'recommendation_results_view',
+    'match_detail_open',
+    'payment_complete',
+    'result_submit'
+  ];
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -85,19 +92,83 @@
       });
   }
 
+  function eventName(event) {
+    return typeof event === 'string' ? event : event && event.name;
+  }
+
+  function eventTraceStatus(events, requiredEvents) {
+    const required = Array.isArray(requiredEvents) && requiredEvents.length ? requiredEvents : defaultFunnel;
+    const names = Array.isArray(events) ? events.map(eventName).filter(Boolean) : [];
+    let cursor = -1;
+    const missing = [];
+    for (const name of required) {
+      const index = names.indexOf(name, cursor + 1);
+      if (index < 0) missing.push(name);
+      else cursor = index;
+    }
+    return {
+      pass: missing.length === 0,
+      completeCount: required.length - missing.length,
+      requiredCount: required.length,
+      missing,
+      names
+    };
+  }
+
+  function consistencyStatus(checks) {
+    if (typeof checks === 'boolean') return checks;
+    if (!checks || typeof checks !== 'object') return false;
+    const values = Object.values(checks);
+    return values.length > 0 && values.every(Boolean);
+  }
+
+  function filterHomeMatches(matches, filters) {
+    const list = Array.isArray(matches) ? matches : [];
+    const f = filters || {};
+    const currentElo = Number(f.currentElo);
+    return list.filter(match => {
+      if (Array.isArray(f.keys) && !f.keys.includes(match.key)) return false;
+      if (f.openOnly && match.status && match.status !== 'open') return false;
+      if (Number.isFinite(Number(f.maxEloDiff)) && Number.isFinite(currentElo) && Math.abs(Number(match.avgElo) - currentElo) > Number(f.maxEloDiff)) return false;
+      if (Number.isFinite(Number(f.maxDistanceKm)) && Number(match.distanceKm) > Number(f.maxDistanceKm)) return false;
+      return true;
+    });
+  }
+
+  function applyCredit(balance, delta) {
+    const current = Number(balance);
+    const change = Number(delta);
+    if (!Number.isFinite(current) || !Number.isFinite(change)) return 0;
+    return Math.max(0, Math.round(current + change));
+  }
+
   function dataQualityStatus(input) {
     const answered = Number(input.answeredCount) || 0;
-    const eventCount = Number(input.eventCount) || 0;
     const valid = Boolean(input.valid);
-    const consistent = Boolean(input.consistent);
+    const consistent = input.consistencyChecks !== undefined ? consistencyStatus(input.consistencyChecks) : Boolean(input.consistent);
+    const trace = Array.isArray(input.events)
+      ? eventTraceStatus(input.events, input.requiredEvents)
+      : { pass: (Number(input.eventCount) || 0) >= 5 };
     return {
       completeness: answered >= 5 ? 'PASS' : 'CHECK',
       validity: valid ? 'PASS' : 'CHECK',
       freshness: 'SAMPLE',
       consistency: consistent ? 'PASS' : 'CHECK',
-      traceability: eventCount >= 5 ? 'PASS' : 'CHECK'
+      traceability: trace.pass ? 'PASS' : 'CHECK'
     };
   }
 
-  return { clamp, effectiveElo, skillLabel, scoreMatch, rankMatches, dataQualityStatus };
+  return {
+    clamp,
+    effectiveElo,
+    skillLabel,
+    scoreMatch,
+    rankMatches,
+    eventTraceStatus,
+    consistencyStatus,
+    filterHomeMatches,
+    applyCredit,
+    dataQualityStatus,
+    defaultFunnel: defaultFunnel.slice()
+  };
 });
