@@ -1,0 +1,29 @@
+name: Restore FootMate assets
+
+on:
+  push:
+    branches:
+      - restore-assets
+    paths:
+      - .github/workflows/restore-assets.yml
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild source assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .tmp/index.part* | base64 -d | gzip -d > index.html
+          cat .tmp/og.part* | base64 -d | gzip -d > og-footmate.png
+          rm -rf .tmp
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Restore FootMate source assets"
+          git push origin HEAD:restore-assets
