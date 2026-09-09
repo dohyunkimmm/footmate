@@ -1,0 +1,19 @@
+/* FootMate runtime consistency patch · 2026-09-09 */
+.v3-launcher{
+  bottom:84px!important;
+  right:10px!important;
+  z-index:720!important;
+}
+.device-screen:has(#s-chat.active) .v3-launcher,
+.device-screen:has(#s-pay.active) .v3-launcher,
+.device-screen:has(#s-filter.active) .v3-launcher{
+  bottom:76px!important;
+}
+.dq-badge.check{background:#EEF3FF!important;color:#274A82!important}
+#footmateRuntimeEmpty{
+  margin:0 16px 12px;padding:16px;border-radius:16px;background:#fff;
+  border:1.5px dashed #9BA8C0;text-align:center;color:#5A6888;font-size:12px;line-height:1.65
+}
+#footmateRuntimeEmpty strong{display:block;color:#1A1A2E;font-size:14px;margin-bottom:4px}
+#footmateRuntimeEmpty button{margin-top:10px}
+@media(max-width:390px){.v3-launcher{bottom:82px!important}}
