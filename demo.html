@@ -1060,19 +1060,19 @@
 
             <div style="font-size:12px;font-weight:700;color:var(--txt3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">경기 남부</div>
             <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-              <button class="quiz-opt" onclick="selectRegion(this)" style="justify-content:space-between;">
+              <button class="quiz-opt" data-region-key="suwon" onclick="selectRegion(this)" style="justify-content:space-between;">
                 <span>🏟️ 수원시 (영통·권선·팔달·장안)</span>
 <span style="color:var(--txt3);">›</span>
               </button>
-              <button class="quiz-opt" onclick="selectRegion(this)" style="justify-content:space-between;">
+              <button class="quiz-opt" data-region-key="seongnam" onclick="selectRegion(this)" style="justify-content:space-between;">
                 <span>⚽ 성남시 (분당·수정·중원)</span>
 <span style="color:var(--txt3);">›</span>
               </button>
-              <button class="quiz-opt" onclick="selectRegion(this)" style="justify-content:space-between;">
+              <button class="quiz-opt" data-region-key="seongnam" onclick="selectRegion(this)" style="justify-content:space-between;">
                 <span>🏃 용인시 (기흥·수지·처인)</span>
 <span style="color:var(--txt3);">›</span>
               </button>
-              <button class="quiz-opt" onclick="selectRegion(this)" style="justify-content:space-between;">
+              <button class="quiz-opt" data-region-key="suwon" onclick="selectRegion(this)" style="justify-content:space-between;">
                 <span>🌿 화성시 · 오산시</span>
 <span style="color:var(--txt3);">›</span>
               </button>
@@ -1080,17 +1080,17 @@
 
             <div style="font-size:12px;font-weight:700;color:var(--txt3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">경기 북부</div>
             <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:28px;">
-              <button class="quiz-opt" onclick="selectRegion(this)" style="justify-content:space-between;">
+              <button class="quiz-opt" data-region-key="north" onclick="selectRegion(this)" style="justify-content:space-between;">
                 <span>🏙️ 고양시 · 파주시</span>
 <span style="color:var(--txt3);">›</span>
               </button>
-              <button class="quiz-opt" onclick="selectRegion(this)" style="justify-content:space-between;">
+              <button class="quiz-opt" data-region-key="north" onclick="selectRegion(this)" style="justify-content:space-between;">
                 <span>🌆 의정부시 · 남양주시</span>
 <span style="color:var(--txt3);">›</span>
               </button>
             </div>
 
-            <button class="btn-primary" onclick="goScreen('s-elo')" id="regionConfirmBtn" style="opacity:.4;pointer-events:none;">
+            <button class="btn-primary" onclick="goScreen('s-elo')" id="regionConfirmBtn" disabled style="opacity:.4;pointer-events:none;">
               선택 완료 →
             </button>
           </div>
@@ -1861,7 +1861,7 @@
                   <div style="font-size:14px;font-weight:800;color:var(--txt);">신용 · 체크카드</div>
                   <div style="font-size:11px;color:var(--txt3);">일반 카드 결제</div>
                 </div>
-                <div style="width:20px;height:20px;border-radius:50%;background:#ddd;flex-shrink:0;">
+                <div class="method-check" style="width:20px;height:20px;border-radius:50%;background:#ddd;flex-shrink:0;">
 </div>
               </button>
 
@@ -2479,7 +2479,7 @@
             <!-- 입력창 -->
             <div style="background:#fff;border-top:0.5px solid var(--border);padding:10px 14px;display:flex;gap:10px;align-items:center;flex-shrink:0;">
               <div id="chatInput" contenteditable="true" role="textbox" aria-label="팀 채팅 메시지" aria-multiline="false" data-placeholder="메시지 입력..."
-                onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMsg();}"
+                onkeydown="if(event.key==='Enter' &amp;&amp; !event.isComposing &amp;&amp; event.keyCode!==229){event.preventDefault();sendChatMsg();}"
                 style="flex:1;background:var(--gray);border-radius:99px;padding:10px 16px;font-size:13px;color:var(--txt);outline:none;max-height:80px;overflow-y:auto;">
 </div>
               <button type="button" class="chat-send-button" aria-label="메시지 보내기" onclick="sendChatMsg()" style="border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;">➤</button>
@@ -3420,6 +3420,40 @@ const phases = [
 ];
 
 let currentScreen = 's-splash';
+let screenRevision = 0;
+const screenTimers = new Set();
+let quizAdvancing = false;
+
+function screenTimeout(callback, delay) {
+  const revision = screenRevision;
+  const timer = setTimeout(() => {
+    screenTimers.delete(timer);
+    if (revision === screenRevision) callback();
+  }, delay);
+  screenTimers.add(timer);
+  return timer;
+}
+
+function screenInterval(callback, delay) {
+  const revision = screenRevision;
+  const timer = setInterval(() => {
+    if (revision === screenRevision) callback();
+  }, delay);
+  screenTimers.add(timer);
+  return timer;
+}
+
+function screenFrame(callback) {
+  const revision = screenRevision;
+  requestAnimationFrame(() => { if (revision === screenRevision) callback(); });
+}
+
+function clearScreenTasks() {
+  screenRevision++;
+  screenTimers.forEach(timer => { clearTimeout(timer); clearInterval(timer); });
+  screenTimers.clear();
+  quizAdvancing = false;
+}
 
 // Build screen map
 function buildMap() {
@@ -3722,13 +3756,20 @@ const screenHashAliases = {
   splash:'s-splash',quiz:'s-quiz',elo:'s-elo',matches:'s-results',detail:'s-detail',payment:'s-pay',gameday:'s-gameday',noshow:'s-noshow',result:'s-postgame',evaluation:'s-eval','elo-update':'s-eloUpdate',rematch:'s-lockin',v2:'s-v2-priority',waitlist:'s-v2-waitlist',report:'s-v2-report'
 };
 const hashByScreen = Object.fromEntries(Object.entries(screenHashAliases).map(([hash,id]) => [id,hash]));
-const requestedStartScreen = screenHashAliases[(location.hash || '').replace(/^#/,'').toLowerCase()] || 's-splash';
+function screenFromHash(hash = location.hash) {
+  const slug = (hash || '').replace(/^#/, '').toLowerCase();
+  return screenHashAliases[slug] || screens.find(screen =>
+    screen.id.toLowerCase() === slug || screen.id.replace(/^s-/, '').toLowerCase() === slug
+  )?.id || 's-splash';
+}
+let navigatingDemoHistory = false;
 let demoStarted = false;
 
 function syncDemoHash(screenId) {
   if (!demoStarted || window.self !== window.top) return;
   const hash = hashByScreen[screenId] || screenId.replace(/^s-/,'');
-  history.replaceState(history.state, '', '#' + hash);
+  if (navigatingDemoHistory || location.hash === '#' + hash) return;
+  history.pushState(history.state, '', '#' + hash);
 }
 
 function selectedPositionLabel() {
@@ -3755,10 +3796,14 @@ function openUpcomingMatch() {
   goScreen(participationConfirmed ? 's-gameday' : 's-detail');
 }
 
-function confirmParticipation() {
+function recordParticipation() {
   participationConfirmed = true;
   syncParticipationState();
   trackDemoEvent('payment_complete', {match:selectedMatchKey});
+}
+
+function confirmParticipation() {
+  recordParticipation();
   goScreen('s-confirm');
 }
 
@@ -3973,7 +4018,7 @@ function closeAccessibleDialog(modal) {
 
 function trapDialogFocus(modal, event) {
   const focusable = [...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')]
-    .filter(el => !el.closest('[aria-hidden="true"]'));
+    .filter(el => !el.closest('[aria-hidden="true"],[inert]') && el.getClientRects().length > 0);
   if (!focusable.length) return;
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
@@ -4123,6 +4168,9 @@ function focusActiveScreen(screen) {
 
 // Go to screen
 function goScreen(id) {
+  const el = document.getElementById(id);
+  if (!el?.classList.contains('screen')) return;
+  clearScreenTasks();
   const prev = document.querySelector('.screen.active');
   if (prev && prev.id === 's-chat' && id !== 's-chat') stopAmbientChat();
   if (prev) {
@@ -4130,8 +4178,15 @@ function goScreen(id) {
     prev.setAttribute('aria-hidden', 'true');
     prev.inert = true;
   }
-  const el = document.getElementById(id);
-  if (!el) return;
+  if (prev?.id === 's-location') {
+    const locationButton = prev.querySelector('[onclick="allowLocation(this)"]');
+    if (locationButton) {
+      locationButton.textContent = locationButton.dataset.idleLabel || locationButton.textContent;
+      locationButton.disabled = false;
+      locationButton.style.opacity = '';
+      locationButton.style.pointerEvents = '';
+    }
+  }
   el.classList.add('active');
   el.setAttribute('aria-hidden', 'false');
   el.inert = false;
@@ -4145,14 +4200,16 @@ function goScreen(id) {
   updateInfo(el);
   updateMapHighlight(id);
   updateFlowNav(el.dataset.phase);
-  if (id === 's-reason') { renderSelectedMatch(); requestAnimationFrame(animateBars); }
+  if (id === 's-quiz') renderQuiz();
+  if (id === 's-detail' || id === 's-pay') { selectedMatchKey = 'suwon'; renderSelectedMatch(); }
+  if (id === 's-reason') { renderSelectedMatch(); screenFrame(animateBars); }
   if (id === 's-v2-compare') renderV2Comparison();
-  if (id === 's-eloUpdate') requestAnimationFrame(animateElo);
+  if (id === 's-eloUpdate') screenFrame(animateElo);
   if (id === 's-chat') {
-    requestAnimationFrame(() => { scrollChatToBottom(); startAmbientChat(); });
+    screenFrame(() => { scrollChatToBottom(); startAmbientChat(); });
   }
   if (id === 's-gameday') {
-    requestAnimationFrame(() => {
+    screenFrame(() => {
       applyScenarioUsers();
       startKickoffCountdown();
     });
@@ -4160,9 +4217,9 @@ function goScreen(id) {
     stopKickoffCountdown();
   }
   if (id === 's-postgame') {
-    requestAnimationFrame(applyPostgameScenario);
+    screenFrame(applyPostgameScenario);
   }
-  requestAnimationFrame(() => { enhanceInteractiveElements(); focusActiveScreen(el); });
+  screenFrame(() => { enhanceInteractiveElements(); focusActiveScreen(el); });
 }
 
 function updateInfo(el) {
@@ -4227,9 +4284,11 @@ function renderQuiz() {
 }
 
 function selectQuizOpt(el, i) {
+  if (quizAdvancing || currentScreen !== 's-quiz') return;
   const question = quizData[quizStep];
   const option = question?.opts?.[i];
   if (!question || !option) return;
+  quizAdvancing = true;
   scenarioProfile[question.key] = option.v;
   if (question.key === 'region') scenarioProfile.regionLabel = option.t;
   if (question.key === 'time') scenarioProfile.timeLabel = option.t;
@@ -4237,10 +4296,12 @@ function selectQuizOpt(el, i) {
   document.querySelectorAll('#quizContent .quiz-opt').forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
   el.classList.add('selected');
   el.setAttribute('aria-pressed', 'true');
-  setTimeout(() => {
+  document.querySelectorAll('#quizContent .quiz-opt').forEach(button => { button.disabled = true; });
+  screenTimeout(() => {
+    quizAdvancing = false;
     quizStep++;
     if (quizStep >= quizData.length) { quizStep = 0; goScreen('s-location'); }
-    else renderQuiz();
+    else { renderQuiz(); document.querySelector('#quizContent .quiz-opt')?.focus({preventScroll:true}); }
   }, 400);
 }
 
@@ -4277,6 +4338,8 @@ function submitEvaluation() {
     if (status) status.textContent = '매너 점수를 먼저 선택해 주세요.';
     return;
   }
+  const reminder = document.getElementById('evalReminder');
+  if (reminder) reminder.style.display = 'none';
   const keywordCount = document.querySelectorAll('#evalChips .eval-chip.active').length;
   setText('submittedStarScore', selectedEvalStars + ' / 5점');
   setText('submittedKeywordCount', keywordCount + '개');
@@ -4306,7 +4369,7 @@ function animateBars() {
   const match = matchScenarios[selectedMatchKey] || matchScenarios.suwon;
   const bars = [{id:'rb1',w:match.eloScore},{id:'rb2',w:match.styleScore},{id:'rb3',w:match.locationScore},{id:'rb4',w:100}];
   bars.forEach((b, i) => {
-    setTimeout(() => {
+    screenTimeout(() => {
       const el = document.getElementById(b.id);
       if (el) el.style.width = b.w + '%';
     }, i * 150);
@@ -4318,9 +4381,11 @@ function animateElo() {
   if (!el) return;
   const target = demoState.updatedElo;
   let n = demoState.initialElo;
+  el.textContent = n.toLocaleString();
+  if (target === n) return;
   const direction = target >= n ? 1 : -1;
   el.style.animation = 'none';
-  const interval = setInterval(() => {
+  const interval = screenInterval(() => {
     n += direction;
     el.textContent = n.toLocaleString();
     if ((direction > 0 && n >= target) || (direction < 0 && n <= target)) clearInterval(interval);
@@ -4397,14 +4462,14 @@ function startSSO(provider) {
   const txtEl = document.getElementById('sso-step-txt');
   txtEl.textContent = p.steps[0];
 
-  const stepTimer = setInterval(() => {
+  const stepTimer = screenInterval(() => {
     stepIdx++;
     if (stepIdx < p.steps.length) {
       txtEl.textContent = p.steps[stepIdx];
     } else {
       clearInterval(stepTimer);
       // STEP2: 완료
-      setTimeout(() => showSSOComplete(p), 400);
+      screenTimeout(() => showSSOComplete(p), 400);
     }
   }, 900);
 }
@@ -4430,7 +4495,7 @@ function showSSOComplete(p) {
   av.style.color = p.user.avatarColor;
 
   // 2초 후 퀴즈로 자동 이동
-  setTimeout(() => {
+  screenTimeout(() => {
     goScreen('s-quiz');
   }, 2000);
 }
@@ -4667,6 +4732,8 @@ function showMemberToast(name, pos, elo, star) {
 
 // ── 충전 금액 선택
 let selectedChargeAmount = 20000;
+let selectedPaymentMethod = 'kakao';
+const paymentMethodLabels = {kakao:'카카오페이', naver:'네이버페이', card:'신용 · 체크카드'};
 function selectCharge(el, amount) {
   selectedChargeAmount = amount;
   document.querySelectorAll('.charge-btn').forEach(b => {
@@ -4689,13 +4756,16 @@ function completeCharge() {
   const chargedBalance = 3000 + selectedChargeAmount;
   const remainingBalance = chargedBalance - 17000;
   setText('chargeDoneAmount', '₩' + selectedChargeAmount.toLocaleString() + ' 충전 완료');
-  setText('chargeDoneBalance', '카카오페이 · 충전 후 잔액 ₩' + chargedBalance.toLocaleString());
+  setText('chargeDoneBalance', paymentMethodLabels[selectedPaymentMethod] + ' · 충전 후 잔액 ₩' + chargedBalance.toLocaleString());
   setText('chargeDoneRemaining', '₩' + remainingBalance.toLocaleString());
+  recordParticipation();
   goScreen('s-charge-done');
 }
 
 // ── 결제 수단 선택
 function selectMethod(method) {
+  if (!Object.hasOwn(paymentMethodLabels, method)) return;
+  selectedPaymentMethod = method;
   ['kakao','naver','card'].forEach(m => {
     const btn = document.getElementById('method-' + m);
     if (!btn) return;
@@ -4728,21 +4798,30 @@ function selectMethod(method) {
 
 // ── 위치 허용
 function allowLocation(btn) {
+  if (btn.disabled) return;
+  btn.dataset.idleLabel = btn.textContent;
+  btn.disabled = true;
   // 허용 애니메이션
   btn.textContent = '📍 위치 확인 중...';
   btn.style.opacity = '.7';
   btn.style.pointerEvents = 'none';
-  setTimeout(() => {
+  screenTimeout(() => {
     goScreen('s-elo');
   }, 1200);
 }
 
 // ── 지역 선택 (수동)
 function selectRegion(el) {
+  const region = el.dataset.regionKey;
+  if (!Object.hasOwn(regionDisplay, region)) return;
+  scenarioProfile.region = region;
+  scenarioProfile.regionLabel = regionDisplay[region];
+  syncDynamicScenario();
   document.querySelectorAll('#s-manual-location .quiz-opt').forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
   el.classList.add('selected');
   el.setAttribute('aria-pressed', 'true');
   const btn = document.getElementById('regionConfirmBtn');
+  btn.disabled = false;
   btn.style.opacity = '1';
   btn.style.pointerEvents = 'all';
 }
@@ -5278,7 +5357,7 @@ function startFootMateDemo(){
   }
   try{
     demoStarted = true;
-    goScreen(requestedStartScreen);
+    goScreen(screenFromHash());
   }catch(e){}
 }
 
@@ -5302,9 +5381,10 @@ document.addEventListener('keydown', function(e){
   const exceptionModal = document.getElementById('exceptionModal');
   const datePicker = document.getElementById('datePicker');
   const v3Inspector = document.getElementById('v3Inspector');
-  const activeDialog = v3Inspector?.classList.contains('open') ? v3Inspector : exceptionModal?.classList.contains('open') ? exceptionModal : datePicker?.style.display === 'flex' ? datePicker : null;
+  const onboarding = document.getElementById('demoOnboarding');
+  const activeDialog = onboarding?.getAttribute('aria-hidden') !== 'true' ? onboarding : v3Inspector?.classList.contains('open') ? v3Inspector : exceptionModal?.classList.contains('open') ? exceptionModal : datePicker?.style.display === 'flex' ? datePicker : null;
   if (activeDialog) {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && activeDialog !== onboarding) {
       e.preventDefault();
       activeDialog === v3Inspector ? closeV3Inspector() : activeDialog === exceptionModal ? closeException() : closeDatePicker();
       return;
@@ -5317,6 +5397,16 @@ document.addEventListener('keydown', function(e){
     target.click();
   }
 });
+
+function restoreDemoHistory() {
+  if (!demoStarted || window.self !== window.top) return;
+  const target = screenFromHash();
+  if (target === currentScreen) return;
+  navigatingDemoHistory = true;
+  try { goScreen(target); } finally { navigatingDemoHistory = false; }
+}
+window.addEventListener('popstate', restoreDemoHistory);
+window.addEventListener('hashchange', restoreDemoHistory);
 
 // ── INIT
 syncScenarioDateText();
