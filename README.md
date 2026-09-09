@@ -29,8 +29,8 @@
 
 승인된 큰 HTML 원본은 그대로 유지하고, Case Study와 Demo 모두 얇은 셸에서 최신 런타임 보정 레이어를 주입합니다.
 
-- `index.html` / `index-source.html` — 승인된 Case Study 원본
-- `index-shell.html` / `index-patches.js` — `/`에서 실제 4탭 IA와 최신 데이터 품질 설명을 동기화
+- `index-source.html` — 승인된 Case Study 원본
+- `index.html` / `index-shell.html` / `index-patches.js` — Production `/`에서 원본을 로드하고 실제 4탭 IA와 최신 데이터 품질 설명을 동기화하는 셸·패치
 - `demo.html` / `demo-source.html` — 승인된 프로토타입 원본
 - `demo-shell.html` — `/demo`에서 원본 HTML을 같은 문서에 로드하고 런타임 자산을 주입
 - `footmate-core.js` — 필터링 · 매칭 점수 · 추천 정렬 · 크레딧 · 데이터 품질의 순수 로직
