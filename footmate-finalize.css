@@ -1,0 +1,14 @@
+/* FootMate final runtime polish · 2026-09-10 */
+.footmate-home-empty{
+  margin:8px 0 12px;
+  padding:16px;
+  border:1.5px dashed var(--border);
+  border-radius:14px;
+  background:#fff;
+  color:var(--txt2);
+  font-size:12px;
+  line-height:1.6;
+  text-align:center;
+}
+#v3Launcher{min-width:92px;white-space:nowrap}
+@media(max-width:390px){#v3Launcher{min-width:88px;font-size:11px}}

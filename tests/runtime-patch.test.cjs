@@ -39,3 +39,36 @@ test('data quality does not report traceability PASS before all funnel events ex
   const complete=core.dataQualityStatus({answeredCount:5,eventCount:5,valid:true,consistent:true});
   assert.equal(complete.traceability,'PASS');
 });
+
+test('traceability requires the defined funnel events in order', () => {
+  const good=core.defaultFunnel.map(name=>({name}));
+  assert.equal(core.eventTraceStatus(good).pass,true);
+  const wrong=[good[1],good[0],...good.slice(2)];
+  const trace=core.eventTraceStatus(wrong);
+  assert.equal(trace.pass,false);
+  assert.ok(trace.missing.includes('recommendation_results_view'));
+});
+
+test('data quality consistency evaluates every required linkage check', () => {
+  const pass=core.dataQualityStatus({answeredCount:5,events:core.defaultFunnel,valid:true,consistencyChecks:{participationHasMatch:true,paymentMatchesParticipation:true,selectedMatchValid:true}});
+  assert.equal(pass.consistency,'PASS');
+  const fail=core.dataQualityStatus({answeredCount:5,events:core.defaultFunnel,valid:true,consistencyChecks:{participationHasMatch:true,paymentMatchesParticipation:false,selectedMatchValid:true}});
+  assert.equal(fail.consistency,'CHECK');
+});
+
+test('home filters apply day membership, ELO range and distance constraints', () => {
+  const matches=[
+    {key:'suwon',avgElo:1299,distanceKm:1.2,status:'open'},
+    {key:'seongnam',avgElo:1320,distanceKm:0.8,status:'open'},
+    {key:'yongin',avgElo:1278,distanceKm:6.4,status:'open'}
+  ];
+  assert.deepEqual(core.filterHomeMatches(matches,{keys:['suwon','yongin'],currentElo:1295}).map(x=>x.key),['suwon','yongin']);
+  assert.deepEqual(core.filterHomeMatches(matches,{currentElo:1295,maxEloDiff:10}).map(x=>x.key),['suwon']);
+  assert.deepEqual(core.filterHomeMatches(matches,{maxDistanceKm:5}).map(x=>x.key),['suwon','seongnam']);
+});
+
+test('credit helper applies charge and payment without going negative', () => {
+  assert.equal(core.applyCredit(3000,20000),23000);
+  assert.equal(core.applyCredit(23000,-17000),6000);
+  assert.equal(core.applyCredit(3000,-17000),0);
+});

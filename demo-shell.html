@@ -3,43 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>FootMate | AI Agent Workflow 프로토타입</title>
+<title>FootMate | 인터랙티브 프로토타입</title>
 <meta name="theme-color" content="#1a2d6e">
 <style>
-html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#e8ecf5}
-#footmateSource{display:block;width:100%;height:100%;border:0;opacity:0;transition:opacity .12s ease}
-#footmateSource.ready{opacity:1}
+html,body{width:100%;height:100%;margin:0;background:#e8ecf5;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}
+#boot{height:100%;display:grid;place-items:center;color:#5a6888;font-size:13px}
+#boot strong{display:block;color:#1a1a2e;font-size:15px;margin-bottom:6px}
 </style>
 </head>
 <body>
-<iframe id="footmateSource" title="FootMate 인터랙티브 데모" allow="clipboard-read; clipboard-write"></iframe>
+<div id="boot"><div><strong>FootMate 데모를 불러오는 중입니다.</strong>원본 프로토타입과 최신 런타임 검증 레이어를 연결합니다.</div></div>
 <script>
-(function(){
-  const frame=document.getElementById('footmateSource');
-  const initialHash=location.hash || '';
-  const initialSearch=location.search || '';
-  frame.src='/demo-source'+initialSearch+initialHash;
-  function addStyle(doc, href){
-    return new Promise((resolve,reject)=>{const link=doc.createElement('link');link.rel='stylesheet';link.href=href;link.onload=resolve;link.onerror=reject;doc.head.appendChild(link);});
+(async function(){
+  try{
+    const response=await fetch('/demo-source'+location.search,{cache:'no-store'});
+    if(!response.ok)throw new Error('demo source '+response.status);
+    let html=await response.text();
+    const styles='<link rel="stylesheet" href="/footmate-patches.css?v=20260910-2"><link rel="stylesheet" href="/footmate-finalize.css?v=20260910-2">';
+    const scripts='<script src="/footmate-core.js?v=20260910-2"><\/script><script src="/footmate-patches.js?v=20260910-2"><\/script><script src="/footmate-finalize.js?v=20260910-2"><\/script><script src="/footmate-persist-extra.js?v=20260910-2"><\/script>';
+    html=html.includes('</head>')?html.replace('</head>',styles+'</head>'):styles+html;
+    html=html.includes('</body>')?html.replace('</body>',scripts+'</body>'):html+scripts;
+    document.open();
+    document.write(html);
+    document.close();
+  }catch(error){
+    console.error('[FootMate shell] source load failed',error);
+    const boot=document.getElementById('boot');
+    if(boot)boot.innerHTML='<div><strong>데모를 불러오지 못했습니다.</strong><a href="/demo-source" style="color:#1a5fcc">원본 데모 열기</a></div>';
   }
-  function addScript(doc, src){
-    return new Promise((resolve,reject)=>{const s=doc.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;doc.head.appendChild(s);});
-  }
-  frame.addEventListener('load', async function(){
-    try{
-      const doc=frame.contentDocument;
-      await addStyle(doc,'/footmate-patches.css?v=20260909-1');
-      await addScript(doc,'/footmate-core.js?v=20260909-1');
-      await addScript(doc,'/footmate-patches.js?v=20260909-1');
-      frame.classList.add('ready');
-    }catch(err){
-      console.error('[FootMate shell] runtime patch load failed',err);
-      frame.classList.add('ready');
-    }
-  });
-  window.addEventListener('hashchange',()=>{
-    try{frame.contentWindow.location.hash=location.hash;}catch(e){}
-  });
 })();
 </script>
 </body>

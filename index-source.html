@@ -1,0 +1,2790 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>FootMate | AI 서비스 기획·시스템 PM 케이스 스터디</title>
+<meta name="description" content="동적 ELO 매칭을 AI Agent Workflow Blueprint, 서비스 데이터·품질, 프로토타입 구현·QA·배포 체계로 확장한 FootMate 서비스 기획·프로토타이핑 케이스 스터디입니다.">
+<meta name="theme-color" content="#07111F">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://footmate-black.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:url" content="https://footmate-black.vercel.app/">
+<meta property="og:title" content="FootMate | AI 서비스 기획·시스템 PM 케이스 스터디">
+<meta property="og:description" content="설명 가능한 동적 매칭, AI Agent Workflow, 데이터 품질과 검증 이벤트를 연결한 39개 화면의 인터랙티브 프로토타입입니다.">
+<meta property="og:image" content="https://footmate-black.vercel.app/og-footmate.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="FootMate AI 서비스 기획·시스템 PM 인터랙티브 프로토타입">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FootMate | AI 서비스 기획·시스템 PM 케이스 스터디">
+<meta name="twitter:description" content="동적 ELO, AI Agent Workflow, 데이터 품질과 예외·복구 흐름을 연결한 인터랙티브 프로토타입">
+<meta name="twitter:image" content="https://footmate-black.vercel.app/og-footmate.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;800;900&display=optional">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;height:100%;overflow:hidden;background:#07111F;color:#E8F0F8;font-family:'Noto Sans KR','Inter',sans-serif;word-break:keep-all}.layout{display:flex;width:100vw;height:100vh}.sidebar{width:230px;background:rgba(4,7,15,.98);border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;z-index:5}.sb-header{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}.sb-logo{font-weight:900;font-size:15px;background:linear-gradient(90deg,#fff,#8FC3FF,#8B6CF7,#5EEAD4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.sb-logo-row{display:flex;align-items:center;gap:7px}.sb-icon{flex:0 0 auto;display:block}.sb-sub{font-size:10px;color:#4B5F78;margin-top:3px}.toc-list{overflow:auto;padding:8px 0}.toc-item{display:flex;gap:10px;padding:8px 14px;cursor:pointer;border-left:2px solid transparent;transition:.15s}.toc-item:hover{background:rgba(79,142,247,.08)}.toc-item.on{background:rgba(79,142,247,.14);border-left-color:#4F8EF7}.toc-n{font-family:Inter;font-weight:900;font-size:10px;color:#4F8EF7;min-width:23px}.toc-t{display:block;font-size:11px;font-weight:800;color:#8FA4BC;line-height:1.3}.toc-s{display:block;font-size:9.5px;color:#3A4F6A;line-height:1.25;margin-top:1px}.toc-item.on .toc-t{color:#fff}.viewer{position:relative;flex:1;background:#04090F;overflow:hidden}.track{position:absolute;inset:0;display:flex;height:100%;transition:transform .32s cubic-bezier(.4,0,.2,1)}.slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;padding:68px 76px 76px;background:radial-gradient(ellipse at 50% 0%,rgba(79,142,247,.12),transparent 55%),#07111F}.topbar{position:absolute;top:0;left:0;right:0;height:48px;z-index:10;background:linear-gradient(180deg,rgba(4,9,15,.92),transparent);display:flex;justify-content:space-between;align-items:center;padding:0 70px 0 24px;pointer-events:none}.topbar-title{font-size:12px;font-weight:800;color:rgba(255,255,255,.45)}.topbar-count{font-family:Inter;font-size:11px;color:rgba(255,255,255,.28)}.pbar{position:absolute;top:0;left:0;right:0;height:2px;z-index:20}.pbar-fill{height:100%;width:0;background:linear-gradient(90deg,#4F8EF7,#5EEAD4);transition:.32s}.btn{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;font-size:22px;z-index:15;cursor:pointer}.btn:hover{background:rgba(255,255,255,.16)}.btn:disabled{opacity:.25}.btn-prev{left:16px}.btn-next{right:16px}.label{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:12;background:rgba(4,9,15,.72);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:5px 15px;font-size:11px;font-weight:800;color:#8FA4BC}.dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:12}.dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.18);border:0;cursor:pointer}.dot.on{background:#4F8EF7;transform:scale(1.6)}.hint{position:absolute;right:16px;bottom:16px;font-size:9px;color:rgba(255,255,255,.15);font-family:Inter}.content{width:min(1060px,100%);height:min(650px,100%);display:flex;flex-direction:column;justify-content:center}.kicker{font-family:Inter;font-weight:900;font-size:11px;letter-spacing:.26em;color:#5EEAD4;text-transform:uppercase;margin-bottom:12px}h2{font-size:clamp(30px,4vw,48px);font-weight:950;letter-spacing:-.055em;line-height:1.12;color:#fff;margin-bottom:16px}.lead{font-size:18px;color:#A7B8D0;line-height:1.75;max-width:850px;margin-bottom:28px}.lead b{color:#fff}.cover{text-align:center}.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 18px;border-radius:999px;border:1px solid rgba(79,142,247,.3);background:rgba(79,142,247,.12);color:#8FC3FF;font-size:11px;font-weight:900;letter-spacing:.18em;margin-bottom:22px}.cover h1{font-size:clamp(76px,10vw,140px);font-weight:950;letter-spacing:-.08em;line-height:.9;background:linear-gradient(135deg,#fff,#8FC3FF 40%,#8B6CF7 72%,#5EEAD4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.cover p{font-size:21px;color:#8FA4BC;margin:20px 0 34px}.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:700px;margin:0 auto}.hero-grid div,.card,.problem,.moscow div,.road div{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:18px;padding:20px}.hero-grid b{display:block;font-family:Inter;font-size:30px;color:#fff}.hero-grid span{font-size:11px;color:#6F829B;font-weight:800}.cards{display:grid;gap:14px}.cards+.cards{margin-top:14px}.three{grid-template-columns:repeat(3,1fr)}.card em,.problem b{font-family:Inter;font-style:normal;font-weight:900;color:#4F8EF7;font-size:13px}.card h3,.problem h3{font-size:22px;color:#fff;margin:9px 0 10px;letter-spacing:-.03em}.card p,.problem p,.moscow p,.road p{font-size:15px;color:#8FA4BC;line-height:1.65}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.chips span,.hyp span{font-size:12px;font-weight:900;color:#8FC3FF;border:1px solid rgba(79,142,247,.28);background:rgba(79,142,247,.12);padding:7px 12px;border-radius:999px}.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}.solution-line{margin:16px 0 22px;padding:18px 22px;border-radius:16px;background:rgba(94,234,212,.08);border:1px solid rgba(94,234,212,.22);color:#A7B8D0;font-size:17px}.solution-line strong{color:#5EEAD4}.persona-layout{display:grid;grid-template-columns:320px 1fr;gap:22px}.profile{border-radius:26px;background:linear-gradient(180deg,rgba(27,48,89,.96),rgba(23,23,65,.98));border:1px solid rgba(79,142,247,.45);padding:34px}.profile h3{font-size:34px;color:#fff;margin-bottom:20px}.profile p{font-size:17px;color:#9DB4D0;line-height:1.8}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.tags span{font-size:12px;font-weight:900;color:#4F8EF7;background:rgba(79,142,247,.14);border:1px solid rgba(79,142,247,.35);border-radius:999px;padding:7px 10px}.jtbd{display:grid;grid-template-columns:1fr 1fr;gap:14px}.jtbd div{border-radius:20px;background:rgba(18,30,45,.9);border:1px solid rgba(255,255,255,.1);padding:24px}.jtbd b{font-size:14px;font-weight:900}.jtbd p{font-size:16px;color:#A7B8D0;line-height:1.65;margin-top:10px}.green{color:#5EEAD4}.blue{color:#4F8EF7}.yellow{color:#FFD166}.red{color:#FF8A8A}.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.timeline.six{grid-template-columns:repeat(6,1fr)}.timeline div{position:relative;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:18px;padding:22px 18px;min-height:210px}.timeline.six div{padding:20px 14px;min-height:196px}.timeline.six h3{font-size:15px}.timeline b{font-family:Inter;color:#5EEAD4;font-size:20px}.timeline h3{font-size:20px;margin:16px 0 12px;color:#fff}.timeline p{font-size:14px;line-height:1.6;color:#8FA4BC}.comp{width:100%;border-collapse:collapse;overflow:hidden;border-radius:18px;font-size:16px}.comp th,.comp td{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);text-align:left}.comp th{color:#8FC3FF;font-size:13px;text-transform:uppercase;letter-spacing:.1em}.comp .highlight td{background:rgba(79,142,247,.14);color:#fff;font-weight:800}.moscow{display:grid;grid-template-columns:1fr 1fr;gap:14px}.moscow b{display:block;font-size:24px;color:#fff;margin-bottom:10px}.ia-map{text-align:center}.root{display:inline-block;padding:18px 42px;border-radius:999px;background:linear-gradient(135deg,#4F8EF7,#8B6CF7,#5EEAD4);font-weight:950;color:#06101C;font-size:22px;margin-bottom:30px}.ia-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.ia-row span{padding:22px 12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-weight:900;color:#fff}.ia-detail{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.ia-detail p{font-size:13px;color:#8FA4BC;line-height:1.5}.logic{display:grid;grid-template-columns:280px 1fr;gap:30px;align-items:center}.donut{width:250px;height:250px;border-radius:50%;background:conic-gradient(#4F8EF7 0 50%,rgba(79,142,247,.18) 50% 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 34px #07111F;border:1px solid rgba(255,255,255,.08)}.donut span{font-family:Inter;font-size:68px;font-weight:950;color:#fff}.donut small{font-size:18px;color:#8FA4BC;margin-top:-12px}.donut p{font-weight:900;color:#5EEAD4}.bar-list{display:flex;flex-direction:column;gap:12px}.bar-list div{border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);padding:18px 20px}.bar-list b{display:block;color:#fff;font-size:18px;margin-bottom:5px}.bar-list span{font-size:14px;color:#8FA4BC}.note{font-size:12px;color:#6F829B;margin:18px 0 14px}.match{border-radius:14px;background:#fff;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);font-size:13px;color:#1A1A2E}.match b{display:block;font-size:34px;color:#4F8EF7}.demo{align-items:center;text-align:center;height:100%;justify-content:center}.device{width:390px;max-width:46vw;background:#1A1A2E;border-radius:44px;padding:8px;box-shadow:0 24px 80px rgba(0,0,0,.7);margin-top:10px}.device iframe{width:100%;height:min(660px,calc(100vh - 210px));border:0;border-radius:36px;background:#fff}.road{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.road b{font-size:22px;color:#fff}.hyp{display:flex;gap:10px;flex-wrap:wrap}.slide{background:radial-gradient(ellipse at 15% 0%,rgba(139,108,247,.10),transparent 45%),radial-gradient(ellipse at 50% 0%,rgba(79,142,247,.12),transparent 55%),#07111F}.sidebar{backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%)}.toc-item{transition:background .3s cubic-bezier(.22,1,.36,1),border-color .3s cubic-bezier(.22,1,.36,1)}.profile{box-shadow:0 30px 60px -20px rgba(79,142,247,.35),inset 0 1px 0 rgba(255,255,255,.08)}.chips span,.hyp span,.tags span{transition:background .3s,transform .3s,border-color .3s}.chips span:hover,.hyp span:hover,.tags span:hover{background:rgba(79,142,247,.24);border-color:rgba(79,142,247,.55);transform:translateY(-2px)}.btn{transition:background .3s cubic-bezier(.22,1,.36,1),transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1)}.btn:hover{transform:translateY(-50%) scale(1.08);box-shadow:0 10px 24px -8px rgba(79,142,247,.4)}.dot{transition:background .3s,transform .3s}.dot:hover{background:rgba(255,255,255,.5);transform:scale(1.4)}.dot.on:hover{background:#4F8EF7;transform:scale(1.6)}.comp{backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}.comp tr{transition:background .25s}.comp tbody tr:hover td{background:rgba(79,142,247,.08)}.device{transition:transform .5s cubic-bezier(.22,1,.36,1)}.cover-guide{
+  margin:22px auto 0;
+  width:max-content;
+  max-width:90%;
+  padding:9px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.045);
+  color:#8FA4BC;
+  font-size:12px;
+  font-weight:800;
+}
+
+/* Keep the cover typography stable while web fonts load. */
+.cover h1{
+  font-family:'Inter','Noto Sans KR',sans-serif;
+  font-weight:900;
+}
+h2,.root,.donut span{font-weight:900}
+.cover p{margin-bottom:10px}
+.cover-role{
+  margin-bottom:28px;
+  color:#8FC3FF;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.cover-actions{
+  display:flex;
+  justify-content:center;
+  margin:18px auto 0;
+}
+.cover-demo-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  min-height:42px;
+  padding:11px 18px;
+  border:1px solid rgba(94,234,212,.52);
+  border-radius:999px;
+  background:linear-gradient(135deg,#5EEAD4,#8FC3FF);
+  color:#06101C;
+  font-size:12px;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 14px 34px -16px rgba(94,234,212,.72);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+.cover-demo-btn:hover{
+  transform:translateY(-2px);
+  filter:saturate(1.08);
+  box-shadow:0 18px 38px -14px rgba(94,234,212,.82);
+}
+.cover-demo-btn:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:4px;
+}
+
+/* ── Slide 16 · Product Demo Redesign ── */
+@keyframes demoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.78)}
+}
+@media(max-width:1100px){
+}
+@media(max-width:900px){
+}
+@media(max-width:560px){
+}/* ─────────────────────────────────────────
+   Slide 16 · FootMate Product Showcase
+   Apple × Notion × Linear inspired
+───────────────────────────────────────── */
+.demo-showcase-slide{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg,rgba(7,17,31,.88),rgba(7,17,31,.98)),
+    radial-gradient(circle at 78% 24%,rgba(83,117,255,.22),transparent 34%),
+    radial-gradient(circle at 18% 12%,rgba(139,108,247,.16),transparent 34%),
+    #07111F;
+}.demo-showcase-slide:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:36px 36px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 72%);
+  pointer-events:none;
+}.demo-showcase{
+  position:relative;
+  z-index:1;
+  width:min(1220px,100%);
+  height:min(720px,100%);
+  display:grid;
+  grid-template-columns:minmax(480px,1.12fr) minmax(360px,.88fr);
+  gap:clamp(56px,7vw,104px);
+  align-items:center;
+}.showcase-copy{
+  min-width:0;
+}.showcase-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.045);
+  color:#8FA4BC;
+  font-family:Inter,sans-serif;
+  font-size:9.5px;
+  font-weight:900;
+  letter-spacing:.18em;
+  margin-bottom:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}.showcase-live-dot,.showcase-status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#5EEAD4;
+  box-shadow:0 0 0 5px rgba(94,234,212,.09),0 0 16px rgba(94,234,212,.75);
+  animation:showcasePulse 1.9s ease-in-out infinite;
+}
+@keyframes showcasePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.76)}
+}.showcase-copy h2{
+  margin:0 0 20px;
+  font-family:Inter,'Noto Sans KR',sans-serif;
+  font-size:clamp(52px,6vw,82px);
+  line-height:.94;
+  letter-spacing:-.075em;
+  font-weight:900;
+}.showcase-copy h2 span{
+  background:linear-gradient(105deg,#fff 0%,#9CC5FF 38%,#9A7DFF 68%,#5EEAD4 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}.showcase-lead{
+  max-width:660px;
+  margin-bottom:24px;
+  color:#9BAEC5;
+  font-size:17px;
+  line-height:1.8;
+}.showcase-lead b{
+  color:#fff;
+  font-weight:800;
+}.showcase-path{
+  display:grid;
+  grid-template-columns:auto 24px auto 24px auto 24px auto 24px auto;
+  align-items:center;
+  gap:7px;
+  margin:26px 0 22px;
+}.showcase-path>div{
+  min-width:0;
+}.showcase-path span{
+  display:block;
+  color:#5EEAD4;
+  font-family:Inter,sans-serif;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.12em;
+  margin-bottom:4px;
+}.showcase-path b{
+  display:block;
+  color:#fff;
+  font-family:Inter,sans-serif;
+  font-size:13px;
+  line-height:1.2;
+}.showcase-path small{
+  display:block;
+  margin-top:3px;
+  color:#5F748E;
+  font-size:9.5px;
+  line-height:1.3;
+  white-space:nowrap;
+}.showcase-path i{
+  position:relative;
+  display:block;
+  width:100%;
+  height:1px;
+  background:linear-gradient(90deg,rgba(79,142,247,.2),rgba(94,234,212,.7));
+}.showcase-path i:after{
+  content:"";
+  position:absolute;
+  top:50%;
+  right:-1px;
+  width:5px;
+  height:5px;
+  border-top:1px solid #5EEAD4;
+  border-right:1px solid #5EEAD4;
+  transform:translateY(-50%) rotate(45deg);
+}.showcase-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:10px;
+}.showcase-metrics div{
+  padding:16px 16px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.035);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}.showcase-metrics strong{
+  display:block;
+  color:#fff;
+  font-family:Inter,sans-serif;
+  font-size:23px;
+  font-weight:900;
+  margin-bottom:3px;
+}.showcase-metrics div:last-child strong{
+  font-size:19px;
+  letter-spacing:-.02em;
+  white-space:nowrap;
+}.showcase-metrics span{
+  color:#657A94;
+  font-size:9.5px;
+  font-weight:700;
+}.showcase-tech{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}.showcase-tech span{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(79,142,247,.22);
+  background:rgba(79,142,247,.08);
+  color:#8FC3FF;
+  font-family:Inter,sans-serif;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.04em;
+}.showcase-note{
+  margin-top:12px;
+  color:#4F647D;
+  font-size:10px;
+}.showcase-stage{
+  position:relative;
+  min-height:650px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}.showcase-orbit{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(120,150,255,.12);
+  pointer-events:none;
+}.orbit-a{
+  width:470px;
+  height:470px;
+  animation:orbitSpin 20s linear infinite;
+}.orbit-b{
+  width:560px;
+  height:560px;
+  border-style:dashed;
+  border-color:rgba(94,234,212,.08);
+  animation:orbitSpin 30s linear infinite reverse;
+}
+@keyframes orbitSpin{to{transform:rotate(360deg)}
+}.showcase-stage:before{
+  content:"";
+  position:absolute;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(79,142,247,.24),rgba(139,108,247,.08) 42%,transparent 70%);
+  filter:blur(14px);
+  pointer-events:none;
+}.showcase-device-meta{
+  position:relative;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  align-self:flex-start;
+  margin:0 0 10px 22px;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(5,10,18,.72);
+  color:#879BB4;
+  font-family:Inter,sans-serif;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.16em;
+  backdrop-filter:blur(16px);
+}.showcase-device-wrap{
+  position:relative;
+  z-index:2;
+  perspective:1400px;
+}.showcase-device-wrap .device{
+  width:min(404px,35vw);
+  max-width:100%;
+  margin:0;
+  padding:9px;
+  border-radius:48px;
+  background:
+    linear-gradient(145deg,#2A2D42,#10121F);
+  box-shadow:
+    0 50px 110px rgba(0,0,0,.60),
+    0 0 0 1px rgba(255,255,255,.11),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 90px rgba(79,142,247,.17);
+  transform:rotateY(-4deg) rotateX(1deg);
+  transition:transform .6s cubic-bezier(.22,1,.36,1),box-shadow .6s;
+}.showcase-device-wrap .device:hover{
+  transform:rotateY(0) rotateX(0) translateY(-4px);
+  box-shadow:
+    0 58px 130px rgba(0,0,0,.68),
+    0 0 0 1px rgba(255,255,255,.14),
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 0 110px rgba(79,142,247,.22);
+}.showcase-device-wrap .device:before{
+  content:"";
+  position:absolute;
+  top:14px;
+  left:50%;
+  transform:translateX(-50%);
+  width:86px;
+  height:18px;
+  border-radius:999px;
+  background:#080910;
+  z-index:3;
+  pointer-events:none;
+}.showcase-device-wrap .device iframe{
+  height:min(650px,calc(100vh - 165px));
+  border-radius:39px;
+}.showcase-hint{
+  position:relative;
+  z-index:3;
+  margin-top:11px;
+  color:#5A6E87;
+  font-size:10px;
+}
+@media(max-width:1120px){.demo-showcase{
+    grid-template-columns:minmax(420px,1fr) minmax(340px,390px);
+    gap:44px;
+  }.showcase-path{
+    grid-template-columns:1fr;
+    gap:7px;
+  }.showcase-path i{display:none}.showcase-path>div{
+    display:grid;
+    grid-template-columns:28px 75px 1fr;
+    align-items:center;
+    gap:7px;
+  }.showcase-path span,.showcase-path b,.showcase-path small{margin:0}
+}
+@media(max-width:900px){.demo-showcase-slide{
+    overflow-y:auto;
+    align-items:flex-start;
+  }.demo-showcase{
+    display:flex;
+    flex-direction:column;
+    height:auto;
+    max-height:none;
+    gap:36px;
+    padding-bottom:44px;
+  }.showcase-copy{
+    width:min(720px,100%);
+  }.showcase-stage{
+    min-height:auto;
+  }.showcase-device-wrap .device{
+    width:min(404px,88vw);
+    transform:none;
+  }.showcase-device-wrap .device iframe{
+    height:620px;
+  }.showcase-orbit{display:none}
+}
+@media(max-width:560px){.showcase-copy h2{
+    font-size:48px;
+  }.showcase-lead{
+    font-size:14px;
+  }.showcase-metrics{
+    grid-template-columns:1fr;
+  }.showcase-path>div{
+    grid-template-columns:28px 68px 1fr;
+  }
+}/* ── Final Slide · Clean Closing ── */
+.closing-final-slide{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 75% 20%,rgba(79,142,247,.15),transparent 34%),
+    radial-gradient(circle at 20% 85%,rgba(139,108,247,.10),transparent 38%),
+    #07111F;
+}.closing-final-slide:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.4),transparent 78%);
+  pointer-events:none;
+}.closing-final{
+  position:relative;
+  z-index:1;
+  width:min(980px,100%);
+  height:min(650px,100%);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+}.closing-final-kicker{
+  color:#5EEAD4;
+  font-family:Inter,sans-serif;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.25em;
+  margin-bottom:18px;
+}.closing-final h2{
+  margin-bottom:22px;
+  font-family:Inter,'Noto Sans KR',sans-serif;
+  font-size:clamp(46px,6vw,76px);
+  line-height:1.02;
+  letter-spacing:-.07em;
+}.closing-final h2 span{
+  background:linear-gradient(100deg,#fff,#8FC3FF 45%,#8B6CF7 72%,#5EEAD4);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}.closing-final-profile{
+  margin-bottom:22px;
+}.closing-final-profile strong{
+  display:block;
+  color:#fff;
+  font-size:20px;
+  margin-bottom:5px;
+}.closing-final-profile p{
+  color:#8296B0;
+  font-size:14px;
+}.closing-final-values{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:22px;
+}.closing-final-values div{
+  padding:17px 18px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.035);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}.closing-final-values b{
+  display:block;
+  color:#fff;
+  font-family:Inter,sans-serif;
+  font-size:15px;
+  margin-bottom:6px;
+}.closing-final-values span{
+  color:#6F839C;
+  font-size:12px;
+  line-height:1.5;
+}.closing-final-links{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}.closing-final-links a{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-height:88px;
+  padding:17px 48px 17px 18px;
+  border-radius:16px;
+  border:1px solid rgba(79,142,247,.22);
+  background:rgba(79,142,247,.07);
+  text-decoration:none;
+  transition:transform .25s,background .25s,border-color .25s;
+}.closing-final-links a:hover{
+  transform:translateY(-3px);
+  background:rgba(79,142,247,.14);
+  border-color:rgba(79,142,247,.42);
+}.closing-final-links small{
+  color:#5EEAD4;
+  font-family:Inter,sans-serif;
+  font-size:8.5px;
+  font-weight:900;
+  letter-spacing:.16em;
+  margin-bottom:8px;
+}.closing-final-links b{
+  color:#fff;
+  font-size:14px;
+}.closing-final-links span{
+  position:absolute;
+  top:50%;
+  right:18px;
+  transform:translateY(-50%);
+  color:#8FC3FF;
+  font-size:20px;
+}
+@media(max-width:700px){.closing-final-values,.closing-final-links{
+    grid-template-columns:1fr;
+  }.closing-final{
+    height:auto;
+    padding:20px 0 30px;
+  }
+}
+
+@media(max-width:1200px){.slide{padding:60px 48px 72px}.hero-grid{max-width:600px}}
+@media(max-width:900px){html,body{overflow:auto}.layout{min-height:100vh;height:auto}.viewer{min-height:100vh}.sidebar{display:none}.slide{padding:58px 20px 82px;align-items:flex-start}.content{height:auto;max-height:calc(100vh - 120px);overflow-y:auto;overflow-x:hidden;padding-right:4px}.three,.problem-grid,.timeline,.timeline.six,.moscow,.persona-layout,.jtbd,.logic,.road{grid-template-columns:1fr}.hero-grid{grid-template-columns:1fr 1fr}.timeline div,.timeline.six div{min-height:auto}.ia-row,.ia-detail{grid-template-columns:1fr}.device{max-width:88vw;width:330px}.device iframe{height:min(620px,calc(100vh - 260px))}.btn{width:38px;height:38px}.btn-prev{left:8px}.btn-next{right:8px}.topbar{padding:0 18px}.label{bottom:38px}.hint{display:none}.cover-guide{font-size:10px}}
+@media(max-width:480px){.slide{padding-left:14px;padding-right:14px}.hero-grid{gap:8px}.hero-grid div{padding:14px 10px}.hero-grid b{font-size:24px}.hero-grid span{font-size:9.5px}.cover h1{font-size:clamp(52px,16vw,76px)}.badge{font-size:9.5px;padding:6px 14px;letter-spacing:.12em}.lead{font-size:15px}h2{letter-spacing:-.04em}.kicker{font-size:10px;letter-spacing:.18em}}
+@media(min-resolution:2dppx){.card,.problem,.moscow div,.road div,.timeline div{box-shadow:0 24px 48px -24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06),0 0 0 .5px rgba(255,255,255,.03)}}
+.comp a{color:inherit;text-decoration-color:rgba(143,195,255,.5);text-underline-offset:3px}.comp a:hover{color:#8FC3FF}
+.showcase-actions{display:flex;justify-content:center;margin-top:12px}.demo-open-btn{appearance:none;border:1px solid rgba(94,234,212,.28);border-radius:999px;background:rgba(94,234,212,.08);color:#A7F3E8;padding:8px 13px;font:800 10px/1.2 'Noto Sans KR','Inter',sans-serif;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none;transition:background .2s,border-color .2s,transform .2s}.demo-open-btn:hover{background:rgba(94,234,212,.15);border-color:rgba(94,234,212,.48);transform:translateY(-1px)}
+.toc-item:focus-visible,.dot:focus-visible,.btn:focus-visible,.demo-open-btn:focus-visible,.closing-final-links a:focus-visible{outline:2px solid #5EEAD4;outline-offset:3px}
+@media(max-width:900px){.comp{font-size:12px}.comp th,.comp td{padding:10px 8px}.showcase-actions{margin-bottom:16px}}
+@media(prefers-reduced-motion:reduce){.track,.pbar-fill,.btn,.dot,.showcase-live-dot,.showcase-status-dot,.showcase-orbit{animation:none!important;transition:none!important}}
+</style>
+<style id="exact-outer-frame">
+  .demo-showcase-slide .showcase-device-wrap .device {
+    width: min(375px, calc((100vh - 96px) * 375 / 780)) !important;
+    aspect-ratio: 375 / 780 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  .demo-showcase-slide .showcase-device-wrap .device::before {
+    display: none !important;
+  }
+
+  .demo-showcase-slide .showcase-device-wrap .device iframe {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    overflow: hidden !important;
+  }
+
+  @media (max-width: 900px) {
+    .demo-showcase-slide .showcase-device-wrap .device {
+      width: min(94vw, calc((100vh - 110px) * 375 / 780)) !important;
+    }
+  }
+</style>
+<style id="portfolio-polish-20260815">
+  .toc-s {
+    color: #607A99;
+    font-size: 10px;
+    line-height: 1.24;
+  }
+
+  .toc-item.on .toc-s {
+    color: #8296B0;
+  }
+
+  .donut span {
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1;
+  }
+
+  .donut span small {
+    margin: 0 0 0 2px;
+    color: #FFFFFF;
+    font-size: .34em;
+    font-weight: 900;
+  }
+
+  .donut > p {
+    margin-top: 10px;
+  }
+
+  .closing-final h2 {
+    font-size: clamp(44px, 5.25vw, 68px);
+    line-height: 1.045;
+    letter-spacing: -.06em;
+  }
+
+  .comp-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 18px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(143,195,255,.42) transparent;
+  }
+
+  .comp-scroll:focus-visible {
+    outline: 2px solid #5EEAD4;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .slide {
+      padding-bottom: 104px;
+    }
+
+    .content {
+      max-height: calc(100vh - 156px);
+    }
+
+    .btn {
+      top: auto;
+      bottom: 18px;
+      transform: none;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-prev {
+      left: 14px;
+    }
+
+    .btn-next {
+      right: 14px;
+    }
+
+    .comp {
+      min-width: 680px;
+    }
+  }
+
+  /* ── Operations, exceptions, validation and measurement ── */
+  .ops-content,
+  .validation-content {
+    width: min(1120px, 100%);
+  }
+
+  .ops-content h2,
+  .validation-content h2 {
+    font-size: clamp(34px, 4vw, 46px);
+    margin-bottom: 18px;
+  }
+
+  .ops-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.42fr) minmax(300px, .8fr);
+    gap: 14px;
+    min-height: 420px;
+  }
+
+  .ops-console,
+  .exception-panel,
+  .test-panel,
+  .metric-panel {
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 20px;
+    background: rgba(255,255,255,.04);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 24px 54px -36px rgba(0,0,0,.8);
+  }
+
+  .ops-console {
+    padding: 18px;
+  }
+
+  .ops-toolbar,
+  .panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .ops-toolbar small,
+  .panel-heading small {
+    display: block;
+    color: #5EEAD4;
+    font: 900 9px/1.2 Inter, sans-serif;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .ops-toolbar h3,
+  .panel-heading h3 {
+    color: #fff;
+    font-size: 19px;
+    letter-spacing: -.03em;
+  }
+
+  .concept-badge,
+  .planned-badge {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border: 1px solid rgba(143,195,255,.24);
+    border-radius: 999px;
+    background: rgba(79,142,247,.09);
+    color: #8FC3FF;
+    font: 800 9px/1.2 'Noto Sans KR', sans-serif;
+  }
+
+  .ops-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 16px 0 12px;
+  }
+
+  .ops-kpis div {
+    padding: 11px 12px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 13px;
+    background: rgba(3,10,19,.42);
+  }
+
+  .ops-kpis b {
+    display: block;
+    color: #fff;
+    font: 900 20px/1 Inter, sans-serif;
+    margin-bottom: 5px;
+  }
+
+  .ops-kpis span {
+    color: #657A94;
+    font-size: 9.5px;
+    font-weight: 700;
+  }
+
+  .ops-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+  }
+
+  .ops-row {
+    min-width: 560px;
+    display: grid;
+    grid-template-columns: 1.42fr .58fr .58fr .78fr 72px;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+
+  .ops-row:last-child {
+    border-bottom: 0;
+  }
+
+  .ops-row.header {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: rgba(255,255,255,.025);
+    color: #607A99;
+    font: 800 9px/1.2 'Noto Sans KR', sans-serif;
+  }
+
+  .ops-match strong {
+    display: block;
+    color: #E8F0F8;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .ops-match span,
+  .ops-cell {
+    color: #71869F;
+    font-size: 10px;
+  }
+
+  .ops-status {
+    justify-self: start;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .ops-status.ok {
+    color: #6EE7C7;
+    background: rgba(94,234,212,.09);
+    border: 1px solid rgba(94,234,212,.18);
+  }
+
+  .ops-status.watch {
+    color: #FFD166;
+    background: rgba(255,209,102,.09);
+    border: 1px solid rgba(255,209,102,.18);
+  }
+
+  .ops-action {
+    border: 1px solid rgba(143,195,255,.24);
+    border-radius: 9px;
+    background: rgba(79,142,247,.09);
+    color: #9CC5FF;
+    padding: 7px 9px;
+    font: 800 9px/1.15 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .ops-action:hover,
+  .ops-action:focus-visible {
+    background: rgba(79,142,247,.18);
+    border-color: rgba(143,195,255,.44);
+  }
+
+  .ops-action.done {
+    color: #6EE7C7;
+    border-color: rgba(94,234,212,.28);
+    background: rgba(94,234,212,.09);
+  }
+
+  .ops-footnote {
+    margin-top: 10px;
+    color: #526A84;
+    font-size: 9.5px;
+    line-height: 1.5;
+  }
+
+  .exception-panel,
+  .test-panel,
+  .metric-panel {
+    padding: 18px;
+  }
+
+  .exception-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .exception-item {
+    display: grid;
+    grid-template-columns: 24px 92px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,.065);
+    border-radius: 12px;
+    background: rgba(3,10,19,.34);
+  }
+
+  .exception-item i {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background: rgba(255,138,138,.1);
+    color: #FF9E9E;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .exception-item b {
+    color: #E8F0F8;
+    font-size: 10.5px;
+  }
+
+  .exception-item span {
+    color: #687E98;
+    font-size: 9.5px;
+    line-height: 1.4;
+  }
+
+  .policy-note {
+    margin-top: 10px;
+    color: #526A84;
+    font-size: 9.5px;
+  }
+
+  .validation-grid {
+    display: grid;
+    grid-template-columns: .92fr 1.08fr;
+    gap: 14px;
+  }
+
+  .test-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 15px 0 12px;
+  }
+
+  .test-summary div {
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(3,10,19,.34);
+  }
+
+  .test-summary b {
+    display: block;
+    color: #fff;
+    font: 900 18px/1 Inter, sans-serif;
+    margin-bottom: 4px;
+  }
+
+  .test-summary span {
+    color: #657A94;
+    font-size: 9px;
+  }
+
+  .test-task-list {
+    display: grid;
+    gap: 7px;
+  }
+
+  .test-task {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 11px;
+    background: rgba(255,255,255,.025);
+  }
+
+  .test-task b {
+    color: #5EEAD4;
+    font: 900 10px/1.45 Inter, sans-serif;
+  }
+
+  .test-task span {
+    color: #8296B0;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .test-record {
+    margin-top: 11px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    color: #607A99;
+    font-size: 9.5px;
+    line-height: 1.55;
+  }
+
+  .measure-flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin: 15px 0 12px;
+  }
+
+  .measure-flow div {
+    position: relative;
+    padding: 11px 8px;
+    border-radius: 11px;
+    border: 1px solid rgba(79,142,247,.14);
+    background: rgba(79,142,247,.055);
+  }
+
+  .measure-flow div:not(:last-child):after {
+    content: "→";
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(-50%);
+    color: #4F8EF7;
+    font-size: 10px;
+  }
+
+  .measure-flow b {
+    display: block;
+    color: #E8F0F8;
+    font-size: 9.5px;
+    line-height: 1.35;
+  }
+
+  .measure-flow span {
+    display: block;
+    margin-top: 4px;
+    color: #607A99;
+    font-size: 8px;
+  }
+
+  .event-list {
+    display: grid;
+    gap: 5px;
+  }
+
+  .event-row {
+    display: grid;
+    grid-template-columns: 155px 1fr;
+    gap: 10px;
+    padding: 7px 9px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.025);
+  }
+
+  .event-row code {
+    color: #8FC3FF;
+    font: 800 8.5px/1.4 Inter, monospace;
+  }
+
+  .event-row span {
+    color: #71869F;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  .validation-targets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 13px;
+  }
+
+  .validation-targets span {
+    padding: 6px 10px;
+    border: 1px solid rgba(94,234,212,.2);
+    border-radius: 999px;
+    background: rgba(94,234,212,.07);
+    color: #79E8D6;
+    font-size: 9.5px;
+    font-weight: 900;
+  }
+
+  .validation-disclaimer {
+    margin-top: 10px;
+    color: #526A84;
+    font-size: 9.5px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .ops-layout,
+    .validation-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ops-kpis {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .measure-flow {
+      grid-template-columns: 1fr;
+    }
+
+    .measure-flow div:not(:last-child):after {
+      display: none;
+    }
+
+    .event-row {
+      grid-template-columns: 1fr;
+      gap: 3px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .ops-toolbar,
+    .panel-heading {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .test-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .exception-item {
+      grid-template-columns: 24px 1fr;
+    }
+
+    .exception-item span {
+      grid-column: 2;
+    }
+  }
+</style>
+
+<style id="universal-responsive-mobile-fix-20260816">
+/* Universal responsive layer: phones, foldables, tablets and mobile landscape. */
+:root { --app-height: 100vh; }
+@supports (height: 100dvh) { :root { --app-height: 100dvh; } }
+
+/* Medium touch/mobile layouts, including unfolded foldables. */
+@media (max-width: 1180px), (pointer: coarse) and (max-width: 1366px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .layout {
+    width: 100%;
+    max-width: 100%;
+    height: var(--app-height);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .sidebar { display: none; }
+
+  .viewer,
+  .track {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .viewer { overflow: hidden; }
+
+  .track {
+    inset: 0;
+    overflow: visible;
+  }
+
+  .slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
+    align-items: flex-start;
+    overflow: hidden;
+    padding-top: calc(clamp(54px, 6vh, 68px) + env(safe-area-inset-top));
+    padding-right: calc(clamp(18px, 4vw, 48px) + env(safe-area-inset-right));
+    padding-bottom: calc(clamp(88px, 10vh, 110px) + env(safe-area-inset-bottom));
+    padding-left: calc(clamp(18px, 4vw, 48px) + env(safe-area-inset-left));
+  }
+
+  .content,
+  .ops-content,
+  .validation-content,
+  .demo-showcase,
+  .demo-showcase-slide,
+  .showcase-copy,
+  .showcase-device-wrap,
+  .closing-final,
+  .cover,
+  .cards,
+  .problem-grid,
+  .persona-layout,
+  .jtbd,
+  .timeline,
+  .moscow,
+  .ia-map,
+  .logic,
+  .road,
+  .ops-layout,
+  .validation-grid,
+  .metric-panel,
+  .test-panel,
+  .exception-panel,
+  .ops-console {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .content {
+    height: 100%;
+    max-height: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  .topbar {
+    height: calc(48px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+    padding-left: calc(18px + env(safe-area-inset-left));
+    padding-right: calc(18px + env(safe-area-inset-right));
+  }
+
+  .btn {
+    top: auto;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    transform: none;
+    width: 40px;
+    height: 40px;
+    touch-action: manipulation;
+  }
+  .btn:hover { transform: none; }
+  .btn-prev { left: calc(10px + env(safe-area-inset-left)); }
+  .btn-next { right: calc(10px + env(safe-area-inset-right)); }
+
+  .label {
+    bottom: calc(42px + env(safe-area-inset-bottom));
+    max-width: calc(100% - 120px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dots { bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .hint { display: none; }
+
+  img, svg, video, canvas, iframe { max-width: 100%; }
+  p, span, b, strong, td, th, code { overflow-wrap: anywhere; }
+
+  .comp-scroll,
+  .ops-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .ops-layout,
+  .validation-grid { grid-template-columns: 1fr; }
+
+  .ops-kpis { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .measure-flow { grid-template-columns: repeat(5, minmax(0,1fr)); }
+  .event-row { grid-template-columns: minmax(130px, .65fr) minmax(0, 1fr); }
+
+  .demo-showcase-slide .showcase-device-wrap .device {
+    width: min(88vw, 375px, calc((var(--app-height) - 120px) * 375 / 780)) !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Phones and folded/narrow foldables. */
+@media (max-width: 900px) {
+  .slide {
+    padding-right: calc(clamp(14px, 4vw, 24px) + env(safe-area-inset-right));
+    padding-left: calc(clamp(14px, 4vw, 24px) + env(safe-area-inset-left));
+  }
+
+  .three,
+  .problem-grid,
+  .timeline,
+  .timeline.six,
+  .moscow,
+  .persona-layout,
+  .jtbd,
+  .logic,
+  .road,
+  .ia-row,
+  .ia-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .ops-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .measure-flow { grid-template-columns: 1fr; }
+  .measure-flow div:not(:last-child)::after { display: none; }
+  .event-row { grid-template-columns: 1fr; gap: 3px; }
+  .test-summary { grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+  .comp { min-width: 640px; }
+  .ops-row { min-width: 540px; }
+
+  .device iframe { height: 100% !important; }
+}
+
+/* Common phone widths, including Flip main screen and Pro Max class devices. */
+@media (max-width: 520px) {
+  .slide {
+    padding-top: calc(54px + env(safe-area-inset-top));
+    padding-right: calc(12px + env(safe-area-inset-right));
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    padding-left: calc(12px + env(safe-area-inset-left));
+  }
+
+  .cover h1 { font-size: clamp(50px, 16vw, 76px); }
+  .cover p { font-size: clamp(15px, 4.4vw, 18px); }
+  h2,
+  .showcase-copy h2,
+  .closing-final h2 {
+    font-size: clamp(28px, 8vw, 38px);
+    line-height: 1.08;
+  }
+  .lead { font-size: clamp(14px, 4vw, 16px); }
+
+  .hero-grid { gap: 8px; }
+  .hero-grid div { min-width: 0; padding: 13px 9px; }
+  .hero-grid b { font-size: 24px; }
+  .hero-grid span { font-size: 9.5px; }
+
+  .ops-toolbar,
+  .panel-heading { flex-direction: column; align-items: flex-start; }
+  .test-summary { grid-template-columns: 1fr; }
+  .exception-item { grid-template-columns: 24px 1fr; }
+  .exception-item span { grid-column: 2; }
+
+  .demo-showcase-slide .showcase-device-wrap .device {
+    width: min(92vw, 360px, calc((var(--app-height) - 116px) * 375 / 780)) !important;
+  }
+}
+
+/* Very narrow legacy phones: keep cards readable instead of forcing 2-column metrics. */
+@media (max-width: 350px) {
+  .hero-grid,
+  .ops-kpis { grid-template-columns: 1fr; }
+  .label { max-width: calc(100% - 104px); font-size: 10px; }
+}
+
+/* Landscape phones and folded devices: prioritize vertical room. */
+@media (max-width: 1180px) and (max-height: 620px) and (orientation: landscape), (pointer: coarse) and (max-width: 1366px) and (max-height: 620px) and (orientation: landscape) {
+  .slide {
+    padding-top: calc(50px + env(safe-area-inset-top));
+    padding-bottom: calc(66px + env(safe-area-inset-bottom));
+  }
+  .topbar { height: calc(42px + env(safe-area-inset-top)); }
+  .label { display: none; }
+  .dots { bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .btn { bottom: calc(8px + env(safe-area-inset-bottom)); width: 36px; height: 36px; }
+  .demo-showcase-slide .showcase-device-wrap .device {
+    width: min(46vw, 300px, calc((var(--app-height) - 78px) * 375 / 780)) !important;
+  }
+}
+</style>
+<style id="mobile-hr-ux-20260816">
+/* Mobile recruiter UX layer — navigation only; portfolio content is unchanged. */
+:root { --mobile-edge-guard: 24px; }
+
+/* Primary touch targets. Keep visual size compact while hit areas reach 44px. */
+@media (max-width: 1180px), (pointer: coarse) and (max-width: 1366px) {
+  .btn {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .topbar {
+    pointer-events: auto;
+    gap: 8px;
+  }
+  .topbar-title { pointer-events: none; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar-count {
+    margin-left: auto;
+    min-width: 52px;
+    text-align: right;
+    color: rgba(255,255,255,.58);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .mobile-toc-trigger,
+  .mobile-toc-close {
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 44px;
+    min-height: 44px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(7,17,31,.82);
+    color: #DCE8F6;
+    border-radius: 12px;
+    font: 800 11px/1 'Noto Sans KR', Inter, sans-serif;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .mobile-toc-trigger { padding: 0 12px; }
+
+  .mobile-toc-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0,0,0,.54);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, visibility .2s ease;
+    padding-top: env(safe-area-inset-top);
+  }
+  .mobile-toc-overlay.open { opacity: 1; visibility: visible; }
+  .mobile-toc-sheet {
+    width: min(100%, 680px);
+    max-height: min(76dvh, 720px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.12);
+    border-bottom: 0;
+    border-radius: 22px 22px 0 0;
+    background: rgba(4,9,15,.98);
+    box-shadow: 0 -24px 70px rgba(0,0,0,.42);
+    transform: translateY(18px);
+    transition: transform .22s ease;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mobile-toc-overlay.open .mobile-toc-sheet { transform: translateY(0); }
+  .mobile-toc-head {
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px 6px 18px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .mobile-toc-head strong { color: #fff; font-size: 14px; }
+  .mobile-toc-head span { display: block; color: #607A99; font-size: 10px; margin-top: 2px; }
+  .mobile-toc-list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 10px 12px;
+  }
+  .mobile-toc-item {
+    width: 100%;
+    min-height: 48px;
+    display: grid;
+    grid-template-columns: 34px minmax(0,1fr);
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #8FA4BC;
+    text-align: left;
+    padding: 7px 10px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .mobile-toc-item + .mobile-toc-item { margin-top: 2px; }
+  .mobile-toc-item .n { color: #4F8EF7; font: 900 10px/1 Inter, sans-serif; }
+  .mobile-toc-item .t { color: inherit; font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mobile-toc-item[aria-current="page"] { background: rgba(79,142,247,.14); color: #fff; }
+
+  /* Demo and horizontally scrollable data areas own their gestures. */
+  .showcase-device-wrap,
+  .device,
+  #demoFrame,
+  .comp-scroll,
+  .ops-table-wrap { touch-action: pan-x pan-y; }
+
+  .closing-final-links a { min-height: 88px; }
+}
+
+/* Mobile-only trigger; desktop keeps the existing sidebar navigation. */
+@media (min-width: 1181px) and (pointer: fine) {
+  .mobile-toc-trigger,
+  .mobile-toc-overlay { display: none !important; }
+}
+
+/* Preserve motion accessibility for newly added navigation UI as well. */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-toc-overlay,
+  .mobile-toc-sheet,
+  .track,
+  .pbar-fill {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+<style id="footmate-phase2-portrait">@media (max-width:900px) and (orientation:portrait){.demo-showcase-slide .showcase-device-wrap .device{width:min(92vw,360px)!important}}</style>
+<style id="footmate-phase3-accessibility">
+  .skip-link{position:fixed;top:8px;left:8px;z-index:9999;transform:translateY(-160%);padding:10px 14px;border-radius:8px;background:#fff;color:#07111F;font-size:13px;font-weight:900;text-decoration:none}
+  .skip-link:focus{transform:translateY(0)}
+  :where(button,a,[role="button"]):focus-visible{outline:3px solid #8FC3FF!important;outline-offset:3px!important}
+  .viewer:focus{outline:none}
+  .sb-sub,.toc-s{color:#8294AA}
+  .toc-t,.label{color:#A7B8D0}
+  .topbar-title{color:rgba(255,255,255,.72)}
+  .topbar-count{color:rgba(255,255,255,.62)}
+  .hint{color:rgba(255,255,255,.64)}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+<style id="footmate-v2-portfolio-scope">
+  .cover-phase-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:-8px 0 18px}
+  .phase-pill{display:inline-flex;align-items:center;min-height:28px;padding:6px 11px;border-radius:999px;font:900 10px/1 Inter,sans-serif;letter-spacing:.08em}
+  .phase-pill.original{color:#9BC7FF;border:1px solid rgba(79,142,247,.36);background:rgba(79,142,247,.12)}
+  .phase-pill.extension{color:#BDF8EF;border:1px solid rgba(94,234,212,.34);background:rgba(94,234,212,.10)}
+  .phase-kicker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .phase-kicker .kicker{margin:0}
+  .phase-kicker .phase-pill{min-height:25px;padding:5px 9px;font-size:9px}
+  .v2-concept-slide{background:radial-gradient(circle at 83% 12%,rgba(94,234,212,.13),transparent 34%),radial-gradient(circle at 15% 8%,rgba(139,108,247,.15),transparent 38%),#07111F}
+  .v2-concept-slide .content{justify-content:center}
+  .v2-concept-slide h2{font-size:clamp(30px,3.7vw,46px);margin-bottom:10px}
+  .v2-concept-slide .lead{font-size:16px;line-height:1.62;margin-bottom:14px;max-width:980px}
+  .v2-scope-band{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:10px;align-items:stretch;margin-bottom:12px}
+  .v2-scope-card{border-radius:16px;padding:15px 17px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045)}
+  .v2-scope-card.original{border-color:rgba(79,142,247,.28);background:rgba(79,142,247,.08)}
+  .v2-scope-card.extension{border-color:rgba(94,234,212,.28);background:rgba(94,234,212,.07)}
+  .v2-scope-card small{display:block;margin-bottom:5px;font:900 9px/1 Inter,sans-serif;letter-spacing:.14em;color:#7890AC}
+  .v2-scope-card.original small{color:#8FC3FF}
+  .v2-scope-card.extension small{color:#72E8D6}
+  .v2-scope-card b{display:block;color:#fff;font-size:18px;letter-spacing:-.025em;margin-bottom:4px}
+  .v2-scope-card p{color:#8FA4BC;font-size:12px;line-height:1.5}
+  .v2-scope-arrow{display:grid;place-items:center;color:#5EEAD4;font:900 20px/1 Inter,sans-serif}
+  .v2-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .v2-feature{position:relative;min-height:145px;padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045)}
+  .v2-feature em{display:block;color:#5EEAD4;font:900 10px/1 Inter,sans-serif;font-style:normal;letter-spacing:.12em}
+  .v2-feature h3{font-size:18px;color:#fff;margin:8px 0 6px;letter-spacing:-.025em}
+  .v2-feature p{color:#8FA4BC;font-size:12px;line-height:1.5}
+  .v2-feature span{display:inline-flex;margin-top:9px;padding:5px 8px;border-radius:999px;color:#A9F4E8;background:rgba(94,234,212,.09);border:1px solid rgba(94,234,212,.18);font-size:9px;font-weight:900}
+  .v2-boundary{margin-top:10px;padding:9px 12px;border-radius:11px;background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.18);color:#9EADC0;font-size:10px;line-height:1.5}
+  .v2-boundary b{color:#FFD166}
+  .showcase-phase-row{display:flex;gap:7px;flex-wrap:wrap;margin:-2px 0 12px}
+  .showcase-phase-row .phase-pill{font-size:8px;min-height:24px;padding:5px 8px}
+  @media(max-width:900px){
+    .cover-phase-row{margin:-4px 0 14px}
+    .v2-concept-slide{align-items:flex-start;overflow-y:auto}
+    .v2-concept-slide .content{height:auto;min-height:100%;justify-content:flex-start;padding-bottom:44px}
+    .v2-scope-band{grid-template-columns:1fr;gap:8px}
+    .v2-scope-arrow{height:18px;transform:rotate(90deg)}
+    .v2-feature-grid{grid-template-columns:1fr}
+    .v2-feature{min-height:0}
+  }
+  @media(max-width:560px){
+    .cover-phase-row .phase-pill{font-size:8px;padding:5px 8px}
+    .v2-concept-slide h2{font-size:27px}
+    .v2-concept-slide .lead{font-size:14px}
+  }
+</style>
+<style id="footmate-ai-system-pm">
+  .ai-system-slide{background:radial-gradient(circle at 84% 10%,rgba(94,234,212,.14),transparent 34%),radial-gradient(circle at 18% 12%,rgba(139,108,247,.16),transparent 38%),#07111F}
+  .ai-system-slide .content{height:min(680px,100%)}
+  .ai-system-slide h2{font-size:clamp(29px,3.7vw,45px);margin-bottom:10px}
+  .ai-system-slide .lead{max-width:980px;margin-bottom:15px;font-size:16px;line-height:1.62}
+  .agent-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:4px 0 12px}
+  .agent-step{position:relative;min-height:142px;padding:15px 13px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.045)}
+  .agent-step:not(:last-child)::after{content:'›';position:absolute;right:-8px;top:50%;z-index:2;transform:translateY(-50%);color:#5EEAD4;font:900 20px/1 Inter,sans-serif}
+  .agent-step em{display:block;color:#5EEAD4;font:900 9px/1 Inter,sans-serif;font-style:normal;letter-spacing:.12em}
+  .agent-step h3{margin:9px 0 7px;color:#fff;font-size:17px;letter-spacing:-.025em}
+  .agent-step p{color:#8FA4BC;font-size:11px;line-height:1.55}
+  .boundary-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .boundary-card{padding:11px 13px;border-radius:13px;border:1px solid rgba(79,142,247,.25);background:rgba(79,142,247,.08);color:#8FA4BC;font-size:10px;line-height:1.55}
+  .boundary-card.future{border-color:rgba(255,209,102,.25);background:rgba(255,209,102,.07)}
+  .boundary-card b{display:block;margin-bottom:3px;color:#8FC3FF;font-size:11px}.boundary-card.future b{color:#FFD166}
+  .quality-layout{display:grid;grid-template-columns:.88fr 1.12fr;gap:14px;align-items:stretch}
+  .data-map,.quality-panel{padding:17px;border-radius:18px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045)}
+  .panel-label{display:block;margin-bottom:10px;color:#5EEAD4;font:900 10px/1 Inter,sans-serif;letter-spacing:.12em}
+  .entity-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .entity-card{padding:11px;border-radius:12px;background:rgba(79,142,247,.09);border:1px solid rgba(79,142,247,.2)}
+  .entity-card b{display:block;color:#fff;font-size:12px}.entity-card span{display:block;margin-top:3px;color:#7890AC;font-size:9px;line-height:1.4}
+  .entity-card.wide{grid-column:1/-1}
+  .quality-table{width:100%;border-collapse:collapse;font-size:10px}
+  .quality-table th,.quality-table td{padding:8px 7px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}
+  .quality-table th{color:#8FC3FF;font-size:9px;letter-spacing:.08em}.quality-table td{color:#8FA4BC;line-height:1.45}.quality-table td:first-child{color:#fff;font-weight:800}
+  .owner-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.owner-strip span{padding:6px 8px;border-radius:999px;background:rgba(94,234,212,.08);border:1px solid rgba(94,234,212,.18);color:#A9F4E8;font-size:9px;font-weight:800}
+  .build-proof-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 12px}
+  .build-proof{min-height:156px;padding:15px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045)}
+  .build-proof em{display:block;color:#5EEAD4;font:900 9px/1 Inter,sans-serif;font-style:normal;letter-spacing:.12em}.build-proof h3{margin:9px 0 7px;color:#fff;font-size:17px}.build-proof p{color:#8FA4BC;font-size:11px;line-height:1.55}.build-proof code{color:#8FC3FF;font-size:9px}
+  .evidence-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:11px}.evidence-strip div{padding:9px 10px;border-radius:11px;background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.18)}.evidence-strip b{display:block;color:#fff;font:900 16px/1 Inter,sans-serif}.evidence-strip span{display:block;margin-top:4px;color:#7890AC;font-size:9px;line-height:1.35}
+  .doc-links{display:flex;gap:8px;flex-wrap:wrap}.doc-links a{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;border:1px solid rgba(94,234,212,.28);background:rgba(94,234,212,.08);color:#BDF8EF;font-size:10px;font-weight:900;text-decoration:none}.doc-links a:hover{background:rgba(94,234,212,.16)}
+  @media(max-width:900px){.ai-system-slide{align-items:flex-start;overflow-y:auto}.ai-system-slide .content{height:auto;min-height:100%;justify-content:flex-start;padding-bottom:44px}.agent-flow,.quality-layout,.build-proof-grid{grid-template-columns:1fr}.agent-step{min-height:0}.agent-step:not(:last-child)::after{content:'↓';right:50%;top:auto;bottom:-13px;transform:translateX(50%)}.boundary-grid,.evidence-strip{grid-template-columns:1fr 1fr}.quality-table{font-size:9px}}
+  @media(max-width:560px){.boundary-grid,.evidence-strip,.entity-grid{grid-template-columns:1fr}.entity-card.wide{grid-column:auto}.doc-links{display:grid}.doc-links a{justify-content:center}}
+</style>
+
+<style id="footmate-mobile-safe-alignment-20260905">
+@media (max-width: 900px) {
+  /* Keep short slides centered, but never let tall content overflow above the scroll origin. */
+  .content { justify-content: safe center; }
+  .ai-system-slide .content,
+  .v2-concept-slide .content { justify-content: flex-start; }
+}
+</style>
+
+<style id="footmate-layout-density-polish-20260905">
+/* Layout / density / spacing polish — preserves the existing visual system. */
+@media (min-width: 1181px) {
+  .slide{padding:64px 64px 74px}
+  .content{width:min(1120px,100%);height:min(680px,100%)}
+  h2{line-height:1.08;margin-bottom:14px}
+  .lead{max-width:920px;margin-bottom:22px;line-height:1.68}
+  .kicker{margin-bottom:10px}
+  .phase-kicker{margin-bottom:10px}
+  .cards{gap:12px}.cards+.cards{margin-top:12px}
+  .hero-grid div,.card,.problem,.moscow div,.road div{padding:19px}
+  .card h3,.problem h3{margin:8px 0 8px}
+  .card p,.problem p,.moscow p,.road p{line-height:1.58}
+  .chips{margin-top:16px;gap:7px}
+  .solution-line{margin:14px 0 18px;padding:16px 20px}
+
+  /* Sparse slides: use the canvas more intentionally. */
+  .slide[data-i="4"] .timeline{gap:14px}
+  .slide[data-i="4"] .timeline>div,
+  .slide[data-i="14"] .timeline>div{min-height:228px;padding:25px 20px}
+  .slide[data-i="4"] .timeline h3,
+  .slide[data-i="14"] .timeline h3{margin:18px 0 11px}
+  .slide[data-i="7"] .moscow{gap:16px}
+  .slide[data-i="7"] .moscow>div{min-height:148px;padding:24px 22px}
+  .slide[data-i="8"] .root{margin-bottom:24px;padding:17px 44px}
+  .slide[data-i="8"] .ia-row{gap:14px;margin-bottom:12px}
+  .slide[data-i="8"] .ia-row span{padding:25px 12px}
+  .slide[data-i="8"] .ia-detail{gap:14px}
+  .slide[data-i="8"] .ia-detail p{padding:10px 12px;border-radius:11px;background:rgba(255,255,255,.025);line-height:1.45}
+  .slide[data-i="9"] .logic{grid-template-columns:290px 1fr;gap:38px}
+  .slide[data-i="9"] .donut{width:260px;height:260px}
+  .slide[data-i="9"] .bar-list{gap:13px}
+  .slide[data-i="9"] .bar-list>div{padding:19px 21px}
+  .slide[data-i="13"] .cards.three{gap:14px}
+  .slide[data-i="13"] .card{min-height:154px;padding:21px}
+  .slide[data-i="14"] .chips{margin-top:18px}
+
+  /* Dense system slides: give content slightly more breathing room without hiding anything. */
+  .ai-system-slide .content{width:min(1140px,100%)}
+  .ai-system-slide .lead{margin-bottom:13px}
+  .agent-flow{gap:10px;margin:5px 0 14px}
+  .agent-step{min-height:146px;padding:16px 14px}
+  .boundary-grid{gap:10px}
+  .quality-layout{gap:16px}
+  .data-map,.quality-panel{padding:18px}
+  .build-proof-grid{gap:11px;margin:5px 0 13px}
+  .build-proof{padding:16px;min-height:158px}
+  .evidence-strip{gap:9px;margin-bottom:12px}
+  .doc-links{gap:9px}
+
+  /* Operations / validation: stronger columns and consistent internal rhythm. */
+  .ops-layout{grid-template-columns:minmax(0,1.5fr) minmax(310px,.78fr);gap:16px}
+  .ops-console,.exception-panel,.test-panel,.metric-panel{border-radius:18px}
+  .ops-console,.exception-panel,.test-panel,.metric-panel{padding:20px}
+  .ops-kpis{margin:15px 0 13px;gap:9px}
+  .exception-list{margin-top:13px;gap:9px}
+  .validation-grid{grid-template-columns:.94fr 1.06fr;gap:16px}
+  .test-summary,.measure-flow{margin-top:14px}
+  .validation-targets{margin-top:14px}
+
+  /* Extension slide: reduce stacked density at the bottom while keeping all evidence. */
+  .v2-concept-slide .content{width:min(1130px,100%)}
+  .v2-scope-band{gap:12px;margin-bottom:13px}
+  .v2-scope-card{padding:16px 18px}
+  .v2-feature-grid{gap:12px}
+  .v2-feature{padding:17px;min-height:148px}
+  .v2-boundary{margin-top:11px;padding:10px 13px}
+
+  /* Demo showcase: rebalance copy vs device and cut decorative dominance. */
+  .demo-showcase{grid-template-columns:minmax(500px,1.16fr) minmax(350px,.84fr);gap:clamp(48px,5vw,76px)}
+  .showcase-copy h2{font-size:clamp(54px,5.5vw,76px);margin-bottom:18px}
+  .showcase-lead{margin-bottom:20px;line-height:1.72}
+  .showcase-path{margin:22px 0 20px}
+  .showcase-metrics{gap:11px}
+  .showcase-tech{margin-top:12px;gap:6px}
+  .showcase-stage{min-height:620px}
+  .orbit-a{width:430px;height:430px;opacity:.72}
+  .orbit-b{width:510px;height:510px;opacity:.62}
+  .showcase-stage:before{width:470px;height:470px;opacity:.82}
+
+  /* Closing: create a cleaner reading cadence and less bottom crowding. */
+  .closing-final{width:min(1120px,100%)}
+  .closing-final h2{font-size:clamp(42px,4.8vw,62px);line-height:1.04;margin-bottom:18px}
+  .closing-final-profile{margin-bottom:14px}
+  .closing-final-values{gap:12px;margin-bottom:14px}
+  .closing-final-values div{padding:15px 16px}
+  .closing-final .solution-line{margin:0 0 16px!important}
+  .closing-final-links{gap:12px}
+  .closing-final-links a{padding:15px 17px}
+}
+
+/* Mid-size laptops: keep comfortable gutters and avoid visually cramped cards. */
+@media (min-width: 901px) and (max-width:1180px){
+  .slide{padding-left:48px;padding-right:48px}
+  .content{width:min(1040px,100%)}
+  .card,.problem,.moscow div,.road div{padding:17px}
+  .agent-step{padding:13px 11px}
+}
+
+/* Mobile: consistent top rhythm, card spacing and readable internal gutters. */
+@media (max-width:900px){
+  .slide{padding-left:18px;padding-right:18px}
+  .content{padding-right:2px}
+  .kicker,.phase-kicker{margin-bottom:10px}
+  h2{margin-bottom:13px;line-height:1.14}
+  .lead{margin-bottom:18px;line-height:1.65}
+  .cards,.problem-grid,.moscow,.timeline,.jtbd{gap:11px}
+  .cards+.cards{margin-top:11px}
+  .card,.problem,.moscow div,.timeline div,.jtbd div{padding:17px}
+  .solution-line{margin:13px 0 16px;padding:14px 16px}
+  .chips{gap:6px;margin-top:14px}
+  .ia-detail p{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.025)}
+  .ops-console,.exception-panel,.test-panel,.metric-panel{padding:16px}
+  .v2-feature{padding:15px}
+  .showcase-tech{gap:5px}
+  .closing-final-values{gap:9px}
+  .closing-final-links{gap:9px}
+}
+
+@media(max-width:560px){
+  .slide{padding-left:16px;padding-right:16px}
+  .card,.problem,.moscow div,.timeline div,.jtbd div{padding:15px}
+  .hero-grid div{padding:13px 9px}
+  .chips span,.hyp span{padding:6px 9px;font-size:10px}
+}
+</style>
+
+
+<style id="footmate-showcase-balance-20260905">
+@media (min-width:1181px){
+  .demo-showcase{height:min(720px,100%)}
+  .showcase-stage{height:100%;min-height:0}
+  .showcase-device-meta{margin:0 0 8px 14px}
+  .showcase-device-wrap .device{width:min(334px,29vw)}
+  .showcase-device-wrap .device iframe{height:min(570px,calc(100vh - 270px))}
+  .showcase-hint{margin-top:9px}
+  .showcase-actions{margin-top:9px}
+  .orbit-a{width:400px;height:400px}
+  .orbit-b{width:470px;height:470px}
+  .showcase-stage:before{width:430px;height:430px}
+}
+@media(max-width:900px){
+  .demo-showcase-slide .showcase-path{
+    grid-template-columns:repeat(5,minmax(58px,1fr));
+    gap:7px;
+    margin:18px 0;
+    overflow-x:auto;
+    padding-bottom:3px;
+    scrollbar-width:none;
+  }
+  .demo-showcase-slide .showcase-path::-webkit-scrollbar{display:none}
+  .demo-showcase-slide .showcase-path i{display:none}
+  .demo-showcase-slide .showcase-path small{white-space:normal;font-size:8.5px;line-height:1.25}
+  .demo-showcase-slide .showcase-tech{flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+  .demo-showcase-slide .showcase-tech::-webkit-scrollbar{display:none}
+  .demo-showcase-slide .showcase-tech span{flex:0 0 auto}
+  .demo-showcase-slide .showcase-stage{min-height:auto;padding-top:8px}
+  .demo-showcase-slide .showcase-device-wrap .device{width:min(82vw,320px)!important}
+  .demo-showcase-slide .showcase-device-wrap .device iframe{height:min(540px,calc(100vh - 220px))}
+  .demo-showcase-slide .showcase-orbit{opacity:.45}
+}
+</style>
+
+
+<style id="footmate-showcase-exact-frame-balance-20260905">
+@media(min-width:1181px){
+  .demo-showcase-slide .showcase-device-wrap .device{
+    width:min(300px,26vw,calc((100vh - 235px) * 375 / 780))!important;
+  }
+}
+@media(max-width:900px){
+  .demo-showcase-slide .showcase-device-wrap .device{
+    width:min(80vw,275px,calc((var(--app-height) - 220px) * 375 / 780))!important;
+  }
+}
+</style>
+
+
+<style id="footmate-responsive-layout-balance-20260905">
+/* Safe centering prevents tall content from being clipped above the viewport. */
+.content{justify-content:safe center}
+
+/* Compact desktop / tablet landscape: use the full canvas and allow only dense slides to scroll. */
+@media(min-width:901px) and (max-width:1180px){
+  .sidebar{display:none!important}
+  .viewer{width:100vw}
+  .slide{padding:58px 54px 82px}
+  .content{
+    width:min(1080px,100%);
+    height:auto;
+    max-height:calc(100vh - 140px);
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:5px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(143,195,255,.28) transparent;
+  }
+  .topbar{padding-left:26px}
+  .ops-content,.validation-content,.v2-concept-slide .content,.ai-system-slide .content,.closing-final{justify-content:flex-start}
+}
+
+/* Short laptop screens: preserve the closing slide hierarchy without clipping. */
+@media(min-width:1181px) and (max-height:800px){
+  .closing-final h2{font-size:clamp(38px,4.2vw,52px)!important;margin-bottom:12px!important}
+  .closing-final-profile{padding:12px 14px!important;margin-bottom:10px!important}
+  .closing-final-values{margin-bottom:10px!important;gap:9px!important}
+  .closing-final-values div{padding:11px 13px!important}
+  .closing-final .solution-line{padding:12px 16px!important;margin-bottom:11px!important}
+  .closing-final-links a{padding:11px 14px!important;min-height:0!important}
+}
+</style>
+
+</head>
+<body>
+<a class="skip-link" href="#portfolioMain">본문으로 건너뛰기</a>
+<div class="layout">
+<aside class="sidebar">
+<div class="sb-header">
+<div class="sb-logo-row">
+<svg class="sb-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<linearGradient id="iconGrad1" x1="0" y1="0" x2="24" y2="24">
+<stop stop-color="#4F8EF7"/>
+<stop offset=".5" stop-color="#8B6CF7"/>
+<stop offset="1" stop-color="#5EEAD4"/>
+</linearGradient>
+</defs>
+<circle cx="12" cy="12" r="9.3" stroke="url(#iconGrad1)" stroke-width="1.6"/>
+<path d="M12 6.2L15.3 8.6L14.1 12.4H9.9L8.7 8.6L12 6.2Z" fill="url(#iconGrad1)"/>
+<path d="M12 6.2V3.2M15.3 8.6L18.2 6.6M14.1 12.4L16.4 15.6M9.9 12.4L7.6 15.6M8.7 8.6L5.8 6.6" stroke="url(#iconGrad1)" stroke-width="1.1" stroke-linecap="round"/>
+</svg>
+<span class="sb-logo">FootMate</span>
+</div>
+<div class="sb-sub">AI Service Planning · System PM · 20장</div>
+</div>
+<div class="toc-list" role="navigation" aria-label="슬라이드 목차">
+<div class="toc-item" data-i="0" onclick="goTo(0)">
+<span class="toc-n">01</span>
+<div>
+<span class="toc-t">Cover</span>
+<span class="toc-s">FootMate 기획 포트폴리오</span>
+</div>
+</div>
+<div class="toc-item" data-i="1" onclick="goTo(1)">
+<span class="toc-n">02</span>
+<div>
+<span class="toc-t">Why this Project</span>
+<span class="toc-s">기획 배경 · 목표 · 실행 범위</span>
+</div>
+</div>
+<div class="toc-item" data-i="2" onclick="goTo(2)">
+<span class="toc-n">03</span>
+<div>
+<span class="toc-t">Problem</span>
+<span class="toc-s">풋살 매칭의 핵심 문제 정의</span>
+</div>
+</div>
+<div class="toc-item" data-i="3" onclick="goTo(3)">
+<span class="toc-n">04</span>
+<div>
+<span class="toc-t">Persona / JTBD</span>
+<span class="toc-s">핵심 타겟과 이용 맥락</span>
+</div>
+</div>
+<div class="toc-item" data-i="4" onclick="goTo(4)">
+<span class="toc-n">05</span>
+<div>
+<span class="toc-t">Journey Map</span>
+<span class="toc-s">사용 전·중·후 흐름 정리</span>
+</div>
+</div>
+<div class="toc-item" data-i="5" onclick="goTo(5)">
+<span class="toc-n">06</span>
+<div>
+<span class="toc-t">Competitive Gap</span>
+<span class="toc-s">기존 서비스와 차별점</span>
+</div>
+</div>
+<div class="toc-item" data-i="6" onclick="goTo(6)">
+<span class="toc-n">07</span>
+<div>
+<span class="toc-t">Design Principles</span>
+<span class="toc-s">Fair Match · Trust · Growth</span>
+</div>
+</div>
+<div class="toc-item" data-i="7" onclick="goTo(7)">
+<span class="toc-n">08</span>
+<div>
+<span class="toc-t">MoSCoW</span>
+<span class="toc-s">기능 우선순위 정의</span>
+</div>
+</div>
+<div class="toc-item" data-i="8" onclick="goTo(8)">
+<span class="toc-n">09</span>
+<div>
+<span class="toc-t">IA Design</span>
+<span class="toc-s">정보 구조 및 화면 구조 설계</span>
+</div>
+</div>
+<div class="toc-item" data-i="9" onclick="goTo(9)">
+<span class="toc-n">10</span>
+<div>
+<span class="toc-t">Matching Logic</span>
+<span class="toc-s">초기 ELO·추천·경기 결과 계산</span>
+</div>
+</div>
+<div class="toc-item" data-i="10" onclick="goTo(10)">
+<span class="toc-n">11</span>
+<div>
+<span class="toc-t">AI Agent Workflow</span>
+<span class="toc-s">계획 · 도구 · 가드레일 · HITL</span>
+</div>
+</div>
+<div class="toc-item" data-i="11" onclick="goTo(11)">
+<span class="toc-n">12</span>
+<div>
+<span class="toc-t">Service Data &amp; Quality</span>
+<span class="toc-s">데이터 구조 · 품질 규칙 · 소유권</span>
+</div>
+</div>
+<div class="toc-item" data-i="12" onclick="goTo(12)">
+<span class="toc-n">13</span>
+<div>
+<span class="toc-t">Prototype Build · QA · Deployment</span>
+<span class="toc-s">GitHub 버전 관리부터 Vercel 검증까지</span>
+</div>
+</div>
+<div class="toc-item" data-i="13" onclick="goTo(13)">
+<span class="toc-n">14</span>
+<div>
+<span class="toc-t">Key Screens</span>
+<span class="toc-s">프로토타입 대표 화면 흐름</span>
+</div>
+</div>
+<div class="toc-item" data-i="14" onclick="goTo(14)">
+<span class="toc-n">15</span>
+<div>
+<span class="toc-t">UX Flow</span>
+<span class="toc-s">신청 → 결제 → 경기 → 평가</span>
+</div>
+</div>
+<div class="toc-item" data-i="15" onclick="goTo(15)">
+<span class="toc-n">16</span>
+<div>
+<span class="toc-t">Operations &amp; Exceptions</span>
+<span class="toc-s">운영자 콘솔 · 예외 처리 정책</span>
+</div>
+</div>
+<div class="toc-item" data-i="16" onclick="goTo(16)">
+<span class="toc-n">17</span>
+<div>
+<span class="toc-t">Service Extension Concept</span>
+<span class="toc-s">+6 화면 · 선택과 복구 흐름</span>
+</div>
+</div>
+<div class="toc-item" data-i="17" onclick="goTo(17)">
+<span class="toc-n">18</span>
+<div>
+<span class="toc-t">Interactive Demo</span>
+<span class="toc-s">39개 화면 · 동적 상태·검증 로그</span>
+</div>
+</div>
+<div class="toc-item" data-i="18" onclick="goTo(18)">
+<span class="toc-n">19</span>
+<div>
+<span class="toc-t">Validation &amp; Metrics</span>
+<span class="toc-s">검증 설계 · 테스트 후 실제값 교체</span>
+</div>
+</div>
+<div class="toc-item" data-i="19" onclick="goTo(19)">
+<span class="toc-n">20</span>
+<div>
+<span class="toc-t">Reflection &amp; Next Step</span>
+<span class="toc-s">시스템 PM 관점의 회고 · 다음 검증</span>
+</div>
+</div>
+</div>
+</aside>
+<main class="viewer" id="portfolioMain" tabindex="-1">
+<div class="pbar">
+<div class="pbar-fill" id="pf">
+</div>
+</div>
+<div class="topbar">
+<div class="topbar-title" id="ttl">커버</div>
+<div class="topbar-count" id="cnt">01 / 20</div>
+</div>
+<div class="track" id="track">
+<div class="slide" data-i="0">
+<div class="cover">
+<div class="badge">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<linearGradient id="iconGrad2" x1="0" y1="0" x2="24" y2="24">
+<stop stop-color="#4F8EF7"/>
+<stop offset=".5" stop-color="#8B6CF7"/>
+<stop offset="1" stop-color="#5EEAD4"/>
+</linearGradient>
+</defs>
+<circle cx="12" cy="12" r="9.3" stroke="url(#iconGrad2)" stroke-width="1.6"/>
+<path d="M12 6.2L15.3 8.6L14.1 12.4H9.9L8.7 8.6L12 6.2Z" fill="url(#iconGrad2)"/>
+<path d="M12 6.2V3.2M15.3 8.6L18.2 6.6M14.1 12.4L16.4 15.6M9.9 12.4L7.6 15.6M8.7 8.6L5.8 6.6" stroke="url(#iconGrad2)" stroke-width="1.1" stroke-linecap="round"/>
+</svg>FOOTMATE · AI SERVICE PLANNING · SYSTEM PM</div>
+<h1>FootMate</h1>
+<p>실력에 맞는 팀을 찾고, 노쇼를 줄이며, 다시 참여하게 만드는 풋살 매칭 서비스</p>
+<div class="cover-phase-row" aria-label="프로젝트 범위 구분">
+<span class="phase-pill original">AI AGENT WORKFLOW BLUEPRINT · SERVICE DATA &amp; QUALITY</span>
+</div>
+<div class="cover-role">교육 과정에서 시작해 개인 프로젝트로 확장·고도화한 AI 서비스 기획·프로토타이핑 프로젝트입니다.</div>
+<div class="hero-grid">
+<div>
+<b>5</b>
+<span>AI Agent Workflow 단계</span>
+</div>
+<div>
+<b>5</b>
+<span>데이터 품질 규칙</span>
+</div>
+<div>
+<b>39</b>
+<span>인터랙티브 화면</span>
+</div>
+<div>
+<b>Live</b>
+<span>Vercel 배포</span>
+</div>
+</div>
+<div class="cover-actions">
+<a class="cover-demo-btn" href="/demo" target="_blank" rel="noopener" aria-label="FootMate 인터랙티브 데모 새 창에서 열기">인터랙티브 데모 바로 체험 <span aria-hidden="true">↗</span></a>
+</div>
+<div class="cover-guide">← → 키 또는 좌우 버튼으로 이동 · 전체 기획 흐름 20장</div>
+</div>
+</div>
+<div class="slide" data-i="1">
+<section class="content">
+<div class="phase-kicker"><div class="kicker">WHY THIS PROJECT</div><span class="phase-pill original">CORE SERVICE</span></div>
+<h2>예약보다 중요한 것은 “누구와 경기하는가”였습니다</h2>
+<p class="lead">기존 풋살 서비스는 예약과 모집에는 강했지만, <b>실력에 맞는 팀 구성</b>, <b>노쇼 대응</b>, <b>다시 참여할 이유</b>까지는 충분히 제공하지 못한다고 판단했습니다.</p>
+<div class="solution-line">
+<strong>목표:</strong> Fair Match · Trust · Growth를 하나의 사용자 흐름으로 연결해 경기 품질을 높이는 것</div>
+<div class="cards three">
+<div class="card">
+<em>01</em>
+<h3>Plan</h3>
+<p>Persona·JTBD·IA·Journey Map으로 문제와 사용자 흐름을 구조화했습니다.</p>
+</div>
+<div class="card">
+<em>02</em>
+<h3>Design</h3>
+<p>ELO 매칭, 선결제·체크인, 평가·재참여 정책을 설계했습니다.</p>
+</div>
+<div class="card">
+<em>03</em>
+<h3>Build</h3>
+<p>핵심 흐름 33개 + 서비스 확장 6개, 총 39개 화면의 클릭 가능한 라이브 데모로 기획 가설을 구현했습니다.</p>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="2">
+<section class="content">
+<div class="kicker">PROBLEM</div>
+<h2>풋살 매칭은 아직 “운”에 가깝다</h2>
+<div class="problem-grid">
+<div class="problem">
+<b>01</b>
+<h3>실력 차이</h3>
+<p>오픈채팅 기반 모집은 팀원 간 실력 편차가 커 경기 만족도가 낮아집니다.</p>
+</div>
+<div class="problem">
+<b>02</b>
+<h3>노쇼 리스크</h3>
+<p>경기 직전 불참이 발생하면 팀 구성과 경기 품질이 저하됩니다.</p>
+</div>
+<div class="problem">
+<b>03</b>
+<h3>관계 지속성 부족</h3>
+<p>경기 후 관계와 기록이 이어지지 않아 다시 함께할 팀원과 성장 기록이 쌓이지 않습니다.</p>
+</div>
+</div>
+<div class="solution-line">문제 → <strong>ELO 기반 매칭</strong> + <strong>참가비 결제·보증금 예치</strong> + <strong>경기 후 평가·성장 기록</strong>
+</div>
+</section>
+</div>
+<div class="slide" data-i="3">
+<section class="content persona">
+<div class="kicker">PERSONA / JTBD</div>
+<h2>핵심 타겟 — 이민준, 32세</h2>
+<p class="note">※ 서비스 가설 검증을 위해 설정한 가상 페르소나입니다.</p>
+<div class="persona-layout">
+<div class="profile">
+<h3>이민준</h3>
+<p>경기도 수원에 거주하는<br>30대 직장인<br>풋살 경력 3년 · MF</p>
+<div class="tags">
+<span>주 1~2회</span>
+<span>실력 매칭</span>
+<span>성장 기록</span>
+</div>
+</div>
+<div class="jtbd">
+<div>
+<b class="green">기능적</b>
+<p>실력이 비슷한 팀원을 빠르게 찾고 경기장 예약까지 한 번에 해결하고 싶다.</p>
+</div>
+<div>
+<b class="blue">사회적</b>
+<p>단골 팀원을 만들어 정기적으로 함께 뛰고 싶다.</p>
+</div>
+<div>
+<b class="yellow">감정적</b>
+<p>ELO가 올랐다는 성장감과 경기 후 성취감을 느끼고 싶다.</p>
+</div>
+<div>
+<b class="red">Pain</b>
+<p>실력이 비슷한 상대를 찾는 데 시간이 오래 걸리고, 반복되는 노쇼로 경기 운영에 불편을 겪습니다.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="4">
+<section class="content">
+<div class="kicker">JOURNEY MAP</div>
+<h2>5단계 사용자 여정</h2>
+<div class="timeline">
+<div>
+<b>01</b>
+<h3>온보딩</h3>
+<p>소셜 로그인 · 퀴즈 · 위치 동의 · ELO 배정</p>
+</div>
+<div>
+<b>02</b>
+<h3>개인화 매칭</h3>
+<p>조건 설정 · 추천 목록 · 팀 상세 · 구장 정보</p>
+</div>
+<div>
+<b>03</b>
+<h3>결제</h3>
+<p>참가비 결제 · 보증금 예치 · 참가 확정 · 알림</p>
+</div>
+<div>
+<b>04</b>
+<h3>경기 당일</h3>
+<p>체크인 · 팀 채팅 · 노쇼 자동 처리</p>
+</div>
+<div>
+<b>05</b>
+<h3>평가·재참여</h3>
+<p>팀원 평가 · ELO 업데이트 · 성장 피드</p>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="5">
+<section class="content">
+<div class="kicker">COMPETITIVE GAP</div>
+<h2>예약 중심 서비스에서 경기 품질 중심 서비스로</h2>
+<div class="comp-scroll" role="region" aria-label="경쟁 서비스 비교표" tabindex="0">
+<table class="comp">
+<tr>
+<th>서비스</th>
+<th>강점</th>
+<th>한계</th>
+</tr>
+<tr>
+<td><a href="https://www.plabfootball.com/" target="_blank" rel="noopener">플랩풋볼</a></td>
+<td>소셜 매치·구장 예약·레벨 측정</td>
+<td>추천 기준의 개인화 설명이 제한적</td>
+</tr>
+<tr>
+<td><a href="https://play.google.com/store/apps/details?id=com.urbanfootball.android" target="_blank" rel="noopener">어반풋볼</a></td>
+<td>소셜 매치·구장 예약·레슨</td>
+<td>경기 후 성장 기록 연계가 제한적</td>
+</tr>
+<tr>
+<td><a href="https://apps.apple.com/kr/app/id1463155313" target="_blank" rel="noopener">매치업</a></td>
+<td>예약·개인 참여·팀 관리</td>
+<td>ELO 기반 추천 기능은 확인하기 어려움</td>
+</tr>
+<tr class="highlight">
+<td>FootMate</td>
+<td>ELO 매칭 · 노쇼 방지 · 성장 기록</td>
+<td>초기 사용자 데이터가 적을 때 매칭 품질 검증 필요</td>
+</tr>
+</table>
+</div>
+<p class="note">※ 각 서비스의 공개 기능 소개를 기준으로 비교했습니다(2026.08 확인).</p>
+</section>
+</div>
+<div class="slide" data-i="6">
+<section class="content">
+<div class="kicker">STRATEGY & DESIGN PRINCIPLES</div>
+<h2>Fair Match · Trust · Growth</h2>
+<p class="lead">기능을 나열하지 않고, 사용자가 다시 참여하고 싶은 경기 경험을 만드는 세 가지 원칙으로 설계했습니다.</p>
+<div class="cards three">
+<div class="card">
+<em>01 · FAIR MATCH</em>
+<h3>Personalized Matching</h3>
+<p>ELO·플레이 성향·위치를 조합해 실력이 비슷한 팀을 추천합니다.</p>
+</div>
+<div class="card">
+<em>02 · TRUST</em>
+<h3>Reliable Operation</h3>
+<p>참가비 결제와 보증금 예치, 체크인으로 노쇼 리스크와 운영 불안을 낮춥니다.</p>
+</div>
+<div class="card">
+<em>03 · GROWTH</em>
+<h3>Reason to Return</h3>
+<p>경기 결과·평가·ELO 기록을 다음 경기 추천과 재참여로 연결합니다.</p>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="7">
+<section class="content">
+<div class="kicker">MOSCOW</div>
+<h2>기능 우선순위</h2>
+<div class="moscow">
+<div>
+<b>Must</b>
+<p>ELO 기반 실력 매칭 · 참가비 결제 · 보증금 예치 · 경기 당일 뷰 · 팀원 평가</p>
+</div>
+<div>
+<b>Should</b>
+<p>풋살장 예약 연동 · 팀원 즐겨찾기 · 상세 필터 · 관리자 정산 대시보드</p>
+</div>
+<div>
+<b>Could</b>
+<p>하이라이트 기록 · 커뮤니티 피드 · 팀 배지 · 개인 기록 카드</p>
+</div>
+<div>
+<b>Won't</b>
+<p>과도한 SNS 기능 · 복잡한 리그 운영 · 영상 분석 고도화</p>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="8">
+<section class="content">
+<div class="kicker">IA DESIGN</div>
+<h2>서비스 구조를 5개 탭으로 단순화</h2>
+<div class="ia-map">
+<div class="root">FootMate App</div>
+<div class="ia-row">
+<span>홈</span>
+<span>매칭</span>
+<span>경기</span>
+<span>채팅</span>
+<span>마이</span>
+</div>
+<div class="ia-detail">
+<p>홈: 추천 매치 · 필터</p>
+<p>매칭: 팀 상세 · 구장 정보</p>
+<p>경기: 체크인 · 결과</p>
+<p>채팅: 팀 커뮤니케이션</p>
+<p>마이: ELO · 성장 피드</p>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="9">
+<section class="content">
+<div class="kicker">MATCHING LOGIC · INITIAL HYPOTHESIS</div>
+<h2>입력부터 경기 결과까지 이어지는 동적 ELO 구조</h2>
+<p class="lead">5개 온보딩 응답으로 초기값을 만들고, 실력·성향·위치 적합도를 계산한 뒤 경기 결과로 ELO를 갱신합니다.</p>
+<div class="logic">
+<div class="donut">
+<span>50<small>%</small></span>
+<p>ELO</p>
+</div>
+<div class="bar-list">
+<div>
+<b>50% ELO 실력</b>
+<span>자가 실력·경기 빈도로 초기값을 산정하고 상대 ELO와 승·무·패로 업데이트</span>
+</div>
+<div>
+<b>30% 플레이 성향</b>
+<span>포지션·선호 시간대·경기 빈도의 조건 적합도를 반영</span>
+</div>
+<div>
+<b>20% 위치 편의성</b>
+<span>선호 활동 지역과 구장 권역의 일치도를 기준으로 추천</span>
+</div>
+</div>
+</div>
+<p class="note"><b>경기 후 ELO = 현재 ELO + K(32) × (실제 결과 − 기대 결과)</b> · 팀원 평가는 ELO가 아닌 별도 매너 기록으로 저장합니다. ※ 가중치와 초기값은 사용자 테스트가 필요한 규칙 기반 가설입니다.</p>
+</section>
+</div>
+<div class="slide ai-system-slide" data-i="10">
+<section class="content">
+<div class="phase-kicker"><div class="kicker">AI AGENT WORKFLOW</div><span class="phase-pill extension">SYSTEM PM BLUEPRINT</span></div>
+<h2>추천 결과를 보여주는 데서 그치지 않고, 다음 행동까지 설계하는 에이전트</h2>
+<p class="lead">사용자의 목표와 현재 상태를 파악하고 필요한 데이터를 조회한 뒤, <b>설명 가능한 추천과 복구 행동</b>을 제안하는 5단계 AI Agent Workflow를 설계했습니다.</p>
+<div class="agent-flow" aria-label="AI Agent Workflow 5단계">
+  <article class="agent-step"><em>01 · CONTEXT</em><h3>목표·상태 수집</h3><p>포지션·빈도·실력·지역·시간과 정원·결제·체크인 상태를 수집합니다.</p></article>
+  <article class="agent-step"><em>02 · PLAN</em><h3>과업 계획</h3><p>일반 추천인지, 만석·노쇼·결제 실패 같은 복구 과업인지 분류합니다.</p></article>
+  <article class="agent-step"><em>03 · TOOLS</em><h3>도구 실행</h3><p>프로필·경기 목록·ELO 계산기·운영 정책을 조회해 후보와 근거를 만듭니다.</p></article>
+  <article class="agent-step"><em>04 · GUARDRAIL</em><h3>품질·HITL</h3><p>누락·최신성·정원 충돌을 확인하고 결제·참가·신고 전 사용자 승인을 받습니다.</p></article>
+  <article class="agent-step"><em>05 · OBSERVE</em><h3>행동·로그</h3><p>추천·대기·대체 행동을 제안하고 상태 전환과 퍼널 이벤트를 기록합니다.</p></article>
+</div>
+<div class="boundary-grid">
+  <div class="boundary-card"><b>현재 확인 가능</b>규칙 기반 추천 계산 · 추천 이유 · 대기·대체 참가 · 예외 복구 · 브라우저 내부 이벤트 로그</div>
+  <div class="boundary-card future"><b>향후 실제 연동</b>LLM·DB·결제·알림·운영자 도구 · 자동 실행은 가드레일과 사용자 승인 이후에만 허용</div>
+</div>
+</section>
+</div>
+<div class="slide ai-system-slide" data-i="11">
+<section class="content">
+<div class="phase-kicker"><div class="kicker">SERVICE DATA &amp; QUALITY</div><span class="phase-pill extension">DATA CONTRACT · OWNERSHIP</span></div>
+<h2>추천 품질을 화면이 아니라 데이터 계약으로 관리합니다</h2>
+<p class="lead">핵심 엔터티와 검증 규칙, 실패 시 처리와 소유자를 연결해 <b>데이터 품질 기준이 서비스의 다음 행동을 결정</b>하도록 설계했습니다.</p>
+<div class="quality-layout">
+  <div class="data-map">
+    <span class="panel-label">CORE DATA MODEL</span>
+    <div class="entity-grid">
+      <div class="entity-card"><b>UserProfile</b><span>실력 · 포지션 · 지역 · 시간</span></div>
+      <div class="entity-card"><b>Match</b><span>정원 · 상태 · 구장 · 평균 ELO</span></div>
+      <div class="entity-card"><b>Participation</b><span>결제 · 참가 · 체크인 · 결과</span></div>
+      <div class="entity-card"><b>Recommendation</b><span>점수 · 가중치 · 근거 · 생성 시각</span></div>
+      <div class="entity-card wide"><b>Event &amp; Audit Log</b><span>세션 · 화면 · 이벤트 · 상태 전환 · 추적 ID</span></div>
+    </div>
+    <div class="owner-strip"><span>PM · 정책·지표</span><span>Data/Eng · 스키마·검증</span><span>Ops · 예외 처리</span><span>User · 최종 승인</span></div>
+  </div>
+  <div class="quality-panel">
+    <span class="panel-label">QUALITY GATES</span>
+    <table class="quality-table">
+      <thead><tr><th>차원</th><th>검사</th><th>실패 시 처리</th><th>관측 지표</th></tr></thead>
+      <tbody>
+        <tr><td>Completeness</td><td>5개 입력·필수값</td><td>재질문·중단</td><td>누락률</td></tr>
+        <tr><td>Validity</td><td>ELO·정원·상태 범위</td><td>오류 표시</td><td>실패율</td></tr>
+        <tr><td>Freshness</td><td>정원·경기 상태 시각</td><td>결제 전 재조회</td><td>기준 초과율</td></tr>
+        <tr><td>Consistency</td><td>결제→참가→체크인</td><td>충돌 차단</td><td>충돌 건수</td></tr>
+        <tr><td>Traceability</td><td>입력·가중치·결과</td><td>추적 ID 기록</td><td>로그 누락률</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="note">※ 현재는 샘플 데이터로 품질 게이트를 설명하는 설계 단계입니다. 운영 연동 후 오류율·최신성·상태 충돌을 실제 지표로 수집합니다.</p>
+</section>
+</div>
+<div class="slide ai-system-slide" data-i="12">
+<section class="content">
+<div class="phase-kicker"><div class="kicker">PROTOTYPE BUILD · QA · DEPLOYMENT</div><span class="phase-pill original">EVIDENCE-BASED BUILD</span></div>
+<h2>아이디어를 작동하는 증거로 바꾸고, 검증 기준으로 다듬었습니다</h2>
+<p class="lead">요구사항을 프롬프트와 인수 기준으로 세분화하고 작은 동작 단위로 구현한 뒤, 반응형·접근성·상태 정합성을 점검했습니다. GitHub <code>main</code>을 Source of Truth로 관리하고 Vercel Production 배포·검증 흐름으로 연결했습니다.</p>
+<p class="note" style="margin:-4px 0 12px;font-size:12px;color:#A7B8D0;line-height:1.6;"><b style="color:#fff;">단독 수행 범위</b> · 서비스 기획·요구사항 정의·UX/IA·운영·예외 정책·프롬프트 설계·HTML/CSS/JavaScript 구현·QA·GitHub 버전 관리·Vercel 배포까지 전 과정을 직접 수행했습니다. <span style="color:#5EEAD4;">AI는 구현을 가속하기 위한 도구로 활용했습니다.</span></p>
+<div class="build-proof-grid">
+  <article class="build-proof"><em>01 · PROMPT</em><h3>요구사항 구조화</h3><p>사용자 문제·정상/예외 흐름·문구·완료 조건을 프롬프트로 분리하고 변경 범위를 고정했습니다.</p></article>
+  <article class="build-proof"><em>02 · AI-ASSISTED BUILD</em><h3>동작 단위 구현</h3><p><code>HTML · CSS · JavaScript</code>로 5개 입력, 추천 점수, ELO 갱신과 복구 상태를 연결했습니다.</p></article>
+  <article class="build-proof"><em>03 · QA</em><h3>교차·역검증</h3><p>입력→결과와 결과→입력을 모두 확인하고, 키보드·터치·모바일 동작과 문구·상태 정합성을 점검했습니다.</p></article>
+  <article class="build-proof"><em>04 · DEPLOY</em><h3>버전 관리·배포 검증</h3><p>GitHub <code>main</code>을 기준 소스로 관리하고, commit 이후 Vercel Production 배포본에서 핵심 경로·딥링크·콘솔 오류·데모 임베드를 확인합니다.</p></article>
+</div>
+<div class="evidence-strip" aria-label="구현 증거">
+  <div><b>39</b><span>상태 기반 화면</span></div><div><b>5</b><span>연결된 입력</span></div><div><b>5</b><span>퍼널 이벤트</span></div><div><b>20</b><span>기획 케이스 스터디</span></div>
+</div>
+<div class="doc-links" aria-label="FootMate 공개 상세 기획 문서">
+  <a href="https://dohyunkimm.notion.site/AI-39221460c9348082b628ea5eb7fb79fc" target="_blank" rel="noopener">FootMate 공개 상세 기획 보기 ↗</a>
+</div>
+</section>
+</div>
+<div class="slide" data-i="13">
+<section class="content">
+<div class="kicker">KEY SCREENS</div>
+<h2>프로토타입 대표 화면 흐름</h2>
+<div class="cards three">
+<div class="card">
+<em>01</em>
+<h3>Onboarding</h3>
+<p>포지션·경기 빈도·자가 실력·지역·시간대 응답으로 초기 ELO와 추천 조건을 만듭니다.</p>
+</div>
+<div class="card">
+<em>02</em>
+<h3>Personalized Matching</h3>
+<p>거리, 시간, 실력 조건을 입력하면 적합도 기반 추천 매치를 제시합니다.</p>
+</div>
+<div class="card">
+<em>03</em>
+<h3>Team Detail</h3>
+<p>추천 이유, 팀 스타일, 구장 정보, 참가 조건을 한 화면에서 확인합니다.</p>
+</div>
+</div>
+<div class="cards three">
+<div class="card">
+<em>04</em>
+<h3>Payment</h3>
+<p>크레딧으로 참가비를 결제하고 보증금을 예치해 노쇼 리스크를 줄이는 구조를 설계했습니다.</p>
+</div>
+<div class="card">
+<em>05</em>
+<h3>Game Day</h3>
+<p>체크인 카운트다운, 팀 채팅, 노쇼 자동 처리 흐름을 구성했습니다.</p>
+</div>
+<div class="card">
+<em>06</em>
+<h3>Review & Growth</h3>
+<p>경기 결과는 ELO로, 팀원 평가는 매너 기록으로 분리해 성장 피드에 연결했습니다.</p>
+</div>
+</div>
+</section>
+</div>
+<div class="slide" data-i="14">
+<section class="content">
+<div class="kicker">UX FLOW</div>
+<h2>사용자 행동이 끊기지 않도록 설계한 핵심 플로우</h2>
+<div class="timeline">
+<div>
+<b>01</b>
+<h3>탐색</h3>
+<p>오늘 가능한 매치와 추천 이유를 빠르게 확인</p>
+</div>
+<div>
+<b>02</b>
+<h3>조건 입력</h3>
+<p>거리, 시간, 포지션, 실력 조건을 간단히 조정</p>
+</div>
+<div>
+<b>03</b>
+<h3>참가 확정</h3>
+<p>참가비 결제와 보증금 예치로 참가를 확정</p>
+</div>
+<div>
+<b>04</b>
+<h3>경기 참여</h3>
+<p>체크인, 채팅, 노쇼 대응으로 경기 품질 관리</p>
+</div>
+<div>
+<b>05</b>
+<h3>재방문</h3>
+<p>팀원 평가와 결과 기반 ELO 변화를 성장 피드로 연결해 다시 참여할 이유를 제공합니다.</p>
+</div>
+</div>
+<div class="chips">
+<span>탐색 부담 감소</span>
+<span>참가 신뢰 확보</span>
+<span>경기 품질 관리</span>
+<span>성장 기록 기반 재참여</span>
+</div>
+</section>
+</div>
+<div class="slide" data-i="15">
+<section class="content ops-content">
+<div class="phase-kicker"><div class="kicker">OPERATIONS & EXCEPTION DESIGN</div><span class="phase-pill original">CORE SERVICE</span></div>
+<h2>사용자 경험을 운영 가능한 상태·예외 구조로 확장했습니다</h2>
+<div class="ops-layout">
+  <div class="ops-console">
+    <div class="ops-toolbar">
+      <div>
+        <small>Admin operations concept</small>
+        <h3>경기 운영 콘솔</h3>
+      </div>
+<span class="concept-badge">SAMPLE DATA · 정책 검증 전 단계</span>
+    </div>
+    <div class="ops-kpis" aria-label="운영 상태 예시">
+      <div><b>3</b><span>오늘 경기</span></div>
+      <div><b>29</b><span>참가 확정</span></div>
+      <div><b>25</b><span>체크인</span></div>
+      <div><b>1</b><span>확인 필요</span></div>
+    </div>
+    <div class="ops-table-wrap" role="region" aria-label="경기 운영 현황 예시" tabindex="0">
+      <div class="ops-row header">
+        <span>경기</span><span>참가</span><span>체크인</span><span>상태</span><span>조치</span>
+      </div>
+      <div class="ops-row">
+        <div class="ops-match"><strong>19:00 · 강남 A구장</strong><span>중급 · 5:5 매치</span></div>
+        <span class="ops-cell">10 / 10</span><span class="ops-cell">9 / 10</span>
+        <span class="ops-status ok">정상 운영</span>
+        <button type="button" class="ops-action" onclick="toggleOpsState(this)">상세 확인</button>
+      </div>
+      <div class="ops-row">
+        <div class="ops-match"><strong>20:30 · 성수 B구장</strong><span>초중급 · 5:5 매치</span></div>
+        <span class="ops-cell">9 / 10</span><span class="ops-cell">6 / 10</span>
+        <span class="ops-status watch">확인 필요</span>
+        <button type="button" class="ops-action" onclick="toggleOpsState(this)">노쇼 검토</button>
+      </div>
+      <div class="ops-row">
+        <div class="ops-match"><strong>21:00 · 영등포 C구장</strong><span>중급 · 5:5 매치</span></div>
+        <span class="ops-cell">10 / 10</span><span class="ops-cell">10 / 10</span>
+        <span class="ops-status ok">경기 준비</span>
+        <button type="button" class="ops-action" onclick="toggleOpsState(this)">상세 확인</button>
+      </div>
+    </div>
+    <p class="ops-footnote">참가·체크인·노쇼 상태를 한 화면에서 확인하고, 운영자 판단이 필요한 항목만 분리한 콘셉트입니다.</p>
+  </div>
+
+  <div class="exception-panel">
+    <div class="panel-heading">
+      <div>
+        <small>Exception policy</small>
+        <h3>핵심 예외 정책 5개</h3>
+      </div>
+    </div>
+    <div class="exception-list">
+      <div class="exception-item"><i>01</i><b>결제 실패</b><span>자리 임시 보류 → 재시도 안내</span></div>
+      <div class="exception-item"><i>02</i><b>추천 결과 없음</b><span>거리·시간 조건 완화 제안</span></div>
+      <div class="exception-item"><i>03</i><b>경기 취소</b><span>알림 → 참가비·보증금 분리 처리</span></div>
+      <div class="exception-item"><i>04</i><b>체크인 오류</b><span>현장 코드 → 운영자 확인 요청</span></div>
+    <div class="exception-item"><i>05</i><b>평가 미참여</b><span>리마인드 → 다음 경기 전에 완료하도록 안내</span></div>
+    </div>
+    <p class="policy-note">※ 운영 정책은 초기 가설이며, Live Demo의 관련 화면에서 예외 상태와 복구 경로를 확인할 수 있습니다.</p>
+  </div>
+</div>
+</section>
+</div>
+<div class="slide v2-concept-slide" data-i="16">
+<section class="content">
+  <div class="phase-kicker">
+    <div class="kicker">SERVICE EXTENSION CONCEPT</div>
+    <span class="phase-pill extension">ADDITIVE TO CORE JOURNEY</span>
+  </div>
+  <h2>핵심 흐름은 유지하고,<br>사용자가 막히는 순간에 다음 행동을 제안했습니다</h2>
+  <p class="lead">핵심 서비스의 기능과 흐름은 유지하면서, 프로토타입을 체험할 때 막힐 수 있는 세 지점을 보완한 <b>서비스 확장 콘셉트</b>입니다.</p>
+
+  <div class="v2-scope-band" aria-label="핵심 서비스와 확장 범위 비교">
+    <article class="v2-scope-card original">
+      <small>CORE JOURNEY · BASELINE</small>
+      <b>33개 사용자 화면 + 운영자 콘솔 + 핵심 예외 5개</b>
+      <p>로그인 → 추천 → 결제 → 체크인 → 평가 → ELO 업데이트의 전체 흐름을 구현한 기존 프로젝트 범위입니다.</p>
+    </article>
+    <div class="v2-scope-arrow" aria-hidden="true">→</div>
+    <article class="v2-scope-card extension">
+      <small>SERVICE EXTENSION · ADDITIVE</small>
+      <b>3개 개선 축 · 6개 확장 화면</b>
+      <p>기존 33개 화면은 유지하면서 추천 기준 선택권, 만석 복구, 경기 후 신뢰 회복 흐름을 추가했습니다.</p>
+    </article>
+  </div>
+
+  <div class="v2-feature-grid">
+    <article class="v2-feature">
+      <em>01 · EXPLAINABLE TUNING</em>
+      <h3>추천 기준을 직접 조정</h3>
+      <p>균형·실력·거리 우선 모드를 비교하고, 추천 결과가 달라진 이유를 화면에서 확인합니다.</p>
+      <span>우선순위 설정 · 경기 비교</span>
+    </article>
+    <article class="v2-feature">
+      <em>02 · WAITLIST RECOVERY</em>
+      <h3>마감된 경기에도 다음 선택을 제공</h3>
+      <p>대기 신청에서 빈자리 알림을 거쳐 대체 매치를 선택하는 복구 흐름을 연결했습니다.</p>
+      <span>대기 신청 · 대체 매치</span>
+    </article>
+    <article class="v2-feature">
+      <em>03 · TRUST RECOVERY</em>
+      <h3>경기 후 문제 처리 과정을 확인</h3>
+      <p>문제 유형을 선택해 접수하고, 접수 번호와 처리 단계로 진행 상태를 확인합니다.</p>
+      <span>문제 신고 · 처리 상태</span>
+    </article>
+  </div>
+  <p class="v2-boundary"><b>구현 경계</b> · 서비스 확장 기능은 기획 검증용 인터랙티브 프로토타입입니다. 실시간 알림·실제 결제·운영자 처리·외부 추천 모델 연동은 구현 범위가 아니며, 화면 안의 샘플 데이터와 상태 전환으로 흐름을 시뮬레이션합니다.</p>
+</section>
+</div>
+<div class="slide demo-showcase-slide" data-i="17">
+  <section class="content demo-showcase">
+    <div class="showcase-copy">
+      <div class="showcase-eyebrow">
+        <span class="showcase-live-dot">
+</span>
+        INTERACTIVE PRODUCT EXPERIENCE
+      </div>
+
+      <div class="showcase-phase-row" aria-label="데모 화면 범위">
+        <span class="phase-pill original">CORE JOURNEY · 33</span>
+        <span class="phase-pill extension">SERVICE EXTENSION · +6</span>
+        <span class="phase-pill original">DYNAMIC MATCHING · AGENT</span>
+      </div>
+
+      <h2>Experience<br>
+<span>FootMate.</span>
+</h2>
+
+      <p class="showcase-lead">
+        핵심 여정과 서비스 확장 흐름을 동적 계산과 AI Agent Workflow로 연결한
+        <b>39개 화면의 상태 기반 프로토타입</b>을
+        직접 체험해 보세요.
+      </p>
+
+      <div class="showcase-path" aria-label="데모 체험 단계">
+        <div>
+<span>01</span>
+<b>Login</b>
+<small>5문항·초기 ELO 계산</small>
+</div>
+        <i>
+</i>
+        <div>
+<span>02</span>
+<b>Match</b>
+<small>조건별 추천 점수 계산</small>
+</div>
+        <i>
+</i>
+        <div>
+<span>03</span>
+<b>Pay</b>
+<small>참가비·보증금 예치</small>
+</div>
+        <i>
+</i>
+        <div>
+<span>04</span>
+<b>Play</b>
+<small>체크인·경기 당일</small>
+</div>
+        <i>
+</i>
+        <div>
+<span>05</span>
+<b>Grow</b>
+<small>결과 ELO·매너 분리</small>
+</div>
+      </div>
+
+      <div class="showcase-metrics">
+        <div>
+<strong>39</strong>
+<span>Prototype Screens</span>
+</div>
+        <div>
+<strong>5</strong>
+<span>Connected Inputs</span>
+</div>
+        <div>
+<strong>5</strong>
+<span>Live Event Logs</span>
+</div>
+      </div>
+
+      <div class="showcase-tech">
+        <span>Service Planning</span>
+        <span>UX Flow</span>
+        <span>Policy Design</span>
+        <span>State Recovery</span>
+        <span>Dynamic ELO</span>
+        <span>AI Agent Workflow</span>
+        <span>Data Quality</span>
+        <span>HITL Guardrail</span>
+        <span>Event Instrumentation</span>
+        <span>Interactive Prototype</span>
+      </div>
+
+      <p class="showcase-note">
+        ※ 실제 운영 서비스가 아니며, 외부 연동 없이 샘플 데이터로 동작하는 기획 검증용 프로토타입입니다.
+      </p>
+    </div>
+
+    <div class="showcase-stage">
+      <div class="showcase-orbit orbit-a">
+</div>
+      <div class="showcase-orbit orbit-b">
+</div>
+
+      <div class="showcase-device-meta">
+        <span class="showcase-status-dot">
+</span>
+        LIVE PROTOTYPE
+      </div>
+
+      <div class="showcase-device-wrap">
+        <div class="device">
+<iframe id="demoFrame" data-src="/demo" src="about:blank" title="FootMate 인터랙티브 데모">
+</iframe>
+</div>
+      </div>
+
+      <div class="showcase-hint">
+        앱 우측 하단의 ‘AI 로직’에서 Agent Workflow와 이벤트 로그도 확인할 수 있습니다.
+      </div>
+      <div class="showcase-actions">
+        <a class="demo-open-btn" href="/demo" target="_blank" rel="noopener">새 창에서 데모 열기 ↗</a>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="slide" data-i="18">
+<section class="content validation-content">
+<div class="phase-kicker"><div class="kicker">VALIDATION &amp; MEASUREMENT</div><span class="phase-pill extension">TEST READY · ACTUALS PENDING</span></div>
+<h2>테스트가 끝나면 목표값을 실제 결과와 개선 이력으로 교체합니다</h2>
+<div class="validation-grid">
+  <div class="test-panel">
+    <div class="panel-heading">
+      <div>
+        <small>Usability test protocol</small>
+        <h3>1차 사용자 테스트 설계</h3>
+      </div>
+      <span class="planned-badge">테스트 전 · 실제값 미기입</span>
+    </div>
+    <div class="test-summary">
+      <div><b>5+</b><span>목표 참여자</span></div>
+      <div><b>3</b><span>핵심 과업</span></div>
+      <div><b>15m</b><span>1인 예상 시간</span></div>
+    </div>
+    <div class="test-task-list">
+      <div class="test-task"><b>T1</b><span>조건을 설정하고 추천 결과의 근거를 설명한다.</span></div>
+      <div class="test-task"><b>T2</b><span>참가비·보증금을 확인하고 결제·참가 확정까지 진행한다.</span></div>
+      <div class="test-task"><b>T3</b><span>체크인·평가를 완료하고 다음 경기 추천을 찾는다.</span></div>
+    </div>
+    <p class="test-record"><b>기록 항목</b> · 과업 완료 여부 · 소요 시간 · 이탈 지점 · 주요 발화 · 개선 제안</p>
+  </div>
+
+  <div class="metric-panel">
+    <div class="panel-heading">
+      <div>
+        <small>KPI & event taxonomy</small>
+        <h3>핵심 퍼널과 이벤트 구현</h3>
+      </div>
+      <span class="planned-badge">LIVE EVENT LOG</span>
+    </div>
+    <div class="measure-flow" aria-label="핵심 전환 퍼널">
+      <div><b>추천 노출</b><span>도달</span></div>
+      <div><b>상세 조회</b><span>탐색</span></div>
+      <div><b>결제 완료</b><span>전환</span></div>
+      <div><b>체크인</b><span>참여</span></div>
+      <div><b>다음 경기 탐색</b><span>재참여 행동</span></div>
+    </div>
+    <div class="event-list">
+      <div class="event-row"><code>match_recommend_view</code><span>추천 결과와 적합도 노출</span></div>
+      <div class="event-row"><code>match_detail_open</code><span>추천 팀 상세 진입</span></div>
+      <div class="event-row"><code>payment_complete</code><span>참가비·보증금 결제 완료</span></div>
+      <div class="event-row"><code>checkin_complete</code><span>경기 당일 체크인 완료</span></div>
+      <div class="event-row"><code>rematch_click</code><span>평가 후 다음 경기 추천 선택</span></div>
+    </div>
+  </div>
+</div>
+<div class="validation-targets">
+  <span>추천 이해 4/5명+</span>
+  <span>결제·체크인 신뢰 4/5명+</span>
+  <span>재참여 의향 3/5명+</span>
+  <span>30일 내 재참여 확정률 별도 측정</span>
+</div>
+<p class="validation-disclaimer">※ 5개 이벤트는 데모 내부 검증 로그로 구현했으며 외부 서버로 전송하지 않습니다. 현재 수치는 테스트 목표값이며 실제 성과가 아닙니다. 테스트 완료 후 참여자 수·과업 성공률·발견 이슈·개선 전후를 공개합니다.</p>
+</section>
+</div>
+<div class="slide closing-final-slide" data-i="19">
+  <section class="content closing-final">
+    <div class="closing-final-kicker">SYSTEM PM REFLECTION &amp; NEXT STEP</div>
+    <h2>
+      AI 기능을 이름 붙이는 것보다,<br>
+      데이터·상태·도구·가드레일을<br>
+      <span>하나의 운영 흐름으로 연결하는 일</span>이 중요했습니다.
+    </h2>
+    <div class="closing-final-profile">
+      <strong>What I Learned</strong>
+      <p>5개 입력과 경기 결과가 추천·ELO에 반영되도록 만들고, 만석·노쇼·결제 실패의 복구 흐름을 연결했습니다. 이어 AI Agent Workflow와 데이터 품질 게이트를 설계하면서, AI 서비스 기획은 추천 화면뿐 아니라 입력 계약·도구 호출·승인 권한·관측 로그까지 함께 정의해야 한다는 점을 확인했습니다.</p>
+    </div>
+    <div class="closing-final-values">
+      <div>
+<b>Define</b>
+<span>사용자 문제와 AI Agent가 해결할 과업과 경계를 정의했습니다.</span>
+</div>
+      <div>
+<b>Design</b>
+<span>정상·예외 흐름과 데이터·품질·HITL 정책을 함께 설계했습니다.</span>
+</div>
+      <div>
+<b>Validate</b>
+<span>작동하는 데모와 행동 이벤트로 검증 지점을 구체화했습니다.</span>
+</div>
+    </div>
+    <div class="solution-line" style="margin-bottom:24px">
+<strong>Next Step:</strong> 5명 이상 사용자 테스트 → 실제 결과·개선 전후 공개 → 외부 AI·DB 연동 전 데이터 품질 기준과 자동 실행 권한 검증 순서로 진행합니다.</div>
+    <div class="closing-final-links">
+      <a href="https://dohyunkimm.notion.site/IT-57e21460c934836187a6015d647020b1" target="_blank" rel="noopener">
+<small>MAIN PORTFOLIO</small>
+<b>전체 포트폴리오 보기</b>
+<span>↗</span>
+</a>
+      <a href="https://dohyunkimm.notion.site/AI-39221460c9348082b628ea5eb7fb79fc" target="_blank" rel="noopener">
+<small>PROJECT DETAIL</small>
+<b>풋메이트 상세 기획 보기</b>
+<span>↗</span>
+</a>
+    </div>
+  </section>
+</div>
+</div>
+<button type="button" class="btn btn-prev" id="prev" onclick="prev()" aria-label="이전 슬라이드">‹</button>
+<button type="button" class="btn btn-next" id="next" onclick="next()" aria-label="다음 슬라이드">›</button>
+<div class="label" id="lab" aria-live="polite">커버</div>
+<div class="dots" id="dots" aria-label="슬라이드 바로가기">
+</div>
+<div class="hint">← → / Space</div>
+</main>
+</div>
+<script id="mobile-hr-ux-script-20260816">
+const LABELS=['Cover','Why this Project','Problem','Persona / JTBD','Journey Map','Competitive Gap','Design Principles','MoSCoW','IA Design','Matching Logic','AI Agent Workflow','Service Data & Quality','Prototype Build · QA · Deployment','Key Screens','UX Flow','Operations & Exceptions','Service Extension Concept','Interactive Demo','Validation & Metrics','Reflection & Next Step'];
+const SLUGS=['cover','why-this-project','problem','persona-jtbd','journey-map','competitive-gap','design-principles','moscow','ia-design','matching-logic','ai-agent-workflow','service-data-quality','prototype-build-qa-deployment','key-screens','ux-flow','operations-exceptions','v2-concept-extension','interactive-demo','validation-metrics','reflection-next-step'];
+const LEGACY_SLUGS={'vibe-coding-prompt-qa-deployment':'prototype-build-qa-deployment'};
+let cur=0;
+const total=LABELS.length;
+const track=document.getElementById('track'),pf=document.getElementById('pf'),ttl=document.getElementById('ttl'),cnt=document.getElementById('cnt'),lab=document.getElementById('lab'),dots=document.getElementById('dots');
+let navigatingFromHistory=false;
+let resizeRaf=0;
+function indexFromLocation(){let slug=(location.hash||'').replace(/^#/,'').toLowerCase();if(!slug)return 0;if(LEGACY_SLUGS[slug])slug=LEGACY_SLUGS[slug];const bySlug=SLUGS.indexOf(slug);if(bySlug>=0)return bySlug;const stateIndex=history.state&&Number.isInteger(history.state.footmateSlide)?history.state.footmateSlide:null;return stateIndex!==null?Math.max(0,Math.min(total-1,stateIndex)):0}
+function historyHash(i){return i===0?'':'#'+SLUGS[i]}
+function historyUrl(i){return location.pathname+location.search+historyHash(i)}
+function syncHistory(i,mode){if(navigatingFromHistory||mode==='none')return;const state={...(history.state||{}),footmateSlide:i};const expectedHash=historyHash(i);if(mode==='replace')history.replaceState(state,'',historyUrl(i));else if((history.state&&history.state.footmateSlide)!==i||location.hash!==expectedHash)history.pushState(state,'',historyUrl(i))}
+function syncViewportHeight(){const h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;if(h>0)document.documentElement.style.setProperty('--app-height',Math.round(h)+'px')}
+function syncMobileToc(){document.querySelectorAll('.mobile-toc-item').forEach((e,idx)=>e.setAttribute('aria-current',idx===cur?'page':'false'))}
+function renderSlide(i,{historyMode='push'}={}){cur=Math.max(0,Math.min(total-1,Number(i)||0));track.style.transform=`translateX(${-cur*100}%)`;pf.style.width=((cur+1)/total*100)+'%';ttl.textContent=LABELS[cur];cnt.textContent=String(cur+1).padStart(2,'0')+' / '+total;cnt.setAttribute('aria-label',`현재 슬라이드 ${cur+1} / ${total}`);lab.textContent=LABELS[cur];document.querySelectorAll('.slide').forEach((e,idx)=>{const active=idx===cur;e.setAttribute('aria-hidden',active?'false':'true');e.inert=!active});document.querySelectorAll('.toc-item').forEach((e,idx)=>{const active=idx===cur;e.classList.toggle('on',active);e.setAttribute('aria-current',active?'page':'false')});document.querySelectorAll('.dot').forEach((e,idx)=>{const active=idx===cur;e.classList.toggle('on',active);e.setAttribute('aria-current',active?'true':'false')});document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=cur===total-1;syncMobileToc();syncHistory(cur,historyMode);if(cur===17)loadDemo()}
+function goTo(i,opts){renderSlide(i,opts||{historyMode:'push'})}function next(){if(cur<total-1)goTo(cur+1)}function prev(){if(cur>0)goTo(cur-1)}
+document.querySelectorAll('.toc-item').forEach((item,index)=>{item.setAttribute('role','button');item.setAttribute('tabindex','0');item.setAttribute('aria-label',`${index+1}. ${LABELS[index]}`);item.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();goTo(index)}})});
+for(let i=0;i<total;i++){const b=document.createElement('button');b.type='button';b.className='dot';b.setAttribute('aria-label',`${i+1}번 슬라이드: ${LABELS[i]}`);b.onclick=()=>goTo(i);dots.appendChild(b)}
+(function buildMobileToc(){const topbar=document.querySelector('.topbar');if(!topbar)return;const trigger=document.createElement('button');trigger.type='button';trigger.className='mobile-toc-trigger';trigger.textContent='목차';trigger.setAttribute('aria-label','빠른 목차 열기');trigger.setAttribute('aria-expanded','false');topbar.appendChild(trigger);const overlay=document.createElement('div');overlay.className='mobile-toc-overlay';overlay.setAttribute('aria-hidden','true');overlay.innerHTML='<div class="mobile-toc-sheet" role="dialog" aria-modal="true" aria-label="FootMate 빠른 목차"><div class="mobile-toc-head"><div><strong>FootMate</strong><span>'+total+'장 빠른 이동</span></div><button type="button" class="mobile-toc-close" aria-label="목차 닫기">×</button></div><div class="mobile-toc-list"></div></div>';document.body.appendChild(overlay);overlay.inert=true;const list=overlay.querySelector('.mobile-toc-list');const closeBtn=overlay.querySelector('.mobile-toc-close');let returnFocus=null;function focusCurrentSlide(){const slide=document.querySelector('.slide[aria-hidden="false"]');const heading=slide?.querySelector('h1,h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}else document.getElementById('portfolioMain')?.focus({preventScroll:true})}function closeMobileToc({restoreFocus=true}={}){overlay.classList.remove('open');overlay.inert=true;overlay.setAttribute('aria-hidden','true');trigger.setAttribute('aria-expanded','false');if(restoreFocus)requestAnimationFrame(()=>returnFocus?.isConnected&&returnFocus.focus({preventScroll:true}))}LABELS.forEach((label,index)=>{const b=document.createElement('button');b.type='button';b.className='mobile-toc-item';b.innerHTML='<span class="n">'+String(index+1).padStart(2,'0')+'</span><span class="t"></span>';b.querySelector('.t').textContent=label;b.addEventListener('click',()=>{closeMobileToc({restoreFocus:false});goTo(index);requestAnimationFrame(focusCurrentSlide)});list.appendChild(b)});function openMobileToc(){returnFocus=document.activeElement;overlay.inert=false;overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');trigger.setAttribute('aria-expanded','true');syncMobileToc();const active=overlay.querySelector('[aria-current="page"]')||list.querySelector('button');if(active){active.scrollIntoView({block:'center'});setTimeout(()=>active.focus({preventScroll:true}),240)}else setTimeout(()=>closeBtn.focus({preventScroll:true}),240)}window.closeMobileToc=closeMobileToc;trigger.addEventListener('click',openMobileToc);closeBtn.addEventListener('click',()=>closeMobileToc());overlay.addEventListener('click',e=>{if(e.target===overlay)closeMobileToc()});document.addEventListener('keydown',e=>{if(!overlay.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();closeMobileToc();return}if(e.key==='Tab'){const focusable=[...overlay.querySelectorAll('button:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')];if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}})})();
+(function addSwipeNavigation(){const viewer=document.querySelector('.viewer');if(!viewer)return;const EDGE=24,MIN_X=52,RATIO=1.18,MAX_MS=900;let start=null;const blockedSelector='a,button,input,textarea,select,[contenteditable="true"],iframe,.showcase-device-wrap,.device,.showcase-actions,.comp-scroll,.ops-table-wrap,[data-no-slide-swipe]';viewer.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;if(e.clientX<=EDGE||e.clientX>=window.innerWidth-EDGE)return;if(e.target.closest&&e.target.closest(blockedSelector))return;start={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now(),target:e.target}},{passive:true});viewer.addEventListener('pointerup',e=>{if(!start||e.pointerId!==start.id){start=null;return}const dx=e.clientX-start.x,dy=e.clientY-start.y,dt=performance.now()-start.t;start=null;if(dt>MAX_MS||Math.abs(dx)<MIN_X||Math.abs(dx)<Math.abs(dy)*RATIO)return;if(dx<0)next();else prev()},{passive:true});viewer.addEventListener('pointercancel',()=>{start=null},{passive:true})})();
+function normalizeCoverUrl(i){const raw=(location.hash||'').replace(/^#/,'').toLowerCase();if(i===0&&location.hash==='#cover'){const state={...(history.state||{}),footmateSlide:0};history.replaceState(state,'',historyUrl(0));return}if(raw&&LEGACY_SLUGS[raw]){const state={...(history.state||{}),footmateSlide:i};history.replaceState(state,'',historyUrl(i))}}
+window.addEventListener('popstate',()=>{const target=indexFromLocation();navigatingFromHistory=true;renderSlide(target,{historyMode:'none'});navigatingFromHistory=false;normalizeCoverUrl(target)});window.addEventListener('hashchange',()=>{const target=indexFromLocation();if(target!==cur){navigatingFromHistory=true;renderSlide(target,{historyMode:'none'});navigatingFromHistory=false}normalizeCoverUrl(target)});
+function preserveSlideOnViewportChange(){cancelAnimationFrame(resizeRaf);resizeRaf=requestAnimationFrame(()=>{syncViewportHeight();track.style.transform=`translateX(${-cur*100}%)`})}window.addEventListener('resize',preserveSlideOnViewportChange,{passive:true});window.addEventListener('orientationchange',preserveSlideOnViewportChange,{passive:true});if(window.visualViewport)window.visualViewport.addEventListener('resize',preserveSlideOnViewportChange,{passive:true});
+function toggleOpsState(btn){const done=btn.classList.toggle('done');btn.textContent=done?'확인 완료':'상세 확인';btn.setAttribute('aria-pressed',done?'true':'false')}
+function loadDemo(){const f=document.getElementById('demoFrame');if(!f||f.dataset.loaded==='true'||!f.dataset.src)return;f.src=f.dataset.src;f.dataset.loaded='true'}
+document.addEventListener('keydown',e=>{if(e.defaultPrevented||document.querySelector('.mobile-toc-overlay.open'))return;const tag=e.target&&e.target.tagName;const isInteractive=e.target?.closest?.('[role="button"]')||['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(tag)||(e.target&&e.target.isContentEditable);if(isInteractive)return;if(['ArrowRight',' '].includes(e.key)){e.preventDefault();next()}if(e.key==='ArrowLeft'){e.preventDefault();prev()}});
+syncViewportHeight();const initialIndex=indexFromLocation();renderSlide(initialIndex,{historyMode:'replace'});
+</script>
+</body>
+</html>
