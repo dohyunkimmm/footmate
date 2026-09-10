@@ -61,5 +61,6 @@ window.goScreen=function(id){const r=priorGo(id);if(id==='s-home')restoreHomeCon
 const oldReplay=window.replayFootMateDemo;
 window.replayFootMateDemo=function(){try{localStorage.removeItem(STORE)}catch(e){}return oldReplay?.()};
 const lowCreditSimulation=[...document.querySelectorAll('#s-pay .btn-secondary')].find(btn=>(btn.textContent||'').includes('크레딧 부족 시뮬레이션'));if(lowCreditSimulation)lowCreditSimulation.onclick=()=>window.simulateLowCredit();
+window.FootMateFinalRuntime={state:finalState,persist,renderCredit,cost:COST,storeKey:STORE};
 patchLabels();restoreSecondaryState();restoreHomeControls();renderCredit();renderDeepDataQuality();persist();
 })();
