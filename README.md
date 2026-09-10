@@ -25,7 +25,7 @@
 - 기존 boolean 즐겨찾기·친구 저장값의 ID 기반 상태 migration
 - AI Agent Workflow 및 데이터 품질 상태(`PASS` · `CHECK` · `SAMPLE`)
 - 핵심 퍼널 이벤트의 존재·순서와 결제·참가 연결 키 기반 Data Quality 검사
-- 접근성을 고려한 동적 ARIA 상태 동기화
+- 접근성을 고려한 동적 ARIA 상태 동기화와 대표 화면 axe WCAG 2 A/AA 자동 gate
 - Production Case Study shell의 description · canonical · Open Graph · Twitter Card 메타데이터 제공
 
 ## 🧩 Runtime Structure
@@ -38,14 +38,16 @@
 - `demo-shell.html` — `/demo`에서 원본 HTML을 같은 문서에 로드하고 런타임 자산을 주입
 - `footmate-core.js` — 필터링 · 매칭 점수 · 추천 정렬 · 크레딧 · 데이터 품질의 순수 로직
 - `footmate-patches.js` / `footmate-patches.css` — 추천 · 경기 · ELO 상태 동기화와 UI 회귀 보정
-- `footmate-finalize.js` / `footmate-finalize.css` — 홈 필터 · 크레딧 · ID 기반 확장 persistence · Data Quality 심화 검증 · UI 명칭 보정
+- `footmate-finalize.js` / `footmate-finalize.css` — 홈 필터 · 크레딧 · ID 기반 확장 persistence · Data Quality 심화 검증 · UI/접근성 런타임 보정
 - `footmate-persist-extra.js` — 저장된 사용자 채팅의 안전한 화면 복원
+- `playwright.config.cjs` / `tests/e2e/*` — 실제 Chromium E2E · axe 접근성 gate · Production browser smoke
+- `tests/production-smoke.cjs` — 배포된 Production HTML·런타임 자산 HTTP smoke와 JSON 증거 기록
 
 `/demo`는 원본을 별도 내부 iframe으로 다시 감싸지 않으므로, Case Study에 임베드될 때 iframe 중첩을 한 단계 줄였습니다.
 
 ## 🛠 Tech
 
-HTML · CSS · JavaScript · Node.js Test Runner · GitHub Actions · GitHub · Vercel
+HTML · CSS · JavaScript · Node.js Test Runner · Playwright · axe-core · GitHub Actions · GitHub · Vercel
 
 ## 👤 Role
 
@@ -58,20 +60,40 @@ HTML · CSS · JavaScript · Node.js Test Runner · GitHub Actions · GitHub · 
 
 ## ✅ 검증
 
-Node.js 20 이상에서 별도 패키지 설치 없이 전체 테스트를 실행합니다.
+검증은 **Node 로직/회귀 → 실제 Chromium E2E → 대표 화면 접근성 → Production smoke**의 서로 다른 레이어로 분리합니다.
+
+### Node 회귀 · 36개
 
 ```sh
 node --test tests/*.test.cjs
 ```
 
-현재 테스트는 세 그룹으로 나뉩니다.
-
 - `tests/regression.test.cjs` — 기존 프로토타입 회귀 20개: JavaScript·이벤트 핸들러 문법, Deep Link, 화면 이력, 퀴즈·타이머, 지역·결제·참가 상태, ELO, 한글 IME·키보드 등
 - `tests/runtime-patch.test.cjs` — 런타임 일관성 9개: 실력 단계 값, 현재 ELO carry-forward, 하드 필터, 추천 정렬, Data Quality, 퍼널 이벤트 순서, 상태 연결 키, 홈 필터, 크레딧 증감
 - `tests/quality-hardening.test.cjs` — 품질 보강 회귀 7개: Case Study shell 동기화, 승인 Demo 원본 동기화, Production 메타데이터, 런타임 문법, 저잔액 화면 이동 무부작용, ID 기반 persistence, 이전 저장값 migration
 
-`.github/workflows/qa.yml`에서 `main` 대상 Pull Request와 `main` push마다 동일한 전체 회귀 테스트를 자동 실행합니다.
+### 실제 Chromium E2E + axe
+
+GitHub Actions의 `Browser E2E + axe` job은 Playwright Chromium에서 5개 브라우저 검증을 실행합니다.
+
+- Production-like `/demo` shell과 전체 39개 화면·런타임 부팅
+- 실제 UI를 통한 온보딩 완료
+- 소개 화면 종료 후 Deep Link 복원
+- 저잔액 화면 이동 무부작용·명시적 시뮬레이션·reload persistence
+- `s-splash` · `s-home` · `s-detail` · `s-pay` · `s-profile` 대표 화면의 axe WCAG 2 A/AA `serious`/`critical` 위반 0건
+
+브라우저 `pageerror`, 같은 origin의 HTTP 4xx/5xx, 의미 있는 `console.error`도 실패로 처리합니다. axe 도입 과정에서 확인된 로그인·홈 보조 텍스트·팀 상세 포지션의 색 대비 문제는 승인 원본을 수정하지 않고 `footmate-finalize.css` 런타임 레이어에서 보정했습니다.
+
+### Production Smoke + 증거 Artifact
+
+`main` push에서는 `Regression 36`과 `Browser E2E + axe` 성공 후 **해당 Git SHA의 Vercel status `success`**를 기다린 다음 실제 `https://footmate-black.vercel.app`을 검사합니다.
+
+- `/`, `/demo`, `/demo-source`, `footmate-core.js`, `footmate-finalize.js` HTTP 응답과 핵심 marker
+- Production `/` metadata
+- 실제 Chromium에서 Case Study·Demo 렌더, 39개 화면 런타임 부팅과 홈 화면 이동
+
+브라우저/Production QA는 GitHub Actions Artifact에 Playwright HTML report, 실패 screenshot·trace·error context, Production smoke JSON을 남기며 보존 기간은 14일입니다.
 
 사용자 확인 기준으로 실제 iPhone·Android 핵심 흐름, VoiceOver/TalkBack 발화·포커스·동적 상태 알림, 전체 39개 화면의 브라우저 Console Error 수동 QA에서 문제 없음을 확인했습니다. 자동 테스트·배포 상태와 사용자 수동 QA는 실제 로그인·위치·결제·DB·알림·외부 AI 모델 등 서비스 연동 검증과 구분합니다.
 
-검토 범위와 QA 상태는 [2026-09-10 검토 기록](docs/QA-2026-09-10.md)을 참고하세요.
+최신 검증 설계와 상태는 [2026-09-11 검토 기록](docs/QA-2026-09-11.md)을 참고하세요. 이전 [2026-09-10 기록](docs/QA-2026-09-10.md)은 변경 이력으로 유지합니다.

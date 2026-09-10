@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  statuses: read
 
 concurrency:
   group: footmate-qa-${{ github.ref }}
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   regression:
+    name: Regression 36
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,3 +27,83 @@ jobs:
           node-version: '20'
       - name: Run regression suite
         run: node --test tests/*.test.cjs
+
+  browser-e2e:
+    name: Browser E2E + axe
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser E2E and accessibility gate
+        run: npx playwright test tests/e2e/footmate.spec.cjs
+      - name: Upload browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-e2e-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  production-smoke:
+    name: Production Smoke
+    if: github.event_name == 'push'
+    needs: [regression, browser-e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Wait for Vercel deployment of this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 36); do
+            state="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/status" --jq '[.statuses[] | select(.context=="Vercel")][0].state // ""')"
+            echo "Vercel status: ${state:-pending}"
+            if [ "$state" = "success" ]; then
+              exit 0
+            fi
+            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for the Vercel status for ${GITHUB_SHA}."
+          exit 1
+      - name: Run production HTTP smoke
+        env:
+          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
+        run: node tests/production-smoke.cjs
+      - name: Install production browser dependency
+        run: npm install --no-save @playwright/test@1.55.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run production browser render smoke
+        env:
+          BASE_URL: https://footmate-black.vercel.app
+          PRODUCTION_SMOKE: '1'
+        run: npx playwright test tests/e2e/production.spec.cjs
+      - name: Upload production QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-smoke-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14

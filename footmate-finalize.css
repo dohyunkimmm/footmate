@@ -1,4 +1,13 @@
-/* FootMate final runtime polish · 2026-09-10 */
+/* FootMate final runtime polish · 2026-09-11 */
+:root{
+  --blue:#2866C7;
+  --purple:#5B52E6;
+  --green:#177A58;
+  --orange:#9B4E00;
+  --red:#C83C3B;
+  --txt2:#53627D;
+  --txt3:#59677F;
+}
 .footmate-home-empty{
   margin:8px 0 12px;
   padding:16px;
@@ -10,5 +19,15 @@
   line-height:1.6;
   text-align:center;
 }
+.chip-gray{color:#555B65!important}
+#s-home button[onclick^="switchDay"]:not(.active-day-tab){color:#59677F!important}
+#s-home .active-day-tab{color:#fff!important}
+#home-position-chip{color:#5148CC!important}
+.detail-chips .chip-blue{color:#2866C7!important}
+.detail-chips .chip-green,.prb-text{color:#146B4D!important}
+.field-diagram{background:#0F5F32!important}
+.pos-filled{color:#0F5F32!important}
+#detail-open-position{background:#2F6F4A!important}
 #v3Launcher{min-width:92px;white-space:nowrap}
+#s-splash button[onclick*="startSSO('naver')"]{color:#071D10!important}
 @media(max-width:390px){#v3Launcher{min-width:88px;font-size:11px}}
