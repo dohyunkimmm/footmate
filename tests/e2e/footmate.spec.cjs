@@ -42,12 +42,39 @@ function expectNoRuntimeFailures(failures) {
 test('production-like demo shell boots all 39 screens and runtime layers', async ({ page }) => {
   const failures = await bootDemo(page);
   await expect(page.locator('.screen')).toHaveCount(39);
+  await page.waitForFunction(() => !!window.FootMateProductOps && !!window.FootMateProductCore && !!window.FootMateFinalRuntime);
   const runtime = await page.evaluate(() => ({
     core: !!window.FootMateCore,
+    productCore: !!window.FootMateProductCore,
     finalize: window.__footmateFinalize === true,
-    active: document.querySelector('.screen.active')?.id
+    productHardening: window.__footmateProductHardening === true,
+    productOps: !!window.FootMateProductOps,
+    active: document.querySelector('.screen.active')?.id,
+    operation: window.FootMateProductOps.operation()
   }));
-  expect(runtime).toEqual({ core: true, finalize: true, active: 's-splash' });
+  expect(runtime.core).toBe(true);
+  expect(runtime.productCore).toBe(true);
+  expect(runtime.finalize).toBe(true);
+  expect(runtime.productHardening).toBe(true);
+  expect(runtime.productOps).toBe(true);
+  expect(runtime.active).toBe('s-splash');
+  expect(runtime.operation).toMatchObject({ match: 'open', payment: 'idle', participation: 'available' });
+
+  await page.getByRole('button', { name: /제품 검증/ }).click();
+  const inspector = page.locator('#fmProductInspector');
+  await expect(inspector).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.getByRole('tab', { name: '운영 정책' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('tab', { name: '추천 설명' }).click();
+  await expect(page.locator('[data-fm-panel="recommendation"]')).toContainText('추천 이유');
+  await page.getByRole('tab', { name: /PM/ }).click();
+  await expect(page.locator('[data-fm-panel="pm"]')).toContainText('Event contract');
+  const inspectorAxe = await new AxeBuilder({ page })
+    .include('#fmProductInspector')
+    .withTags(['wcag2a', 'wcag2aa'])
+    .analyze();
+  const inspectorBlocking = inspectorAxe.violations.filter(v => ['serious', 'critical'].includes(v.impact));
+  expect(inspectorBlocking, JSON.stringify(inspectorBlocking, null, 2)).toEqual([]);
+  await page.getByRole('button', { name: /제품 검증 패널 닫기/ }).click();
   expectNoRuntimeFailures(failures);
 });
 
