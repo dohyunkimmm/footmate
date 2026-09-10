@@ -49,7 +49,7 @@ async function main() {
 
   await run('demo-source', '/demo-source', ({ body }) => {
     assert(body.includes('id="s-splash"'), 'demo source splash missing');
-    assert(body.includes('id="s-v3"'), 'demo source service extension screen missing');
+    assert(body.includes('id="s-profile"'), 'demo source profile screen missing');
   });
 
   await run('core-runtime', '/footmate-core.js', ({ body, contentType }) => {
