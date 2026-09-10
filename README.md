@@ -62,7 +62,7 @@ HTML · CSS · JavaScript · Node.js Test Runner · Playwright · axe-core · Gi
 
 검증은 **Node 로직/회귀 → 실제 Chromium E2E → 대표 화면 접근성 → Production smoke**의 서로 다른 레이어로 분리합니다.
 
-최종 Production QA 기준은 커밋 [`15151a5`](https://github.com/dohyunkimmm/footmate/commit/15151a511c36e9ff21a4b499fbaa30656577a072)입니다. 해당 `main` 실행에서 `Regression 36`, `Browser E2E + axe`, `Production Smoke`가 모두 성공했고, Production Smoke 내부의 Vercel SHA 확인 · 실제 Production HTTP 검사 · Production Chromium 렌더 검사 · 증거 Artifact 업로드까지 모두 통과했습니다. `/demo`는 Vercel Production에서 `demo-shell.html`로 정상 라우팅되며, 승인 원본 `demo.html`과 `demo-source.html`은 수정하지 않았습니다.
+Production QA의 첫 완전 통과 기준은 커밋 [`15151a5`](https://github.com/dohyunkimmm/footmate/commit/15151a511c36e9ff21a4b499fbaa30656577a072)입니다. 해당 `main` 실행에서 `Regression 36`, `Browser E2E + axe`, `Production Smoke`가 모두 성공했고, Production Smoke 내부의 Vercel SHA 확인 · 실제 Production HTTP 검사 · Production Chromium 렌더 검사 · 증거 Artifact 업로드까지 모두 통과했습니다. `/demo`는 Vercel Production에서 `demo-shell.html`로 정상 라우팅되며, 승인 원본 `demo.html`과 `demo-source.html`은 수정하지 않았습니다. 이후 문서 동기화 `main` 재검증에서 홈 초록 상태 chip 2개의 4.43:1 색 대비가 axe gate에 포착되어, 테스트 기준을 낮추지 않고 `footmate-finalize.css` 런타임 레이어에서 대비 여유를 추가했습니다.
 
 `main`은 GitHub Ruleset으로 Pull Request를 강제하며 `Regression 36`과 `Browser E2E + axe`를 required status check로 사용합니다. `Production Smoke`는 `main` push 후 해당 SHA의 Vercel 배포를 대상으로 실행합니다.
 
@@ -86,7 +86,7 @@ GitHub Actions의 `Browser E2E + axe` job은 Playwright Chromium에서 5개 브�
 - 저잔액 화면 이동 무부작용·명시적 시뮬레이션·reload persistence
 - `s-splash` · `s-home` · `s-detail` · `s-pay` · `s-profile` 대표 화면의 axe WCAG 2 A/AA `serious`/`critical` 위반 0건
 
-브라우저 `pageerror`, 같은 origin의 HTTP 4xx/5xx, 의미 있는 `console.error`도 실패로 처리합니다. axe 도입 과정에서 확인된 로그인·홈 보조 텍스트·팀 상세 포지션의 색 대비 문제는 승인 원본을 수정하지 않고 `footmate-finalize.css` 런타임 레이어에서 보정했습니다.
+브라우저 `pageerror`, 같은 origin의 HTTP 4xx/5xx, 의미 있는 `console.error`도 실패로 처리합니다. axe 도입과 후속 `main` 재검증에서 확인된 로그인·홈 보조 텍스트·홈 초록 상태 chip·팀 상세 포지션의 색 대비 문제는 승인 원본을 수정하지 않고 `footmate-finalize.css` 런타임 레이어에서 보정했습니다.
 
 ### Production Smoke + 증거 Artifact
 
