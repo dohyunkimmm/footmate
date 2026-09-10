@@ -77,6 +77,23 @@ HTML · CSS · JavaScript · Node.js Test Runner · Playwright · axe-core · Gi
 
 자동 PASS와 사용자 수동 PASS는 서로 다른 검증 근거이며, 실서비스 연동 미구현 영역을 자동 QA 완료로 간주하지 않습니다. 최신 구현 자동 QA·Production 검증 기준은 [`1a450f2`](https://github.com/dohyunkimmm/footmate/commit/1a450f2f9f5b7c0a676ac26de38ada1a25510dab)입니다.
 
+### Evidence Index
+
+| Evidence | 무엇을 증명하는가 | Reference | 보존 |
+| --- | --- | --- | --- |
+| FootMate QA workflow | 최신 PR/`main` 자동 QA 실행 목록 | [GitHub Actions](https://github.com/dohyunkimmm/footmate/actions/workflows/qa.yml) | 지속 |
+| QA snapshot #27 | `c28869b` `main`에서 Regression·Browser·Production 전체 성공 | [Run 34542597864](https://github.com/dohyunkimmm/footmate/actions/runs/34542597864) | 실행 기록 |
+| Regression 36 | Node 회귀 36/36 성공 | [Job](https://github.com/dohyunkimmm/footmate/actions/runs/34542597864/job/103088292981) | 실행 기록 |
+| Browser E2E + axe | Chromium E2E 5개·axe gate·브라우저 증거 업로드 성공 | [Job](https://github.com/dohyunkimmm/footmate/actions/runs/34542597864/job/103088293239) | 실행 기록 |
+| Browser evidence Artifact | Playwright report·실패 시 trace/screenshot 증거 | [browser-e2e-34542597864](https://github.com/dohyunkimmm/footmate/actions/runs/34542597864/artifacts/10177838085) | 2026-09-24까지 |
+| Production Smoke | Vercel SHA 확인·HTTP smoke·Production Chromium·증거 업로드 성공 | [Job](https://github.com/dohyunkimmm/footmate/actions/runs/34542597864/job/103088509810) | 실행 기록 |
+| Production evidence Artifact | `production-smoke.json`·Playwright Production report | [production-smoke-34542597864](https://github.com/dohyunkimmm/footmate/actions/runs/34542597864/artifacts/10177864546) | 2026-09-24까지 |
+| Vercel Production | `c28869b` 배포 status `success`와 실제 Production 배포 | [Deployment](https://vercel.com/dohyunkimm/footmate/3KcpSAeSKHVLzwFccTzftqxeTCP2) · [Live](https://footmate-black.vercel.app/) | 배포 이력 |
+| QA review record | 검증 설계·범위·자동/수동 QA 구분·해결 이력 | [QA-2026-09-11.md](docs/QA-2026-09-11.md) | 지속 |
+| Implementation baseline | 접근성 후속 보정까지 포함한 최신 구현 자동 QA 기준 | [`1a450f2`](https://github.com/dohyunkimmm/footmate/commit/1a450f2f9f5b7c0a676ac26de38ada1a25510dab) | 지속 |
+
+Artifact는 GitHub Actions 보존 정책에 따라 14일 후 만료될 수 있습니다. 장기 추적은 workflow 실행 기록·커밋·QA 검토 기록을 기준으로 합니다. Evidence snapshot은 해당 시점의 불변 검증 기록이며, 최신 실행 상태는 workflow 페이지에서 확인합니다.
+
 Production QA의 첫 완전 통과 기준은 커밋 [`15151a5`](https://github.com/dohyunkimmm/footmate/commit/15151a511c36e9ff21a4b499fbaa30656577a072)입니다. 해당 `main` 실행에서 `Regression 36`, `Browser E2E + axe`, `Production Smoke`가 모두 성공했고, Production Smoke 내부의 Vercel SHA 확인 · 실제 Production HTTP 검사 · Production Chromium 렌더 검사 · 증거 Artifact 업로드까지 모두 통과했습니다. `/demo`는 Vercel Production에서 `demo-shell.html`로 정상 라우팅되며, 승인 원본 `demo.html`과 `demo-source.html`은 수정하지 않았습니다. 이후 문서 동기화 `main` 재검증에서 홈 초록 상태 chip 2개의 4.43:1 색 대비가 axe gate에 포착되어, 테스트 기준을 낮추지 않고 `footmate-finalize.css` 런타임 레이어에서 대비 여유를 추가했습니다.
 
 `main`은 GitHub Ruleset으로 Pull Request를 강제하며 `Regression 36`과 `Browser E2E + axe`를 required status check로 사용합니다. `Production Smoke`는 `main` push 후 해당 SHA의 Vercel 배포를 대상으로 실행합니다.
