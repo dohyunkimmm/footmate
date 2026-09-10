@@ -72,6 +72,6 @@ node --test tests/*.test.cjs
 
 `.github/workflows/qa.yml`에서 `main` 대상 Pull Request와 `main` push마다 동일한 전체 회귀 테스트를 자동 실행합니다.
 
-자동 테스트와 배포 확인은 실제 브라우저 렌더링, 모바일 실기기, VoiceOver/TalkBack 등 접근성 QA를 완전히 대체하지 않습니다.
+사용자 확인 기준으로 실제 iPhone·Android 핵심 흐름, VoiceOver/TalkBack 발화·포커스·동적 상태 알림, 전체 39개 화면의 브라우저 Console Error 수동 QA에서 문제 없음을 확인했습니다. 자동 테스트·배포 상태와 사용자 수동 QA는 실제 로그인·위치·결제·DB·알림·외부 AI 모델 등 서비스 연동 검증과 구분합니다.
 
-검토 범위와 남은 수동 QA는 [2026-09-10 검토 기록](docs/QA-2026-09-10.md)을 참고하세요.
+검토 범위와 QA 상태는 [2026-09-10 검토 기록](docs/QA-2026-09-10.md)을 참고하세요.
