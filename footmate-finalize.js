@@ -5,10 +5,17 @@ const Core=window.FootMateCore;
 if(!Core)return;
 const STORE='footmateFinalStateV3';
 const COST=17000;
-const finalState={creditBalance:20000,paidMatchKeys:[],homeDayIndex:1,homeFilterMode:'all',favorite:false,friendAdded:false,evalStars:0,chatMessages:[]};
+const finalState={creditBalance:20000,paidMatchKeys:[],homeDayIndex:1,homeFilterMode:'all',favoriteMatchKeys:[],friendIds:[],evalStars:0,chatMessages:[]};
 try{Object.assign(finalState,JSON.parse(localStorage.getItem(STORE)||'{}')||{})}catch(e){}
 if(!Array.isArray(finalState.paidMatchKeys))finalState.paidMatchKeys=[];
+if(!Array.isArray(finalState.favoriteMatchKeys))finalState.favoriteMatchKeys=[];
+if(!Array.isArray(finalState.friendIds))finalState.friendIds=[];
 if(!Array.isArray(finalState.chatMessages))finalState.chatMessages=[];
+const legacyFavorite=finalState.favorite===true;
+const legacyFriend=finalState.friendAdded===true;
+if(legacyFavorite){const key=window.selectedMatchKey||selectedMatchKey||'suwon';if(!finalState.favoriteMatchKeys.includes(key))finalState.favoriteMatchKeys.push(key)}
+if(legacyFriend){for(const id of ['kim-minsu','park-jihyun'])if(!finalState.friendIds.includes(id))finalState.friendIds.push(id)}
+delete finalState.favorite;delete finalState.friendAdded;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(finalState))}catch(e){}}
 function won(n){return '₩'+Math.max(0,Number(n)||0).toLocaleString()}
 function rowValue(root,label){if(!root)return null;for(const row of root.querySelectorAll('.pay-row,.profile-menu-item')){const key=row.querySelector('.pay-key,.pmi-txt');if(key&&key.textContent.trim()===label)return row.querySelector('.pay-val,.pmi-val')}return null}
@@ -23,6 +30,7 @@ const oldFilterTab=window.filterTab;
 window.filterTab=function(el){if(typeof oldFilterTab==='function')oldFilterTab(el);const label=(el?.textContent||'').trim();finalState.homeFilterMode=label.includes('모집')?'open':label.includes('ELO')?'elo':label.includes('5km')?'distance':'all';applyHomeFilters()};
 function restoreHomeControls(){document.querySelectorAll('.day-tab').forEach((b,i)=>{const on=i===Number(finalState.homeDayIndex);b.style.background=on?'var(--blue)':'transparent';b.style.color=on?'#fff':'#66738A';b.setAttribute('aria-pressed',on?'true':'false')});document.querySelectorAll('#home-filter-tabs button').forEach(b=>{const t=b.textContent.trim();const mode=t.includes('모집')?'open':t.includes('ELO')?'elo':t.includes('5km')?'distance':'all';const on=mode===finalState.homeFilterMode;b.style.background=on?'var(--blue)':'transparent';b.style.color=on?'#fff':'var(--txt2)';b.style.borderColor=on?'var(--blue)':'var(--border)';b.setAttribute('aria-pressed',on?'true':'false')});applyHomeFilters()}
 function renderCredit(){const pay=document.getElementById('s-pay'),low=document.getElementById('s-pay-low'),charge=document.getElementById('s-charge'),profile=document.getElementById('s-profile');const pv=rowValue(pay,'현재 크레딧 잔액');if(pv)pv.textContent=won(finalState.creditBalance);const direct=pay?.querySelector('.btn-primary');if(direct)direct.textContent=finalState.creditBalance>=COST?`크레딧 ${won(COST)}으로 참가 확정하기`:`크레딧 부족 · ${won(COST-finalState.creditBalance)} 충전 필요`;const lv=rowValue(low,'현재 크레딧');if(lv)lv.textContent=won(finalState.creditBalance);const shortage=rowValue(low,'부족한 금액');if(shortage)shortage.textContent=won(Math.max(0,COST-finalState.creditBalance));if(charge){const balance=[...charge.querySelectorAll('div')].find(x=>x.textContent.trim()==='현재 크레딧 잔액')?.parentElement?.querySelector('div:nth-child(2)');if(balance)balance.textContent=won(finalState.creditBalance);setText('afterBalance',won(finalState.creditBalance+(Number(typeof selectedChargeAmount!=='undefined'?selectedChargeAmount:20000)||20000)))}const prof=rowValue(profile,'크레딧 잔액');if(prof)prof.textContent=won(finalState.creditBalance);setText('chargeDoneRemaining',won(finalState.creditBalance));}
+window.simulateLowCredit=function(){finalState.creditBalance=3000;renderCredit();persist();window.goScreen('s-pay-low')};
 const oldSelectCharge=window.selectCharge;
 window.selectCharge=function(el,amount){const r=oldSelectCharge?.(el,amount);renderCredit();persist();return r};
 const oldRecord=window.recordParticipation;
@@ -37,17 +45,21 @@ const previousDQ=window.renderDataQuality;
 window.renderDataQuality=function(){previousDQ?.();renderDeepDataQuality()};
 const oldStars=window.setStars;
 window.setStars=function(n){const r=oldStars?.(n);finalState.evalStars=Number(n)||0;persist();return r};
+function currentFavoriteKey(){return window.selectedMatchKey||selectedMatchKey||'suwon'}
+function friendId(btn){const card=btn?.parentElement;const text=(card?.textContent||'').replace(/\s+/g,' ');if(text.includes('김민수'))return'kim-minsu';if(text.includes('박지현'))return'park-jihyun';if(text.includes('이준호'))return'lee-junho';return null}
 const oldFavorite=window.toggleFavorite;
-window.toggleFavorite=function(btn){const r=oldFavorite?.(btn);finalState.favorite=btn?.getAttribute('aria-pressed')==='true';persist();return r};
+window.toggleFavorite=function(btn){const key=currentFavoriteKey();const r=oldFavorite?.(btn);const on=btn?.getAttribute('aria-pressed')==='true';finalState.favoriteMatchKeys=finalState.favoriteMatchKeys.filter(x=>x!==key);if(on)finalState.favoriteMatchKeys.push(key);persist();return r};
 const oldFriend=window.addFriend;
-window.addFriend=function(btn){const r=oldFriend?.(btn);finalState.friendAdded=true;persist();return r};
+window.addFriend=function(btn){const id=friendId(btn);const r=oldFriend?.(btn);if(id&&!finalState.friendIds.includes(id))finalState.friendIds.push(id);persist();return r};
 const oldSendChat=window.sendChatMsg;
 window.sendChatMsg=function(){const input=document.getElementById('chatInput');const text=input?.innerText.trim();const r=oldSendChat?.();if(text){finalState.chatMessages.push(text);finalState.chatMessages=finalState.chatMessages.slice(-20);persist()}return r};
-function restoreSecondaryState(){if(finalState.evalStars&&typeof window.setStars==='function')window.setStars(finalState.evalStars);const fav=document.querySelector('#s-detail .detail-fav');if(fav&&finalState.favorite&&fav.getAttribute('aria-pressed')!=='true')oldFavorite?.(fav);if(finalState.friendAdded)document.querySelectorAll('#s-friends button').forEach(btn=>{if((btn.textContent||'').includes('추가'))oldFriend?.(btn)});const wrap=document.getElementById('chat-messages-wrap');if(wrap&&!wrap.querySelector('[data-fm-saved-chat]')){finalState.chatMessages.forEach(text=>{const bubble=document.createElement('div');bubble.dataset.fmSavedChat='true';bubble.style.cssText='display:flex;justify-content:flex-end;';const body=document.createElement('div');body.style.cssText='max-width:78%;background:var(--blue);color:#fff;border-radius:14px 14px 4px 14px;padding:9px 11px;font-size:12px;line-height:1.45;';body.textContent=text;bubble.appendChild(body);wrap.appendChild(bubble)})}}
+function restoreFavoriteState(){const fav=document.querySelector('#s-detail .detail-fav');if(!fav)return;const on=finalState.favoriteMatchKeys.includes(currentFavoriteKey());if((fav.getAttribute('aria-pressed')==='true')!==on)oldFavorite?.(fav)}
+function restoreSecondaryState(){if(finalState.evalStars&&typeof window.setStars==='function')window.setStars(finalState.evalStars);restoreFavoriteState();document.querySelectorAll('#s-friends button[onclick*="addFriend"]').forEach(btn=>{const id=friendId(btn);if(id&&finalState.friendIds.includes(id)&&(btn.textContent||'').includes('추가'))oldFriend?.(btn)});const wrap=document.getElementById('chat-messages-wrap');if(wrap&&!wrap.querySelector('[data-fm-saved-chat]')){finalState.chatMessages.forEach(text=>{const bubble=document.createElement('div');bubble.dataset.fmSavedChat='true';bubble.style.cssText='display:flex;justify-content:flex-end;';const body=document.createElement('div');body.style.cssText='max-width:78%;background:var(--blue);color:#fff;border-radius:14px 14px 4px 14px;padding:9px 11px;font-size:12px;line-height:1.45;';body.textContent=text;bubble.appendChild(body);wrap.appendChild(bubble)})}}
 function patchLabels(){const launcher=document.getElementById('v3Launcher');if(launcher){for(const node of launcher.childNodes){if(node.nodeType===Node.TEXT_NODE){node.nodeValue='매칭 로직 ';break}}launcher.setAttribute('aria-label','매칭 로직, Agent Workflow와 데이터·검증 로그 열기')}try{if(window.parent!==window&&window.parent.location.origin===location.origin){const p=window.parent.document;const ia=p.querySelector('.slide[data-i="8"] h2');if(ia)ia.textContent='서비스 구조를 4개 핵심 탭으로 단순화';const row=p.querySelector('.slide[data-i="8"] .ia-row');const detail=p.querySelector('.slide[data-i="8"] .ia-detail');if(row){row.style.gridTemplateColumns='repeat(4,1fr)';row.innerHTML='<span>홈</span><span>탐색</span><span>일정</span><span>프로필</span>'}if(detail){detail.style.gridTemplateColumns='repeat(4,1fr)';detail.innerHTML='<p>홈: 추천 경기 · 홈 필터</p><p>탐색: 조건 설정 · 추천 결과 · 팀 상세</p><p>일정: 참가 확정 · 경기일 · 알림</p><p>프로필: ELO · 성장 기록 · 설정</p>'}const hint=p.querySelector('.showcase-hint');if(hint)hint.textContent=hint.textContent.replace('AI 로직','매칭 로직')}}catch(e){}}
 const priorGo=window.goScreen;
-window.goScreen=function(id){if(id==='s-pay-low'&&finalState.creditBalance>=COST&&!finalState.paidMatchKeys.includes(selectedMatchKey)){finalState.creditBalance=3000;persist()}const r=priorGo(id);if(id==='s-home')restoreHomeControls();if(['s-pay','s-pay-low','s-charge','s-charge-done','s-profile'].includes(id))renderCredit();if(id==='s-v3'||document.getElementById('v3Inspector')?.getAttribute('aria-hidden')==='false')renderDeepDataQuality();patchLabels();return r};
+window.goScreen=function(id){const r=priorGo(id);if(id==='s-home')restoreHomeControls();if(id==='s-detail')restoreFavoriteState();if(['s-pay','s-pay-low','s-charge','s-charge-done','s-profile'].includes(id))renderCredit();if(id==='s-v3'||document.getElementById('v3Inspector')?.getAttribute('aria-hidden')==='false')renderDeepDataQuality();patchLabels();return r};
 const oldReplay=window.replayFootMateDemo;
 window.replayFootMateDemo=function(){try{localStorage.removeItem(STORE)}catch(e){}return oldReplay?.()};
+const lowCreditSimulation=[...document.querySelectorAll('#s-pay .btn-secondary')].find(btn=>(btn.textContent||'').includes('크레딧 부족 시뮬레이션'));if(lowCreditSimulation)lowCreditSimulation.onclick=()=>window.simulateLowCredit();
 patchLabels();restoreSecondaryState();restoreHomeControls();renderCredit();renderDeepDataQuality();persist();
 })();
