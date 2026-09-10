@@ -27,9 +27,14 @@ test('production shell exposes SEO and social metadata before JavaScript runs', 
 });
 
 test('runtime hardening scripts parse', () => {
-  for (const file of ['footmate-core.js', 'footmate-patches.js', 'footmate-finalize.js', 'footmate-persist-extra.js', 'index-patches.js']) {
+  for (const file of ['footmate-core.js', 'footmate-product-core.js', 'footmate-patches.js', 'footmate-finalize.js', 'footmate-product-hardening.js', 'footmate-persist-extra.js', 'index-patches.js']) {
     assert.doesNotThrow(() => new vm.Script(read(file)), `${file} should parse`);
   }
+  const shell=read('demo-shell.html');
+  assert.ok(shell.includes('/footmate-product-core.js'));
+  assert.ok(shell.includes('/footmate-product-hardening.js'));
+  assert.ok(shell.includes('/footmate-product-hardening.css'));
+  assert.ok(read('index-patches.js').includes('fmDecisionSummary'));
 });
 
 test('opening the low-credit screen does not mutate persisted balance', () => {
@@ -41,6 +46,7 @@ test('opening the low-credit screen does not mutate persisted balance', () => {
   assert.ok(simulation, 'explicit low-credit simulation should exist');
   assert.ok(simulation[0].includes('creditBalance=3000'));
   assert.ok(source.includes("lowCreditSimulation.onclick=()=>window.simulateLowCredit()"));
+  assert.ok(source.includes('window.FootMateFinalRuntime={state:finalState,persist,renderCredit,cost:COST,storeKey:STORE}'));
 });
 
 test('favorite and friend persistence uses entity identifiers', () => {
@@ -52,6 +58,10 @@ test('favorite and friend persistence uses entity identifiers', () => {
   assert.ok(source.includes("return'park-jihyun'"));
   assert.equal(source.includes('favorite:false'), false);
   assert.equal(source.includes('friendAdded:false'), false);
+  const hardening=read('footmate-product-hardening.js');
+  assert.ok(hardening.includes('operationByMatch'));
+  assert.ok(hardening.includes('duplicate_application_blocked'));
+  assert.ok(hardening.includes('refund_complete'));
 });
 
 test('legacy boolean persistence is migrated instead of silently discarded', () => {
