@@ -20,10 +20,11 @@
   text-align:center;
 }
 .chip-gray{color:#555B65!important}
-#s-home button[onclick^="switchDay"]:not(.active){color:#59677F!important}
+#s-home button[onclick^="switchDay"]:not(.active-day-tab){color:#59677F!important}
+#s-home .active-day-tab{color:#fff!important}
 #home-position-chip{color:#5148CC!important}
 .detail-chips .chip-blue{color:#2866C7!important}
-.detail-chips .chip-green,.prb-text{color:#177A58!important}
+.detail-chips .chip-green,.prb-text{color:#146B4D!important}
 .field-diagram{background:#0F5F32!important}
 .pos-filled{color:#0F5F32!important}
 #detail-open-position{background:#2F6F4A!important}
