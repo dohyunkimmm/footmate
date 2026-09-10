@@ -121,6 +121,7 @@ test('low-credit screen navigation is side-effect free and explicit simulation p
 test('representative screens have no serious or critical axe violations', async ({ page }) => {
   const failures = await bootDemo(page);
   const screens = ['s-splash', 's-home', 's-detail', 's-pay', 's-profile'];
+  const accessibilityFailures = [];
 
   for (const id of screens) {
     await page.evaluate(screenId => window.goScreen(screenId), id);
@@ -130,8 +131,16 @@ test('representative screens have no serious or critical axe violations', async 
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze();
     const blocking = results.violations.filter(v => ['serious', 'critical'].includes(v.impact));
-    expect(blocking, `${id}: ${blocking.map(v => `${v.id}(${v.impact})`).join(', ')}`).toEqual([]);
+    for (const violation of blocking) {
+      accessibilityFailures.push({
+        screen: id,
+        id: violation.id,
+        impact: violation.impact,
+        nodes: violation.nodes.map(node => ({ target: node.target, summary: node.failureSummary }))
+      });
+    }
   }
 
+  expect(accessibilityFailures, JSON.stringify(accessibilityFailures, null, 2)).toEqual([]);
   expectNoRuntimeFailures(failures);
 });
