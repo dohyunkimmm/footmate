@@ -62,6 +62,21 @@ HTML · CSS · JavaScript · Node.js Test Runner · Playwright · axe-core · Gi
 
 검증은 **Node 로직/회귀 → 실제 Chromium E2E → 대표 화면 접근성 → Production smoke**의 서로 다른 레이어로 분리합니다.
 
+### Verification Matrix
+
+| 검증 레이어 | 검증 대상 | 방식 | 실행 조건·환경 | 통과 기준 | 증거 | 상태 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Regression | 로직·상태·회귀 36개 | Node Test Runner 자동 | PR / `main` | 36/36 성공 | GitHub Actions `Regression 36` | **PASS** |
+| Browser E2E | 핵심 사용자 흐름 5개·39화면 런타임 | Playwright Chromium 자동 | PR / `main` | 5/5 성공 + pageerror·same-origin 4xx/5xx·의미 있는 console error 0 | `browser-e2e-*` Artifact | **PASS** |
+| Accessibility | `s-splash`·`s-home`·`s-detail`·`s-pay`·`s-profile` | axe WCAG 2 A/AA 자동 | PR / `main` | serious/critical 0 | Browser E2E report·Artifact | **PASS** |
+| Production HTTP | `/`·`/demo`·`/demo-source`·핵심 runtime 자산·metadata | Node `fetch` smoke 자동 | `main` + 해당 SHA Vercel success 후 | HTTP·content-type·핵심 marker 전부 성공 | `production-smoke.json` | **PASS** |
+| Production Browser | 실제 Case Study·Demo 렌더·39화면 부팅 | Playwright Chromium 자동 | `main` Production 배포 후 | 렌더·런타임·홈 이동 성공 + browser/network error 0 | `production-smoke-*` Artifact | **PASS** |
+| Mobile Device | iPhone·Android 핵심 흐름 | 사용자 수동 QA | 실제 모바일 기기 | 핵심 흐름 문제 없음 | 사용자 확인 기록 | **PASS · 사용자 확인** |
+| Screen Reader | VoiceOver·TalkBack 발화·포커스·동적 상태 | 사용자 수동 QA | 실제 모바일 기기 | 발화·포커스·동적 알림 문제 없음 | 사용자 확인 기록 | **PASS · 사용자 확인** |
+| Real Service Integration | 로그인·위치·결제·DB·알림·외부 AI 모델 | 미구현 / 향후 검증 | 실제 서비스 연동 후 | 서버·외부 서비스 기준 E2E | — | **N/A · 현재 범위 밖** |
+
+자동 PASS와 사용자 수동 PASS는 서로 다른 검증 근거이며, 실서비스 연동 미구현 영역을 자동 QA 완료로 간주하지 않습니다. 최신 구현 자동 QA·Production 검증 기준은 [`1a450f2`](https://github.com/dohyunkimmm/footmate/commit/1a450f2f9f5b7c0a676ac26de38ada1a25510dab)입니다.
+
 Production QA의 첫 완전 통과 기준은 커밋 [`15151a5`](https://github.com/dohyunkimmm/footmate/commit/15151a511c36e9ff21a4b499fbaa30656577a072)입니다. 해당 `main` 실행에서 `Regression 36`, `Browser E2E + axe`, `Production Smoke`가 모두 성공했고, Production Smoke 내부의 Vercel SHA 확인 · 실제 Production HTTP 검사 · Production Chromium 렌더 검사 · 증거 Artifact 업로드까지 모두 통과했습니다. `/demo`는 Vercel Production에서 `demo-shell.html`로 정상 라우팅되며, 승인 원본 `demo.html`과 `demo-source.html`은 수정하지 않았습니다. 이후 문서 동기화 `main` 재검증에서 홈 초록 상태 chip 2개의 4.43:1 색 대비가 axe gate에 포착되어, 테스트 기준을 낮추지 않고 `footmate-finalize.css` 런타임 레이어에서 대비 여유를 추가했습니다.
 
 `main`은 GitHub Ruleset으로 Pull Request를 강제하며 `Regression 36`과 `Browser E2E + axe`를 required status check로 사용합니다. `Production Smoke`는 `main` push 후 해당 SHA의 Vercel 배포를 대상으로 실행합니다.
