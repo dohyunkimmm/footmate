@@ -20,6 +20,8 @@
   text-align:center;
 }
 .chip-gray{color:#555B65!important}
+.field-diagram{background:#0F5F32!important}
+.pos-filled{color:#0F5F32!important}
 #v3Launcher{min-width:92px;white-space:nowrap}
 #s-splash button[onclick*="startSSO('naver')"]{color:#071D10!important}
 @media(max-width:390px){#v3Launcher{min-width:88px;font-size:11px}}
