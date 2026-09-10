@@ -1,0 +1,44 @@
+/* FootMate product hardening · operations / recommendation / PM evidence */
+.fm-product-launcher{
+  position:fixed;right:16px;bottom:72px;z-index:96;display:inline-flex;align-items:center;gap:7px;
+  min-height:38px;padding:9px 12px;border:1px solid rgba(26,45,110,.18);border-radius:999px;
+  background:#fff;color:#24314B;font:800 11px/1.2 -apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;
+  box-shadow:0 10px 30px rgba(24,39,75,.18);cursor:pointer
+}
+.fm-product-launcher span{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#E7F0FF;color:#1F5EBB;font-size:10px}
+.fm-product-launcher:hover{transform:translateY(-1px)}
+.fm-product-launcher:focus-visible,.fm-product-inspector button:focus-visible{outline:3px solid #2F6FD3;outline-offset:2px}
+.fm-product-inspector{position:fixed;inset:0;z-index:150;display:flex;justify-content:flex-end;align-items:stretch;background:rgba(10,18,35,.46);backdrop-filter:blur(4px)}
+.fm-product-inspector[aria-hidden="true"]{display:none}
+.fm-inspector-card{width:min(520px,100vw);height:100%;overflow:auto;background:#F7F9FC;color:#1E293B;box-shadow:-18px 0 54px rgba(15,23,42,.22);padding:18px 18px 24px}
+.fm-inspector-card>header{position:sticky;top:-18px;z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:-18px -18px 0;padding:18px;background:rgba(247,249,252,.96);border-bottom:1px solid #DCE3EF;backdrop-filter:blur(12px)}
+.fm-inspector-card>header small,.fm-section-head small{display:block;margin-bottom:5px;color:#50627D;font:900 9px/1.2 Inter,-apple-system,sans-serif;letter-spacing:.13em}
+.fm-inspector-card>header h2{margin:0;color:#15233A;font-size:19px;line-height:1.28;letter-spacing:-.03em}
+.fm-close{flex:0 0 auto;width:36px;height:36px;border:1px solid #D5DEEA;border-radius:50%;background:#fff;color:#40516D;font-size:24px;line-height:1;cursor:pointer}
+.fm-tabs{position:sticky;top:73px;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 -2px 16px;padding:10px 2px;background:rgba(247,249,252,.94);backdrop-filter:blur(10px)}
+.fm-tabs button{min-height:38px;border:1px solid #D7E0EC;border-radius:10px;background:#fff;color:#596A84;font-size:11px;font-weight:800;cursor:pointer}
+.fm-tabs button[aria-selected="true"]{border-color:#2D68C4;background:#EDF4FF;color:#1F56A7}
+.fm-panel{padding:2px}
+.fm-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.fm-section-head h3{margin:0;color:#15233A;font-size:18px;line-height:1.35;letter-spacing:-.03em}
+.fm-scope-badge{flex:0 0 auto;padding:6px 9px;border:1px solid #C9D5E5;border-radius:999px;background:#fff;color:#596A84;font-size:9px;font-weight:900;white-space:nowrap}
+.fm-scope-badge.pass{border-color:#B5DCCF;background:#EFFAF5;color:#12654A}.fm-scope-badge.check{border-color:#E7CBAE;background:#FFF7EF;color:#8A4A12}
+.fm-status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.fm-status-card{padding:12px;border:1px solid #DDE5EF;border-radius:12px;background:#fff}
+.fm-status-card span,.fm-status-card small{display:block;color:#6B7A90;font-size:9px}.fm-status-card strong{display:block;margin:5px 0 3px;color:#17263D;font-size:13px}.fm-status-card small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.fm-policy-note{margin:10px 0 12px;padding:11px 12px;border:1px solid #D8E4F1;border-radius:12px;background:#F2F7FD;color:#4F6077;font-size:10.5px;line-height:1.55}.fm-policy-note b{color:#1E4E8F}
+.fm-actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.fm-action{min-height:38px;padding:9px 10px;border:1px solid #CED9E8;border-radius:10px;background:#fff;color:#33445E;font-size:10px;font-weight:850;cursor:pointer}.fm-action:hover:not(:disabled){background:#F0F5FB}.fm-action:disabled{opacity:.42;cursor:not-allowed}.fm-action.danger{border-color:#E8C8C8;background:#FFF8F8;color:#9B3434}
+.fm-history{margin-top:14px;padding-top:12px;border-top:1px solid #DDE4EE}.fm-subhead{display:flex;justify-content:space-between;margin-bottom:7px;color:#4B5D76;font-size:10px}.fm-history>div:not(.fm-subhead){display:grid;grid-template-columns:88px 1fr;gap:8px;padding:7px 0;border-bottom:1px dashed #DDE4EE;font-size:10px}.fm-history code{color:#5A6F8F}.fm-history p{color:#75859B;font-size:10px}
+.fm-reason-summary,.fm-exclusions,.fm-compare{padding:12px;border:1px solid #DDE5EF;border-radius:12px;background:#fff}.fm-reason-summary b,.fm-exclusions>b,.fm-compare b{color:#1C2B42;font-size:11px}.fm-reason-summary p,.fm-exclusions p{margin:6px 0 0;color:#5B6C83;font-size:10.5px;line-height:1.55}
+.fm-factor-list{display:grid;gap:8px;margin:10px 0}.fm-factor{padding:10px 11px;border:1px solid #E0E7F0;border-radius:11px;background:#fff}.fm-factor>div:first-child{display:flex;justify-content:space-between;gap:8px}.fm-factor b{color:#24344D;font-size:10.5px}.fm-factor span,.fm-factor small{color:#687A92;font-size:9.5px}.fm-factor-track{height:5px;margin:7px 0 5px;border-radius:999px;background:#E7ECF3;overflow:hidden}.fm-factor-track i{display:block;height:100%;border-radius:inherit;background:#3E74C7}
+.fm-exclusions ul{margin:7px 0 0 18px;padding:0;color:#566A83;font-size:10px;line-height:1.55}.fm-compare{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}.fm-compare>div{min-width:0}.fm-compare span{display:block;margin-top:4px;color:#687A92;font-size:9.5px;line-height:1.45}.fm-compare .fm-action{flex:0 0 142px}
+.fm-delta-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.fm-delta-grid span{padding:6px 8px;border-radius:999px;background:#EEF3F9;color:#5A6C84;font-size:9px}.fm-delta-grid b{color:#235CA9}
+.fm-kpi-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.fm-kpi-summary div{padding:12px;border:1px solid #DDE5EF;border-radius:12px;background:#fff}.fm-kpi-summary b{display:block;color:#17335B;font-size:20px}.fm-kpi-summary span{display:block;margin-top:4px;color:#6C7D93;font-size:9px;line-height:1.35}
+.fm-funnel{display:grid;grid-template-columns:1fr;gap:6px}.fm-funnel>div{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:9px 10px;border:1px solid #E0E7F0;border-radius:10px;background:#fff}.fm-funnel>div>span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#EEF2F7;color:#667991;font-size:9px;font-weight:900}.fm-funnel b{color:#394A63;font:750 9.5px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace}.fm-funnel small{color:#8997A8;font-size:9px}.fm-funnel .done{border-color:#C9E1D8;background:#F5FBF8}.fm-funnel .done>span{background:#DDF3EA;color:#14684C}.fm-funnel .done small{color:#34705E}
+.fm-kpi-table{margin-top:10px;border:1px solid #DDE5EF;border-radius:12px;background:#fff;overflow:hidden}.fm-kpi-table>div{display:grid;grid-template-columns:1fr 1.7fr 56px;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid #E5EAF1;font-size:9.5px}.fm-kpi-table>div:last-child{border-bottom:0}.fm-kpi-table .head{background:#F1F5FA;color:#65758B;font-size:9px}.fm-kpi-table code{color:#526985;white-space:normal;overflow-wrap:anywhere}.fm-kpi-table strong{color:#1E568F;text-align:right}
+.fm-footnote{margin:10px 2px 0;color:#6F8095;font-size:9.5px;line-height:1.55}.fm-empty{padding:18px;border:1px dashed #CBD6E4;border-radius:12px;color:#6B7B90;font-size:11px}.fm-inspector-card>footer{margin-top:18px;padding-top:12px;border-top:1px solid #DDE4EE;color:#74849A;font-size:9.5px;line-height:1.5}
+.fm-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:560px){.fm-product-launcher{right:12px;bottom:68px}.fm-inspector-card{padding-left:14px;padding-right:14px}.fm-inspector-card>header{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.fm-status-grid,.fm-kpi-summary{grid-template-columns:1fr}.fm-actions-grid{grid-template-columns:1fr 1fr}.fm-compare{align-items:stretch;flex-direction:column}.fm-compare .fm-action{flex:auto}.fm-kpi-table>div{grid-template-columns:1fr 1.25fr 48px}}
+@media(max-width:380px){.fm-actions-grid{grid-template-columns:1fr}.fm-tabs button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.fm-product-launcher,.fm-product-inspector,.fm-inspector-card,.fm-product-inspector *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.fm-product-launcher:hover{transform:none}}
