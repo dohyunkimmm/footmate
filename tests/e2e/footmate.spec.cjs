@@ -17,12 +17,20 @@ function attachFailureWatch(page) {
   return failures;
 }
 
+async function waitForRuntime(page) {
+  await page.waitForFunction(() => typeof window.goScreen === 'function' && document.querySelectorAll('.screen').length === 39);
+}
+
+async function dismissOnboarding(page) {
+  const onboarding = page.locator('#demoOnboarding');
+  if (await onboarding.isVisible()) await page.locator('.demo-onboarding-start').click();
+}
+
 async function bootDemo(page, target = '/demo') {
   const failures = attachFailureWatch(page);
   await page.goto(target, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => typeof window.goScreen === 'function' && document.querySelectorAll('.screen').length === 39);
-  const onboarding = page.locator('#demoOnboarding');
-  if (await onboarding.isVisible()) await page.locator('.demo-onboarding-start').click();
+  await waitForRuntime(page);
+  await dismissOnboarding(page);
   await expect(page.locator('#s-splash')).toHaveClass(/active/);
   return failures;
 }
@@ -66,27 +74,30 @@ test('onboarding can be completed through visible controls', async ({ page }) =>
   expectNoRuntimeFailures(failures);
 });
 
-test('deep links restore the requested screen in a real browser', async ({ page }) => {
+test('deep links restore the requested screen after the demo intro', async ({ page }) => {
   const failures = attachFailureWatch(page);
   await page.goto('/demo#profile', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => document.querySelector('.screen.active')?.id === 's-profile');
+  await waitForRuntime(page);
   await expect(page).toHaveURL(/#profile$/);
+  await dismissOnboarding(page);
   await expect(page.locator('#s-profile')).toHaveClass(/active/);
   expectNoRuntimeFailures(failures);
 });
 
 test('low-credit screen navigation is side-effect free and explicit simulation persists', async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem('footmateFinalStateV3', JSON.stringify({
-      creditBalance: 20000,
-      paidMatchKeys: [],
-      homeDayIndex: 1,
-      homeFilterMode: 'all',
-      favoriteMatchKeys: [],
-      friendIds: [],
-      evalStars: 0,
-      chatMessages: []
-    }));
+    if (!localStorage.getItem('footmateFinalStateV3')) {
+      localStorage.setItem('footmateFinalStateV3', JSON.stringify({
+        creditBalance: 20000,
+        paidMatchKeys: [],
+        homeDayIndex: 1,
+        homeFilterMode: 'all',
+        favoriteMatchKeys: [],
+        friendIds: [],
+        evalStars: 0,
+        chatMessages: []
+      }));
+    }
   });
   const failures = await bootDemo(page);
 
@@ -101,7 +112,7 @@ test('low-credit screen navigation is side-effect free and explicit simulation p
   expect(state.creditBalance).toBe(3000);
 
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => typeof window.goScreen === 'function');
+  await waitForRuntime(page);
   state = await page.evaluate(() => JSON.parse(localStorage.getItem('footmateFinalStateV3')));
   expect(state.creditBalance).toBe(3000);
   expectNoRuntimeFailures(failures);
