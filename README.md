@@ -62,6 +62,10 @@ HTML · CSS · JavaScript · Node.js Test Runner · Playwright · axe-core · Gi
 
 검증은 **Node 로직/회귀 → 실제 Chromium E2E → 대표 화면 접근성 → Production smoke**의 서로 다른 레이어로 분리합니다.
 
+최종 Production QA 기준은 커밋 [`15151a5`](https://github.com/dohyunkimmm/footmate/commit/15151a511c36e9ff21a4b499fbaa30656577a072)입니다. 해당 `main` 실행에서 `Regression 36`, `Browser E2E + axe`, `Production Smoke`가 모두 성공했고, Production Smoke 내부의 Vercel SHA 확인 · 실제 Production HTTP 검사 · Production Chromium 렌더 검사 · 증거 Artifact 업로드까지 모두 통과했습니다. `/demo`는 Vercel Production에서 `demo-shell.html`로 정상 라우팅되며, 승인 원본 `demo.html`과 `demo-source.html`은 수정하지 않았습니다.
+
+`main`은 GitHub Ruleset으로 Pull Request를 강제하며 `Regression 36`과 `Browser E2E + axe`를 required status check로 사용합니다. `Production Smoke`는 `main` push 후 해당 SHA의 Vercel 배포를 대상으로 실행합니다.
+
 ### Node 회귀 · 36개
 
 ```sh
