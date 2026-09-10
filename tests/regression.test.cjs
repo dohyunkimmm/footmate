@@ -59,7 +59,7 @@ function harness() {
 }
 
 test('all inline scripts and event handlers parse',()=>{
-  for(const file of ['demo.html','index.html']){
+  for(const file of ['demo.html','index-source.html','index.html']){
     const source=fs.readFileSync(path.join(root,file),'utf8');
     for(const [,js] of source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)) new vm.Script(js);
     for(const [,js] of source.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g,'').matchAll(/\bon\w+="([^"]*)"/g)) new Function('event',js.replaceAll('&amp;','&').replaceAll('&quot;','"').replaceAll('&#39;',"'"));
@@ -180,7 +180,7 @@ test('onboarding Tab loops within its visible action',()=>{
 });
 
 test('case study keyboard shortcut does not override a TOC action or an open dialog',()=>{
-  const source=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const source=fs.readFileSync(path.join(root,'index-source.html'),'utf8');
   const keyScript=source.slice(source.lastIndexOf("document.addEventListener('keydown',e=>"),source.indexOf('\nsyncViewportHeight();const initialIndex'));
   let handler,moves=0,open=false;const ctx=vm.createContext({document:{addEventListener:(_,fn)=>handler=fn,querySelector:()=>open?{}:null},next:()=>moves++,prev:()=>moves--});
   vm.runInContext(keyScript,ctx);
