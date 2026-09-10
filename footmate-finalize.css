@@ -22,6 +22,7 @@
 .chip-gray{color:#555B65!important}
 #s-home button[onclick^="switchDay"]:not(.active-day-tab){color:#59677F!important}
 #s-home .active-day-tab{color:#fff!important}
+#s-home .chip-green{color:#146B4D!important}
 #home-position-chip{color:#5148CC!important}
 .detail-chips .chip-blue{color:#2866C7!important}
 .detail-chips .chip-green,.prb-text{color:#146B4D!important}
