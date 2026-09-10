@@ -1,4 +1,4 @@
-/* FootMate final runtime polish · 2026-09-10 */
+/* FootMate final runtime polish · 2026-09-11 */
 .footmate-home-empty{
   margin:8px 0 12px;
   padding:16px;
@@ -11,4 +11,5 @@
   text-align:center;
 }
 #v3Launcher{min-width:92px;white-space:nowrap}
+#s-splash button[onclick*="startSSO('naver')"]{color:#071D10!important}
 @media(max-width:390px){#v3Launcher{min-width:88px;font-size:11px}}
