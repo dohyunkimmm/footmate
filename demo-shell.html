@@ -19,8 +19,8 @@ html,body{width:100%;height:100%;margin:0;background:#e8ecf5;font-family:-apple-
     const response=await fetch('/demo-source'+location.search,{cache:'no-store'});
     if(!response.ok)throw new Error('demo source '+response.status);
     let html=await response.text();
-    const styles='<link rel="stylesheet" href="/footmate-patches.css?v=20260910-2"><link rel="stylesheet" href="/footmate-finalize.css?v=20260910-2">';
-    const scripts='<script src="/footmate-core.js?v=20260910-2"><\/script><script src="/footmate-patches.js?v=20260910-2"><\/script><script src="/footmate-finalize.js?v=20260910-2"><\/script><script src="/footmate-persist-extra.js?v=20260910-2"><\/script>';
+    const styles='<link rel="stylesheet" href="/footmate-patches.css?v=20260911-1"><link rel="stylesheet" href="/footmate-finalize.css?v=20260911-1"><link rel="stylesheet" href="/footmate-product-hardening.css?v=20260911-1">';
+    const scripts='<script src="/footmate-core.js?v=20260911-1"><\/script><script src="/footmate-product-core.js?v=20260911-1"><\/script><script src="/footmate-patches.js?v=20260911-1"><\/script><script src="/footmate-finalize.js?v=20260911-1"><\/script><script src="/footmate-product-hardening.js?v=20260911-1"><\/script><script src="/footmate-persist-extra.js?v=20260911-1"><\/script>';
     html=html.includes('</head>')?html.replace('</head>',styles+'</head>'):styles+html;
     html=html.includes('</body>')?html.replace('</body>',scripts+'</body>'):html+scripts;
     document.open();

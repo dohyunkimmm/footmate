@@ -45,6 +45,8 @@ async function main() {
     assert(contentType.includes('text/html'), '/demo must return HTML');
     assert(body.includes('FootMate | 인터랙티브 프로토타입'), '/demo shell title missing');
     assert(body.includes("fetch('/demo-source'"), '/demo shell source loader missing');
+    assert(body.includes('footmate-product-core.js'), '/demo product policy core loader missing');
+    assert(body.includes('footmate-product-hardening.js'), '/demo product hardening loader missing');
   });
 
   await run('demo-source', '/demo-source', ({ body }) => {
@@ -57,10 +59,25 @@ async function main() {
     assert(body.includes('FootMateCore'), 'FootMateCore marker missing');
   });
 
+  await run('product-core-runtime', '/footmate-product-core.js', ({ body, contentType }) => {
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product core content type unexpected');
+    assert(body.includes('FootMateProductCore'), 'FootMateProductCore marker missing');
+    assert(body.includes('transitionState'), 'product state machine marker missing');
+    assert(body.includes('explainMatch'), 'recommendation explanation marker missing');
+  });
+
   await run('final-runtime', '/footmate-finalize.js', ({ body, contentType }) => {
     assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'final runtime content type unexpected');
     assert(body.includes('simulateLowCredit'), 'final runtime hardening marker missing');
     assert(body.includes('favoriteMatchKeys'), 'entity persistence marker missing');
+    assert(body.includes('FootMateFinalRuntime'), 'final runtime state accessor missing');
+  });
+
+  await run('product-hardening-runtime', '/footmate-product-hardening.js', ({ body, contentType }) => {
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product hardening content type unexpected');
+    assert(body.includes('FootMateProductOps'), 'product operation API missing');
+    assert(body.includes('duplicate_application_blocked'), 'duplicate application guard marker missing');
+    assert(body.includes('recommendation_baseline_saved'), 'recommendation comparison marker missing');
   });
 
   fs.mkdirSync(reportDir, { recursive: true });
