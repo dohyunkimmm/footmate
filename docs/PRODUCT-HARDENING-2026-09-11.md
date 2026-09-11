@@ -45,6 +45,14 @@
 - Production HTTP smoke는 product core/hardening asset과 loader를 확인한다.
 - Production Chromium smoke는 실제 Case Study 의사결정 요약과 Demo `제품 검증` runtime을 확인한다.
 
+## 검증 결과
+
+- PR #10 첫 브라우저 실행에서 새 PM 패널 보조 텍스트 4종의 명암비가 2.97–4.29:1로 WCAG AA 4.5:1에 미달했다. axe 기준을 완화하거나 예외 처리하지 않고 runtime CSS 텍스트 색을 더 진하게 보정했다.
+- 수정 후 PR required checks `Regression 36`, `Browser E2E + axe`가 모두 성공했다.
+- merge SHA [`a6cb6fe`](https://github.com/dohyunkimmm/footmate/commit/a6cb6fed24fb9d8394515596dbbaa15f7127b3cc)의 `main` run #32에서 `Regression 36`, `Browser E2E + axe`, `Production Smoke`가 모두 성공했다.
+- Production Smoke 내부의 Vercel current-SHA 확인, 확장 HTTP asset 검사, Production Chromium 렌더, Artifact 업로드가 모두 성공했고 Vercel 배포 status도 `success`였다.
+- 승인 원본 `demo.html` / `demo-source.html`은 변경하지 않았다.
+
 ## 범위 밖
 
 실제 결제사, DB, 실시간 알림, 외부 AI 모델, 운영자 백엔드는 연결하지 않는다. 이번 상태 전이와 KPI 값은 기획 검증용 runtime simulation이며 실제 운영 데이터로 오인하지 않는다.
