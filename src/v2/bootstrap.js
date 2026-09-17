@@ -1,6 +1,8 @@
 import{createStorage}from'./core/storage.js';
 import{getActiveScreenId}from'./core/screen-observer.js';
 import{resolveMode,applyMode}from'./core/mode.js';
+import{createMatchEngine}from'./domain/matching-engine.js';
+import{createEloEngine}from'./domain/elo-engine.js';
 import{createProductStore}from'./state/product-store.js';
 import{createScenarioStore}from'./state/scenario-store.js';
 import{createHomeController}from'./ui/home-controller.js';
@@ -10,7 +12,7 @@ import{createSecondaryController}from'./ui/secondary-controller.js';
 import{installScreenEffects}from'./ui/screen-effects.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
-const VERSION='2.0.0';
+const VERSION='2.1.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -55,8 +57,11 @@ async function boot(){
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
+  const matchEngine=createMatchEngine(window.FootMateCore);
+  const eloEngine=createEloEngine();
+  window.FootMateScenarioAdapter.attachDomainEngines?.({match:matchEngine,elo:eloEngine});
   const productStore=createProductStore(finalRuntime);
-  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter);
+  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine});
   const home=createHomeController({productStore,scenarioStore});
   const filterResults=createFilterResultsController({scenarioStore});
   const payment=createPaymentController({productStore,scenarioStore,finalRuntime});
@@ -115,14 +120,16 @@ async function boot(){
     state,
     productStore,
     scenarioStore,
+    domain:{matchEngine,eloEngine},
     controllers:{home,filterResults,payment,secondary},
     storageKey:uiStorage.key,
-    architecture:'native-es-modules',
+    architecture:'v2.1-domain-modular-es-runtime',
     navigationWrapped:false,
     legacyLayers:{
       finalize:'state-bridge-only',
       patchNavigationWrapped:false,
-      productHardeningNavigationWrapped:false
+      productHardeningNavigationWrapped:false,
+      scenarioAdapter:window.FootMateScenarioAdapter.architecture
     },
     refresh(){
       validation.refresh();
@@ -138,10 +145,21 @@ async function boot(){
     }
   };
 
+  window.FootMateV21={
+    version:VERSION,
+    matchEngine,
+    eloEngine,
+    scenarioStore,
+    architecture:'domain-engine-extraction'
+  };
+
   window.dispatchEvent(new CustomEvent('footmate:v2:ready',{
     detail:{version:VERSION,mode:state.mode}
   }));
-  console.info('[FootMate] v2 Product Experience ready',VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2.1:ready',{
+    detail:{version:VERSION,mode:state.mode}
+  }));
+  console.info('[FootMate] v2.1 Domain Engine ready',VERSION,state.mode);
 }
 
 boot().catch(error=>{
