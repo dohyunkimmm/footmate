@@ -228,6 +228,6 @@ function installUi(){
   wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeInspector();return}if(event.key==='ArrowRight'||event.key==='ArrowLeft'){const tabs=[...wrap.querySelectorAll('[data-fm-tab]')],current=tabs.findIndex(x=>x.getAttribute('aria-selected')==='true');if(current>=0){event.preventDefault();const next=(current+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;setTab(tabs[next].dataset.fmTab);tabs[next].focus()}}});
 }
 installUi();operation();persist();
-window.FootMateProductOps={operation,transition,simulatePaymentFailure,retryPayment,joinWaitlist,promoteWaitlist,acceptWaitlistOffer,cancelParticipation,markNoShow,checkIn,completeMatch,cancelMatch,resetOperation,openInspector,closeInspector,renderInspector,saveRecommendationBaseline:saveBaseline,combinedEvents,architecture:'v2.1-domain-aware-state-machine-adapter'};
+window.FootMateProductOps={operation,transition,simulatePaymentFailure,retryPayment,joinWaitlist,promoteWaitlist,acceptWaitlistOffer,cancelParticipation,markNoShow,checkIn,completeMatch,cancelMatch,resetOperation,openInspector,closeInspector,renderInspector,saveRecommendationBaseline:saveBaseline,combinedEvents,currentMatchKey,currentScenario,recommendationSource:()=>window.FootMateV21?'v2.1-domain-store':'legacy-compatibility',architecture:'v2.1-domain-aware-state-machine-adapter'};
 console.info('[FootMate] v2.1 product policy adapter ready');
 })();
