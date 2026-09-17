@@ -7,7 +7,7 @@ const reportFile = path.join(reportDir, 'production-smoke.json');
 
 async function fetchText(route) {
   const url = base + route;
-  const response = await fetch(url, { redirect: 'follow', headers: { 'user-agent': 'FootMate-QA/1.0' } });
+  const response = await fetch(url, { redirect: 'follow', headers: { 'user-agent': 'FootMate-QA/1.1' } });
   const body = await response.text();
   return { url: response.url, status: response.status, contentType: response.headers.get('content-type') || '', body };
 }
@@ -37,7 +37,9 @@ async function main() {
       '<link rel="canonical" href="https://footmate-black.vercel.app/">',
       '<meta property="og:title"',
       '<meta property="og:image"',
-      '<meta name="twitter:card" content="summary_large_image">'
+      '<meta name="twitter:card" content="summary_large_image">',
+      'case-study-experience-v11.css',
+      'index-patches.js?v=20260917-1'
     ]) assert(body.includes(marker), `/ missing ${marker}`);
   });
 
@@ -47,11 +49,26 @@ async function main() {
     assert(body.includes("fetch('/demo-source'"), '/demo shell source loader missing');
     assert(body.includes('footmate-product-core.js'), '/demo product policy core loader missing');
     assert(body.includes('footmate-product-hardening.js'), '/demo product hardening loader missing');
+    assert(body.includes('footmate-experience-v11.css'), '/demo v1.1 experience layer missing');
   });
 
   await run('demo-source', '/demo-source', ({ body }) => {
     assert(body.includes('id="s-splash"'), 'demo source splash missing');
     assert(body.includes('id="s-profile"'), 'demo source profile screen missing');
+  });
+
+  await run('experience-css', '/footmate-experience-v11.css', ({ body, contentType }) => {
+    assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v1.1 experience CSS content type unexpected');
+    assert(body.includes('--fm-brand:#2F6FD3'), 'v1.1 brand token missing');
+    assert(body.includes('--fm-radius-lg:18px'), 'v1.1 radius token missing');
+    assert(body.includes('#s-home .pcnt'), 'v1.1 home polish marker missing');
+    assert(body.includes('#s-profile .pcnt'), 'v1.1 profile polish marker missing');
+  });
+
+  await run('case-study-experience-css', '/case-study-experience-v11.css', ({ body, contentType }) => {
+    assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'case study v1.1 CSS content type unexpected');
+    assert(body.includes('.fm-v11-release'), 'case study release marker missing');
+    assert(body.includes('.fm-v11-grid'), 'case study experience scope grid missing');
   });
 
   await run('core-runtime', '/footmate-core.js', ({ body, contentType }) => {
