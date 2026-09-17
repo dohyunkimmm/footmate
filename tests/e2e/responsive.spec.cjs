@@ -3,7 +3,11 @@ const { test, expect } = require('@playwright/test');
 async function boot(page, width, height) {
   await page.setViewportSize({ width, height });
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => typeof window.goScreen === 'function' && document.querySelectorAll('.screen').length === 39 && window.__footmateV11Hotfix === true);
+  await page.waitForFunction(() =>
+    typeof window.goScreen === 'function' &&
+    document.querySelectorAll('.screen').length === 39 &&
+    window.__footmateV2 === true
+  );
   const onboarding = page.locator('#demoOnboarding');
   if (await onboarding.isVisible()) await page.locator('.demo-onboarding-start').click();
 }
@@ -11,9 +15,10 @@ async function boot(page, width, height) {
 for (const viewport of [
   { name: '320', width: 320, height: 700 },
   { name: '375', width: 375, height: 812 },
-  { name: '390', width: 390, height: 844 }
+  { name: '390', width: 390, height: 844 },
+  { name: '430', width: 430, height: 932 }
 ]) {
-  test(`v1.1 representative UI remains usable at ${viewport.name}px`, async ({ page }) => {
+  test(`v2 representative UI remains usable at ${viewport.name}px`, async ({ page }) => {
     await boot(page, viewport.width, viewport.height);
 
     await page.evaluate(() => window.goScreen('s-splash'));
