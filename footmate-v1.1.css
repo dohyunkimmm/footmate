@@ -146,7 +146,8 @@
   .fm-product-launcher{right:10px!important}
 }
 @media(max-width:340px){
-  .btn-primary{min-height:50px!important}
+  /* The 375px prototype is proportionally scaled at narrow widths; 52px keeps the rendered target >=44px at 320px. */
+  .btn-primary{min-height:52px!important}
   .nbar{padding-left:12px!important;padding-right:12px!important}
   .card{margin-left:10px!important;margin-right:10px!important;padding-left:13px!important;padding-right:13px!important}
   .tab-lbl{font-size:9px!important}
