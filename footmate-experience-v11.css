@@ -98,7 +98,7 @@ body{font-feature-settings:"kern" 1,"liga" 1;text-rendering:optimizeLegibility}
 #s-home .card,#home-match-list>[onclick*="s-detail"]{border:1px solid var(--fm-border)!important;border-radius:18px!important;box-shadow:0 7px 20px rgba(27,45,74,.07)!important;background:#fff!important}
 #s-home .card:hover,#home-match-list>[onclick*="s-detail"]:hover{border-color:#BED0EA!important;box-shadow:0 10px 24px rgba(27,45,74,.10)!important}
 #home-filter-tabs{gap:7px!important}
-#home-filter-tabs button,.day-tab{min-height:38px!important;border-radius:999px!important;font-weight:800!important}
+#home-filter-tabs button,.day-tab{min-height:44px!important;border-radius:999px!important;font-weight:800!important}
 #home-filter-tabs button{border:1px solid var(--fm-border)!important;background:#fff;color:var(--fm-ink-2)}
 #home-filter-tabs button[aria-pressed="true"],.day-tab[aria-pressed="true"],#s-home .active-day-tab{background:var(--fm-brand)!important;border-color:var(--fm-brand)!important;color:#fff!important;box-shadow:0 5px 12px rgba(47,111,211,.16)}
 .footmate-home-empty,#footmateRuntimeEmpty{border-color:#C6D3E3;background:#FBFCFE;color:var(--fm-ink-2)}
@@ -137,13 +137,13 @@ body{font-feature-settings:"kern" 1,"liga" 1;text-rendering:optimizeLegibility}
 .pec-fill{background:linear-gradient(90deg,var(--fm-brand),var(--fm-accent))}
 
 /* Validation / recommendation inspector: keep technical detail, improve hierarchy. */
-.fm-product-launcher{min-height:42px!important;padding:10px 13px!important;border-color:#C7D6EA!important;box-shadow:0 12px 30px rgba(24,39,75,.16)!important;color:#31425B!important}
+.fm-product-launcher{min-height:44px!important;padding:10px 13px!important;border-color:#C7D6EA!important;box-shadow:0 12px 30px rgba(24,39,75,.16)!important;color:#31425B!important}
 .fm-inspector-card{background:#F6F8FC!important}
 .fm-inspector-card>header{background:rgba(246,248,252,.96)!important}
-.fm-tabs button{min-height:42px!important;border-radius:12px!important}
+.fm-tabs button{min-height:44px!important;border-radius:12px!important}
 .fm-status-card,.fm-reason-summary,.fm-exclusions,.fm-compare,.fm-factor,.fm-kpi-summary div,.fm-funnel>div,.fm-kpi-table{border-color:var(--fm-border)!important;box-shadow:0 3px 12px rgba(28,44,70,.035)}
 .v3-inspector-sheet{border-radius:24px 24px 0 0;box-shadow:0 -18px 48px rgba(15,26,58,.22)}
-.v3-launcher{min-height:40px!important;padding:8px 11px!important}
+.v3-launcher{min-height:44px!important;padding:8px 11px!important}
 
 /* State surfaces */
 .exception-dialog{border-radius:26px 26px 0 0;box-shadow:0 -18px 48px rgba(15,26,58,.22)}
