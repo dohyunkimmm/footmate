@@ -20,11 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v5
+      - name: Use Node.js 24
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
+          package-manager-cache: false
       - name: Run regression suite
         run: node --test tests/*.test.cjs
 
@@ -33,11 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v5
+      - name: Use Node.js 24
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
+          package-manager-cache: false
       - name: Install browser QA dependencies
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
@@ -46,7 +48,7 @@ jobs:
         run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/responsive.spec.cjs
       - name: Upload browser QA evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: browser-e2e-${{ github.run_id }}
           path: |
@@ -62,11 +64,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v5
+      - name: Use Node.js 24
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
+          package-manager-cache: false
       - name: Wait for Vercel deployment of this commit
         env:
           GH_TOKEN: ${{ github.token }}
@@ -99,7 +102,7 @@ jobs:
         run: npx playwright test tests/e2e/production.spec.cjs
       - name: Upload production QA evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: production-smoke-${{ github.run_id }}
           path: |
