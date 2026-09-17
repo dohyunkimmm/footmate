@@ -13,32 +13,35 @@
 
 ## 🚀 Current Release
 
-**v2.0.0 · Product Experience**
+**v2.1.0 · Domain Engine**
 
-- Stable source/runtime baseline: `a192ec1`
-- Stable promotion: PR #26 merged to `main`
-- GitHub Actions run #87: Regression 36 · Browser E2E + axe · Production HTTP · Production Chromium **PASS**
-- Stable Production verification: `9ff82c7` · Vercel verified · READY
-- Stable source/runtime baseline: `a192ec1` (PR #26)
+- Source/runtime baseline: `4393403`
+- GitHub PR #29 merged to `main`
+- GitHub Actions run #93:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - v2.1 matching/ELO parity gates **PASS**
+  - Responsive 320 / 375 / 390 / 430 px **PASS**
+  - Representative visual contract **PASS**
+- v2.1 Production deployment: **pending** — Vercel deployment rate limit
+- Current verified Production: `9ff82c7` · v2.0.0 · verified · READY
 
-v2.0.0은 beta 단계에서 만든 ES module 경계와 runtime migration을 안정 버전으로 확정한 릴리스입니다.
+v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다.
 
-- Product / Portfolio mode 분리 유지
-- `src/v2/state/` product/scenario store 도입
-- Home · Filter · Result · Payment · Participation · Evaluation · Favorite · Friend · Chat 상호작용을 v2 controller로 이동
-- 핵심 사용자 흐름의 inline event handler 제거
-- `goScreen` 재래핑 제거: screen observer 기반 side effect 처리
-- `footmate-finalize.js`를 persisted state compatibility bridge로 축소
-- 중복 `footmate-persist-extra.js` 제거
-- 결제 중복 차감 방지 및 legacy state migration 유지
-- canonical design token + 320 / 375 / 390 / 430 px responsive gate
-- 대표 화면 visual contract regression 추가
-- GitHub Actions Node 24 + product-impact aware Production smoke
+### What changed in v2.1
+
+- `src/v2/domain/matching-engine.js` — 매칭 score/rank/derived scenario
+- `src/v2/domain/elo-engine.js` — ELO update / tier 계산
+- `scenario-store`가 ranked matches · selected scenario · eligible count를 domain engine에서 파생
+- `FootMateScenarioAdapter`는 계산 주체가 아니라 render/persistence compatibility adapter로 축소
+- Product Validation 추천 설명도 v2.1 scenario store를 우선 사용
+- legacy matching/ELO 계산과 새 domain engine 결과 parity를 Playwright로 검증
+- Product / Portfolio mode, 39개 화면, 매칭 가중치, eligibility, ELO K-factor, 결제/운영 정책, 저장 상태는 v2.0.0과 호환
 
 ### Demo modes
 
-- `/demo` — **Product mode**: 실제 사용자 흐름 중심. 포트폴리오/검증 UI를 제품 화면에서 제거합니다.
-- `/demo?mode=portfolio` — **Portfolio mode**: Flow Nav와 Product Validation inspector를 통해 추천 근거, 운영 정책, 이벤트/KPI를 검증합니다.
+- `/demo` — **Product mode**: 실제 사용자 흐름 중심
+- `/demo?mode=portfolio` — **Portfolio mode**: 추천 근거, 운영 정책, 이벤트/KPI 검증
 
 ## ✨ Key Features
 
@@ -46,88 +49,69 @@ v2.0.0은 beta 단계에서 만든 ES module 경계와 runtime migration을 안�
 - 날짜 · 지역 · 시간대 · 거리 · 경기 방식 · 모집 포지션 기반 후보 eligibility
 - ELO · 플레이 조건 · 위치 기반 매칭 점수와 추천 정렬
 - 추천 점수 분해, 제외 이유, 필터 완화 fallback, 조건 변경 전/후 비교
-- 홈 날짜/상태/ELO/거리 필터링
+- Home 날짜/상태/ELO/거리 필터링
 - 선택 경기 → 상세 → 결제 → 참가 상태의 경기 식별자 일관성
 - Payment · Participation · Match 상태 머신 기반 운영 시뮬레이션
 - 결제 실패/재시도 · 중복 신청 차단 · 취소/환불 · 노쇼 · 대기→빈자리 제안→참가 · 경기 취소
-- 크레딧 충전 · 결제 · 환불 · 프로필 상태 동기화와 중복 차감 방지
 - 경기 결과 ELO 업데이트와 다음 추천 반영
 - 브라우저 재진입 시 핵심 진행 상태와 사용자 선택 복원
 - AI Agent Workflow 및 데이터 품질 상태(`PASS` · `CHECK` · `SAMPLE`)
 - 이벤트 계약과 핵심 퍼널/KPI 관측
-- Portfolio mode의 접근 가능한 Product Validation inspector
+- 접근 가능한 Product Validation inspector
 - Case Study의 `Problem → Hypothesis → Design → Validation → Result` 구조
 
 ## 🧩 Runtime Structure
 
-### v2 ownership
+### v2.1 domain ownership
 
-- `src/v2/bootstrap.js` — v2 runtime composition root
-- `src/v2/core/mode.js` — Product / Portfolio mode
-- `src/v2/core/screen-observer.js` — active screen 관찰
-- `src/v2/core/storage.js` — versioned UI persistence
-- `src/v2/state/product-store.js` — 결제·즐겨찾기·친구·평가·채팅 등 persisted product state
-- `src/v2/state/scenario-store.js` — 필터·선택 경기·추천 scenario state
-- `src/v2/ui/home-controller.js` — Home day/filter/match interaction
+- `src/v2/bootstrap.js` — runtime composition root
+- `src/v2/domain/matching-engine.js` — matching domain engine
+- `src/v2/domain/elo-engine.js` — ELO domain engine
+- `src/v2/state/product-store.js` — persisted product state
+- `src/v2/state/scenario-store.js` — domain-derived scenario state
+- `src/v2/ui/home-controller.js` — Home interaction
 - `src/v2/ui/filter-results-controller.js` — Filter/Result interaction
 - `src/v2/ui/payment-controller.js` — Charge/Payment/Participation adapter
 - `src/v2/ui/secondary-controller.js` — Evaluation/Favorite/Friend/Chat persistence
-- `src/v2/ui/screen-effects.js` — observer 기반 screen side effects
+- `src/v2/ui/screen-effects.js` — observer 기반 screen effects
 - `src/v2/ui/validation-entry.js` — Portfolio validation entry
-- `src/v2/styles/tokens.css` — canonical design tokens
-- `src/v2/styles/app.css` — v2 product experience layer
+- `src/v2/styles/tokens.css` / `app.css` — design token / product experience layer
 
 ### Compatibility boundary
 
-- `demo.html` / `demo-source.html` — 39-screen prototype source
-- `demo-shell.html` — Production `/demo` shell
-- `footmate-core.js` — 매칭·ELO·크레딧·데이터 품질 core logic
-- `footmate-product-core.js` — 상태 머신·추천 설명·이벤트·KPI logic
-- `footmate-patches.js` — 기존 scenario/render logic을 `FootMateScenarioAdapter` 뒤에서 제공
-- `footmate-finalize.js` — **state compatibility bridge only**
-- `footmate-product-hardening.js` — 운영 예외·추천 설명·Product Validation state machine adapter
-- `footmate-experience.css` — stable visual compatibility layer
-
-v2.0.0에서는 새 상태와 사용자 interaction의 소유권을 `src/v2/`로 이동했습니다. Matching/ELO의 기존 계산·render 구현 일부는 호환성을 위해 `footmate-patches.js` 뒤에 남아 있으며, 이는 `FootMateScenarioAdapter`를 통해 v2 store와 연결됩니다.
+- `footmate-core.js` — 저수준 score/filter/credit/data-quality core
+- `footmate-product-core.js` — 상태 머신·추천 설명·이벤트/KPI core
+- `footmate-patches.js` — 기존 DOM render와 persistence 호환; v2.1 부팅 후 matching/ELO 계산은 domain engine에 위임
+- `footmate-finalize.js` — persisted state compatibility bridge only
+- `footmate-product-hardening.js` — Operations/Product Validation adapter
+- `footmate-experience.css` — visual compatibility layer
 
 ## 🛠 Tech
 
 HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Playwright · axe-core · GitHub Actions · GitHub · Vercel
 
-## 👤 Role
-
-기획 · UX/IA · 정책 설계 · 프로토타입 구현 · QA · 배포를 직접 수행했습니다.
-
 ## 📌 Project Scope
 
-실제 상용 서비스가 아닌 **서비스 기획 검증용 인터랙티브 프로토타입**입니다.
-
-추천과 ELO는 규칙 기반 로직 및 샘플 데이터를 사용합니다. 운영 상태와 KPI 역시 simulation / 현재 세션 관측이며 실제 결제 · 외부 AI 모델 · DB · 실시간 알림 · 운영자 백엔드는 연동하지 않았습니다.
+실제 상용 서비스가 아닌 **서비스 기획 검증용 인터랙티브 프로토타입**입니다. 추천과 ELO는 규칙 기반 로직 및 샘플 데이터를 사용하며 실제 결제 · 외부 AI 모델 · DB · 실시간 알림 · 운영자 백엔드는 연동하지 않았습니다.
 
 ## ✅ Verification
-
-`v2.0.0` stable source/runtime 기준 SHA는 `a192ec1`입니다. 이후 stable naming 문서 동기화를 포함한 `main@9ff82c7`가 Vercel Production에 verified · READY로 배포됐고, GitHub Actions **run #87**에서 Regression 36 · Browser E2E + axe · Production HTTP smoke · Production Chromium render smoke가 모두 통과했습니다. 직전 `a192ec1` 배포 시 일시적으로 발생했던 Vercel rate limit은 해소됐습니다.
 
 | 검증 | 상태 |
 | --- | --- |
 | Regression 36 | **PASS** |
-| Browser E2E · Product + Portfolio mode | **PASS** |
-| v2 store / adapter / duplicate-charge gate | **PASS** |
-| Critical inline-handler migration gate | **PASS** |
+| Browser E2E · Product + Portfolio | **PASS** |
+| Matching domain parity | **PASS** |
+| ELO domain parity | **PASS** |
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
-| Stable-source Regression / E2E | **a192ec1 · PASS** |
-| Production HTTP smoke | **run #87 · PASS** |
-| Production Chromium render smoke | **run #87 · PASS** |
-| Verified v2.0.0 Production baseline | **9ff82c7 · verified · READY** |
-| v2.0.0 Production promotion | **PASS** |
+| v2.1 source/runtime | **4393403 · PASS** |
+| v2.1 Production deployment | **Pending · Vercel rate limit** |
+| Current verified Production | **9ff82c7 · v2.0.0 · READY** |
 
-수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 다음 대규모 제품 UI 변경 시 다시 수행합니다.
+수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
 ## 📚 Documentation
-
-현재 문서는 두 곳만 유지합니다.
 
 - `README.md` — 현재 제품 · 구조 · 검증 상태
 - `docs/RELEASE-HISTORY.md` — 현재/과거 릴리스 · 검증 baseline · 후속 정리 후보
