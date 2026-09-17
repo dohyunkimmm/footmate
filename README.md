@@ -10,7 +10,6 @@
 - [Live Demo · Portfolio mode](https://footmate-black.vercel.app/demo?mode=portfolio)
 - [Case Study](https://footmate-black.vercel.app/)
 - [Release History](docs/RELEASE-HISTORY.md)
-- [v2 Architecture](docs/V2-RELEASE.md)
 
 ## 🚀 Current Development
 
@@ -126,6 +125,9 @@ v2.0.0-beta.2 제품/runtime 기준 SHA는 `84c698b`입니다. 동일 SHA의 Ver
 
 ## 📚 Documentation
 
-- `README.md` — 현재 제품/구조/검증 상태
-- `docs/V2-RELEASE.md` — 현재 v2 구조 전환 범위와 compatibility boundary
-- `docs/RELEASE-HISTORY.md` — 릴리스와 과거 검증 baseline 요약
+현재 문서는 두 곳만 유지합니다.
+
+- `README.md` — 현재 제품 · 구조 · 검증 상태
+- `docs/RELEASE-HISTORY.md` — 현재/과거 릴리스 · 검증 baseline · 후속 정리 후보
+
+세부 변경은 Git commit, Pull Request, GitHub Actions 이력을 source of truth로 사용합니다.
