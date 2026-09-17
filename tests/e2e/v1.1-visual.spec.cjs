@@ -24,6 +24,13 @@ async function expectViewportFit(page) {
   expect(metrics.shell.right).toBeLessThanOrEqual(metrics.innerWidth + 1);
 }
 
+async function expectTouchHeight(locator, minimum = 44) {
+  await expect(locator).toBeVisible();
+  const box = await locator.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box.height).toBeGreaterThanOrEqual(minimum);
+}
+
 test('v1.1 design layer loads and representative screens fit the viewport', async ({ page }) => {
   await bootDemo(page);
   await expect(page.locator('link[href*="footmate-v1.1.css"]')).toHaveCount(1);
@@ -31,29 +38,29 @@ test('v1.1 design layer loads and representative screens fit the viewport', asyn
   const token = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--fm-brand-700').trim());
   expect(token).toBe('#173F8F');
 
-  for (const id of ['s-home', 's-detail', 's-pay', 's-profile']) {
+  for (const id of ['s-home', 's-detail', 's-pay', 's-gameday', 's-postgame', 's-eloUpdate', 's-profile']) {
     await page.evaluate(screenId => window.goScreen(screenId), id);
     await expect(page.locator(`#${id}`)).toHaveClass(/active/);
     await expectViewportFit(page);
   }
 });
 
-test('primary actions keep mobile-friendly touch height', async ({ page }) => {
+test('representative interactive controls keep mobile-friendly touch height', async ({ page }) => {
   await bootDemo(page);
+
+  await page.evaluate(() => window.goScreen('s-home'));
+  await expectTouchHeight(page.locator('#s-home .day-tab').first());
+
   for (const id of ['s-detail', 's-pay']) {
     await page.evaluate(screenId => window.goScreen(screenId), id);
-    const button = page.locator(`#${id} .btn-primary`).first();
-    await expect(button).toBeVisible();
-    const box = await button.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box.height).toBeGreaterThanOrEqual(44);
+    await expectTouchHeight(page.locator(`#${id} .btn-primary`).first());
   }
 
+  await page.evaluate(() => window.goScreen('s-gameday'));
+  await expectTouchHeight(page.locator('#s-gameday .gameday-scenario-btn').first());
+
   await page.evaluate(() => window.goScreen('s-profile'));
-  const menu = page.locator('#s-profile .profile-menu-item').first();
-  await expect(menu).toBeVisible();
-  const menuBox = await menu.boundingBox();
-  expect(menuBox.height).toBeGreaterThanOrEqual(44);
+  await expectTouchHeight(page.locator('#s-profile .profile-menu-item').first());
 });
 
 test('case study exposes the v1.1 iteration without rewriting the baseline source', async ({ page }) => {
