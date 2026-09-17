@@ -14,7 +14,7 @@ async function visualContract(page, id) {
     const box = screen.getBoundingClientRect();
     const primary = screen.querySelector('.btn-primary:not([hidden])');
     const primaryBox = primary?.getBoundingClientRect();
-    const card = screen.querySelector('.card,.match-card,.profile-menu-item,.pay-row');
+    const card = screen.querySelector('.card,.match-card,.profile-menu-item,.profile-elo-card,.ticket,.result-card');
     const cardStyle = card ? getComputedStyle(card) : null;
     const tab = screen.querySelector('.tab-bar');
     const tabBox = tab?.getBoundingClientRect();
