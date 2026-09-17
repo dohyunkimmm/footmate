@@ -36,7 +36,7 @@ function operation(key=currentMatchKey()){
   return op;
 }
 function record(name,metadata={}){
-  const event=Product.normalizeAnalyticsEvent(name,Object.assign({match:currentMatchKey()},metadata),{sessionId:state.pmSessionId,version:'2.0.0-beta.1'});
+  const event=Product.normalizeAnalyticsEvent(name,Object.assign({match:currentMatchKey()},metadata),{sessionId:state.pmSessionId,version:'2.0.0'});
   state.pmEvents.push(event);state.pmEvents=state.pmEvents.slice(-80);persist();return event;
 }
 function rawEvents(){try{return Array.isArray(demoEvents)?demoEvents:[]}catch(e){return[]}}
