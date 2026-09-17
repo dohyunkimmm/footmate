@@ -19,7 +19,7 @@ function collectFailures(page) {
   return failures;
 }
 
-test('production case study and demo render after deployment', async ({ page }) => {
+test('production case study and v2 product/portfolio modes render after deployment', async ({ page }) => {
   const failures = collectFailures(page);
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -29,15 +29,27 @@ test('production case study and demo render after deployment', async ({ page }) 
   await expect(page.locator('#fmDecisionSummary')).toContainText('Validation');
 
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => typeof window.goScreen === 'function' && document.querySelectorAll('.screen').length === 39 && !!window.FootMateProductOps);
-  const onboarding = page.locator('#demoOnboarding');
-  if (await onboarding.isVisible()) await page.locator('.demo-onboarding-start').click();
+  await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
+  await expect(page.locator('.top-bar')).toBeHidden();
+  await expect(page.locator('.flow-nav')).toBeHidden();
   await page.evaluate(() => window.goScreen('s-home'));
   await expect(page.locator('#s-home')).toHaveClass(/active/);
-  await expect(page.locator('.screen')).toHaveCount(39);
-  await expect(page.getByRole('button', { name: /제품 검증/ })).toBeVisible();
-  const state = await page.evaluate(() => window.FootMateProductOps.operation());
-  expect(state).toMatchObject({ match: 'open', participation: 'available' });
+  await expect(page.locator('#v3Launcher')).toBeHidden();
+  let state = await page.evaluate(() => ({
+    mode: window.FootMateV2Runtime.mode,
+    operation: window.FootMateProductOps.operation()
+  }));
+  expect(state.mode).toBe('product');
+  expect(state.operation).toMatchObject({ match: 'open', participation: 'available' });
+
+  await page.goto('/demo?mode=portfolio', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.__footmateV2 === true);
+  const intro = page.locator('#demoOnboarding');
+  if (await intro.isVisible()) await page.locator('.demo-onboarding-start').click();
+  await page.evaluate(() => window.goScreen('s-home'));
+  await expect(page.getByRole('button', { name: '제품 검증 패널 열기' })).toBeVisible();
+  state = await page.evaluate(() => ({ mode: window.FootMateV2Runtime.mode }));
+  expect(state.mode).toBe('portfolio');
 
   expect(failures, failures.join('\n')).toEqual([]);
 });

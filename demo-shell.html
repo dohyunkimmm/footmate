@@ -12,15 +12,15 @@ html,body{width:100%;height:100%;margin:0;background:#eef2f8;font-family:-apple-
 </style>
 </head>
 <body>
-<div id="boot"><div><strong>FootMate 데모를 불러오는 중입니다.</strong>v1.1 Experience Polish와 검증 레이어를 연결합니다.</div></div>
+<div id="boot"><div><strong>FootMate 데모를 불러오는 중입니다.</strong>v2 Product Experience Architecture를 연결합니다.</div></div>
 <script>
 (async function(){
   try{
     const response=await fetch('/demo-source'+location.search,{cache:'no-store'});
     if(!response.ok)throw new Error('demo source '+response.status);
     let html=await response.text();
-    const styles='<link rel="stylesheet" href="/footmate-patches.css?v=20260911-1"><link rel="stylesheet" href="/footmate-finalize.css?v=20260911-1"><link rel="stylesheet" href="/footmate-product-hardening.css?v=20260911-1"><link rel="stylesheet" href="/footmate-v1.1.css?v=20260918-2">';
-    const scripts='<script src="/footmate-core.js?v=20260911-1"><\/script><script src="/footmate-product-core.js?v=20260911-1"><\/script><script src="/footmate-patches.js?v=20260911-1"><\/script><script src="/footmate-finalize.js?v=20260911-1"><\/script><script src="/footmate-product-hardening.js?v=20260911-1"><\/script><script src="/footmate-persist-extra.js?v=20260911-1"><\/script><script src="/footmate-v1.1.js?v=20260918-2"><\/script>';
+    const styles='<link rel="stylesheet" href="/footmate-patches.css?v=20260911-1"><link rel="stylesheet" href="/footmate-finalize.css?v=20260911-1"><link rel="stylesheet" href="/footmate-product-hardening.css?v=20260911-1"><link rel="stylesheet" href="/footmate-v1.1.css?v=20260918-2"><link rel="stylesheet" href="/src/v2/styles/tokens.css?v=20260918-1"><link rel="stylesheet" href="/src/v2/styles/app.css?v=20260918-1">';
+    const scripts='<script src="/footmate-core.js?v=20260911-1"><\/script><script src="/footmate-product-core.js?v=20260911-1"><\/script><script src="/footmate-patches.js?v=20260911-1"><\/script><script src="/footmate-finalize.js?v=20260911-1"><\/script><script src="/footmate-product-hardening.js?v=20260911-1"><\/script><script src="/footmate-persist-extra.js?v=20260911-1"><\/script><script type="module" src="/src/v2/bootstrap.js?v=20260918-1"><\/script>';
     html=html.includes('</head>')?html.replace('</head>',styles+'</head>'):styles+html;
     html=html.includes('</body>')?html.replace('</body>',scripts+'</body>'):html+scripts;
     document.open();
