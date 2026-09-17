@@ -56,6 +56,9 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     finalizeArchitecture: window.FootMateFinalRuntime?.architecture,
     scenarioAdapter: !!window.FootMateScenarioAdapter,
     legacyLayers: window.FootMateV2Runtime?.legacyLayers,
+    domainRuntime: !!window.FootMateV21,
+    scenarioStoreArchitecture: window.FootMateV2Runtime?.scenarioStore?.architecture,
+    recommendationSource: window.FootMateProductOps?.recommendationSource?.(),
     mode: window.FootMateV2Runtime?.mode,
     architecture: window.FootMateV2Runtime?.architecture,
     navigationWrapped: window.FootMateV2Runtime?.navigationWrapped,
@@ -74,6 +77,9 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     navigationWrapped: false,
     finalizeArchitecture: 'compatibility-state-bridge',
     scenarioAdapter: true,
+    domainRuntime: true,
+    scenarioStoreArchitecture: 'v2.1-domain-derived-store',
+    recommendationSource: 'v2.1-domain-store',
     active: 's-splash'
   });
   expect(runtime.version).toMatch(/^2\./);
