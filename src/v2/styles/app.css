@@ -37,7 +37,23 @@ html[data-footmate-version="2"] :where(input,textarea,select):focus-visible{
   outline-offset:1px!important;
 }
 
-html[data-footmate-version="2"] .v3-launcher{
+/* Product mode removes portfolio chrome from the user journey. */
+html[data-footmate-mode="product"] body{
+  min-height:100dvh;
+  padding:0!important;
+  justify-content:center!important;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(53,111,199,.16),transparent 34%),
+    #111827!important;
+}
+
+html[data-footmate-mode="product"] :where(.top-bar,.flow-nav,#demoOnboarding,.v3-launcher,.fm-product-launcher){
+  display:none!important;
+}
+
+/* Portfolio mode keeps technical validation explicit and separate. */
+html[data-footmate-mode="portfolio"] .v3-launcher{
   min-height:44px!important;
   padding:9px 13px!important;
   right:10px!important;
@@ -61,14 +77,14 @@ html[data-footmate-version="2"] #s-splash button[onclick*="s-v2-priority"]{
 }
 
 @media(max-width:390px){
-  html[data-footmate-version="2"] .v3-launcher{
+  html[data-footmate-mode="portfolio"] .v3-launcher{
     right:10px!important;
     bottom:82px!important;
   }
 }
 
 @media(max-width:340px){
-  html[data-footmate-version="2"] .v3-launcher{
+  html[data-footmate-mode="portfolio"] .v3-launcher{
     min-height:52px!important;
     padding-left:14px!important;
     padding-right:14px!important;
