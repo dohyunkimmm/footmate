@@ -57,6 +57,18 @@ test('runtime hardening classics parse and v2 module graph is wired', () => {
   assert.ok(shell.includes('type="module" src="/src/v2/bootstrap.js'));
   assert.equal(shell.includes('/footmate-persist-extra.js'), false);
   assert.equal(exists('footmate-persist-extra.js'), false);
+  assert.ok(shell.includes('/footmate-experience.css'));
+  assert.equal(shell.includes('/footmate-v1.1.css'), false);
+
+  const caseStudyShell = read('index.html');
+  assert.ok(caseStudyShell.includes('/case-study-experience.css'));
+  assert.ok(caseStudyShell.includes('/index-experience.js'));
+  assert.equal(caseStudyShell.includes('/case-study-v1.1.css'), false);
+  assert.equal(caseStudyShell.includes('/index-v1.1.js'), false);
+  assert.equal(exists('footmate-v1.1.css'), false);
+  assert.equal(exists('case-study-v1.1.css'), false);
+  assert.equal(exists('index-v1.1.js'), false);
+
   assert.ok(read('index-patches.js').includes('fmDecisionSummary'));
 });
 
@@ -107,7 +119,7 @@ test('v2 controllers are the owners of migrated critical interactions', () => {
   const payment = read('src/v2/ui/payment-controller.js');
   const secondary = read('src/v2/ui/secondary-controller.js');
 
-  assert.ok(bootstrap.includes("VERSION='2.0.0-beta.2'"));
+  assert.ok(bootstrap.includes("VERSION='2.0.0'"));
   assert.ok(bootstrap.includes("finalize:'state-bridge-only'"));
   assert.ok(home.includes("removeAttribute('onclick')"));
   assert.ok(filters.includes("removeAttribute('onclick')"));

@@ -1,4 +1,4 @@
-/* FootMate v1.1 · Experience Polish
+/* FootMate v2.0.0 · Product Experience
    Non-destructive visual system layer for the existing 39-screen prototype. */
 :root{
   --fm-brand:#255AAE;
@@ -132,7 +132,7 @@
 .fm-tabs button[aria-selected="true"]{border-color:var(--fm-brand)!important;background:var(--fm-brand-soft)!important;color:var(--fm-brand-strong)!important}
 .fm-factor-track i{background:var(--fm-brand)!important}
 
-/* v1.1.1 hotfix: keep portfolio utilities out of the product onboarding flow. */
+/* Stable product/portfolio separation: keep portfolio utilities out of the product onboarding flow. */
 #s-splash button[onclick*="s-v2-priority"]{display:none!important}
 .fm-product-launcher{display:none!important}
 .v3-launcher{

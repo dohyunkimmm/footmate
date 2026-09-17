@@ -164,7 +164,7 @@ test('v2 UI state is versioned and screen state persists independently', async (
   }));
   expect(snapshot.key).toBe('footmate:v2:ui');
   expect(snapshot.saved).toMatchObject({
-    version: '2.0.0-beta.2',
+    version: '2.0.0',
     mode: 'product',
     lastActiveScreen: 's-profile'
   });

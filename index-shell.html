@@ -24,15 +24,15 @@
 <style>html,body{width:100%;height:100%;margin:0;background:#07111F;color:#A7B8D0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}#boot{height:100%;display:grid;place-items:center}#boot strong{display:block;color:#fff;margin-bottom:6px}</style>
 </head>
 <body>
-<div id="boot"><div><strong>FootMate 케이스 스터디를 불러오는 중입니다.</strong>v1.1 Experience Polish와 최신 검증 상태를 동기화합니다.</div></div>
+<div id="boot"><div><strong>FootMate 케이스 스터디를 불러오는 중입니다.</strong>v2.0.0 Product Experience와 최신 검증 상태를 동기화합니다.</div></div>
 <script>
 (async function(){
   try{
     const response=await fetch('/index-source'+location.search,{cache:'no-store'});
     if(!response.ok)throw new Error('index source '+response.status);
     let html=await response.text();
-    const styles='<link rel="stylesheet" href="/case-study-v1.1.css?v=20260917-1">';
-    const patch='<script src="/index-patches.js?v=20260917-1"><\/script><script src="/index-v1.1.js?v=20260917-1"><\/script>';
+    const styles='<link rel="stylesheet" href="/case-study-experience.css?v=20260918-1">';
+    const patch='<script src="/index-patches.js?v=20260917-1"><\/script><script src="/index-experience.js?v=20260918-1"><\/script>';
     html=html.includes('</head>')?html.replace('</head>',styles+'</head>'):styles+html;
     html=html.includes('</body>')?html.replace('</body>',patch+'</body>'):html+patch;
     document.open();
