@@ -2,21 +2,28 @@
 
 이 문서는 FootMate의 현재 릴리스 상태와 이전 검증 기준만 간결하게 보존합니다. 세부 변경 내역은 Git commit / Pull Request / GitHub Actions 이력을 기준으로 추적합니다.
 
-## Current — v1.1 Experience Polish
+## Current development — v2.0.0-beta.1 Product Experience Architecture
 
-- Core v1.1 release baseline: `8d501bd`
-- Release: **v1.1 · Experience Polish**
-- Scope: Visual polish, UI/UX refinement, Case Study synchronization, responsive QA, accessibility refinement
-- GitHub: PR #16 merged to `main`
-- v1.1 UI hotfix: PR #18 consolidates the overlapping `매칭 로직 0/5` / `제품 검증` utilities into one `제품 검증` entry, hides it during onboarding, and keeps funnel progress inside the validation inspector
-- Automated QA: GitHub Actions run #57 PASS; hotfix PR must also pass the same Regression / Browser / axe / responsive gates before merge
-  - Regression 36 PASS
-  - Browser E2E + axe PASS
-  - 320 / 375 / 390 px responsive gate PASS
-  - Production HTTP smoke PASS
-  - Production browser render smoke PASS
-- Vercel: v1.1 baseline verified / Production READY
-- Production endpoints: Case Study `/` and Live Demo `/demo` HTTP 200 verified
+- Base: `main@ec3f8cf` (v1.1 hotfix complete)
+- v2 PR: #19
+- Scope:
+  - native ES module runtime boundary under `src/v2/`
+  - Product / Portfolio mode separation
+  - versioned v2 UI state and active-screen observer
+  - canonical v2 design tokens
+  - responsive gate expanded to 430 px
+  - GitHub Actions Node 24 migration
+- Product logic compatibility: Matching / ELO / Payment / Operations state machines unchanged
+- Production release status: pending PR QA and main Production smoke
+
+## v1.1 — Experience Polish
+
+- Core release baseline: `8d501bd`
+- UI hotfix baseline: `ec3f8cf`
+- PR #16: Visual polish, UI/UX refinement, Case Study synchronization, responsive/accessibility refinement
+- PR #18: overlapping `매칭 로직 0/5` / `제품 검증` controls consolidated and onboarding overlap removed
+- GitHub Actions run #64: Regression 36 / Browser E2E + axe / responsive / Production smoke PASS
+- Vercel: `ec3f8cf` verified / Production READY
 - Manual device QA: iPhone Safari + VoiceOver and Android Chrome + TalkBack core flows checked by user; no blocking issue reported
 
 The previous `Portfolio Freeze 2026.09.12` is a historical snapshot only. It no longer represents a development lock.
@@ -45,6 +52,6 @@ To keep `main` readable:
 
 - Current product description and verification status live in `README.md`.
 - Release history is consolidated in this file.
-- Dated QA, hardening, close-out, and per-version planning documents are removed from the working tree after their relevant facts are absorbed here.
+- During active major work, one current release/planning document may live in `docs/`.
+- Dated QA, hardening, close-out, and per-version planning documents are removed after their relevant facts are absorbed here.
 - Deleted documents remain recoverable through Git history.
-- For new major work such as v2, create one current planning/release document and fold it into this history after release instead of accumulating dated snapshots.
