@@ -16,6 +16,11 @@
 
 **v2.0.0-beta.1 · Product Experience Architecture**
 
+- Product/runtime baseline: `70102da`
+- GitHub PR #19 merged to `main`
+- GitHub Actions run #69 PASS
+- Vercel `70102da` verified / Production READY
+
 v2는 v1.1의 39개 화면과 운영 정책을 유지하면서 runtime/UI 경계를 정리하는 구조 전환입니다.
 
 - native ES module 기반 `src/v2/` runtime 도입
@@ -91,17 +96,17 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 ## ✅ Verification
 
-v2 beta PR에서는 다음을 release gate로 사용합니다.
+v2.0.0-beta.1 제품/runtime 기준 SHA `70102da`는 GitHub Actions **run #69**와 동일 SHA의 Vercel Production 배포를 기준으로 검증했습니다.
 
-| 검증 | 기준 |
+| 검증 | 상태 |
 | --- | --- |
-| Regression | 36 tests |
-| Browser E2E | Product + Portfolio mode |
-| axe WCAG 2 A/AA | serious / critical 0 |
-| Responsive | 320 / 375 / 390 / 430 px |
-| Production HTTP smoke | main merge 후 |
-| Production Chromium smoke | main merge 후 |
-| Vercel | GitHub main SHA와 동일 |
+| Regression 36 | **PASS** |
+| Browser E2E · Product + Portfolio mode | **PASS** |
+| axe WCAG 2 A/AA serious / critical | **0 · PASS** |
+| Responsive 320 / 375 / 390 / 430 px | **PASS** |
+| Production HTTP smoke | **PASS** |
+| Production Chromium render smoke | **PASS** |
+| Vercel | **70102da · verified · READY** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, v2의 제품 UI가 추가로 크게 바뀌는 단계에서 다시 수행합니다.
 
