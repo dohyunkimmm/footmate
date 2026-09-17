@@ -42,12 +42,13 @@ function expectNoRuntimeFailures(failures) {
 test('production-like demo shell boots all 39 screens and runtime layers', async ({ page }) => {
   const failures = await bootDemo(page);
   await expect(page.locator('.screen')).toHaveCount(39);
-  await page.waitForFunction(() => !!window.FootMateProductOps && !!window.FootMateProductCore && !!window.FootMateFinalRuntime);
+  await page.waitForFunction(() => !!window.FootMateProductOps && !!window.FootMateProductCore && !!window.FootMateFinalRuntime && window.__footmateV11Hotfix === true);
   const runtime = await page.evaluate(() => ({
     core: !!window.FootMateCore,
     productCore: !!window.FootMateProductCore,
     finalize: window.__footmateFinalize === true,
     productHardening: window.__footmateProductHardening === true,
+    v11Hotfix: window.__footmateV11Hotfix === true,
     productOps: !!window.FootMateProductOps,
     active: document.querySelector('.screen.active')?.id,
     operation: window.FootMateProductOps.operation()
@@ -56,15 +57,23 @@ test('production-like demo shell boots all 39 screens and runtime layers', async
   expect(runtime.productCore).toBe(true);
   expect(runtime.finalize).toBe(true);
   expect(runtime.productHardening).toBe(true);
+  expect(runtime.v11Hotfix).toBe(true);
   expect(runtime.productOps).toBe(true);
   expect(runtime.active).toBe('s-splash');
   expect(runtime.operation).toMatchObject({ match: 'open', payment: 'idle', participation: 'available' });
 
-  await page.getByRole('button', { name: /제품 검증/ }).click();
+  await expect(page.locator('#v3Launcher')).toBeHidden();
+  await expect(page.locator('#fmProductLauncher')).toBeHidden();
+
+  await page.evaluate(() => window.goScreen('s-home'));
+  const validationLauncher = page.getByRole('button', { name: '제품 검증 패널 열기' });
+  await expect(validationLauncher).toBeVisible();
+  await expect(page.locator('#v3Launcher')).toHaveText('제품 검증');
+  await validationLauncher.click();
+
   const inspector = page.locator('#fmProductInspector');
   await expect(inspector).toHaveAttribute('aria-hidden', 'false');
-  await expect(page.getByRole('tab', { name: '운영 정책' })).toHaveAttribute('aria-selected', 'true');
-  await page.getByRole('tab', { name: '추천 설명' }).click();
+  await expect(page.getByRole('tab', { name: '추천 설명' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('[data-fm-panel="recommendation"]')).toContainText('추천 이유');
   await page.getByRole('tab', { name: /PM/ }).click();
   await expect(page.locator('[data-fm-panel="pm"]')).toContainText('Event contract');
@@ -75,6 +84,7 @@ test('production-like demo shell boots all 39 screens and runtime layers', async
   const inspectorBlocking = inspectorAxe.violations.filter(v => ['serious', 'critical'].includes(v.impact));
   expect(inspectorBlocking, JSON.stringify(inspectorBlocking, null, 2)).toEqual([]);
   await page.getByRole('button', { name: /제품 검증 패널 닫기/ }).click();
+  await expect(validationLauncher).toBeFocused();
   expectNoRuntimeFailures(failures);
 });
 
@@ -83,20 +93,24 @@ test('onboarding can be completed through visible controls', async ({ page }) =>
 
   await page.getByRole('button', { name: /카카오/ }).click();
   await expect(page.locator('#s-quiz')).toHaveClass(/active/, { timeout: 10_000 });
+  await expect(page.locator('#v3Launcher')).toBeHidden();
 
   for (let step = 0; step < 5; step += 1) {
     await page.locator('#s-quiz .quiz-opt').first().click();
     if (step < 4) await page.waitForTimeout(450);
   }
   await expect(page.locator('#s-location')).toHaveClass(/active/, { timeout: 3_000 });
+  await expect(page.locator('#v3Launcher')).toBeHidden();
 
   await page.getByRole('button', { name: /직접 지역 입력/ }).click();
   await expect(page.locator('#s-manual-location')).toHaveClass(/active/);
   await page.locator('#s-manual-location button[data-region-key="suwon"]').first().click();
   await page.locator('#regionConfirmBtn').click();
   await expect(page.locator('#s-elo')).toHaveClass(/active/);
+  await expect(page.locator('#v3Launcher')).toBeHidden();
   await page.locator('#s-elo .btn-primary').click();
   await expect(page.locator('#s-home')).toHaveClass(/active/);
+  await expect(page.getByRole('button', { name: '제품 검증 패널 열기' })).toBeVisible();
 
   expectNoRuntimeFailures(failures);
 });
