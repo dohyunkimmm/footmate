@@ -1,0 +1,23 @@
+/* FootMate Case Study v2.0.0 · Product Experience */
+:root{
+  --cs-brand:#6EA7FF;
+  --cs-accent:#7C6CF2;
+  --cs-mint:#63E8D5;
+  --cs-text:#F4F8FC;
+  --cs-muted:#91A5BE;
+  --cs-panel:rgba(255,255,255,.05);
+  --cs-line:rgba(255,255,255,.1);
+}
+.sidebar{width:240px!important;background:rgba(4,8,16,.96)!important;box-shadow:18px 0 54px rgba(0,0,0,.12)}
+.sb-header{padding:20px 18px!important}.sb-logo{font-size:16px!important;letter-spacing:-.02em}.toc-item{padding:9px 16px!important}.toc-item.on{background:linear-gradient(90deg,rgba(79,142,247,.18),rgba(79,142,247,.04))!important}
+.slide{padding:64px 72px 72px!important}.content{width:min(1100px,100%)!important}.kicker{color:var(--cs-mint)!important}.lead{color:#AFC0D5!important;line-height:1.72!important}
+.hero-grid div,.card,.problem,.moscow div,.road div,.closing-final-values div{border-color:var(--cs-line)!important;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.035))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.card,.problem,.moscow div,.road div{transition:transform .22s ease,border-color .22s ease,background .22s ease}
+@media(hover:hover){.card:hover,.problem:hover,.moscow div:hover,.road div:hover{transform:translateY(-3px);border-color:rgba(110,167,255,.25)!important;background:rgba(255,255,255,.065)!important}}
+.fm-decision-summary span{min-height:62px!important;padding:10px 11px!important;border-radius:13px!important;background:rgba(255,255,255,.045)!important}.fm-decision-summary b{color:var(--cs-mint)!important}
+.fm-proof-strip span{border-color:rgba(99,232,213,.24)!important;background:rgba(99,232,213,.08)!important;color:#B7FFF4!important}
+.showcase-device-wrap .device{box-shadow:0 50px 110px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.12),0 0 100px rgba(79,142,247,.2)!important}
+.topbar{padding-right:76px!important}.label{backdrop-filter:blur(14px)}
+@media(max-width:900px){.sidebar{width:210px!important}.slide{padding:62px 42px 68px!important}}
+@media(max-width:700px){.sidebar{display:none!important}.slide{padding:58px 22px 68px!important}.topbar{padding:0 20px!important}.content{height:auto!important}.lead{font-size:15px!important}}
+@media(prefers-reduced-motion:reduce){.card,.problem,.moscow div,.road div{transition:none!important}}
