@@ -1,6 +1,6 @@
 # FootMate Release History
 
-이 문서는 FootMate의 현재 릴리스 상태와 이전 검증 기준만 간결하게 보존합니다. 세부 변경 내역은 Git commit / Pull Request / GitHub Actions 이력을 기준으로 추적합니다.
+이 문서는 FootMate의 현재 릴리스 상태, 이전 검증 기준, 다음 구조 정리 후보만 간결하게 보존합니다. 세부 변경 내역은 Git commit / Pull Request / GitHub Actions 이력을 기준으로 추적합니다.
 
 ## Current — v2.0.0-beta.2 Runtime Migration
 
@@ -31,9 +31,48 @@
   - Production Chromium render smoke PASS
 - Vercel product/runtime baseline: `84c698b` verified / Production READY
 
-### Remaining compatibility boundary
+### v2 runtime ownership
 
-Matching/ELO scenario calculation and legacy screen rendering 일부는 `footmate-patches.js`에 남아 있지만 `FootMateScenarioAdapter` 뒤로 격리되어 있습니다. beta2의 state 및 핵심 사용자 interaction 소유권은 `src/v2/`로 이동했습니다.
+```
+src/v2/
+  bootstrap.js
+  core/
+    mode.js
+    screen-observer.js
+    storage.js
+  state/
+    product-store.js
+    scenario-store.js
+  ui/
+    home-controller.js
+    filter-results-controller.js
+    payment-controller.js
+    secondary-controller.js
+    screen-effects.js
+    validation-entry.js
+  styles/
+    tokens.css
+    app.css
+```
+
+### Compatibility boundary
+
+- `footmate-finalize.js` — persisted state compatibility bridge only
+- `footmate-patches.js` — Matching/ELO scenario 및 기존 render 일부를 `FootMateScenarioAdapter` 뒤에서 제공
+- `footmate-product-hardening.js` — Operations state machine / Product Validation compatibility adapter
+- `footmate-core.js`, `footmate-product-core.js` — core calculation / product policy
+- `footmate-persist-extra.js`, `footmate-v1.1.js` — 제거 완료
+- legacy patch / hardening navigation wrapper — 제거 완료
+
+beta2의 state 및 핵심 사용자 interaction 소유권은 `src/v2/`로 이동했습니다. 남은 Matching/ELO render compatibility code는 명시적 adapter 뒤에 격리돼 있습니다.
+
+### Optional future cleanup
+
+현재 기능·QA를 위해 필수인 미완료 작업은 없습니다. 다음은 향후 기술부채 정리 후보입니다.
+
+- `footmate-patches.js`의 Matching/ELO scenario render를 `src/v2/` 내부 모듈로 추가 분리
+- 큰 `demo-source.html` 화면 markup을 build-time component/source로 분리
+- compatibility CSS를 component 단위 stylesheet로 추가 축소
 
 ## v2.0.0-beta.1 — Product Experience Architecture
 
@@ -78,7 +117,7 @@ The previous `Portfolio Freeze 2026.09.12` is a historical snapshot only. It no 
 To keep `main` readable:
 
 - Current product description and verification status live in `README.md`.
-- Release history is consolidated in this file.
-- During active major work, one current release/planning document may live in `docs/`.
-- Dated QA, hardening, close-out, and per-version planning documents are removed after their relevant facts are absorbed here.
+- Release history, compatibility boundary, and optional cleanup items live in this file.
+- Per-version planning/release documents are removed after their relevant facts are absorbed here.
+- Dated QA, hardening, and close-out documents are not kept in the current tree after consolidation.
 - Deleted documents remain recoverable through Git history.
