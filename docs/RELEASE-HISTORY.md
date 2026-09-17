@@ -2,34 +2,29 @@
 
 이 문서는 FootMate의 현재 릴리스 상태, 이전 검증 기준, 다음 구조 정리 후보만 간결하게 보존합니다. 세부 변경 내역은 Git commit / Pull Request / GitHub Actions 이력을 기준으로 추적합니다.
 
-## Current — v2.0.0-beta.2 Runtime Migration
+## Current — v2.0.0 Product Experience
 
-- Product/runtime baseline: `84c698b`
-- GitHub: PR #21 merged to `main`
-- QA/CI-only follow-ups: PR #22, #23
-- Scope:
-  - product/scenario store under `src/v2/state/`
-  - Home / Filter / Result controllers
-  - Payment / Participation adapter
-  - Evaluation / Favorite / Friend / Chat controller
-  - observer-driven screen effects
-  - critical inline handler migration
-  - `footmate-finalize.js` reduced to state compatibility bridge
-  - patch/Product Hardening navigation wrappers removed
-  - duplicate chat persistence layer removed
-  - representative visual contract regression added
-  - Production smoke made aware of product-impact vs QA-only commits
-- Product logic compatibility: Matching / ELO / Operations policy preserved
-- GitHub Actions run #79:
+- Stable source/runtime baseline: `a192ec1`
+- GitHub: PR #26 merged to `main`
+- Version contract:
+  - runtime `2.0.0`
+  - Product Hardening event contract `2.0.0`
+  - Case Study badge/name `v2.0.0 Product Experience`
+- Active asset names:
+  - `footmate-experience.css`
+  - `case-study-experience.css`
+  - `index-experience.js`
+- Removed active legacy names:
+  - `footmate-v1.1.css`
+  - `case-study-v1.1.css`
+  - `index-v1.1.js`
+- GitHub Actions run #85:
   - Regression 36 PASS
   - Browser E2E + axe PASS
-  - Product / Portfolio mode PASS
-  - v2 store/adapter and duplicate-charge gates PASS
-  - 320 / 375 / 390 / 430 px responsive gate PASS
-  - representative visual contract PASS
-  - Production HTTP smoke PASS
-  - Production Chromium render smoke PASS
-- Vercel product/runtime baseline: `84c698b` verified / Production READY
+  - Production deployment wait failed because Vercel returned `Deployment rate limited — retry in 24 hours`
+  - 이 실패는 코드/브라우저 QA 실패가 아니라 배포 quota 상태입니다.
+- Current verified Production baseline: `84c698b` · Vercel READY
+- Stable Production promotion: pending Vercel rate-limit reset
 
 ### v2 runtime ownership
 
@@ -61,18 +56,25 @@ src/v2/
 - `footmate-patches.js` — Matching/ELO scenario 및 기존 render 일부를 `FootMateScenarioAdapter` 뒤에서 제공
 - `footmate-product-hardening.js` — Operations state machine / Product Validation compatibility adapter
 - `footmate-core.js`, `footmate-product-core.js` — core calculation / product policy
-- `footmate-persist-extra.js`, `footmate-v1.1.js` — 제거 완료
 - legacy patch / hardening navigation wrapper — 제거 완료
 
-beta2의 state 및 핵심 사용자 interaction 소유권은 `src/v2/`로 이동했습니다. 남은 Matching/ELO render compatibility code는 명시적 adapter 뒤에 격리돼 있습니다.
+현재 기능·QA를 위해 필수인 미완료 구현 작업은 없습니다.
 
 ### Optional future cleanup
-
-현재 기능·QA를 위해 필수인 미완료 작업은 없습니다. 다음은 향후 기술부채 정리 후보입니다.
 
 - `footmate-patches.js`의 Matching/ELO scenario render를 `src/v2/` 내부 모듈로 추가 분리
 - 큰 `demo-source.html` 화면 markup을 build-time component/source로 분리
 - compatibility CSS를 component 단위 stylesheet로 추가 축소
+
+## v2.0.0-beta.2 — Runtime Migration
+
+- Product/runtime baseline: `84c698b`
+- GitHub: PR #21
+- product/scenario store와 주요 UI controller 이전 완료
+- finalize state bridge 축소, navigation wrapper 제거, duplicate persistence 제거
+- 320 / 375 / 390 / 430 responsive gate 및 visual contract regression
+- GitHub Actions run #79: Regression · Browser E2E + axe · Production HTTP/Chromium smoke PASS
+- Vercel: `84c698b` verified / Production READY
 
 ## v2.0.0-beta.1 — Product Experience Architecture
 
