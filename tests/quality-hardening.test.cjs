@@ -107,7 +107,7 @@ test('v2 controllers are the owners of migrated critical interactions', () => {
   const payment = read('src/v2/ui/payment-controller.js');
   const secondary = read('src/v2/ui/secondary-controller.js');
 
-  assert.ok(bootstrap.includes("VERSION='2.0.0-beta.2'"));
+  assert.ok(bootstrap.includes("VERSION='2.0.0'"));
   assert.ok(bootstrap.includes("finalize:'state-bridge-only'"));
   assert.ok(home.includes("removeAttribute('onclick')"));
   assert.ok(filters.includes("removeAttribute('onclick')"));
