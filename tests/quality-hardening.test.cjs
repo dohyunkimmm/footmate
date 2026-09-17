@@ -6,6 +6,7 @@ const vm = require('node:vm');
 
 const root = process.env.FOOTMATE_SOURCE_DIR || path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+const exists = file => fs.existsSync(path.join(root, file));
 
 test('production case study shell stays synchronized', () => {
   assert.equal(read('index.html'), read('index-shell.html'));
@@ -26,39 +27,66 @@ test('production shell exposes SEO and social metadata before JavaScript runs', 
   ]) assert.ok(html.includes(marker), `missing metadata: ${marker}`);
 });
 
-test('runtime hardening scripts parse', () => {
-  for (const file of ['footmate-core.js', 'footmate-product-core.js', 'footmate-patches.js', 'footmate-finalize.js', 'footmate-product-hardening.js', 'footmate-persist-extra.js', 'index-patches.js']) {
+test('runtime hardening classics parse and v2 module graph is wired', () => {
+  for (const file of [
+    'footmate-core.js',
+    'footmate-product-core.js',
+    'footmate-patches.js',
+    'footmate-finalize.js',
+    'footmate-product-hardening.js',
+    'index-patches.js'
+  ]) {
     assert.doesNotThrow(() => new vm.Script(read(file)), `${file} should parse`);
   }
-  const shell=read('demo-shell.html');
+
+  for (const file of [
+    'src/v2/bootstrap.js',
+    'src/v2/state/product-store.js',
+    'src/v2/state/scenario-store.js',
+    'src/v2/ui/home-controller.js',
+    'src/v2/ui/filter-results-controller.js',
+    'src/v2/ui/payment-controller.js',
+    'src/v2/ui/secondary-controller.js',
+    'src/v2/ui/screen-effects.js'
+  ]) assert.ok(exists(file), `missing v2 module: ${file}`);
+
+  const shell = read('demo-shell.html');
   assert.ok(shell.includes('/footmate-product-core.js'));
   assert.ok(shell.includes('/footmate-product-hardening.js'));
   assert.ok(shell.includes('/footmate-product-hardening.css'));
+  assert.ok(shell.includes('type="module" src="/src/v2/bootstrap.js'));
+  assert.equal(shell.includes('/footmate-persist-extra.js'), false);
+  assert.equal(exists('footmate-persist-extra.js'), false);
   assert.ok(read('index-patches.js').includes('fmDecisionSummary'));
 });
 
-test('opening the low-credit screen does not mutate persisted balance', () => {
-  const source = read('footmate-finalize.js');
-  const navigation = source.match(/window\.goScreen=function\(id\)\{[\s\S]*?return r\};/);
-  assert.ok(navigation, 'goScreen wrapper should exist');
-  assert.equal(navigation[0].includes('creditBalance=3000'), false);
-  const simulation = source.match(/window\.simulateLowCredit=function\(\)\{[\s\S]*?\};/);
-  assert.ok(simulation, 'explicit low-credit simulation should exist');
-  assert.ok(simulation[0].includes('creditBalance=3000'));
-  assert.ok(source.includes("lowCreditSimulation.onclick=()=>window.simulateLowCredit()"));
-  assert.ok(source.includes('window.FootMateFinalRuntime={state:finalState,persist,renderCredit,cost:COST,storeKey:STORE}'));
+test('low-credit mutation moved out of navigation and into payment adapter', () => {
+  const finalize = read('footmate-finalize.js');
+  const payment = read('src/v2/ui/payment-controller.js');
+  const patch = read('footmate-patches.js');
+  const hardening = read('footmate-product-hardening.js');
+
+  assert.equal(finalize.includes('window.goScreen=function'), false);
+  assert.equal(patch.includes('goScreen=function(id)'), false);
+  assert.equal(hardening.includes('window.goScreen=function'), false);
+  assert.ok(payment.includes('creditBalance:3000'));
+  assert.ok(payment.includes("window.goScreen?.('s-pay-low')"));
+  assert.ok(payment.includes('window.simulateLowCredit=simulateLowCredit'));
+  assert.ok(finalize.includes("architecture:'compatibility-state-bridge'"));
 });
 
-test('favorite and friend persistence uses entity identifiers', () => {
-  const source = read('footmate-finalize.js');
-  assert.ok(source.includes('favoriteMatchKeys:[]'));
-  assert.ok(source.includes('friendIds:[]'));
-  assert.ok(source.includes("currentFavoriteKey()"));
-  assert.ok(source.includes("return'kim-minsu'"));
-  assert.ok(source.includes("return'park-jihyun'"));
-  assert.equal(source.includes('favorite:false'), false);
-  assert.equal(source.includes('friendAdded:false'), false);
-  const hardening=read('footmate-product-hardening.js');
+test('favorite and friend persistence uses entity identifiers in v2 controller', () => {
+  const finalize = read('footmate-finalize.js');
+  const secondary = read('src/v2/ui/secondary-controller.js');
+  assert.ok(finalize.includes('favoriteMatchKeys:[]'));
+  assert.ok(finalize.includes('friendIds:[]'));
+  assert.ok(secondary.includes('favoriteKey()'));
+  assert.ok(secondary.includes("return'kim-minsu'"));
+  assert.ok(secondary.includes("return'park-jihyun'"));
+  assert.equal(finalize.includes('favorite:false'), false);
+  assert.equal(finalize.includes('friendAdded:false'), false);
+
+  const hardening = read('footmate-product-hardening.js');
   assert.ok(hardening.includes('operationByMatch'));
   assert.ok(hardening.includes('duplicate_application_blocked'));
   assert.ok(hardening.includes('refund_complete'));
@@ -66,7 +94,23 @@ test('favorite and friend persistence uses entity identifiers', () => {
 
 test('legacy boolean persistence is migrated instead of silently discarded', () => {
   const source = read('footmate-finalize.js');
-  assert.ok(source.includes('finalState.favorite===true'));
-  assert.ok(source.includes('finalState.friendAdded===true'));
-  assert.ok(source.includes('delete finalState.favorite;delete finalState.friendAdded;'));
+  assert.ok(source.includes('state.favorite===true'));
+  assert.ok(source.includes('state.friendAdded===true'));
+  assert.ok(source.includes('delete state.favorite'));
+  assert.ok(source.includes('delete state.friendAdded'));
+});
+
+test('v2 controllers are the owners of migrated critical interactions', () => {
+  const bootstrap = read('src/v2/bootstrap.js');
+  const home = read('src/v2/ui/home-controller.js');
+  const filters = read('src/v2/ui/filter-results-controller.js');
+  const payment = read('src/v2/ui/payment-controller.js');
+  const secondary = read('src/v2/ui/secondary-controller.js');
+
+  assert.ok(bootstrap.includes("VERSION='2.0.0-beta.2'"));
+  assert.ok(bootstrap.includes("finalize:'state-bridge-only'"));
+  assert.ok(home.includes("removeAttribute('onclick')"));
+  assert.ok(filters.includes("removeAttribute('onclick')"));
+  assert.ok(payment.includes("removeAttribute('onclick')"));
+  assert.ok(secondary.includes("removeAttribute('onclick')"));
 });
