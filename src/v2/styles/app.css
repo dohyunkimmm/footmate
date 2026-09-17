@@ -37,6 +37,23 @@ html[data-footmate-version="2"] :where(input,textarea,select):focus-visible{
   outline-offset:1px!important;
 }
 
+/* v2.1 accessibility hardening: keep small status text safely above WCAG AA contrast. */
+html[data-footmate-version="2"] #s-home .day-tab[aria-pressed="false"]{
+  color:#40516C!important;
+}
+html[data-footmate-version="2"] #s-home [id^="home-match-pct-"]{
+  color:#1F4F9D!important;
+}
+html[data-footmate-version="2"] #s-home [data-home-match-key] [style*="color:var(--green)"]{
+  color:#0F6547!important;
+}
+html[data-footmate-version="2"] #s-detail .chip-blue{
+  color:#1F4F9D!important;
+}
+html[data-footmate-version="2"] #s-pay .pay-val[style*="color:var(--green)"]{
+  color:#0F6547!important;
+}
+
 .fm-saved-chat{
   display:flex;
   justify-content:flex-end;
