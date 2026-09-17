@@ -18,7 +18,11 @@ function attachFailureWatch(page) {
 }
 
 async function waitForRuntime(page) {
-  await page.waitForFunction(() => typeof window.goScreen === 'function' && document.querySelectorAll('.screen').length === 39);
+  await page.waitForFunction(() =>
+    typeof window.goScreen === 'function' &&
+    document.querySelectorAll('.screen').length === 39 &&
+    window.__footmateV2 === true
+  );
 }
 
 async function dismissOnboarding(page) {
@@ -39,16 +43,18 @@ function expectNoRuntimeFailures(failures) {
   expect(failures, failures.join('\n')).toEqual([]);
 }
 
-test('production-like demo shell boots all 39 screens and runtime layers', async ({ page }) => {
+test('v2 shell boots all 39 screens with modular runtime layers', async ({ page }) => {
   const failures = await bootDemo(page);
   await expect(page.locator('.screen')).toHaveCount(39);
-  await page.waitForFunction(() => !!window.FootMateProductOps && !!window.FootMateProductCore && !!window.FootMateFinalRuntime && window.__footmateV11Hotfix === true);
   const runtime = await page.evaluate(() => ({
     core: !!window.FootMateCore,
     productCore: !!window.FootMateProductCore,
     finalize: window.__footmateFinalize === true,
     productHardening: window.__footmateProductHardening === true,
-    v11Hotfix: window.__footmateV11Hotfix === true,
+    v2: window.__footmateV2 === true,
+    version: window.FootMateV2Runtime?.version,
+    architecture: window.FootMateV2Runtime?.architecture,
+    navigationWrapped: window.FootMateV2Runtime?.navigationWrapped,
     productOps: !!window.FootMateProductOps,
     active: document.querySelector('.screen.active')?.id,
     operation: window.FootMateProductOps.operation()
@@ -57,7 +63,10 @@ test('production-like demo shell boots all 39 screens and runtime layers', async
   expect(runtime.productCore).toBe(true);
   expect(runtime.finalize).toBe(true);
   expect(runtime.productHardening).toBe(true);
-  expect(runtime.v11Hotfix).toBe(true);
+  expect(runtime.v2).toBe(true);
+  expect(runtime.version).toMatch(/^2\./);
+  expect(runtime.architecture).toBe('native-es-modules');
+  expect(runtime.navigationWrapped).toBe(false);
   expect(runtime.productOps).toBe(true);
   expect(runtime.active).toBe('s-splash');
   expect(runtime.operation).toMatchObject({ match: 'open', payment: 'idle', participation: 'available' });
@@ -66,6 +75,7 @@ test('production-like demo shell boots all 39 screens and runtime layers', async
   await expect(page.locator('#fmProductLauncher')).toBeHidden();
 
   await page.evaluate(() => window.goScreen('s-home'));
+  await page.waitForFunction(() => window.FootMateV2Runtime?.state?.lastActiveScreen === 's-home');
   const validationLauncher = page.getByRole('button', { name: '제품 검증 패널 열기' });
   await expect(validationLauncher).toBeVisible();
   await expect(page.locator('#v3Launcher')).toHaveText('제품 검증');
@@ -88,8 +98,11 @@ test('production-like demo shell boots all 39 screens and runtime layers', async
   expectNoRuntimeFailures(failures);
 });
 
-test('onboarding can be completed through visible controls', async ({ page }) => {
+test('v2 onboarding keeps portfolio utilities out of the product flow', async ({ page }) => {
   const failures = await bootDemo(page);
+
+  await expect(page.locator('#v3Launcher')).toBeHidden();
+  await expect(page.locator('#s-splash button[onclick*="s-v2-priority"]')).toBeHidden();
 
   await page.getByRole('button', { name: /카카오/ }).click();
   await expect(page.locator('#s-quiz')).toHaveClass(/active/, { timeout: 10_000 });
@@ -112,6 +125,20 @@ test('onboarding can be completed through visible controls', async ({ page }) =>
   await expect(page.locator('#s-home')).toHaveClass(/active/);
   await expect(page.getByRole('button', { name: '제품 검증 패널 열기' })).toBeVisible();
 
+  expectNoRuntimeFailures(failures);
+});
+
+test('v2 UI state is versioned and screen state persists independently', async ({ page }) => {
+  const failures = await bootDemo(page);
+  await page.evaluate(() => window.goScreen('s-profile'));
+  await page.waitForFunction(() => window.FootMateV2Runtime?.state?.lastActiveScreen === 's-profile');
+
+  const snapshot = await page.evaluate(() => ({
+    key: window.FootMateV2Runtime.storageKey,
+    saved: JSON.parse(localStorage.getItem(window.FootMateV2Runtime.storageKey) || 'null')
+  }));
+  expect(snapshot.key).toBe('footmate:v2:ui');
+  expect(snapshot.saved).toMatchObject({ version: '2.0.0-beta.1', lastActiveScreen: 's-profile' });
   expectNoRuntimeFailures(failures);
 });
 
