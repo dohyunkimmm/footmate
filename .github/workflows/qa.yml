@@ -106,6 +106,7 @@ jobs:
       - name: Run production HTTP smoke
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
+          FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required }}
         run: node tests/production-smoke.cjs
       - name: Install production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
