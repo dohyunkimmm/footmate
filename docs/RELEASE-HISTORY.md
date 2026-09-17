@@ -4,17 +4,18 @@
 
 ## Current — v1.1 Experience Polish
 
-- Current production baseline: `main@8d501bd`
+- Core v1.1 release baseline: `8d501bd`
 - Release: **v1.1 · Experience Polish**
 - Scope: Visual polish, UI/UX refinement, Case Study synchronization, responsive QA, accessibility refinement
 - GitHub: PR #16 merged to `main`
-- Automated QA: GitHub Actions run #57 PASS
+- v1.1 UI hotfix: PR #18 consolidates the overlapping `매칭 로직 0/5` / `제품 검증` utilities into one `제품 검증` entry, hides it during onboarding, and keeps funnel progress inside the validation inspector
+- Automated QA: GitHub Actions run #57 PASS; hotfix PR must also pass the same Regression / Browser / axe / responsive gates before merge
   - Regression 36 PASS
   - Browser E2E + axe PASS
   - 320 / 375 / 390 px responsive gate PASS
   - Production HTTP smoke PASS
   - Production browser render smoke PASS
-- Vercel: `8d501bd` verified commit / Production READY
+- Vercel: v1.1 baseline verified / Production READY
 - Production endpoints: Case Study `/` and Live Demo `/demo` HTTP 200 verified
 - Manual device QA: iPhone Safari + VoiceOver and Android Chrome + TalkBack core flows checked by user; no blocking issue reported
 
