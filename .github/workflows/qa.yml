@@ -29,7 +29,7 @@ jobs:
         run: node --test tests/*.test.cjs
 
   browser-e2e:
-    name: Browser E2E + axe + responsive
+    name: Browser E2E + axe
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
