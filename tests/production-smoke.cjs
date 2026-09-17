@@ -68,9 +68,23 @@ async function main() {
 
   await run('final-runtime', '/footmate-finalize.js', ({ body, contentType }) => {
     assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'final runtime content type unexpected');
-    assert(body.includes('simulateLowCredit'), 'final runtime hardening marker missing');
+    assert(body.includes('compatibility-state-bridge'), 'final runtime state-bridge marker missing');
     assert(body.includes('favoriteMatchKeys'), 'entity persistence marker missing');
     assert(body.includes('FootMateFinalRuntime'), 'final runtime state accessor missing');
+  });
+
+  await run('v2-bootstrap-runtime', '/src/v2/bootstrap.js', ({ body, contentType }) => {
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 bootstrap content type unexpected');
+    assert(body.includes("VERSION='2.0.0-beta.2'"), 'v2 beta2 version marker missing');
+    assert(body.includes("architecture:'native-es-modules'"), 'v2 architecture marker missing');
+    assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
+  });
+
+  await run('v2-payment-runtime', '/src/v2/ui/payment-controller.js', ({ body, contentType }) => {
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 payment content type unexpected');
+    assert(body.includes('simulateLowCredit'), 'v2 low-credit controller marker missing');
+    assert(body.includes('recordParticipation'), 'v2 participation adapter marker missing');
+    assert(body.includes('paidMatchKeys'), 'v2 duplicate-charge guard marker missing');
   });
 
   await run('product-hardening-runtime', '/footmate-product-hardening.js', ({ body, contentType }) => {
