@@ -1,0 +1,157 @@
+/* FootMate v1.1 · Experience Polish
+   Non-destructive visual system layer for the existing 39-screen prototype. */
+:root{
+  --fm-brand:#255AAE;
+  --fm-brand-strong:#1F4F9D;
+  --fm-brand-soft:#EEF4FF;
+  --fm-accent:#6B5CE7;
+  --fm-success:#177A58;
+  --fm-warning:#9A5A05;
+  --fm-danger:#B83A3A;
+  --fm-text:#172033;
+  --fm-text-2:#506078;
+  --fm-text-3:#7D8CA3;
+  --fm-surface:#FFFFFF;
+  --fm-surface-soft:#F5F7FB;
+  --fm-border:#DCE3ED;
+  --fm-shadow-card:0 8px 24px rgba(25,43,78,.08);
+  --fm-shadow-float:0 16px 40px rgba(25,43,78,.16);
+  --fm-radius-sm:10px;
+  --fm-radius-md:14px;
+  --fm-radius-lg:18px;
+  --fm-radius-xl:24px;
+}
+
+/* Base hierarchy */
+.screen{background:var(--fm-surface-soft)!important;color:var(--fm-text)}
+.pcnt{scrollbar-width:none}
+.nbar{height:48px!important;padding:0 16px!important;border-bottom:1px solid rgba(31,48,76,.07)!important}
+.nbar-title{font-size:16px!important;font-weight:850!important;letter-spacing:-.025em!important;color:var(--fm-text)!important}
+.nbar-back,.nbar-action{color:var(--fm-brand)!important}
+.sbar{height:40px!important}
+
+/* Cards */
+.card,.profile-elo-card,.profile-menu-item,.notif-item,.checkin-member,.gameday-scenario,
+.v2-match-card,.v2-status-card,.ticket,.postgame-scenario{
+  border:1px solid var(--fm-border)!important;
+  box-shadow:var(--fm-shadow-card)!important;
+}
+.card,.profile-elo-card,.profile-menu-item,.notif-item,.checkin-member,.gameday-scenario{
+  border-radius:var(--fm-radius-lg)!important;
+}
+
+/* Primary actions */
+.btn-primary{
+  min-height:48px!important;
+  border-radius:14px!important;
+  background:linear-gradient(135deg,var(--fm-brand),#477FD8)!important;
+  box-shadow:0 8px 18px rgba(37,90,174,.22)!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  letter-spacing:-.015em!important;
+}
+.btn-primary:hover{filter:brightness(1.025)}
+.btn-primary:active{transform:translateY(1px) scale(.99)!important}
+.btn-secondary,.btn-social{
+  min-height:46px!important;
+  border-radius:14px!important;
+  border-color:var(--fm-border)!important;
+  box-shadow:none!important;
+}
+.btn-secondary{color:var(--fm-brand)!important;background:#fff!important}
+
+/* Touch targets */
+:where(button,[role="button"],a.inline-policy-link,.tab-item,.fnav-btn){min-height:44px}
+.tab-item{justify-content:flex-start;padding-top:2px!important}
+.tab-bar{height:76px!important;padding-top:8px!important;border-top:1px solid rgba(31,48,76,.08)!important}
+.tab-lbl{font-size:10px!important;font-weight:750!important}
+.tab-lbl.on{color:var(--fm-brand)!important}
+
+/* Chips */
+.chip,.day-tab,#home-filter-tabs button,.eval-chip{
+  border-radius:999px!important;
+  font-weight:800!important;
+}
+.chip-blue{background:var(--fm-brand-soft)!important;color:var(--fm-brand)!important}
+.chip-green{background:#EAF7F1!important;color:var(--fm-success)!important}
+.chip-orange{background:#FFF4E5!important;color:var(--fm-warning)!important}
+.chip-purple{background:#F0EDFF!important;color:var(--fm-accent)!important}
+
+/* Home: improve scanability without changing data or flow */
+#s-home .pcnt{background:linear-gradient(180deg,#F8FAFD 0,#F4F7FB 100%)!important}
+#s-home #home-match-list>[onclick*="s-detail"]{
+  border:1px solid var(--fm-border)!important;
+  border-radius:18px!important;
+  box-shadow:var(--fm-shadow-card)!important;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+#s-home #home-match-list>[onclick*="s-detail"]:active{transform:scale(.992)}
+#s-home .active-day-tab,#home-filter-tabs button[aria-pressed="true"]{
+  background:var(--fm-brand)!important;
+  border-color:var(--fm-brand)!important;
+  color:#fff!important;
+  box-shadow:0 5px 14px rgba(37,90,174,.18)!important;
+}
+.footmate-home-empty,#footmateRuntimeEmpty{
+  border-color:#B8C7DB!important;
+  background:#FBFCFE!important;
+  color:var(--fm-text-2)!important;
+}
+
+/* Detail / payment / profile: clearer content grouping */
+#s-detail .pcnt,#s-pay .pcnt,#s-pay-low .pcnt,#s-charge .pcnt,#s-profile .pcnt{background:#F5F7FB!important}
+.detail-fav{box-shadow:0 8px 22px rgba(9,19,37,.2)!important}
+.profile-hero{background:linear-gradient(135deg,#6657D9,var(--fm-brand))!important}
+.profile-menu-item{min-height:54px!important}
+
+/* ELO moments */
+.elo-circle-big,.lockin-banner,.eval-av{
+  background:linear-gradient(135deg,var(--fm-brand),var(--fm-accent))!important;
+}
+.elo-circle-big{box-shadow:0 14px 34px rgba(37,90,174,.28)!important}
+.elo-tier-txt,.elo-update-badge,.pep-title,.pec-num{color:var(--fm-brand)!important}
+
+/* Game-day and status feedback */
+.gameday-hero{background:linear-gradient(135deg,#19785A,#0F5F48)!important}
+.cs-arrived{background:#EAF7F1!important;color:var(--fm-success)!important}
+.cs-moving{background:#FFF4E5!important;color:var(--fm-warning)!important}
+
+/* Product validation UI becomes visually consistent with the app */
+.fm-product-launcher{
+  min-height:44px!important;
+  padding:10px 14px!important;
+  border-color:#CBD7E7!important;
+  box-shadow:var(--fm-shadow-float)!important;
+}
+.fm-inspector-card{background:#F7F9FC!important}
+.fm-status-card,.fm-reason-summary,.fm-exclusions,.fm-compare,.fm-factor,.fm-kpi-summary div,.fm-funnel>div,.fm-kpi-table{
+  border-color:var(--fm-border)!important;
+  border-radius:var(--fm-radius-md)!important;
+}
+.fm-tabs button,.fm-action{min-height:44px!important}
+.fm-tabs button[aria-selected="true"]{border-color:var(--fm-brand)!important;background:var(--fm-brand-soft)!important;color:var(--fm-brand-strong)!important}
+.fm-factor-track i{background:var(--fm-brand)!important}
+
+/* Focus / motion */
+:where(button,a,input,textarea,select,[role="button"],[contenteditable="true"]):focus-visible{
+  outline:3px solid #0B57D0!important;
+  outline-offset:2px!important;
+}
+@media (hover:hover){
+  .card:hover,.profile-menu-item:not(.is-static):hover,.notif-item:hover{border-color:#C6D3E4!important}
+}
+@media(max-width:390px){
+  .btn-primary{min-height:46px!important}
+  .card{margin-left:14px!important;margin-right:14px!important}
+  .fm-product-launcher{right:10px!important}
+}
+@media(max-width:340px){
+  /* The 375px prototype is proportionally scaled at narrow widths; 52px keeps the rendered target >=44px at 320px. */
+  .btn-primary{min-height:52px!important}
+  .nbar{padding-left:12px!important;padding-right:12px!important}
+  .card{margin-left:10px!important;margin-right:10px!important;padding-left:13px!important;padding-right:13px!important}
+  .tab-lbl{font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #s-home #home-match-list>[onclick*="s-detail"],.btn-primary{transition:none!important}
+}
