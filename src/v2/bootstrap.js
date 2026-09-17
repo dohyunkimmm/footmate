@@ -45,6 +45,13 @@ async function boot(){
 
   document.documentElement.dataset.footmateVersion='2';
   state.mode=applyMode(mode);
+
+  // Product mode skips the portfolio intro visually, but still runs its
+  // initialization contract so hash deep-links and demo state restoration work.
+  if(state.mode==='product'&&typeof window.startFootMateDemo==='function'){
+    window.startFootMateDemo();
+  }
+
   const validation=installValidationEntry({mode:state.mode});
 
   state.version=VERSION;
