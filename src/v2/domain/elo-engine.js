@@ -1,6 +1,6 @@
 export function createEloEngine({kFactor=32}={}){
   function actualScore(result){
-    return result==='WIN'?1:result==='DRAW'?.5:0;
+    return result==='WIN'?1:result==='DRAW'?0.5:0;
   }
 
   function calculate({baseElo,opponentElo,result}){
