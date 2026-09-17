@@ -1,11 +1,14 @@
 import{createStorage}from'./core/storage.js';
 import{getActiveScreenId,observeActiveScreen}from'./core/screen-observer.js';
+import{resolveMode,applyMode}from'./core/mode.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
 const VERSION='2.0.0-beta.1';
 const uiStorage=createStorage('ui');
+const mode=resolveMode();
 const state=Object.assign({
   version:VERSION,
+  mode,
   lastActiveScreen:'',
   validationTab:'recommendation'
 },uiStorage.read());
@@ -31,6 +34,7 @@ function waitForRuntime(timeoutMs=8000){
 function persistState(){
   uiStorage.write({
     version:VERSION,
+    mode:state.mode,
     lastActiveScreen:state.lastActiveScreen,
     validationTab:state.validationTab
   });
@@ -40,7 +44,8 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  const validation=installValidationEntry();
+  state.mode=applyMode(mode);
+  const validation=installValidationEntry({mode:state.mode});
 
   state.version=VERSION;
   state.lastActiveScreen=getActiveScreenId();
@@ -64,6 +69,7 @@ async function boot(){
   window.__footmateV2=true;
   window.FootMateV2Runtime={
     version:VERSION,
+    mode:state.mode,
     state,
     storageKey:uiStorage.key,
     architecture:'native-es-modules',
@@ -75,8 +81,8 @@ async function boot(){
     }
   };
 
-  window.dispatchEvent(new CustomEvent('footmate:v2:ready',{detail:{version:VERSION}}));
-  console.info('[FootMate] v2 product experience architecture ready',VERSION);
+  window.dispatchEvent(new CustomEvent('footmate:v2:ready',{detail:{version:VERSION,mode:state.mode}}));
+  console.info('[FootMate] v2 product experience architecture ready',VERSION,state.mode);
 }
 
 boot().catch(error=>{
