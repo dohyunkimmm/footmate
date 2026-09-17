@@ -37,7 +37,8 @@ async function main() {
       '<link rel="canonical" href="https://footmate-black.vercel.app/">',
       '<meta property="og:title"',
       '<meta property="og:image"',
-      '<meta name="twitter:card" content="summary_large_image">'
+      '<meta name="twitter:card" content="summary_large_image">',
+      'index-v1.1.css'
     ]) assert(body.includes(marker), `/ missing ${marker}`);
   });
 
@@ -47,6 +48,7 @@ async function main() {
     assert(body.includes("fetch('/demo-source'"), '/demo shell source loader missing');
     assert(body.includes('footmate-product-core.js'), '/demo product policy core loader missing');
     assert(body.includes('footmate-product-hardening.js'), '/demo product hardening loader missing');
+    assert(body.includes('footmate-v1.1.css'), '/demo v1.1 visual layer missing');
   });
 
   await run('demo-source', '/demo-source', ({ body }) => {
@@ -78,6 +80,18 @@ async function main() {
     assert(body.includes('FootMateProductOps'), 'product operation API missing');
     assert(body.includes('duplicate_application_blocked'), 'duplicate application guard marker missing');
     assert(body.includes('recommendation_baseline_saved'), 'recommendation comparison marker missing');
+  });
+
+  await run('v1.1-demo-style', '/footmate-v1.1.css', ({ body, contentType }) => {
+    assert(contentType.includes('css') || contentType.includes('text/plain'), 'v1.1 demo style content type unexpected');
+    assert(body.includes('--fm-brand-700'), 'v1.1 design token marker missing');
+    assert(body.includes('#s-home'), 'v1.1 home refinement marker missing');
+  });
+
+  await run('v1.1-case-study-style', '/index-v1.1.css', ({ body, contentType }) => {
+    assert(contentType.includes('css') || contentType.includes('text/plain'), 'v1.1 case study style content type unexpected');
+    assert(body.includes('--fm-cs-bg'), 'v1.1 case study token marker missing');
+    assert(body.includes('.fm-version-note'), 'v1.1 case study version marker missing');
   });
 
   fs.mkdirSync(reportDir, { recursive: true });

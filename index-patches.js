@@ -10,6 +10,7 @@ function ensureEnhancementStyles(){
     .fm-decision-summary b{display:block;margin-bottom:3px;color:#5EEAD4;font:900 8px/1.2 Inter,sans-serif;letter-spacing:.09em;text-transform:uppercase}
     .fm-proof-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
     .fm-proof-strip span{padding:6px 9px;border-radius:999px;border:1px solid rgba(94,234,212,.2);background:rgba(94,234,212,.07);color:#A9F4E8;font-size:9px;font-weight:900}
+    .fm-proof-strip .pending{border-color:rgba(255,209,102,.22);background:rgba(255,209,102,.08);color:#FFE2A0}
     @media(max-width:900px){.fm-decision-summary{grid-template-columns:1fr 1fr}.fm-decision-summary span:last-child{grid-column:1/-1}}
     @media(max-width:520px){.fm-decision-summary{grid-template-columns:1fr}.fm-decision-summary span:last-child{grid-column:auto}}
     @media(prefers-reduced-motion:reduce){.fm-decision-summary *,.fm-proof-strip *{animation:none!important;transition:none!important}}
@@ -31,35 +32,48 @@ function syncCaseStudy(){
     detail.innerHTML='<p>홈: 추천 경기 · 홈 필터</p><p>탐색: 조건 설정 · 추천 결과 · 팀 상세</p><p>일정: 참가 확정 · 경기일 · 알림</p><p>프로필: ELO · 성장 기록 · 설정</p>';
   }
   const cover=document.querySelector('.slide[data-i="0"] .cover');
-  if(cover&&!document.getElementById('fmDecisionSummary')){
-    const summary=document.createElement('div');
-    summary.id='fmDecisionSummary';
-    summary.className='fm-decision-summary';
-    summary.setAttribute('aria-label','프로젝트 의사결정 요약');
-    summary.innerHTML='<span><b>Problem</b>실력 편차 · 노쇼 · 관계 단절</span><span><b>Hypothesis</b>ELO·선결제·성장 기록이 신뢰를 높인다</span><span><b>Design</b>39화면 · 상태 기반 핵심 여정</span><span><b>Validation</b>36 회귀 · Chromium · axe · Production Smoke</span><span><b>Result</b>설명 가능한 추천·운영 예외·검증 증거를 연결</span>';
-    const hero=cover.querySelector('.hero-grid');
-    if(hero)cover.insertBefore(summary,hero);
+  if(cover){
+    if(!document.getElementById('fmV11VersionNote')){
+      const note=document.createElement('div');
+      note.id='fmV11VersionNote';
+      note.className='fm-version-note';
+      note.textContent='v1.1 · Visual & UX Refinement · iteration';
+      const title=cover.querySelector('h1');
+      if(title)cover.insertBefore(note,title);
+    }
+    if(!document.getElementById('fmDecisionSummary')){
+      const summary=document.createElement('div');
+      summary.id='fmDecisionSummary';
+      summary.className='fm-decision-summary';
+      summary.setAttribute('aria-label','프로젝트 의사결정 요약');
+      summary.innerHTML='<span><b>Problem</b>실력 편차 · 노쇼 · 관계 단절</span><span><b>Hypothesis</b>ELO·선결제·성장 기록이 신뢰를 높인다</span><span><b>Design</b>39화면 기능 baseline + Design System 통합</span><span><b>Validation</b>기존 기능 QA 유지 · v1.1 반응형/Visual QA 진행</span><span><b>Result</b>설명 가능한 추천과 실제 제품처럼 읽히는 핵심 Flow 연결</span>';
+      const hero=cover.querySelector('.hero-grid');
+      if(hero)cover.insertBefore(summary,hero);
+    }
   }
   const hint=document.querySelector('.showcase-hint');
-  if(hint)hint.textContent='앱 우측 하단의 ‘매칭 로직’과 ‘제품 검증’에서 Agent Workflow, 운영 상태 전이, 추천 근거와 이벤트 로그를 확인할 수 있습니다.';
+  if(hint)hint.textContent='v1.1에서는 홈·경기 상세·결제·프로필의 시각 계층과 컴포넌트 규칙을 통합하고 있습니다. 앱 우측 하단의 ‘매칭 로직’과 ‘제품 검증’에서는 기존 Agent Workflow·운영 상태 전이·추천 근거를 계속 확인할 수 있습니다.';
   const qualityNote=document.querySelector('.slide[data-i="11"] .note');
-  if(qualityNote)qualityNote.textContent='※ 현재 프로토타입은 입력·상태·퍼널 이벤트에 따라 PASS·CHECK를 판정하며, 서버 최신성이 필요한 Freshness는 SAMPLE로 구분합니다. 운영 연동 후 오류율·최신성·상태 충돌을 실제 지표로 수집합니다.';
+  if(qualityNote)qualityNote.textContent='※ 현재 프로토타입은 입력·상태·퍼널 이벤트에 따라 PASS·CHECK를 판정하며, 서버 최신성이 필요한 Freshness는 SAMPLE로 구분합니다. v1.1 Visual & UX Refinement는 기존 제품 로직을 유지한 채 표현 계층을 개선하는 별도 iteration입니다.';
   const validation=document.querySelector('.slide[data-i="18"]');
   if(validation){
     const phase=validation.querySelector('.phase-kicker .phase-pill');
-    if(phase)phase.textContent='AUTOMATED QA VERIFIED · USER TEST PLANNED';
+    if(phase)phase.textContent='BASELINE QA VERIFIED · V1.1 VISUAL QA IN PROGRESS';
     const title=validation.querySelector('h2');
-    if(title)title.textContent='자동 QA는 증거로 닫고, 사용자 테스트는 실제 행동값으로 분리합니다';
+    if(title)title.textContent='기능 baseline은 유지하고, v1.1은 시각·반응형 회귀를 별도로 검증합니다';
     const badges=validation.querySelectorAll('.planned-badge');
-    if(badges[0])badges[0].textContent='USER TEST · 실제 행동값 미수집';
-    if(badges[1])badges[1].textContent='EVENT CONTRACT · LIVE';
+    if(badges[0])badges[0].textContent='V1.1 · MULTI-VIEWPORT / VISUAL QA';
+    if(badges[1])badges[1].textContent='EVENT CONTRACT · BASELINE 유지';
     const flow=validation.querySelector('.measure-flow');
     if(flow)flow.innerHTML='<div><b>온보딩 완료</b><span>입력</span></div><div><b>추천 노출</b><span>도달</span></div><div><b>상세 조회</b><span>탐색</span></div><div><b>결제 완료</b><span>전환</span></div><div><b>결과 제출</b><span>재추천 연결</span></div>';
     const events=validation.querySelector('.event-list');
     if(events)events.innerHTML='<div class="event-row"><code>quiz_complete</code><span>5개 온보딩 입력 완료</span></div><div class="event-row"><code>recommendation_results_view</code><span>조건 기반 추천 결과 노출</span></div><div class="event-row"><code>match_detail_open</code><span>추천 팀 상세 진입</span></div><div class="event-row"><code>payment_complete</code><span>선택 경기 결제·참가 연결</span></div><div class="event-row"><code>result_submit</code><span>경기 결과 제출과 다음 추천 연결</span></div>';
     const metricPanel=validation.querySelector('.metric-panel');
     if(metricPanel&&!metricPanel.querySelector('.fm-proof-strip')){
-      const proof=document.createElement('div');proof.className='fm-proof-strip';proof.innerHTML='<span>Regression 36</span><span>Chromium E2E</span><span>axe serious/critical 0</span><span>Production HTTP + Browser</span>';metricPanel.appendChild(proof);
+      const proof=document.createElement('div');
+      proof.className='fm-proof-strip';
+      proof.innerHTML='<span>Baseline Regression 36</span><span>Baseline Chromium E2E</span><span>Baseline axe gate</span><span class="pending">v1.1 visual regression · pending</span><span class="pending">mobile viewport QA · pending</span>';
+      metricPanel.appendChild(proof);
     }
   }
 }

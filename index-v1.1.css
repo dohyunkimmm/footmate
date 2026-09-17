@@ -1,0 +1,42 @@
+/* FootMate Case Study v1.1 · Visual & UX Refinement · 2026-09-17 */
+:root{
+  --fm-cs-bg:#07111F;
+  --fm-cs-panel:#0C1727;
+  --fm-cs-line:rgba(255,255,255,.09);
+  --fm-cs-text:#F5F8FC;
+  --fm-cs-muted:#91A4BC;
+  --fm-cs-blue:#77AEFF;
+  --fm-cs-mint:#67E8D2;
+  --fm-cs-purple:#9A86FF;
+}
+html,body{background:var(--fm-cs-bg)}
+.sidebar{width:244px;background:rgba(4,9,17,.96);border-right:1px solid var(--fm-cs-line);box-shadow:18px 0 48px rgba(0,0,0,.14)}
+.sb-header{padding:20px 17px 18px}.sb-logo{font-size:16px;letter-spacing:-.02em}.sb-sub{color:#6F839D;font-size:10px}
+.toc-list{padding:10px 0}.toc-item{margin:2px 8px;padding:10px 11px;border-radius:10px;border-left:0;gap:9px}.toc-item:hover{background:rgba(119,174,255,.08)}.toc-item.on{background:linear-gradient(90deg,rgba(119,174,255,.15),rgba(154,134,255,.08));box-shadow:inset 0 0 0 1px rgba(119,174,255,.12)}
+.toc-n{color:var(--fm-cs-blue)}.toc-t{color:#A8B7CA}.toc-s{color:#60748E}.toc-item.on .toc-t{color:#fff}
+.viewer{background:radial-gradient(circle at 76% 0%,rgba(88,126,255,.09),transparent 36%),#050B13}
+.slide{padding:70px 78px 78px;background:radial-gradient(ellipse at 16% 0%,rgba(154,134,255,.09),transparent 42%),radial-gradient(ellipse at 52% 0%,rgba(119,174,255,.11),transparent 55%),var(--fm-cs-bg)}
+.content{width:min(1080px,100%);height:min(660px,100%)}
+.kicker{color:var(--fm-cs-mint);font-size:10.5px;letter-spacing:.24em}.lead{color:#A8B7CA;max-width:900px}
+h2{letter-spacing:-.05em}
+.card,.problem,.moscow div,.road div,.hero-grid div{border-color:var(--fm-cs-line);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.035));box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 10px 32px rgba(0,0,0,.10)}
+.card p,.problem p,.moscow p,.road p{color:#94A7C0}.card em,.problem b{color:var(--fm-cs-blue)}
+.badge{border-color:rgba(119,174,255,.28);background:rgba(119,174,255,.10);color:#A8CBFF;box-shadow:0 8px 28px rgba(58,104,190,.08)}
+.cover h1{background:linear-gradient(135deg,#fff 6%,#9FC8FF 39%,#A893FF 70%,#67E8D2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 10px 30px rgba(73,117,190,.13))}
+.fm-version-note{display:inline-flex;align-items:center;gap:7px;margin:0 auto 14px;padding:7px 12px;border:1px solid rgba(103,232,210,.20);border-radius:999px;background:rgba(103,232,210,.07);color:#B7F7EC;font:800 10px/1.2 Inter,'Noto Sans KR',sans-serif;letter-spacing:.02em}
+.fm-version-note::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--fm-cs-mint);box-shadow:0 0 0 4px rgba(103,232,210,.10)}
+.fm-decision-summary{gap:9px!important;margin-bottom:16px!important}.fm-decision-summary span{padding:10px 11px!important;border-radius:13px!important;background:rgba(255,255,255,.045)!important;color:#8EA2BA!important}.fm-decision-summary b{color:var(--fm-cs-mint)!important}
+.solution-line{border-color:rgba(103,232,210,.20);background:rgba(103,232,210,.065)}
+.root{background:linear-gradient(135deg,#77AEFF,#9A86FF,#67E8D2);box-shadow:0 12px 34px rgba(85,126,214,.18)}
+.ia-row span{border-color:var(--fm-cs-line);background:rgba(255,255,255,.05);box-shadow:0 8px 24px rgba(0,0,0,.10)}
+.match{border:1px solid #E2E8F0;box-shadow:0 12px 36px rgba(0,0,0,.18)}
+.showcase-device-wrap .device{box-shadow:0 52px 120px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.13),inset 0 1px 0 rgba(255,255,255,.09),0 0 105px rgba(119,174,255,.18)}
+.showcase-device-meta{color:#A0B1C6;border-color:rgba(255,255,255,.10)}
+.showcase-hint{color:#72869F;max-width:470px;line-height:1.55}
+.closing-final-values div,.closing-final-links a{border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.04)}
+.btn{width:44px;height:44px;border-color:rgba(255,255,255,.13);background:rgba(255,255,255,.075);backdrop-filter:blur(12px)}.btn:hover{background:rgba(119,174,255,.14);border-color:rgba(119,174,255,.30)}
+.dot{width:5px;height:5px}.dot.on{background:var(--fm-cs-blue)}.pbar-fill{background:linear-gradient(90deg,var(--fm-cs-blue),var(--fm-cs-purple),var(--fm-cs-mint))}
+:where(button,a,[role="button"]):focus-visible{outline:3px solid #77AEFF!important;outline-offset:3px!important}
+@media(max-width:900px){.sidebar{width:210px}.slide{padding:66px 38px 74px}.content{height:auto;min-height:100%}}
+@media(max-width:700px){.sidebar{display:none}.slide{padding:62px 20px 70px}.topbar{padding-left:18px;padding-right:18px}.btn-prev{left:8px}.btn-next{right:8px}}
+@media(prefers-reduced-motion:reduce){.toc-item,.btn,.card,.problem,.road div,.moscow div{transition:none!important}}

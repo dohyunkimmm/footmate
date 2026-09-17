@@ -1,0 +1,102 @@
+/* FootMate v1.1 · Visual & UX Refinement · 2026-09-17 */
+:root{
+  --fm-brand-700:#173F8F;
+  --fm-brand-600:#245BB8;
+  --fm-brand-500:#3473D4;
+  --fm-brand-100:#EAF2FF;
+  --fm-brand-050:#F5F8FF;
+  --fm-accent-600:#4F46C7;
+  --fm-success-600:#177A58;
+  --fm-warning-600:#9A4F00;
+  --fm-danger-600:#B93838;
+  --fm-ink-900:#172033;
+  --fm-ink-700:#42516B;
+  --fm-ink-500:#617087;
+  --fm-line:#DCE4F0;
+  --fm-surface:#FFFFFF;
+  --fm-surface-subtle:#F6F8FC;
+  --fm-shadow-card:0 8px 24px rgba(28,45,82,.08);
+  --fm-shadow-float:0 18px 48px rgba(28,45,82,.16);
+  --fm-radius-sm:10px;
+  --fm-radius-md:14px;
+  --fm-radius-lg:18px;
+  --fm-radius-xl:24px;
+  --blue:var(--fm-brand-600);
+  --blue-light:var(--fm-brand-100);
+  --blue-mid:var(--fm-brand-700);
+  --purple:var(--fm-accent-600);
+  --green:var(--fm-success-600);
+  --orange:var(--fm-warning-600);
+  --red:var(--fm-danger-600);
+  --gray:var(--fm-surface-subtle);
+  --gray2:#EEF2F8;
+  --border:var(--fm-line);
+  --txt:var(--fm-ink-900);
+  --txt2:var(--fm-ink-700);
+  --txt3:var(--fm-ink-500);
+}
+html{background:#E9EEF6}
+body{background:linear-gradient(180deg,#EEF2F8 0%,#E7EDF6 100%);color:var(--txt);letter-spacing:-.012em}
+.top-bar{margin-bottom:16px}
+.top-logo{font-size:16px;letter-spacing:-.025em}
+.top-badge{background:var(--fm-brand-700);padding:6px 11px;box-shadow:0 4px 14px rgba(23,63,143,.18)}
+.flow-nav{gap:8px;margin-bottom:18px}
+.fnav-btn{min-height:34px;padding:7px 13px;border:1px solid var(--fm-line);background:rgba(255,255,255,.86);color:var(--fm-ink-700);box-shadow:0 1px 0 rgba(20,35,65,.03)}
+.fnav-btn:hover{border-color:#B8C9E5;background:#fff;color:var(--fm-brand-700)}
+.fnav-btn.active{background:var(--fm-brand-700);border-color:var(--fm-brand-700);box-shadow:0 6px 18px rgba(23,63,143,.18)}
+.device-shell{background:linear-gradient(145deg,#20283B,#111827);box-shadow:0 36px 90px rgba(24,35,60,.28),0 0 0 1px rgba(255,255,255,.16)}
+.device-screen{background:var(--fm-surface-subtle);box-shadow:inset 0 0 0 1px rgba(255,255,255,.72)}
+.screen{background:var(--fm-surface-subtle)}
+.sbar,.nbar,.tab-bar{background:rgba(255,255,255,.97);backdrop-filter:blur(16px)}
+.nbar{height:48px;border-bottom:1px solid rgba(220,228,240,.84)}
+.nbar-title{font-size:15px;font-weight:800;letter-spacing:-.025em}
+.nbar-back,.nbar-action{color:var(--fm-brand-700)}
+.tab-bar{height:74px;border-top:1px solid rgba(220,228,240,.88);padding-top:9px}
+.tab-item{min-height:52px;border-radius:12px;justify-content:flex-start;padding-top:3px;transition:background .16s ease,transform .16s ease}
+.tab-item:active{transform:scale(.97);background:var(--fm-brand-050)}
+.tab-icon{font-size:21px}.tab-lbl{font-size:10px;font-weight:700;color:var(--fm-ink-500)}.tab-lbl.on{color:var(--fm-brand-700)}
+.card,.profile-elo-card,.profile-menu-item,.notif-item,.checkin-member,.v2-match-card,.v2-status-card{border:1px solid var(--fm-line);border-radius:var(--fm-radius-lg);box-shadow:var(--fm-shadow-card)}
+.card{padding:15px 16px;margin-bottom:12px}
+.btn-primary,.btn-secondary,.btn-social{min-height:48px;border-radius:14px;font-weight:800;letter-spacing:-.02em}
+.btn-primary{background:linear-gradient(180deg,var(--fm-brand-500),var(--fm-brand-600));box-shadow:0 8px 20px rgba(36,91,184,.20)}
+.btn-primary:hover{filter:brightness(1.02)}
+.btn-primary:active{transform:translateY(1px) scale(.99);box-shadow:0 4px 12px rgba(36,91,184,.18)}
+.btn-secondary{border-color:#B8CAE7;color:var(--fm-brand-700);background:#fff}
+.btn-secondary:hover{background:var(--fm-brand-050)}
+.chip{min-height:28px;padding:5px 10px;font-size:10.5px;border:1px solid transparent}
+.chip-blue{background:var(--fm-brand-100);color:var(--fm-brand-700)}
+.chip-green{background:#E9F6F1;color:#146B4D}.chip-orange{background:#FFF4E8;color:#8C4700}.chip-purple{background:#F0EEFF;color:#5148CC}.chip-gray{background:#EFF2F6;color:#59677F}
+#s-splash .pcnt{background:radial-gradient(circle at 50% 12%,rgba(91,120,255,.32),transparent 36%),linear-gradient(155deg,#0D1730 0%,#162A62 48%,#234FAE 100%)}
+.splash-title{font-size:28px;letter-spacing:-.045em}.splash-sub{max-width:280px;color:rgba(255,255,255,.74)}
+.splash-socials .btn-social{box-shadow:0 7px 22px rgba(0,0,0,.10);border-color:rgba(255,255,255,.55)}
+#s-home .pcnt,#s-profile .pcnt,#s-notifs .pcnt{background:linear-gradient(180deg,#F8FAFE 0%,#F3F6FB 100%)}
+#s-home .day-tab,#home-filter-tabs button{min-height:44px;border-radius:999px!important;font-weight:800!important;transition:all .16s ease}
+#home-filter-tabs{gap:7px}
+#home-match-list .card{position:relative;overflow:hidden}
+#home-match-list .card::after{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--fm-brand-500),var(--fm-accent-600));opacity:.78}
+#s-detail .pcnt{background:#F6F8FC}
+.detail-chips{gap:6px}
+.detail-fav{width:46px;height:46px;box-shadow:0 10px 24px rgba(15,26,58,.18)}
+#s-pay .pcnt,#s-pay-low .pcnt,#s-charge .pcnt,#s-charge-done .pcnt{background:linear-gradient(180deg,#F9FBFE,#F3F6FB)}
+.pay-row{padding:11px 0;border-bottom:1px solid #E8EDF4}
+.pay-row:last-child{border-bottom:0}.pay-key{color:var(--fm-ink-500)}.pay-val{color:var(--fm-ink-900);font-weight:800}
+.ticket{background:#fff;border-color:#B9C9E4;box-shadow:var(--fm-shadow-card)}
+.gameday-hero{background:linear-gradient(135deg,#146B4D 0%,#1D8B67 100%);padding:20px 16px;box-shadow:0 8px 22px rgba(20,107,77,.16)}
+.gameday-name{letter-spacing:-.03em}.gds-item{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.12)}
+.checkin-member,.gameday-scenario{border-color:var(--fm-line);box-shadow:0 5px 16px rgba(28,45,82,.05)}
+.gameday-scenario-btn{min-height:44px;background:#FBFCFE;border-color:var(--fm-line)}
+#s-postgame .pcnt,#s-eloUpdate .pcnt{background:linear-gradient(180deg,#FFFFFF 0%,#F7F9FD 100%)}
+.postgame-stats,.postgame-scenario,.elo-dist-box{border:1px solid var(--fm-line);background:#F7F9FC}
+.postgame-elo-preview{border:1px solid #C9D9F1;background:var(--fm-brand-100)}
+.elo-circle-big{background:linear-gradient(135deg,var(--fm-brand-500),var(--fm-accent-600));box-shadow:0 12px 34px rgba(36,91,184,.24)}
+.lockin-banner{background:linear-gradient(135deg,var(--fm-brand-600),var(--fm-accent-600));box-shadow:0 12px 28px rgba(36,91,184,.18)}
+.profile-hero{background:linear-gradient(135deg,#4B49C8 0%,#285FBF 58%,#1F75B8 100%);padding:22px 17px;box-shadow:0 10px 28px rgba(36,91,184,.18)}
+.profile-av{box-shadow:0 7px 20px rgba(19,40,88,.20)}
+.profile-elo-card{margin-top:14px}.profile-menu-item{min-height:52px;margin-bottom:9px}.pmi-icon{width:30px;text-align:center}.pmi-arr{color:#8B98AC}
+.fm-product-launcher{min-height:44px;padding:10px 13px;border-color:#C9D5E6;box-shadow:0 12px 32px rgba(24,39,75,.16)}
+.fm-inspector-card{background:#F7F9FC}.fm-tabs button,.fm-action{min-height:44px}.fm-status-card,.fm-reason-summary,.fm-exclusions,.fm-compare,.fm-factor,.fm-kpi-summary div,.fm-kpi-table{border-color:var(--fm-line);box-shadow:0 4px 14px rgba(28,45,82,.04)}
+.v3-launcher{min-height:44px!important;padding:9px 12px!important;background:rgba(20,32,66,.94)!important;box-shadow:0 10px 26px rgba(15,26,58,.24)!important}
+:where(button,a,input,textarea,select,[role="button"],[contenteditable="true"]):focus-visible{outline:3px solid #1C63C7!important;outline-offset:3px!important}
+@media(max-width:560px){body{padding:12px 8px 28px}.top-bar,.flow-nav{max-width:420px}.device-shell{width:min(100%,390px);height:min(780px,calc(100vh - 124px));min-height:640px;border-radius:38px;padding:10px}.device-screen{border-radius:29px}.device-notch{top:10px}.btn-primary,.btn-secondary,.btn-social{min-height:48px}.fm-product-launcher{right:10px}}
+@media(max-width:390px){body{padding-inline:4px}.device-shell{border-radius:32px;padding:8px}.device-screen{border-radius:25px}.btn-primary,.btn-secondary,.btn-social,#s-home .day-tab,#home-filter-tabs button,.gameday-scenario-btn,.fm-product-launcher,.fm-tabs button,.fm-action,.v3-launcher{min-height:52px!important}.card{margin-left:12px;margin-right:12px}.profile-elo-card,.profile-menu-item{margin-left:12px;margin-right:12px}}
+@media(prefers-reduced-motion:reduce){.tab-item,.fnav-btn,.btn-primary,.btn-secondary,.card,.profile-menu-item{transition:none!important}}
