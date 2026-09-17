@@ -29,6 +29,14 @@ module.exports = defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
+    },
+    {
+      name: 'chromium-mobile-390',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 } }
+    },
+    {
+      name: 'chromium-compact-320',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 320, height: 700 } }
     }
   ]
 });
