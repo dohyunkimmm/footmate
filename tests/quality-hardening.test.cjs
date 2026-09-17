@@ -41,6 +41,8 @@ test('runtime hardening classics parse and v2 module graph is wired', () => {
 
   for (const file of [
     'src/v2/bootstrap.js',
+    'src/v2/domain/matching-engine.js',
+    'src/v2/domain/elo-engine.js',
     'src/v2/state/product-store.js',
     'src/v2/state/scenario-store.js',
     'src/v2/ui/home-controller.js',
@@ -119,8 +121,16 @@ test('v2 controllers are the owners of migrated critical interactions', () => {
   const payment = read('src/v2/ui/payment-controller.js');
   const secondary = read('src/v2/ui/secondary-controller.js');
 
-  assert.ok(bootstrap.includes("VERSION='2.0.0'"));
+  assert.ok(bootstrap.includes("VERSION='2.1.0'"));
   assert.ok(bootstrap.includes("finalize:'state-bridge-only'"));
+  assert.ok(bootstrap.includes("createMatchEngine"));
+  assert.ok(bootstrap.includes("createEloEngine"));
+  assert.ok(read('src/v2/domain/matching-engine.js').includes("architecture:'v2.1-domain-engine'"));
+  assert.ok(read('src/v2/domain/elo-engine.js').includes("architecture:'v2.1-domain-engine'"));
+  assert.ok(read('src/v2/state/scenario-store.js').includes("v2.1-domain-derived-store"));
+  assert.ok(read('footmate-patches.js').includes("attachDomainEngines"));
+  assert.ok(read('footmate-patches.js').includes("v2.1-render-compatibility-adapter"));
+  assert.ok(read('footmate-product-hardening.js').includes("recommendationSource"));
   assert.ok(home.includes("removeAttribute('onclick')"));
   assert.ok(filters.includes("removeAttribute('onclick')"));
   assert.ok(payment.includes("removeAttribute('onclick')"));

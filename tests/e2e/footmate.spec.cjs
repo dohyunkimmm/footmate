@@ -56,6 +56,9 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     finalizeArchitecture: window.FootMateFinalRuntime?.architecture,
     scenarioAdapter: !!window.FootMateScenarioAdapter,
     legacyLayers: window.FootMateV2Runtime?.legacyLayers,
+    domainRuntime: !!window.FootMateV21,
+    scenarioStoreArchitecture: window.FootMateV2Runtime?.scenarioStore?.architecture,
+    recommendationSource: window.FootMateProductOps?.recommendationSource?.(),
     mode: window.FootMateV2Runtime?.mode,
     architecture: window.FootMateV2Runtime?.architecture,
     navigationWrapped: window.FootMateV2Runtime?.navigationWrapped,
@@ -70,10 +73,13 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     productHardening: true,
     v2: true,
     mode: 'product',
-    architecture: 'native-es-modules',
+    architecture: 'v2.1-domain-modular-es-runtime',
     navigationWrapped: false,
     finalizeArchitecture: 'compatibility-state-bridge',
     scenarioAdapter: true,
+    domainRuntime: true,
+    scenarioStoreArchitecture: 'v2.1-domain-derived-store',
+    recommendationSource: 'v2.1-domain-store',
     active: 's-splash'
   });
   expect(runtime.version).toMatch(/^2\./);
@@ -164,7 +170,7 @@ test('v2 UI state is versioned and screen state persists independently', async (
   }));
   expect(snapshot.key).toBe('footmate:v2:ui');
   expect(snapshot.saved).toMatchObject({
-    version: '2.0.0',
+    version: '2.1.0',
     mode: 'product',
     lastActiveScreen: 's-profile'
   });

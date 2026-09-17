@@ -11,6 +11,7 @@ const META={
 };
 Object.entries(META).forEach(([k,m])=>Object.assign(matchScenarioBases[k],m,{distance:m.distanceKm+'km'}));
 const state=window.FootMateRuntime={answered:new Set(),participationMatchKey:null};
+const domainEngines={match:null,elo:null};
 scenarioProfile.matchSkill=scenarioProfile.matchSkill??scenarioProfile.skill;
 scenarioProfile.distanceKm=scenarioProfile.distanceKm??Number(document.getElementById('distanceRange')?.value||15);
 scenarioProfile.format=scenarioProfile.format||'5vs5';
@@ -22,7 +23,7 @@ function ymd(d){return d instanceof Date?[d.getFullYear(),d.getMonth(),d.getDate
 function dateKey(){if(ymd(selectedDate)===ymd(SCENARIO_DATES.sat))return'sat';if(ymd(selectedDate)===ymd(SCENARIO_DATES.sun))return'sun';return ymd(selectedDate)||'sat'}
 function meta(k=selectedMatchKey){return META[k]||META.suwon}
 function fmt(m=meta()){return m.formats.includes(scenarioProfile.format)?scenarioProfile.format:m.formats[0]}
-function tier(e){return e>=1450?'골드 I':e>=1375?'골드 II':e>=1300?'실버 III':e>=1225?'실버 II':e>=1150?'실버 I':'브론즈 III'}
+function tier(e){return domainEngines.elo?.tier?.(e)||(e>=1450?'골드 I':e>=1375?'골드 II':e>=1300?'실버 III':e>=1225?'실버 II':e>=1150?'실버 I':'브론즈 III')}
 function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;return el}
 function save(){try{localStorage.setItem(STORE,JSON.stringify({currentElo:demoState.currentElo,eloBeforeUpdate:demoState.eloBeforeUpdate,updatedElo:demoState.updatedElo,eloCommitted:demoState.eloCommitted,result:demoState.postgameResult,selectedMatchKey,participationConfirmed,participationMatchKey:state.participationMatchKey,answered:[...state.answered],profile:{position:scenarioProfile.position,frequency:scenarioProfile.frequency,skill:scenarioProfile.skill,region:scenarioProfile.region,time:scenarioProfile.time,matchSkill:scenarioProfile.matchSkill,distanceKm:scenarioProfile.distanceKm,format:scenarioProfile.format,dateKey:dateKey()}}))}catch(e){}}
 function restore(){let x;try{x=JSON.parse(localStorage.getItem(STORE)||'null')}catch(e){}if(!x)return;if(x.profile){['position','frequency','skill','region','time','matchSkill','distanceKm','format'].forEach(k=>{if(x.profile[k]!=null)scenarioProfile[k]=x.profile[k]});if(x.profile.dateKey==='sun')selectedDate=new Date(SCENARIO_DATES.sun);if(x.profile.dateKey==='sat')selectedDate=new Date(SCENARIO_DATES.sat)};if(Number.isFinite(+x.currentElo))demoState.currentElo=+x.currentElo;if(Number.isFinite(+x.eloBeforeUpdate))demoState.eloBeforeUpdate=+x.eloBeforeUpdate;if(Number.isFinite(+x.updatedElo))demoState.updatedElo=+x.updatedElo;demoState.eloCommitted=!!x.eloCommitted;if(x.result&&resultDisplay[x.result])demoState.postgameResult=x.result;if(META[x.selectedMatchKey])selectedMatchKey=x.selectedMatchKey;participationConfirmed=!!x.participationConfirmed;if(META[x.participationMatchKey])state.participationMatchKey=x.participationMatchKey;(x.answered||[]).forEach(k=>state.answered.add(k))}
@@ -59,10 +60,10 @@ function applyDistanceState(value){
 }
 updateFilterSelections=renderFilterButtons;
 
-calculateMatchScenario=function(key){const b=matchScenarioBases[key]||matchScenarioBases.suwon;const x=Core.scoreMatch(b,Object.assign({},scenarioProfile,{dateKey:dateKey()}),demoState,scoreWeights.balance);return Object.assign({},x,{positionFit:x.positions.includes(scenarioProfile.position),availablePosition:x.positions.includes(scenarioProfile.position)?scenarioProfile.position:x.positions[0],styleDesc:x.timeKey===scenarioProfile.time?'선호 시간대와 일치':'선호 시간대와 차이',locationDesc:x.eligibility.region&&x.eligibility.distance?`${x.distanceKm}km · 선택 지역/거리 내`:`${x.distanceKm}km · 선택 지역/거리 밖`})};
+calculateMatchScenario=function(key){const b=matchScenarioBases[key]||matchScenarioBases.suwon;const profile=Object.assign({},scenarioProfile,{dateKey:dateKey()});if(domainEngines.match?.score)return domainEngines.match.score({key,base:b,profile,eloState:demoState,weights:scoreWeights.balance});const x=Core.scoreMatch(b,profile,demoState,scoreWeights.balance);return Object.assign({},x,{key,positionFit:x.positions.includes(scenarioProfile.position),availablePosition:x.positions.includes(scenarioProfile.position)?scenarioProfile.position:x.positions[0],styleDesc:x.timeKey===scenarioProfile.time?'선호 시간대와 일치':'선호 시간대와 차이',locationDesc:x.eligibility.region&&x.eligibility.distance?`${x.distanceKm}km · 선택 지역/거리 내`:`${x.distanceKm}km · 선택 지역/거리 밖`})};
 function cards(){const out={};document.querySelectorAll('#s-results [data-match-card]').forEach(c=>out[c.dataset.matchCard]=c);return out}
 function emptyBox(){let e=document.getElementById('footmateRuntimeEmpty');if(e)return e;const pc=document.querySelector('#s-results .pcnt');if(!pc)return null;e=document.createElement('div');e.id='footmateRuntimeEmpty';e.innerHTML='<strong>선택한 조건에 맞는 경기가 없습니다.</strong>날짜·시간·지역·거리·경기 방식·모집 포지션을 조정해 보세요.<button class="btn-secondary" type="button" style="margin-top:10px">필터 다시 설정</button>';e.querySelector('button').onclick=()=>goScreen('s-filter');const first=pc.querySelector('[data-match-card]');first?pc.insertBefore(e,first):pc.prepend(e);return e}
-function renderResults(){const ranked=Core.rankMatches(matchScenarioBases,Object.assign({},scenarioProfile,{dateKey:dateKey()}),demoState,scoreWeights.balance);const cs=cards();ranked.forEach((x,i)=>{const m=matchScenarios[x.key]=calculateMatchScenario(x.key),c=cs[x.key];if(!c)return;c.style.display=m.eligible?'':'none';c.setAttribute('aria-hidden',!m.eligible);set('result-pct-'+x.key,m.pct+'%');set('result-elo-diff-'+x.key,`ELO 차이 ${m.eloDiff} · ${m.positions.join('/')} 모집 · ${Core.skillLabel(scenarioProfile.matchSkill)}`);const bar=document.getElementById('result-skill-bar-'+x.key);if(bar)bar.style.width=m.eloScore+'%';const badge=document.getElementById('result-badge-'+x.key);if(badge){badge.textContent=i===0&&m.eligible?'🥇 Best Match':m.eligible?'조건 일치':'조건 불일치';badge.className='chip '+(i===0&&m.eligible?'chip-blue':m.eligible?'chip-green':'chip-gray')}const skill=c.querySelector('.result-chips .chip:first-child');if(skill){skill.textContent=m.eloDiff<=150?'실력 범위 ✓':`ELO 차이 ${m.eloDiff}`;skill.className='chip '+(m.eloDiff<=150?'chip-blue':'chip-orange')}const pos=x.key==='suwon'?document.getElementById('scenario-slot-chip'):c.querySelector('.result-chips .chip:last-child');if(pos)pos.textContent=m.positions.includes(scenarioProfile.position)?scenarioProfile.position+' 1자리':m.positions.join('/')+' 모집';c.onclick=()=>selectMatch(x.key,true)});const holder=Object.values(cs)[0]?.parentElement;if(holder){if(!window.__fmResultEnd){const all=[...holder.querySelectorAll('[data-match-card]')],mark=document.createComment('result-end');(all.at(-1)||holder.lastChild)?.after?.(mark);if(!mark.parentNode)holder.appendChild(mark);window.__fmResultEnd=mark}ranked.forEach(x=>cs[x.key]&&holder.insertBefore(cs[x.key],window.__fmResultEnd))}const ok=ranked.filter(x=>x.eligible);const banner=document.querySelector('#s-results .results-ai-banner');if(banner)banner.textContent=ok.length?`조건에 맞는 팀 ${ok.length}개 · 현재 ELO ${Core.effectiveElo(demoState).toLocaleString()} 기반 정렬`:'현재 조건에 맞는 경기가 없습니다.';const e=emptyBox();if(e)e.style.display=ok.length?'none':'';return ranked}
+function renderResults(){const profile=Object.assign({},scenarioProfile,{dateKey:dateKey()});const ranked=domainEngines.match?.rank?domainEngines.match.rank({matches:matchScenarioBases,profile,eloState:demoState,weights:scoreWeights.balance}):Core.rankMatches(matchScenarioBases,profile,demoState,scoreWeights.balance);const cs=cards();ranked.forEach((x,i)=>{const m=matchScenarios[x.key]=calculateMatchScenario(x.key),c=cs[x.key];if(!c)return;c.style.display=m.eligible?'':'none';c.setAttribute('aria-hidden',!m.eligible);set('result-pct-'+x.key,m.pct+'%');set('result-elo-diff-'+x.key,`ELO 차이 ${m.eloDiff} · ${m.positions.join('/')} 모집 · ${Core.skillLabel(scenarioProfile.matchSkill)}`);const bar=document.getElementById('result-skill-bar-'+x.key);if(bar)bar.style.width=m.eloScore+'%';const badge=document.getElementById('result-badge-'+x.key);if(badge){badge.textContent=i===0&&m.eligible?'🥇 Best Match':m.eligible?'조건 일치':'조건 불일치';badge.className='chip '+(i===0&&m.eligible?'chip-blue':m.eligible?'chip-green':'chip-gray')}const skill=c.querySelector('.result-chips .chip:first-child');if(skill){skill.textContent=m.eloDiff<=150?'실력 범위 ✓':`ELO 차이 ${m.eloDiff}`;skill.className='chip '+(m.eloDiff<=150?'chip-blue':'chip-orange')}const pos=x.key==='suwon'?document.getElementById('scenario-slot-chip'):c.querySelector('.result-chips .chip:last-child');if(pos)pos.textContent=m.positions.includes(scenarioProfile.position)?scenarioProfile.position+' 1자리':m.positions.join('/')+' 모집';c.onclick=()=>selectMatch(x.key,true)});const holder=Object.values(cs)[0]?.parentElement;if(holder){if(!window.__fmResultEnd){const all=[...holder.querySelectorAll('[data-match-card]')],mark=document.createComment('result-end');(all.at(-1)||holder.lastChild)?.after?.(mark);if(!mark.parentNode)holder.appendChild(mark);window.__fmResultEnd=mark}ranked.forEach(x=>cs[x.key]&&holder.insertBefore(cs[x.key],window.__fmResultEnd))}const ok=ranked.filter(x=>x.eligible);const banner=document.querySelector('#s-results .results-ai-banner');if(banner)banner.textContent=ok.length?`조건에 맞는 팀 ${ok.length}개 · 현재 ELO ${Core.effectiveElo(demoState).toLocaleString()} 기반 정렬`:'현재 조건에 맞는 경기가 없습니다.';const e=emptyBox();if(e)e.style.display=ok.length?'none':'';return ranked}
 recalculateMatches=function(){Object.keys(matchScenarioBases).forEach(k=>matchScenarios[k]=calculateMatchScenario(k));renderResults();renderSelectedMatch();renderFilter()};
 
 function renderIdentity(){const m=meta(),x=matchScenarios[selectedMatchKey]||calculateMatchScenario(selectedMatchKey),f=fmt(m),map={'수원 FC UNITED':m.team,'수원 풋살아레나 A코트':m.venue,'수원시 영통구':m.region,'평균 ELO 1299':'평균 ELO '+m.avgElo,'5vs5':f,'09:00':m.time,[SCENARIO_DATES.satCompact]:m.dateKey==='sun'?SCENARIO_DATES.sunCompact:SCENARIO_DATES.satCompact};['s-detail','s-pay','s-confirm','s-notifs','s-gameday','s-chat','s-venue','s-postgame','s-eval'].forEach(id=>baselineReplace(id,map));const title=document.querySelector('#s-detail .detail-team-name');if(title)title.textContent=m.team;set('detail-team-meta',`★ ${m.manner.toFixed(1)} · 매칭 ${x.pct}% · ${m.venue} · ${m.distanceKm}km`);set('detail-open-position',(x.availablePosition||m.positions[0])+' 1자리');set('ticket-position',x.positions.includes(scenarioProfile.position)?selectedPositionLabel():(x.availablePosition||m.positions[0]));}
@@ -71,12 +72,12 @@ selectMatch=function(key,detail=false){selectedMatchKey=matchScenarios[key]?key:
 document.querySelectorAll('#s-home [onclick*="s-detail"]').forEach(c=>{const t=c.textContent;const k=t.includes('성남 프리미어FC')?'seongnam':t.includes('용인 레전드팀')?'yongin':t.includes('수원 FC UNITED')?'suwon':null;if(k)c.onclick=()=>selectMatch(k,true)});
 
 const oldV2=renderV2Comparison;
-renderV2Comparison=function(){oldV2();const r=Core.rankMatches(matchScenarioBases,Object.assign({},scenarioProfile,{dateKey:dateKey()}),demoState,scoreWeights.balance),p=r.find(x=>x.eligible)||r[0];if(p){set('v2PrimaryTeam',p.team);set('v2PrimaryScore',p.pct+'%');set('v2MetricSkill',p.eloScore);set('v2MetricStyle',p.styleScore);set('v2MetricDistance',p.locationScore)}};
+renderV2Comparison=function(){oldV2();const profile=Object.assign({},scenarioProfile,{dateKey:dateKey()}),r=domainEngines.match?.rank?domainEngines.match.rank({matches:matchScenarioBases,profile,eloState:demoState,weights:scoreWeights.balance}):Core.rankMatches(matchScenarioBases,profile,demoState,scoreWeights.balance),p=r.find(x=>x.eligible)||r[0];if(p){set('v2PrimaryTeam',p.team);set('v2PrimaryScore',p.pct+'%');set('v2MetricSkill',p.eloScore);set('v2MetricStyle',p.styleScore);set('v2MetricDistance',p.locationScore)}};
 const oldAccept=acceptV2Replacement;
 acceptV2Replacement=function(){selectedMatchKey='seongnam';renderSelectedMatch();oldAccept();const b=document.getElementById('v2OfferPayment');if(b)b.onclick=()=>{selectedMatchKey='seongnam';renderSelectedMatch();goScreen('s-pay')};save()};
 
 function updateProfile(){const e=Core.effectiveElo(demoState),p=document.getElementById('s-profile');set('profile-elo-number',e.toLocaleString());if(p){const sub=p.querySelector('.profile-sub'),te=p.querySelector('.pec-tier');if(sub)sub.textContent=`${tier(e)} · ${regionDisplay[scenarioProfile.region]||scenarioProfile.regionLabel}`;if(te)te.textContent='🏅 '+tier(e)}}
-calculateEloUpdate=function(){const base=demoState.eloCommitted?+demoState.eloBeforeUpdate:Core.effectiveElo(demoState),opp=meta(state.participationMatchKey||selectedMatchKey).avgElo,expected=1/(1+Math.pow(10,(opp-base)/400)),actual=demoState.postgameResult==='WIN'?1:demoState.postgameResult==='DRAW' ? .5 : 0,delta=Math.round(32*(actual-expected)),updated=base+delta;Object.assign(demoState,{expectedScore:expected,eloDelta:delta,updatedElo:updated});return{baseElo:base,opponentElo:opp,expectedScore:expected,actualScore:actual,delta,updatedElo:updated}};
+calculateEloUpdate=function(){const base=demoState.eloCommitted?+demoState.eloBeforeUpdate:Core.effectiveElo(demoState),opp=meta(state.participationMatchKey||selectedMatchKey).avgElo,u=domainEngines.elo?.calculate?domainEngines.elo.calculate({baseElo:base,opponentElo:opp,result:demoState.postgameResult}):(()=>{const expected=1/(1+Math.pow(10,(opp-base)/400)),actual=demoState.postgameResult==='WIN'?1:demoState.postgameResult==='DRAW'?0.5:0,delta=Math.round(32*(actual-expected));return{baseElo:base,opponentElo:opp,expectedScore:expected,actualScore:actual,delta,updatedElo:base+delta}})();Object.assign(demoState,{expectedScore:u.expectedScore,eloDelta:u.delta,updatedElo:u.updatedElo});return u};
 function commitElo(){if(demoState.eloCommitted)return calculateEloUpdate();const u=calculateEloUpdate();demoState.eloBeforeUpdate=u.baseElo;demoState.currentElo=u.updatedElo;demoState.updatedElo=u.updatedElo;demoState.eloCommitted=true;recalculateMatches();updateProfile();save();return u}
 const oldEloRender=renderEloUpdate;
 renderEloUpdate=function(){oldEloRender();const u=calculateEloUpdate();set('eloOldNum',u.baseElo.toLocaleString());set('eloNewNum',u.updatedElo.toLocaleString());set('growth-elo-before',u.baseElo.toLocaleString());set('growth-elo-after',u.updatedElo.toLocaleString());updateProfile()};
@@ -117,15 +118,41 @@ window.FootMateScenarioAdapter={
         dateKey:dateKey()
       },
       elo:Core.effectiveElo(demoState),
+      eloState:{
+        currentElo:Core.effectiveElo(demoState),
+        initialElo:Number(demoState.initialElo),
+        eloBeforeUpdate:Number(demoState.eloBeforeUpdate),
+        updatedElo:Number(demoState.updatedElo),
+        eloCommitted:Boolean(demoState.eloCommitted),
+        result:demoState.postgameResult
+      },
+      weights:{...scoreWeights.balance},
+      participationMatchKey:state.participationMatchKey,
       matches:Object.fromEntries(Object.entries(matchScenarioBases).map(([key,value])=>[key,{
         key,
         team:value.team,
         venue:value.venue,
+        region:value.region,
+        regionKey:value.regionKey,
+        timeKey:value.timeKey,
+        dateKey:value.dateKey,
+        time:value.time,
         avgElo:Number(value.avgElo),
+        manner:Number(value.manner),
         distanceKm:Number(value.distanceKm??parseFloat(value.distance)),
+        formats:Array.isArray(value.formats)?[...value.formats]:[],
+        positions:Array.isArray(value.positions)?[...value.positions]:[],
         status:'open'
       }]))
     };
+  },
+  attachDomainEngines(engines={}){
+    domainEngines.match=engines.match||domainEngines.match;
+    domainEngines.elo=engines.elo||domainEngines.elo;
+    recalculateMatches();
+    calculateEloUpdate();
+    save();
+    return{match:!!domainEngines.match,elo:!!domainEngines.elo};
   },
   setFilter:applyFilterState,
   setDistance:applyDistanceState,
@@ -155,9 +182,10 @@ window.FootMateScenarioAdapter={
     goScreen(detail?'s-detail':'s-reason');
     return true;
   },
-  persist:save
+  persist:save,
+  architecture:'v2.1-render-compatibility-adapter'
 };
 
 renderFilterButtons();renderFilter();recalculateMatches();updateProfile();syncParticipationState();renderDataQuality();renderSelectedMatch();
-console.info('[FootMate] consistency patch 2026-09-09.1 applied',{elo:Core.effectiveElo(demoState),selectedMatchKey});
+console.info('[FootMate] scenario compatibility adapter ready',{elo:Core.effectiveElo(demoState),selectedMatchKey});
 })();

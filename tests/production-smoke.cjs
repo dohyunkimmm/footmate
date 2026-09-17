@@ -75,9 +75,21 @@ async function main() {
 
   await run('v2-bootstrap-runtime', '/src/v2/bootstrap.js', ({ body, contentType }) => {
     assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 bootstrap content type unexpected');
-    assert(body.includes("VERSION='2.0.0'"), 'v2 stable version marker missing');
-    assert(body.includes("architecture:'native-es-modules'"), 'v2 architecture marker missing');
+    assert(body.includes("VERSION='2.1.0'"), 'v2.1 version marker missing');
+    assert(body.includes("architecture:'v2.1-domain-modular-es-runtime'"), 'v2.1 architecture marker missing');
     assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
+  });
+
+  await run('v2-matching-domain-runtime', '/src/v2/domain/matching-engine.js', ({ body, contentType }) => {
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 matching domain content type unexpected');
+    assert(body.includes('createMatchEngine'), 'v2.1 matching engine export missing');
+    assert(body.includes("architecture:'v2.1-domain-engine'"), 'v2.1 matching architecture marker missing');
+  });
+
+  await run('v2-elo-domain-runtime', '/src/v2/domain/elo-engine.js', ({ body, contentType }) => {
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 ELO domain content type unexpected');
+    assert(body.includes('createEloEngine'), 'v2.1 ELO engine export missing');
+    assert(body.includes("architecture:'v2.1-domain-engine'"), 'v2.1 ELO architecture marker missing');
   });
 
   await run('v2-payment-runtime', '/src/v2/ui/payment-controller.js', ({ body, contentType }) => {
@@ -92,6 +104,7 @@ async function main() {
     assert(body.includes('FootMateProductOps'), 'product operation API missing');
     assert(body.includes('duplicate_application_blocked'), 'duplicate application guard marker missing');
     assert(body.includes('recommendation_baseline_saved'), 'recommendation comparison marker missing');
+    assert(body.includes('v2.1-domain-store'), 'v2.1 recommendation source marker missing');
   });
 
   fs.mkdirSync(reportDir, { recursive: true });
