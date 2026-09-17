@@ -4,8 +4,8 @@
 
 ## Current development — v2.0.0-beta.1 Product Experience Architecture
 
-- Base: `main@ec3f8cf` (v1.1 hotfix complete)
-- v2 PR: #19
+- Product/runtime baseline: `70102da`
+- GitHub: PR #19 merged to `main`
 - Scope:
   - native ES module runtime boundary under `src/v2/`
   - Product / Portfolio mode separation
@@ -14,7 +14,14 @@
   - responsive gate expanded to 430 px
   - GitHub Actions Node 24 migration
 - Product logic compatibility: Matching / ELO / Payment / Operations state machines unchanged
-- Production release status: pending PR QA and main Production smoke
+- GitHub Actions run #69:
+  - Regression 36 PASS
+  - Browser E2E + axe PASS
+  - Product / Portfolio mode PASS
+  - 320 / 375 / 390 / 430 px responsive gate PASS
+  - Production HTTP smoke PASS
+  - Production Chromium render smoke PASS
+- Vercel: `70102da` verified commit / Production READY
 
 ## v1.1 — Experience Polish
 
