@@ -10,7 +10,7 @@ import{createSecondaryController}from'./ui/secondary-controller.js';
 import{installScreenEffects}from'./ui/screen-effects.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
-const VERSION='2.0.0-beta.2';
+const VERSION='2.0.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -141,7 +141,7 @@ async function boot(){
   window.dispatchEvent(new CustomEvent('footmate:v2:ready',{
     detail:{version:VERSION,mode:state.mode}
   }));
-  console.info('[FootMate] v2 runtime migration ready',VERSION,state.mode);
+  console.info('[FootMate] v2 Product Experience ready',VERSION,state.mode);
 }
 
 boot().catch(error=>{
