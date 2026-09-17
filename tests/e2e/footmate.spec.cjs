@@ -53,6 +53,9 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     productHardening: window.__footmateProductHardening === true,
     v2: window.__footmateV2 === true,
     version: window.FootMateV2Runtime?.version,
+    finalizeArchitecture: window.FootMateFinalRuntime?.architecture,
+    scenarioAdapter: !!window.FootMateScenarioAdapter,
+    legacyLayers: window.FootMateV2Runtime?.legacyLayers,
     mode: window.FootMateV2Runtime?.mode,
     architecture: window.FootMateV2Runtime?.architecture,
     navigationWrapped: window.FootMateV2Runtime?.navigationWrapped,
@@ -69,6 +72,8 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     mode: 'product',
     architecture: 'native-es-modules',
     navigationWrapped: false,
+    finalizeArchitecture: 'compatibility-state-bridge',
+    scenarioAdapter: true,
     active: 's-splash'
   });
   expect(runtime.version).toMatch(/^2\./);
@@ -159,10 +164,93 @@ test('v2 UI state is versioned and screen state persists independently', async (
   }));
   expect(snapshot.key).toBe('footmate:v2:ui');
   expect(snapshot.saved).toMatchObject({
-    version: '2.0.0-beta.1',
+    version: '2.0.0-beta.2',
     mode: 'product',
     lastActiveScreen: 's-profile'
   });
+  expectNoRuntimeFailures(failures);
+});
+
+test('v2 critical interactions no longer depend on inline handlers', async ({ page }) => {
+  const failures = await bootDemo(page);
+
+  await page.evaluate(() => window.goScreen('s-home'));
+  const yesterday = page.locator('.day-tab').first();
+  expect(await yesterday.getAttribute('onclick')).toBeNull();
+  await yesterday.click();
+  let state = await page.evaluate(() => ({
+    homeDayIndex: window.FootMateV2Runtime.productStore.getState().homeDayIndex
+  }));
+  expect(state.homeDayIndex).toBe(0);
+
+  await page.evaluate(() => window.goScreen('s-filter'));
+  const morning = page.locator('#s-filter [data-time-key="morning"]');
+  expect(await morning.getAttribute('onclick')).toBeNull();
+  await morning.click();
+  state = await page.evaluate(() => ({
+    time: window.FootMateV2Runtime.scenarioStore.getState().profile.time
+  }));
+  expect(state.time).toBe('morning');
+
+  await page.evaluate(() => window.goScreen('s-results'));
+  const firstCard = page.locator('#s-results [data-match-card]:visible').first();
+  expect(await firstCard.getAttribute('onclick')).toBeNull();
+  const key = await firstCard.getAttribute('data-match-card');
+  await firstCard.click();
+  await expect(page.locator('#s-detail')).toHaveClass(/active/);
+  state = await page.evaluate(() => ({
+    selected: window.FootMateV2Runtime.scenarioStore.getState().selectedMatchKey
+  }));
+  expect(state.selected).toBe(key);
+
+  await page.evaluate(() => window.goScreen('s-pay'));
+  expect(await page.locator('#s-pay .btn-primary').getAttribute('onclick')).toBeNull();
+
+  await page.evaluate(() => window.goScreen('s-eval'));
+  expect(await page.locator('#evalStars .eval-star').first().getAttribute('onclick')).toBeNull();
+
+  expectNoRuntimeFailures(failures);
+});
+
+test('v2 payment adapter deducts once and blocks duplicate charging', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('footmateFinalStateV3', JSON.stringify({
+      creditBalance: 20000,
+      paidMatchKeys: [],
+      homeDayIndex: 1,
+      homeFilterMode: 'all',
+      favoriteMatchKeys: [],
+      friendIds: [],
+      evalStars: 0,
+      chatMessages: [],
+      selectedChargeAmount: 20000,
+      selectedPaymentMethod: 'kakao'
+    }));
+  });
+
+  const failures = await bootDemo(page);
+  await page.evaluate(() => window.goScreen('s-pay'));
+  await page.locator('#s-pay .btn-primary').click();
+  await expect(page.locator('#s-confirm')).toHaveClass(/active/);
+
+  let snapshot = await page.evaluate(() => ({
+    balance: window.FootMateV2Runtime.productStore.getState().creditBalance,
+    paid: window.FootMateV2Runtime.productStore.getState().paidMatchKeys,
+    operation: window.FootMateProductOps.operation()
+  }));
+  expect(snapshot.balance).toBe(3000);
+  expect(snapshot.paid).toContain('suwon');
+  expect(snapshot.operation).toMatchObject({ payment: 'paid', participation: 'confirmed' });
+
+  await page.evaluate(() => window.goScreen('s-pay'));
+  await page.locator('#s-pay .btn-primary').click();
+  snapshot = await page.evaluate(() => ({
+    balance: window.FootMateV2Runtime.productStore.getState().creditBalance,
+    paid: window.FootMateV2Runtime.productStore.getState().paidMatchKeys
+  }));
+  expect(snapshot.balance).toBe(3000);
+  expect(snapshot.paid.filter(key => key === 'suwon')).toHaveLength(1);
+
   expectNoRuntimeFailures(failures);
 });
 
