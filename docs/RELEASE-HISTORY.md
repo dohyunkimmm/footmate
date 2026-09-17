@@ -18,13 +18,14 @@
   - `footmate-v1.1.css`
   - `case-study-v1.1.css`
   - `index-v1.1.js`
-- GitHub Actions run #85:
-  - Regression 36 PASS
-  - Browser E2E + axe PASS
-  - Production deployment wait failed because Vercel returned `Deployment rate limited — retry in 24 hours`
-  - 이 실패는 코드/브라우저 QA 실패가 아니라 배포 quota 상태입니다.
-- Current verified Production baseline: `84c698b` · Vercel READY
-- Stable Production promotion: pending Vercel rate-limit reset
+- GitHub Actions:
+  - run #85: Regression 36 PASS · Browser E2E + axe PASS
+  - run #87: Regression 36 PASS · Browser E2E + axe PASS · Production HTTP smoke PASS · Production Chromium render smoke PASS
+- Vercel stable Production verification: `9ff82c7` · verified · READY
+- Deployment incident:
+  - `a192ec1` 직후 Vercel이 일시적으로 `Deployment rate limited — retry in 24 hours`를 반환
+  - 다음 main 배포 `9ff82c7`에서 정상 배포되어 해소
+  - 코드/브라우저 QA 실패는 아니었음
 
 ### v2 runtime ownership
 

@@ -17,9 +17,9 @@
 
 - Stable source/runtime baseline: `a192ec1`
 - Stable promotion: PR #26 merged to `main`
-- GitHub Actions run #85: Regression 36 · Browser E2E + axe **PASS**
-- Current verified Production baseline: `84c698b` · READY
-- Stable Production promotion: **pending** — Vercel deployment rate limit (24h), 코드/QA 실패 아님
+- GitHub Actions run #87: Regression 36 · Browser E2E + axe · Production HTTP · Production Chromium **PASS**
+- Stable Production verification: `9ff82c7` · Vercel verified · READY
+- Stable source/runtime baseline: `a192ec1` (PR #26)
 
 v2.0.0은 beta 단계에서 만든 ES module 경계와 runtime migration을 안정 버전으로 확정한 릴리스입니다.
 
@@ -106,7 +106,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 ## ✅ Verification
 
-`v2.0.0` stable source/runtime 기준 SHA는 `a192ec1`입니다. GitHub Actions **run #85**에서 Regression 36과 Browser E2E + axe가 통과했습니다. 다만 Vercel 계정의 24시간 deployment rate limit 때문에 이 SHA의 Production 승격은 대기 중이며, 현재 실제 Production은 이전에 전체 smoke 검증을 통과한 `84c698b`를 유지합니다.
+`v2.0.0` stable source/runtime 기준 SHA는 `a192ec1`입니다. 이후 stable naming 문서 동기화를 포함한 `main@9ff82c7`가 Vercel Production에 verified · READY로 배포됐고, GitHub Actions **run #87**에서 Regression 36 · Browser E2E + axe · Production HTTP smoke · Production Chromium render smoke가 모두 통과했습니다. 직전 `a192ec1` 배포 시 일시적으로 발생했던 Vercel rate limit은 해소됐습니다.
 
 | 검증 | 상태 |
 | --- | --- |
@@ -118,10 +118,10 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
 | Stable-source Regression / E2E | **a192ec1 · PASS** |
-| Production HTTP smoke | **84c698b · PASS** |
-| Production Chromium render smoke | **84c698b · PASS** |
-| Current Vercel Production | **84c698b · verified · READY** |
-| v2.0.0 Production promotion | **Pending · Vercel rate limit** |
+| Production HTTP smoke | **run #87 · PASS** |
+| Production Chromium render smoke | **run #87 · PASS** |
+| Verified v2.0.0 Production baseline | **9ff82c7 · verified · READY** |
+| v2.0.0 Production promotion | **PASS** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 다음 대규모 제품 UI 변경 시 다시 수행합니다.
 
