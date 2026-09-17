@@ -45,21 +45,21 @@ for (const viewport of [
         const active = document.getElementById(screenId);
         const layout = document.querySelector('.prototype-layout');
         const rect = layout?.getBoundingClientRect();
-        const primary = active?.querySelector('.btn-primary, button');
-        const primaryRect = primary?.getBoundingClientRect();
+        const representativeAction = active?.querySelector('.btn-primary, .day-tab, .gameday-scenario-btn, button');
+        const actionRect = representativeAction?.getBoundingClientRect();
         return {
           viewportWidth: window.innerWidth,
           scrollWidth: document.documentElement.scrollWidth,
           layoutLeft: rect?.left ?? 0,
           layoutRight: rect?.right ?? 0,
-          buttonHeight: primaryRect?.height ?? 0
+          actionHeight: actionRect?.height ?? 0
         };
       }, id);
 
       expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.viewportWidth + 1);
       expect(geometry.layoutLeft).toBeGreaterThanOrEqual(-1);
       expect(geometry.layoutRight).toBeLessThanOrEqual(geometry.viewportWidth + 1);
-      expect(geometry.buttonHeight).toBeGreaterThanOrEqual(24);
+      expect(geometry.actionHeight).toBeGreaterThanOrEqual(44);
     }
   });
 }
