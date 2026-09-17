@@ -19,6 +19,7 @@ for (const viewport of [
     await page.evaluate(() => window.goScreen('s-splash'));
     await expect(page.locator('#v3Launcher')).toBeHidden();
     await expect(page.locator('#fmProductLauncher')).toBeHidden();
+    await expect(page.locator('#s-splash button[onclick*="s-v2-priority"]')).toBeHidden();
 
     for (const id of ['s-splash', 's-home', 's-detail', 's-pay', 's-profile']) {
       await page.evaluate(screenId => window.goScreen(screenId), id);
