@@ -70,7 +70,7 @@ test('v2 product mode boots all 39 screens with modular runtime layers', async (
     productHardening: true,
     v2: true,
     mode: 'product',
-    architecture: 'native-es-modules',
+    architecture: 'v2.1-domain-modular-es-runtime',
     navigationWrapped: false,
     finalizeArchitecture: 'compatibility-state-bridge',
     scenarioAdapter: true,
@@ -164,7 +164,7 @@ test('v2 UI state is versioned and screen state persists independently', async (
   }));
   expect(snapshot.key).toBe('footmate:v2:ui');
   expect(snapshot.saved).toMatchObject({
-    version: '2.0.0',
+    version: '2.1.0',
     mode: 'product',
     lastActiveScreen: 's-profile'
   });
