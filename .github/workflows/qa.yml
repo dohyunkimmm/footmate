@@ -70,7 +70,23 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Determine production impact
+        id: impact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          changed_files="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" --jq '.files[].filename')"
+          echo "Changed files:"
+          echo "$changed_files"
+          if printf '%s\n' "$changed_files" | grep -Ev '^(tests/|docs/|README\.md$|\.github/|playwright\.config\.cjs$)' >/dev/null; then
+            echo "deployment_required=true" >> "$GITHUB_OUTPUT"
+            echo "Production-impacting files changed; exact-SHA deployment is required."
+          else
+            echo "deployment_required=false" >> "$GITHUB_OUTPUT"
+            echo "QA/docs-only change; validate the current Production deployment."
+          fi
       - name: Wait for Vercel deployment of this commit
+        if: steps.impact.outputs.deployment_required == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
