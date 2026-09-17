@@ -84,6 +84,13 @@ html[data-footmate-version="2"] #s-splash button[onclick*="s-v2-priority"]{
 }
 
 @media(max-width:340px){
+  /* The 375px prototype scales to ~85% at 320px. 52px preserves a rendered 44px target. */
+  html[data-footmate-version="2"] .btn-primary,
+  html[data-footmate-version="2"] .btn-secondary,
+  html[data-footmate-version="2"] .btn-social{
+    min-height:52px!important;
+  }
+
   html[data-footmate-mode="portfolio"] .v3-launcher{
     min-height:52px!important;
     padding-left:14px!important;
