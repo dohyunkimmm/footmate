@@ -26,12 +26,17 @@ test('production case study and demo render after deployment', async ({ page }) 
   await page.waitForFunction(() => document.body.textContent.includes('FootMate') || document.body.textContent.includes('풋메이트'));
   await expect(page.locator('meta[name="description"]')).toHaveCount(1);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://footmate-black.vercel.app/');
-  await expect(page.locator('#fmDecisionSummary')).toContainText('Validation');
+  await expect(page.locator('link[href*="case-study-experience-v11.css"]')).toHaveCount(1);
+  await expect(page.locator('#fmV11Release')).toContainText('v1.1');
+  await expect(page.locator('#fmDecisionSummary')).toContainText('Design System');
 
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => typeof window.goScreen === 'function' && document.querySelectorAll('.screen').length === 39 && !!window.FootMateProductOps);
   const onboarding = page.locator('#demoOnboarding');
   if (await onboarding.isVisible()) await page.locator('.demo-onboarding-start').click();
+  await expect(page.locator('link[href*="footmate-experience-v11.css"]')).toHaveCount(1);
+  const brand = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--fm-brand').trim());
+  expect(brand).toBe('#2F6FD3');
   await page.evaluate(() => window.goScreen('s-home'));
   await expect(page.locator('#s-home')).toHaveClass(/active/);
   await expect(page.locator('.screen')).toHaveCount(39);
