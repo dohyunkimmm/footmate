@@ -75,7 +75,7 @@ async function main() {
 
   await run('v2-bootstrap-runtime', '/src/v2/bootstrap.js', ({ body, contentType }) => {
     assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 bootstrap content type unexpected');
-    assert(body.includes("VERSION='2.0.0-beta.2'"), 'v2 beta2 version marker missing');
+    assert(body.includes("VERSION='2.0.0'"), 'v2 stable version marker missing');
     assert(body.includes("architecture:'native-es-modules'"), 'v2 architecture marker missing');
     assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
   });
