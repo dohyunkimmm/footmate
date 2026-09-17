@@ -1,37 +1,33 @@
 # FootMate Release History
 
-이 문서는 FootMate의 현재 릴리스 상태, 이전 검증 기준, 다음 구조 정리 후보만 간결하게 보존합니다. 세부 변경 내역은 Git commit / Pull Request / GitHub Actions 이력을 기준으로 추적합니다.
+현재 릴리스 상태와 검증 기준만 간결하게 보존합니다. 세부 변경은 Git commit / Pull Request / GitHub Actions를 source of truth로 사용합니다.
 
-## Current — v2.0.0 Product Experience
+## Current — v2.1.0 Domain Engine
 
-- Stable source/runtime baseline: `a192ec1`
-- GitHub: PR #26 merged to `main`
-- Version contract:
-  - runtime `2.0.0`
-  - Product Hardening event contract `2.0.0`
-  - Case Study badge/name `v2.0.0 Product Experience`
-- Active asset names:
-  - `footmate-experience.css`
-  - `case-study-experience.css`
-  - `index-experience.js`
-- Removed active legacy names:
-  - `footmate-v1.1.css`
-  - `case-study-v1.1.css`
-  - `index-v1.1.js`
-- GitHub Actions:
-  - run #85: Regression 36 PASS · Browser E2E + axe PASS
-  - run #87: Regression 36 PASS · Browser E2E + axe PASS · Production HTTP smoke PASS · Production Chromium render smoke PASS
-- Vercel stable Production verification: `9ff82c7` · verified · READY
-- Deployment incident:
-  - `a192ec1` 직후 Vercel이 일시적으로 `Deployment rate limited — retry in 24 hours`를 반환
-  - 다음 main 배포 `9ff82c7`에서 정상 배포되어 해소
-  - 코드/브라우저 QA 실패는 아니었음
+- Source/runtime baseline: `4393403`
+- GitHub: PR #29 merged to `main`
+- Runtime version: `2.1.0`
+- Product Hardening event contract: `2.1.0`
+- Case Study badge/name: `v2.1.0 Domain Engine`
+- GitHub Actions run #93:
+  - Regression 36 PASS
+  - Browser E2E + axe PASS
+  - matching domain parity PASS
+  - ELO domain parity PASS
+  - 320 / 375 / 390 / 430 responsive PASS
+  - representative visual contract PASS
+  - Production Smoke blocked before HTTP/browser phase because Vercel returned `Deployment rate limited — retry in 24 hours`
+- v2.1 Production: pending Vercel deployment
+- Current verified Production: `9ff82c7` · v2.0.0 · verified · READY
 
-### v2 runtime ownership
+### Domain ownership
 
 ```
 src/v2/
   bootstrap.js
+  domain/
+    matching-engine.js
+    elo-engine.js
   core/
     mode.js
     screen-observer.js
@@ -51,76 +47,65 @@ src/v2/
     app.css
 ```
 
-### Compatibility boundary
+- Matching score/ranking과 ELO update/tier 계산은 v2.1 domain engine이 소유합니다.
+- `scenario-store`는 raw adapter snapshot에서 ranked/selected scenario를 파생합니다.
+- Product Validation 추천 설명은 `v2.1-domain-store`를 우선 사용합니다.
+- `footmate-patches.js`는 v2.1 부팅 후 계산을 domain engine에 위임하고 DOM render/persistence compatibility를 유지합니다.
 
-- `footmate-finalize.js` — persisted state compatibility bridge only
-- `footmate-patches.js` — Matching/ELO scenario 및 기존 render 일부를 `FootMateScenarioAdapter` 뒤에서 제공
-- `footmate-product-hardening.js` — Operations state machine / Product Validation compatibility adapter
-- `footmate-core.js`, `footmate-product-core.js` — core calculation / product policy
-- legacy patch / hardening navigation wrapper — 제거 완료
+### Remaining compatibility boundary
 
-현재 기능·QA를 위해 필수인 미완료 구현 작업은 없습니다.
+필수 미완료 기능은 없습니다. 향후 선택적 정리 후보:
 
-### Optional future cleanup
+- `footmate-patches.js`에 남은 DOM render/persistence 자체를 v2 controller/renderer로 추가 분리
+- `footmate-product-hardening.js`의 Inspector UI render를 `src/v2/ui/`로 이동
+- 큰 `demo-source.html` markup을 build-time source/component로 분리
+- compatibility CSS를 component stylesheet로 추가 축소
 
-- `footmate-patches.js`의 Matching/ELO scenario render를 `src/v2/` 내부 모듈로 추가 분리
-- 큰 `demo-source.html` 화면 markup을 build-time component/source로 분리
-- compatibility CSS를 component 단위 stylesheet로 추가 축소
+## v2.0.0 — Product Experience
+
+- Stable source/runtime baseline: `a192ec1`
+- Production verification: `9ff82c7`
+- PR #26 stable promotion
+- Product / Portfolio mode 분리
+- product/scenario store 및 UI controller ownership
+- finalize state bridge 축소, navigation wrapper 제거
+- 320 / 375 / 390 / 430 responsive + visual contract
+- GitHub Actions run #87: Regression · Browser E2E + axe · Production HTTP/Chromium PASS
+- Vercel: `9ff82c7` verified / READY
 
 ## v2.0.0-beta.2 — Runtime Migration
 
-- Product/runtime baseline: `84c698b`
-- GitHub: PR #21
-- product/scenario store와 주요 UI controller 이전 완료
-- finalize state bridge 축소, navigation wrapper 제거, duplicate persistence 제거
-- 320 / 375 / 390 / 430 responsive gate 및 visual contract regression
-- GitHub Actions run #79: Regression · Browser E2E + axe · Production HTTP/Chromium smoke PASS
-- Vercel: `84c698b` verified / Production READY
+- Baseline: `84c698b`
+- PR #21
+- Home/Filter/Result/Payment/Participation/Evaluation/Favorite/Friend/Chat controller migration
+- duplicate persistence 제거, inline handler migration
 
 ## v2.0.0-beta.1 — Product Experience Architecture
 
-- Product/runtime baseline: `70102da`
-- GitHub: PR #19
-- Product / Portfolio mode 분리
-- native ES module bootstrap, mode, observer, storage, design token 경계 도입
-- GitHub Actions run #69 / Vercel Production 검증 완료
+- Baseline: `70102da`
+- PR #19
+- native ES module bootstrap, Product/Portfolio mode, observer, storage, design token 경계 도입
 
 ## v1.1 — Experience Polish
 
 - Core release baseline: `8d501bd`
 - UI hotfix baseline: `ec3f8cf`
-- PR #16: Visual polish, UI/UX refinement, Case Study synchronization, responsive/accessibility refinement
-- PR #18: overlapping `매칭 로직 0/5` / `제품 검증` controls consolidated and onboarding overlap removed
-- GitHub Actions run #64: Regression 36 / Browser E2E + axe / responsive / Production smoke PASS
-- Vercel: `ec3f8cf` verified / Production READY
-- Manual device QA: iPhone Safari + VoiceOver and Android Chrome + TalkBack core flows checked by user; no blocking issue reported
-
-The previous `Portfolio Freeze 2026.09.12` is a historical snapshot only. It no longer represents a development lock.
+- PR #16 / #18
+- responsive/accessibility polish와 Product Validation launcher 정리
+- Manual device QA: iPhone Safari + VoiceOver / Android Chrome + TalkBack 사용자 확인 PASS
 
 ## Historical baselines
 
-### 2026-09-12 — Portfolio close-out snapshot
+- `eff58f3` — 2026-09-12 Portfolio close-out snapshot
+- `a6cb6fe` — P0–P2 Product Hardening implementation baseline
+- `15151a5` — first complete Production routing/smoke pass
+- `1a450f2` — accessibility refinement baseline
 
-- `eff58f3` — close-out documentation baseline
-- GitHub required checks and Vercel Production smoke were passing at the snapshot
-- This state is retained only as historical evidence
-
-### 2026-09-11 — P0–P2 Product Hardening
-
-- `a6cb6fe` — implementation baseline for operations state machines, recommendation explainability, event/KPI contracts, and Product Validation
-- Regression / Browser E2E + axe / Production Smoke passed at this baseline
-
-### First complete Production QA pass
-
-- `15151a5` — first complete Production routing and smoke pass
-- `1a450f2` — follow-up accessibility refinement baseline
+이전 Portfolio Freeze는 historical snapshot일 뿐 현재 개발 잠금이 아닙니다.
 
 ## Documentation policy
 
-To keep `main` readable:
-
-- Current product description and verification status live in `README.md`.
-- Release history, compatibility boundary, and optional cleanup items live in this file.
-- Per-version planning/release documents are removed after their relevant facts are absorbed here.
-- Dated QA, hardening, and close-out documents are not kept in the current tree after consolidation.
-- Deleted documents remain recoverable through Git history.
+- Current state: `README.md`
+- Release history / compatibility boundary: 이 문서
+- per-version working docs와 날짜별 QA docs는 현재 tree에 누적하지 않음
+- 삭제된 상세 문서는 Git history에서 복원 가능
