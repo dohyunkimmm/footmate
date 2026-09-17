@@ -11,17 +11,17 @@
 - [Case Study](https://footmate-black.vercel.app/)
 - [Release History](docs/RELEASE-HISTORY.md)
 
-## 🚀 Current Development
+## 🚀 Current Release
 
-**v2.0.0-beta.2 · Runtime Migration**
+**v2.0.0 · Product Experience**
 
-- Product/runtime baseline: `84c698b`
-- GitHub PR #21 merged to `main`
-- QA/CI follow-ups: PR #22, #23 — product behavior change 없음
-- GitHub Actions run #79: Regression · Browser E2E + axe · Production HTTP · Production Chromium **PASS**
-- Vercel: `84c698b` verified / Production READY
+- Stable source/runtime baseline: `a192ec1`
+- Stable promotion: PR #26 merged to `main`
+- GitHub Actions run #85: Regression 36 · Browser E2E + axe **PASS**
+- Current verified Production baseline: `84c698b` · READY
+- Stable Production promotion: **pending** — Vercel deployment rate limit (24h), 코드/QA 실패 아님
 
-v2 beta2는 beta1에서 만든 ES module 경계를 실제 상태·상호작용의 주 소유자로 확장한 단계입니다.
+v2.0.0은 beta 단계에서 만든 ES module 경계와 runtime migration을 안정 버전으로 확정한 릴리스입니다.
 
 - Product / Portfolio mode 분리 유지
 - `src/v2/state/` product/scenario store 도입
@@ -86,9 +86,9 @@ v2 beta2는 beta1에서 만든 ES module 경계를 실제 상태·상호작용�
 - `footmate-patches.js` — 기존 scenario/render logic을 `FootMateScenarioAdapter` 뒤에서 제공
 - `footmate-finalize.js` — **state compatibility bridge only**
 - `footmate-product-hardening.js` — 운영 예외·추천 설명·Product Validation state machine adapter
-- `footmate-v1.1.css` — v2 migration 동안 유지하는 visual compatibility layer
+- `footmate-experience.css` — stable visual compatibility layer
 
-v2 beta2에서는 새 상태와 사용자 interaction의 소유권을 `src/v2/`로 이동했습니다. Matching/ELO의 기존 계산·render 구현 일부는 호환성을 위해 `footmate-patches.js` 뒤에 남아 있으며, 이는 `FootMateScenarioAdapter`를 통해 v2 store와 연결됩니다.
+v2.0.0에서는 새 상태와 사용자 interaction의 소유권을 `src/v2/`로 이동했습니다. Matching/ELO의 기존 계산·render 구현 일부는 호환성을 위해 `footmate-patches.js` 뒤에 남아 있으며, 이는 `FootMateScenarioAdapter`를 통해 v2 store와 연결됩니다.
 
 ## 🛠 Tech
 
@@ -106,7 +106,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 ## ✅ Verification
 
-v2.0.0-beta.2 제품/runtime 기준 SHA는 `84c698b`입니다. 동일 SHA의 Vercel Production 배포는 READY이며, 이후 QA-only CI 보정까지 포함한 GitHub Actions **run #79**에서 현재 Production을 다시 검증했습니다.
+`v2.0.0` stable source/runtime 기준 SHA는 `a192ec1`입니다. GitHub Actions **run #85**에서 Regression 36과 Browser E2E + axe가 통과했습니다. 다만 Vercel 계정의 24시간 deployment rate limit 때문에 이 SHA의 Production 승격은 대기 중이며, 현재 실제 Production은 이전에 전체 smoke 검증을 통과한 `84c698b`를 유지합니다.
 
 | 검증 | 상태 |
 | --- | --- |
@@ -117,9 +117,11 @@ v2.0.0-beta.2 제품/runtime 기준 SHA는 `84c698b`입니다. 동일 SHA의 Ver
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
-| Production HTTP smoke | **PASS** |
-| Production Chromium render smoke | **PASS** |
-| Vercel product/runtime baseline | **84c698b · verified · READY** |
+| Stable-source Regression / E2E | **a192ec1 · PASS** |
+| Production HTTP smoke | **84c698b · PASS** |
+| Production Chromium render smoke | **84c698b · PASS** |
+| Current Vercel Production | **84c698b · verified · READY** |
+| v2.0.0 Production promotion | **Pending · Vercel rate limit** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 다음 대규모 제품 UI 변경 시 다시 수행합니다.
 
