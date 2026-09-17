@@ -35,9 +35,28 @@ function baselineReplace(screenId,map){const root=document.getElementById(screen
 function loadingValue(label){const root=document.getElementById('s-loading');if(!root)return null;for(const row of root.querySelectorAll('div')){const c=[...row.children];if(c.length>1&&c[0].textContent.trim()===label)return c[c.length-1]}return null}
 function renderFilter(){scenarioProfile.dateKey=dateKey();const times={morning:'오전 (6~12시)',day:'낮 (12~17시)',evening:'저녁 (17~21시)',night:'야간 (21시 이후)'};const day=['일','월','화','수','목','금','토'][selectedDate.getDay()];const d=formatScenarioDate(selectedDate,day,'spaced');const r=regionDisplay[scenarioProfile.region]||scenarioProfile.regionLabel||'지역 미선택';const a=loadingValue('날짜'),b=loadingValue('위치'),c=loadingValue('실력');if(a)a.textContent=`${d} · ${times[scenarioProfile.time]||''}`;if(b)b.textContent=`${r} · ${scenarioProfile.distanceKm}km`;if(c)c.textContent=`${scenarioProfile.format} · ${Core.skillLabel(scenarioProfile.matchSkill)}`}
 function renderFilterButtons(){document.querySelectorAll('#s-filter [data-time-key]').forEach(b=>{const a=b.dataset.timeKey===scenarioProfile.time;b.classList.toggle('active',a);b.setAttribute('aria-pressed',a)});document.querySelectorAll('#s-filter [data-skill-key]').forEach(b=>{const a=+b.dataset.skillKey===+scenarioProfile.matchSkill;b.classList.toggle('active',a);b.setAttribute('aria-pressed',a)});document.querySelectorAll('#s-filter [data-format-key]').forEach(b=>{const a=b.dataset.formatKey===scenarioProfile.format;b.classList.toggle('active',a);b.setAttribute('aria-pressed',a)});const r=document.getElementById('distanceRange');if(r)r.value=scenarioProfile.distanceKm;set('distanceVal',scenarioProfile.distanceKm)}
-const oldToggle=togglePill;
-togglePill=function(el){if(!el?.closest('#s-filter'))return oldToggle(el);const g=el.parentElement;g.querySelectorAll('.filter-pill').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false')});el.classList.add('active');el.setAttribute('aria-pressed','true');if(el.dataset.timeKey)scenarioProfile.time=el.dataset.timeKey;if(el.dataset.skillKey)scenarioProfile.matchSkill=+el.dataset.skillKey;if(el.dataset.formatKey)scenarioProfile.format=el.dataset.formatKey;renderFilter();recalculateMatches();save()};
-updateDistance=function(v){scenarioProfile.distanceKm=Math.max(1,Math.min(30,+v||15));set('distanceVal',scenarioProfile.distanceKm);const r=document.getElementById('distanceRange');if(r){r.value=scenarioProfile.distanceKm;r.setAttribute('aria-valuenow',scenarioProfile.distanceKm);r.setAttribute('aria-valuetext',scenarioProfile.distanceKm+'km')}renderFilter();recalculateMatches();save()};
+function applyFilterState(patch={}){
+  if(patch.time!=null)scenarioProfile.time=patch.time;
+  if(patch.matchSkill!=null)scenarioProfile.matchSkill=Number(patch.matchSkill);
+  if(patch.format!=null)scenarioProfile.format=patch.format;
+  renderFilterButtons();
+  renderFilter();
+  recalculateMatches();
+  save();
+}
+function applyDistanceState(value){
+  scenarioProfile.distanceKm=Math.max(1,Math.min(30,Number(value)||15));
+  const range=document.getElementById('distanceRange');
+  if(range){
+    range.value=scenarioProfile.distanceKm;
+    range.setAttribute('aria-valuenow',scenarioProfile.distanceKm);
+    range.setAttribute('aria-valuetext',scenarioProfile.distanceKm+'km');
+  }
+  set('distanceVal',scenarioProfile.distanceKm);
+  renderFilter();
+  recalculateMatches();
+  save();
+}
 updateFilterSelections=renderFilterButtons;
 
 calculateMatchScenario=function(key){const b=matchScenarioBases[key]||matchScenarioBases.suwon;const x=Core.scoreMatch(b,Object.assign({},scenarioProfile,{dateKey:dateKey()}),demoState,scoreWeights.balance);return Object.assign({},x,{positionFit:x.positions.includes(scenarioProfile.position),availablePosition:x.positions.includes(scenarioProfile.position)?scenarioProfile.position:x.positions[0],styleDesc:x.timeKey===scenarioProfile.time?'선호 시간대와 일치':'선호 시간대와 차이',locationDesc:x.eligibility.region&&x.eligibility.distance?`${x.distanceKm}km · 선택 지역/거리 내`:`${x.distanceKm}km · 선택 지역/거리 밖`})};
@@ -68,8 +87,7 @@ confirmParticipation=function(){recordParticipation();goScreen('s-confirm')};
 syncParticipationState=function(){if(participationConfirmed&&state.participationMatchKey){const k=state.participationMatchKey,m=meta(k);const h=document.getElementById('s-home');if(h)baselineReplace('s-home',{'수원 FC UNITED':m.team,'수원 풋살아레나 A코트':m.venue,[SCENARIO_DATES.satCompact]:m.dateKey==='sun'?SCENARIO_DATES.sunCompact:SCENARIO_DATES.satCompact});set('home-upcoming-title','참가 예정 경기')}};
 openUpcomingMatch=function(){if(participationConfirmed&&state.participationMatchKey)selectedMatchKey=state.participationMatchKey;renderSelectedMatch();goScreen(participationConfirmed?'s-gameday':'s-detail')};
 
-const oldGo=goScreen;
-goScreen=function(id){const k=selectedMatchKey;oldGo(id);if(['s-detail','s-pay','s-confirm','s-gameday','s-chat'].includes(id)&&META[k]){selectedMatchKey=k;renderSelectedMatch()}if(id==='s-filter')renderFilterButtons();if(id==='s-loading')renderFilter();if(id==='s-results')renderResults();if(id==='s-profile')updateProfile();if(id==='s-eloUpdate')renderEloUpdate();if(id==='s-v2-compare')renderV2Comparison();save()};
+
 syncDemoHash=function(screenId){if(!demoStarted)return;const hash=hashByScreen[screenId]||screenId.replace(/^s-/,'');const target='#'+hash;try{const w=window.parent!==window&&window.parent.location.origin===location.origin?window.parent:window;if(w.location.hash!==target)w.history.replaceState(null,'',target)}catch(e){if(location.hash!==target)history.replaceState(null,'',target)}};
 
 const oldQuiz=selectQuizOpt;
@@ -82,6 +100,63 @@ replayFootMateDemo=function(){try{localStorage.removeItem(STORE)}catch(e){}retur
 
 syncDynamicScenario=function(){if(!demoState.eloCommitted){demoState.initialElo=calculateInitialElo();demoState.currentElo=demoState.initialElo;demoState.eloBeforeUpdate=demoState.initialElo}scenarioProfile.matchSkill=scenarioProfile.matchSkill??scenarioProfile.skill;recalculateMatches();calculateEloUpdate();renderEloUpdate();renderFilterButtons();renderFilter();renderDataQuality();syncParticipationState();updateProfile();save()};
 syncScenarioPosition=function(){const x=matchScenarios[selectedMatchKey]||calculateMatchScenario(selectedMatchKey),p=x.positions.includes(scenarioProfile.position)?scenarioProfile.position:x.positions[0];const d=document.getElementById('detail-open-position');if(d)d.childNodes.length?d.childNodes[0].nodeValue=p:d.textContent=p;set('ticket-position',x.positions.includes(scenarioProfile.position)?selectedPositionLabel():p)};
+
+window.FootMateScenarioAdapter={
+  snapshot(){
+    return{
+      selectedMatchKey,
+      profile:{
+        position:scenarioProfile.position,
+        frequency:scenarioProfile.frequency,
+        skill:scenarioProfile.skill,
+        region:scenarioProfile.region,
+        time:scenarioProfile.time,
+        matchSkill:scenarioProfile.matchSkill,
+        distanceKm:scenarioProfile.distanceKm,
+        format:scenarioProfile.format,
+        dateKey:dateKey()
+      },
+      elo:Core.effectiveElo(demoState),
+      matches:Object.fromEntries(Object.entries(matchScenarioBases).map(([key,value])=>[key,{
+        key,
+        team:value.team,
+        venue:value.venue,
+        avgElo:Number(value.avgElo),
+        distanceKm:Number(value.distanceKm??parseFloat(value.distance)),
+        status:'open'
+      }]))
+    };
+  },
+  setFilter:applyFilterState,
+  setDistance:applyDistanceState,
+  setSelectedMatch(key){
+    if(!META[key])return false;
+    selectedMatchKey=key;
+    renderSelectedMatch();
+    save();
+    return true;
+  },
+  renderForScreen(id,preferredMatchKey){
+    if(preferredMatchKey&&META[preferredMatchKey])selectedMatchKey=preferredMatchKey;
+    if(['s-detail','s-pay','s-confirm','s-gameday','s-chat'].includes(id)&&META[selectedMatchKey])renderSelectedMatch();
+    if(id==='s-filter')renderFilterButtons();
+    if(id==='s-loading')renderFilter();
+    if(id==='s-results')renderResults();
+    if(id==='s-profile')updateProfile();
+    if(id==='s-eloUpdate')renderEloUpdate();
+    if(id==='s-v2-compare')renderV2Comparison();
+    save();
+  },
+  selectMatch(key,detail=false){
+    if(!META[key])return false;
+    selectedMatchKey=key;
+    renderSelectedMatch();
+    save();
+    goScreen(detail?'s-detail':'s-reason');
+    return true;
+  },
+  persist:save
+};
 
 renderFilterButtons();renderFilter();recalculateMatches();updateProfile();syncParticipationState();renderDataQuality();renderSelectedMatch();
 console.info('[FootMate] consistency patch 2026-09-09.1 applied',{elo:Core.effectiveElo(demoState),selectedMatchKey});

@@ -37,6 +37,20 @@ html[data-footmate-version="2"] :where(input,textarea,select):focus-visible{
   outline-offset:1px!important;
 }
 
+.fm-saved-chat{
+  display:flex;
+  justify-content:flex-end;
+}
+.fm-saved-chat-body{
+  max-width:78%;
+  padding:9px 11px;
+  border-radius:14px 14px 4px 14px;
+  background:var(--fm-color-brand-600);
+  color:#fff;
+  font-size:12px;
+  line-height:1.45;
+}
+
 /* Product mode removes portfolio chrome from the user journey. */
 html[data-footmate-mode="product"] body{
   min-height:100dvh;

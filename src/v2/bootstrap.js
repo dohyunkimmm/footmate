@@ -1,14 +1,21 @@
 import{createStorage}from'./core/storage.js';
-import{getActiveScreenId,observeActiveScreen}from'./core/screen-observer.js';
+import{getActiveScreenId}from'./core/screen-observer.js';
 import{resolveMode,applyMode}from'./core/mode.js';
+import{createProductStore}from'./state/product-store.js';
+import{createScenarioStore}from'./state/scenario-store.js';
+import{createHomeController}from'./ui/home-controller.js';
+import{createFilterResultsController}from'./ui/filter-results-controller.js';
+import{createPaymentController}from'./ui/payment-controller.js';
+import{createSecondaryController}from'./ui/secondary-controller.js';
+import{installScreenEffects}from'./ui/screen-effects.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
-const VERSION='2.0.0-beta.1';
+const VERSION='2.0.0-beta.2';
 const uiStorage=createStorage('ui');
-const mode=resolveMode();
+const requestedMode=resolveMode();
 const state=Object.assign({
   version:VERSION,
-  mode,
+  mode:requestedMode,
   lastActiveScreen:'',
   validationTab:'recommendation'
 },uiStorage.read());
@@ -22,6 +29,7 @@ function waitForRuntime(timeoutMs=8000){
         !!window.FootMateProductOps&&
         !!window.FootMateProductCore&&
         !!window.FootMateFinalRuntime&&
+        !!window.FootMateScenarioAdapter&&
         document.querySelectorAll('.screen').length===39;
       if(ready)return resolve();
       if(performance.now()-started>timeoutMs)return reject(new Error('FootMate v2 runtime dependency timeout'));
@@ -31,7 +39,7 @@ function waitForRuntime(timeoutMs=8000){
   });
 }
 
-function persistState(){
+function persistUiState(){
   uiStorage.write({
     version:VERSION,
     mode:state.mode,
@@ -44,7 +52,35 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  state.mode=applyMode(mode);
+  state.mode=applyMode(requestedMode);
+
+  const finalRuntime=window.FootMateFinalRuntime;
+  const productStore=createProductStore(finalRuntime);
+  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter);
+  const home=createHomeController({productStore,scenarioStore});
+  const filterResults=createFilterResultsController({scenarioStore});
+  const payment=createPaymentController({productStore,scenarioStore,finalRuntime});
+  const secondary=createSecondaryController({productStore,finalRuntime});
+
+  home.bindControls();
+  filterResults.bindFilterButtons();
+  filterResults.bindResultCards();
+
+  state.version=VERSION;
+  state.lastActiveScreen=getActiveScreenId();
+  persistUiState();
+
+  const stopScreenEffects=installScreenEffects({
+    scenarioStore,
+    home,
+    filterResults,
+    payment,
+    secondary,
+    onScreen(activeId){
+      state.lastActiveScreen=activeId;
+      persistUiState();
+    }
+  });
 
   // Product mode skips the portfolio intro visually, but still runs its
   // initialization contract so hash deep-links and demo state restoration work.
@@ -54,42 +90,58 @@ async function boot(){
 
   const validation=installValidationEntry({mode:state.mode});
 
-  state.version=VERSION;
-  state.lastActiveScreen=getActiveScreenId();
-  persistState();
-
-  const stopScreenObserver=observeActiveScreen(activeId=>{
-    if(!activeId)return;
-    state.lastActiveScreen=activeId;
-    persistState();
-  });
-
   const originalOpenInspector=window.FootMateProductOps.openInspector;
   if(typeof originalOpenInspector==='function'){
     window.FootMateProductOps.openInspector=function(tab='operations'){
       state.validationTab=tab;
-      persistState();
+      persistUiState();
       return originalOpenInspector.apply(this,arguments);
     };
   }
+
+  const legacyReplay=finalRuntime.legacy?.replayFootMateDemo;
+  window.replayFootMateDemo=function(){
+    try{
+      localStorage.removeItem(finalRuntime.storeKey);
+      localStorage.removeItem(uiStorage.key);
+    }catch(error){}
+    return legacyReplay?.();
+  };
 
   window.__footmateV2=true;
   window.FootMateV2Runtime={
     version:VERSION,
     mode:state.mode,
     state,
+    productStore,
+    scenarioStore,
+    controllers:{home,filterResults,payment,secondary},
     storageKey:uiStorage.key,
     architecture:'native-es-modules',
     navigationWrapped:false,
-    refresh:validation.refresh,
+    legacyLayers:{
+      finalize:'state-bridge-only',
+      patchNavigationWrapped:false,
+      productHardeningNavigationWrapped:false
+    },
+    refresh(){
+      validation.refresh();
+      scenarioStore.renderForScreen(getActiveScreenId());
+      home.onScreen(getActiveScreenId());
+      filterResults.onScreen(getActiveScreenId());
+      payment.onScreen(getActiveScreenId());
+      secondary.onScreen(getActiveScreenId());
+    },
     destroy(){
       validation.stop?.();
-      stopScreenObserver?.();
+      stopScreenEffects?.();
     }
   };
 
-  window.dispatchEvent(new CustomEvent('footmate:v2:ready',{detail:{version:VERSION,mode:state.mode}}));
-  console.info('[FootMate] v2 product experience architecture ready',VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2:ready',{
+    detail:{version:VERSION,mode:state.mode}
+  }));
+  console.info('[FootMate] v2 runtime migration ready',VERSION,state.mode);
 }
 
 boot().catch(error=>{

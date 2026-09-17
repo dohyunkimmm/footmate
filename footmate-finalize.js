@@ -1,66 +1,127 @@
 (function(){
 'use strict';
-if(window.__footmateFinalize)return;window.__footmateFinalize=true;
-const Core=window.FootMateCore;
-if(!Core)return;
+if(window.__footmateFinalize)return;
+window.__footmateFinalize=true;
+
 const STORE='footmateFinalStateV3';
 const COST=17000;
-const finalState={creditBalance:20000,paidMatchKeys:[],homeDayIndex:1,homeFilterMode:'all',favoriteMatchKeys:[],friendIds:[],evalStars:0,chatMessages:[]};
-try{Object.assign(finalState,JSON.parse(localStorage.getItem(STORE)||'{}')||{})}catch(e){}
-if(!Array.isArray(finalState.paidMatchKeys))finalState.paidMatchKeys=[];
-if(!Array.isArray(finalState.favoriteMatchKeys))finalState.favoriteMatchKeys=[];
-if(!Array.isArray(finalState.friendIds))finalState.friendIds=[];
-if(!Array.isArray(finalState.chatMessages))finalState.chatMessages=[];
-const legacyFavorite=finalState.favorite===true;
-const legacyFriend=finalState.friendAdded===true;
-if(legacyFavorite){const key=window.selectedMatchKey||selectedMatchKey||'suwon';if(!finalState.favoriteMatchKeys.includes(key))finalState.favoriteMatchKeys.push(key)}
-if(legacyFriend){for(const id of ['kim-minsu','park-jihyun'])if(!finalState.friendIds.includes(id))finalState.friendIds.push(id)}
-delete finalState.favorite;delete finalState.friendAdded;
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(finalState))}catch(e){}}
-function won(n){return '₩'+Math.max(0,Number(n)||0).toLocaleString()}
-function rowValue(root,label){if(!root)return null;for(const row of root.querySelectorAll('.pay-row,.profile-menu-item')){const key=row.querySelector('.pay-key,.pmi-txt');if(key&&key.textContent.trim()===label)return row.querySelector('.pay-val,.pmi-val')}return null}
-function setText(id,text){const el=document.getElementById(id);if(el)el.textContent=text;return el}
-function matchKeyFromText(text){for(const [key,m] of Object.entries(matchScenarioBases||{})){if(text.includes(m.team)||text.includes(m.venue))return key}return null}
-function homeCards(){const root=document.getElementById('home-match-list');if(!root)return[];return [...root.children].filter(el=>el.matches?.('[onclick*="s-detail"]')).map(el=>{const key=matchKeyFromText(el.textContent||'');if(key)el.dataset.homeMatchKey=key;return{el,key,base:key?matchScenarioBases[key]:null}}).filter(x=>x.key&&x.base)}
-function homeDayKeys(idx){return idx===0?['suwon','yongin']:idx===2?['seongnam']:['suwon','seongnam','yongin']}
-function applyHomeFilters(){const items=homeCards();if(!items.length)return;const mode=finalState.homeFilterMode;const data=items.map(({key,base})=>({key,avgElo:Number(base.avgElo),distanceKm:Number(base.distanceKm??parseFloat(base.distance)),status:'open'}));const opts={keys:homeDayKeys(Number(finalState.homeDayIndex)),currentElo:Core.effectiveElo(demoState)};if(mode==='open')opts.openOnly=true;if(mode==='elo')opts.maxEloDiff=50;if(mode==='distance')opts.maxDistanceKm=5;const visible=new Set(Core.filterHomeMatches(data,opts).map(x=>x.key));items.forEach(({el,key})=>{const show=visible.has(key);el.style.display=show?'':'none';el.setAttribute('aria-hidden',show?'false':'true')});const idx=Number(finalState.homeDayIndex);const dayLabel=['어제','오늘','내일'][idx]||'오늘';const heading=document.querySelector('#home-match-list > div:first-child');if(heading)heading.textContent=`⚽ ${dayLabel} 경기 · ${visible.size}건`;let empty=document.getElementById('footmateHomeEmpty');if(!empty){empty=document.createElement('div');empty.id='footmateHomeEmpty';empty.className='footmate-home-empty';empty.textContent='선택한 홈 필터에 맞는 경기가 없습니다.';document.getElementById('home-match-list')?.appendChild(empty)}empty.style.display=visible.size?'none':'';persist()}
-const oldSwitchDay=window.switchDay;
-window.switchDay=function(el,idx){if(typeof oldSwitchDay==='function')oldSwitchDay(el,idx);finalState.homeDayIndex=Number(idx);applyHomeFilters()};
-const oldFilterTab=window.filterTab;
-window.filterTab=function(el){if(typeof oldFilterTab==='function')oldFilterTab(el);const label=(el?.textContent||'').trim();finalState.homeFilterMode=label.includes('모집')?'open':label.includes('ELO')?'elo':label.includes('5km')?'distance':'all';applyHomeFilters()};
-function restoreHomeControls(){document.querySelectorAll('.day-tab').forEach((b,i)=>{const on=i===Number(finalState.homeDayIndex);b.style.background=on?'var(--blue)':'transparent';b.style.color=on?'#fff':'#66738A';b.setAttribute('aria-pressed',on?'true':'false')});document.querySelectorAll('#home-filter-tabs button').forEach(b=>{const t=b.textContent.trim();const mode=t.includes('모집')?'open':t.includes('ELO')?'elo':t.includes('5km')?'distance':'all';const on=mode===finalState.homeFilterMode;b.style.background=on?'var(--blue)':'transparent';b.style.color=on?'#fff':'var(--txt2)';b.style.borderColor=on?'var(--blue)':'var(--border)';b.setAttribute('aria-pressed',on?'true':'false')});applyHomeFilters()}
-function renderCredit(){const pay=document.getElementById('s-pay'),low=document.getElementById('s-pay-low'),charge=document.getElementById('s-charge'),profile=document.getElementById('s-profile');const pv=rowValue(pay,'현재 크레딧 잔액');if(pv)pv.textContent=won(finalState.creditBalance);const direct=pay?.querySelector('.btn-primary');if(direct)direct.textContent=finalState.creditBalance>=COST?`크레딧 ${won(COST)}으로 참가 확정하기`:`크레딧 부족 · ${won(COST-finalState.creditBalance)} 충전 필요`;const lv=rowValue(low,'현재 크레딧');if(lv)lv.textContent=won(finalState.creditBalance);const shortage=rowValue(low,'부족한 금액');if(shortage)shortage.textContent=won(Math.max(0,COST-finalState.creditBalance));if(charge){const balance=[...charge.querySelectorAll('div')].find(x=>x.textContent.trim()==='현재 크레딧 잔액')?.parentElement?.querySelector('div:nth-child(2)');if(balance)balance.textContent=won(finalState.creditBalance);setText('afterBalance',won(finalState.creditBalance+(Number(typeof selectedChargeAmount!=='undefined'?selectedChargeAmount:20000)||20000)))}const prof=rowValue(profile,'크레딧 잔액');if(prof)prof.textContent=won(finalState.creditBalance);setText('chargeDoneRemaining',won(finalState.creditBalance));}
-window.simulateLowCredit=function(){finalState.creditBalance=3000;renderCredit();persist();window.goScreen('s-pay-low')};
-const oldSelectCharge=window.selectCharge;
-window.selectCharge=function(el,amount){const r=oldSelectCharge?.(el,amount);renderCredit();persist();return r};
-const oldRecord=window.recordParticipation;
-window.recordParticipation=function(){const key=window.selectedMatchKey||selectedMatchKey||'suwon';if(!finalState.paidMatchKeys.includes(key)){if(finalState.creditBalance<COST){finalState.creditBalance=Math.min(finalState.creditBalance,3000);renderCredit();persist();return false}finalState.creditBalance=Core.applyCredit(finalState.creditBalance,-COST);finalState.paidMatchKeys.push(key)}const r=oldRecord?.();renderCredit();persist();return r===false?false:true};
-window.confirmParticipation=function(){if(window.recordParticipation()===false){window.goScreen('s-pay-low');return}window.goScreen('s-confirm')};
-window.completeCharge=function(){const amount=Number(typeof selectedChargeAmount!=='undefined'?selectedChargeAmount:20000)||20000;finalState.creditBalance=Core.applyCredit(finalState.creditBalance,amount);setText('chargeDoneAmount',won(amount)+' 충전 완료');setText('chargeDoneBalance',(paymentMethodLabels?.[selectedPaymentMethod]||'선택 결제수단')+' · 충전 후 잔액 '+won(finalState.creditBalance));renderCredit();if(window.recordParticipation()===false){window.goScreen('s-pay-low');return}setText('chargeDoneRemaining',won(finalState.creditBalance));persist();window.goScreen('s-charge-done')};
-function offeredMatchKey(){const root=document.getElementById('s-v2-replacement');if(!root)return null;return matchKeyFromText(root.textContent||'')}
-const oldAcceptReplacement=window.acceptV2Replacement;
-window.acceptV2Replacement=function(){const key=offeredMatchKey()||window.selectedMatchKey||selectedMatchKey;if(key&&matchScenarioBases[key])selectedMatchKey=key;const r=oldAcceptReplacement?.();if(key&&matchScenarioBases[key])selectedMatchKey=key;renderSelectedMatch?.();const pay=document.getElementById('v2OfferPayment');if(pay)pay.onclick=()=>{if(key&&matchScenarioBases[key])selectedMatchKey=key;renderSelectedMatch?.();goScreen('s-pay')};persist();return r};
-function renderDeepDataQuality(){const grid=document.getElementById('v3DataQuality');if(!grid)return;const payment=demoEvents.find(e=>e.name==='payment_complete');const participationKey=window.FootMateRuntime?.participationMatchKey;const checks={participationHasMatch:!participationConfirmed||!!participationKey,paymentMatchesParticipation:!participationConfirmed||!payment||payment.metadata?.match===participationKey,selectedMatchValid:!!matchScenarioBases[selectedMatchKey]};const valid=Core.effectiveElo(demoState)>=900&&Core.effectiveElo(demoState)<=1800&&!!resultDisplay[demoState.postgameResult];const trace=Core.eventTraceStatus(demoEvents,Core.defaultFunnel);const q=Core.dataQualityStatus({answeredCount:window.FootMateRuntime?.answered?.size||0,events:demoEvents,requiredEvents:Core.defaultFunnel,valid,consistencyChecks:checks});const rows=[['Completeness',`${Math.min(window.FootMateRuntime?.answered?.size||0,5)}/5 입력 확인`,q.completeness],['Validity',valid?'현재 ELO·결과 허용 범위':'허용 범위 확인 필요',q.validity],['Freshness','경기 정원·상태는 샘플 데이터',q.freshness],['Consistency',q.consistency==='PASS'?'결제·참가 연결 키 일치':'결제·참가 연결 키 확인 필요',q.consistency],['Traceability',`${trace.completeCount}/${trace.requiredCount} 핵심 이벤트 순서 확인`,q.traceability]];grid.innerHTML=rows.map(([n,d,b])=>`<div class="dq-row"><b>${n}</b><span>${d}</span><em class="dq-badge ${b.toLowerCase()}">${b}</em></div>`).join('')}
-const previousDQ=window.renderDataQuality;
-window.renderDataQuality=function(){previousDQ?.();renderDeepDataQuality()};
-const oldStars=window.setStars;
-window.setStars=function(n){const r=oldStars?.(n);finalState.evalStars=Number(n)||0;persist();return r};
-function currentFavoriteKey(){return window.selectedMatchKey||selectedMatchKey||'suwon'}
-function friendId(btn){const card=btn?.parentElement;const text=(card?.textContent||'').replace(/\s+/g,' ');if(text.includes('김민수'))return'kim-minsu';if(text.includes('박지현'))return'park-jihyun';if(text.includes('이준호'))return'lee-junho';return null}
-const oldFavorite=window.toggleFavorite;
-window.toggleFavorite=function(btn){const key=currentFavoriteKey();const r=oldFavorite?.(btn);const on=btn?.getAttribute('aria-pressed')==='true';finalState.favoriteMatchKeys=finalState.favoriteMatchKeys.filter(x=>x!==key);if(on)finalState.favoriteMatchKeys.push(key);persist();return r};
-const oldFriend=window.addFriend;
-window.addFriend=function(btn){const id=friendId(btn);const r=oldFriend?.(btn);if(id&&!finalState.friendIds.includes(id))finalState.friendIds.push(id);persist();return r};
-const oldSendChat=window.sendChatMsg;
-window.sendChatMsg=function(){const input=document.getElementById('chatInput');const text=input?.innerText.trim();const r=oldSendChat?.();if(text){finalState.chatMessages.push(text);finalState.chatMessages=finalState.chatMessages.slice(-20);persist()}return r};
-function restoreFavoriteState(){const fav=document.querySelector('#s-detail .detail-fav');if(!fav)return;const on=finalState.favoriteMatchKeys.includes(currentFavoriteKey());if((fav.getAttribute('aria-pressed')==='true')!==on)oldFavorite?.(fav)}
-function restoreSecondaryState(){if(finalState.evalStars&&typeof window.setStars==='function')window.setStars(finalState.evalStars);restoreFavoriteState();document.querySelectorAll('#s-friends button[onclick*="addFriend"]').forEach(btn=>{const id=friendId(btn);if(id&&finalState.friendIds.includes(id)&&(btn.textContent||'').includes('추가'))oldFriend?.(btn)});const wrap=document.getElementById('chat-messages-wrap');if(wrap&&!wrap.querySelector('[data-fm-saved-chat]')){finalState.chatMessages.forEach(text=>{const bubble=document.createElement('div');bubble.dataset.fmSavedChat='true';bubble.style.cssText='display:flex;justify-content:flex-end;';const body=document.createElement('div');body.style.cssText='max-width:78%;background:var(--blue);color:#fff;border-radius:14px 14px 4px 14px;padding:9px 11px;font-size:12px;line-height:1.45;';body.textContent=text;bubble.appendChild(body);wrap.appendChild(bubble)})}}
-function patchLabels(){const launcher=document.getElementById('v3Launcher');if(launcher){for(const node of launcher.childNodes){if(node.nodeType===Node.TEXT_NODE){node.nodeValue='매칭 로직 ';break}}launcher.setAttribute('aria-label','매칭 로직, Agent Workflow와 데이터·검증 로그 열기')}try{if(window.parent!==window&&window.parent.location.origin===location.origin){const p=window.parent.document;const ia=p.querySelector('.slide[data-i="8"] h2');if(ia)ia.textContent='서비스 구조를 4개 핵심 탭으로 단순화';const row=p.querySelector('.slide[data-i="8"] .ia-row');const detail=p.querySelector('.slide[data-i="8"] .ia-detail');if(row){row.style.gridTemplateColumns='repeat(4,1fr)';row.innerHTML='<span>홈</span><span>탐색</span><span>일정</span><span>프로필</span>'}if(detail){detail.style.gridTemplateColumns='repeat(4,1fr)';detail.innerHTML='<p>홈: 추천 경기 · 홈 필터</p><p>탐색: 조건 설정 · 추천 결과 · 팀 상세</p><p>일정: 참가 확정 · 경기일 · 알림</p><p>프로필: ELO · 성장 기록 · 설정</p>'}const hint=p.querySelector('.showcase-hint');if(hint)hint.textContent=hint.textContent.replace('AI 로직','매칭 로직')}}catch(e){}}
-const priorGo=window.goScreen;
-window.goScreen=function(id){const r=priorGo(id);if(id==='s-home')restoreHomeControls();if(id==='s-detail')restoreFavoriteState();if(['s-pay','s-pay-low','s-charge','s-charge-done','s-profile'].includes(id))renderCredit();if(id==='s-v3'||document.getElementById('v3Inspector')?.getAttribute('aria-hidden')==='false')renderDeepDataQuality();patchLabels();return r};
-const oldReplay=window.replayFootMateDemo;
-window.replayFootMateDemo=function(){try{localStorage.removeItem(STORE)}catch(e){}return oldReplay?.()};
-const lowCreditSimulation=[...document.querySelectorAll('#s-pay .btn-secondary')].find(btn=>(btn.textContent||'').includes('크레딧 부족 시뮬레이션'));if(lowCreditSimulation)lowCreditSimulation.onclick=()=>window.simulateLowCredit();
-window.FootMateFinalRuntime={state:finalState,persist,renderCredit,cost:COST,storeKey:STORE};
-patchLabels();restoreSecondaryState();restoreHomeControls();renderCredit();renderDeepDataQuality();persist();
+const defaults={
+  creditBalance:20000,
+  paidMatchKeys:[],
+  homeDayIndex:1,
+  homeFilterMode:'all',
+  favoriteMatchKeys:[],
+  friendIds:[],
+  evalStars:0,
+  chatMessages:[],
+  selectedChargeAmount:20000,
+  selectedPaymentMethod:'kakao'
+};
+const state=Object.assign({},defaults);
+
+try{Object.assign(state,JSON.parse(localStorage.getItem(STORE)||'{}')||{})}catch(e){}
+
+for(const key of ['paidMatchKeys','favoriteMatchKeys','friendIds','chatMessages']){
+  if(!Array.isArray(state[key]))state[key]=[];
+}
+
+const legacyFavorite=state.favorite===true;
+const legacyFriend=state.friendAdded===true;
+try{
+  const key=window.selectedMatchKey||(typeof selectedMatchKey!=='undefined'?selectedMatchKey:null)||'suwon';
+  if(legacyFavorite&&!state.favoriteMatchKeys.includes(key))state.favoriteMatchKeys.push(key);
+}catch(e){}
+if(legacyFriend){
+  for(const id of ['kim-minsu','park-jihyun']){
+    if(!state.friendIds.includes(id))state.friendIds.push(id);
+  }
+}
+delete state.favorite;
+delete state.friendAdded;
+
+function persist(){
+  try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){}
+}
+
+function won(value){
+  return '₩'+Math.max(0,Number(value)||0).toLocaleString();
+}
+
+function rowValue(root,label){
+  if(!root)return null;
+  for(const row of root.querySelectorAll('.pay-row,.profile-menu-item')){
+    const key=row.querySelector('.pay-key,.pmi-txt');
+    if(key&&key.textContent.trim()===label)return row.querySelector('.pay-val,.pmi-val');
+  }
+  return null;
+}
+
+function setText(id,text){
+  const el=document.getElementById(id);
+  if(el)el.textContent=text;
+  return el;
+}
+
+function renderCredit(){
+  const pay=document.getElementById('s-pay');
+  const low=document.getElementById('s-pay-low');
+  const charge=document.getElementById('s-charge');
+  const profile=document.getElementById('s-profile');
+  const balance=Number(state.creditBalance)||0;
+  const chargeAmount=Number(state.selectedChargeAmount)||20000;
+
+  const payBalance=rowValue(pay,'현재 크레딧 잔액');
+  if(payBalance)payBalance.textContent=won(balance);
+
+  const primary=pay?.querySelector('.btn-primary');
+  if(primary){
+    primary.textContent=balance>=COST
+      ? `크레딧 ${won(COST)}으로 참가 확정하기`
+      : `크레딧 부족 · ${won(COST-balance)} 충전 필요`;
+  }
+
+  const lowBalance=rowValue(low,'현재 크레딧');
+  if(lowBalance)lowBalance.textContent=won(balance);
+  const shortage=rowValue(low,'부족한 금액');
+  if(shortage)shortage.textContent=won(Math.max(0,COST-balance));
+
+  if(charge){
+    const current=[...charge.querySelectorAll('div')]
+      .find(el=>el.textContent.trim()==='현재 크레딧 잔액')
+      ?.parentElement?.querySelector('div:nth-child(2)');
+    if(current)current.textContent=won(balance);
+    setText('afterBalance',won(balance+chargeAmount));
+    const chargeButton=charge.querySelector('.btn-primary');
+    if(chargeButton)chargeButton.textContent=won(chargeAmount)+' 충전하기';
+  }
+
+  const profileBalance=rowValue(profile,'크레딧 잔액');
+  if(profileBalance)profileBalance.textContent=won(balance);
+  setText('chargeDoneRemaining',won(balance));
+}
+
+const legacy={
+  switchDay:typeof window.switchDay==='function'?window.switchDay:null,
+  filterTab:typeof window.filterTab==='function'?window.filterTab:null,
+  selectCharge:typeof window.selectCharge==='function'?window.selectCharge:null,
+  selectMethod:typeof window.selectMethod==='function'?window.selectMethod:null,
+  setStars:typeof window.setStars==='function'?window.setStars:null,
+  toggleFavorite:typeof window.toggleFavorite==='function'?window.toggleFavorite:null,
+  addFriend:typeof window.addFriend==='function'?window.addFriend:null,
+  sendChatMsg:typeof window.sendChatMsg==='function'?window.sendChatMsg:null,
+  replayFootMateDemo:typeof window.replayFootMateDemo==='function'?window.replayFootMateDemo:null
+};
+
+window.FootMateFinalRuntime={
+  state,
+  persist,
+  renderCredit,
+  cost:COST,
+  storeKey:STORE,
+  legacy,
+  architecture:'compatibility-state-bridge'
+};
+
+renderCredit();
+persist();
 })();

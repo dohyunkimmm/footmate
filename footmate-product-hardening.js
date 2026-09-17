@@ -36,7 +36,7 @@ function operation(key=currentMatchKey()){
   return op;
 }
 function record(name,metadata={}){
-  const event=Product.normalizeAnalyticsEvent(name,Object.assign({match:currentMatchKey()},metadata),{sessionId:state.pmSessionId,version:'1.1'});
+  const event=Product.normalizeAnalyticsEvent(name,Object.assign({match:currentMatchKey()},metadata),{sessionId:state.pmSessionId,version:'2.0.0-beta.1'});
   state.pmEvents.push(event);state.pmEvents=state.pmEvents.slice(-80);persist();return event;
 }
 function rawEvents(){try{return Array.isArray(demoEvents)?demoEvents:[]}catch(e){return[]}}
@@ -208,9 +208,9 @@ function renderRecommendation(){const root=document.querySelector('[data-fm-pane
 }
 function renderPm(){const root=document.querySelector('[data-fm-panel="pm"]');if(!root)return;const funnel=Product.funnelMetrics(combinedEvents(),Core.defaultFunnel||[]);const contract=state.pmEvents.map(Product.validateAnalyticsEvent);const validCount=contract.filter(x=>x.pass).length;const kpis=Product.kpiSnapshot(combinedEvents());root.innerHTML=`
   <div class="fm-section-head"><div><small>P1 · PM / DATA QUALITY</small><h3>퍼널 · 이벤트 계약 · KPI 관측</h3></div><span class="fm-scope-badge">현재 세션</span></div>
-  <div class="fm-kpi-summary"><div><b>${funnel.completedCount}/${funnel.requiredCount}</b><span>핵심 퍼널 단계</span></div><div><b>${funnel.conversionPct}%</b><span>현재 세션 도달률</span></div><div><b>${validCount}/${contract.length||0}</b><span>v1.1 이벤트 계약 유효</span></div></div>
+  <div class="fm-kpi-summary"><div><b>${funnel.completedCount}/${funnel.requiredCount}</b><span>핵심 퍼널 단계</span></div><div><b>${funnel.conversionPct}%</b><span>현재 세션 도달률</span></div><div><b>${validCount}/${contract.length||0}</b><span>v2 이벤트 계약 유효</span></div></div>
   <div class="fm-funnel">${funnel.steps.map((step,index)=>`<div class="${step.reached?'done':''}"><span>${String(index+1).padStart(2,'0')}</span><b>${escapeHtml(step.name)}</b><small>${step.reached?'관측됨':'미관측'}</small></div>`).join('')}</div>
-  <div class="fm-policy-note"><b>다음 미관측 이벤트:</b> ${escapeHtml(funnel.nextMissing||'없음 · 핵심 퍼널 완료')}<br><b>Event contract:</b> name · timestamp · sessionId · version · metadata. 운영/추천 추가 이벤트는 v1.1로 별도 기록합니다.</div>
+  <div class="fm-policy-note"><b>다음 미관측 이벤트:</b> ${escapeHtml(funnel.nextMissing||'없음 · 핵심 퍼널 완료')}<br><b>Event contract:</b> name · timestamp · sessionId · version · metadata. 운영/추천 추가 이벤트는 v2 계약으로 별도 기록합니다.</div>
   <div class="fm-kpi-table"><div class="head"><b>KPI</b><b>분자 / 분모</b><b>현재 세션</b></div>${kpis.map(k=>`<div><span>${escapeHtml(k.label)}${k.inverse?' ↓':''}</span><code>${escapeHtml(k.numerator)} / ${escapeHtml(k.denominator)}</code><strong>${k.rate==null?'—':k.rate+'%'}</strong></div>`).join('')}</div>
   <p class="fm-footnote">현재 값은 1개 프로토타입 세션의 관측값이며 목표 KPI나 실제 사용자 성과가 아닙니다. 실서비스 연동 후 서버 기준 이벤트와 코호트 지표로 교체합니다.</p>`;
 }
@@ -227,9 +227,7 @@ function installUi(){
   wrap.addEventListener('click',event=>{if(event.target===wrap)closeInspector();const tab=event.target.closest('[data-fm-tab]');if(tab)setTab(tab.dataset.fmTab);const action=event.target.closest('[data-fm-action]')?.dataset.fmAction;if(!action)return;const actions={'payment-fail':simulatePaymentFailure,'payment-retry':retryPayment,'waitlist':joinWaitlist,'promote':promoteWaitlist,'accept-offer':acceptWaitlistOffer,'checkin':checkIn,'complete':completeMatch,'cancel-participation':cancelParticipation,'no-show':markNoShow,'cancel-match':cancelMatch,'reset':resetOperation,'save-baseline':saveBaseline};actions[action]?.()});
   wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeInspector();return}if(event.key==='ArrowRight'||event.key==='ArrowLeft'){const tabs=[...wrap.querySelectorAll('[data-fm-tab]')],current=tabs.findIndex(x=>x.getAttribute('aria-selected')==='true');if(current>=0){event.preventDefault();const next=(current+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;setTab(tabs[next].dataset.fmTab);tabs[next].focus()}}});
 }
-const originalGo=window.goScreen;
-if(typeof originalGo==='function')window.goScreen=function(){const result=originalGo.apply(this,arguments);renderInspector();return result};
 installUi();operation();persist();
-window.FootMateProductOps={operation,transition,simulatePaymentFailure,retryPayment,joinWaitlist,promoteWaitlist,acceptWaitlistOffer,cancelParticipation,markNoShow,checkIn,completeMatch,cancelMatch,resetOperation,openInspector,closeInspector,renderInspector,saveRecommendationBaseline:saveBaseline,combinedEvents};
+window.FootMateProductOps={operation,transition,simulatePaymentFailure,retryPayment,joinWaitlist,promoteWaitlist,acceptWaitlistOffer,cancelParticipation,markNoShow,checkIn,completeMatch,cancelMatch,resetOperation,openInspector,closeInspector,renderInspector,saveRecommendationBaseline:saveBaseline,combinedEvents,architecture:'v2-compatible-state-machine-adapter'};
 console.info('[FootMate] product hardening 2026-09-11 applied');
 })();
