@@ -2,26 +2,46 @@
 
 이 문서는 FootMate의 현재 릴리스 상태와 이전 검증 기준만 간결하게 보존합니다. 세부 변경 내역은 Git commit / Pull Request / GitHub Actions 이력을 기준으로 추적합니다.
 
-## Current development — v2.0.0-beta.1 Product Experience Architecture
+## Current — v2.0.0-beta.2 Runtime Migration
 
-- Product/runtime baseline: `70102da`
-- GitHub: PR #19 merged to `main`
+- Product/runtime baseline: `84c698b`
+- GitHub: PR #21 merged to `main`
+- QA/CI-only follow-ups: PR #22, #23
 - Scope:
-  - native ES module runtime boundary under `src/v2/`
-  - Product / Portfolio mode separation
-  - versioned v2 UI state and active-screen observer
-  - canonical v2 design tokens
-  - responsive gate expanded to 430 px
-  - GitHub Actions Node 24 migration
-- Product logic compatibility: Matching / ELO / Payment / Operations state machines unchanged
-- GitHub Actions run #69:
+  - product/scenario store under `src/v2/state/`
+  - Home / Filter / Result controllers
+  - Payment / Participation adapter
+  - Evaluation / Favorite / Friend / Chat controller
+  - observer-driven screen effects
+  - critical inline handler migration
+  - `footmate-finalize.js` reduced to state compatibility bridge
+  - patch/Product Hardening navigation wrappers removed
+  - duplicate chat persistence layer removed
+  - representative visual contract regression added
+  - Production smoke made aware of product-impact vs QA-only commits
+- Product logic compatibility: Matching / ELO / Operations policy preserved
+- GitHub Actions run #79:
   - Regression 36 PASS
   - Browser E2E + axe PASS
   - Product / Portfolio mode PASS
+  - v2 store/adapter and duplicate-charge gates PASS
   - 320 / 375 / 390 / 430 px responsive gate PASS
+  - representative visual contract PASS
   - Production HTTP smoke PASS
   - Production Chromium render smoke PASS
-- Vercel: `70102da` verified commit / Production READY
+- Vercel product/runtime baseline: `84c698b` verified / Production READY
+
+### Remaining compatibility boundary
+
+Matching/ELO scenario calculation and legacy screen rendering 일부는 `footmate-patches.js`에 남아 있지만 `FootMateScenarioAdapter` 뒤로 격리되어 있습니다. beta2의 state 및 핵심 사용자 interaction 소유권은 `src/v2/`로 이동했습니다.
+
+## v2.0.0-beta.1 — Product Experience Architecture
+
+- Product/runtime baseline: `70102da`
+- GitHub: PR #19
+- Product / Portfolio mode 분리
+- native ES module bootstrap, mode, observer, storage, design token 경계 도입
+- GitHub Actions run #69 / Vercel Production 검증 완료
 
 ## v1.1 — Experience Polish
 

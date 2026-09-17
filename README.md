@@ -14,23 +14,27 @@
 
 ## 🚀 Current Development
 
-**v2.0.0-beta.1 · Product Experience Architecture**
+**v2.0.0-beta.2 · Runtime Migration**
 
-- Product/runtime baseline: `70102da`
-- GitHub PR #19 merged to `main`
-- GitHub Actions run #69 PASS
-- Vercel `70102da` verified / Production READY
+- Product/runtime baseline: `84c698b`
+- GitHub PR #21 merged to `main`
+- QA/CI follow-ups: PR #22, #23 — product behavior change 없음
+- GitHub Actions run #79: Regression · Browser E2E + axe · Production HTTP · Production Chromium **PASS**
+- Vercel: `84c698b` verified / Production READY
 
-v2는 v1.1의 39개 화면과 운영 정책을 유지하면서 runtime/UI 경계를 정리하는 구조 전환입니다.
+v2 beta2는 beta1에서 만든 ES module 경계를 실제 상태·상호작용의 주 소유자로 확장한 단계입니다.
 
-- native ES module 기반 `src/v2/` runtime 도입
-- Product mode와 Portfolio mode 분리
-- 새 v2 UI 동작은 `goScreen`을 추가 재래핑하지 않고 active screen observer 사용
-- versioned UI storage `footmate:v2:ui`
-- canonical color / spacing / typography / radius token 도입
-- 320 / 375 / 390 / 430 px responsive QA
-- GitHub Actions Node 24 runtime 전환
-- 기존 Matching / ELO / Payment / Operations logic과 persisted state 호환 유지
+- Product / Portfolio mode 분리 유지
+- `src/v2/state/` product/scenario store 도입
+- Home · Filter · Result · Payment · Participation · Evaluation · Favorite · Friend · Chat 상호작용을 v2 controller로 이동
+- 핵심 사용자 흐름의 inline event handler 제거
+- `goScreen` 재래핑 제거: screen observer 기반 side effect 처리
+- `footmate-finalize.js`를 persisted state compatibility bridge로 축소
+- 중복 `footmate-persist-extra.js` 제거
+- 결제 중복 차감 방지 및 legacy state migration 유지
+- canonical design token + 320 / 375 / 390 / 430 px responsive gate
+- 대표 화면 visual contract regression 추가
+- GitHub Actions Node 24 + product-impact aware Production smoke
 
 ### Demo modes
 
@@ -57,28 +61,35 @@ v2는 v1.1의 39개 화면과 운영 정책을 유지하면서 runtime/UI 경계
 
 ## 🧩 Runtime Structure
 
-### v2 boundary
+### v2 ownership
 
-- `src/v2/bootstrap.js` — v2 runtime entry
+- `src/v2/bootstrap.js` — v2 runtime composition root
 - `src/v2/core/mode.js` — Product / Portfolio mode
 - `src/v2/core/screen-observer.js` — active screen 관찰
 - `src/v2/core/storage.js` — versioned UI persistence
+- `src/v2/state/product-store.js` — 결제·즐겨찾기·친구·평가·채팅 등 persisted product state
+- `src/v2/state/scenario-store.js` — 필터·선택 경기·추천 scenario state
+- `src/v2/ui/home-controller.js` — Home day/filter/match interaction
+- `src/v2/ui/filter-results-controller.js` — Filter/Result interaction
+- `src/v2/ui/payment-controller.js` — Charge/Payment/Participation adapter
+- `src/v2/ui/secondary-controller.js` — Evaluation/Favorite/Friend/Chat persistence
+- `src/v2/ui/screen-effects.js` — observer 기반 screen side effects
 - `src/v2/ui/validation-entry.js` — Portfolio validation entry
 - `src/v2/styles/tokens.css` — canonical design tokens
 - `src/v2/styles/app.css` — v2 product experience layer
 
-### Compatibility layer
+### Compatibility boundary
 
 - `demo.html` / `demo-source.html` — 39-screen prototype source
 - `demo-shell.html` — Production `/demo` shell
-- `footmate-core.js` — 필터 · 매칭 · 추천 · 크레딧 · 데이터 품질 core logic
-- `footmate-product-core.js` — 상태 머신 · 추천 설명 · 이벤트 · KPI logic
-- `footmate-patches.*` / `footmate-finalize.*` — 기존 runtime synchronization / regression layer
-- `footmate-product-hardening.*` — 운영 예외 · 추천 설명 · Product Validation
+- `footmate-core.js` — 매칭·ELO·크레딧·데이터 품질 core logic
+- `footmate-product-core.js` — 상태 머신·추천 설명·이벤트·KPI logic
+- `footmate-patches.js` — 기존 scenario/render logic을 `FootMateScenarioAdapter` 뒤에서 제공
+- `footmate-finalize.js` — **state compatibility bridge only**
+- `footmate-product-hardening.js` — 운영 예외·추천 설명·Product Validation state machine adapter
 - `footmate-v1.1.css` — v2 migration 동안 유지하는 visual compatibility layer
-- `tests/` / `playwright.config.cjs` — Regression · E2E · accessibility · responsive · Production smoke
 
-v2에서는 새 기능부터 `src/v2/` 경계 안에 추가하고, 기존 patch/finalize layer는 기능 단위로 점진적으로 축소합니다.
+v2 beta2에서는 새 상태와 사용자 interaction의 소유권을 `src/v2/`로 이동했습니다. Matching/ELO의 기존 계산·render 구현 일부는 호환성을 위해 `footmate-patches.js` 뒤에 남아 있으며, 이는 `FootMateScenarioAdapter`를 통해 v2 store와 연결됩니다.
 
 ## 🛠 Tech
 
@@ -96,24 +107,25 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 ## ✅ Verification
 
-v2.0.0-beta.1 제품/runtime 기준 SHA `70102da`는 GitHub Actions **run #69**와 동일 SHA의 Vercel Production 배포를 기준으로 검증했습니다.
+v2.0.0-beta.2 제품/runtime 기준 SHA는 `84c698b`입니다. 동일 SHA의 Vercel Production 배포는 READY이며, 이후 QA-only CI 보정까지 포함한 GitHub Actions **run #79**에서 현재 Production을 다시 검증했습니다.
 
 | 검증 | 상태 |
 | --- | --- |
 | Regression 36 | **PASS** |
 | Browser E2E · Product + Portfolio mode | **PASS** |
+| v2 store / adapter / duplicate-charge gate | **PASS** |
+| Critical inline-handler migration gate | **PASS** |
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
+| Representative visual contract | **PASS** |
 | Production HTTP smoke | **PASS** |
 | Production Chromium render smoke | **PASS** |
-| Vercel | **70102da · verified · READY** |
+| Vercel product/runtime baseline | **84c698b · verified · READY** |
 
-수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, v2의 제품 UI가 추가로 크게 바뀌는 단계에서 다시 수행합니다.
+수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 다음 대규모 제품 UI 변경 시 다시 수행합니다.
 
 ## 📚 Documentation
 
 - `README.md` — 현재 제품/구조/검증 상태
-- `docs/V2-RELEASE.md` — 현재 v2 구조 전환 범위와 release gate
+- `docs/V2-RELEASE.md` — 현재 v2 구조 전환 범위와 compatibility boundary
 - `docs/RELEASE-HISTORY.md` — 릴리스와 과거 검증 baseline 요약
-
-v2가 안정 릴리스되면 `docs/V2-RELEASE.md`의 핵심 사실을 Release History에 흡수하고 working tree 문서를 다시 최소화합니다.
