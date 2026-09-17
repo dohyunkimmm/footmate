@@ -1,8 +1,8 @@
 /* FootMate v1.1 · Experience Polish
    Non-destructive visual system layer for the existing 39-screen prototype. */
 :root{
-  --fm-brand:#2F6FD3;
-  --fm-brand-strong:#2458AD;
+  --fm-brand:#255AAE;
+  --fm-brand-strong:#1F4F9D;
   --fm-brand-soft:#EEF4FF;
   --fm-accent:#6B5CE7;
   --fm-success:#177A58;
@@ -45,7 +45,7 @@
   min-height:48px!important;
   border-radius:14px!important;
   background:linear-gradient(135deg,var(--fm-brand),#477FD8)!important;
-  box-shadow:0 8px 18px rgba(47,111,211,.22)!important;
+  box-shadow:0 8px 18px rgba(37,90,174,.22)!important;
   font-size:14px!important;
   font-weight:850!important;
   letter-spacing:-.015em!important;
@@ -90,7 +90,7 @@
   background:var(--fm-brand)!important;
   border-color:var(--fm-brand)!important;
   color:#fff!important;
-  box-shadow:0 5px 14px rgba(47,111,211,.18)!important;
+  box-shadow:0 5px 14px rgba(37,90,174,.18)!important;
 }
 .footmate-home-empty,#footmateRuntimeEmpty{
   border-color:#B8C7DB!important;
@@ -108,7 +108,7 @@
 .elo-circle-big,.lockin-banner,.eval-av{
   background:linear-gradient(135deg,var(--fm-brand),var(--fm-accent))!important;
 }
-.elo-circle-big{box-shadow:0 14px 34px rgba(47,111,211,.28)!important}
+.elo-circle-big{box-shadow:0 14px 34px rgba(37,90,174,.28)!important}
 .elo-tier-txt,.elo-update-badge,.pep-title,.pec-num{color:var(--fm-brand)!important}
 
 /* Game-day and status feedback */
@@ -146,6 +146,7 @@
   .fm-product-launcher{right:10px!important}
 }
 @media(max-width:340px){
+  .btn-primary{min-height:50px!important}
   .nbar{padding-left:12px!important;padding-right:12px!important}
   .card{margin-left:10px!important;margin-right:10px!important;padding-left:13px!important;padding-right:13px!important}
   .tab-lbl{font-size:9px!important}
