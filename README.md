@@ -12,62 +12,53 @@
 - [Backup deployment · Render](https://footmate-backup.onrender.com)
 - [Release History](docs/RELEASE-HISTORY.md)
 
-## 🚀 Current Main · v2.2.0
+## 🚀 Current Release · v2.3.0
 
-**v2.2.0 · Inspector UI Ownership**
+**v2.3.0 · Compatibility Boundary Reduction**
 
-현재 `main`의 v2.2 product tree는 Vercel Production exact verification을 완료했습니다. Render backup은 `main` auto-deploy 경로로 같은 릴리스 트리를 유지합니다.
+v2.3은 v2.2의 안정 동작을 회귀 기준으로 유지하면서 Product Experience CSS, scenario persistence, Filter/Results/Recommendation Reason presentation의 canonical ownership을 `src/v2/`로 이동한 구조 고도화 릴리스입니다.
 
-- v2.2 product baseline: `94939d5` · PR #47
-- Release runtime: `2.2.0`
+- v2.3 architecture baseline: `bf27784` · PR #52
+- exact verified Production SHA: `aaacbdc` · PR #55
+- Release runtime: `2.3.0`
 - Storage / schema / Product Hardening event contract: `2.1.0` 호환 유지
+- v2.2 runtime alias/event: 호환 유지
 - Regression baseline: Product / Portfolio mode · 39 screens · 16-slide Case Study
-- PR #44 · `d134d4b`
-  - canonical prototype source를 `demo-source.html`로 단일화
-  - 중복 ~354 KB `demo.html` artifact 제거
-  - `/demo.html` legacy compatibility route 유지
-- PR #45 · `4c90dfe`
-  - exact Vercel deployment를 사용할 수 없을 때 Production smoke가 마지막 verified Production을 compatibility mode로 검증하도록 정리
-- PR #47 · `94939d5`
-  - Product Validation Inspector DOM/render/focus/keyboard ownership을 `src/v2/ui/product-inspector.js`로 이동
-  - Inspector component styles를 `src/v2/styles/product-inspector.css`로 이동
-  - `footmate-product-hardening.js`를 policy/state/analytics adapter + UI bridge로 축소
-  - 중복 Inspector launcher bridge 제거
-  - Case Study release badge/note를 v2.2 UI Ownership 기준으로 동기화
-  - exact Production strict browser smoke에 v2.2 runtime/Inspector ownership assertion 추가
-- PR #47 QA run #146: Regression + Browser E2E/axe **PASS**
-- v2.2 product-baseline main run #147: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
-  - 당시 Production Smoke는 마지막 exact verified Production을 대상으로 compatibility mode로 실행
-- PR #53 · no-source-change Production retry
-  - PR QA run #158: Regression 36 + Browser E2E/axe **PASS**
-  - exact Production verification main SHA: `5fbdbf4`
-  - main run #159: Regression 36 + Browser E2E/axe + strict Production HTTP + strict Production Chromium render smoke **PASS**
+- Matching / ELO ownership: `src/v2/domain/`
+- Product Validation Inspector ownership: `src/v2/ui/product-inspector.js`
 
-### Production release gate
+### v2.3 architecture
 
-- v2.2 exact verified Vercel Production: `5fbdbf4`
-  - v2.2 product tree baseline: `94939d5`
-  - Vercel deployment: `dpl_FnD7dPN9DgMnYQMoEsd5LaUHs5kY`
+- Product Experience, runtime patch/finalize CSS를 `src/v2/styles/` canonical ownership으로 이동
+- legacy CSS 파일은 compatibility alias로 유지
+- canonical scenario persistence `footmate:v2:scenario` 도입
+- legacy runtime state를 덮어쓰지 않는 guarded hydration bridge 도입
+- Filter / Results / Recommendation Reason 렌더링을 `src/v2/ui/scenario-presenter.js`로 이동
+- `FootMateV23` + `footmate:v2.3:ready`를 정식 release contract로 노출
+- `FootMateV22` + `footmate:v2.2:ready`는 compatibility contract로 유지
+- Case Study release badge/note를 v2.3 Compatibility Boundary 기준으로 동기화
+
+### QA / Production verification
+
+- PR #52 QA run #163: Regression 36 + Browser E2E/axe **PASS**
+- PR #55 QA run #167: Regression 36 + Browser E2E/axe **PASS**
+- exact Production verification main `aaacbdc` · run #168:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - exact Vercel deployment wait **PASS**
+  - strict Production HTTP smoke **PASS**
+  - strict Production Chromium render smoke **PASS**
+  - v2.3 release metadata / canonical scenario ownership / v2.2 compatibility assertions **PASS**
+- Vercel Production:
+  - SHA: `aaacbdc5edccdc7dd89404e6fde439f36e1df091`
+  - deployment: `dpl_86HgVTqT4aK5aCx5vhyYLipaK4W8`
   - state: **READY**
-  - GitHub Actions run #159: Regression 36, Browser E2E + axe, strict Production HTTP smoke, strict Production Chromium render smoke **PASS**
-  - Product / Portfolio mode + v2.2 Inspector ownership assertions **PASS**
-- Render backup current-main verification:
+- Render backup:
   - service: `footmate-backup`
-  - URL: `https://footmate-backup.onrender.com`
-  - verified SHA: `5fbdbf415eb83687163d53cb4f6d987af9aa0cc2`
-  - deployment: `dep-dami6c0ae00c73bnbcm0`
-  - state at verification: **live**
-  - branch: `main` · auto-deploy enabled
-- v2.2 Vercel Production release gate: **CLOSED**
-
-### v2.3 architecture backlog
-
-v2.2에서 release scope를 넘기지 않기 위해 아래 항목은 다음 구조 고도화로 이관합니다.
-
-- `footmate-patches.js`에 남은 DOM render/persistence ownership 추가 분리
-- 큰 `demo-source.html` markup의 build-time source/component 분리
-- compatibility CSS 추가 축소
-- required status check key `Regression 36` rename은 repository ruleset과 workflow를 함께 변경
+  - SHA: `aaacbdc5edccdc7dd89404e6fde439f36e1df091`
+  - deployment: `dep-damil8h7lnhs73ccu1r0`
+  - state: **live**
+- v2.3 Production release gate: **CLOSED**
 
 ## ✨ Key Features
 
@@ -83,37 +74,47 @@ v2.2에서 release scope를 넘기지 않기 위해 아래 항목은 다음 구�
 - 브라우저 재진입 시 핵심 진행 상태와 사용자 선택 복원
 - AI Agent Workflow 및 데이터 품질 상태(`PASS` · `CHECK` · `SAMPLE`)
 - 이벤트 계약과 핵심 퍼널/KPI 관측
-- 접근 가능한 Product Validation inspector
+- 접근 가능한 Product Validation Inspector
 - Case Study의 `Problem → Hypothesis → Design → Validation → Result` 구조
 
 ## 🧩 Runtime Structure
 
-### v2.2 ownership
+### v2.3 ownership
 
-- `src/v2/bootstrap.js` — runtime composition root · release `2.2.0`
+- `src/v2/bootstrap.js` — runtime composition root · release `2.3.0`
 - `src/v2/domain/matching-engine.js` — matching domain engine
 - `src/v2/domain/elo-engine.js` — ELO domain engine
 - `src/v2/state/product-store.js` — persisted product state
 - `src/v2/state/scenario-store.js` — domain-derived scenario state
+- `src/v2/state/scenario-persistence.js` — canonical scenario persistence
+- `src/v2/compat/scenario-persistence-bridge.js` — guarded legacy hydration bridge
+- `src/v2/ui/scenario-presenter.js` — Filter / Results / Recommendation Reason presentation
 - `src/v2/ui/home-controller.js` — Home interaction
-- `src/v2/ui/filter-results-controller.js` — Filter/Result interaction
+- `src/v2/ui/filter-results-controller.js` — Filter/Result interaction adapter
 - `src/v2/ui/payment-controller.js` — Charge/Payment/Participation adapter
 - `src/v2/ui/secondary-controller.js` — Evaluation/Favorite/Friend/Chat persistence
-- `src/v2/ui/screen-effects.js` — observer 기반 screen effects
 - `src/v2/ui/product-inspector.js` — Product Validation Inspector UI ownership
+- `src/v2/ui/screen-effects.js` — observer 기반 screen effects
 - `src/v2/ui/validation-entry.js` — Portfolio validation entry
+- `src/v2/styles/experience.css` — Product Experience canonical visual layer
+- `src/v2/styles/compatibility-patches.css` / `compatibility-finalize.css` — compatibility visual ownership
 - `src/v2/styles/product-inspector.css` — Inspector component styles
-- `src/v2/styles/tokens.css` / `app.css` — design token / product experience layer
+- `src/v2/styles/tokens.css` / `app.css` — design token / mode layer
 
 ### Compatibility boundary
 
 - `footmate-core.js` — 저수준 score/filter/credit/data-quality core
 - `footmate-product-core.js` — 상태 머신·추천 설명·이벤트/KPI core
-- `footmate-patches.js` — 기존 DOM render와 persistence 호환; matching/ELO 계산은 domain engine에 위임
+- `footmate-patches.js` — 일부 기존 DOM render/persistence compatibility; matching/ELO는 domain engine에 위임
 - `footmate-finalize.js` — persisted state compatibility bridge only
-- `footmate-product-hardening.js` — policy/state/analytics adapter + v2.2 Inspector UI bridge
-- `footmate-product-hardening.css` — v2.2 Inspector stylesheet compatibility alias
-- `footmate-experience.css` — visual compatibility layer
+- `footmate-product-hardening.js` — policy/state/analytics adapter + Inspector UI bridge
+- legacy CSS entry files — canonical `src/v2/styles/`를 가리키는 compatibility alias
+
+## 🔭 Next Architecture Candidates
+
+- 큰 `demo-source.html` markup의 build-time source/component 분리
+- `footmate-patches.js`에 남은 DOM/persistence compatibility ownership 추가 축소
+- required status check key `Regression 36` rename은 repository ruleset + workflow와 함께 수행
 
 ## 🛠 Tech
 
@@ -127,29 +128,27 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 | 검증 | 상태 |
 | --- | --- |
-| v2.2 product baseline | **94939d5 · v2.2.0** |
-| Regression suite | **PASS** · required-check key는 현재 `Regression 36` |
+| v2.3 architecture baseline | **bf27784 · PR #52 · v2.3.0** |
+| exact verified Production SHA | **aaacbdc · PR #55** |
+| Regression suite | **PASS** · required-check key `Regression 36` |
 | Browser E2E · Product + Portfolio | **PASS** |
-| Matching domain parity | **PASS** |
-| ELO domain parity | **PASS** |
+| Matching / ELO domain parity | **PASS** |
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
 | 39-screen product baseline | **PASS** |
 | 16-slide Case Study IA | **PASS** |
-| v2.2 Inspector ownership | **PR #47 · run #146 PASS** |
-| v2.2 product-baseline QA | **run #147 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
-| v2.2 exact verified Vercel Production | **5fbdbf4 · dpl_FnD7dPN9DgMnYQMoEsd5LaUHs5kY · READY** |
-| v2.2 exact Production verification | **run #159 · strict HTTP + Chromium + Inspector assertions PASS** |
-| Render backup | **current-main LIVE verified · 5fbdbf4 · dep-dami6c0ae00c73bnbcm0** |
+| v2.3 exact Vercel Production | **aaacbdc · dpl_86HgVTqT4aK5aCx5vhyYLipaK4W8 · READY** |
+| v2.3 exact Production verification | **run #168 · strict HTTP + Chromium PASS** |
+| Render backup | **aaacbdc · dep-damil8h7lnhs73ccu1r0 · live** |
 
-Render 항목은 service/deploy control plane 기준 검증입니다. Vercel strict HTTP/Chromium Production smoke와는 독립된 배포 경로로 구분합니다.
+Render는 Vercel과 독립적인 배포 경로입니다. exact Vercel Production verification은 GitHub Actions의 exact deployment wait + strict HTTP/Chromium gate로 판단합니다.
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
 ## 📚 Documentation
 
 - `README.md` — 현재 제품 · 구조 · 검증 상태
-- `docs/RELEASE-HISTORY.md` — 현재/과거 릴리스 · 검증 baseline · 후속 정리 후보
+- `docs/RELEASE-HISTORY.md` — 현재/과거 릴리스 · 검증 baseline · 후속 구조 후보
 
-세부 변경은 Git commit, Pull Request, GitHub Actions 이력을 source of truth로 사용합니다.
+moving `main`은 문서-only merge로 전진할 수 있으므로, 제품/runtime baseline과 exact verified Production SHA는 별도로 유지합니다. 세부 변경과 현재 branch head는 Git commit, Pull Request, GitHub Actions 이력을 source of truth로 사용합니다.
