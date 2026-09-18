@@ -40,7 +40,7 @@ async function main() {
     if (strictProduction) {
       assert(body.includes('/src/v2/styles/core-funnel.css'), '/demo v2.4 core funnel stylesheet missing');
       assert(body.includes('/src/v2/styles/decision-recovery.css'), '/demo v2.5 decision/recovery stylesheet missing');
-      assert(body.includes('/src/v2/bootstrap.js?v=20260919-1'), '/demo v2.5 bootstrap cache key missing');
+      assert(body.includes('/src/v2/bootstrap.js?v=20260919-2'), '/demo v2.6 bootstrap cache key missing');
     }
   });
 
@@ -57,6 +57,7 @@ async function main() {
     if (strictProduction) {
       assert(!body.includes('fm24-'), 'v2.4 component markup leaked into demo-source');
       assert(!body.includes('fm25-'), 'v2.5 component markup leaked into demo-source');
+      assert(!body.includes('fm26-'), 'v2.6 architecture markup leaked into demo-source');
     }
   });
 
@@ -82,13 +83,32 @@ async function main() {
     assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
     if (strictProduction) {
       assert(body.includes("VERSION='2.1.0'"), 'v2.1 schema version marker missing');
-      assert(body.includes("RELEASE_VERSION='2.5.0'"), 'v2.5 release marker missing');
-      assert(body.includes('FootMateV25'), 'v2.5 runtime contract missing');
-      assert(body.includes("releaseArchitecture:'v2.5-decision-recovery-experience'"), 'v2.5 release architecture marker missing');
+      assert(body.includes("RELEASE_VERSION='2.6.0'"), 'v2.6 release marker missing');
+      assert(body.includes('FootMateV26'), 'v2.6 runtime contract missing');
+      assert(body.includes("releaseArchitecture:'v2.6-architecture-hardening'"), 'v2.6 release architecture marker missing');
+      assert(body.includes("previousReleaseArchitecture:'v2.5-decision-recovery-experience'"), 'v2.5 previous architecture marker missing');
     }
   });
 
   if (strictProduction) {
+    await run('v2.6-runtime-boundary', '/src/v2/demo/runtime-boundary.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'runtime boundary content type unexpected');
+      assert(body.includes('v2.6-build-source-component-boundary'), 'v2.6 runtime boundary marker missing');
+      assert(body.includes('39-screen-regression-fixture'), 'v2.6 legacy source role missing');
+      assert(body.includes('legacy-render-adapter-only'), 'v2.6 patch role missing');
+    });
+    await run('v2.6-availability-gateway', '/src/v2/domain/availability-gateway.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'availability gateway content type unexpected');
+      assert(body.includes('createAvailabilityGateway'), 'v2.6 availability gateway export missing');
+      assert(body.includes('v2.6-availability-verification-boundary'), 'v2.6 availability architecture marker missing');
+      assert(body.includes('serverVerified:false'), 'v2.6 prototype/server verification marker missing');
+    });
+    await run('v2.6-decision-trace-persistence', '/src/v2/state/decision-trace-persistence.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'trace persistence content type unexpected');
+      assert(body.includes('createDecisionTracePersistence'), 'v2.6 trace persistence export missing');
+      assert(body.includes('v2.6-decision-trace-persistence'), 'v2.6 trace persistence architecture marker missing');
+      assert(body.includes("createStorage('decision-traces')"), 'v2.6 trace persistence storage key missing');
+    });
     await run('v2.5-decision-engine', '/src/v2/domain/decision-engine.js', ({ body, contentType }) => {
       assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'decision engine content type unexpected');
       assert(body.includes('createDecisionEngine'), 'v2.5 decision engine export missing');

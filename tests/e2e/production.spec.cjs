@@ -33,7 +33,7 @@ test('production case study and v2 product/portfolio modes render after deployme
     await expect(page.locator('.slide')).toHaveCount(16);
     await expect(page.locator('.toc-item')).toHaveCount(16);
     await expect(page.locator('#cnt')).toContainText('/ 16');
-    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V2.5');
+    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V2.6');
     await page.evaluate(() => window.goTo(4));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('User Journey');
     await page.evaluate(() => window.goTo(7));
@@ -47,7 +47,7 @@ test('production case study and v2 product/portfolio modes render after deployme
 
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
-  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV25);
+  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV26 && !!window.FootMateV25);
   await expect(page.locator('.top-bar')).toBeHidden();
   await expect(page.locator('.flow-nav')).toBeHidden();
   await page.evaluate(() => window.goScreen('s-home'));
@@ -61,7 +61,7 @@ test('production case study and v2 product/portfolio modes render after deployme
   if (!strictProduction) {
     const compatibility = await page.evaluate(() => ({
       runtimeVersion: window.FootMateV2Runtime?.version || null,
-      availableReleaseVersion: window.FootMateV25?.version || window.FootMateV24?.version || window.FootMateV23?.version || window.FootMateV22?.version || null
+      availableReleaseVersion: window.FootMateV26?.version || window.FootMateV25?.version || window.FootMateV24?.version || window.FootMateV23?.version || window.FootMateV22?.version || null
     }));
     expect(compatibility.runtimeVersion).toBeTruthy();
     expect(compatibility.availableReleaseVersion).toBeTruthy();
@@ -77,42 +77,61 @@ test('production case study and v2 product/portfolio modes render after deployme
       releaseDataset: document.documentElement.dataset.footmateRelease,
       inspectorReady: window.__footmateV22Inspector === true,
       policyArchitecture: window.FootMateProductOps?.architecture,
+      v26Version: window.FootMateV26?.version,
+      v26PreviousReleaseVersion: window.FootMateV26?.previousReleaseVersion,
+      v26RuntimeBoundary: window.FootMateV26?.runtimeBoundary,
+      v26AvailabilityGateway: window.FootMateV26?.availabilityGateway,
+      v26TracePersistence: window.FootMateV26?.decisionTracePersistence,
+      v26PersistentDecisionReplay: window.FootMateV26?.persistentDecisionReplay,
       v25Version: window.FootMateV25?.version,
+      v25CurrentReleaseVersion: window.FootMateV25?.currentReleaseVersion,
       v25PreviousReleaseVersion: window.FootMateV25?.previousReleaseVersion,
       v25DecisionEngine: window.FootMateV25?.decisionEngine,
       v25Experience: window.FootMateV25?.decisionRecoveryExperience,
       v25ComponentSource: window.FootMateV25?.componentSource,
       v25CssOwnership: window.FootMateV25?.cssOwnership,
+      v25Compatibility: window.FootMateV25?.compatibility,
       v24Version: window.FootMateV24?.version,
       v24CurrentReleaseVersion: window.FootMateV24?.currentReleaseVersion,
       v24Compatibility: window.FootMateV24?.compatibility,
       v23Version: window.FootMateV23?.version,
       v23CurrentReleaseVersion: window.FootMateV23?.currentReleaseVersion,
       v22Version: window.FootMateV22?.version,
-      v22CurrentReleaseVersion: window.FootMateV22?.currentReleaseVersion
+      v22CurrentReleaseVersion: window.FootMateV22?.currentReleaseVersion,
+      availability: window.FootMateV2Runtime?.availabilityGateway?.read()
     }));
-    expect(release).toEqual({
-      version: '2.5.0',
-      schemaVersion: '2.1.0',
-      releaseArchitecture: 'v2.5-decision-recovery-experience',
-      previousReleaseArchitecture: 'v2.4-core-funnel-experience',
-      uiArchitecture: 'v2.2-product-inspector-module',
-      releaseDataset: '2.5',
-      inspectorReady: true,
-      policyArchitecture: 'v2.2-policy-adapter-ui-bridge',
-      v25Version: '2.5.0',
-      v25PreviousReleaseVersion: '2.4.0',
-      v25DecisionEngine: 'v2.5-decision-recovery-engine',
-      v25Experience: 'v2.5-decision-recovery-experience',
-      v25ComponentSource: 'src/v2/demo/decision-recovery-components.js',
-      v25CssOwnership: 'src/v2/styles/decision-recovery.css',
-      v24Version: '2.4.0',
-      v24CurrentReleaseVersion: '2.5.0',
-      v24Compatibility: true,
-      v23Version: '2.3.0',
-      v23CurrentReleaseVersion: '2.5.0',
-      v22Version: '2.2.0',
-      v22CurrentReleaseVersion: '2.5.0'
+    expect(release.version).toBe('2.6.0');
+    expect(release.schemaVersion).toBe('2.1.0');
+    expect(release.releaseArchitecture).toBe('v2.6-architecture-hardening');
+    expect(release.previousReleaseArchitecture).toBe('v2.5-decision-recovery-experience');
+    expect(release.uiArchitecture).toBe('v2.2-product-inspector-module');
+    expect(release.releaseDataset).toBe('2.6');
+    expect(release.inspectorReady).toBe(true);
+    expect(release.policyArchitecture).toBe('v2.2-policy-adapter-ui-bridge');
+    expect(release.v26Version).toBe('2.6.0');
+    expect(release.v26PreviousReleaseVersion).toBe('2.5.0');
+    expect(release.v26RuntimeBoundary).toBe('v2.6-build-source-component-boundary');
+    expect(release.v26AvailabilityGateway).toBe('v2.6-availability-verification-boundary');
+    expect(release.v26TracePersistence).toBe('v2.6-decision-trace-persistence');
+    expect(release.v26PersistentDecisionReplay).toBe(true);
+    expect(release.v25Version).toBe('2.5.0');
+    expect(release.v25CurrentReleaseVersion).toBe('2.6.0');
+    expect(release.v25PreviousReleaseVersion).toBe('2.4.0');
+    expect(release.v25DecisionEngine).toBe('v2.5-decision-recovery-engine');
+    expect(release.v25Experience).toBe('v2.5-decision-recovery-experience');
+    expect(release.v25ComponentSource).toBe('src/v2/demo/decision-recovery-components.js');
+    expect(release.v25CssOwnership).toBe('src/v2/styles/decision-recovery.css');
+    expect(release.v25Compatibility).toBe(true);
+    expect(release.v24Version).toBe('2.4.0');
+    expect(release.v24CurrentReleaseVersion).toBe('2.6.0');
+    expect(release.v24Compatibility).toBe(true);
+    expect(release.v23Version).toBe('2.3.0');
+    expect(release.v23CurrentReleaseVersion).toBe('2.6.0');
+    expect(release.v22Version).toBe('2.2.0');
+    expect(release.v22CurrentReleaseVersion).toBe('2.6.0');
+    expect(release.availability).toMatchObject({
+      architecture:'v2.6-availability-verification-boundary',
+      freshness:{source:'prototype-session',realtime:false,serverVerified:false}
     });
     await page.evaluate(() => window.FootMateV2Runtime.scenarioStore.navigateToMatch('seongnam', true));
     await expect(page.locator('#s-detail')).toHaveAttribute('data-v2-presentation', 'scenario-presenter');
@@ -124,7 +143,7 @@ test('production case study and v2 product/portfolio modes render after deployme
 
   await page.goto('/demo?mode=portfolio', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
-  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV25);
+  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV26 && !!window.FootMateV25);
   const intro = page.locator('#demoOnboarding');
   if (await intro.isVisible()) await page.locator('.demo-onboarding-start').click();
   await page.evaluate(() => window.goScreen('s-home'));

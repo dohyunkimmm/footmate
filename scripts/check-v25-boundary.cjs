@@ -13,6 +13,6 @@ for(const marker of ['createDecisionEngine','v2.5-decision-recovery-engine'])if(
 for(const marker of ['DECISION_RECOVERY_SCREEN_IDS','dataset.fm25Slot'])if(!components.includes(marker))throw new Error(`decision component marker missing: ${marker}`);
 if(!experience.includes("componentSource:'src/v2/demo/decision-recovery-components.js'"))throw new Error('v2.5 experience ownership marker missing');
 if(!styles.includes('FootMate v2.5 · Decision & Recovery Experience'))throw new Error('v2.5 stylesheet marker missing');
-if(!bootstrap.includes("RELEASE_VERSION='2.5.0'"))throw new Error('v2.5 release version missing');
-if(!bootstrap.includes('window.FootMateV25'))throw new Error('FootMateV25 contract missing');
+if(!bootstrap.includes("V25_RELEASE_VERSION='2.5.0'"))throw new Error('v2.5 compatibility release version missing');
+if(!bootstrap.includes('window.FootMateV25'))throw new Error('FootMateV25 compatibility contract missing');
 console.log('PASS v2.5 decision/recovery source boundary');

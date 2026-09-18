@@ -11,7 +11,7 @@ async function boot(page,width=375,height=812){
 }
 function expectNoFailures(failures){expect(failures,failures.join('\n')).toEqual([])}
 
-test('v2.5 exposes decision/recovery runtime and preserves v2.4 compatibility',async({page})=>{
+test('v2.5 decision/recovery runtime remains compatible under v2.6',async({page})=>{
   const failures=await boot(page);
   const snapshot=await page.evaluate(()=>({
     version:window.FootMateV2Runtime?.version,
@@ -23,12 +23,12 @@ test('v2.5 exposes decision/recovery runtime and preserves v2.4 compatibility',a
     styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(link=>new URL(link.href).pathname),
     decision:window.FootMateV2Runtime?.decisionEngine?.evaluate('s-home',{record:false})
   }));
-  expect(snapshot.version).toBe('2.5.0');
-  expect(snapshot.architecture).toBe('v2.5-decision-recovery-experience');
-  expect(snapshot.dataset).toBe('2.5');
+  expect(snapshot.version).toBe('2.6.0');
+  expect(snapshot.architecture).toBe('v2.6-architecture-hardening');
+  expect(snapshot.dataset).toBe('2.6');
   expect(snapshot.screens).toBe(39);
-  expect(snapshot.release).toMatchObject({version:'2.5.0',previousReleaseVersion:'2.4.0',schemaVersion:'2.1.0',decisionEngine:'v2.5-decision-recovery-engine',decisionRecoveryExperience:'v2.5-decision-recovery-experience',traceReplay:true});
-  expect(snapshot.v24).toMatchObject({version:'2.4.0',currentReleaseVersion:'2.5.0',compatibility:true});
+  expect(snapshot.release).toMatchObject({version:'2.5.0',currentReleaseVersion:'2.6.0',previousReleaseVersion:'2.4.0',schemaVersion:'2.1.0',decisionEngine:'v2.5-decision-recovery-engine',decisionRecoveryExperience:'v2.5-decision-recovery-experience',traceReplay:true,compatibility:true});
+  expect(snapshot.v24).toMatchObject({version:'2.4.0',currentReleaseVersion:'2.6.0',compatibility:true});
   expect(snapshot.styles).toContain('/src/v2/styles/decision-recovery.css');
   expect(snapshot.decision.traceId).toMatch(/^fm25-/);
   expectNoFailures(failures);
