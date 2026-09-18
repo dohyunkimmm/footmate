@@ -17,12 +17,12 @@ if(!Array.isArray(state.pmEvents))state.pmEvents=[];
 if(!state.pmSessionId)state.pmSessionId='fm-'+Date.now().toString(36);
 if(!state.recommendationBaseline||typeof state.recommendationBaseline!=='object')state.recommendationBaseline=null;
 
+let inspectorUi=null;
 function persist(){Final.persist?.()}
 function renderCredit(){Final.renderCredit?.()}
-function currentMatchKey(){try{return window.FootMateV21?.scenarioStore?.getState?.().selectedMatchKey||window.selectedMatchKey||(typeof selectedMatchKey!=='undefined'?selectedMatchKey:null)||'suwon'}catch(e){return'suwon'}}
+function currentMatchKey(){try{return window.FootMateV22?.scenarioStore?.getState?.().selectedMatchKey||window.FootMateV21?.scenarioStore?.getState?.().selectedMatchKey||window.selectedMatchKey||(typeof selectedMatchKey!=='undefined'?selectedMatchKey:null)||'suwon'}catch(e){return'suwon'}}
 function setParticipationFlag(value,key){try{if(typeof participationConfirmed!=='undefined')participationConfirmed=Boolean(value)}catch(e){};if(window.FootMateRuntime){window.FootMateRuntime.participationMatchKey=value?key:null}}
-function matchMeta(key=currentMatchKey()){try{return window.FootMateV21?.scenarioStore?.getState?.().matches?.[key]||(typeof matchScenarioBases!=='undefined'&&matchScenarioBases[key])||null}catch(e){return null}}
-function currentScenario(){const key=currentMatchKey();try{const derived=window.FootMateV21?.scenarioStore?.getSelectedScenario?.();if(derived&&derived.key===key)return derived;if(typeof window.calculateMatchScenario==='function')return window.calculateMatchScenario(key);if(typeof calculateMatchScenario==='function')return calculateMatchScenario(key);if(typeof matchScenarios!=='undefined'&&matchScenarios[key])return matchScenarios[key]}catch(e){}return null}
+function currentScenario(){const key=currentMatchKey();try{const derived=window.FootMateV22?.scenarioStore?.getSelectedScenario?.()||window.FootMateV21?.scenarioStore?.getSelectedScenario?.();if(derived&&derived.key===key)return derived;if(typeof window.calculateMatchScenario==='function')return window.calculateMatchScenario(key);if(typeof calculateMatchScenario==='function')return calculateMatchScenario(key);if(typeof matchScenarios!=='undefined'&&matchScenarios[key])return matchScenarios[key]}catch(e){}return null}
 function operation(key=currentMatchKey()){
   let op=state.operationByMatch[key];
   if(!op||typeof op!=='object'||Array.isArray(op)){
@@ -41,7 +41,11 @@ function record(name,metadata={}){
 }
 function rawEvents(){try{return Array.isArray(demoEvents)?demoEvents:[]}catch(e){return[]}}
 function combinedEvents(){return [...rawEvents(),...state.pmEvents]}
-function announce(message){const live=document.getElementById('fmLiveRegion');if(live){live.textContent='';setTimeout(()=>{live.textContent=message},20)}}
+function announce(message){inspectorUi?.announce?.(message)}
+function renderInspector(){return inspectorUi?.render?.()}
+function openInspector(tab){return inspectorUi?.open?.(tab)}
+function closeInspector(){return inspectorUi?.close?.()}
+function attachInspectorUi(ui){inspectorUi=ui&&typeof ui==='object'?ui:null;renderInspector();return()=>{if(inspectorUi===ui)inspectorUi=null}}
 function statusLabel(machine,value){return STATUS_LABELS[machine]?.[value]||value}
 function transition(machine,to,meta={}){
   const key=currentMatchKey(),op=operation(key),from=op[machine];
@@ -98,7 +102,7 @@ function joinWaitlist(){
 }
 function promoteWaitlist(){
   const op=operation();
-  if(op.participation!=='waitlisted'){announce('대기 등록 상태에서만 빈자리 제안을 만들 수 있습니다.');return false}
+  if(op.participation!=='waitlisted'){announce('대기 등록 상태에서만 빈자리 제안을 만들 수 없습니다.');return false}
   if(op.match==='full')transition('match','open',{reason:'seat_released'});
   const result=transition('participation','offered',{expiresInMinutes:10});
   if(result.ok){record('waitlist_offer',{expiresInMinutes:10});announce('빈자리 제안을 만들었습니다. 10분 내 수락·결제 정책입니다.')}
@@ -150,6 +154,8 @@ function cancelMatch(){
 function resetOperation(){
   const key=currentMatchKey();state.operationByMatch[key]={match:'open',payment:paidFor(key)?'paid':'idle',participation:paidFor(key)?'confirmed':'available',history:[]};persist();record('operation_scenario_reset');announce('현재 경기의 운영 시뮬레이션 상태를 초기화했습니다.');renderInspector();
 }
+function sanitizedScenario(scenario){if(!scenario)return null;return{eligible:scenario.eligible,pct:scenario.pct,eloScore:scenario.eloScore,locationScore:scenario.locationScore,eligibility:Object.assign({},scenario.eligibility||{}),team:scenario.team,key:scenario.key||currentMatchKey()}}
+function saveBaseline(){const scenario=sanitizedScenario(currentScenario());if(!scenario)return false;state.recommendationBaseline={savedAt:new Date().toISOString(),matchKey:currentMatchKey(),scored:scenario};persist();record('recommendation_baseline_saved',{pct:scenario.pct});announce('현재 추천을 비교 기준으로 저장했습니다. 필터를 변경한 뒤 다시 확인하세요.');renderInspector();return true}
 
 const originalRecord=window.recordParticipation;
 if(typeof originalRecord==='function')window.recordParticipation=function(){
@@ -171,63 +177,15 @@ if(typeof originalTrack==='function')window.trackDemoEvent=function(name,metadat
   const result=originalTrack.apply(this,arguments);record(name,metadata);renderInspector();return result;
 };
 
-function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
-function dialog(){return document.getElementById('fmProductInspector')}
-function inspectorOpen(){return dialog()?.getAttribute('aria-hidden')==='false'}
-function activeTab(){return dialog()?.dataset.activeTab||'operations'}
-function setTab(name){const d=dialog();if(!d)return;d.dataset.activeTab=name;d.querySelectorAll('[data-fm-tab]').forEach(button=>{const on=button.dataset.fmTab===name;button.setAttribute('aria-selected',on?'true':'false');button.tabIndex=on?0:-1});d.querySelectorAll('[data-fm-panel]').forEach(panel=>{panel.hidden=panel.dataset.fmPanel!==name});renderInspector()}
-function renderStatusCard(machine,value){return `<div class="fm-status-card"><span>${escapeHtml(machine==='match'?'경기':machine==='payment'?'결제':'참가')}</span><strong>${escapeHtml(statusLabel(machine,value))}</strong><small>${escapeHtml(value)}</small></div>`}
-function actionButton(action,label,disabled=false,kind='secondary'){return `<button type="button" class="fm-action ${kind}" data-fm-action="${escapeHtml(action)}"${disabled?' disabled':''}>${escapeHtml(label)}</button>`}
-function renderOperations(){const root=document.querySelector('[data-fm-panel="operations"]');if(!root)return;const key=currentMatchKey(),op=operation(key),meta=matchMeta(key);const history=op.history.slice(-6).reverse();root.innerHTML=`
-  <div class="fm-section-head"><div><small>P0 · OPERATIONS REALISM</small><h3>${escapeHtml(meta?.team||key)}</h3></div><span class="fm-scope-badge">시뮬레이션</span></div>
-  <div class="fm-status-grid">${renderStatusCard('match',op.match)}${renderStatusCard('payment',op.payment)}${renderStatusCard('participation',op.participation)}</div>
-  <div class="fm-policy-note"><b>정책:</b> 결제 실패 재시도 · 중복 신청 차단 · 취소/환불 · 노쇼 · 대기→빈자리 제안 · 경기 취소를 상태 전이 규칙으로 검증합니다.</div>
-  <div class="fm-actions-grid">
-    ${actionButton('payment-fail','결제 실패 재현',['paid','refunded'].includes(op.payment))}
-    ${actionButton('payment-retry','결제 재시도',op.payment==='paid'||op.payment==='refunded')}
-    ${actionButton('waitlist','대기 등록',op.participation!=='available')}
-    ${actionButton('promote','빈자리 제안',op.participation!=='waitlisted')}
-    ${actionButton('accept-offer','제안 수락·결제',op.participation!=='offered')}
-    ${actionButton('checkin','체크인',op.participation!=='confirmed')}
-    ${actionButton('complete','경기 완료',op.participation!=='checked_in')}
-    ${actionButton('cancel-participation','참가 취소·환불',!['confirmed','waitlisted','offered'].includes(op.participation),'danger')}
-    ${actionButton('no-show','노쇼 처리',op.participation!=='confirmed','danger')}
-    ${actionButton('cancel-match','경기 취소',!['open','full'].includes(op.match),'danger')}
-    ${actionButton('reset','시뮬레이션 초기화',false)}
-  </div>
-  <div class="fm-history"><div class="fm-subhead"><b>최근 상태 전이</b><span>${history.length}건</span></div>${history.length?history.map(item=>`<div><code>${escapeHtml(item.machine)}</code><span>${escapeHtml(statusLabel(item.machine,item.from))} → <b>${escapeHtml(statusLabel(item.machine,item.to))}</b></span></div>`).join(''):'<p>아직 실행한 운영 시뮬레이션이 없습니다.</p>'}</div>`;
-}
-function sanitizedScenario(scenario){if(!scenario)return null;return{eligible:scenario.eligible,pct:scenario.pct,eloScore:scenario.eloScore,locationScore:scenario.locationScore,eligibility:Object.assign({},scenario.eligibility||{}),team:scenario.team,key:scenario.key||currentMatchKey()}}
-function renderRecommendation(){const root=document.querySelector('[data-fm-panel="recommendation"]');if(!root)return;const scenario=currentScenario();if(!scenario){root.innerHTML='<p class="fm-empty">추천 계산 상태를 불러오지 못했습니다.</p>';return}const explanation=Product.explainMatch(scenario);const baseline=state.recommendationBaseline?.scored;const comparison=baseline?Product.compareRecommendations(baseline,scenario):null;const factorRows=explanation.factors.map(f=>`<div class="fm-factor"><div><b>${escapeHtml(f.label)}</b><span>${f.score}점</span></div><div class="fm-factor-track"><i style="width:${f.score}%"></i></div><small>${f.pass?'조건 충족':'조건 불일치'}</small></div>`).join('');const exclusions=explanation.exclusions.length?explanation.exclusions.map(x=>`<li>${escapeHtml(x.message)}</li>`).join(''):'<li>하드 필터 제외 조건 없음</li>';const delta=comparison?`${comparison.pctDelta>=0?'+':''}${comparison.pctDelta}%p`:null;root.innerHTML=`
-  <div class="fm-section-head"><div><small>P0 · EXPLAINABLE RECOMMENDATION</small><h3>${escapeHtml(scenario.team||currentMatchKey())} · ${explanation.pct}%</h3></div><span class="fm-scope-badge ${explanation.eligible?'pass':'check'}">${explanation.eligible?'추천 가능':'필터 제외'}</span></div>
-  <div class="fm-reason-summary"><b>추천 이유</b><p>${escapeHtml(explanation.reasons.join(' · ')||'현재 조건에서 강한 추천 요인이 부족합니다.')}</p></div>
-  <div class="fm-factor-list">${factorRows}</div>
-  <div class="fm-exclusions"><b>제외 이유 / fallback</b><ul>${exclusions}</ul>${explanation.fallback?`<p>${escapeHtml(explanation.fallback.message)} 우선 완화: ${escapeHtml(explanation.fallback.relaxPriority.join(' → '))}</p>`:'<p>현재 후보는 모든 하드 필터를 충족합니다.</p>'}</div>
-  <div class="fm-compare"><div><b>조건 변경 전/후 비교</b><span>${comparison?`기준 ${comparison.beforePct}% → 현재 ${comparison.afterPct}% · ${delta}`:'비교 기준을 저장하면 필터 변경 효과를 확인할 수 있습니다.'}</span></div>${actionButton('save-baseline','현재 추천을 비교 기준으로 저장')}</div>
-  ${comparison?`<div class="fm-delta-grid">${comparison.factors.filter(f=>f.delta!==0).slice(0,5).map(f=>`<span>${escapeHtml(f.label)} <b>${f.delta>0?'+':''}${f.delta}</b></span>`).join('')||'<span>요인별 점수 변화 없음</span>'}</div>`:''}`;
-}
-function renderPm(){const root=document.querySelector('[data-fm-panel="pm"]');if(!root)return;const funnel=Product.funnelMetrics(combinedEvents(),Core.defaultFunnel||[]);const contract=state.pmEvents.map(Product.validateAnalyticsEvent);const validCount=contract.filter(x=>x.pass).length;const kpis=Product.kpiSnapshot(combinedEvents());root.innerHTML=`
-  <div class="fm-section-head"><div><small>P1 · PM / DATA QUALITY</small><h3>퍼널 · 이벤트 계약 · KPI 관측</h3></div><span class="fm-scope-badge">현재 세션</span></div>
-  <div class="fm-kpi-summary"><div><b>${funnel.completedCount}/${funnel.requiredCount}</b><span>핵심 퍼널 단계</span></div><div><b>${funnel.conversionPct}%</b><span>현재 세션 도달률</span></div><div><b>${validCount}/${contract.length||0}</b><span>v2.1 이벤트 계약 유효</span></div></div>
-  <div class="fm-funnel">${funnel.steps.map((step,index)=>`<div class="${step.reached?'done':''}"><span>${String(index+1).padStart(2,'0')}</span><b>${escapeHtml(step.name)}</b><small>${step.reached?'관측됨':'미관측'}</small></div>`).join('')}</div>
-  <div class="fm-policy-note"><b>다음 미관측 이벤트:</b> ${escapeHtml(funnel.nextMissing||'없음 · 핵심 퍼널 완료')}<br><b>Event contract:</b> name · timestamp · sessionId · version · metadata. 운영/추천 추가 이벤트는 v2.1 계약으로 별도 기록합니다.</div>
-  <div class="fm-kpi-table"><div class="head"><b>KPI</b><b>분자 / 분모</b><b>현재 세션</b></div>${kpis.map(k=>`<div><span>${escapeHtml(k.label)}${k.inverse?' ↓':''}</span><code>${escapeHtml(k.numerator)} / ${escapeHtml(k.denominator)}</code><strong>${k.rate==null?'—':k.rate+'%'}</strong></div>`).join('')}</div>
-  <p class="fm-footnote">현재 값은 1개 프로토타입 세션의 관측값이며 목표 KPI나 실제 사용자 성과가 아닙니다. 실서비스 연동 후 서버 기준 이벤트와 코호트 지표로 교체합니다.</p>`;
-}
-function renderInspector(){if(!inspectorOpen())return;const tab=activeTab();if(tab==='operations')renderOperations();if(tab==='recommendation')renderRecommendation();if(tab==='pm')renderPm()}
-function saveBaseline(){const scenario=sanitizedScenario(currentScenario());if(!scenario)return false;state.recommendationBaseline={savedAt:new Date().toISOString(),matchKey:currentMatchKey(),scored:scenario};persist();record('recommendation_baseline_saved',{pct:scenario.pct});announce('현재 추천을 비교 기준으로 저장했습니다. 필터를 변경한 뒤 다시 확인하세요.');renderRecommendation();return true}
-function openInspector(tab){const d=dialog();if(!d)return;d.dataset.returnFocus=document.activeElement?.id||'';d.setAttribute('aria-hidden','false');document.body.classList.add('fm-inspector-open');setTab(tab||activeTab());setTimeout(()=>d.querySelector('.fm-close')?.focus(),0)}
-function closeInspector(){const d=dialog();if(!d)return;d.setAttribute('aria-hidden','true');document.body.classList.remove('fm-inspector-open');const id=d.dataset.returnFocus;if(id)document.getElementById(id)?.focus();else document.getElementById('fmProductLauncher')?.focus()}
-function installUi(){
-  if(document.getElementById('fmProductInspector'))return;
-  const launcher=document.createElement('button');launcher.id='fmProductLauncher';launcher.type='button';launcher.className='fm-product-launcher';launcher.setAttribute('aria-haspopup','dialog');launcher.setAttribute('aria-controls','fmProductInspector');launcher.innerHTML='<span aria-hidden="true">✓</span> 제품 검증';launcher.addEventListener('click',()=>openInspector());document.body.appendChild(launcher);
-  const live=document.createElement('div');live.id='fmLiveRegion';live.className='fm-sr-only';live.setAttribute('aria-live','polite');live.setAttribute('aria-atomic','true');document.body.appendChild(live);
-  const wrap=document.createElement('div');wrap.id='fmProductInspector';wrap.className='fm-product-inspector';wrap.setAttribute('role','dialog');wrap.setAttribute('aria-modal','true');wrap.setAttribute('aria-hidden','true');wrap.setAttribute('aria-labelledby','fmProductTitle');wrap.dataset.activeTab='operations';wrap.innerHTML=`<div class="fm-inspector-card"><header><div><small>FOOTMATE PRODUCT HARDENING</small><h2 id="fmProductTitle">제품 정책 · 추천 설명 · PM 검증</h2></div><button type="button" class="fm-close" aria-label="제품 검증 패널 닫기">×</button></header><div class="fm-tabs" role="tablist" aria-label="제품 검증 범주"><button type="button" role="tab" data-fm-tab="operations" aria-selected="true">운영 정책</button><button type="button" role="tab" data-fm-tab="recommendation" aria-selected="false" tabindex="-1">추천 설명</button><button type="button" role="tab" data-fm-tab="pm" aria-selected="false" tabindex="-1">PM · 데이터</button></div><div class="fm-panel" data-fm-panel="operations"></div><div class="fm-panel" data-fm-panel="recommendation" hidden></div><div class="fm-panel" data-fm-panel="pm" hidden></div><footer>기획 검증용 상태 시뮬레이션 · 실제 결제/DB/알림/외부 AI 모델 미연동</footer></div>`;document.body.appendChild(wrap);
-  wrap.querySelector('.fm-close').addEventListener('click',closeInspector);
-  wrap.addEventListener('click',event=>{if(event.target===wrap)closeInspector();const tab=event.target.closest('[data-fm-tab]');if(tab)setTab(tab.dataset.fmTab);const action=event.target.closest('[data-fm-action]')?.dataset.fmAction;if(!action)return;const actions={'payment-fail':simulatePaymentFailure,'payment-retry':retryPayment,'waitlist':joinWaitlist,'promote':promoteWaitlist,'accept-offer':acceptWaitlistOffer,'checkin':checkIn,'complete':completeMatch,'cancel-participation':cancelParticipation,'no-show':markNoShow,'cancel-match':cancelMatch,'reset':resetOperation,'save-baseline':saveBaseline};actions[action]?.()});
-  wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeInspector();return}if(event.key==='ArrowRight'||event.key==='ArrowLeft'){const tabs=[...wrap.querySelectorAll('[data-fm-tab]')],current=tabs.findIndex(x=>x.getAttribute('aria-selected')==='true');if(current>=0){event.preventDefault();const next=(current+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;setTab(tabs[next].dataset.fmTab);tabs[next].focus()}}});
-}
-installUi();operation();persist();
-window.FootMateProductOps={operation,transition,simulatePaymentFailure,retryPayment,joinWaitlist,promoteWaitlist,acceptWaitlistOffer,cancelParticipation,markNoShow,checkIn,completeMatch,cancelMatch,resetOperation,openInspector,closeInspector,renderInspector,saveRecommendationBaseline:saveBaseline,combinedEvents,currentMatchKey,currentScenario,recommendationSource:()=>window.FootMateV21?'v2.1-domain-store':'legacy-compatibility',architecture:'v2.1-domain-aware-state-machine-adapter'};
-console.info('[FootMate] v2.1 product policy adapter ready');
+operation();persist();
+window.FootMateProductOps={
+  operation,transition,simulatePaymentFailure,retryPayment,joinWaitlist,promoteWaitlist,acceptWaitlistOffer,
+  cancelParticipation,markNoShow,checkIn,completeMatch,cancelMatch,resetOperation,
+  openInspector,closeInspector,renderInspector,attachInspectorUi,statusLabel,
+  saveRecommendationBaseline:saveBaseline,combinedEvents,currentMatchKey,currentScenario,
+  recommendationSource:()=>window.FootMateV22||window.FootMateV21?'v2.1-domain-store':'legacy-compatibility',
+  architecture:'v2.2-policy-adapter-ui-bridge',
+  eventContractVersion:'2.1.0'
+};
+console.info('[FootMate] v2.2 product policy adapter ready');
 })();

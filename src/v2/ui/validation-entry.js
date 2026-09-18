@@ -13,14 +13,6 @@ function patchParentHint(mode){
   }
 }
 
-function hideDuplicateLauncher(){
-  const duplicate=document.getElementById('fmProductLauncher');
-  if(!duplicate)return;
-  duplicate.hidden=true;
-  duplicate.tabIndex=-1;
-  duplicate.setAttribute('aria-hidden','true');
-}
-
 function configureLauncher(mode){
   const launcher=document.getElementById('v3Launcher');
   if(!launcher)return null;
@@ -35,21 +27,17 @@ function configureLauncher(mode){
     window.FootMateProductOps?.openInspector?.('recommendation');
   };
 
-  if(mode!=='portfolio'){
-    launcher.hidden=true;
-    launcher.setAttribute('aria-hidden','true');
-  }
-
+  const hidden=mode!=='portfolio';
+  launcher.hidden=hidden;
+  launcher.setAttribute('aria-hidden',hidden?'true':'false');
   return launcher;
 }
 
 export function installValidationEntry({mode='product'}={}){
-  hideDuplicateLauncher();
   const launcher=configureLauncher(mode);
   patchParentHint(mode);
 
   const stop=observeActiveScreen(activeId=>{
-    hideDuplicateLauncher();
     const target=configureLauncher(mode)||launcher;
     if(target){
       const hidden=mode!=='portfolio'||ONBOARDING_SCREENS.has(activeId);
@@ -60,7 +48,6 @@ export function installValidationEntry({mode='product'}={}){
   });
 
   return{stop,refresh:()=>{
-    hideDuplicateLauncher();
     configureLauncher(mode);
     patchParentHint(mode);
   }};
