@@ -6,22 +6,26 @@
 
 - Product/runtime baseline: `59b5af1`
 - Domain Engine extraction baseline: `4393403`
-- GitHub: PR #29 merged to `main`
+- Product release: PR #29
 - Runtime version: `2.1.0`
 - Product Hardening event contract: `2.1.0`
 - Case Study badge/name: `v2.1.0 Domain Engine`
-- GitHub Actions run #102:
-  - Regression 36 PASS
+- Case Study information architecture: 16 slides
+  - PR #34 consolidated User Journey, Product Strategy, and Operations & Recovery
+  - PR #37 kept `Prototype Build · QA · Deployment` on one TOC line
+  - PR #39 / `bba810f` synchronized Case Study runtime patch indices with the 16-slide order
+- Last exact verified Production: `ad940ae`
+  - Vercel deployment: `dpl_FddUunfH9ZnWx3EPXc6XefXBNCWV`
+  - state: READY
+  - GitHub Actions run #123: Regression 36, Browser E2E + axe, Production HTTP smoke, and Production Chromium render smoke PASS
+- Latest code-impacting baseline: `bba810f`
+  - GitHub Actions run #125: Regression 36 PASS
   - Browser E2E + axe PASS
-  - matching domain parity PASS
-  - ELO domain parity PASS
-  - 320 / 375 / 390 / 430 responsive PASS
-  - representative visual contract PASS
-  - Production HTTP smoke PASS
-  - Production Chromium render smoke PASS
-- Vercel Production: `4f8a55a` · deployment `dpl_6qdJWivcQ2KP2zZJwiRWhsRMACQc` · verified · READY
-- PR #32 / `4f8a55a` contains no source changes; it retriggered deployment for the already-verified v2.1 product tree from `59b5af1`.
-- The earlier Vercel rate-limit incident was resolved by the successful retry deployment.
+  - matching/ELO parity PASS
+  - 16-slide Case Study patch-index guards PASS
+  - responsive and representative visual contract PASS
+  - Production smoke PASS in compatibility mode
+- Exact-SHA Production promotion of `bba810f` is pending because Vercel returned `Deployment rate limited — retry in 24 hours`. The compatibility smoke in run #125 validated the last verified Production and is not an exact-SHA Production verification for `bba810f`.
 
 ### Domain ownership
 
@@ -54,6 +58,17 @@ src/v2/
 - `scenario-store`는 raw adapter snapshot에서 ranked/selected scenario를 파생합니다.
 - Product Validation 추천 설명은 `v2.1-domain-store`를 우선 사용합니다.
 - `footmate-patches.js`는 v2.1 부팅 후 계산을 domain engine에 위임하고 DOM render/persistence compatibility를 유지합니다.
+
+### Case Study runtime synchronization
+
+The 20→16 slide consolidation changed slide indices without changing product behavior. Before the next version, the Case Study runtime patch targets were aligned to the current order:
+
+- IA Design runtime patch: slide index 7
+- Matching Logic: slide index 8 remains untouched by the IA patch
+- Service Data & Quality runtime note: slide index 10
+- Validation runtime patch: slide index 14
+- Browser regression now verifies the IA title, 4-tab render, Matching Logic title, and Data Quality note on the intended slides.
+- Strict Production smoke includes the same assertions and will gate the next exact-SHA Production promotion.
 
 ### Remaining compatibility boundary
 
