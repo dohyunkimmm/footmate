@@ -15,29 +15,24 @@
 
 **v2.1.0 · Domain Engine**
 
-- Product/runtime baseline: `59b5af1`
+- Stable product/runtime baseline: `59b5af1`
 - Domain Engine extraction baseline: `4393403`
-- Product release baseline: PR #29
+- Latest product / Case Study code baseline: `54b540d` · PR #42
+- Mobile Case Study scroll + Interactive Demo visibility fix: `1b1288b` · PR #41
 - 16-slide Case Study consolidation: PR #34
-- Case Study TOC single-line polish: PR #37
-- Case Study runtime index sync: `bba810f` · PR #39 · CI verified
-- Last exact verified Production: `ad940ae` · Vercel deployment `dpl_FddUunfH9ZnWx3EPXc6XefXBNCWV` · READY
-- GitHub Actions run #123 verified `ad940ae` in strict Production mode:
-  - Regression 36 **PASS**
+- Case Study runtime index sync: `bba810f` · PR #39
+- Last exact verified Production: `1b1288b`
+  - Vercel deployment: `dpl_DMq66eLQLa7YVQVmAwcVpUeFfgfz`
+  - state: **READY**
+  - GitHub Actions run #129: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+- Current main code baseline `54b540d`:
+  - GitHub Actions run #132: Regression 36 **PASS**
   - Browser E2E + axe **PASS**
-  - Production HTTP smoke **PASS**
-  - Production Chromium render smoke **PASS**
-- GitHub Actions run #125 verified the `bba810f` code-impacting baseline:
-  - Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-  - v2.1 matching/ELO parity gates **PASS**
-  - 16-slide Case Study patch-index guards **PASS**
-  - Responsive 320 / 375 / 390 / 430 px **PASS**
-  - Representative visual contract **PASS**
-  - Production smoke **PASS in compatibility mode**
-- Exact-SHA Production promotion of `bba810f` is pending because Vercel returned `Deployment rate limited — retry in 24 hours`. Until that promotion succeeds, `ad940ae` remains the last exact verified Production.
+  - Production HTTP + Chromium smoke **PASS in compatibility mode**
+  - exact-SHA Vercel Production is **PENDING** because the Hobby project is currently build-rate-limited
+- PR #42 changes only the initial Case Study loading copy. Case Study content, layout, demo behavior, and routing remain unchanged.
 
-v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다. Case Study는 16장 구조로 통합됐고, 통합 이후 runtime patch 인덱스도 현재 슬라이드 순서에 맞춰 동기화했습니다.
+v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다. 현재 안정 기준은 Product / Portfolio mode, 39개 화면, 16장 Case Study이며 최근 모바일 Case Study 스크롤과 Interactive Demo 노출 회귀를 복구했습니다.
 
 ### What changed in v2.1
 
@@ -116,13 +111,13 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
-| v2.1 product/runtime | **59b5af1 · PASS** |
+| Stable v2.1 product/runtime | **59b5af1 · PASS** |
 | 16-slide Case Study IA | **PASS** |
-| Case Study runtime patch sync | **bba810f · CI PASS** |
-| Last exact verified Production | **ad940ae · dpl_FddUunfH9ZnWx3EPXc6XefXBNCWV · READY** |
-| Exact Production smoke | **run #123 · HTTP + Chromium PASS** |
-| Latest code-impacting validation | **run #125 · CI PASS · Production compatibility PASS** |
-| bba810f exact-SHA Production | **PENDING · Vercel rate limit** |
+| Latest code-impacting main baseline | **54b540d · run #132 · CI PASS** |
+| Last exact verified Production | **1b1288b · dpl_DMq66eLQLa7YVQVmAwcVpUeFfgfz · READY** |
+| Exact Production smoke | **run #129 · HTTP + Chromium PASS** |
+| Current main exact-SHA Production | **PENDING · Vercel Hobby build-rate-limit** |
+| Current main compatibility smoke | **run #132 · HTTP + Chromium PASS** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
