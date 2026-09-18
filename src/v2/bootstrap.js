@@ -9,10 +9,12 @@ import{createHomeController}from'./ui/home-controller.js';
 import{createFilterResultsController}from'./ui/filter-results-controller.js';
 import{createPaymentController}from'./ui/payment-controller.js';
 import{createSecondaryController}from'./ui/secondary-controller.js';
+import{installProductInspector}from'./ui/product-inspector.js';
 import{installScreenEffects}from'./ui/screen-effects.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
 const VERSION='2.1.0';
+const RELEASE_VERSION='2.2.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -54,6 +56,7 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
+  document.documentElement.dataset.footmateRelease='2.2';
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
@@ -66,6 +69,16 @@ async function boot(){
   const filterResults=createFilterResultsController({scenarioStore});
   const payment=createPaymentController({productStore,scenarioStore,finalRuntime});
   const secondary=createSecondaryController({productStore,finalRuntime});
+
+  window.FootMateV22={
+    version:RELEASE_VERSION,
+    schemaVersion:VERSION,
+    matchEngine,
+    eloEngine,
+    scenarioStore,
+    architecture:'v2.2-inspector-ui-ownership'
+  };
+  const inspector=installProductInspector();
 
   home.bindControls();
   filterResults.bindFilterButtons();
@@ -115,24 +128,29 @@ async function boot(){
 
   window.__footmateV2=true;
   window.FootMateV2Runtime={
-    version:VERSION,
+    version:RELEASE_VERSION,
+    schemaVersion:VERSION,
     mode:state.mode,
     state,
     productStore,
     scenarioStore,
     domain:{matchEngine,eloEngine},
-    controllers:{home,filterResults,payment,secondary},
+    controllers:{home,filterResults,payment,secondary,inspector},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
+    releaseArchitecture:'v2.2-inspector-modular-ui-runtime',
+    uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
       finalize:'state-bridge-only',
       patchNavigationWrapped:false,
       productHardeningNavigationWrapped:false,
+      productHardening:'policy-adapter-ui-bridge',
       scenarioAdapter:window.FootMateScenarioAdapter.architecture
     },
     refresh(){
       validation.refresh();
+      inspector.render();
       scenarioStore.renderForScreen(getActiveScreenId());
       home.onScreen(getActiveScreenId());
       filterResults.onScreen(getActiveScreenId());
@@ -141,6 +159,7 @@ async function boot(){
     },
     destroy(){
       validation.stop?.();
+      inspector.destroy?.();
       stopScreenEffects?.();
     }
   };
@@ -154,12 +173,15 @@ async function boot(){
   };
 
   window.dispatchEvent(new CustomEvent('footmate:v2:ready',{
-    detail:{version:VERSION,mode:state.mode}
+    detail:{version:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.1:ready',{
     detail:{version:VERSION,mode:state.mode}
   }));
-  console.info('[FootMate] v2.1 Domain Engine ready',VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2.2:ready',{
+    detail:{version:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+  }));
+  console.info('[FootMate] v2.2 Inspector UI ownership ready',RELEASE_VERSION,state.mode);
 }
 
 boot().catch(error=>{
