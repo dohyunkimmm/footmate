@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const root = process.env.FOOTMATE_SOURCE_DIR || path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'demo.html'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'demo-source.html'), 'utf8');
 const script = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].at(-1)[1];
 
 function harness() {
@@ -59,7 +59,10 @@ function harness() {
 }
 
 test('all inline scripts and event handlers parse',()=>{
-  for(const file of ['demo.html','index-source.html','index.html']){
+  assert.equal(fs.existsSync(path.join(root,'demo.html')),false,'demo.html duplicate artifact must stay removed');
+  const routing=JSON.parse(fs.readFileSync(path.join(root,'vercel.json'),'utf8'));
+  assert.equal(routing.rewrites.some(item=>item.source==='/demo.html'&&item.destination==='/demo-shell.html'),true,'legacy /demo.html must resolve through demo shell');
+  for(const file of ['demo-source.html','index-source.html','index.html']){
     const source=fs.readFileSync(path.join(root,file),'utf8');
     for(const [,js] of source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)) new vm.Script(js);
     for(const [,js] of source.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g,'').matchAll(/\bon\w+="([^"]*)"/g)) new Function('event',js.replaceAll('&amp;','&').replaceAll('&quot;','"').replaceAll('&#39;',"'"));

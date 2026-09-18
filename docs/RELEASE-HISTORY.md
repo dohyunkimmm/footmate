@@ -18,15 +18,24 @@
   - `49d62c` — pre-next-version Case Study regression baseline
   - `1b1288b` · PR #41 — restored mobile vertical scrolling and Interactive Demo visibility
   - `54b540d` · PR #42 — simplified the initial Case Study loading message only
-- Last exact verified Production: `1b1288b`
-  - Vercel deployment: `dpl_DMq66eLQLa7YVQVmAwcVpUeFfgfz`
+- Current main / exact verified Production: `3d83a01`
+  - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
-  - GitHub Actions run #129: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-- Latest main code baseline: `54b540d`
-  - GitHub Actions run #132: Regression 36 and Browser E2E + axe **PASS**
-  - Production HTTP + Chromium smoke **PASS in compatibility mode**
-  - exact-SHA Vercel Production is pending because the Hobby project is currently build-rate-limited
-  - the exact verified Production therefore remains `1b1288b` until a later deployment succeeds and strict Production verification passes
+  - GitHub Actions run #134: Regression suite, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+  - Vercel was READY before the Production Smoke job started
+- Latest product / Case Study code baseline remains `54b540d` · PR #42.
+- The temporary Vercel Hobby build-rate-limit is no longer the current Production blocker.
+
+### Next candidate — v2.2 architecture cleanup
+
+This candidate starts the next-version cleanup without changing the stable user flow.
+
+- make `demo-source.html` the only canonical 39-screen prototype source
+- remove the duplicate ~354 KB `demo.html` artifact
+- preserve legacy `/demo.html` compatibility through `demo-shell.html`
+- update the local E2E server, Regression suite, and Production HTTP smoke to guard the new artifact boundary
+- keep Product / Portfolio modes, Matching / ELO results, state/persistence semantics, and the 16-slide Case Study as regression baselines
+- Production status: **not released** until PR QA, merge, exact Vercel Production, and Production verification complete
 
 ### Domain ownership
 
@@ -78,7 +87,7 @@ The 20→16 slide consolidation changed slide indices without changing product b
 
 - `footmate-patches.js`에 남은 DOM render/persistence 자체를 v2 controller/renderer로 추가 분리
 - `footmate-product-hardening.js`의 Inspector UI render를 `src/v2/ui/`로 이동
-- 큰 `demo-source.html` markup을 build-time source/component로 분리
+- `demo-source.html` 자체는 여전히 큰 단일 markup이므로 build-time source/component 분리는 후속 후보 (중복 `demo.html` artifact 제거는 v2.2 candidate에서 선행)
 - compatibility CSS를 component stylesheet로 추가 축소
 
 ## v2.0.0 — Product Experience

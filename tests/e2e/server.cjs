@@ -11,6 +11,7 @@ const rewrites = new Map([
   ['/index', 'index.html'],
   ['/index-source', 'index-source.html'],
   ['/demo', 'demo-shell.html'],
+  ['/demo.html', 'demo-shell.html'],
   ['/demo-shell', 'demo-shell.html'],
   ['/demo-source', 'demo-source.html']
 ]);
