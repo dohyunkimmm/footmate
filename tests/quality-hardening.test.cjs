@@ -96,7 +96,12 @@ test('case study information architecture is consolidated to 16 slides', () => {
     '<div class="kicker">SERVICE EXTENSION CONCEPT</div>'
   ]) assert.equal(source.includes(duplicate), false, `duplicate section remains: ${duplicate}`);
 
-  assert.ok(read('index-patches.js').includes('.slide[data-i="14"]'));
+  const patches = read('index-patches.js');
+  assert.ok(patches.includes('.slide[data-i="7"] h2'));
+  assert.ok(patches.includes('.slide[data-i="10"] .note'));
+  assert.ok(patches.includes('.slide[data-i="14"]'));
+  assert.equal(patches.includes('.slide[data-i="8"] h2'), false);
+  assert.equal(patches.includes('.slide[data-i="11"] .note'), false);
   assert.ok(read('index-experience.js').includes('.slide[data-i="14"]'));
 });
 
