@@ -23,7 +23,7 @@ PR #44 · `d134d4b`
 - local E2E routing, regression ownership checks, strict Production HTTP smoke 동기화
 
 PR #45 · `4c90dfe`
-- exact Vercel deployment가 rate-limit일 때 Production smoke가 마지막 verified Production을 compatibility mode로 검증하도록 수정
+- exact Vercel deployment를 사용할 수 없을 때 Production smoke가 마지막 verified Production을 compatibility mode로 검증하도록 수정
 
 PR #47 · `94939d5`
 - Product Validation Inspector DOM/render/focus/keyboard ownership을 `src/v2/ui/product-inspector.js`로 이동
@@ -42,7 +42,7 @@ PR #47 · `94939d5`
   - Browser E2E + axe **PASS**
   - Production HTTP smoke **PASS**
   - Production Chromium render smoke **PASS**
-  - 단, Vercel exact deployment가 rate-limit되어 마지막 exact verified Production 대상 compatibility mode
+  - 마지막 exact verified Production 대상 compatibility mode
 - TODO / FIXME search: 없음
 
 ### Deployment / release gate
@@ -53,10 +53,9 @@ Last exact verified Vercel Production:
 - state: **READY**
 - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
 
-v2.2 product baseline pending exact Vercel Production:
+v2.2 product baseline exact Vercel Production verification:
 - production-impacting SHA: `94939d5`
 - current docs-only main may advance while carrying the same v2.2 product tree
-- Vercel status: **PENDING** — Hobby quota 제한으로 최신 시도는 canceled이며 마지막 READY Production은 `3d83a01`
 - required before calling v2.2 Vercel Production-verified:
   - `94939d5` product tree를 포함한 current main descendant가 Vercel Production READY
   - strict Production HTTP smoke PASS
@@ -72,7 +71,7 @@ Render backup verification baseline:
 - deployment: `dep-damd0h6gekts73e6hlm0`
 - state at verification: **live**
 - verified SHA는 당시 GitHub current main과 exact 일치
-- Render는 Vercel quota와 독립된 백업 배포 경로로 사용하며, 이 검증은 Render service/deploy control plane 기준임
+- current main을 따라가는 백업 배포 경로이며, 이 검증은 Render service/deploy control plane 기준임
 - strict HTTP/Chromium Production smoke는 기존 Vercel release gate와 구분
 
 ### v2.2 ownership
