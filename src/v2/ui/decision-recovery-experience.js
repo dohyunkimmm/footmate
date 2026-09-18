@@ -30,7 +30,7 @@ export function installDecisionRecoveryExperience({decisionEngine,scenarioStore,
   function syncPayGuard(value){
     const primary=document.querySelector('#s-pay .btn-primary');
     if(!primary)return;
-    const blocked=value.submission!=='allow';
+    const blocked=value.submission==='block';
     primary.disabled=blocked;
     primary.dataset.fm25Guard=blocked?'blocked':'ready';
     primary.setAttribute('aria-disabled',String(blocked));

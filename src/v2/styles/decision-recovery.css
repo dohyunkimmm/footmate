@@ -43,7 +43,7 @@ html[data-footmate-release="2.5"] .fm25-check[data-state="block"] .fm25-check-ic
 html[data-footmate-release="2.5"] .fm25-check[data-state="info"] .fm25-check-icon{background:var(--fm-color-brand-50);color:var(--fm-color-brand-700)}
 html[data-footmate-release="2.5"] .fm25-check-copy{min-width:0}
 html[data-footmate-release="2.5"] .fm25-check-label{display:block;color:var(--fm-color-text-900);font-size:11px}
-html[data-footmate-release="2.5"] .fm25-check-detail{display:block;margin-top:2px;color:var(--fm-color-text-500);font-size:10px;line-height:1.4}
+html[data-footmate-release="2.5"] .fm25-check-detail{display:block;margin-top:2px;color:var(--fm-color-text-700);font-size:10px;line-height:1.4}
 html[data-footmate-release="2.5"] .fm25-data-note{margin:10px 0 0;color:var(--fm-color-text-500);font-size:9px;line-height:1.5}
 html[data-footmate-release="2.5"] .fm25-trace{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:9px;border-top:1px dashed var(--fm-color-border);color:var(--fm-color-text-500);font-size:9px}
 html[data-footmate-release="2.5"] .fm25-trace-label{font-weight:800}
