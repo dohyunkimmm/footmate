@@ -9,7 +9,7 @@ async function boot(page){
     }
   });
   await page.goto('/demo',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV23Candidate);
+  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV23);
   const onboarding=page.locator('#demoOnboarding');
   if(await onboarding.isVisible())await page.locator('.demo-onboarding-start').click();
   return failures;
@@ -19,28 +19,36 @@ function expectNoFailures(failures){
   expect(failures,failures.join('\n')).toEqual([]);
 }
 
-test('v2.3 candidate loads canonical v2 CSS and exposes architecture ownership',async({page})=>{
+test('v2.3 release loads canonical v2 CSS and exposes architecture ownership',async({page})=>{
   const failures=await boot(page);
   const snapshot=await page.evaluate(()=>({
-    candidate:window.FootMateV23Candidate,
+    release:window.FootMateV23,
+    v22:window.FootMateV22,
     runtimeVersion:window.FootMateV2Runtime?.version,
     releaseArchitecture:window.FootMateV2Runtime?.releaseArchitecture,
-    candidateArchitecture:window.FootMateV2Runtime?.candidateArchitecture,
+    previousReleaseArchitecture:window.FootMateV2Runtime?.previousReleaseArchitecture,
     presentationArchitecture:window.FootMateV2Runtime?.scenarioStore?.presentationArchitecture,
     presenterOwnedScreens:window.FootMateV2Runtime?.scenarioStore?.presenterOwnedScreens,
+    releaseDataset:document.documentElement.dataset.footmateRelease,
     stylePaths:[...document.querySelectorAll('link[rel="stylesheet"]')].map(link=>new URL(link.href).pathname)
   }));
 
-  expect(snapshot.runtimeVersion).toBe('2.2.0');
-  expect(snapshot.releaseArchitecture).toBe('v2.2-inspector-modular-ui-runtime');
-  expect(snapshot.candidateArchitecture).toBe('v2.3-compatibility-boundary-reduction');
-  expect(snapshot.candidate).toMatchObject({
+  expect(snapshot.runtimeVersion).toBe('2.3.0');
+  expect(snapshot.releaseDataset).toBe('2.3');
+  expect(snapshot.releaseArchitecture).toBe('v2.3-compatibility-boundary-reduction');
+  expect(snapshot.previousReleaseArchitecture).toBe('v2.2-inspector-modular-ui-runtime');
+  expect(snapshot.release).toMatchObject({
     version:'2.3.0',
-    baseReleaseVersion:'2.2.0',
+    previousReleaseVersion:'2.2.0',
     schemaVersion:'2.1.0',
     scenarioPersistence:'v2.3-scenario-persistence-migration',
     scenarioPresentation:'v2.3-scenario-presenter',
     cssOwnership:'src/v2/styles'
+  });
+  expect(snapshot.v22).toMatchObject({
+    version:'2.2.0',
+    currentReleaseVersion:'2.3.0',
+    compatibility:true
   });
   expect(snapshot.presentationArchitecture).toBe('v2.3-scenario-presenter');
   expect(snapshot.presenterOwnedScreens).toEqual(['s-filter','s-results','s-reason']);
@@ -108,7 +116,7 @@ test('v2.3 canonical scenario persistence restores when the legacy key is absent
   const record=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v2:scenario')));
   expect(record).toMatchObject({
     schemaVersion:'2.1.0',
-    candidateVersion:'2.3.0',
+    releaseVersion:'2.3.0',
     state:{
       selectedMatchKey:'yongin',
       profile:{time:'evening',matchSkill:2.5,format:'7vs7',distanceKm:11}
@@ -117,7 +125,7 @@ test('v2.3 canonical scenario persistence restores when the legacy key is absent
 
   await page.evaluate(()=>localStorage.removeItem('footmateRuntimeStateV2'));
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV23Candidate);
+  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV23);
 
   const restored=await page.evaluate(()=>({
     state:window.FootMateV2Runtime.scenarioStore.getState(),

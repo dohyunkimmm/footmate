@@ -16,8 +16,8 @@ import{installScreenEffects}from'./ui/screen-effects.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
 const VERSION='2.1.0';
-const RELEASE_VERSION='2.2.0';
-const CANDIDATE_VERSION='2.3.0';
+const PREVIOUS_RELEASE_VERSION='2.2.0';
+const RELEASE_VERSION='2.3.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -59,7 +59,7 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  document.documentElement.dataset.footmateRelease='2.2';
+  document.documentElement.dataset.footmateRelease='2.3';
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
@@ -76,16 +76,18 @@ async function boot(){
   const secondary=createSecondaryController({productStore,finalRuntime});
 
   window.FootMateV22={
-    version:RELEASE_VERSION,
+    version:PREVIOUS_RELEASE_VERSION,
+    currentReleaseVersion:RELEASE_VERSION,
     schemaVersion:VERSION,
     matchEngine,
     eloEngine,
     scenarioStore,
-    architecture:'v2.2-inspector-ui-ownership'
+    architecture:'v2.2-inspector-ui-ownership',
+    compatibility:true
   };
-  window.FootMateV23Candidate={
-    version:CANDIDATE_VERSION,
-    baseReleaseVersion:RELEASE_VERSION,
+  window.FootMateV23={
+    version:RELEASE_VERSION,
+    previousReleaseVersion:PREVIOUS_RELEASE_VERSION,
     schemaVersion:VERSION,
     scenarioPersistence:scenarioPersistence.architecture,
     scenarioPersistenceKey:scenarioPersistence.key,
@@ -157,8 +159,8 @@ async function boot(){
     controllers:{home,filterResults,payment,secondary,inspector},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
-    releaseArchitecture:'v2.2-inspector-modular-ui-runtime',
-    candidateArchitecture:'v2.3-compatibility-boundary-reduction',
+    releaseArchitecture:'v2.3-compatibility-boundary-reduction',
+    previousReleaseArchitecture:'v2.2-inspector-modular-ui-runtime',
     uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
@@ -201,12 +203,12 @@ async function boot(){
     detail:{version:VERSION,mode:state.mode}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.2:ready',{
-    detail:{version:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+    detail:{version:PREVIOUS_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
-  window.dispatchEvent(new CustomEvent('footmate:v2.3:candidate-ready',{
-    detail:{version:CANDIDATE_VERSION,baseReleaseVersion:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+  window.dispatchEvent(new CustomEvent('footmate:v2.3:ready',{
+    detail:{version:RELEASE_VERSION,previousReleaseVersion:PREVIOUS_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
   }));
-  console.info('[FootMate] v2.2 release runtime + v2.3 architecture candidate ready',RELEASE_VERSION,CANDIDATE_VERSION,state.mode);
+  console.info('[FootMate] v2.3 compatibility boundary release ready',RELEASE_VERSION,state.mode);
 }
 
 boot().catch(error=>{

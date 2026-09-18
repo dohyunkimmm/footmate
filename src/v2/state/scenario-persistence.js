@@ -1,7 +1,7 @@
 import{createStorage}from'../core/storage.js';
 
 const SCHEMA_VERSION='2.1.0';
-const CANDIDATE_VERSION='2.3.0';
+const RELEASE_VERSION='2.3.0';
 const LEGACY_KEY='footmateRuntimeStateV2';
 
 function readLegacy(){
@@ -52,7 +52,7 @@ export function createScenarioPersistence(scenarioStore){
     const updatedAt=Date.now();
     const record={
       schemaVersion:SCHEMA_VERSION,
-      candidateVersion:CANDIDATE_VERSION,
+      releaseVersion:RELEASE_VERSION,
       reason,
       updatedAt,
       state:cloneState(value),
@@ -100,7 +100,7 @@ export function createScenarioPersistence(scenarioStore){
     key:storage.key,
     legacyKey:LEGACY_KEY,
     schemaVersion:SCHEMA_VERSION,
-    candidateVersion:CANDIDATE_VERSION,
+    releaseVersion:RELEASE_VERSION,
     architecture:'v2.3-scenario-persistence-migration',
     getRecord:()=>storage.read(null),
     persist,

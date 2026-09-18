@@ -6,7 +6,7 @@ const path = require('node:path');
 const root = process.env.FOOTMATE_SOURCE_DIR || path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
-test('v2.3 candidate moves compatibility and experience CSS ownership into src/v2', () => {
+test('v2.3 release moves compatibility and experience CSS ownership into src/v2', () => {
   const patchAlias = read('footmate-patches.css');
   const finalizeAlias = read('footmate-finalize.css');
   const experienceAlias = read('footmate-experience.css');
@@ -24,7 +24,7 @@ test('v2.3 candidate moves compatibility and experience CSS ownership into src/v
 
   assert.ok(patchStyles.includes('#footmateRuntimeEmpty{'));
   assert.ok(finalizeStyles.includes('.footmate-home-empty{'));
-  assert.ok(experience.includes('FootMate v2.3 candidate'));
+  assert.ok(experience.includes('FootMate v2.3 · Product Experience CSS ownership'));
   assert.ok(experience.includes('.btn-primary{'));
   assert.ok(experience.includes('#s-home .pcnt'));
   assert.ok(experience.includes('.fm-inspector-card'));
@@ -46,7 +46,9 @@ test('v2.3 scenario persistence uses a guarded canonical-to-legacy migration bou
   const shell = read('demo-shell.html');
 
   assert.ok(persistence.includes("createStorage('scenario')"));
+  assert.ok(persistence.includes("const RELEASE_VERSION='2.3.0'"));
   assert.ok(persistence.includes("const LEGACY_KEY='footmateRuntimeStateV2'"));
+  assert.ok(persistence.includes("releaseVersion:RELEASE_VERSION"));
   assert.ok(persistence.includes("architecture:'v2.3-scenario-persistence-migration'"));
   assert.ok(persistence.includes('__v23CanonicalUpdatedAt'));
 
@@ -65,7 +67,7 @@ test('v2.3 scenario persistence uses a guarded canonical-to-legacy migration bou
   assert.ok(bootstrap.includes('scenarioPersistence.clear()'));
 });
 
-test('v2.3 candidate gives filter, results and reason presentation to a v2 presenter', () => {
+test('v2.3 release gives filter, results and reason presentation to a v2 presenter', () => {
   const presenter = read('src/v2/ui/scenario-presenter.js');
   const store = read('src/v2/state/scenario-store.js');
   const bootstrap = read('src/v2/bootstrap.js');
@@ -82,12 +84,12 @@ test('v2.3 candidate gives filter, results and reason presentation to a v2 prese
   assert.ok(store.includes("present('s-reason',value)"));
   assert.ok(store.includes("presentationArchitecture:presenter?.architecture||'adapter-render-compatibility'"));
 
-  assert.ok(bootstrap.includes("const CANDIDATE_VERSION='2.3.0'"));
-  assert.ok(bootstrap.includes('window.FootMateV23Candidate'));
-  assert.ok(bootstrap.includes("candidateArchitecture:'v2.3-compatibility-boundary-reduction'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.3.0'"));
+  assert.ok(bootstrap.includes('window.FootMateV23'));
+  assert.ok(bootstrap.includes("releaseArchitecture:'v2.3-compatibility-boundary-reduction'"));
 });
 
-test('v2.3 architecture prep keeps the public v2.2 release contract untouched', () => {
+test('v2.3 release preserves the v2.2 compatibility alias and v2.1 schema contract', () => {
   const app = read('src/v2/styles/app.css');
   const bootstrap = read('src/v2/bootstrap.js');
   const experience = read('src/v2/styles/experience.css');
@@ -96,8 +98,15 @@ test('v2.3 architecture prep keeps the public v2.2 release contract untouched', 
   assert.ok(app.includes('html[data-footmate-mode="portfolio"] .v3-launcher'));
   assert.ok(experience.includes(':root{'));
 
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.2.0'"));
-  assert.ok(bootstrap.includes("document.documentElement.dataset.footmateRelease='2.2'"));
-  assert.ok(bootstrap.includes("releaseArchitecture:'v2.2-inspector-modular-ui-runtime'"));
+  assert.ok(bootstrap.includes("const VERSION='2.1.0'"));
+  assert.ok(bootstrap.includes("const PREVIOUS_RELEASE_VERSION='2.2.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.3.0'"));
+  assert.ok(bootstrap.includes("document.documentElement.dataset.footmateRelease='2.3'"));
+  assert.ok(bootstrap.includes('window.FootMateV22'));
+  assert.ok(bootstrap.includes("compatibility:true"));
+  assert.ok(bootstrap.includes("releaseArchitecture:'v2.3-compatibility-boundary-reduction'"));
   assert.ok(bootstrap.includes("'footmate:v2.2:ready'"));
+  assert.ok(bootstrap.includes("'footmate:v2.3:ready'"));
+  assert.equal(bootstrap.includes('FootMateV23Candidate'), false);
+  assert.equal(bootstrap.includes('candidateArchitecture'), false);
 });
