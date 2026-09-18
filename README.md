@@ -17,20 +17,27 @@
 
 - Product/runtime baseline: `59b5af1`
 - Domain Engine extraction baseline: `4393403`
-- GitHub PR #29 merged to `main`
-- GitHub Actions run #102:
+- Product release baseline: PR #29
+- 16-slide Case Study consolidation: PR #34
+- Case Study TOC single-line polish: PR #37
+- Case Study runtime index sync: `bba810f` · PR #39 · CI verified
+- Last exact verified Production: `ad940ae` · Vercel deployment `dpl_FddUunfH9ZnWx3EPXc6XefXBNCWV` · READY
+- GitHub Actions run #123 verified `ad940ae` in strict Production mode:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - Production HTTP smoke **PASS**
+  - Production Chromium render smoke **PASS**
+- GitHub Actions run #125 verified the `bba810f` code-impacting baseline:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - v2.1 matching/ELO parity gates **PASS**
+  - 16-slide Case Study patch-index guards **PASS**
   - Responsive 320 / 375 / 390 / 430 px **PASS**
   - Representative visual contract **PASS**
-  - Production HTTP smoke **PASS**
-  - Production Chromium render smoke **PASS**
-- Verified Production: `4f8a55a` · Vercel verified · READY
-- Vercel deployment: `dpl_6qdJWivcQ2KP2zZJwiRWhsRMACQc`
-- PR #32 is a no-source-change deployment retry; the product tree is the same v2.1 runtime verified from `59b5af1`.
+  - Production smoke **PASS in compatibility mode**
+- Exact-SHA Production promotion of `bba810f` is pending because Vercel returned `Deployment rate limited — retry in 24 hours`. Until that promotion succeeds, `ad940ae` remains the last exact verified Production.
 
-v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다.
+v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다. Case Study는 16장 구조로 통합됐고, 통합 이후 runtime patch 인덱스도 현재 슬라이드 순서에 맞춰 동기화했습니다.
 
 ### What changed in v2.1
 
@@ -110,9 +117,12 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
 | v2.1 product/runtime | **59b5af1 · PASS** |
-| v2.1 Production promotion | **4f8a55a · verified · READY** |
-| Production HTTP smoke | **run #102 · PASS** |
-| Production Chromium render smoke | **run #102 · PASS** |
+| 16-slide Case Study IA | **PASS** |
+| Case Study runtime patch sync | **bba810f · CI PASS** |
+| Last exact verified Production | **ad940ae · dpl_FddUunfH9ZnWx3EPXc6XefXBNCWV · READY** |
+| Exact Production smoke | **run #123 · HTTP + Chromium PASS** |
+| Latest code-impacting validation | **run #125 · CI PASS · Production compatibility PASS** |
+| bba810f exact-SHA Production | **PENDING · Vercel rate limit** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
