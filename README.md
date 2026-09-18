@@ -9,13 +9,14 @@
 - [Live Demo · Product mode](https://footmate-black.vercel.app/demo)
 - [Live Demo · Portfolio mode](https://footmate-black.vercel.app/demo?mode=portfolio)
 - [Case Study](https://footmate-black.vercel.app/)
+- [Backup deployment · Render](https://footmate-backup.onrender.com)
 - [Release History](docs/RELEASE-HISTORY.md)
 
 ## 🚀 Current Main · v2.2.0
 
 **v2.2.0 · Inspector UI Ownership**
 
-현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. 다만 Vercel Hobby build-rate-limit 때문에 exact-SHA Production 검증은 아직 닫히지 않았습니다.
+현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. Vercel Hobby build-rate-limit 때문에 exact-SHA Production 검증은 아직 닫히지 않았지만, quota와 독립된 Render backup은 `main` auto-deploy 경로로 `live` 상태를 유지합니다. 문서 sync 직전 검증 baseline `b3125bf`는 당시 current main과 exact 일치했습니다.
 
 - v2.2 product baseline: `94939d5` · PR #47
 - Release runtime: `2.2.0`
@@ -40,13 +41,21 @@
 
 ### Production release gate
 
-- Last exact verified Production: `3d83a01`
+- Last exact verified Vercel Production: `3d83a01`
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
   - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-- v2.2 production-impacting baseline awaiting exact Production: `94939d5`
-- Current Vercel status: **PENDING** — `Deployment rate limited — retry in 24 hours`
-- v2.2를 Production-verified release로 닫기 위한 남은 조건:
+- v2.2 production-impacting baseline awaiting exact Vercel Production: `94939d5`
+- Current Vercel status: **PENDING** — latest attempts are quota-limited/canceled; last READY Production remains `3d83a01`
+- Render backup verification baseline:
+  - service: `footmate-backup`
+  - URL: `https://footmate-backup.onrender.com`
+  - verified SHA: `b3125bf28ba8d1a44201950c55b11c841b77b383`
+  - deployment: `dep-damd0h6gekts73e6hlm0`
+  - state at verification: **live**
+  - branch: `main` · auto-deploy enabled
+  - 당시 GitHub current main과 exact 일치했으며 Vercel quota와 독립된 백업 배포 경로로 사용
+- v2.2를 Vercel Production-verified release로 닫기 위한 남은 조건:
   - `94939d5` product tree를 포함한 현재 main descendant가 Vercel Production에 READY
   - strict Production HTTP smoke PASS
   - strict Production Chromium render smoke PASS
@@ -60,7 +69,6 @@ v2.2에서 release scope를 넘기지 않기 위해 아래 항목은 다음 구�
 - 큰 `demo-source.html` markup의 build-time source/component 분리
 - compatibility CSS 추가 축소
 - required status check key `Regression 36` rename은 repository ruleset과 workflow를 함께 변경
-- Render backup exact deployment 재검증
 
 ## ✨ Key Features
 
@@ -110,7 +118,7 @@ v2.2에서 release scope를 넘기지 않기 위해 아래 항목은 다음 구�
 
 ## 🛠 Tech
 
-HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Playwright · axe-core · GitHub Actions · GitHub · Vercel
+HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Playwright · axe-core · GitHub Actions · GitHub · Vercel · Render
 
 ## 📌 Project Scope
 
@@ -132,10 +140,12 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | 16-slide Case Study IA | **PASS** |
 | v2.2 Inspector ownership | **PR #47 · run #146 PASS** |
 | v2.2 product-baseline QA | **run #147 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
-| Last exact verified Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
-| Last exact Production verification | **run #134 · HTTP + Chromium PASS** |
-| v2.2 exact Vercel Production | **PENDING · build-rate-limit · retry in 24 hours** |
-| Render backup | **미확인 · connector workspace 확인 필요** |
+| Last exact verified Vercel Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
+| Last exact Vercel Production verification | **run #134 · HTTP + Chromium PASS** |
+| v2.2 exact Vercel Production | **PENDING · Hobby quota / latest attempts canceled** |
+| Render backup | **LIVE verified baseline · b3125bf · dep-damd0h6gekts73e6hlm0 · main auto-deploy** |
+
+Render 항목은 service/deploy control plane 기준 검증입니다. 별도 strict HTTP/Chromium Production smoke는 Vercel release gate와 구분합니다.
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
