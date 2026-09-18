@@ -50,6 +50,12 @@ async function main() {
     assert(body.includes('footmate-product-hardening.js'), '/demo product hardening loader missing');
   });
 
+  await run('demo-legacy-shell', '/demo.html', ({ body, contentType }) => {
+    assert(contentType.includes('text/html'), '/demo.html must return HTML');
+    assert(body.includes('FootMate | 인터랙티브 프로토타입'), '/demo.html compatibility shell title missing');
+    assert(body.includes("fetch('/demo-source'"), '/demo.html must resolve through the demo shell');
+  });
+
   await run('demo-source', '/demo-source', ({ body }) => {
     assert(body.includes('id="s-splash"'), 'demo source splash missing');
     assert(body.includes('id="s-profile"'), 'demo source profile screen missing');
