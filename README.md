@@ -11,60 +11,56 @@
 - [Case Study](https://footmate-black.vercel.app/)
 - [Release History](docs/RELEASE-HISTORY.md)
 
-## 🚀 Current Release
+## 🚀 Current Main · v2.2.0
 
-**v2.1.0 · Domain Engine**
+**v2.2.0 · Inspector UI Ownership**
 
-- Stable product/runtime baseline: `59b5af1`
-- Domain Engine extraction baseline: `4393403`
-- Mobile Case Study scroll + Interactive Demo visibility fix: `1b1288b` · PR #41
-- Initial Case Study loading-copy polish: `54b540d` · PR #42
-- 16-slide Case Study consolidation: PR #34
-- Case Study runtime index sync: `bba810f` · PR #39
+현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. 다만 Vercel Hobby build-rate-limit 때문에 exact-SHA Production 검증은 아직 닫히지 않았습니다.
+
+- Current main baseline: `94939d5` · PR #47
+- Release runtime: `2.2.0`
+- Storage / schema / Product Hardening event contract: `2.1.0` 호환 유지
+- Regression baseline: Product / Portfolio mode · 39 screens · 16-slide Case Study
+- PR #44 · `d134d4b`
+  - canonical prototype source를 `demo-source.html`로 단일화
+  - 중복 ~354 KB `demo.html` artifact 제거
+  - `/demo.html` legacy compatibility route 유지
+- PR #45 · `4c90dfe`
+  - Vercel rate-limit 시 Production smoke가 마지막 exact Production을 호환 모드로 검증하도록 정리
+- PR #47 · `94939d5`
+  - Product Validation Inspector DOM/render/focus/keyboard ownership을 `src/v2/ui/product-inspector.js`로 이동
+  - Inspector component styles를 `src/v2/styles/product-inspector.css`로 이동
+  - `footmate-product-hardening.js`를 policy/state/analytics adapter + UI bridge로 축소
+  - 중복 Inspector launcher bridge 제거
+  - Case Study release badge/note를 v2.2 UI Ownership 기준으로 동기화
+  - exact Production strict browser smoke에 v2.2 runtime/Inspector ownership assertion 추가
+- PR #47 QA run #146: Regression + Browser E2E/axe **PASS**
+- main run #147: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
+  - Production Smoke는 Vercel rate-limit 때문에 마지막 exact verified Production을 대상으로 compatibility mode로 실행
+
+### Production release gate
+
 - Last exact verified Production: `3d83a01`
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
   - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-  - the deployment was READY before Production Smoke started
-- Latest production-impacting main baseline: `d134d4b` · PR #44
-  - canonical prototype source is now `demo-source.html`
-  - duplicate ~354 KB `demo.html` artifact removed
-  - legacy `/demo.html` is preserved through `demo-shell.html`
-  - PR QA run #140: Regression + Browser E2E/axe **PASS**
-  - main run #141: Regression + Browser E2E/axe **PASS**
-  - exact Vercel deployment is **PENDING**: `Deployment rate limited — retry in 24 hours`
-- QA/operations patch: `4c90dfe` · PR #45
-  - rate-limit fallback smoke no longer requires a route that exists only on the pending exact deployment
-  - main run #143: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
-  - Production Smoke ran in compatibility mode against the last exact verified Production
+- v2.2 exact Production target: `94939d5`
+- Current Vercel status: **PENDING** — `Deployment rate limited — retry in 24 hours`
+- v2.2를 Production-verified release로 닫기 위한 남은 조건:
+  - exact `94939d5` 계열 tree가 Vercel Production에 READY
+  - strict Production HTTP smoke PASS
+  - strict Production Chromium render smoke PASS
+  - Product/Portfolio + v2.2 Inspector ownership assertion PASS
 
-### Next-version status · v2.2 architecture cleanup
+### v2.3 architecture backlog
 
-The first v2.2 architecture increment is merged to `main`, but it is **not Production-verified yet** and the runtime version remains `2.1.0`.
+v2.2에서 release scope를 넘기지 않기 위해 아래 항목은 다음 구조 고도화로 이관합니다.
 
-- complete: remove duplicated `demo.html` source artifact while preserving `/demo.html` compatibility
-- complete: guard the canonical source boundary in regression and Production smoke
-- pending: exact-SHA Vercel Production for the PR #44 product-impacting baseline
-- next: move Product Validation Inspector render ownership from `footmate-product-hardening.js` into `src/v2/ui/`
-- next: split the large `demo-source.html` into build-time source/components
-- next: reduce remaining DOM/persistence and compatibility CSS ownership
-
-v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 안정 릴리스입니다. 현재 회귀 기준은 Product / Portfolio mode, 39개 화면, 16장 Case Study입니다.
-
-### What changed in v2.1
-
-- `src/v2/domain/matching-engine.js` — 매칭 score/rank/derived scenario
-- `src/v2/domain/elo-engine.js` — ELO update / tier 계산
-- `scenario-store`가 ranked matches · selected scenario · eligible count를 domain engine에서 파생
-- `FootMateScenarioAdapter`는 계산 주체가 아니라 render/persistence compatibility adapter로 축소
-- Product Validation 추천 설명도 v2.1 scenario store를 우선 사용
-- legacy matching/ELO 계산과 새 domain engine 결과 parity를 Playwright로 검증
-- Product / Portfolio mode, 39개 화면, 매칭 가중치, eligibility, ELO K-factor, 결제/운영 정책, 저장 상태는 v2.0.0과 호환
-
-### Demo modes
-
-- `/demo` — **Product mode**: 실제 사용자 흐름 중심
-- `/demo?mode=portfolio` — **Portfolio mode**: 추천 근거, 운영 정책, 이벤트/KPI 검증
+- `footmate-patches.js`에 남은 DOM render/persistence ownership 추가 분리
+- 큰 `demo-source.html` markup의 build-time source/component 분리
+- compatibility CSS 추가 축소
+- required status check key `Regression 36` rename은 repository ruleset과 workflow를 함께 변경
+- Render backup exact deployment 재검증
 
 ## ✨ Key Features
 
@@ -85,9 +81,9 @@ v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산
 
 ## 🧩 Runtime Structure
 
-### v2.1 domain ownership
+### v2.2 ownership
 
-- `src/v2/bootstrap.js` — runtime composition root
+- `src/v2/bootstrap.js` — runtime composition root · release `2.2.0`
 - `src/v2/domain/matching-engine.js` — matching domain engine
 - `src/v2/domain/elo-engine.js` — ELO domain engine
 - `src/v2/state/product-store.js` — persisted product state
@@ -97,16 +93,19 @@ v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산
 - `src/v2/ui/payment-controller.js` — Charge/Payment/Participation adapter
 - `src/v2/ui/secondary-controller.js` — Evaluation/Favorite/Friend/Chat persistence
 - `src/v2/ui/screen-effects.js` — observer 기반 screen effects
+- `src/v2/ui/product-inspector.js` — Product Validation Inspector UI ownership
 - `src/v2/ui/validation-entry.js` — Portfolio validation entry
+- `src/v2/styles/product-inspector.css` — Inspector component styles
 - `src/v2/styles/tokens.css` / `app.css` — design token / product experience layer
 
 ### Compatibility boundary
 
 - `footmate-core.js` — 저수준 score/filter/credit/data-quality core
 - `footmate-product-core.js` — 상태 머신·추천 설명·이벤트/KPI core
-- `footmate-patches.js` — 기존 DOM render와 persistence 호환; v2.1 부팅 후 matching/ELO 계산은 domain engine에 위임
+- `footmate-patches.js` — 기존 DOM render와 persistence 호환; matching/ELO 계산은 domain engine에 위임
 - `footmate-finalize.js` — persisted state compatibility bridge only
-- `footmate-product-hardening.js` — Operations/Product Validation adapter
+- `footmate-product-hardening.js` — policy/state/analytics adapter + v2.2 Inspector UI bridge
+- `footmate-product-hardening.css` — v2.2 Inspector stylesheet compatibility alias
 - `footmate-experience.css` — visual compatibility layer
 
 ## 🛠 Tech
@@ -121,6 +120,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 | 검증 | 상태 |
 | --- | --- |
+| Current main | **94939d5 · v2.2.0** |
 | Regression suite | **PASS** · required-check key는 현재 `Regression 36` |
 | Browser E2E · Product + Portfolio | **PASS** |
 | Matching domain parity | **PASS** |
@@ -128,15 +128,14 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
-| Stable v2.1 product/runtime | **59b5af1 · PASS** |
+| 39-screen product baseline | **PASS** |
 | 16-slide Case Study IA | **PASS** |
+| v2.2 Inspector ownership | **PR #47 · run #146 PASS** |
+| Current main QA | **run #147 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
 | Last exact verified Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
-| Exact Production verification | **run #134 · HTTP + Chromium PASS** |
-| v2.2 artifact-boundary merge baseline | **d134d4b · PR #44 · exact Production PENDING** |
-| v2.2 PR QA | **run #140 · Regression + Browser E2E/axe PASS** |
-| Current main compatibility QA | **4c90dfe · run #143 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
-| Vercel exact deployment for v2.2 | **PENDING · build-rate-limit · retry in 24 hours** |
-| Render backup | **미확인 · connector workspace 확인 필요 / public endpoint fetch 불가** |
+| Last exact Production verification | **run #134 · HTTP + Chromium PASS** |
+| v2.2 exact Vercel Production | **PENDING · build-rate-limit · retry in 24 hours** |
+| Render backup | **미확인 · connector workspace 확인 필요** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 

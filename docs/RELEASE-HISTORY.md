@@ -2,61 +2,73 @@
 
 현재 릴리스 상태와 검증 기준만 간결하게 보존합니다. 세부 변경은 Git commit / Pull Request / GitHub Actions를 source of truth로 사용합니다.
 
-## Current — v2.1.0 Domain Engine
+## Current main — v2.2.0 Inspector UI Ownership
 
-- Stable product/runtime baseline: `59b5af1`
-- Domain Engine extraction baseline: `4393403`
-- Product release: PR #29
-- Runtime version: `2.1.0`
-- Product Hardening event contract: `2.1.0`
-- Case Study badge/name: `v2.1.0 Domain Engine`
+- Current main baseline: `94939d5` · PR #47
+- Release runtime version: `2.2.0`
+- Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
+- Product / Portfolio mode: 유지
+- Product screen baseline: 39 screens
 - Case Study information architecture: 16 slides
-  - PR #34 consolidated User Journey, Product Strategy, and Operations & Recovery
-  - PR #37 kept `Prototype Build · QA · Deployment` on one TOC line
-  - PR #39 / `bba810f` synchronized Case Study runtime patch indices with the 16-slide order
-- Recent stable-baseline changes:
-  - `49d62c` — pre-next-version Case Study regression baseline
-  - `1b1288b` · PR #41 — restored mobile vertical scrolling and Interactive Demo visibility
-  - `54b540d` · PR #42 — simplified the initial Case Study loading message only
-- Last exact verified Production: `3d83a01`
-  - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
-  - state: **READY**
-  - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-  - deployment READY preceded the Production Smoke job
-- Latest production-impacting main baseline: `d134d4b` · PR #44
-  - single canonical prototype source: `demo-source.html`
-  - duplicate ~354 KB `demo.html` artifact removed
-  - legacy `/demo.html` preserved through `demo-shell.html`
-  - PR QA run #140: Regression + Browser E2E/axe **PASS**
-  - main run #141: Regression + Browser E2E/axe **PASS**
-  - exact Vercel deployment: **PENDING** — `Deployment rate limited — retry in 24 hours`
-- QA/operations patch: `4c90dfe` · PR #45
-  - corrected Production compatibility-smoke behavior while exact deployment is rate-limited
-  - main run #143: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
-  - smoke target was the last exact verified Production in compatibility mode
-- Render backup: **미확인**
-  - the Render connector requires explicit workspace confirmation before service inspection
-  - direct public URL fetch was unavailable in the current tool environment
+- Matching / ELO ownership: `src/v2/domain/`
+- Product Validation Inspector UI ownership: `src/v2/ui/product-inspector.js`
+- Inspector component styles: `src/v2/styles/product-inspector.css`
 
-### v2.2 architecture cleanup status
+### v2.2 changes
 
-The first next-version architecture increment is merged to `main`, but it is not yet an exact Production-verified release. Runtime remains `2.1.0`.
+PR #44 · `d134d4b`
+- canonical prototype source를 `demo-source.html`로 단일화
+- 중복 ~354 KB `demo.html` artifact 제거
+- legacy `/demo.html` compatibility route를 `demo-shell.html`로 유지
+- local E2E routing, regression ownership checks, strict Production HTTP smoke 동기화
 
-Completed:
-- canonicalize the 39-screen prototype source on `demo-source.html`
-- remove the duplicate `demo.html` artifact
-- preserve `/demo.html` as a compatibility route through the shell
-- align local E2E routing, regression ownership checks, and strict Production HTTP smoke
-- make rate-limit compatibility smoke validate only capabilities present on the last verified Production
+PR #45 · `4c90dfe`
+- exact Vercel deployment가 rate-limit일 때 Production smoke가 마지막 verified Production을 compatibility mode로 검증하도록 수정
 
-Pending release gate:
-- exact-SHA Vercel Production for the PR #44 product-impacting baseline
-- strict Production HTTP + browser render smoke against that exact deployment
+PR #47 · `94939d5`
+- Product Validation Inspector DOM/render/focus/keyboard ownership을 `src/v2/ui/product-inspector.js`로 이동
+- Inspector styles를 `src/v2/styles/product-inspector.css`로 이동
+- `footmate-product-hardening.js`를 policy/state/analytics adapter + UI bridge로 축소
+- 중복 Inspector launcher bridge 제거
+- Case Study badge/note를 v2.2 UI Ownership 기준으로 동기화
+- release version을 `2.2.0`으로 노출하면서 storage/schema/event contract는 `2.1.0` 호환 유지
+- strict exact-Production browser smoke에 v2.2 runtime/Inspector ownership assertion 추가
 
-### Domain ownership
+### QA
 
+- PR #47 run #146: required Regression check + Browser E2E/axe **PASS**
+- main `94939d5` run #147:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - Production HTTP smoke **PASS**
+  - Production Chromium render smoke **PASS**
+  - 단, Vercel exact deployment가 rate-limit되어 마지막 exact verified Production 대상 compatibility mode
+- TODO / FIXME search: 없음
 
-```
+### Production release gate
+
+Last exact verified Production:
+- SHA: `3d83a01`
+- deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
+- state: **READY**
+- GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+
+v2.2 exact Production target:
+- main SHA: `94939d5`
+- Vercel status: **PENDING** — `Deployment rate limited — retry in 24 hours`
+- required before calling v2.2 Production-verified:
+  - exact `94939d5` 계열 tree가 Vercel Production READY
+  - strict Production HTTP smoke PASS
+  - strict Production Chromium render smoke PASS
+  - Product/Portfolio + v2.2 Inspector ownership assertions PASS
+
+Render backup:
+- **미확인**
+- connector에서 확인 가능한 workspace는 `My Workspace` 하나지만, Render tool 정책상 workspace를 사용자 확인 없이 선택할 수 없어 service/deploy 검증을 진행하지 않음
+
+### v2.2 ownership
+
+```text
 src/v2/
   bootstrap.js
   domain/
@@ -74,39 +86,53 @@ src/v2/
     filter-results-controller.js
     payment-controller.js
     secondary-controller.js
+    product-inspector.js
     screen-effects.js
     validation-entry.js
   styles/
     tokens.css
     app.css
+    product-inspector.css
 ```
 
-- Matching score/ranking과 ELO update/tier 계산은 v2.1 domain engine이 소유합니다.
+- Matching score/ranking과 ELO update/tier 계산은 v2 domain engine이 소유합니다.
 - `scenario-store`는 raw adapter snapshot에서 ranked/selected scenario를 파생합니다.
-- Product Validation 추천 설명은 `v2.1-domain-store`를 우선 사용합니다.
-- `footmate-patches.js`는 v2.1 부팅 후 계산을 domain engine에 위임하고 DOM render/persistence compatibility를 유지합니다.
+- Product Validation Inspector UI는 v2.2 module이 소유합니다.
+- `footmate-product-hardening.js`는 operations/recommendation/analytics policy adapter와 Inspector UI bridge 역할만 유지합니다.
+- `footmate-patches.js`는 아직 일부 DOM render/persistence compatibility를 유지합니다.
 
 ### Case Study runtime synchronization
 
-The 20→16 slide consolidation changed slide indices without changing product behavior. Before the next version, the Case Study runtime patch targets were aligned to the current order:
-
+- 16-slide IA 유지
+- User Journey: slide index 4
 - IA Design runtime patch: slide index 7
-- Matching Logic: slide index 8 remains untouched by the IA patch
+- Matching Logic: slide index 8
 - Service Data & Quality runtime note: slide index 10
 - Validation runtime patch: slide index 14
-- Browser regression verifies the IA title, 4-tab render, Matching Logic title, and Data Quality note on the intended slides.
-- Strict Production smoke includes the same assertions and gates an exact-SHA Production promotion.
+- strict Production smoke는 16-slide 구조와 v2.2 release badge/Inspector ownership을 함께 검증합니다.
 
-### Remaining compatibility boundary
+### Deferred to v2.3
 
-다음 고도화 후보:
+v2.2 release scope를 불필요하게 키우지 않기 위해 아래 구조 변경은 다음 minor architecture increment로 이관합니다.
 
-- `footmate-product-hardening.js`의 Inspector UI render를 `src/v2/ui/`로 이동
 - `footmate-patches.js`에 남은 DOM render/persistence를 v2 controller/renderer로 추가 분리
 - 큰 `demo-source.html` markup을 build-time source/component로 분리
-- compatibility CSS를 component stylesheet로 추가 축소
-- required status check key `Regression 36`을 실제 suite naming과 맞추려면 repository ruleset 변경과 workflow rename을 함께 수행
-- Render backup 서비스의 exact deployment 상태를 workspace 확인 후 재검증
+- compatibility CSS 추가 축소
+- required status check key `Regression 36` rename은 repository ruleset과 workflow rename을 함께 수행
+- Render backup exact deployment 상태 재검증
+
+## v2.1.0 — Domain Engine
+
+- Stable product/runtime baseline: `59b5af1`
+- Domain Engine extraction baseline: `4393403`
+- Product release: PR #29
+- Matching / ELO 계산 ownership을 `src/v2/domain/`으로 이동
+- `scenario-store`가 ranked/selected scenario를 domain engine에서 파생
+- Product / Portfolio mode, 39 screens, 16-slide Case Study 유지
+- Product Hardening event contract `2.1.0`
+- Mobile Case Study scroll + Interactive Demo visibility: `1b1288b` · PR #41
+- Initial Case Study loading-copy polish: `54b540d` · PR #42
+- Last exact v2.1 Production baseline before v2.2 work: `3d83a01`
 
 ## v2.0.0 — Product Experience
 
