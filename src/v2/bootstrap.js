@@ -4,9 +4,12 @@ import{resolveMode,applyMode}from'./core/mode.js';
 import{createMatchEngine}from'./domain/matching-engine.js';
 import{createEloEngine}from'./domain/elo-engine.js';
 import{createDecisionEngine}from'./domain/decision-engine.js';
+import{createAvailabilityGateway}from'./domain/availability-gateway.js';
 import{createProductStore}from'./state/product-store.js';
 import{createScenarioStore}from'./state/scenario-store.js';
 import{createScenarioPersistence}from'./state/scenario-persistence.js';
+import{createDecisionTracePersistence}from'./state/decision-trace-persistence.js';
+import{createRuntimeBoundary}from'./demo/runtime-boundary.js';
 import{createScenarioPresenter}from'./ui/scenario-presenter.js';
 import{installCoreFunnelExperience}from'./ui/core-funnel-experience.js';
 import{installDecisionRecoveryExperience}from'./ui/decision-recovery-experience.js';
@@ -21,8 +24,9 @@ import{installValidationEntry}from'./ui/validation-entry.js';
 const VERSION='2.1.0';
 const V22_RELEASE_VERSION='2.2.0';
 const V23_RELEASE_VERSION='2.3.0';
-const PREVIOUS_RELEASE_VERSION='2.4.0';
-const RELEASE_VERSION='2.5.0';
+const V24_RELEASE_VERSION='2.4.0';
+const V25_RELEASE_VERSION='2.5.0';
+const RELEASE_VERSION='2.6.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -64,11 +68,12 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  document.documentElement.dataset.footmateRelease='2.5';
+  document.documentElement.dataset.footmateRelease='2.6';
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
   const productOps=window.FootMateProductOps;
+  const runtimeBoundary=createRuntimeBoundary();
   const matchEngine=createMatchEngine(window.FootMateCore);
   const eloEngine=createEloEngine();
   window.FootMateScenarioAdapter.attachDomainEngines?.({match:matchEngine,elo:eloEngine});
@@ -76,8 +81,11 @@ async function boot(){
   const scenarioPresenter=createScenarioPresenter();
   const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine,presenter:scenarioPresenter});
   const scenarioPersistence=createScenarioPersistence(scenarioStore).start();
+  const decisionTracePersistence=createDecisionTracePersistence().start();
+  const availabilityGateway=createAvailabilityGateway({productStore,productOps});
   const coreFunnel=installCoreFunnelExperience({scenarioStore,mode:state.mode});
   const decisionEngine=createDecisionEngine({scenarioStore,productStore,productOps});
+  decisionTracePersistence.capture(decisionEngine.history(),'bootstrap-engine');
   const home=createHomeController({productStore,scenarioStore});
   const filterResults=createFilterResultsController({scenarioStore});
   const payment=createPaymentController({productStore,scenarioStore,finalRuntime,decisionEngine,productOps});
@@ -106,7 +114,7 @@ async function boot(){
     compatibility:true
   };
   window.FootMateV24={
-    version:PREVIOUS_RELEASE_VERSION,
+    version:V24_RELEASE_VERSION,
     currentReleaseVersion:RELEASE_VERSION,
     previousReleaseVersion:V23_RELEASE_VERSION,
     schemaVersion:VERSION,
@@ -121,8 +129,9 @@ async function boot(){
     compatibility:true
   };
   window.FootMateV25={
-    version:RELEASE_VERSION,
-    previousReleaseVersion:PREVIOUS_RELEASE_VERSION,
+    version:V25_RELEASE_VERSION,
+    currentReleaseVersion:RELEASE_VERSION,
+    previousReleaseVersion:V24_RELEASE_VERSION,
     schemaVersion:VERSION,
     decisionEngine:decisionEngine.architecture,
     decisionRecoveryExperience:decisionRecovery.architecture,
@@ -130,7 +139,20 @@ async function boot(){
     ownedScreens:[...decisionRecovery.ownedScreens],
     traceReplay:true,
     cssOwnership:'src/v2/styles/decision-recovery.css',
-    architecture:'v2.5-decision-recovery-experience'
+    architecture:'v2.5-decision-recovery-experience',
+    compatibility:true
+  };
+  window.FootMateV26={
+    version:RELEASE_VERSION,
+    previousReleaseVersion:V25_RELEASE_VERSION,
+    schemaVersion:VERSION,
+    runtimeBoundary:runtimeBoundary.architecture,
+    availabilityGateway:availabilityGateway.architecture,
+    decisionTracePersistence:decisionTracePersistence.architecture,
+    persistentDecisionReplay:true,
+    legacySourceRole:runtimeBoundary.legacySource.role,
+    compatibilityPatchRole:runtimeBoundary.compatibility.role,
+    architecture:'v2.6-architecture-hardening'
   };
   const inspector=installProductInspector();
 
@@ -179,6 +201,7 @@ async function boot(){
       localStorage.removeItem(finalRuntime.storeKey);
       localStorage.removeItem(uiStorage.key);
       scenarioPersistence.clear();
+      decisionTracePersistence.clear();
     }catch(error){}
     return legacyReplay?.();
   };
@@ -196,12 +219,15 @@ async function boot(){
     coreFunnel,
     decisionEngine,
     decisionRecovery,
-    domain:{matchEngine,eloEngine,decisionEngine},
+    decisionTracePersistence,
+    availabilityGateway,
+    runtimeBoundary,
+    domain:{matchEngine,eloEngine,decisionEngine,availabilityGateway},
     controllers:{home,filterResults,payment,secondary,inspector,coreFunnel,decisionRecovery},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
-    releaseArchitecture:'v2.5-decision-recovery-experience',
-    previousReleaseArchitecture:'v2.4-core-funnel-experience',
+    releaseArchitecture:'v2.6-architecture-hardening',
+    previousReleaseArchitecture:'v2.5-decision-recovery-experience',
     uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
@@ -210,7 +236,8 @@ async function boot(){
       productHardeningNavigationWrapped:false,
       productHardening:'policy-adapter-ui-bridge',
       scenarioAdapter:window.FootMateScenarioAdapter.architecture,
-      scenarioPersistenceBridge:window.FootMateScenarioPersistenceBridge?.architecture||'unavailable'
+      scenarioPersistenceBridge:window.FootMateScenarioPersistenceBridge?.architecture||'unavailable',
+      patchRuntime:'legacy-render-adapter-only'
     },
     refresh(){
       validation.refresh();
@@ -228,6 +255,7 @@ async function boot(){
       inspector.destroy?.();
       decisionRecovery.destroy?.();
       coreFunnel.destroy?.();
+      decisionTracePersistence.destroy?.();
       scenarioPersistence.destroy?.();
       stopScreenEffects?.();
     }
@@ -254,12 +282,15 @@ async function boot(){
     detail:{version:V23_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V22_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.4:ready',{
-    detail:{version:PREVIOUS_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V23_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
+    detail:{version:V24_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V23_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.5:ready',{
-    detail:{version:RELEASE_VERSION,previousReleaseVersion:PREVIOUS_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+    detail:{version:V25_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V24_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
-  console.info('[FootMate] v2.5 decision & recovery experience ready',RELEASE_VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2.6:ready',{
+    detail:{version:RELEASE_VERSION,previousReleaseVersion:V25_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+  }));
+  console.info('[FootMate] v2.6 architecture hardening ready',RELEASE_VERSION,state.mode);
 }
 
 boot().catch(error=>{
