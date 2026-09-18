@@ -6,6 +6,7 @@
 
 - architecture baseline: `9afd19e` · PR #57
 - product/runtime baseline: `21c6ab4` · PR #58
+- exact verified Production descendant: `b38e147` · PR #61
 - Release runtime version: `2.4.0`
 - Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
 - v2.2 / v2.3 runtime alias/event: compatibility 유지
@@ -13,7 +14,7 @@
 - Product screen baseline: 39 screens
 - Case Study information architecture: 16 slides
 - Matching / ELO ownership: `src/v2/domain/`
-- v2.4 exact Vercel Production verification: **Not yet verified**
+- v2.4 release gate: **CLOSED**
 
 ### v2.4 changes
 
@@ -38,6 +39,12 @@ PR #59 · QA-only descendant
 - exact strict mode에서만 v2.4 release metadata와 v2.4-only UI ownership을 요구
 - 이 변경은 product/runtime baseline을 변경하지 않음
 
+PR #61 · `b38e147`
+- protected main → Vercel Production 경로를 동작 변경 없이 재트리거
+- exact SHA `b38e14765a169715d4309036aeb8eb07663e304e`가 Vercel Production `READY`로 배포됨
+- strict Production HTTP + Chromium 검증을 통과해 v2.4 release gate를 닫음
+- product/runtime baseline은 `21c6ab4`로 유지
+
 ### QA
 
 - PR #57 run #173:
@@ -51,26 +58,34 @@ PR #59 · QA-only descendant
 - QA contract sync PR #59 run #177:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
-- current main QA run #178:
+- compatibility main run #178:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - Production compatibility HTTP smoke **PASS**
   - Production compatibility Chromium render smoke **PASS**
+- exact Production main run #182:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - exact Vercel deployment wait **PASS**
+  - Production HTTP smoke **PASS**
+  - strict Production Chromium render smoke **PASS**
 
 Compatibility smoke는 exact Production verification으로 간주하지 않습니다.
 
 ### Deployment / release gate
 
-v2.4 Vercel Production:
+v2.4 exact Vercel Production:
 - product/runtime baseline: `21c6ab4b3d7bbed1b3ffaae202452aed98208834`
-- exact Production verification: **Not yet verified**
-- release gate: **OPEN**
-
-Last exact verified Vercel Production remains v2.3:
-- SHA: `aaacbdc5edccdc7dd89404e6fde439f36e1df091`
-- deployment: `dpl_86HgVTqT4aK5aCx5vhyYLipaK4W8`
+- exact verified SHA: `b38e14765a169715d4309036aeb8eb07663e304e`
+- deployment: `dpl_GyvevKkNYEgRkJKJrXLuAwekXmCm`
 - state: **READY**
-- exact verification run: #168 · strict HTTP + Chromium **PASS**
+- exact verification run: #182 · exact wait + strict HTTP + Chromium **PASS**
+- release gate: **CLOSED**
+
+Render exact release deployment:
+- SHA: `b38e14765a169715d4309036aeb8eb07663e304e`
+- deployment: `dep-damk034s728c73c5ood0`
+- state: **live**
 
 Render backup is an independent deployment path. Current exact-main/live status is verified from the Render control plane after important merges and is not used as a substitute for Vercel exact Production verification.
 
@@ -132,7 +147,7 @@ src/v2/
 - Architecture baseline: `bf27784` · PR #52
 - Exact verified Production SHA: `aaacbdc` · PR #55
 - Vercel deployment: `dpl_86HgVTqT4aK5aCx5vhyYLipaK4W8`
-- Exact Production QA: run #168 · Regression / Browser / exact wait / strict HTTP / Chromium **PASS**
+- Exact Production QA: run #168 · Regression / Browser / strict HTTP / Chromium **PASS**
 - Product Experience CSS, canonical scenario persistence, Filter/Results/Recommendation Reason presentation ownership을 `src/v2/`로 이동
 - v2.2 compatibility contract와 `2.1.0` storage/schema/event contract 유지
 - Product / Portfolio mode, 39 screens, 16-slide Case Study 유지
