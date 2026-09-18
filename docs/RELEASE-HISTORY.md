@@ -18,24 +18,40 @@
   - `49d62c` — pre-next-version Case Study regression baseline
   - `1b1288b` · PR #41 — restored mobile vertical scrolling and Interactive Demo visibility
   - `54b540d` · PR #42 — simplified the initial Case Study loading message only
-- Current main / exact verified Production: `3d83a01`
+- Last exact verified Production: `3d83a01`
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
-  - GitHub Actions run #134: Regression suite, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-  - Vercel was READY before the Production Smoke job started
-- Latest product / Case Study code baseline remains `54b540d` · PR #42.
-- The temporary Vercel Hobby build-rate-limit is no longer the current Production blocker.
+  - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+  - deployment READY preceded the Production Smoke job
+- Latest production-impacting main baseline: `d134d4b` · PR #44
+  - single canonical prototype source: `demo-source.html`
+  - duplicate ~354 KB `demo.html` artifact removed
+  - legacy `/demo.html` preserved through `demo-shell.html`
+  - PR QA run #140: Regression + Browser E2E/axe **PASS**
+  - main run #141: Regression + Browser E2E/axe **PASS**
+  - exact Vercel deployment: **PENDING** — `Deployment rate limited — retry in 24 hours`
+- QA/operations patch: `4c90dfe` · PR #45
+  - corrected Production compatibility-smoke behavior while exact deployment is rate-limited
+  - main run #143: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
+  - smoke target was the last exact verified Production in compatibility mode
+- Render backup: **미확인**
+  - the Render connector requires explicit workspace confirmation before service inspection
+  - direct public URL fetch was unavailable in the current tool environment
 
-### Next candidate — v2.2 architecture cleanup
+### v2.2 architecture cleanup status
 
-This candidate starts the next-version cleanup without changing the stable user flow.
+The first next-version architecture increment is merged to `main`, but it is not yet an exact Production-verified release. Runtime remains `2.1.0`.
 
-- make `demo-source.html` the only canonical 39-screen prototype source
-- remove the duplicate ~354 KB `demo.html` artifact
-- preserve legacy `/demo.html` compatibility through `demo-shell.html`
-- update the local E2E server, Regression suite, and Production HTTP smoke to guard the new artifact boundary
-- keep Product / Portfolio modes, Matching / ELO results, state/persistence semantics, and the 16-slide Case Study as regression baselines
-- Production status: **not released** until PR QA, merge, exact Vercel Production, and Production verification complete
+Completed:
+- canonicalize the 39-screen prototype source on `demo-source.html`
+- remove the duplicate `demo.html` artifact
+- preserve `/demo.html` as a compatibility route through the shell
+- align local E2E routing, regression ownership checks, and strict Production HTTP smoke
+- make rate-limit compatibility smoke validate only capabilities present on the last verified Production
+
+Pending release gate:
+- exact-SHA Vercel Production for the PR #44 product-impacting baseline
+- strict Production HTTP + browser render smoke against that exact deployment
 
 ### Domain ownership
 
@@ -78,17 +94,19 @@ The 20→16 slide consolidation changed slide indices without changing product b
 - Matching Logic: slide index 8 remains untouched by the IA patch
 - Service Data & Quality runtime note: slide index 10
 - Validation runtime patch: slide index 14
-- Browser regression now verifies the IA title, 4-tab render, Matching Logic title, and Data Quality note on the intended slides.
-- Strict Production smoke includes the same assertions and will gate the next exact-SHA Production promotion.
+- Browser regression verifies the IA title, 4-tab render, Matching Logic title, and Data Quality note on the intended slides.
+- Strict Production smoke includes the same assertions and gates an exact-SHA Production promotion.
 
 ### Remaining compatibility boundary
 
-필수 미완료 기능은 없습니다. 향후 선택적 정리 후보:
+다음 고도화 후보:
 
-- `footmate-patches.js`에 남은 DOM render/persistence 자체를 v2 controller/renderer로 추가 분리
 - `footmate-product-hardening.js`의 Inspector UI render를 `src/v2/ui/`로 이동
-- `demo-source.html` 자체는 여전히 큰 단일 markup이므로 build-time source/component 분리는 후속 후보 (중복 `demo.html` artifact 제거는 v2.2 candidate에서 선행)
+- `footmate-patches.js`에 남은 DOM render/persistence를 v2 controller/renderer로 추가 분리
+- 큰 `demo-source.html` markup을 build-time source/component로 분리
 - compatibility CSS를 component stylesheet로 추가 축소
+- required status check key `Regression 36`을 실제 suite naming과 맞추려면 repository ruleset 변경과 workflow rename을 함께 수행
+- Render backup 서비스의 exact deployment 상태를 workspace 확인 후 재검증
 
 ## v2.0.0 — Product Experience
 

@@ -17,28 +17,39 @@
 
 - Stable product/runtime baseline: `59b5af1`
 - Domain Engine extraction baseline: `4393403`
-- Latest product / Case Study code baseline: `54b540d` · PR #42
 - Mobile Case Study scroll + Interactive Demo visibility fix: `1b1288b` · PR #41
+- Initial Case Study loading-copy polish: `54b540d` · PR #42
 - 16-slide Case Study consolidation: PR #34
 - Case Study runtime index sync: `bba810f` · PR #39
-- Current main / exact verified Production: `3d83a01`
+- Last exact verified Production: `3d83a01`
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
-  - GitHub Actions run #134: Regression suite, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-  - the Production deployment was READY before the run #134 Production Smoke job started
-- Latest product / Case Study code baseline remains `54b540d` · PR #42.
-- The temporary Vercel Hobby build-rate-limit that blocked `54b540d` directly was cleared by the successful `3d83a01` Production deployment.
-- PR #42 changes only the initial Case Study loading copy. Case Study content, layout, demo behavior, and routing remain unchanged.
+  - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+  - the deployment was READY before Production Smoke started
+- Latest production-impacting main baseline: `d134d4b` · PR #44
+  - canonical prototype source is now `demo-source.html`
+  - duplicate ~354 KB `demo.html` artifact removed
+  - legacy `/demo.html` is preserved through `demo-shell.html`
+  - PR QA run #140: Regression + Browser E2E/axe **PASS**
+  - main run #141: Regression + Browser E2E/axe **PASS**
+  - exact Vercel deployment is **PENDING**: `Deployment rate limited — retry in 24 hours`
+- QA/operations patch: `4c90dfe` · PR #45
+  - rate-limit fallback smoke no longer requires a route that exists only on the pending exact deployment
+  - main run #143: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
+  - Production Smoke ran in compatibility mode against the last exact verified Production
 
-### Next-version candidate · v2.2 architecture cleanup
+### Next-version status · v2.2 architecture cleanup
 
-- keep `demo-source.html` as the single canonical 39-screen prototype source
-- remove the duplicate ~354 KB `demo.html` artifact
-- preserve legacy `/demo.html` access by routing it through `demo-shell.html`
-- add regression and Production HTTP smoke coverage for that compatibility route
-- keep Product / Portfolio behavior, matching/ELO policy, persistence semantics, and the 16-slide Case Study unchanged
+The first v2.2 architecture increment is merged to `main`, but it is **not Production-verified yet** and the runtime version remains `2.1.0`.
 
-v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다. 현재 안정 기준은 Product / Portfolio mode, 39개 화면, 16장 Case Study이며 최근 모바일 Case Study 스크롤과 Interactive Demo 노출 회귀를 복구했습니다.
+- complete: remove duplicated `demo.html` source artifact while preserving `/demo.html` compatibility
+- complete: guard the canonical source boundary in regression and Production smoke
+- pending: exact-SHA Vercel Production for the PR #44 product-impacting baseline
+- next: move Product Validation Inspector render ownership from `footmate-product-hardening.js` into `src/v2/ui/`
+- next: split the large `demo-source.html` into build-time source/components
+- next: reduce remaining DOM/persistence and compatibility CSS ownership
+
+v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 안정 릴리스입니다. 현재 회귀 기준은 Product / Portfolio mode, 39개 화면, 16장 Case Study입니다.
 
 ### What changed in v2.1
 
@@ -110,7 +121,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 | 검증 | 상태 |
 | --- | --- |
-| Regression suite | **PASS** |
+| Regression suite | **PASS** · required-check key는 현재 `Regression 36` |
 | Browser E2E · Product + Portfolio | **PASS** |
 | Matching domain parity | **PASS** |
 | ELO domain parity | **PASS** |
@@ -119,11 +130,13 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | Representative visual contract | **PASS** |
 | Stable v2.1 product/runtime | **59b5af1 · PASS** |
 | 16-slide Case Study IA | **PASS** |
-| Latest product / Case Study code baseline | **54b540d · PR #42** |
-| Current main / exact verified Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
-| Current Production QA | **run #134 · Regression 36 + Browser E2E/axe + HTTP + Chromium PASS** |
-| Vercel Hobby build-rate-limit | **RESOLVED for current Production** |
-| v2.2 demo artifact boundary | **candidate · PR QA pending** |
+| Last exact verified Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
+| Exact Production verification | **run #134 · HTTP + Chromium PASS** |
+| v2.2 artifact-boundary merge baseline | **d134d4b · PR #44 · exact Production PENDING** |
+| v2.2 PR QA | **run #140 · Regression + Browser E2E/axe PASS** |
+| Current main compatibility QA | **4c90dfe · run #143 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
+| Vercel exact deployment for v2.2 | **PENDING · build-rate-limit · retry in 24 hours** |
+| Render backup | **미확인 · connector workspace 확인 필요 / public endpoint fetch 불가** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
