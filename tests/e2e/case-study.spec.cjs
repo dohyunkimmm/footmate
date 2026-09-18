@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 test('case study uses the consolidated 16-slide information architecture', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('.slide').length === 16);
+  await page.waitForFunction(() => typeof window.goTo === 'function');
 
   await expect(page.locator('.slide')).toHaveCount(16);
   await expect(page.locator('.toc-item')).toHaveCount(16);
@@ -49,4 +50,29 @@ test('removed duplicate case study sections are not rendered as separate slides'
   expect(text).not.toContain('프로토타입 대표 화면 흐름');
   expect(text).not.toContain('사용자 행동이 끊기지 않도록 설계한 핵심 플로우');
   expect(text).not.toContain('핵심 흐름은 유지하고,');
+});
+
+
+test('long Case Study TOC heading stays on one line on desktop', async ({ page }) => {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1024, height: 768 }
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.querySelectorAll('.toc-item').length === 16);
+
+    const title = page.locator('.toc-item[data-i="11"] .toc-t');
+    await expect(title).toHaveText('Prototype Build · QA · Deployment');
+
+    const metrics = await title.evaluate(element => {
+      const style = getComputedStyle(element);
+      return {
+        height: element.getBoundingClientRect().height,
+        lineHeight: parseFloat(style.lineHeight)
+      };
+    });
+
+    expect(metrics.height).toBeLessThanOrEqual(metrics.lineHeight * 1.25);
+  }
 });
