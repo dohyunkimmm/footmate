@@ -18,6 +18,16 @@ test('case study uses the consolidated 16-slide information architecture', async
   await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('Fair Match · Trust · Growth');
   await expect(page.locator('.slide[aria-hidden="false"] .moscow > div')).toHaveCount(4);
 
+  await page.evaluate(() => window.goTo(7));
+  await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('서비스 구조를 4개 핵심 탭으로 단순화');
+  await expect(page.locator('.slide[aria-hidden="false"] .ia-row > span')).toHaveCount(4);
+
+  await page.evaluate(() => window.goTo(8));
+  await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('입력부터 경기 결과까지 이어지는 동적 ELO 구조');
+
+  await page.evaluate(() => window.goTo(10));
+  await expect(page.locator('.slide[aria-hidden="false"] .note')).toContainText('PASS·CHECK');
+
   await page.evaluate(() => window.goTo(12));
   await expect(page.locator('.slide[aria-hidden="false"] h2')).toContainText('운영 상태와 복구 행동');
   await expect(page.locator('.slide[aria-hidden="false"] .cards.three .card')).toHaveCount(3);
