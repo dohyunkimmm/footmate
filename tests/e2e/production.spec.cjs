@@ -29,11 +29,23 @@ test('production case study and v2 product/portfolio modes render after deployme
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://footmate-black.vercel.app/');
   await expect(page.locator('#fmDecisionSummary')).toContainText('Validation');
   if (strictProduction) {
+    await page.waitForFunction(() => typeof window.goTo === 'function');
     await expect(page.locator('.slide')).toHaveCount(16);
     await expect(page.locator('.toc-item')).toHaveCount(16);
     await expect(page.locator('#cnt')).toContainText('/ 16');
+
     await page.evaluate(() => window.goTo(4));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('User Journey');
+
+    await page.evaluate(() => window.goTo(7));
+    await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('서비스 구조를 4개 핵심 탭으로 단순화');
+    await expect(page.locator('.slide[aria-hidden="false"] .ia-row > span')).toHaveCount(4);
+
+    await page.evaluate(() => window.goTo(8));
+    await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('입력부터 경기 결과까지 이어지는 동적 ELO 구조');
+
+    await page.evaluate(() => window.goTo(10));
+    await expect(page.locator('.slide[aria-hidden="false"] .note')).toContainText('PASS·CHECK');
   }
 
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
