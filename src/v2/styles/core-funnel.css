@@ -198,7 +198,7 @@ html[data-footmate-release="2.4"] .fm24-checkout-step{
   font-weight:800;
   text-align:center;
 }
-html[data-footmate-release="2.4"] .fm24-checkout-step[data-state="done"]{background:color-mix(in srgb,var(--fm-color-success-600) 9%,white);color:var(--fm-color-success-600)}
+html[data-footmate-release="2.4"] .fm24-checkout-step[data-state="done"]{background:color-mix(in srgb,var(--fm-color-success-600) 9%,white);color:#146B4D}
 html[data-footmate-release="2.4"] .fm24-checkout-step[data-state="current"]{background:var(--fm-color-brand-50);color:var(--fm-color-brand-700)}
 html[data-footmate-release="2.4"] .fm24-sticky-primary{
   position:sticky;
