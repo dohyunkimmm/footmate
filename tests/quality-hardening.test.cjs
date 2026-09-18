@@ -74,6 +74,32 @@ test('runtime hardening classics parse and v2 module graph is wired', () => {
   assert.ok(read('index-patches.js').includes('fmDecisionSummary'));
 });
 
+test('case study information architecture is consolidated to 16 slides', () => {
+  const source = read('index-source.html');
+  const slides = source.match(/<div class="slide[^"]*"[^>]*data-i="\d+"/g) || [];
+  const toc = source.match(/<div class="toc-item" data-i="\d+"/g) || [];
+
+  assert.equal(slides.length, 16);
+  assert.equal(toc.length, 16);
+  assert.ok(source.includes('<h2>User Journey</h2>'));
+  assert.ok(source.includes('<div class="kicker">PRODUCT STRATEGY</div>'));
+  assert.ok(source.includes('<div class="kicker">OPERATIONS &amp; RECOVERY</div>'));
+  assert.ok(source.includes("'key-screens':'user-journey'"));
+  assert.ok(source.includes("'ux-flow':'user-journey'"));
+  assert.ok(source.includes("'moscow':'product-strategy'"));
+  assert.ok(source.includes("'v2-concept-extension':'operations-recovery'"));
+
+  for (const duplicate of [
+    '프로토타입 대표 화면 흐름',
+    '사용자 행동이 끊기지 않도록 설계한 핵심 플로우',
+    '<div class="kicker">MOSCOW</div>',
+    '<div class="kicker">SERVICE EXTENSION CONCEPT</div>'
+  ]) assert.equal(source.includes(duplicate), false, `duplicate section remains: ${duplicate}`);
+
+  assert.ok(read('index-patches.js').includes('.slide[data-i="14"]'));
+  assert.ok(read('index-experience.js').includes('.slide[data-i="14"]'));
+});
+
 test('low-credit mutation moved out of navigation and into payment adapter', () => {
   const finalize = read('footmate-finalize.js');
   const payment = read('src/v2/ui/payment-controller.js');
