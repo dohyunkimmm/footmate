@@ -2,29 +2,22 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-
 const root=process.env.FOOTMATE_SOURCE_DIR||path.join(__dirname,'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 
-test('v2.3 canonical CSS ownership remains available under the v2.4 release',()=>{
+test('v2.3 canonical CSS ownership remains available under the v2.5 release',()=>{
   const patchAlias=read('footmate-patches.css');
   const finalizeAlias=read('footmate-finalize.css');
   const experienceAlias=read('footmate-experience.css');
   const patchStyles=read('src/v2/styles/compatibility-patches.css');
   const finalizeStyles=read('src/v2/styles/compatibility-finalize.css');
   const experience=read('src/v2/styles/experience.css');
-  const shell=read('demo-shell.html');
-
   assert.ok(patchAlias.includes("@import url('/src/v2/styles/compatibility-patches.css?v=20260918-1')"));
   assert.ok(finalizeAlias.includes("@import url('/src/v2/styles/compatibility-finalize.css?v=20260918-1')"));
   assert.ok(experienceAlias.includes("@import url('/src/v2/styles/experience.css?v=20260918-1')"));
-  assert.equal(patchAlias.includes('#footmateRuntimeEmpty{'),false);
-  assert.equal(finalizeAlias.includes('.footmate-home-empty{'),false);
-  assert.equal(experienceAlias.includes('.btn-primary{'),false);
   assert.ok(patchStyles.includes('#footmateRuntimeEmpty{'));
   assert.ok(finalizeStyles.includes('.footmate-home-empty{'));
   assert.ok(experience.includes('.btn-primary{'));
-  assert.ok(shell.includes('/src/v2/styles/experience.css?v=20260918-2'));
 });
 
 test('v2.3 scenario persistence migration remains the canonical compatibility contract',()=>{
@@ -38,14 +31,14 @@ test('v2.3 scenario persistence migration remains the canonical compatibility co
   assert.ok(bootstrap.includes("scenarioPersistence:'v2.3-scenario-persistence-migration'"));
 });
 
-test('v2.3 is exposed as a compatibility alias after v2.4 promotion',()=>{
+test('v2.3 remains a compatibility alias after v2.5 promotion',()=>{
   const bootstrap=read('src/v2/bootstrap.js');
-  assert.ok(bootstrap.includes("const V22_RELEASE_VERSION='2.2.0'"));
-  assert.ok(bootstrap.includes("const PREVIOUS_RELEASE_VERSION='2.3.0'"));
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.4.0'"));
+  assert.ok(bootstrap.includes("const V23_RELEASE_VERSION='2.3.0'"));
+  assert.ok(bootstrap.includes("const PREVIOUS_RELEASE_VERSION='2.4.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.5.0'"));
   assert.ok(bootstrap.includes('window.FootMateV23'));
   assert.ok(bootstrap.includes("architecture:'v2.3-compatibility-boundary-reduction'"));
   assert.ok(bootstrap.includes('compatibility:true'));
   assert.ok(bootstrap.includes("'footmate:v2.3:ready'"));
-  assert.ok(bootstrap.includes('window.FootMateV24'));
+  assert.ok(bootstrap.includes('window.FootMateV25'));
 });

@@ -3,11 +3,13 @@ import{getActiveScreenId}from'./core/screen-observer.js';
 import{resolveMode,applyMode}from'./core/mode.js';
 import{createMatchEngine}from'./domain/matching-engine.js';
 import{createEloEngine}from'./domain/elo-engine.js';
+import{createDecisionEngine}from'./domain/decision-engine.js';
 import{createProductStore}from'./state/product-store.js';
 import{createScenarioStore}from'./state/scenario-store.js';
 import{createScenarioPersistence}from'./state/scenario-persistence.js';
 import{createScenarioPresenter}from'./ui/scenario-presenter.js';
 import{installCoreFunnelExperience}from'./ui/core-funnel-experience.js';
+import{installDecisionRecoveryExperience}from'./ui/decision-recovery-experience.js';
 import{createHomeController}from'./ui/home-controller.js';
 import{createFilterResultsController}from'./ui/filter-results-controller.js';
 import{createPaymentController}from'./ui/payment-controller.js';
@@ -18,8 +20,9 @@ import{installValidationEntry}from'./ui/validation-entry.js';
 
 const VERSION='2.1.0';
 const V22_RELEASE_VERSION='2.2.0';
-const PREVIOUS_RELEASE_VERSION='2.3.0';
-const RELEASE_VERSION='2.4.0';
+const V23_RELEASE_VERSION='2.3.0';
+const PREVIOUS_RELEASE_VERSION='2.4.0';
+const RELEASE_VERSION='2.5.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -61,10 +64,11 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  document.documentElement.dataset.footmateRelease='2.4';
+  document.documentElement.dataset.footmateRelease='2.5';
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
+  const productOps=window.FootMateProductOps;
   const matchEngine=createMatchEngine(window.FootMateCore);
   const eloEngine=createEloEngine();
   window.FootMateScenarioAdapter.attachDomainEngines?.({match:matchEngine,elo:eloEngine});
@@ -73,10 +77,12 @@ async function boot(){
   const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine,presenter:scenarioPresenter});
   const scenarioPersistence=createScenarioPersistence(scenarioStore).start();
   const coreFunnel=installCoreFunnelExperience({scenarioStore,mode:state.mode});
+  const decisionEngine=createDecisionEngine({scenarioStore,productStore,productOps});
   const home=createHomeController({productStore,scenarioStore});
   const filterResults=createFilterResultsController({scenarioStore});
-  const payment=createPaymentController({productStore,scenarioStore,finalRuntime});
+  const payment=createPaymentController({productStore,scenarioStore,finalRuntime,decisionEngine,productOps});
   const secondary=createSecondaryController({productStore,finalRuntime});
+  const decisionRecovery=installDecisionRecoveryExperience({decisionEngine,scenarioStore,productStore,productOps,mode:state.mode});
 
   window.FootMateV22={
     version:V22_RELEASE_VERSION,
@@ -89,7 +95,7 @@ async function boot(){
     compatibility:true
   };
   window.FootMateV23={
-    version:PREVIOUS_RELEASE_VERSION,
+    version:V23_RELEASE_VERSION,
     currentReleaseVersion:RELEASE_VERSION,
     previousReleaseVersion:V22_RELEASE_VERSION,
     schemaVersion:VERSION,
@@ -100,8 +106,9 @@ async function boot(){
     compatibility:true
   };
   window.FootMateV24={
-    version:RELEASE_VERSION,
-    previousReleaseVersion:PREVIOUS_RELEASE_VERSION,
+    version:PREVIOUS_RELEASE_VERSION,
+    currentReleaseVersion:RELEASE_VERSION,
+    previousReleaseVersion:V23_RELEASE_VERSION,
     schemaVersion:VERSION,
     scenarioPersistence:scenarioPersistence.architecture,
     scenarioPresentation:scenarioPresenter.architecture,
@@ -110,7 +117,20 @@ async function boot(){
     componentSource:coreFunnel.componentSource,
     coreFunnelScreens:[...coreFunnel.ownedScreens],
     cssOwnership:'src/v2/styles/core-funnel.css',
-    architecture:'v2.4-core-funnel-experience'
+    architecture:'v2.4-core-funnel-experience',
+    compatibility:true
+  };
+  window.FootMateV25={
+    version:RELEASE_VERSION,
+    previousReleaseVersion:PREVIOUS_RELEASE_VERSION,
+    schemaVersion:VERSION,
+    decisionEngine:decisionEngine.architecture,
+    decisionRecoveryExperience:decisionRecovery.architecture,
+    componentSource:decisionRecovery.componentSource,
+    ownedScreens:[...decisionRecovery.ownedScreens],
+    traceReplay:true,
+    cssOwnership:'src/v2/styles/decision-recovery.css',
+    architecture:'v2.5-decision-recovery-experience'
   };
   const inspector=installProductInspector();
 
@@ -132,6 +152,7 @@ async function boot(){
       state.lastActiveScreen=activeId;
       persistUiState();
       coreFunnel.onScreen(activeId);
+      decisionRecovery.onScreen(activeId);
     }
   });
 
@@ -173,12 +194,14 @@ async function boot(){
     scenarioPersistence,
     scenarioPresenter,
     coreFunnel,
-    domain:{matchEngine,eloEngine},
-    controllers:{home,filterResults,payment,secondary,inspector,coreFunnel},
+    decisionEngine,
+    decisionRecovery,
+    domain:{matchEngine,eloEngine,decisionEngine},
+    controllers:{home,filterResults,payment,secondary,inspector,coreFunnel,decisionRecovery},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
-    releaseArchitecture:'v2.4-core-funnel-experience',
-    previousReleaseArchitecture:'v2.3-compatibility-boundary-reduction',
+    releaseArchitecture:'v2.5-decision-recovery-experience',
+    previousReleaseArchitecture:'v2.4-core-funnel-experience',
     uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
@@ -198,10 +221,12 @@ async function boot(){
       payment.onScreen(getActiveScreenId());
       secondary.onScreen(getActiveScreenId());
       coreFunnel.onScreen(getActiveScreenId());
+      decisionRecovery.onScreen(getActiveScreenId());
     },
     destroy(){
       validation.stop?.();
       inspector.destroy?.();
+      decisionRecovery.destroy?.();
       coreFunnel.destroy?.();
       scenarioPersistence.destroy?.();
       stopScreenEffects?.();
@@ -226,12 +251,15 @@ async function boot(){
     detail:{version:V22_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.3:ready',{
-    detail:{version:PREVIOUS_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V22_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
+    detail:{version:V23_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V22_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.4:ready',{
+    detail:{version:PREVIOUS_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V23_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
+  }));
+  window.dispatchEvent(new CustomEvent('footmate:v2.5:ready',{
     detail:{version:RELEASE_VERSION,previousReleaseVersion:PREVIOUS_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
   }));
-  console.info('[FootMate] v2.4 core funnel experience ready',RELEASE_VERSION,state.mode);
+  console.info('[FootMate] v2.5 decision & recovery experience ready',RELEASE_VERSION,state.mode);
 }
 
 boot().catch(error=>{
