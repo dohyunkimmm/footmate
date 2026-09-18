@@ -55,5 +55,5 @@ test('v2.2 inspector css keeps its compatibility alias while the v2.3 shell load
   assert.ok(shell.includes('/src/v2/styles/product-inspector.css?v=20260918-1'));
   assert.equal(shell.includes('href="/footmate-product-hardening.css'), false);
   assert.ok(shell.includes('footmate-product-hardening.js?v=20260918-5'));
-  assert.ok(shell.includes('bootstrap.js?v=20260918-7'));
+  assert.ok(shell.includes('bootstrap.js?v=20260918-8'));
 });
