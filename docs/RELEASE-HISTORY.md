@@ -4,7 +4,7 @@
 
 ## Current — v2.1.0 Domain Engine
 
-- Product/runtime baseline: `59b5af1`
+- Stable product/runtime baseline: `59b5af1`
 - Domain Engine extraction baseline: `4393403`
 - Product release: PR #29
 - Runtime version: `2.1.0`
@@ -14,20 +14,22 @@
   - PR #34 consolidated User Journey, Product Strategy, and Operations & Recovery
   - PR #37 kept `Prototype Build · QA · Deployment` on one TOC line
   - PR #39 / `bba810f` synchronized Case Study runtime patch indices with the 16-slide order
-- Last exact verified Production: `ad940ae`
-  - Vercel deployment: `dpl_FddUunfH9ZnWx3EPXc6XefXBNCWV`
-  - state: READY
-  - GitHub Actions run #123: Regression 36, Browser E2E + axe, Production HTTP smoke, and Production Chromium render smoke PASS
-- Latest code-impacting baseline: `bba810f`
-  - GitHub Actions run #125: Regression 36 PASS
-  - Browser E2E + axe PASS
-  - matching/ELO parity PASS
-  - 16-slide Case Study patch-index guards PASS
-  - responsive and representative visual contract PASS
-  - Production smoke PASS in compatibility mode
-- Exact-SHA Production promotion of `bba810f` is pending because Vercel returned `Deployment rate limited — retry in 24 hours`. The compatibility smoke in run #125 validated the last verified Production and is not an exact-SHA Production verification for `bba810f`.
+- Recent stable-baseline changes:
+  - `49d62c` — pre-next-version Case Study regression baseline
+  - `1b1288b` · PR #41 — restored mobile vertical scrolling and Interactive Demo visibility
+  - `54b540d` · PR #42 — simplified the initial Case Study loading message only
+- Last exact verified Production: `1b1288b`
+  - Vercel deployment: `dpl_DMq66eLQLa7YVQVmAwcVpUeFfgfz`
+  - state: **READY**
+  - GitHub Actions run #129: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+- Latest main code baseline: `54b540d`
+  - GitHub Actions run #132: Regression 36 and Browser E2E + axe **PASS**
+  - Production HTTP + Chromium smoke **PASS in compatibility mode**
+  - exact-SHA Vercel Production is pending because the Hobby project is currently build-rate-limited
+  - the exact verified Production therefore remains `1b1288b` until a later deployment succeeds and strict Production verification passes
 
 ### Domain ownership
+
 
 ```
 src/v2/
