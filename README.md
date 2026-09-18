@@ -20,12 +20,13 @@ v2.4는 v2.3의 안정 동작을 회귀 기준으로 유지하면서 Home → Fi
 
 - architecture baseline: `9afd19e` · PR #57
 - product/runtime baseline: `21c6ab4` · PR #58
+- exact verified Production descendant: `b38e147` · PR #61
 - Release runtime: `2.4.0`
 - Storage / schema / Product Hardening event contract: `2.1.0` 호환 유지
 - v2.2 / v2.3 runtime alias/event: 호환 유지
 - Regression baseline: Product / Portfolio mode · 39 screens · 16-slide Case Study
 - Matching / ELO ownership: `src/v2/domain/`
-- v2.4 exact Vercel Production verification: **Not yet verified**
+- v2.4 release gate: **CLOSED**
 
 ### v2.4 experience / architecture
 
@@ -43,17 +44,25 @@ v2.4는 v2.3의 안정 동작을 회귀 기준으로 유지하면서 Home → Fi
 
 - PR #57 run #173: Regression 36 + Browser E2E/axe **PASS**
 - PR #58 run #175: checkout completion contrast hotfix · Regression 36 + Browser E2E/axe **PASS**
-- current QA contract main run #178:
+- QA contract sync main run #178:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - compatibility Production HTTP smoke **PASS**
   - compatibility Production Chromium render smoke **PASS**
-- exact v2.4 Vercel Production: **Not yet verified**
-- last exact verified Vercel Production remains v2.3:
-  - SHA `aaacbdc5edccdc7dd89404e6fde439f36e1df091`
-  - deployment `dpl_86HgVTqT4aK5aCx5vhyYLipaK4W8`
+- exact Production verification main run #182:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - exact Vercel deployment wait **PASS**
+  - Production HTTP smoke **PASS**
+  - strict Production Chromium render smoke **PASS**
+- exact v2.4 Vercel Production:
+  - SHA `b38e14765a169715d4309036aeb8eb07663e304e`
+  - deployment `dpl_GyvevKkNYEgRkJKJrXLuAwekXmCm`
   - state **READY**
-- Render backup is an independent deployment path; latest exact-main state is tracked through Render deployment history.
+- Render exact release deployment:
+  - SHA `b38e14765a169715d4309036aeb8eb07663e304e`
+  - deployment `dep-damk034s728c73c5ood0`
+  - state **live**
 
 ## ✨ Key Features
 
@@ -125,19 +134,22 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | --- | --- |
 | v2.4 architecture baseline | **9afd19e · PR #57 · v2.4.0** |
 | v2.4 product/runtime baseline | **21c6ab4 · PR #58** |
-| Regression suite | **PASS** · run #178 |
-| Browser E2E · Product + Portfolio | **PASS** · run #178 |
+| exact verified Production descendant | **b38e147 · PR #61** |
+| Regression suite | **PASS** · run #182 |
+| Browser E2E · Product + Portfolio | **PASS** · run #182 |
 | Matching / ELO domain parity | **PASS** |
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
 | 39-screen product baseline | **PASS** |
 | 16-slide Case Study IA | **PASS** |
-| Production compatibility HTTP + Chromium smoke | **PASS** · run #178 |
-| v2.4 exact Vercel Production verification | **Not yet verified** |
-| last exact verified Vercel Production | **v2.3 · aaacbdc · dpl_86HgVTqT4aK5aCx5vhyYLipaK4W8 · READY** |
+| exact Vercel Production wait | **PASS** · run #182 |
+| Production HTTP + strict Chromium | **PASS** · run #182 |
+| exact Vercel Production | **b38e147 · dpl_GyvevKkNYEgRkJKJrXLuAwekXmCm · READY** |
+| Render exact release | **b38e147 · dep-damk034s728c73c5ood0 · live** |
+| v2.4 release gate | **CLOSED** |
 
-Compatibility smoke는 exact Production verification이 아닙니다. Render와 Vercel은 독립적인 배포 경로이며, v2.4 exact Vercel Production은 exact deployment wait + strict HTTP/Chromium gate가 통과한 경우에만 verified로 기록합니다.
+Compatibility smoke는 exact Production verification이 아닙니다. Render와 Vercel은 독립적인 배포 경로이며, exact Production 검증은 exact deployment wait + strict HTTP/Chromium gate가 통과한 SHA만 기록합니다.
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
