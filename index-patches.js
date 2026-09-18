@@ -44,7 +44,7 @@ function syncCaseStudy(){
   if(hint)hint.textContent='앱 우측 하단의 ‘매칭 로직’과 ‘제품 검증’에서 Agent Workflow, 운영 상태 전이, 추천 근거와 이벤트 로그를 확인할 수 있습니다.';
   const qualityNote=document.querySelector('.slide[data-i="11"] .note');
   if(qualityNote)qualityNote.textContent='※ 현재 프로토타입은 입력·상태·퍼널 이벤트에 따라 PASS·CHECK를 판정하며, 서버 최신성이 필요한 Freshness는 SAMPLE로 구분합니다. 운영 연동 후 오류율·최신성·상태 충돌을 실제 지표로 수집합니다.';
-  const validation=document.querySelector('.slide[data-i="18"]');
+  const validation=document.querySelector('.slide[data-i="14"]');
   if(validation){
     const phase=validation.querySelector('.phase-kicker .phase-pill');
     if(phase)phase.textContent='AUTOMATED QA VERIFIED · USER TEST PLANNED';
