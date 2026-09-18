@@ -30,6 +30,8 @@ jobs:
         run: node scripts/check-v24-boundary.cjs
       - name: Check v2.5 decision/recovery boundary
         run: node scripts/check-v25-boundary.cjs
+      - name: Check v2.6 architecture ownership boundary
+        run: node scripts/check-v26-boundary.cjs
       - name: Run regression and architecture suite
         run: node --test tests/*.test.cjs
 
@@ -48,8 +50,8 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run browser E2E, accessibility, responsive and v2.5 UX gates
-        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs
+      - name: Run browser E2E, accessibility, responsive and v2.6 architecture gates
+        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
