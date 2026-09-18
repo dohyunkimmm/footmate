@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 test('case study uses the consolidated 16-slide information architecture', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('.slide').length === 16);
+  await page.waitForFunction(() => typeof window.goTo === 'function');
 
   await expect(page.locator('.slide')).toHaveCount(16);
   await expect(page.locator('.toc-item')).toHaveCount(16);
