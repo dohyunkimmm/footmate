@@ -125,6 +125,7 @@ jobs:
         env:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
+          FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
         run: npx playwright test tests/e2e/production.spec.cjs
       - name: Upload production QA evidence
         if: always()
