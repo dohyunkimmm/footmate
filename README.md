@@ -17,7 +17,7 @@
 
 현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. 다만 Vercel Hobby build-rate-limit 때문에 exact-SHA Production 검증은 아직 닫히지 않았습니다.
 
-- Current main baseline: `94939d5` · PR #47
+- v2.2 product baseline: `94939d5` · PR #47
 - Release runtime: `2.2.0`
 - Storage / schema / Product Hardening event contract: `2.1.0` 호환 유지
 - Regression baseline: Product / Portfolio mode · 39 screens · 16-slide Case Study
@@ -35,7 +35,7 @@
   - Case Study release badge/note를 v2.2 UI Ownership 기준으로 동기화
   - exact Production strict browser smoke에 v2.2 runtime/Inspector ownership assertion 추가
 - PR #47 QA run #146: Regression + Browser E2E/axe **PASS**
-- main run #147: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
+- v2.2 product-baseline main run #147: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
   - Production Smoke는 Vercel rate-limit 때문에 마지막 exact verified Production을 대상으로 compatibility mode로 실행
 
 ### Production release gate
@@ -44,10 +44,10 @@
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
   - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-- v2.2 exact Production target: `94939d5`
+- v2.2 production-impacting baseline awaiting exact Production: `94939d5`
 - Current Vercel status: **PENDING** — `Deployment rate limited — retry in 24 hours`
 - v2.2를 Production-verified release로 닫기 위한 남은 조건:
-  - exact `94939d5` 계열 tree가 Vercel Production에 READY
+  - `94939d5` product tree를 포함한 현재 main descendant가 Vercel Production에 READY
   - strict Production HTTP smoke PASS
   - strict Production Chromium render smoke PASS
   - Product/Portfolio + v2.2 Inspector ownership assertion PASS
@@ -120,7 +120,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 | 검증 | 상태 |
 | --- | --- |
-| Current main | **94939d5 · v2.2.0** |
+| v2.2 product baseline | **94939d5 · v2.2.0** |
 | Regression suite | **PASS** · required-check key는 현재 `Regression 36` |
 | Browser E2E · Product + Portfolio | **PASS** |
 | Matching domain parity | **PASS** |
@@ -131,7 +131,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | 39-screen product baseline | **PASS** |
 | 16-slide Case Study IA | **PASS** |
 | v2.2 Inspector ownership | **PR #47 · run #146 PASS** |
-| Current main QA | **run #147 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
+| v2.2 product-baseline QA | **run #147 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
 | Last exact verified Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
 | Last exact Production verification | **run #134 · HTTP + Chromium PASS** |
 | v2.2 exact Vercel Production | **PENDING · build-rate-limit · retry in 24 hours** |
