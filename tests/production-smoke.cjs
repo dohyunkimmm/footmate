@@ -48,6 +48,7 @@ async function main() {
     assert(body.includes("fetch('/demo-source'"), '/demo shell source loader missing');
     assert(body.includes('footmate-product-core.js'), '/demo product policy core loader missing');
     assert(body.includes('footmate-product-hardening.js'), '/demo product hardening loader missing');
+    if (strictProduction) assert(body.includes('/src/v2/styles/core-funnel.css'), '/demo v2.4 core funnel stylesheet missing');
   });
 
   if (strictProduction) {
@@ -61,6 +62,7 @@ async function main() {
   await run('demo-source', '/demo-source', ({ body }) => {
     assert(body.includes('id="s-splash"'), 'demo source splash missing');
     assert(body.includes('id="s-profile"'), 'demo source profile screen missing');
+    if (strictProduction) assert(!body.includes('fm24-'), 'v2.4 component markup leaked into demo-source');
   });
 
   await run('core-runtime', '/footmate-core.js', ({ body, contentType }) => {
@@ -69,7 +71,7 @@ async function main() {
   });
 
   await run('product-core-runtime', '/footmate-product-core.js', ({ body, contentType }) => {
-    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product core content type unexpected');
+    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product core runtime content type unexpected');
     assert(body.includes('FootMateProductCore'), 'FootMateProductCore marker missing');
     assert(body.includes('transitionState'), 'product state machine marker missing');
     assert(body.includes('explainMatch'), 'recommendation explanation marker missing');
@@ -87,18 +89,34 @@ async function main() {
     assert(body.includes('FootMateV2Runtime'), 'v2 runtime marker missing');
     assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
     if (strictProduction) {
-      assert(body.includes("VERSION='2.1.0'"), 'v2.1 version marker missing');
-      assert(body.includes("architecture:'v2.1-domain-modular-es-runtime'"), 'v2.1 architecture marker missing');
+      assert(body.includes("VERSION='2.1.0'"), 'v2.1 schema version marker missing');
+      assert(body.includes("RELEASE_VERSION='2.4.0'"), 'v2.4 release marker missing');
+      assert(body.includes('FootMateV24'), 'v2.4 runtime contract missing');
+      assert(body.includes("releaseArchitecture:'v2.4-core-funnel-experience'"), 'v2.4 release architecture marker missing');
     }
   });
 
   if (strictProduction) {
+    await run('v2.4-core-funnel-components', '/src/v2/demo/core-funnel-components.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2.4 component content type unexpected');
+      assert(body.includes('CORE_FUNNEL_STEPS'), 'v2.4 core funnel registry missing');
+      assert(body.includes('createDetailDecisionCard'), 'v2.4 detail decision component missing');
+    });
+    await run('v2.4-core-funnel-experience', '/src/v2/ui/core-funnel-experience.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2.4 experience content type unexpected');
+      assert(body.includes("architecture:'v2.4-core-funnel-experience'"), 'v2.4 core funnel architecture missing');
+      assert(body.includes("componentSource:'src/v2/demo/core-funnel-components.js'"), 'v2.4 component ownership marker missing');
+    });
+    await run('v2.4-core-funnel-style', '/src/v2/styles/core-funnel.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v2.4 stylesheet content type unexpected');
+      assert(body.includes('FootMate v2.4 · Core Funnel Experience'), 'v2.4 stylesheet marker missing');
+      assert(body.includes('.fm24-journey'), 'v2.4 journey style missing');
+    });
     await run('v2-matching-domain-runtime', '/src/v2/domain/matching-engine.js', ({ body, contentType }) => {
       assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 matching domain content type unexpected');
       assert(body.includes('createMatchEngine'), 'v2.1 matching engine export missing');
       assert(body.includes("architecture:'v2.1-domain-engine'"), 'v2.1 matching architecture marker missing');
     });
-
     await run('v2-elo-domain-runtime', '/src/v2/domain/elo-engine.js', ({ body, contentType }) => {
       assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 ELO domain content type unexpected');
       assert(body.includes('createEloEngine'), 'v2.1 ELO engine export missing');

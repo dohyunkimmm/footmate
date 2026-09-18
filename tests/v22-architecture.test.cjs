@@ -25,24 +25,27 @@ test('v2.2 product inspector owns DOM rendering outside product hardening', () =
   assert.equal(validation.includes('hideDuplicateLauncher'), false);
 });
 
-test('v2.3 release metadata preserves v2.2 compatibility and v2.1 storage/event contracts', () => {
+test('v2.4 release metadata preserves v2.2/v2.3 compatibility and v2.1 storage/event contracts', () => {
   const bootstrap = read('src/v2/bootstrap.js');
   const hardening = read('footmate-product-hardening.js');
   const caseStudy = read('index-experience.js');
 
   assert.ok(bootstrap.includes("const VERSION='2.1.0'"));
-  assert.ok(bootstrap.includes("const PREVIOUS_RELEASE_VERSION='2.2.0'"));
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.3.0'"));
-  assert.ok(bootstrap.includes("releaseArchitecture:'v2.3-compatibility-boundary-reduction'"));
+  assert.ok(bootstrap.includes("const V22_RELEASE_VERSION='2.2.0'"));
+  assert.ok(bootstrap.includes("const PREVIOUS_RELEASE_VERSION='2.3.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.4.0'"));
+  assert.ok(bootstrap.includes("releaseArchitecture:'v2.4-core-funnel-experience'"));
   assert.ok(bootstrap.includes("'footmate:v2.2:ready'"));
   assert.ok(bootstrap.includes("'footmate:v2.3:ready'"));
+  assert.ok(bootstrap.includes("'footmate:v2.4:ready'"));
   assert.ok(bootstrap.includes('window.FootMateV22'));
   assert.ok(bootstrap.includes('window.FootMateV23'));
+  assert.ok(bootstrap.includes('window.FootMateV24'));
   assert.ok(hardening.includes("eventContractVersion:'2.1.0'"));
-  assert.ok(caseStudy.includes('v2.3.0 Compatibility Boundary'));
+  assert.ok(caseStudy.includes('v2.4.0 Core Funnel Experience'));
 });
 
-test('v2.2 inspector css keeps its compatibility alias while the v2.3 shell loads canonical ownership directly', () => {
+test('v2.2 inspector css keeps its compatibility alias while the v2.4 shell loads canonical ownership directly', () => {
   const alias = read('footmate-product-hardening.css');
   const styles = read('src/v2/styles/product-inspector.css');
   const shell = read('demo-shell.html');
@@ -55,5 +58,6 @@ test('v2.2 inspector css keeps its compatibility alias while the v2.3 shell load
   assert.ok(shell.includes('/src/v2/styles/product-inspector.css?v=20260918-1'));
   assert.equal(shell.includes('href="/footmate-product-hardening.css'), false);
   assert.ok(shell.includes('footmate-product-hardening.js?v=20260918-5'));
-  assert.ok(shell.includes('bootstrap.js?v=20260918-8'));
+  assert.ok(shell.includes('bootstrap.js?v=20260918-9'));
+  assert.ok(shell.includes('/src/v2/styles/core-funnel.css?v=20260918-1'));
 });

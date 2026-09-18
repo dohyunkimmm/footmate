@@ -27,7 +27,7 @@ html[data-footmate-release="2.4"] .fm24-journey-step{
   align-items:center;
   justify-content:center;
   gap:4px;
-  color:var(--fm-color-text-500);
+  color:var(--fm-color-text-700);
   font-size:10px;
   font-weight:700;
 }
@@ -193,7 +193,7 @@ html[data-footmate-release="2.4"] .fm24-checkout-step{
   padding:9px 6px;
   border-radius:11px;
   background:var(--fm-color-surface-subtle);
-  color:var(--fm-color-text-500);
+  color:var(--fm-color-text-700);
   font-size:10px;
   font-weight:800;
   text-align:center;
@@ -209,6 +209,7 @@ html[data-footmate-release="2.4"] .fm24-sticky-primary{
 html[data-footmate-release="2.4"] #s-detail .pcnt,
 html[data-footmate-release="2.4"] #s-pay .pcnt{padding-bottom:28px}
 @media(max-width:360px){
+  html[data-footmate-release="2.4"] .fm24-action{min-height:52px;padding:12px}
   html[data-footmate-release="2.4"] .fm24-journey-label{display:none}
   html[data-footmate-release="2.4"] .fm24-journey-step{gap:0}
   html[data-footmate-release="2.4"] .fm24-factor-grid{grid-template-columns:1fr}

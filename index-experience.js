@@ -6,9 +6,9 @@ function enhance(){
   if(cover){
     const badge=document.createElement('div');
     badge.id='fmReleaseVersionBadge';
-    badge.setAttribute('aria-label','FootMate v2.3.0 Compatibility Boundary');
+    badge.setAttribute('aria-label','FootMate v2.4.0 Core Funnel Experience');
     badge.style.cssText='display:inline-flex;align-items:center;gap:8px;margin:0 auto 14px;padding:7px 12px;border-radius:999px;border:1px solid rgba(110,167,255,.25);background:rgba(110,167,255,.08);color:#B7D3FF;font:900 9px/1.2 Inter,sans-serif;letter-spacing:.13em;';
-    badge.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#63E8D5;box-shadow:0 0 12px rgba(99,232,213,.6)"></span>V2.3 · COMPATIBILITY BOUNDARY';
+    badge.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#63E8D5;box-shadow:0 0 12px rgba(99,232,213,.6)"></span>V2.4 · CORE FUNNEL EXPERIENCE';
     cover.insertBefore(badge,cover.firstChild);
   }
 
@@ -17,7 +17,7 @@ function enhance(){
     const note=document.createElement('div');
     note.id='fmReleaseExperienceNote';
     note.style.cssText='margin-top:14px;padding:14px 16px;border-radius:14px;border:1px solid rgba(110,167,255,.18);background:linear-gradient(135deg,rgba(110,167,255,.08),rgba(124,108,242,.05));color:#9FB3CC;font-size:11px;line-height:1.65;';
-    note.innerHTML='<b style="display:block;margin-bottom:5px;color:#EAF3FF;font-size:12px">v2.3.0 Compatibility Boundary</b>Product Experience와 runtime patch/finalize CSS ownership을 <code>src/v2/styles</code>로 이동하고, canonical scenario persistence와 guarded legacy hydration bridge를 추가했습니다. Filter·Results·Recommendation Reason 렌더링은 <code>src/v2/ui/scenario-presenter.js</code>가 소유하며 39개 화면, Matching/ELO 정책, storage/schema/event contract <code>2.1.0</code> 호환은 유지합니다.';
+    note.innerHTML='<b style="display:block;margin-bottom:5px;color:#EAF3FF;font-size:12px">v2.4.0 Core Funnel Experience</b>홈 → 조건 설정 → 추천 비교 → 경기 상세 → 참가/결제의 핵심 퍼널을 진행 단계·요약 카드·복구 액션·모바일 sticky CTA 중심으로 재설계했습니다. 새 UI markup은 <code>src/v2/demo/core-funnel-components.js</code>, 동작 ownership은 <code>src/v2/ui/core-funnel-experience.js</code>가 담당하고, Detail presentation도 v2 presenter 경계로 이동했습니다. 기존 39개 화면과 v2.3 compatibility contract는 회귀 기준으로 유지합니다.';
     validation.appendChild(note);
   }
 
@@ -26,7 +26,7 @@ function enhance(){
     const pill=document.createElement('div');
     pill.id='fmReleaseDemoPill';
     pill.style.cssText='display:inline-flex;margin-bottom:10px;padding:6px 10px;border-radius:999px;border:1px solid rgba(99,232,213,.2);background:rgba(99,232,213,.07);color:#A9F4E8;font:900 9px/1.2 Inter,sans-serif;letter-spacing:.08em;';
-    pill.textContent='DOMAIN ENGINE · SCENARIO OWNERSHIP · STATE PARITY';
+    pill.textContent='CORE FUNNEL · COMPONENT OWNERSHIP · RECOVERY UX';
     demoSlide.insertBefore(pill,demoSlide.firstChild);
   }
 }
