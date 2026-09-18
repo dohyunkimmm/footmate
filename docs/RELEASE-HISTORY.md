@@ -4,21 +4,24 @@
 
 ## Current — v2.1.0 Domain Engine
 
-- Source/runtime baseline: `4393403`
+- Product/runtime baseline: `59b5af1`
+- Domain Engine extraction baseline: `4393403`
 - GitHub: PR #29 merged to `main`
 - Runtime version: `2.1.0`
 - Product Hardening event contract: `2.1.0`
 - Case Study badge/name: `v2.1.0 Domain Engine`
-- GitHub Actions run #93:
+- GitHub Actions run #102:
   - Regression 36 PASS
   - Browser E2E + axe PASS
   - matching domain parity PASS
   - ELO domain parity PASS
   - 320 / 375 / 390 / 430 responsive PASS
   - representative visual contract PASS
-  - Production Smoke blocked before HTTP/browser phase because Vercel returned `Deployment rate limited — retry in 24 hours`
-- v2.1 Production: pending Vercel deployment
-- Current verified Production: `9ff82c7` · v2.0.0 · verified · READY
+  - Production HTTP smoke PASS
+  - Production Chromium render smoke PASS
+- Vercel Production: `4f8a55a` · deployment `dpl_6qdJWivcQ2KP2zZJwiRWhsRMACQc` · verified · READY
+- PR #32 / `4f8a55a` contains no source changes; it retriggered deployment for the already-verified v2.1 product tree from `59b5af1`.
+- The earlier Vercel rate-limit incident was resolved by the successful retry deployment.
 
 ### Domain ownership
 
