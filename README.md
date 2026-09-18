@@ -16,7 +16,7 @@
 
 **v2.2.0 · Inspector UI Ownership**
 
-현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. Vercel Hobby build-rate-limit 때문에 exact-SHA Production 검증은 아직 닫히지 않았지만, quota와 독립된 Render backup은 현재 `main`을 exact 배포해 `live` 상태로 유지하고 있습니다.
+현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. Vercel Hobby build-rate-limit 때문에 exact-SHA Production 검증은 아직 닫히지 않았지만, quota와 독립된 Render backup은 `main` auto-deploy 경로로 `live` 상태를 유지합니다. 문서 sync 직전 검증 baseline `b3125bf`는 당시 current main과 exact 일치했습니다.
 
 - v2.2 product baseline: `94939d5` · PR #47
 - Release runtime: `2.2.0`
@@ -47,14 +47,14 @@
   - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
 - v2.2 production-impacting baseline awaiting exact Vercel Production: `94939d5`
 - Current Vercel status: **PENDING** — latest attempts are quota-limited/canceled; last READY Production remains `3d83a01`
-- Current Render backup:
+- Render backup verification baseline:
   - service: `footmate-backup`
   - URL: `https://footmate-backup.onrender.com`
-  - exact main SHA: `b3125bf28ba8d1a44201950c55b11c841b77b383`
+  - verified SHA: `b3125bf28ba8d1a44201950c55b11c841b77b383`
   - deployment: `dep-damd0h6gekts73e6hlm0`
-  - state: **live**
+  - state at verification: **live**
   - branch: `main` · auto-deploy enabled
-  - Vercel quota와 독립된 백업 배포 경로이며 Render service/deploy control plane 기준 exact current-main 반영을 확인함
+  - 당시 GitHub current main과 exact 일치했으며 Vercel quota와 독립된 백업 배포 경로로 사용
 - v2.2를 Vercel Production-verified release로 닫기 위한 남은 조건:
   - `94939d5` product tree를 포함한 현재 main descendant가 Vercel Production에 READY
   - strict Production HTTP smoke PASS
@@ -143,7 +143,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | Last exact verified Vercel Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
 | Last exact Vercel Production verification | **run #134 · HTTP + Chromium PASS** |
 | v2.2 exact Vercel Production | **PENDING · Hobby quota / latest attempts canceled** |
-| Render backup deployment | **LIVE · b3125bf · dep-damd0h6gekts73e6hlm0 · exact current main** |
+| Render backup | **LIVE verified baseline · b3125bf · dep-damd0h6gekts73e6hlm0 · main auto-deploy** |
 
 Render 항목은 service/deploy control plane 기준 검증입니다. 별도 strict HTTP/Chromium Production smoke는 Vercel release gate와 구분합니다.
 
