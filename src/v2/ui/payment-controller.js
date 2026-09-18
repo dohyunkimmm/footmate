@@ -2,7 +2,7 @@ function textValue(value){
   return '₩'+Math.max(0,Number(value)||0).toLocaleString();
 }
 
-export function createPaymentController({productStore,scenarioStore,finalRuntime}){
+export function createPaymentController({productStore,scenarioStore,finalRuntime,decisionEngine,productOps}){
   const legacy=finalRuntime.legacy||{};
   const COST=productStore.cost;
   const hardenedRecord=typeof window.recordParticipation==='function'?window.recordParticipation.bind(window):null;
@@ -10,9 +10,16 @@ export function createPaymentController({productStore,scenarioStore,finalRuntime
   function selectedKey(){
     return scenarioStore.getState().selectedMatchKey||'suwon';
   }
-
+  function participationDecision(){
+    return decisionEngine?.evaluate?.('s-pay',{record:false})||null;
+  }
+  function notifyBlocked(value){
+    if(!value)return;
+    window.dispatchEvent(new CustomEvent('footmate:v2.5:decision-blocked',{detail:value}));
+  }
   function render(){
     productStore.renderCredit();
+    window.FootMateDecisionExperience?.refresh?.();
   }
 
   function selectCharge(button,amount){
@@ -38,6 +45,16 @@ export function createPaymentController({productStore,scenarioStore,finalRuntime
 
   function recordParticipation(){
     const key=selectedKey();
+    const guard=participationDecision();
+    if(guard?.submission==='idempotent')return true;
+    if(guard?.submission==='block'){
+      notifyBlocked(guard);
+      return false;
+    }
+
+    const op=productOps?.operation?.(key);
+    if(op?.payment==='failed')productOps?.transition?.('payment','pending',{trigger:'v2.5-recovery'});
+
     let result=true;
     productStore.update(state=>{
       if(!Array.isArray(state.paidMatchKeys))state.paidMatchKeys=[];
@@ -61,8 +78,19 @@ export function createPaymentController({productStore,scenarioStore,finalRuntime
   }
 
   function confirmParticipation(){
+    const guard=participationDecision();
+    if(guard?.submission==='idempotent'){
+      window.goScreen?.('s-confirm');
+      return true;
+    }
+    if(guard?.submission==='block'){
+      notifyBlocked(guard);
+      if(guard.primary?.id==='charge')window.goScreen?.('s-pay-low');
+      return false;
+    }
     if(recordParticipation()===false){
-      window.goScreen?.('s-pay-low');
+      const next=participationDecision();
+      if(next?.primary?.id==='charge')window.goScreen?.('s-pay-low');
       return false;
     }
     window.goScreen?.('s-confirm');
@@ -86,7 +114,10 @@ export function createPaymentController({productStore,scenarioStore,finalRuntime
     render();
 
     if(recordParticipation()===false){
-      window.goScreen?.('s-pay-low');
+      set('chargeDoneRemaining',textValue(productStore.getState().creditBalance));
+      const guard=participationDecision();
+      notifyBlocked(guard);
+      window.goScreen?.(guard?.primary?.id==='charge'?'s-pay-low':'s-pay');
       return false;
     }
 

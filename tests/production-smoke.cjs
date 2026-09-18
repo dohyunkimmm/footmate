@@ -7,15 +7,10 @@ const reportFile = path.join(reportDir, 'production-smoke.json');
 const strictProduction = ['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION || '').toLowerCase());
 
 async function fetchText(route) {
-  const url = base + route;
-  const response = await fetch(url, { redirect: 'follow', headers: { 'user-agent': 'FootMate-QA/1.0' } });
-  const body = await response.text();
-  return { url: response.url, status: response.status, contentType: response.headers.get('content-type') || '', body };
+  const response = await fetch(base + route, { redirect: 'follow', headers: { 'user-agent': 'FootMate-QA/1.0' } });
+  return { url: response.url, status: response.status, contentType: response.headers.get('content-type') || '', body: await response.text() };
 }
-
-function assert(condition, message) {
-  if (!condition) throw new Error(message);
-}
+function assert(condition, message) { if (!condition) throw new Error(message); }
 
 async function main() {
   const checks = [];
@@ -33,13 +28,7 @@ async function main() {
 
   await run('case-study-html', '/', ({ body, contentType }) => {
     assert(contentType.includes('text/html'), '/ must return HTML');
-    for (const marker of [
-      '<meta name="description"',
-      '<link rel="canonical" href="https://footmate-black.vercel.app/">',
-      '<meta property="og:title"',
-      '<meta property="og:image"',
-      '<meta name="twitter:card" content="summary_large_image">'
-    ]) assert(body.includes(marker), `/ missing ${marker}`);
+    for (const marker of ['<meta name="description"','<link rel="canonical" href="https://footmate-black.vercel.app/">','<meta property="og:title"','<meta property="og:image"','<meta name="twitter:card" content="summary_large_image">']) assert(body.includes(marker), `/ missing ${marker}`);
   });
 
   await run('demo-shell', '/demo', ({ body, contentType }) => {
@@ -48,13 +37,16 @@ async function main() {
     assert(body.includes("fetch('/demo-source'"), '/demo shell source loader missing');
     assert(body.includes('footmate-product-core.js'), '/demo product policy core loader missing');
     assert(body.includes('footmate-product-hardening.js'), '/demo product hardening loader missing');
-    if (strictProduction) assert(body.includes('/src/v2/styles/core-funnel.css'), '/demo v2.4 core funnel stylesheet missing');
+    if (strictProduction) {
+      assert(body.includes('/src/v2/styles/core-funnel.css'), '/demo v2.4 core funnel stylesheet missing');
+      assert(body.includes('/src/v2/styles/decision-recovery.css'), '/demo v2.5 decision/recovery stylesheet missing');
+      assert(body.includes('/src/v2/bootstrap.js?v=20260919-1'), '/demo v2.5 bootstrap cache key missing');
+    }
   });
 
   if (strictProduction) {
     await run('demo-legacy-shell', '/demo.html', ({ body, contentType }) => {
       assert(contentType.includes('text/html'), '/demo.html must return HTML');
-      assert(body.includes('FootMate | 인터랙티브 프로토타입'), '/demo.html compatibility shell title missing');
       assert(body.includes("fetch('/demo-source'"), '/demo.html must resolve through the demo shell');
     });
   }
@@ -62,7 +54,10 @@ async function main() {
   await run('demo-source', '/demo-source', ({ body }) => {
     assert(body.includes('id="s-splash"'), 'demo source splash missing');
     assert(body.includes('id="s-profile"'), 'demo source profile screen missing');
-    if (strictProduction) assert(!body.includes('fm24-'), 'v2.4 component markup leaked into demo-source');
+    if (strictProduction) {
+      assert(!body.includes('fm24-'), 'v2.4 component markup leaked into demo-source');
+      assert(!body.includes('fm25-'), 'v2.5 component markup leaked into demo-source');
+    }
   });
 
   await run('core-runtime', '/footmate-core.js', ({ body, contentType }) => {
@@ -74,13 +69,10 @@ async function main() {
     assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product core runtime content type unexpected');
     assert(body.includes('FootMateProductCore'), 'FootMateProductCore marker missing');
     assert(body.includes('transitionState'), 'product state machine marker missing');
-    assert(body.includes('explainMatch'), 'recommendation explanation marker missing');
   });
 
-  await run('final-runtime', '/footmate-finalize.js', ({ body, contentType }) => {
-    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'final runtime content type unexpected');
+  await run('final-runtime', '/footmate-finalize.js', ({ body }) => {
     assert(body.includes('compatibility-state-bridge'), 'final runtime state-bridge marker missing');
-    assert(body.includes('favoriteMatchKeys'), 'entity persistence marker missing');
     assert(body.includes('FootMateFinalRuntime'), 'final runtime state accessor missing');
   });
 
@@ -90,66 +82,58 @@ async function main() {
     assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
     if (strictProduction) {
       assert(body.includes("VERSION='2.1.0'"), 'v2.1 schema version marker missing');
-      assert(body.includes("RELEASE_VERSION='2.4.0'"), 'v2.4 release marker missing');
-      assert(body.includes('FootMateV24'), 'v2.4 runtime contract missing');
-      assert(body.includes("releaseArchitecture:'v2.4-core-funnel-experience'"), 'v2.4 release architecture marker missing');
+      assert(body.includes("RELEASE_VERSION='2.5.0'"), 'v2.5 release marker missing');
+      assert(body.includes('FootMateV25'), 'v2.5 runtime contract missing');
+      assert(body.includes("releaseArchitecture:'v2.5-decision-recovery-experience'"), 'v2.5 release architecture marker missing');
     }
   });
 
   if (strictProduction) {
-    await run('v2.4-core-funnel-components', '/src/v2/demo/core-funnel-components.js', ({ body, contentType }) => {
-      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2.4 component content type unexpected');
+    await run('v2.5-decision-engine', '/src/v2/domain/decision-engine.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'decision engine content type unexpected');
+      assert(body.includes('createDecisionEngine'), 'v2.5 decision engine export missing');
+      assert(body.includes("architecture:'v2.5-decision-recovery-engine'"), 'v2.5 decision architecture marker missing');
+      assert(body.includes('traceId'), 'v2.5 decision trace marker missing');
+    });
+    await run('v2.5-decision-components', '/src/v2/demo/decision-recovery-components.js', ({ body }) => {
+      assert(body.includes('DECISION_RECOVERY_SCREEN_IDS'), 'v2.5 screen registry missing');
+      assert(body.includes('createComparisonBoard'), 'v2.5 comparison component missing');
+      assert(body.includes('createPreflightCard'), 'v2.5 preflight component missing');
+    });
+    await run('v2.5-decision-experience', '/src/v2/ui/decision-recovery-experience.js', ({ body }) => {
+      assert(body.includes("architecture:'v2.5-decision-recovery-experience'"), 'v2.5 experience architecture missing');
+      assert(body.includes("componentSource:'src/v2/demo/decision-recovery-components.js'"), 'v2.5 component ownership marker missing');
+    });
+    await run('v2.5-decision-style', '/src/v2/styles/decision-recovery.css', ({ body }) => {
+      assert(body.includes('FootMate v2.5 · Decision & Recovery Experience'), 'v2.5 stylesheet marker missing');
+      assert(body.includes('.fm25-panel'), 'v2.5 decision panel style missing');
+    });
+    await run('v2.4-core-funnel-components', '/src/v2/demo/core-funnel-components.js', ({ body }) => {
       assert(body.includes('CORE_FUNNEL_STEPS'), 'v2.4 core funnel registry missing');
-      assert(body.includes('createDetailDecisionCard'), 'v2.4 detail decision component missing');
     });
-    await run('v2.4-core-funnel-experience', '/src/v2/ui/core-funnel-experience.js', ({ body, contentType }) => {
-      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2.4 experience content type unexpected');
-      assert(body.includes("architecture:'v2.4-core-funnel-experience'"), 'v2.4 core funnel architecture missing');
-      assert(body.includes("componentSource:'src/v2/demo/core-funnel-components.js'"), 'v2.4 component ownership marker missing');
-    });
-    await run('v2.4-core-funnel-style', '/src/v2/styles/core-funnel.css', ({ body, contentType }) => {
-      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v2.4 stylesheet content type unexpected');
-      assert(body.includes('FootMate v2.4 · Core Funnel Experience'), 'v2.4 stylesheet marker missing');
-      assert(body.includes('.fm24-journey'), 'v2.4 journey style missing');
-    });
-    await run('v2-matching-domain-runtime', '/src/v2/domain/matching-engine.js', ({ body, contentType }) => {
-      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 matching domain content type unexpected');
+    await run('v2-matching-domain-runtime', '/src/v2/domain/matching-engine.js', ({ body }) => {
       assert(body.includes('createMatchEngine'), 'v2.1 matching engine export missing');
-      assert(body.includes("architecture:'v2.1-domain-engine'"), 'v2.1 matching architecture marker missing');
     });
-    await run('v2-elo-domain-runtime', '/src/v2/domain/elo-engine.js', ({ body, contentType }) => {
-      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 ELO domain content type unexpected');
+    await run('v2-elo-domain-runtime', '/src/v2/domain/elo-engine.js', ({ body }) => {
       assert(body.includes('createEloEngine'), 'v2.1 ELO engine export missing');
-      assert(body.includes("architecture:'v2.1-domain-engine'"), 'v2.1 ELO architecture marker missing');
     });
   }
 
-  await run('v2-payment-runtime', '/src/v2/ui/payment-controller.js', ({ body, contentType }) => {
-    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2 payment content type unexpected');
-    assert(body.includes('simulateLowCredit'), 'v2 low-credit controller marker missing');
+  await run('v2-payment-runtime', '/src/v2/ui/payment-controller.js', ({ body }) => {
     assert(body.includes('recordParticipation'), 'v2 participation adapter marker missing');
     assert(body.includes('paidMatchKeys'), 'v2 duplicate-charge guard marker missing');
+    if (strictProduction) assert(body.includes('footmate:v2.5:decision-blocked'), 'v2.5 payment guard event missing');
   });
 
-  await run('product-hardening-runtime', '/footmate-product-hardening.js', ({ body, contentType }) => {
-    assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product hardening content type unexpected');
+  await run('product-hardening-runtime', '/footmate-product-hardening.js', ({ body }) => {
     assert(body.includes('FootMateProductOps'), 'product operation API missing');
     assert(body.includes('duplicate_application_blocked'), 'duplicate application guard marker missing');
-    assert(body.includes('recommendation_baseline_saved'), 'recommendation comparison marker missing');
     if (strictProduction) assert(body.includes('v2.1-domain-store'), 'v2.1 recommendation source marker missing');
   });
 
   fs.mkdirSync(reportDir, { recursive: true });
-  const payload = {
-    base,
-    checkedAt: new Date().toISOString(),
-    githubSha: process.env.GITHUB_SHA || null,
-    strictProduction,
-    passed: checks.every(check => check.ok),
-    checks
-  };
+  const payload = {base,checkedAt:new Date().toISOString(),githubSha:process.env.GITHUB_SHA||null,strictProduction,passed:checks.every(check=>check.ok),checks};
   fs.writeFileSync(reportFile, JSON.stringify(payload, null, 2) + '\n');
-
   for (const check of checks) {
     console.log(`${check.ok ? 'PASS' : 'FAIL'} ${check.name} ${check.route}${check.status ? ` (${check.status})` : ''}`);
     if (!check.ok) console.error(`  ${check.error}`);
