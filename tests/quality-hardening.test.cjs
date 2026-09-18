@@ -12,8 +12,13 @@ test('production case study shell stays synchronized', () => {
   assert.equal(read('index.html'), read('index-shell.html'));
 });
 
-test('approved demo source stays synchronized', () => {
-  assert.equal(read('demo.html'), read('demo-source.html'));
+test('canonical demo source boundary stays synchronized', () => {
+  assert.equal(exists('demo.html'), false);
+  const shell = read('demo-shell.html');
+  const source = read('demo-source.html');
+  assert.ok(shell.includes("fetch('/demo-source'"));
+  assert.ok(source.includes('id="s-splash"'));
+  assert.ok(source.includes('id="s-profile"'));
 });
 
 test('production shell exposes SEO and social metadata before JavaScript runs', () => {
