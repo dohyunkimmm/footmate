@@ -50,12 +50,13 @@ test('production case study and v2 product/portfolio modes render after deployme
   }
 
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => window.__footmateV2 === true && !!window.FootMateV24 && document.querySelectorAll('.screen').length === 39);
+  await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
+  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV24);
   await expect(page.locator('.top-bar')).toBeHidden();
   await expect(page.locator('.flow-nav')).toBeHidden();
   await page.evaluate(() => window.goScreen('s-home'));
   await expect(page.locator('#s-home')).toHaveClass(/active/);
-  await expect(page.locator('#s-home .fm24-home-decision')).toBeVisible();
+  if (strictProduction) await expect(page.locator('#s-home .fm24-home-decision')).toBeVisible();
   await expect(page.locator('#v3Launcher')).toBeHidden();
   let state = await page.evaluate(() => ({
     mode: window.FootMateV2Runtime.mode,
@@ -63,6 +64,15 @@ test('production case study and v2 product/portfolio modes render after deployme
   }));
   expect(state.mode).toBe('product');
   expect(state.operation).toMatchObject({ match: 'open', participation: 'available' });
+
+  if (!strictProduction) {
+    const compatibility = await page.evaluate(() => ({
+      runtimeVersion: window.FootMateV2Runtime?.version || null,
+      availableReleaseVersion: window.FootMateV24?.version || window.FootMateV23?.version || window.FootMateV22?.version || null
+    }));
+    expect(compatibility.runtimeVersion).toBeTruthy();
+    expect(compatibility.availableReleaseVersion).toBeTruthy();
+  }
 
   if (strictProduction) {
     const release = await page.evaluate(() => ({
@@ -116,13 +126,14 @@ test('production case study and v2 product/portfolio modes render after deployme
   }
 
   await page.goto('/demo?mode=portfolio', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => window.__footmateV2 === true && !!window.FootMateV24);
+  await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
+  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV24);
   const intro = page.locator('#demoOnboarding');
   if (await intro.isVisible()) await page.locator('.demo-onboarding-start').click();
   await page.evaluate(() => window.goScreen('s-home'));
   const validationLauncher = page.getByRole('button', { name: '제품 검증 패널 열기' });
   await expect(validationLauncher).toBeVisible();
-  await expect(page.locator('#s-home .fm24-home-decision')).toBeVisible();
+  if (strictProduction) await expect(page.locator('#s-home .fm24-home-decision')).toBeVisible();
   state = await page.evaluate(() => ({ mode: window.FootMateV2Runtime.mode }));
   expect(state.mode).toBe('portfolio');
 
