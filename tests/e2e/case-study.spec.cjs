@@ -86,3 +86,53 @@ test('long Case Study TOC heading stays on one line on desktop', async ({ page }
     expect(metrics.height).toBeLessThanOrEqual(metrics.lineHeight * 1.25);
   }
 });
+
+
+test('mobile Case Study can scroll vertically and reveal the embedded demo', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => document.querySelectorAll('.slide').length === 16);
+  await page.waitForFunction(() => typeof window.goTo === 'function');
+  await page.waitForSelector('#fmDecisionSummary');
+
+  const cover = page.locator('.slide[data-i="0"] .cover');
+  const coverMetrics = await cover.evaluate(element => {
+    const style = getComputedStyle(element);
+    return {
+      overflowY: style.overflowY,
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight
+    };
+  });
+  expect(coverMetrics.overflowY).toBe('auto');
+  expect(coverMetrics.scrollHeight).toBeGreaterThan(coverMetrics.clientHeight);
+
+  await cover.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  expect(await cover.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+
+  await page.evaluate(() => window.goTo(13));
+  await page.waitForFunction(() => {
+    const frame = document.getElementById('demoFrame');
+    return frame && frame.getAttribute('src') && frame.getAttribute('src') !== 'about:blank';
+  });
+
+  const demo = page.locator('.slide[data-i="13"] .demo-showcase');
+  const demoMetrics = await demo.evaluate(element => {
+    const style = getComputedStyle(element);
+    return {
+      overflowY: style.overflowY,
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight
+    };
+  });
+  expect(demoMetrics.overflowY).toBe('auto');
+  expect(demoMetrics.scrollHeight).toBeGreaterThan(demoMetrics.clientHeight);
+
+  const device = page.locator('.slide[data-i="13"] .showcase-device-wrap');
+  await device.scrollIntoViewIfNeeded();
+  const deviceBox = await device.boundingBox();
+  expect(deviceBox).not.toBeNull();
+  expect(deviceBox.y).toBeLessThan(844);
+  expect(deviceBox.y + deviceBox.height).toBeGreaterThan(0);
+  await expect(page.locator('#demoFrame')).toHaveAttribute('src', '/demo');
+});
