@@ -2,43 +2,45 @@
 
 현재 릴리스 상태와 검증 기준만 간결하게 보존합니다. 세부 변경은 Git commit / Pull Request / GitHub Actions를 source of truth로 사용합니다.
 
-## Current Release — v2.5.0 Decision & Recovery Experience
+## Current Release — v2.6.0 Architecture Hardening
 
-- product/runtime baseline: `0e7c40c` · PR #63
-- exact verified Production SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
-- Release runtime version: `2.5.0`
+- product/runtime baseline: `eddbaa60` · PR #65
+- exact verified Production SHA: `eddbaa607fcf1db516a1d5ab8ee27eb8dad9ad25`
+- Release runtime version: `2.6.0`
 - Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
-- v2.2 / v2.3 / v2.4 runtime alias/event: compatibility 유지
+- v2.2 / v2.3 / v2.4 / v2.5 runtime alias/event: compatibility 유지
 - Product / Portfolio mode: 유지
 - Product screen baseline: 39 screens
 - Case Study information architecture: 16 slides
 - Matching / ELO ownership: `src/v2/domain/`
 - Decision / Recovery ownership: `src/v2/domain/decision-engine.js`
-- v2.5 release gate: **CLOSED**
+- Runtime boundary ownership: `src/v2/demo/runtime-boundary.js`
+- Availability verification boundary: `src/v2/domain/availability-gateway.js`
+- Decision trace persistence: `src/v2/state/decision-trace-persistence.js`
+- v2.6 release gate: **CLOSED**
 
-### v2.5 changes
+### v2.6 changes
 
-PR #63 · `0e7c40c`
-- v2.4 Core Funnel Experience 위에 deterministic decision/guardrail layer 추가
-- Home next-action, Filter impact preview, Results comparison, Detail/Reason preflight, Payment preflight UI/IX 추가
-- 정원 마감 · 저잔액 · 결제 실패 · 조건 불일치에 대한 inline recovery 제공
-- 실제 차단 조건에서 Payment CTA를 비활성화하고 idempotent 참가 상태는 중복 과금 없이 확인 화면으로 이동
-- decision trace ID와 in-session history/replay contract 추가
-- decision engine ownership: `src/v2/domain/decision-engine.js`
-- component ownership: `src/v2/demo/decision-recovery-components.js`
-- interaction ownership: `src/v2/ui/decision-recovery-experience.js`
-- visual ownership: `src/v2/styles/decision-recovery.css`
-- v2.4 core funnel, 39-screen Product, 16-slide Case Study, Matching/ELO domain behavior, `2.1.0` storage/schema/event contract 유지
-- v2.5 markup이 `demo-source.html`에 유입되지 않도록 source boundary gate 추가
+PR #65 · `eddbaa60`
+- v2.5 Decision & Recovery Experience를 compatibility/regr contract로 유지
+- `demo-source.html`을 39-screen regression fixture로 고정하고 신규 v2.6 feature ownership을 `src/v2`로 제한
+- `footmate-patches.js`에 v2.6 feature ownership이 유입되지 않도록 source boundary gate 추가
+- `src/v2/demo/runtime-boundary.js`에서 legacy source 역할과 신규 feature ownership 경계를 명시
+- `src/v2/domain/availability-gateway.js`에 async availability verification boundary 추가
+- 현재 availability verifier는 prototype/session state를 사용하며 `serverVerified: false`; 실제 server-side freshness/capacity API는 연결하지 않음
+- `src/v2/state/decision-trace-persistence.js`에서 decision trace browser persistence/replay 경계를 분리
+- v2.6 runtime에서도 v2.4/v2.5 visual layer가 유지되도록 compatibility selector를 확장해 320px touch target과 기존 core funnel/decision UI 회귀를 복구
+- 39-screen Product, 16-slide Case Study, Matching/ELO behavior, v2.5 comparison/preflight/Payment guard/inline recovery, `2.1.0` storage/schema/event contract 유지
 
 ### QA
 
-- PR #63 final run #186:
+- PR #65 final run #198:
   - Regression 36 **PASS**
   - v2.4 component/source boundary **PASS**
   - v2.5 decision/recovery boundary **PASS**
-  - Browser E2E + axe · responsive · v2.5 UI/IX gate **PASS**
-- exact Production main run #187:
+  - v2.6 architecture ownership boundary **PASS**
+  - Browser E2E + axe · responsive · v2.6 architecture gate **PASS**
+- exact Production main run #199:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - exact Vercel deployment wait **PASS**
@@ -49,32 +51,34 @@ Compatibility smoke는 exact Production verification으로 간주하지 않습�
 
 ### Deployment / release gate
 
-v2.5 exact Vercel Production:
-- product/runtime baseline / exact verified SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
-- deployment: `dpl_4rjLPCjoNVbLAbRB8rjcbqyUYXcj`
+v2.6 exact Vercel Production:
+- product/runtime baseline / exact verified SHA: `eddbaa607fcf1db516a1d5ab8ee27eb8dad9ad25`
+- deployment: `dpl_9A1BD9X95NDccjrCMhEPsqXBBkyX`
 - state: **READY**
-- exact verification run: #187 · exact wait + strict HTTP + Chromium **PASS**
+- exact verification run: #199 · exact wait + strict HTTP + Chromium **PASS**
 - release gate: **CLOSED**
 
-Render exact release deployment:
-- SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
-- deployment: `dep-dams4bjrjlhs738c7fq0`
+Render current live backup at v2.6 release close-out:
+- SHA: `eddbaa607fcf1db516a1d5ab8ee27eb8dad9ad25`
+- deployment: `dep-damssl3tqb8s73a1v7vg`
 - state: **live**
 
 Render backup is an independent deployment path. Current exact-main/live status is verified from the Render control plane after important merges and is not used as a substitute for Vercel exact Production verification.
 
-### v2.5 ownership
+### v2.6 ownership
 
 ```text
 src/v2/
   bootstrap.js
   demo/
+    runtime-boundary.js
     core-funnel-components.js
     decision-recovery-components.js
   domain/
     matching-engine.js
     elo-engine.js
     decision-engine.js
+    availability-gateway.js
   core/
     mode.js
     screen-observer.js
@@ -83,6 +87,7 @@ src/v2/
     product-store.js
     scenario-store.js
     scenario-persistence.js
+    decision-trace-persistence.js
   compat/
     scenario-persistence-bridge.js
   ui/
@@ -107,18 +112,28 @@ src/v2/
 ```
 
 - Matching score/ranking과 ELO update/tier 계산은 v2 domain engine이 소유합니다.
-- `decision-engine`은 현재 scenario/product/operation 상태를 읽어 allow/block/recovery와 trace를 파생합니다.
-- `decision-recovery-experience`는 decision을 UI action · preflight · inline recovery와 연결합니다.
-- `scenario-persistence`는 canonical browser persistence를 소유합니다.
-- v2.4 core funnel은 v2.5 아래 compatibility/regr layer로 유지됩니다.
-- `footmate-patches.js`에는 아직 일부 DOM/persistence compatibility가 남아 있습니다.
+- `decision-engine`은 scenario/product/operation 상태를 읽어 allow/block/recovery와 trace를 파생합니다.
+- `availability-gateway`는 현재 prototype/session 상태를 읽는 async verification boundary이며 실제 server verification은 아직 연결하지 않습니다.
+- `decision-trace-persistence`는 trace의 browser persistence/replay 경계를 소유합니다.
+- `demo-source.html`은 39-screen regression fixture이고 신규 v2.6 feature ownership을 갖지 않습니다.
+- `footmate-patches.js`에는 일부 DOM/persistence compatibility가 남아 있지만 신규 v2.6 feature ownership을 갖지 않습니다.
 
 ### Next architecture candidates
 
-- 큰 `demo-source.html`의 build-time source/component 분리 확대
+- 실제 backend 연동 단계에서 `availability-gateway`의 prototype adapter를 server-side freshness/capacity verifier로 교체
+- decision trace를 server-side durable audit/event storage로 확장
 - `footmate-patches.js`에 남은 DOM/persistence compatibility ownership 추가 축소
-- 실제 backend 연동 단계에서 server-side freshness/capacity check와 decision trace 영속 저장 추가
 - required status check key `Regression 36` rename은 repository ruleset과 workflow를 함께 변경
+
+## v2.5.0 — Decision & Recovery Experience
+
+- Product/runtime baseline: `0e7c40c` · PR #63
+- Exact verified Production SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
+- Vercel deployment: `dpl_4rjLPCjoNVbLAbRB8rjcbqyUYXcj`
+- Exact Production QA: run #187 · Regression / Browser / exact wait / strict HTTP / Chromium **PASS**
+- v2.4 Core Funnel Experience 위에 deterministic decision/guardrail layer 추가
+- 추천 비교 · preflight · Payment guard · inline recovery · decision trace 도입
+- Product / Portfolio mode, 39 screens, 16-slide Case Study, Matching/ELO domain behavior, `2.1.0` compatibility 유지
 
 ## v2.4.0 — Core Funnel Experience
 
