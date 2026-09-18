@@ -38,7 +38,7 @@ test('v2.2 release metadata preserves v2.1 storage and event contracts', () => {
   assert.ok(caseStudy.includes('v2.2.0 UI Ownership'));
 });
 
-test('v2.2 inspector css moved behind a compatibility alias', () => {
+test('v2.2 inspector css keeps its compatibility alias while the v2.3 shell loads canonical ownership directly', () => {
   const alias = read('footmate-product-hardening.css');
   const styles = read('src/v2/styles/product-inspector.css');
   const shell = read('demo-shell.html');
@@ -48,7 +48,8 @@ test('v2.2 inspector css moved behind a compatibility alias', () => {
   assert.ok(styles.includes('.fm-inspector-card{'));
   assert.ok(styles.includes('.fm-product-inspector button:focus-visible'));
   assert.equal(styles.includes('.fm-product-launcher'), false);
-  assert.ok(shell.includes('footmate-product-hardening.css?v=20260918-5'));
+  assert.ok(shell.includes('/src/v2/styles/product-inspector.css?v=20260918-1'));
+  assert.equal(shell.includes('href="/footmate-product-hardening.css'), false);
   assert.ok(shell.includes('footmate-product-hardening.js?v=20260918-5'));
-  assert.ok(shell.includes('bootstrap.js?v=20260918-5'));
+  assert.ok(shell.includes('bootstrap.js?v=20260918-6'));
 });

@@ -39,6 +39,7 @@ test('runtime hardening classics parse and v2 module graph is wired', () => {
     'footmate-patches.js',
     'footmate-finalize.js',
     'footmate-product-hardening.js',
+    'src/v2/compat/scenario-persistence-bridge.js',
     'index-patches.js'
   ]) {
     assert.doesNotThrow(() => new vm.Script(read(file)), `${file} should parse`);
@@ -50,6 +51,8 @@ test('runtime hardening classics parse and v2 module graph is wired', () => {
     'src/v2/domain/elo-engine.js',
     'src/v2/state/product-store.js',
     'src/v2/state/scenario-store.js',
+    'src/v2/state/scenario-persistence.js',
+    'src/v2/ui/scenario-presenter.js',
     'src/v2/ui/home-controller.js',
     'src/v2/ui/filter-results-controller.js',
     'src/v2/ui/payment-controller.js',
@@ -60,11 +63,18 @@ test('runtime hardening classics parse and v2 module graph is wired', () => {
   const shell = read('demo-shell.html');
   assert.ok(shell.includes('/footmate-product-core.js'));
   assert.ok(shell.includes('/footmate-product-hardening.js'));
-  assert.ok(shell.includes('/footmate-product-hardening.css'));
+  assert.ok(shell.includes('/src/v2/compat/scenario-persistence-bridge.js'));
+  assert.ok(shell.includes('/src/v2/styles/compatibility-patches.css'));
+  assert.ok(shell.includes('/src/v2/styles/compatibility-finalize.css'));
+  assert.ok(shell.includes('/src/v2/styles/product-inspector.css'));
+  assert.ok(shell.includes('/src/v2/styles/experience.css'));
+  assert.equal(shell.includes('/footmate-product-hardening.css'), false);
+  assert.equal(shell.includes('/footmate-experience.css'), false);
+  assert.equal(shell.includes('/footmate-patches.css'), false);
+  assert.equal(shell.includes('/footmate-finalize.css'), false);
   assert.ok(shell.includes('type="module" src="/src/v2/bootstrap.js'));
   assert.equal(shell.includes('/footmate-persist-extra.js'), false);
   assert.equal(exists('footmate-persist-extra.js'), false);
-  assert.ok(shell.includes('/footmate-experience.css'));
   assert.equal(shell.includes('/footmate-v1.1.css'), false);
 
   const caseStudyShell = read('index.html');
@@ -161,9 +171,12 @@ test('v2 controllers are the owners of migrated critical interactions', () => {
   assert.ok(bootstrap.includes("finalize:'state-bridge-only'"));
   assert.ok(bootstrap.includes("createMatchEngine"));
   assert.ok(bootstrap.includes("createEloEngine"));
+  assert.ok(bootstrap.includes("createScenarioPersistence"));
+  assert.ok(bootstrap.includes("createScenarioPresenter"));
   assert.ok(read('src/v2/domain/matching-engine.js').includes("architecture:'v2.1-domain-engine'"));
   assert.ok(read('src/v2/domain/elo-engine.js').includes("architecture:'v2.1-domain-engine'"));
   assert.ok(read('src/v2/state/scenario-store.js').includes("v2.1-domain-derived-store"));
+  assert.ok(read('src/v2/state/scenario-store.js').includes("presentationArchitecture"));
   assert.ok(read('footmate-patches.js').includes("attachDomainEngines"));
   assert.ok(read('footmate-patches.js').includes("v2.1-render-compatibility-adapter"));
   assert.ok(read('footmate-product-hardening.js').includes("recommendationSource"));

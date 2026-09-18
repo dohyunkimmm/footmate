@@ -1,4 +1,4 @@
-export function createScenarioStore(adapter,{matchEngine,eloEngine}={}){
+export function createScenarioStore(adapter,{matchEngine,eloEngine,presenter}={}){
   if(!adapter?.snapshot)throw new Error('FootMate scenario adapter is required');
   const listeners=new Set();
 
@@ -43,14 +43,25 @@ export function createScenarioStore(adapter,{matchEngine,eloEngine}={}){
     return emit(reason);
   }
 
+  function present(screenId,value=clone(state)){
+    if(presenter?.owns?.(screenId))presenter.render(screenId,value);
+    return value;
+  }
+
   function setFilter(patch){
     adapter.setFilter?.(patch);
-    return sync('filter');
+    const value=sync('filter');
+    present('s-filter',value);
+    present('s-results',value);
+    return value;
   }
 
   function setDistance(value){
     adapter.setDistance?.(value);
-    return sync('distance');
+    const next=sync('distance');
+    present('s-filter',next);
+    present('s-results',next);
+    return next;
   }
 
   function selectMatch(key){
@@ -61,7 +72,8 @@ export function createScenarioStore(adapter,{matchEngine,eloEngine}={}){
       selectedMatchKey:key,
       selectedScenario:cloneMatch(state.matches[key])
     };
-    emit('selected-match');
+    const value=emit('selected-match');
+    present('s-reason',value);
     return true;
   }
 
@@ -72,8 +84,12 @@ export function createScenarioStore(adapter,{matchEngine,eloEngine}={}){
   }
 
   function renderForScreen(screenId){
-    adapter.renderForScreen?.(screenId,state.selectedMatchKey);
-    return sync('screen',{preserveSelected:true});
+    if(!presenter?.owns?.(screenId)){
+      adapter.renderForScreen?.(screenId,state.selectedMatchKey);
+    }
+    const value=sync('screen',{preserveSelected:true});
+    present(screenId,value);
+    return value;
   }
 
   function getSelectedScenario(){
@@ -98,6 +114,8 @@ export function createScenarioStore(adapter,{matchEngine,eloEngine}={}){
 
   return{
     architecture:matchEngine?'v2.1-domain-derived-store':'adapter-derived-store',
+    presentationArchitecture:presenter?.architecture||'adapter-render-compatibility',
+    presenterOwnedScreens:Array.isArray(presenter?.ownedScreens)?[...presenter.ownedScreens]:[],
     getState:()=>clone(state),
     getSelectedScenario,
     getRankedMatches:()=>clone(state).rankedMatches,

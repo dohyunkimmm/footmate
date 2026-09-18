@@ -5,6 +5,8 @@ import{createMatchEngine}from'./domain/matching-engine.js';
 import{createEloEngine}from'./domain/elo-engine.js';
 import{createProductStore}from'./state/product-store.js';
 import{createScenarioStore}from'./state/scenario-store.js';
+import{createScenarioPersistence}from'./state/scenario-persistence.js';
+import{createScenarioPresenter}from'./ui/scenario-presenter.js';
 import{createHomeController}from'./ui/home-controller.js';
 import{createFilterResultsController}from'./ui/filter-results-controller.js';
 import{createPaymentController}from'./ui/payment-controller.js';
@@ -15,6 +17,7 @@ import{installValidationEntry}from'./ui/validation-entry.js';
 
 const VERSION='2.1.0';
 const RELEASE_VERSION='2.2.0';
+const CANDIDATE_VERSION='2.3.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -64,7 +67,9 @@ async function boot(){
   const eloEngine=createEloEngine();
   window.FootMateScenarioAdapter.attachDomainEngines?.({match:matchEngine,elo:eloEngine});
   const productStore=createProductStore(finalRuntime);
-  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine});
+  const scenarioPresenter=createScenarioPresenter();
+  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine,presenter:scenarioPresenter});
+  const scenarioPersistence=createScenarioPersistence(scenarioStore).start();
   const home=createHomeController({productStore,scenarioStore});
   const filterResults=createFilterResultsController({scenarioStore});
   const payment=createPaymentController({productStore,scenarioStore,finalRuntime});
@@ -77,6 +82,17 @@ async function boot(){
     eloEngine,
     scenarioStore,
     architecture:'v2.2-inspector-ui-ownership'
+  };
+  window.FootMateV23Candidate={
+    version:CANDIDATE_VERSION,
+    baseReleaseVersion:RELEASE_VERSION,
+    schemaVersion:VERSION,
+    scenarioPersistence:scenarioPersistence.architecture,
+    scenarioPersistenceKey:scenarioPersistence.key,
+    scenarioPresentation:scenarioPresenter.architecture,
+    presenterOwnedScreens:[...scenarioPresenter.ownedScreens],
+    cssOwnership:'src/v2/styles',
+    architecture:'v2.3-compatibility-boundary-reduction'
   };
   const inspector=installProductInspector();
 
@@ -122,6 +138,7 @@ async function boot(){
     try{
       localStorage.removeItem(finalRuntime.storeKey);
       localStorage.removeItem(uiStorage.key);
+      scenarioPersistence.clear();
     }catch(error){}
     return legacyReplay?.();
   };
@@ -134,11 +151,14 @@ async function boot(){
     state,
     productStore,
     scenarioStore,
+    scenarioPersistence,
+    scenarioPresenter,
     domain:{matchEngine,eloEngine},
     controllers:{home,filterResults,payment,secondary,inspector},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
     releaseArchitecture:'v2.2-inspector-modular-ui-runtime',
+    candidateArchitecture:'v2.3-compatibility-boundary-reduction',
     uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
@@ -146,7 +166,8 @@ async function boot(){
       patchNavigationWrapped:false,
       productHardeningNavigationWrapped:false,
       productHardening:'policy-adapter-ui-bridge',
-      scenarioAdapter:window.FootMateScenarioAdapter.architecture
+      scenarioAdapter:window.FootMateScenarioAdapter.architecture,
+      scenarioPersistenceBridge:window.FootMateScenarioPersistenceBridge?.architecture||'unavailable'
     },
     refresh(){
       validation.refresh();
@@ -160,6 +181,7 @@ async function boot(){
     destroy(){
       validation.stop?.();
       inspector.destroy?.();
+      scenarioPersistence.destroy?.();
       stopScreenEffects?.();
     }
   };
@@ -181,7 +203,10 @@ async function boot(){
   window.dispatchEvent(new CustomEvent('footmate:v2.2:ready',{
     detail:{version:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
   }));
-  console.info('[FootMate] v2.2 Inspector UI ownership ready',RELEASE_VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2.3:candidate-ready',{
+    detail:{version:CANDIDATE_VERSION,baseReleaseVersion:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+  }));
+  console.info('[FootMate] v2.2 release runtime + v2.3 architecture candidate ready',RELEASE_VERSION,CANDIDATE_VERSION,state.mode);
 }
 
 boot().catch(error=>{
