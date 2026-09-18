@@ -1,4 +1,4 @@
-const OWNED_SCREENS=new Set(['s-filter','s-results','s-reason']);
+const OWNED_SCREENS=new Set(['s-filter','s-results','s-reason','s-detail']);
 
 function setText(id,value){
   const element=document.getElementById(id);
@@ -162,6 +162,23 @@ function renderReason(state){
   setText('reasonLocationDesc',match.locationDesc||'');
 }
 
+function renderDetail(state){
+  const match=state?.selectedScenario;
+  if(!match)return;
+  const profile=state?.profile||{};
+  const positions=Array.isArray(match.positions)?match.positions:[];
+  const position=positions.includes(profile.position)?profile.position:(match.availablePosition||positions[0]||profile.position||'모집');
+  const manner=Number(match.manner);
+  const distance=Number(match.distanceKm);
+  setText('detail-team-name',match.team||'');
+  setText(
+    'detail-team-meta',
+    `★ ${Number.isFinite(manner)?manner.toFixed(1):'-'} · 매칭 ${match.pct||0}% · ${match.venue||''}${Number.isFinite(distance)?` · ${distance}km`:''}`
+  );
+  setText('detail-open-position',`${position} 1자리`);
+  document.getElementById('s-detail')?.setAttribute('data-v2-presentation','scenario-presenter');
+}
+
 export function createScenarioPresenter(){
   function owns(screenId){
     return OWNED_SCREENS.has(screenId);
@@ -171,11 +188,12 @@ export function createScenarioPresenter(){
     if(screenId==='s-filter')renderFilter(state);
     if(screenId==='s-results')renderResults(state);
     if(screenId==='s-reason')renderReason(state);
+    if(screenId==='s-detail')renderDetail(state);
     return state;
   }
 
   return{
-    architecture:'v2.3-scenario-presenter',
+    architecture:'v2.4-core-funnel-presenter',
     ownedScreens:[...OWNED_SCREENS],
     owns,
     render
