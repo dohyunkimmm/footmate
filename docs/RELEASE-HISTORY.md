@@ -2,68 +2,43 @@
 
 현재 릴리스 상태와 검증 기준만 간결하게 보존합니다. 세부 변경은 Git commit / Pull Request / GitHub Actions를 source of truth로 사용합니다.
 
-## Current Release — v2.4.0 Core Funnel Experience
+## Current Release — v2.5.0 Decision & Recovery Experience
 
-- architecture baseline: `9afd19e` · PR #57
-- product/runtime baseline: `21c6ab4` · PR #58
-- exact verified Production descendant: `b38e147` · PR #61
-- Release runtime version: `2.4.0`
+- product/runtime baseline: `0e7c40c` · PR #63
+- exact verified Production SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
+- Release runtime version: `2.5.0`
 - Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
-- v2.2 / v2.3 runtime alias/event: compatibility 유지
+- v2.2 / v2.3 / v2.4 runtime alias/event: compatibility 유지
 - Product / Portfolio mode: 유지
 - Product screen baseline: 39 screens
 - Case Study information architecture: 16 slides
 - Matching / ELO ownership: `src/v2/domain/`
-- v2.4 release gate: **CLOSED**
+- Decision / Recovery ownership: `src/v2/domain/decision-engine.js`
+- v2.5 release gate: **CLOSED**
 
-### v2.4 changes
+### v2.5 changes
 
-PR #57 · `9afd19e`
-- Home → Filter → Results → Detail → Payment를 하나의 core funnel journey로 재설계
-- 조건 요약, 추천 비교, 추천 근거, 상태 피드백, 복구 행동, 결제 단계 안내 추가
-- 새 funnel markup을 `src/v2/demo/core-funnel-components.js`가 소유
-- v2.4 funnel visual ownership을 `src/v2/styles/core-funnel.css`로 분리
-- Detail presentation ownership을 `src/v2/ui/scenario-presenter.js`로 확장
-- legacy 39-screen source에 v2.4 markup이 재유입되지 않도록 component/source boundary gate 추가
-- 320px 모바일 CTA/터치 타깃과 접근성 기준 강화
-- v2.3 canonical persistence와 `2.1.0` compatibility contract 유지
-
-PR #58 · `21c6ab4`
-- checkout completed-state foreground 대비를 axe 기준보다 충분한 수준으로 강화
-- 접근성 회귀 방지 테스트 추가
-- functional funnel/state behavior 변경 없음
-
-PR #59 · QA-only descendant
-- Production compatibility smoke와 exact Production verification assertion을 명시적으로 분리
-- compatibility mode는 현재 배포된 v2 runtime/39-screen Product·Portfolio 동작을 확인
-- exact strict mode에서만 v2.4 release metadata와 v2.4-only UI ownership을 요구
-- 이 변경은 product/runtime baseline을 변경하지 않음
-
-PR #61 · `b38e147`
-- protected main → Vercel Production 경로를 동작 변경 없이 재트리거
-- exact SHA `b38e14765a169715d4309036aeb8eb07663e304e`가 Vercel Production `READY`로 배포됨
-- strict Production HTTP + Chromium 검증을 통과해 v2.4 release gate를 닫음
-- product/runtime baseline은 `21c6ab4`로 유지
+PR #63 · `0e7c40c`
+- v2.4 Core Funnel Experience 위에 deterministic decision/guardrail layer 추가
+- Home next-action, Filter impact preview, Results comparison, Detail/Reason preflight, Payment preflight UI/IX 추가
+- 정원 마감 · 저잔액 · 결제 실패 · 조건 불일치에 대한 inline recovery 제공
+- 실제 차단 조건에서 Payment CTA를 비활성화하고 idempotent 참가 상태는 중복 과금 없이 확인 화면으로 이동
+- decision trace ID와 in-session history/replay contract 추가
+- decision engine ownership: `src/v2/domain/decision-engine.js`
+- component ownership: `src/v2/demo/decision-recovery-components.js`
+- interaction ownership: `src/v2/ui/decision-recovery-experience.js`
+- visual ownership: `src/v2/styles/decision-recovery.css`
+- v2.4 core funnel, 39-screen Product, 16-slide Case Study, Matching/ELO domain behavior, `2.1.0` storage/schema/event contract 유지
+- v2.5 markup이 `demo-source.html`에 유입되지 않도록 source boundary gate 추가
 
 ### QA
 
-- PR #57 run #173:
+- PR #63 final run #186:
   - Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-  - responsive / representative visual / v2.4 funnel gate **PASS**
-- PR #58 run #175:
-  - Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-  - checkout completion contrast regression **PASS**
-- QA contract sync PR #59 run #177:
-  - Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-- compatibility main run #178:
-  - Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-  - Production compatibility HTTP smoke **PASS**
-  - Production compatibility Chromium render smoke **PASS**
-- exact Production main run #182:
+  - v2.4 component/source boundary **PASS**
+  - v2.5 decision/recovery boundary **PASS**
+  - Browser E2E + axe · responsive · v2.5 UI/IX gate **PASS**
+- exact Production main run #187:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - exact Vercel deployment wait **PASS**
@@ -74,31 +49,32 @@ Compatibility smoke는 exact Production verification으로 간주하지 않습�
 
 ### Deployment / release gate
 
-v2.4 exact Vercel Production:
-- product/runtime baseline: `21c6ab4b3d7bbed1b3ffaae202452aed98208834`
-- exact verified SHA: `b38e14765a169715d4309036aeb8eb07663e304e`
-- deployment: `dpl_GyvevKkNYEgRkJKJrXLuAwekXmCm`
+v2.5 exact Vercel Production:
+- product/runtime baseline / exact verified SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
+- deployment: `dpl_4rjLPCjoNVbLAbRB8rjcbqyUYXcj`
 - state: **READY**
-- exact verification run: #182 · exact wait + strict HTTP + Chromium **PASS**
+- exact verification run: #187 · exact wait + strict HTTP + Chromium **PASS**
 - release gate: **CLOSED**
 
 Render exact release deployment:
-- SHA: `b38e14765a169715d4309036aeb8eb07663e304e`
-- deployment: `dep-damk034s728c73c5ood0`
+- SHA: `0e7c40c2d997798dbf71f74fef8f91055cca7abe`
+- deployment: `dep-dams4bjrjlhs738c7fq0`
 - state: **live**
 
 Render backup is an independent deployment path. Current exact-main/live status is verified from the Render control plane after important merges and is not used as a substitute for Vercel exact Production verification.
 
-### v2.4 ownership
+### v2.5 ownership
 
 ```text
 src/v2/
   bootstrap.js
   demo/
     core-funnel-components.js
+    decision-recovery-components.js
   domain/
     matching-engine.js
     elo-engine.js
+    decision-engine.js
   core/
     mode.js
     screen-observer.js
@@ -111,6 +87,7 @@ src/v2/
     scenario-persistence-bridge.js
   ui/
     scenario-presenter.js
+    decision-recovery-experience.js
     home-controller.js
     filter-results-controller.js
     payment-controller.js
@@ -119,6 +96,7 @@ src/v2/
     screen-effects.js
     validation-entry.js
   styles/
+    decision-recovery.css
     core-funnel.css
     compatibility-patches.css
     compatibility-finalize.css
@@ -129,18 +107,28 @@ src/v2/
 ```
 
 - Matching score/ranking과 ELO update/tier 계산은 v2 domain engine이 소유합니다.
-- `scenario-store`는 ranked/selected scenario를 domain engine에서 파생합니다.
+- `decision-engine`은 현재 scenario/product/operation 상태를 읽어 allow/block/recovery와 trace를 파생합니다.
+- `decision-recovery-experience`는 decision을 UI action · preflight · inline recovery와 연결합니다.
 - `scenario-persistence`는 canonical browser persistence를 소유합니다.
-- `scenario-persistence-bridge`는 legacy adapter hydration compatibility만 담당합니다.
-- `scenario-presenter`는 Filter / Results / Recommendation Reason / Detail presentation을 소유합니다.
-- `core-funnel-components.js`는 새 v2.4 funnel markup을 legacy `demo-source.html` 밖에서 소유합니다.
+- v2.4 core funnel은 v2.5 아래 compatibility/regr layer로 유지됩니다.
 - `footmate-patches.js`에는 아직 일부 DOM/persistence compatibility가 남아 있습니다.
 
 ### Next architecture candidates
 
 - 큰 `demo-source.html`의 build-time source/component 분리 확대
 - `footmate-patches.js`에 남은 DOM/persistence compatibility ownership 추가 축소
+- 실제 backend 연동 단계에서 server-side freshness/capacity check와 decision trace 영속 저장 추가
 - required status check key `Regression 36` rename은 repository ruleset과 workflow를 함께 변경
+
+## v2.4.0 — Core Funnel Experience
+
+- Architecture baseline: `9afd19e` · PR #57
+- Product/runtime baseline: `21c6ab4` · PR #58
+- Exact verified Production SHA: `b38e147` · PR #61
+- Vercel deployment: `dpl_GyvevKkNYEgRkJKJrXLuAwekXmCm`
+- Exact Production QA: run #182 · Regression / Browser / exact wait / strict HTTP / Chromium **PASS**
+- Home → Filter → Results → Detail → Payment core funnel과 component/presenter/style ownership 확장
+- Product / Portfolio mode, 39 screens, 16-slide Case Study, `2.1.0` compatibility 유지
 
 ## v2.3.0 — Compatibility Boundary Reduction
 
@@ -150,7 +138,6 @@ src/v2/
 - Exact Production QA: run #168 · Regression / Browser / strict HTTP / Chromium **PASS**
 - Product Experience CSS, canonical scenario persistence, Filter/Results/Recommendation Reason presentation ownership을 `src/v2/`로 이동
 - v2.2 compatibility contract와 `2.1.0` storage/schema/event contract 유지
-- Product / Portfolio mode, 39 screens, 16-slide Case Study 유지
 
 ## v2.2.0 — Inspector UI Ownership
 
@@ -159,8 +146,6 @@ src/v2/
 - Vercel deployment: `dpl_FnD7dPN9DgMnYQMoEsd5LaUHs5kY`
 - Exact Production QA: run #159 · Regression / Browser / strict HTTP / Chromium **PASS**
 - Product Validation Inspector DOM/render/focus/keyboard ownership을 `src/v2/ui/product-inspector.js`로 이동
-- Inspector component styles를 `src/v2/styles/product-inspector.css`로 이동
-- Product / Portfolio mode, 39 screens, 16-slide Case Study 유지
 
 ## v2.1.0 — Domain Engine
 
@@ -168,8 +153,6 @@ src/v2/
 - Domain Engine extraction baseline: `4393403`
 - Product release: PR #29
 - Matching / ELO 계산 ownership을 `src/v2/domain/`으로 이동
-- `scenario-store`가 ranked/selected scenario를 domain engine에서 파생
-- Product / Portfolio mode, 39 screens, 16-slide Case Study 유지
 - Product Hardening event contract `2.1.0`
 
 ## v2.0.0 — Product Experience
@@ -179,9 +162,7 @@ src/v2/
 - PR #26 stable promotion
 - Product / Portfolio mode 분리
 - product/scenario store 및 UI controller ownership
-- finalize state bridge 축소, navigation wrapper 제거
 - 320 / 375 / 390 / 430 responsive + visual contract
-- GitHub Actions run #87: Regression · Browser E2E + axe · Production HTTP/Chromium **PASS**
 
 ## Earlier releases
 
