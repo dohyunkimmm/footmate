@@ -21,7 +21,7 @@
 - Current main / exact verified Production: `3d83a01`
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
-  - GitHub Actions run #134: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+  - GitHub Actions run #134: Regression suite, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
   - Vercel was READY before the Production Smoke job started
 - Latest product / Case Study code baseline remains `54b540d` · PR #42.
 - The temporary Vercel Hobby build-rate-limit is no longer the current Production blocker.
@@ -33,7 +33,7 @@ This candidate starts the next-version cleanup without changing the stable user 
 - make `demo-source.html` the only canonical 39-screen prototype source
 - remove the duplicate ~354 KB `demo.html` artifact
 - preserve legacy `/demo.html` compatibility through `demo-shell.html`
-- update the local E2E server, Regression 36, and Production HTTP smoke to guard the new artifact boundary
+- update the local E2E server, Regression suite, and Production HTTP smoke to guard the new artifact boundary
 - keep Product / Portfolio modes, Matching / ELO results, state/persistence semantics, and the 16-slide Case Study as regression baselines
 - Production status: **not released** until PR QA, merge, exact Vercel Production, and Production verification complete
 
