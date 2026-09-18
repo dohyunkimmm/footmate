@@ -12,7 +12,7 @@ function enhance(){
     cover.insertBefore(badge,cover.firstChild);
   }
 
-  const validation=document.querySelector('.slide[data-i="18"] .content');
+  const validation=document.querySelector('.slide[data-i="14"] .content');
   if(validation&&!document.getElementById('fmReleaseExperienceNote')){
     const note=document.createElement('div');
     note.id='fmReleaseExperienceNote';
