@@ -33,7 +33,7 @@ test('production case study and v2 product/portfolio modes render after deployme
     await expect(page.locator('.slide')).toHaveCount(16);
     await expect(page.locator('.toc-item')).toHaveCount(16);
     await expect(page.locator('#cnt')).toContainText('/ 16');
-    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V2.2');
+    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V2.3');
 
     await page.evaluate(() => window.goTo(4));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('User Journey');
@@ -68,19 +68,37 @@ test('production case study and v2 product/portfolio modes render after deployme
       version: window.FootMateV2Runtime?.version,
       schemaVersion: window.FootMateV2Runtime?.schemaVersion,
       releaseArchitecture: window.FootMateV2Runtime?.releaseArchitecture,
+      previousReleaseArchitecture: window.FootMateV2Runtime?.previousReleaseArchitecture,
       uiArchitecture: window.FootMateV2Runtime?.uiArchitecture,
+      releaseDataset: document.documentElement.dataset.footmateRelease,
       inspectorReady: window.__footmateV22Inspector === true,
       policyArchitecture: window.FootMateProductOps?.architecture,
-      v22Version: window.FootMateV22?.version
+      v23Version: window.FootMateV23?.version,
+      v23PreviousReleaseVersion: window.FootMateV23?.previousReleaseVersion,
+      v23ScenarioPersistence: window.FootMateV23?.scenarioPersistence,
+      v23ScenarioPresentation: window.FootMateV23?.scenarioPresentation,
+      v23CssOwnership: window.FootMateV23?.cssOwnership,
+      v22Version: window.FootMateV22?.version,
+      v22CurrentReleaseVersion: window.FootMateV22?.currentReleaseVersion,
+      v22Compatibility: window.FootMateV22?.compatibility
     }));
     expect(release).toEqual({
-      version: '2.2.0',
+      version: '2.3.0',
       schemaVersion: '2.1.0',
-      releaseArchitecture: 'v2.2-inspector-modular-ui-runtime',
+      releaseArchitecture: 'v2.3-compatibility-boundary-reduction',
+      previousReleaseArchitecture: 'v2.2-inspector-modular-ui-runtime',
       uiArchitecture: 'v2.2-product-inspector-module',
+      releaseDataset: '2.3',
       inspectorReady: true,
       policyArchitecture: 'v2.2-policy-adapter-ui-bridge',
-      v22Version: '2.2.0'
+      v23Version: '2.3.0',
+      v23PreviousReleaseVersion: '2.2.0',
+      v23ScenarioPersistence: 'v2.3-scenario-persistence-migration',
+      v23ScenarioPresentation: 'v2.3-scenario-presenter',
+      v23CssOwnership: 'src/v2/styles',
+      v22Version: '2.2.0',
+      v22CurrentReleaseVersion: '2.3.0',
+      v22Compatibility: true
     });
   }
 
