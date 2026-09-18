@@ -24,7 +24,7 @@
 - Current main / exact verified Production: `3d83a01`
   - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
-  - GitHub Actions run #134: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+  - GitHub Actions run #134: Regression suite, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
   - the Production deployment was READY before the run #134 Production Smoke job started
 - Latest product / Case Study code baseline remains `54b540d` · PR #42.
 - The temporary Vercel Hobby build-rate-limit that blocked `54b540d` directly was cleared by the successful `3d83a01` Production deployment.
@@ -110,7 +110,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 | 검증 | 상태 |
 | --- | --- |
-| Regression 36 | **PASS** |
+| Regression suite | **PASS** |
 | Browser E2E · Product + Portfolio | **PASS** |
 | Matching domain parity | **PASS** |
 | ELO domain parity | **PASS** |
