@@ -18,14 +18,14 @@ function ensureEnhancementStyles(){
 }
 function syncCaseStudy(){
   ensureEnhancementStyles();
-  const ia=document.querySelector('.slide[data-i="8"] h2');
+  const ia=document.querySelector('.slide[data-i="7"] h2');
   if(ia)ia.textContent='서비스 구조를 4개 핵심 탭으로 단순화';
-  const row=document.querySelector('.slide[data-i="8"] .ia-row');
+  const row=document.querySelector('.slide[data-i="7"] .ia-row');
   if(row){
     row.style.gridTemplateColumns='repeat(4,1fr)';
     row.innerHTML='<span>홈</span><span>탐색</span><span>일정</span><span>프로필</span>';
   }
-  const detail=document.querySelector('.slide[data-i="8"] .ia-detail');
+  const detail=document.querySelector('.slide[data-i="7"] .ia-detail');
   if(detail){
     detail.style.gridTemplateColumns='repeat(4,1fr)';
     detail.innerHTML='<p>홈: 추천 경기 · 홈 필터</p><p>탐색: 조건 설정 · 추천 결과 · 팀 상세</p><p>일정: 참가 확정 · 경기일 · 알림</p><p>프로필: ELO · 성장 기록 · 설정</p>';
@@ -42,7 +42,7 @@ function syncCaseStudy(){
   }
   const hint=document.querySelector('.showcase-hint');
   if(hint)hint.textContent='앱 우측 하단의 ‘매칭 로직’과 ‘제품 검증’에서 Agent Workflow, 운영 상태 전이, 추천 근거와 이벤트 로그를 확인할 수 있습니다.';
-  const qualityNote=document.querySelector('.slide[data-i="11"] .note');
+  const qualityNote=document.querySelector('.slide[data-i="10"] .note');
   if(qualityNote)qualityNote.textContent='※ 현재 프로토타입은 입력·상태·퍼널 이벤트에 따라 PASS·CHECK를 판정하며, 서버 최신성이 필요한 Freshness는 SAMPLE로 구분합니다. 운영 연동 후 오류율·최신성·상태 충돌을 실제 지표로 수집합니다.';
   const validation=document.querySelector('.slide[data-i="14"]');
   if(validation){
