@@ -15,16 +15,20 @@
 
 **v2.1.0 · Domain Engine**
 
-- Source/runtime baseline: `4393403`
+- Product/runtime baseline: `59b5af1`
+- Domain Engine extraction baseline: `4393403`
 - GitHub PR #29 merged to `main`
-- GitHub Actions run #93:
+- GitHub Actions run #102:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - v2.1 matching/ELO parity gates **PASS**
   - Responsive 320 / 375 / 390 / 430 px **PASS**
   - Representative visual contract **PASS**
-- v2.1 Production deployment: **pending** — Vercel deployment rate limit
-- Current verified Production: `9ff82c7` · v2.0.0 · verified · READY
+  - Production HTTP smoke **PASS**
+  - Production Chromium render smoke **PASS**
+- Verified Production: `4f8a55a` · Vercel verified · READY
+- Vercel deployment: `dpl_6qdJWivcQ2KP2zZJwiRWhsRMACQc`
+- PR #32 is a no-source-change deployment retry; the product tree is the same v2.1 runtime verified from `59b5af1`.
 
 v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다.
 
@@ -105,9 +109,10 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | axe WCAG 2 A/AA serious / critical | **0 · PASS** |
 | Responsive 320 / 375 / 390 / 430 px | **PASS** |
 | Representative visual contract | **PASS** |
-| v2.1 source/runtime | **4393403 · PASS** |
-| v2.1 Production deployment | **Pending · Vercel rate limit** |
-| Current verified Production | **9ff82c7 · v2.0.0 · READY** |
+| v2.1 product/runtime | **59b5af1 · PASS** |
+| v2.1 Production promotion | **4f8a55a · verified · READY** |
+| Production HTTP smoke | **run #102 · PASS** |
+| Production Chromium render smoke | **run #102 · PASS** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
