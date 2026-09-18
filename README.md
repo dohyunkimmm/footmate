@@ -16,7 +16,7 @@
 
 **v2.2.0 · Inspector UI Ownership**
 
-현재 `main`의 v2.2 코드는 완료된 릴리스 후보 상태입니다. Render backup은 `main` auto-deploy 경로로 `live` 상태를 유지합니다. 문서 sync 직전 검증 baseline `b3125bf`는 당시 current main과 exact 일치했습니다.
+현재 `main`의 v2.2 product tree는 Vercel Production exact verification을 완료했습니다. Render backup은 `main` auto-deploy 경로로 같은 릴리스 트리를 유지합니다.
 
 - v2.2 product baseline: `94939d5` · PR #47
 - Release runtime: `2.2.0`
@@ -37,28 +37,28 @@
   - exact Production strict browser smoke에 v2.2 runtime/Inspector ownership assertion 추가
 - PR #47 QA run #146: Regression + Browser E2E/axe **PASS**
 - v2.2 product-baseline main run #147: Regression + Browser E2E/axe + Production HTTP + Chromium smoke **PASS**
-  - Production Smoke는 마지막 exact verified Production을 대상으로 compatibility mode로 실행
+  - 당시 Production Smoke는 마지막 exact verified Production을 대상으로 compatibility mode로 실행
+- PR #53 · no-source-change Production retry
+  - PR QA run #158: Regression 36 + Browser E2E/axe **PASS**
+  - exact Production verification main SHA: `5fbdbf4`
+  - main run #159: Regression 36 + Browser E2E/axe + strict Production HTTP + strict Production Chromium render smoke **PASS**
 
 ### Production release gate
 
-- Last exact verified Vercel Production: `3d83a01`
-  - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
+- v2.2 exact verified Vercel Production: `5fbdbf4`
+  - v2.2 product tree baseline: `94939d5`
+  - Vercel deployment: `dpl_FnD7dPN9DgMnYQMoEsd5LaUHs5kY`
   - state: **READY**
-  - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-- v2.2 production-impacting baseline requiring exact Vercel Production verification: `94939d5`
-- Render backup verification baseline:
+  - GitHub Actions run #159: Regression 36, Browser E2E + axe, strict Production HTTP smoke, strict Production Chromium render smoke **PASS**
+  - Product / Portfolio mode + v2.2 Inspector ownership assertions **PASS**
+- Render backup current-main verification:
   - service: `footmate-backup`
   - URL: `https://footmate-backup.onrender.com`
-  - verified SHA: `b3125bf28ba8d1a44201950c55b11c841b77b383`
-  - deployment: `dep-damd0h6gekts73e6hlm0`
+  - verified SHA: `5fbdbf415eb83687163d53cb4f6d987af9aa0cc2`
+  - deployment: `dep-dami6c0ae00c73bnbcm0`
   - state at verification: **live**
   - branch: `main` · auto-deploy enabled
-  - 당시 GitHub current main과 exact 일치한 백업 배포 경로로 검증
-- v2.2를 Vercel Production-verified release로 닫기 위한 남은 조건:
-  - `94939d5` product tree를 포함한 현재 main descendant가 Vercel Production에 READY
-  - strict Production HTTP smoke PASS
-  - strict Production Chromium render smoke PASS
-  - Product/Portfolio + v2.2 Inspector ownership assertion PASS
+- v2.2 Vercel Production release gate: **CLOSED**
 
 ### v2.3 architecture backlog
 
@@ -139,12 +139,11 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | 16-slide Case Study IA | **PASS** |
 | v2.2 Inspector ownership | **PR #47 · run #146 PASS** |
 | v2.2 product-baseline QA | **run #147 · Regression + Browser E2E/axe + HTTP + Chromium PASS** |
-| Last exact verified Vercel Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
-| Last exact Vercel Production verification | **run #134 · HTTP + Chromium PASS** |
-| v2.2 exact Vercel Production | **Not yet verified · 94939d5 product tree** |
-| Render backup | **LIVE verified baseline · b3125bf · dep-damd0h6gekts73e6hlm0 · main auto-deploy** |
+| v2.2 exact verified Vercel Production | **5fbdbf4 · dpl_FnD7dPN9DgMnYQMoEsd5LaUHs5kY · READY** |
+| v2.2 exact Production verification | **run #159 · strict HTTP + Chromium + Inspector assertions PASS** |
+| Render backup | **current-main LIVE verified · 5fbdbf4 · dep-dami6c0ae00c73bnbcm0** |
 
-Render 항목은 service/deploy control plane 기준 검증입니다. 별도 strict HTTP/Chromium Production smoke는 Vercel release gate와 구분합니다.
+Render 항목은 service/deploy control plane 기준 검증입니다. Vercel strict HTTP/Chromium Production smoke와는 독립된 배포 경로로 구분합니다.
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
