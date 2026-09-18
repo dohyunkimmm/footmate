@@ -34,6 +34,11 @@ PR #47 · `94939d5`
 - release version을 `2.2.0`으로 노출하면서 storage/schema/event contract는 `2.1.0` 호환 유지
 - strict exact-Production browser smoke에 v2.2 runtime/Inspector ownership assertion 추가
 
+PR #53 · `5fbdbf4`
+- source tree를 변경하지 않고 protected main → Vercel Production 경로를 재트리거
+- v2.2 product tree `94939d5`를 포함한 exact Production descendant 생성
+- Vercel Production READY 및 strict Production QA로 v2.2 release gate 종료
+
 ### QA
 
 - PR #47 run #146: required Regression check + Browser E2E/axe **PASS**
@@ -42,37 +47,40 @@ PR #47 · `94939d5`
   - Browser E2E + axe **PASS**
   - Production HTTP smoke **PASS**
   - Production Chromium render smoke **PASS**
-  - 마지막 exact verified Production 대상 compatibility mode
+  - 당시 마지막 exact verified Production 대상 compatibility mode
+- PR #53 run #158:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+- exact Production verification main `5fbdbf4` run #159:
+  - Regression 36 **PASS**
+  - Browser E2E + axe **PASS**
+  - Vercel deployment wait for exact commit **PASS**
+  - strict Production HTTP smoke **PASS**
+  - strict Production Chromium render smoke **PASS**
+  - Product / Portfolio + v2.2 Inspector ownership assertions **PASS**
 - TODO / FIXME search: 없음
 
 ### Deployment / release gate
 
-Last exact verified Vercel Production:
-- SHA: `3d83a01`
-- deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
+v2.2 exact verified Vercel Production:
+- product baseline: `94939d5`
+- exact verified SHA: `5fbdbf415eb83687163d53cb4f6d987af9aa0cc2`
+- deployment: `dpl_FnD7dPN9DgMnYQMoEsd5LaUHs5kY`
 - state: **READY**
-- GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+- GitHub Actions run #159: Regression 36, Browser E2E + axe, strict Production HTTP smoke, strict Production Chromium render smoke **PASS**
+- Product / Portfolio mode + v2.2 Inspector ownership assertions **PASS**
+- v2.2 Vercel Production release gate: **CLOSED**
 
-v2.2 product baseline exact Vercel Production verification:
-- production-impacting SHA: `94939d5`
-- current docs-only main may advance while carrying the same v2.2 product tree
-- required before calling v2.2 Vercel Production-verified:
-  - `94939d5` product tree를 포함한 current main descendant가 Vercel Production READY
-  - strict Production HTTP smoke PASS
-  - strict Production Chromium render smoke PASS
-  - Product/Portfolio + v2.2 Inspector ownership assertions PASS
-
-Render backup verification baseline:
+Render backup current-main verification:
 - service: `footmate-backup`
 - URL: `https://footmate-backup.onrender.com`
 - branch: `main`
 - auto deploy: enabled
-- verified SHA: `b3125bf28ba8d1a44201950c55b11c841b77b383`
-- deployment: `dep-damd0h6gekts73e6hlm0`
+- verified SHA: `5fbdbf415eb83687163d53cb4f6d987af9aa0cc2`
+- deployment: `dep-dami6c0ae00c73bnbcm0`
 - state at verification: **live**
-- verified SHA는 당시 GitHub current main과 exact 일치
-- current main을 따라가는 백업 배포 경로이며, 이 검증은 Render service/deploy control plane 기준임
-- strict HTTP/Chromium Production smoke는 기존 Vercel release gate와 구분
+- Render service/deploy control plane 기준으로 current main exact 일치 확인
+- Vercel strict HTTP/Chromium Production verification과는 독립된 배포 경로로 구분
 
 ### v2.2 ownership
 
