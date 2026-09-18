@@ -4,7 +4,7 @@
 
 ## Current main — v2.2.0 Inspector UI Ownership
 
-- Current main baseline: `94939d5` · PR #47
+- v2.2 product baseline: `94939d5` · PR #47
 - Release runtime version: `2.2.0`
 - Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
 - Product / Portfolio mode: 유지
@@ -37,7 +37,7 @@ PR #47 · `94939d5`
 ### QA
 
 - PR #47 run #146: required Regression check + Browser E2E/axe **PASS**
-- main `94939d5` run #147:
+- v2.2 product-baseline main `94939d5` run #147:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
   - Production HTTP smoke **PASS**
@@ -53,11 +53,12 @@ Last exact verified Production:
 - state: **READY**
 - GitHub Actions run #134: required Regression check, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
 
-v2.2 exact Production target:
-- main SHA: `94939d5`
+v2.2 product baseline pending exact Production:
+- production-impacting SHA: `94939d5`
+- current docs-only main may advance while carrying the same v2.2 product tree
 - Vercel status: **PENDING** — `Deployment rate limited — retry in 24 hours`
 - required before calling v2.2 Production-verified:
-  - exact `94939d5` 계열 tree가 Vercel Production READY
+  - `94939d5` product tree를 포함한 current main descendant가 Vercel Production READY
   - strict Production HTTP smoke PASS
   - strict Production Chromium render smoke PASS
   - Product/Portfolio + v2.2 Inspector ownership assertions PASS
