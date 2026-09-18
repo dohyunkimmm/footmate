@@ -21,16 +21,22 @@
 - Mobile Case Study scroll + Interactive Demo visibility fix: `1b1288b` · PR #41
 - 16-slide Case Study consolidation: PR #34
 - Case Study runtime index sync: `bba810f` · PR #39
-- Last exact verified Production: `1b1288b`
-  - Vercel deployment: `dpl_DMq66eLQLa7YVQVmAwcVpUeFfgfz`
+- Current main / exact verified Production: `3d83a01`
+  - Vercel deployment: `dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq`
   - state: **READY**
-  - GitHub Actions run #129: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
-- Current main code baseline `54b540d`:
-  - GitHub Actions run #132: Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-  - Production HTTP + Chromium smoke **PASS in compatibility mode**
-  - exact-SHA Vercel Production is **PENDING** because the Hobby project is currently build-rate-limited
+  - GitHub Actions run #134: Regression 36, Browser E2E + axe, Production HTTP smoke, Production Chromium render smoke **PASS**
+  - the Production deployment was READY before the run #134 Production Smoke job started
+- Latest product / Case Study code baseline remains `54b540d` · PR #42.
+- The temporary Vercel Hobby build-rate-limit that blocked `54b540d` directly was cleared by the successful `3d83a01` Production deployment.
 - PR #42 changes only the initial Case Study loading copy. Case Study content, layout, demo behavior, and routing remain unchanged.
+
+### Next-version candidate · v2.2 architecture cleanup
+
+- keep `demo-source.html` as the single canonical 39-screen prototype source
+- remove the duplicate ~354 KB `demo.html` artifact
+- preserve legacy `/demo.html` access by routing it through `demo-shell.html`
+- add regression and Production HTTP smoke coverage for that compatibility route
+- keep Product / Portfolio behavior, matching/ELO policy, persistence semantics, and the 16-slide Case Study unchanged
 
 v2.1은 v2.0.0의 제품 동작과 정책을 유지하면서, 매칭·ELO 계산 책임을 legacy compatibility layer에서 명확한 domain engine으로 이동한 구조 고도화 릴리스입니다. 현재 안정 기준은 Product / Portfolio mode, 39개 화면, 16장 Case Study이며 최근 모바일 Case Study 스크롤과 Interactive Demo 노출 회귀를 복구했습니다.
 
@@ -113,11 +119,11 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | Representative visual contract | **PASS** |
 | Stable v2.1 product/runtime | **59b5af1 · PASS** |
 | 16-slide Case Study IA | **PASS** |
-| Latest code-impacting main baseline | **54b540d · run #132 · CI PASS** |
-| Last exact verified Production | **1b1288b · dpl_DMq66eLQLa7YVQVmAwcVpUeFfgfz · READY** |
-| Exact Production smoke | **run #129 · HTTP + Chromium PASS** |
-| Current main exact-SHA Production | **PENDING · Vercel Hobby build-rate-limit** |
-| Current main compatibility smoke | **run #132 · HTTP + Chromium PASS** |
+| Latest product / Case Study code baseline | **54b540d · PR #42** |
+| Current main / exact verified Production | **3d83a01 · dpl_EvQszpwfiNXXUa2zPn4rTAaNd2Mq · READY** |
+| Current Production QA | **run #134 · Regression 36 + Browser E2E/axe + HTTP + Chromium PASS** |
+| Vercel Hobby build-rate-limit | **RESOLVED for current Production** |
+| v2.2 demo artifact boundary | **candidate · PR QA pending** |
 
 수동 iPhone Safari / VoiceOver / Android Chrome / TalkBack 검증은 v1.1에서 통과했으며, 대규모 제품 UI 변경 시 다시 수행합니다.
 
