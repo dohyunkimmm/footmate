@@ -5,6 +5,8 @@ import{createMatchEngine}from'./domain/matching-engine.js';
 import{createEloEngine}from'./domain/elo-engine.js';
 import{createProductStore}from'./state/product-store.js';
 import{createScenarioStore}from'./state/scenario-store.js';
+import{createScenarioPersistence}from'./state/scenario-persistence.js';
+import{createScenarioPresenter}from'./ui/scenario-presenter.js';
 import{createHomeController}from'./ui/home-controller.js';
 import{createFilterResultsController}from'./ui/filter-results-controller.js';
 import{createPaymentController}from'./ui/payment-controller.js';
@@ -14,7 +16,8 @@ import{installScreenEffects}from'./ui/screen-effects.js';
 import{installValidationEntry}from'./ui/validation-entry.js';
 
 const VERSION='2.1.0';
-const RELEASE_VERSION='2.2.0';
+const PREVIOUS_RELEASE_VERSION='2.2.0';
+const RELEASE_VERSION='2.3.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -56,7 +59,7 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  document.documentElement.dataset.footmateRelease='2.2';
+  document.documentElement.dataset.footmateRelease='2.3';
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
@@ -64,19 +67,34 @@ async function boot(){
   const eloEngine=createEloEngine();
   window.FootMateScenarioAdapter.attachDomainEngines?.({match:matchEngine,elo:eloEngine});
   const productStore=createProductStore(finalRuntime);
-  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine});
+  const scenarioPresenter=createScenarioPresenter();
+  const scenarioStore=createScenarioStore(window.FootMateScenarioAdapter,{matchEngine,eloEngine,presenter:scenarioPresenter});
+  const scenarioPersistence=createScenarioPersistence(scenarioStore).start();
   const home=createHomeController({productStore,scenarioStore});
   const filterResults=createFilterResultsController({scenarioStore});
   const payment=createPaymentController({productStore,scenarioStore,finalRuntime});
   const secondary=createSecondaryController({productStore,finalRuntime});
 
   window.FootMateV22={
-    version:RELEASE_VERSION,
+    version:PREVIOUS_RELEASE_VERSION,
+    currentReleaseVersion:RELEASE_VERSION,
     schemaVersion:VERSION,
     matchEngine,
     eloEngine,
     scenarioStore,
-    architecture:'v2.2-inspector-ui-ownership'
+    architecture:'v2.2-inspector-ui-ownership',
+    compatibility:true
+  };
+  window.FootMateV23={
+    version:RELEASE_VERSION,
+    previousReleaseVersion:PREVIOUS_RELEASE_VERSION,
+    schemaVersion:VERSION,
+    scenarioPersistence:scenarioPersistence.architecture,
+    scenarioPersistenceKey:scenarioPersistence.key,
+    scenarioPresentation:scenarioPresenter.architecture,
+    presenterOwnedScreens:[...scenarioPresenter.ownedScreens],
+    cssOwnership:'src/v2/styles',
+    architecture:'v2.3-compatibility-boundary-reduction'
   };
   const inspector=installProductInspector();
 
@@ -122,6 +140,7 @@ async function boot(){
     try{
       localStorage.removeItem(finalRuntime.storeKey);
       localStorage.removeItem(uiStorage.key);
+      scenarioPersistence.clear();
     }catch(error){}
     return legacyReplay?.();
   };
@@ -134,11 +153,14 @@ async function boot(){
     state,
     productStore,
     scenarioStore,
+    scenarioPersistence,
+    scenarioPresenter,
     domain:{matchEngine,eloEngine},
     controllers:{home,filterResults,payment,secondary,inspector},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
-    releaseArchitecture:'v2.2-inspector-modular-ui-runtime',
+    releaseArchitecture:'v2.3-compatibility-boundary-reduction',
+    previousReleaseArchitecture:'v2.2-inspector-modular-ui-runtime',
     uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
@@ -146,7 +168,8 @@ async function boot(){
       patchNavigationWrapped:false,
       productHardeningNavigationWrapped:false,
       productHardening:'policy-adapter-ui-bridge',
-      scenarioAdapter:window.FootMateScenarioAdapter.architecture
+      scenarioAdapter:window.FootMateScenarioAdapter.architecture,
+      scenarioPersistenceBridge:window.FootMateScenarioPersistenceBridge?.architecture||'unavailable'
     },
     refresh(){
       validation.refresh();
@@ -160,6 +183,7 @@ async function boot(){
     destroy(){
       validation.stop?.();
       inspector.destroy?.();
+      scenarioPersistence.destroy?.();
       stopScreenEffects?.();
     }
   };
@@ -179,9 +203,12 @@ async function boot(){
     detail:{version:VERSION,mode:state.mode}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.2:ready',{
-    detail:{version:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+    detail:{version:PREVIOUS_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
-  console.info('[FootMate] v2.2 Inspector UI ownership ready',RELEASE_VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2.3:ready',{
+    detail:{version:RELEASE_VERSION,previousReleaseVersion:PREVIOUS_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+  }));
+  console.info('[FootMate] v2.3 compatibility boundary release ready',RELEASE_VERSION,state.mode);
 }
 
 boot().catch(error=>{
