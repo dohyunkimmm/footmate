@@ -33,6 +33,7 @@ test('production case study and v2 product/portfolio modes render after deployme
     await expect(page.locator('.slide')).toHaveCount(16);
     await expect(page.locator('.toc-item')).toHaveCount(16);
     await expect(page.locator('#cnt')).toContainText('/ 16');
+    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V2.2');
 
     await page.evaluate(() => window.goTo(4));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('User Journey');
@@ -62,14 +63,51 @@ test('production case study and v2 product/portfolio modes render after deployme
   expect(state.mode).toBe('product');
   expect(state.operation).toMatchObject({ match: 'open', participation: 'available' });
 
+  if (strictProduction) {
+    const release = await page.evaluate(() => ({
+      version: window.FootMateV2Runtime?.version,
+      schemaVersion: window.FootMateV2Runtime?.schemaVersion,
+      releaseArchitecture: window.FootMateV2Runtime?.releaseArchitecture,
+      uiArchitecture: window.FootMateV2Runtime?.uiArchitecture,
+      inspectorReady: window.__footmateV22Inspector === true,
+      policyArchitecture: window.FootMateProductOps?.architecture,
+      v22Version: window.FootMateV22?.version
+    }));
+    expect(release).toEqual({
+      version: '2.2.0',
+      schemaVersion: '2.1.0',
+      releaseArchitecture: 'v2.2-inspector-modular-ui-runtime',
+      uiArchitecture: 'v2.2-product-inspector-module',
+      inspectorReady: true,
+      policyArchitecture: 'v2.2-policy-adapter-ui-bridge',
+      v22Version: '2.2.0'
+    });
+  }
+
   await page.goto('/demo?mode=portfolio', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__footmateV2 === true);
   const intro = page.locator('#demoOnboarding');
   if (await intro.isVisible()) await page.locator('.demo-onboarding-start').click();
   await page.evaluate(() => window.goScreen('s-home'));
-  await expect(page.getByRole('button', { name: '제품 검증 패널 열기' })).toBeVisible();
+  const validationLauncher = page.getByRole('button', { name: '제품 검증 패널 열기' });
+  await expect(validationLauncher).toBeVisible();
   state = await page.evaluate(() => ({ mode: window.FootMateV2Runtime.mode }));
   expect(state.mode).toBe('portfolio');
+
+  if (strictProduction) {
+    await validationLauncher.click();
+    const inspector = page.locator('#fmProductInspector');
+    await expect(inspector).toHaveAttribute('aria-hidden', 'false');
+    await expect(page.getByRole('tab', { name: '추천 설명' })).toHaveAttribute('aria-selected', 'true');
+    const inspectorStyle = await page.locator('.fm-inspector-card').evaluate(element => ({
+      width: element.getBoundingClientRect().width,
+      backgroundColor: getComputedStyle(element).backgroundColor
+    }));
+    expect(inspectorStyle.width).toBeGreaterThan(0);
+    expect(inspectorStyle.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    await page.getByRole('button', { name: /제품 검증 패널 닫기/ }).click();
+    await expect(validationLauncher).toBeFocused();
+  }
 
   expect(failures, failures.join('\n')).toEqual([]);
 });
