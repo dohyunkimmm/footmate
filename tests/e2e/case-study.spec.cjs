@@ -41,8 +41,8 @@ test('case study tells the next-major product-first story across 16 compatibilit
   await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('미연동');
 
   await page.evaluate(() => window.goTo(12));
-  await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('Real App');
-  await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('Evidence');
+  await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('REAL APP');
+  await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('EVIDENCE');
 
   await page.evaluate(() => window.goTo(13));
   await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('Context');
