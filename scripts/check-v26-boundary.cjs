@@ -13,5 +13,5 @@ if(patch.includes('v2.6-')||patch.includes('FootMateV26'))throw new Error('v2.6 
 for(const marker of ["legacySource:{","role:'39-screen-regression-fixture'","newFeatureOwnership:false"])if(!runtimeBoundary.includes(marker))throw new Error(`runtime boundary marker missing: ${marker}`);
 for(const marker of ['createAvailabilityGateway',"architecture:'v2.6-availability-verification-boundary'",'serverVerified:false'])if(!availability.includes(marker))throw new Error(`availability boundary marker missing: ${marker}`);
 for(const marker of ['createDecisionTracePersistence',"architecture:'v2.6-decision-trace-persistence'",'footmate:v2.5:decision'])if(!traces.includes(marker))throw new Error(`trace persistence marker missing: ${marker}`);
-for(const marker of ["RELEASE_VERSION='2.6.0'",'window.FootMateV26',"releaseArchitecture:'v2.6-architecture-hardening'"])if(!bootstrap.includes(marker))throw new Error(`v2.6 bootstrap marker missing: ${marker}`);
-console.log('PASS v2.6 architecture boundary: legacy source/patch stay compatibility-only while availability and trace persistence are v2-owned.');
+for(const marker of ["V26_RELEASE_VERSION='2.6.0'","RELEASE_VERSION='2.7.0'",'window.FootMateV26',"architecture:'v2.6-architecture-hardening'",'compatibility:true'])if(!bootstrap.includes(marker))throw new Error(`v2.6 compatibility marker missing: ${marker}`);
+console.log('PASS v2.6 architecture boundary: legacy source/patch stay compatibility-only while v2.6 remains intact under the v2.7 runtime.');
