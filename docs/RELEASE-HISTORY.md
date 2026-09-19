@@ -2,9 +2,9 @@
 
 현재 릴리스 상태와 검증 기준만 간결하게 보존합니다. 세부 변경은 Git commit / Pull Request / GitHub Actions를 source of truth로 사용합니다.
 
-## Current Release — v3.0.0 Unified App Architecture
+## Current Stable Release — v3.0.0 Unified App Architecture
 
-- product/runtime baseline: `cf766cb047b23ef302f06a80429765f45511bdcf` · PR #79
+- stable product/runtime baseline: `cf766cb047b23ef302f06a80429765f45511bdcf` · PR #79
 - architecture introduction: `50e63eeaa4939f7a397941e7c7a8af408ad4cf92` · PR #74
 - Release runtime version: `3.0.0`
 - Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
@@ -13,119 +13,82 @@
 - Portfolio primary destinations: 4 · 탐색 / 추천 / 참가 / 내 정보
 - Product / Portfolio visual ownership 분리
 - Matching / ELO / decision / payment / persistence semantics: 유지
-- exact Production release gate: **CLOSED**
+- stable v3.0 release gate: **CLOSED**
 
-### v3.0 changes
-
-PR #74 · `50e63eea`
-- v3 release/runtime boundary와 unified app architecture 도입
-- 39 legacy compatibility routes를 4 primary destinations에 매핑
-- `src/v3/app-shell.js`, `src/v3/ia/navigation.js`, `src/v3/state/view-state.js`, reusable components/tokens 추가
-- v2.8 domain/state/matching/ELO/decision/payment contracts 유지
+### Stable v3.0 evidence
 
 PR #79 · `cf766cb0`
 - v3.0 Product mode의 시각 회귀를 v2.8 exact baseline 기준으로 복구
 - Product는 375×780 phone/frame, notch/status bar, legacy tab navigation과 39-screen visual baseline 유지
 - Portfolio mode만 v3 app rail/context/four-destination chrome 소유
-- Splash/SSO readable auth surfaces와 provider identity 복구
-- ELO update horizontal overflow, 320px touch target, route mapping, full-registry accessibility findings 보강
-- exact v2.8 baseline과 39-screen structural/pixel/accessibility regression gate 추가
+- full 39-screen structural/pixel/accessibility regression gate 추가
 
-PR #81
-- moving main의 v3 runtime source를 exact deployed product baseline `cf766cb0`와 다시 동일화
-- Production smoke를 mutable CSS comment가 아닌 semantic Portfolio scope/ownership 기준으로 강화
-- strict desktop Product geometry selector를 실제 legacy tab owner 기준으로 정렬
-- product/runtime 변경 없이 QA contract만 유지
+Stable baseline QA:
+- PR #79 final run #254: Regression 36 / Browser E2E + axe / 39-screen Product / exact v2.8 visual parity / Portfolio containment **PASS**
+- PR #81 final run #260: baseline-sync Regression 36 / Browser E2E + axe / full 39-screen regression **PASS**
+- `FootMate Exact Production Baseline` run #2 · ID `35427738247`: strict Production HTTP + Chromium **PASS**
 
-### QA
+Stable `/demo` product/runtime baseline remains `cf766cb...` even when moving `main` or the isolated `/next` candidate advances.
 
-- PR #79 final run #254:
-  - Regression 36 **PASS**
-  - v2.4–v3.0 ownership / compatibility boundaries **PASS**
-  - Browser E2E + axe **PASS**
-  - 39-screen Product structure / overflow at 320 / 375 / 390 / 430 / 1280 **PASS**
-  - exact v2.8 visual parity with documented corrections **PASS**
-  - Portfolio full 39-route containment/accessibility **PASS**
-- PR #81 final run #260:
-  - Regression 36 **PASS**
-  - Browser E2E + axe · full 39-screen regression **PASS**
-- Exact Production baseline verification:
-  - workflow `FootMate Exact Production Baseline`
-  - run #2 · GitHub run ID `35427738247`
-  - strict Production HTTP smoke **PASS**
-  - strict Production Chromium smoke **PASS**
+## Production-verified Candidate — Matchday Companion
 
-### Deployment / release gate
+Status: **Exact Production verified candidate** · stable `/demo` promotion은 아직 별도 결정
 
-v3.0 product/runtime baseline:
-- SHA: `cf766cb047b23ef302f06a80429765f45511bdcf`
-- PR: #79
-
-Exact verified Vercel Production:
-- SHA: `cf766cb047b23ef302f06a80429765f45511bdcf`
-- deployment: `dpl_51Gki6ZZhy2shP6QH9U1yifT98zG`
-- target: `production`
-- state: **READY**
-- strict HTTP + Chromium: **PASS** · exact baseline run #2
-
-Render backup is an independent deployment path and is not used as a substitute for Vercel exact Production verification. Render current-main exact SHA/deployment/live 상태는 moving main을 재귀적으로 repo 문서에 고정하지 않고 deployment source와 Notion current-state에서 유지합니다.
-
-### v3 ownership
-
-```text
-src/v3/
-  release.js
-  app-shell.js
-  ia/
-    navigation.js
-  state/
-    view-state.js
-  components/
-  styles/
-    tokens.css
-    app-shell.css
-    components.css
-```
-
-- v3 owns release/app-shell/IA/view-state/Portfolio chrome.
-- v2.8 remains the Product visual baseline.
-- `src/v2/domain/`, `src/v2/state/`, Product controllers and payment/recovery semantics remain compatibility owners.
-- 39 legacy Product screens remain available.
-
-### Next candidates
-
-- 실제 backend 연동 시 `availability-gateway`를 server-side freshness/capacity verifier로 교체
-- decision trace를 server-side durable audit/event storage로 확장
-- legacy DOM/persistence compatibility ownership 추가 축소
-
-## Next Major Candidate — Matchday Companion
-
-Status: **Not yet verified for Production** · PR #83
-
-기존 v3.0을 안정 회귀 기준으로 유지하면서 `/next`에 새로운 제품 경험을 분리해 검증합니다. 화면 수를 목표로 두지 않고 `Find → Decide → Join → Play → Return`의 사용자 행동과 경기 상태를 중심으로 재설계합니다.
-
-- Guest-first: `Value → Preferences → Recommendation → Detail → Sign in to Join`
-- Recommendation: 퍼센트 점수보다 레벨 · 거리 · 남은 포지션 등 판단 이유 우선
-- Detail: 의사결정 순서와 단일 참가 CTA
-- Sign in: 아이디/비밀번호 + Kakao · Naver · Apple · Google SSO UI + 회원가입 경로
-- Context continuity: 선택 경기와 플레이 설정을 Sign in → Checkout → 참가 완료까지 유지
-- Matchday: discover → upcoming → matchday → postgame 상태 기반 홈
-- Mode isolation: Real App / Guided Case Study / Evidence 분리
-- Case Study: Problem → Persona/JTBD → Product Thesis → Design Decisions → Recovery → System Evidence → Validation → Limits
+PR #83 · merge SHA `5215f5c7ea2b2599793b4b78db289f1e181ae28e`
+- `/next`에 guest-first Matchday Companion 후보를 stable v3.0과 분리해 구현
+- `Find → Decide → Join → Play → Return` 사용자 journey
+- `Value → Preferences → Recommendation → Detail → Sign in to Join` account gate
+- 추천 이유를 레벨 · 거리 · 남은 포지션 중심으로 재구성
+- 단일 참가 CTA와 선택 경기/플레이 설정의 Sign in → Checkout → 참가 완료 연속성
+- 아이디/비밀번호 로그인, 로그인 상태 유지/아이디 저장, 아이디·비밀번호 찾기, 회원가입 UX
+- Kakao · Naver · Apple · Google SSO 선택 UI
+- discover → upcoming → matchday → postgame 상태 기반 홈
+- Real App / Guided Case Study / Evidence mode 분리
+- 16-section Case Study storytelling을 제품 가치와 의사결정 중심으로 재설계
 
 Authentication implementation scope:
 - 구현: 로그인/회원가입/SSO 선택 UX, 세션 기반 `signedIn` 상태, 참가 흐름 연속성
 - 미연동: 실제 Kakao/Naver/Apple/Google OAuth, 회원 DB, 서버 인증 세션
 
-QA scope:
-- v2.4–v3.0 regression / architecture boundary 유지
-- v2.8 39-screen stable Product visual parity 유지
-- guest-first / sign-in gate / checkout continuity
-- 320 / 375 / 390 / 430 responsive
-- axe serious/critical gate
-- Case Study mobile scroll / embedded `/next` interaction
+PR #84 · exact Production verification closure · merge SHA `a4408623402b266f15fde3e7d2ef1c49e3048b37`
+- Production compatibility browser smoke를 현재 16-section Case Study contract와 정렬
+- `/next` release metadata를 추가해 exact Production HTTP/Chromium 검증 가능하도록 보강
+- stable `/demo` v3.0 / v2.8 39-screen Product baseline과 Matching/ELO/decision/payment/persistence semantics 변경 없음
 
-정확한 GitHub Actions run, merge SHA, Vercel deployment ID, exact Production verification은 완료된 뒤 이 섹션에 기록합니다.
+### Candidate QA
+
+GitHub Actions `FootMate QA` run #305 · ID `35440699193` · head SHA `a4408623402b266f15fde3e7d2ef1c49e3048b37`: **SUCCESS**
+
+- Regression 36 **PASS**
+- Browser E2E + axe **PASS**
+- stable `/demo` exact v2.8 39-screen visual parity **PASS**
+- guest-first recommendation / account gate / ID·PW + SSO / sign-up consent / checkout continuity **PASS**
+- responsive 320 / 375 / 390 / 430 **PASS**
+- Case Study mobile vertical scroll + embedded `/next` interaction **PASS**
+- Production compatibility HTTP smoke **PASS**
+- v3 exact Production HTTP smoke **PASS**
+- next-major exact Production HTTP smoke **PASS**
+- Production compatibility Chromium smoke **PASS**
+- v3 exact Production Chromium smoke **PASS**
+- next-major exact Production Chromium smoke **PASS**
+
+### Deployment / verification
+
+Exact verified Vercel Production:
+- SHA: `a4408623402b266f15fde3e7d2ef1c49e3048b37`
+- deployment: `dpl_GfrE1QiCyuabPiySofrmuNRqY3dc`
+- target: `production`
+- state: **READY**
+- aliases: `footmate-black.vercel.app`, `footmate-dohyunkimm.vercel.app`, `footmate-git-main-dohyunkimm.vercel.app`
+- `/`, `/demo`, `/next`: HTTP **200**
+- exact Production compatibility + v3 + next-major HTTP/Chromium: **PASS** · QA run #305
+
+Render backup release point:
+- SHA: `a4408623402b266f15fde3e7d2ef1c49e3048b37`
+- deployment: `dep-dan78p2jnfac738k44ng`
+- state: **LIVE**
+
+Vercel과 Render는 독립적인 배포 경로입니다. docs-only merge 때문에 moving `main`이 전진할 수 있으므로 stable product/runtime baseline `cf766cb...`, Next candidate runtime release point `a440862...`, 마지막 exact verified Vercel Production을 구분해 유지합니다.
 
 ## v2.8.0 — Matchday Visual Identity
 
@@ -204,12 +167,11 @@ QA scope:
 
 ## Documentation policy
 
-- Current product/release state: `README.md`
+- Current stable/candidate product and verified deployment state: `README.md`
 - Release history / compatibility boundary: 이 문서
-- moving `main`은 QA/docs-only merge로 전진할 수 있으므로 product/runtime baseline과 exact verified Production SHA를 별도로 유지
-- Render current-main exact SHA/deployment/live 상태는 deployment source와 Notion current-state에서 유지
-- exact Production이 완료되지 않은 경우 `Not yet verified`로 기록
+- moving `main`은 docs-only merge로 전진할 수 있으므로 stable product/runtime baseline, candidate runtime release point, exact verified Production SHA를 별도로 유지
 - compatibility smoke와 exact Production verification을 구분
 - Render와 Vercel은 독립적인 배포 경로로 기록
+- exact Production이 완료되지 않은 경우 `Not yet verified`로 기록
 - temporary quota/rate-limit/canceled/pending 상태는 durable documentation에 누적하지 않음
 - 세부 작업 로그는 Git history / PR / Actions를 source of truth로 사용
