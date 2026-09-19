@@ -47,8 +47,20 @@ test('v3.0 shell is loaded after v2.8 and owns responsive navigation chrome',()=
   for(const asset of ['/src/v3/styles/tokens.css','/src/v3/styles/app-shell.css','/src/v3/styles/components.css'])assert.ok(shell.includes(asset));
   assert.match(shellCss,/grid-template-rows:minmax\(0,1fr\) 72px/);
   assert.match(shellCss,/@media\(min-width:800px\)/);
+  assert.match(shellCss,/width:min\(560px,calc\(100vw - 48px\)\)/);
   assert.match(shellCss,/grid-template-columns:104px minmax\(0,1fr\)/);
   assert.match(shellCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(componentCss,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
   assert.match(componentCss,/min-height:52px/);
+});
+
+test('v3.0 does not override v2.8 legacy screen color, typography or surface geometry',()=>{
+  assert.doesNotMatch(shellCss,/\.screen\{[^}]*background/s);
+  assert.doesNotMatch(shellCss,/\.pcnt\{/);
+  assert.doesNotMatch(shellCss,/\.nbar\{/);
+  assert.doesNotMatch(shellCss,/\.nbar-title\{/);
+  assert.doesNotMatch(componentCss,/:is\(\.fm24-panel,\.fm25-panel\)/);
+  assert.doesNotMatch(componentCss,/#s-home \.fm24-home-decision/);
+  assert.doesNotMatch(componentCss,/#s-results \.fm25-compare-grid/);
+  assert.match(componentCss,/v2\.8 remains the visual owner of legacy screens/);
 });

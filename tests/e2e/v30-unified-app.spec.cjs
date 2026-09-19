@@ -69,6 +69,34 @@ test('v3.0 primary navigation maps the 39 compatibility routes into four destina
   expectNoFailures(failures);
 });
 
+test('v3.0 preserves the v2.8 matchday visual baseline on product screens',async({page})=>{
+  const failures=await boot(page,{width:390,height:844});
+  await page.evaluate(()=>window.goScreen('s-home'));
+  const visual=await page.evaluate(()=>{
+    const nbar=document.querySelector('#s-home .nbar');
+    const title=document.querySelector('#s-home .nbar-title');
+    const heroTitle=document.querySelector('#s-home .fm24-title');
+    const canvas=document.querySelector('#s-home .pcnt');
+    return{
+      release:document.documentElement.dataset.footmateRelease,
+      bodyBackground:getComputedStyle(document.body).backgroundColor,
+      nbarHeight:getComputedStyle(nbar).height,
+      nbarTitleSize:getComputedStyle(title).fontSize,
+      heroTitleSize:getComputedStyle(heroTitle).fontSize,
+      canvasBackground:getComputedStyle(canvas).backgroundImage,
+      contextDisplay:getComputedStyle(document.querySelector('#s-home .fm30-context')).display
+    };
+  });
+  expect(visual.release).toBe('2.8');
+  expect(visual.bodyBackground).toBe('rgb(8, 21, 15)');
+  expect(visual.nbarHeight).toBe('54px');
+  expect(visual.nbarTitleSize).toBe('16px');
+  expect(visual.heroTitleSize).toBe('20px');
+  expect(visual.canvasBackground).toContain('linear-gradient');
+  expect(visual.contextDisplay).toBe('none');
+  expectNoFailures(failures);
+});
+
 test('v3.0 mobile shell is touch-safe, contained and accessible at 320px',async({page})=>{
   const failures=await boot(page,{width:320,height:740});
   await page.evaluate(()=>window.goScreen('s-home'));
@@ -88,19 +116,21 @@ test('v3.0 mobile shell is touch-safe, contained and accessible at 320px',async(
   expectNoFailures(failures);
 });
 
-test('v3.0 desktop replaces the phone mock with a left rail and responsive workspace',async({page})=>{
+test('v3.0 desktop keeps a left rail without stretching the v2.8 product viewport',async({page})=>{
   const failures=await boot(page,{width:1280,height:900});
   await page.evaluate(()=>window.goScreen('s-results'));
   const layout=await page.evaluate(()=>{
     const shell=document.querySelector('.device-shell').getBoundingClientRect();
     const nav=document.querySelector('#fm30AppNav').getBoundingClientRect();
     const screen=document.querySelector('.device-screen').getBoundingClientRect();
-    return{shellWidth:shell.width,shellHeight:shell.height,navLeft:nav.left,navWidth:nav.width,screenLeft:screen.left,screenWidth:screen.width,resultsColumns:getComputedStyle(document.querySelector('#s-results .fm25-compare-grid')).gridTemplateColumns};
+    return{shellWidth:shell.width,shellHeight:shell.height,navLeft:nav.left,navWidth:nav.width,screenLeft:screen.left,screenWidth:screen.width};
   });
-  expect(layout.shellWidth).toBeGreaterThan(900);
+  expect(layout.shellWidth).toBeGreaterThanOrEqual(520);
+  expect(layout.shellWidth).toBeLessThanOrEqual(580);
   expect(layout.navWidth).toBeGreaterThanOrEqual(90);
   expect(layout.screenLeft).toBeGreaterThan(layout.navLeft);
-  expect(layout.screenWidth).toBeGreaterThan(700);
-  expect(layout.resultsColumns.split(' ').length).toBeGreaterThanOrEqual(3);
+  expect(layout.screenWidth).toBeGreaterThanOrEqual(400);
+  expect(layout.screenWidth).toBeLessThanOrEqual(470);
+  await expect(page.locator('#s-results .fm30-context')).toBeVisible();
   expectNoFailures(failures);
 });
