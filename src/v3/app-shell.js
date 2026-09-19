@@ -95,9 +95,9 @@ export function installAppShell({runtime,mode='product'}={}){
     queueMicrotask(sync);
   }
 
-  function onClick(event){
+  function onNavigationClick(event){
     const button=event.target.closest?.('[data-fm30-destination]');
-    if(!button)return;
+    if(!button||!nav.contains(button))return;
     event.preventDefault();
     const destinationId=button.dataset.fm30Destination;
     currentDestination=destinationId;
@@ -113,10 +113,9 @@ export function installAppShell({runtime,mode='product'}={}){
   });
   observer.observe(deviceScreen,{subtree:true,attributes:true,attributeFilter:['class']});
 
-  document.addEventListener('click',onClick);
+  nav.addEventListener('click',onNavigationClick);
   const stopScenario=runtime.scenarioStore.subscribe?.(()=>schedule())||(()=>{});
 
-  document.querySelectorAll('.screen').forEach(screen=>mount(screen.id));
   sync();
 
   return{
@@ -128,7 +127,6 @@ export function installAppShell({runtime,mode='product'}={}){
     viewState,
     navigation:nav,
     refresh(){
-      document.querySelectorAll('.screen').forEach(screen=>mount(screen.id));
       sync();
     },
     onScreen:sync,
@@ -136,7 +134,7 @@ export function installAppShell({runtime,mode='product'}={}){
       destroyed=true;
       observer.disconnect();
       stopScenario();
-      document.removeEventListener('click',onClick);
+      nav.removeEventListener('click',onNavigationClick);
       nav.remove();
       document.querySelectorAll('.tab-bar[data-fm30-legacy-nav="true"]').forEach(tab=>{
         tab.removeAttribute('aria-hidden');
