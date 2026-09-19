@@ -39,9 +39,11 @@ html[data-footmate-release="2.8"] #s-sso .pcnt{
 html[data-footmate-release="2.8"] #s-eloUpdate .pcnt{
   overflow-x:hidden!important;
 }
+/* Preserve the baseline content width while removing the measured 6px flex
+   overflow: trim only the excess horizontal padding rather than stretching the row. */
 html[data-footmate-release="2.8"] #s-eloUpdate .pcnt>div{
-  width:100%!important;
-  max-width:100%!important;
+  padding-left:21px!important;
+  padding-right:21px!important;
 }
 html[data-footmate-release="2.8"] #s-pay-low>.pcnt>div:nth-child(2)>div:nth-child(2)>div:nth-child(1),
 html[data-footmate-release="2.8"] #s-noshow .noshow-auto{
