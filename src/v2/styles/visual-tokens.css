@@ -1,0 +1,46 @@
+/* FootMate v2.8 · Matchday Visual Tokens
+   Visual-only design tokens layered on the verified v2.7 experience. */
+html[data-footmate-release="2.8"]{
+  --fm28-ink:#102019;
+  --fm28-ink-strong:#08130F;
+  --fm28-ink-soft:#42564D;
+  --fm28-muted:#64766E;
+  --fm28-canvas:#F1F5F0;
+  --fm28-canvas-strong:#E8EFEA;
+  --fm28-surface:#FFFFFF;
+  --fm28-surface-soft:#F8FAF8;
+  --fm28-line:#D8E2DC;
+  --fm28-line-strong:#C4D2CA;
+  --fm28-pitch:#165B40;
+  --fm28-pitch-strong:#0D422E;
+  --fm28-pitch-deep:#082C20;
+  --fm28-blue:#2458A6;
+  --fm28-blue-soft:#EAF1FC;
+  --fm28-accent:#D3F36B;
+  --fm28-accent-strong:#B9E447;
+  --fm28-accent-soft:#F4FBD9;
+  --fm28-success:#16704E;
+  --fm28-success-soft:#E6F6EF;
+  --fm28-warning:#8B5A08;
+  --fm28-warning-soft:#FFF4DB;
+  --fm28-danger:#A43A3A;
+  --fm28-danger-soft:#FCEBEC;
+  --fm28-radius-xs:10px;
+  --fm28-radius-sm:14px;
+  --fm28-radius-md:18px;
+  --fm28-radius-lg:24px;
+  --fm28-radius-xl:30px;
+  --fm28-shadow-1:0 5px 16px rgba(19,48,36,.055),0 1px 2px rgba(19,48,36,.04);
+  --fm28-shadow-2:0 12px 32px rgba(19,48,36,.10),0 2px 6px rgba(19,48,36,.05);
+  --fm28-shadow-hero:0 18px 44px rgba(6,39,27,.24),0 4px 10px rgba(6,39,27,.12);
+  --fm28-space-1:4px;
+  --fm28-space-2:8px;
+  --fm28-space-3:12px;
+  --fm28-space-4:16px;
+  --fm28-space-5:20px;
+  --fm28-space-6:24px;
+  --fm28-motion-fast:140ms;
+  --fm28-motion-base:220ms;
+  --fm28-motion-slow:360ms;
+  --fm28-ease:cubic-bezier(.2,.8,.2,1);
+}
