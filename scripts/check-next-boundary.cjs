@@ -18,13 +18,13 @@ assert(vercel.includes('"source": "/next"'),'next route missing from Vercel rewr
 assert(vercel.includes('"destination": "/next.html"'),'next route destination missing');
 
 for(const marker of ["NEXT_RELEASE='next-major'","NEXT_STORAGE_KEY='footmate:next:session'",'MATCHES=Object.freeze','setupComplete:false','signedIn:false'])assert(data.includes(marker),`next data contract missing ${marker}`);
-for(const marker of ['Guest-first onboarding','Explainable match fit','Matchday continuity','start-setup','join-match','sign-in','confirm-payment','scenario-matchday','scenario-postgame','mode===\'evidence\''])assert(app.includes(marker),`next experience missing ${marker}`);
+for(const marker of ['Value first','Preference before account','Sign in to join','Matchday continuity','결정에 필요한 이유만 먼저 보여드려요.','start-setup','join-match','sign-in','confirm-payment','scenario-matchday','scenario-postgame',"mode==='evidence'"])assert(app.includes(marker),`next experience missing ${marker}`);
 assert(app.indexOf("action==='join-match'")<app.indexOf("action==='sign-in'"),'join intent must precede sign-in handling');
 assert(app.includes("setState({route:state.signedIn?'checkout':'auth'})"),'join must gate auth only at participation intent');
 assert(app.includes("else setState({setupComplete:true,route:'home'})"),'setup must reach recommendations/home before auth');
 
 for(const marker of ['--fm-pitch:#0b251b','--fm-lime:#c9ef62','.fm-next-nav','@media(max-width:340px)','@media(prefers-reduced-motion:reduce)'])assert(styles.includes(marker),`next visual system missing ${marker}`);
-assert(!styles.includes('font-size:9px'),'product typography must not use 9px text');
+for(const marker of ['font-size:16px','font-size:15px','min-height:52px'])assert(styles.includes(marker),`next product readability/touch contract missing ${marker}`);
 assert(!app.includes('🤖')&&!app.includes('⚽')&&!app.includes('✨'),'next product must use SVG iconography instead of emoji UI');
 
 assert(indexShell.includes('/src/next/case-study.css'),'case study shell missing next cover CSS');
