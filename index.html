@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>FootMate | AI 서비스 기획·시스템 PM 케이스 스터디</title>
-<meta name="description" content="동적 ELO 매칭을 AI Agent Workflow Blueprint, 서비스 데이터·품질, 프로토타입 구현·QA·배포 체계로 확장한 FootMate 서비스 기획·프로토타이핑 케이스 스터디입니다.">
-<meta name="theme-color" content="#07111F">
+<title>FootMate | Matchday Companion 케이스 스터디</title>
+<meta name="description" content="내 수준에 맞는 풋살 경기를 찾고 추천 이유를 이해해 참가하고, 경기 당일까지 이어지는 Matchday Companion 경험을 설계한 FootMate 케이스 스터디입니다.">
+<meta name="theme-color" content="#0B251B">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://footmate-black.vercel.app/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:url" content="https://footmate-black.vercel.app/">
-<meta property="og:title" content="FootMate | AI 서비스 기획·시스템 PM 케이스 스터디">
-<meta property="og:description" content="설명 가능한 동적 매칭, AI Agent Workflow, 데이터 품질과 검증 이벤트를 연결한 39개 화면의 인터랙티브 프로토타입입니다.">
+<meta property="og:title" content="FootMate | Matchday Companion 케이스 스터디">
+<meta property="og:description" content="Find → Decide → Join → Play → Return. 추천 이유부터 경기 당일까지 이어지는 풋살 경험을 설계했습니다.">
 <meta property="og:image" content="https://footmate-black.vercel.app/og-footmate.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="FootMate AI 서비스 기획·시스템 PM 인터랙티브 프로토타입">
+<meta property="og:image:alt" content="FootMate Matchday Companion 케이스 스터디">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="FootMate | AI 서비스 기획·시스템 PM 케이스 스터디">
-<meta name="twitter:description" content="동적 ELO, AI Agent Workflow, 데이터 품질과 예외·복구 흐름을 연결한 인터랙티브 프로토타입">
+<meta name="twitter:title" content="FootMate | Matchday Companion 케이스 스터디">
+<meta name="twitter:description" content="내 수준에 맞는 경기 탐색부터 참가·경기 당일까지 이어지는 FootMate 경험">
 <meta name="twitter:image" content="https://footmate-black.vercel.app/og-footmate.png">
 <style>html,body{width:100%;height:100%;margin:0;background:#07111F;color:#A7B8D0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}#boot{height:100%;display:grid;place-items:center}#boot strong{display:block;color:#fff;margin-bottom:6px}</style>
 </head>
@@ -31,8 +31,8 @@
     const response=await fetch('/index-source'+location.search,{cache:'no-store'});
     if(!response.ok)throw new Error('index source '+response.status);
     let html=await response.text();
-    const styles='<link rel="stylesheet" href="/case-study-experience.css?v=20260918-1">';
-    const patch='<script src="/index-patches.js?v=20260917-1"><\/script><script src="/index-experience.js?v=20260919-1"><\/script>';
+    const styles='<link rel="stylesheet" href="/case-study-experience.css?v=20260918-1"><link rel="stylesheet" href="/src/next/case-study.css?v=20260919-1"><link rel="stylesheet" href="/src/next/case-study-compat.css?v=20260919-1">';
+    const patch='<script src="/index-patches.js?v=20260917-1"><\/script><script src="/index-experience.js?v=20260919-1"><\/script><script src="/src/next/case-study.js?v=20260919-1"><\/script>';
     html=html.includes('</head>')?html.replace('</head>',styles+'</head>'):styles+html;
     html=html.includes('</body>')?html.replace('</body>',patch+'</body>'):html+patch;
     document.open();
@@ -41,7 +41,7 @@
   }catch(error){
     console.error('[FootMate index shell] source load failed',error);
     const boot=document.getElementById('boot');
-    if(boot)boot.innerHTML='<div><strong>케이스 스터디를 불러오지 못했습니다.</strong><a href="/index-source" style="color:#8FC3FF">원본 보기</a></div>';
+    if(boot)boot.innerHTML='<div><strong>케이스 스터디를 불러오지 못했습니다.</strong><a href="/index-source" style="color:#C9EF62">원본 보기</a></div>';
   }
 })();
 </script>
