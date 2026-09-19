@@ -11,10 +11,10 @@ FootMate는 **내 수준에 맞는 풋살 경기를 찾고, 왜 잘 맞는지 �
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Case Study: `/`
 - Compatibility aliases: `/demo`, `/next` → v4.0 Real App
-- Verified release baseline: `fcb01400ecc6ee34bd70bf2da9c1ee8b114375f9`
-- GitHub Actions: **FootMate QA #316 · run 35445575340 · PASS**
-- Exact Vercel Production: `fcb01400ecc6ee34bd70bf2da9c1ee8b114375f9` · `dpl_AAvMY6CCkf8GpsFTVoir38TNxELh` · **READY** · HTTP/Chromium smoke PASS
-- Render backup: `fcb01400ecc6ee34bd70bf2da9c1ee8b114375f9` · `dep-dan8p7e8bjmc73ab4os0` · **LIVE**
+- Product/runtime + public-surface baseline: `fa150f183f6a821edd04e49c3496559e5ebecc8e`
+- GitHub Actions: **FootMate QA #318 · run 35447147842 · PASS**
+- Exact Vercel Production: `fa150f183f6a821edd04e49c3496559e5ebecc8e` · `dpl_ALtasaHtBQZZthkEgMtxomN2p4GP` · **READY** · HTTP/Chromium smoke PASS
+- Render backup: `fa150f183f6a821edd04e49c3496559e5ebecc8e` · `dep-dan989e8bjmc73abijrg` · **LIVE**
 
 ## Product decisions
 
