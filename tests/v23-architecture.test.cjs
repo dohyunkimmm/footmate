@@ -5,7 +5,7 @@ const path=require('node:path');
 const root=process.env.FOOTMATE_SOURCE_DIR||path.join(__dirname,'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 
-test('v2.3 canonical CSS ownership remains available under the v2.6 release',()=>{
+test('v2.3 canonical CSS ownership remains available under the v2.7 release',()=>{
   const patchAlias=read('footmate-patches.css');
   const finalizeAlias=read('footmate-finalize.css');
   const experienceAlias=read('footmate-experience.css');
@@ -31,16 +31,18 @@ test('v2.3 scenario persistence migration remains the canonical compatibility co
   assert.ok(bootstrap.includes("scenarioPersistence:'v2.3-scenario-persistence-migration'"));
 });
 
-test('v2.3 remains a compatibility alias after v2.6 promotion',()=>{
+test('v2.3 remains a compatibility alias after v2.7 promotion',()=>{
   const bootstrap=read('src/v2/bootstrap.js');
   assert.ok(bootstrap.includes("const V23_RELEASE_VERSION='2.3.0'"));
   assert.ok(bootstrap.includes("const V24_RELEASE_VERSION='2.4.0'"));
   assert.ok(bootstrap.includes("const V25_RELEASE_VERSION='2.5.0'"));
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const V26_RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.7.0'"));
   assert.ok(bootstrap.includes('window.FootMateV23'));
   assert.ok(bootstrap.includes("architecture:'v2.3-compatibility-boundary-reduction'"));
   assert.ok(bootstrap.includes('compatibility:true'));
   assert.ok(bootstrap.includes("'footmate:v2.3:ready'"));
   assert.ok(bootstrap.includes('window.FootMateV25'));
   assert.ok(bootstrap.includes('window.FootMateV26'));
+  assert.ok(bootstrap.includes('window.FootMateV27'));
 });
