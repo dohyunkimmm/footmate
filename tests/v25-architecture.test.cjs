@@ -13,14 +13,15 @@ test('v2.5 decision/recovery ownership remains compatible under the current runt
   const payment=read('src/v2/ui/payment-controller.js');
   const shell=read('demo-shell.html');
   assert.ok(bootstrap.includes("const V25_RELEASE_VERSION='2.5.0'"));
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const V26_RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.7.0'"));
   assert.ok(bootstrap.includes('window.FootMateV25'));
   assert.ok(bootstrap.includes("architecture:'v2.5-decision-recovery-experience'"));
-  assert.ok(bootstrap.includes("previousReleaseArchitecture:'v2.5-decision-recovery-experience'"));
+  assert.ok(bootstrap.includes("previousReleaseArchitecture:'v2.6-architecture-hardening'"));
   assert.ok(bootstrap.includes("'footmate:v2.5:ready'"));
   assert.ok(bootstrap.includes('window.FootMateV24'));
-  assert.ok(bootstrap.includes('window.FootMateV23'));
-  assert.ok(bootstrap.includes('window.FootMateV22'));
+  assert.ok(bootstrap.includes('window.FootMateV26'));
+  assert.ok(bootstrap.includes('window.FootMateV27'));
   assert.ok(engine.includes("architecture:'v2.5-decision-recovery-engine'"));
   assert.ok(engine.includes('traceId'));
   assert.ok(engine.includes("submission:'block'"));
@@ -31,7 +32,8 @@ test('v2.5 decision/recovery ownership remains compatible under the current runt
   assert.ok(payment.includes("'footmate:v2.5:decision-blocked'"));
   assert.ok(payment.includes("guard?.submission==='block'"));
   assert.ok(shell.includes('/src/v2/styles/decision-recovery.css?v=20260919-1'));
-  assert.ok(shell.includes('/src/v2/bootstrap.js?v=20260919-2'));
+  assert.ok(shell.includes('/src/v2/styles/visual-experience.css?v=20260919-1'));
+  assert.ok(shell.includes('/src/v2/bootstrap.js?v=20260919-3'));
 });
 
 test('v2.5 keeps component markup out of the canonical legacy source',()=>{
@@ -41,11 +43,12 @@ test('v2.5 keeps component markup out of the canonical legacy source',()=>{
   assert.ok(boundary.includes("if(source.includes('fm25-'))"));
 });
 
-test('v2.5 required check names stay stable while v2.6 extends the browser gate',()=>{
+test('v2.5 required check names stay stable while v2.7 extends the browser gate',()=>{
   const workflow=read('.github/workflows/qa.yml');
   assert.ok(workflow.includes('name: Regression 36'));
   assert.ok(workflow.includes('name: Browser E2E + axe'));
   assert.ok(workflow.includes('node scripts/check-v25-boundary.cjs'));
   assert.ok(workflow.includes('tests/e2e/v25-decision-recovery.spec.cjs'));
   assert.ok(workflow.includes('tests/e2e/v26-architecture-hardening.spec.cjs'));
+  assert.ok(workflow.includes('tests/e2e/v27-visual-experience.spec.cjs'));
 });

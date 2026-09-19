@@ -40,7 +40,8 @@ async function main() {
     if (strictProduction) {
       assert(body.includes('/src/v2/styles/core-funnel.css'), '/demo v2.4 core funnel stylesheet missing');
       assert(body.includes('/src/v2/styles/decision-recovery.css'), '/demo v2.5 decision/recovery stylesheet missing');
-      assert(body.includes('/src/v2/bootstrap.js?v=20260919-2'), '/demo v2.6 bootstrap cache key missing');
+      assert(body.includes('/src/v2/styles/visual-experience.css?v=20260919-1'), '/demo v2.7 visual experience stylesheet missing');
+      assert(body.includes('/src/v2/bootstrap.js?v=20260919-3'), '/demo v2.7 bootstrap cache key missing');
     }
   });
 
@@ -58,6 +59,7 @@ async function main() {
       assert(!body.includes('fm24-'), 'v2.4 component markup leaked into demo-source');
       assert(!body.includes('fm25-'), 'v2.5 component markup leaked into demo-source');
       assert(!body.includes('fm26-'), 'v2.6 architecture markup leaked into demo-source');
+      assert(!body.includes('fm27-'), 'v2.7 visual markup leaked into demo-source');
     }
   });
 
@@ -83,14 +85,25 @@ async function main() {
     assert(body.includes("finalize:'state-bridge-only'"), 'v2 legacy boundary marker missing');
     if (strictProduction) {
       assert(body.includes("VERSION='2.1.0'"), 'v2.1 schema version marker missing');
-      assert(body.includes("RELEASE_VERSION='2.6.0'"), 'v2.6 release marker missing');
-      assert(body.includes('FootMateV26'), 'v2.6 runtime contract missing');
-      assert(body.includes("releaseArchitecture:'v2.6-architecture-hardening'"), 'v2.6 release architecture marker missing');
-      assert(body.includes("previousReleaseArchitecture:'v2.5-decision-recovery-experience'"), 'v2.5 previous architecture marker missing');
+      assert(body.includes("V26_RELEASE_VERSION='2.6.0'"), 'v2.6 compatibility marker missing');
+      assert(body.includes("RELEASE_VERSION='2.7.0'"), 'v2.7 release marker missing');
+      assert(body.includes('FootMateV27'), 'v2.7 runtime contract missing');
+      assert(body.includes('FootMateV26'), 'v2.6 compatibility contract missing');
+      assert(body.includes("releaseArchitecture:'v2.7-visual-experience'"), 'v2.7 release architecture marker missing');
+      assert(body.includes("previousReleaseArchitecture:'v2.6-architecture-hardening'"), 'v2.6 previous architecture marker missing');
+      assert(body.includes("visualOwnership:'src/v2/styles/visual-experience.css'"), 'v2.7 visual ownership marker missing');
     }
   });
 
   if (strictProduction) {
+    await run('v2.7-visual-experience', '/src/v2/styles/visual-experience.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'visual experience content type unexpected');
+      assert(body.includes('FootMate v2.7 · Visual Experience'), 'v2.7 visual stylesheet marker missing');
+      assert(body.includes('html[data-footmate-release="2.7"] .fm24-panel'), 'v2.7 core funnel visual ownership missing');
+      assert(body.includes('html[data-footmate-release="2.7"] .fm25-panel'), 'v2.7 decision visual ownership missing');
+      assert(body.includes('@media(max-width:340px)'), 'v2.7 320px touch safeguard missing');
+      assert(body.includes('@media(prefers-reduced-motion:reduce)'), 'v2.7 reduced motion safeguard missing');
+    });
     await run('v2.6-runtime-boundary', '/src/v2/demo/runtime-boundary.js', ({ body, contentType }) => {
       assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'runtime boundary content type unexpected');
       assert(body.includes('v2.6-build-source-component-boundary'), 'v2.6 runtime boundary marker missing');

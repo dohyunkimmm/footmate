@@ -26,7 +26,8 @@ const V22_RELEASE_VERSION='2.2.0';
 const V23_RELEASE_VERSION='2.3.0';
 const V24_RELEASE_VERSION='2.4.0';
 const V25_RELEASE_VERSION='2.5.0';
-const RELEASE_VERSION='2.6.0';
+const V26_RELEASE_VERSION='2.6.0';
+const RELEASE_VERSION='2.7.0';
 const uiStorage=createStorage('ui');
 const requestedMode=resolveMode();
 const state=Object.assign({
@@ -68,7 +69,7 @@ async function boot(){
   await waitForRuntime();
 
   document.documentElement.dataset.footmateVersion='2';
-  document.documentElement.dataset.footmateRelease='2.6';
+  document.documentElement.dataset.footmateRelease='2.7';
   state.mode=applyMode(requestedMode);
 
   const finalRuntime=window.FootMateFinalRuntime;
@@ -143,7 +144,8 @@ async function boot(){
     compatibility:true
   };
   window.FootMateV26={
-    version:RELEASE_VERSION,
+    version:V26_RELEASE_VERSION,
+    currentReleaseVersion:RELEASE_VERSION,
     previousReleaseVersion:V25_RELEASE_VERSION,
     schemaVersion:VERSION,
     runtimeBoundary:runtimeBoundary.architecture,
@@ -152,7 +154,18 @@ async function boot(){
     persistentDecisionReplay:true,
     legacySourceRole:runtimeBoundary.legacySource.role,
     compatibilityPatchRole:runtimeBoundary.compatibility.role,
-    architecture:'v2.6-architecture-hardening'
+    architecture:'v2.6-architecture-hardening',
+    compatibility:true
+  };
+  window.FootMateV27={
+    version:RELEASE_VERSION,
+    previousReleaseVersion:V26_RELEASE_VERSION,
+    schemaVersion:VERSION,
+    visualOwnership:'src/v2/styles/visual-experience.css',
+    baselineArchitecture:'v2.6-architecture-hardening',
+    preservedScreens:39,
+    caseStudySlides:16,
+    architecture:'v2.7-visual-experience'
   };
   const inspector=installProductInspector();
 
@@ -178,8 +191,6 @@ async function boot(){
     }
   });
 
-  // Product mode skips the portfolio intro visually, but still runs its
-  // initialization contract so hash deep-links and demo state restoration work.
   if(state.mode==='product'&&typeof window.startFootMateDemo==='function'){
     window.startFootMateDemo();
   }
@@ -226,8 +237,9 @@ async function boot(){
     controllers:{home,filterResults,payment,secondary,inspector,coreFunnel,decisionRecovery},
     storageKey:uiStorage.key,
     architecture:'v2.1-domain-modular-es-runtime',
-    releaseArchitecture:'v2.6-architecture-hardening',
-    previousReleaseArchitecture:'v2.5-decision-recovery-experience',
+    releaseArchitecture:'v2.7-visual-experience',
+    previousReleaseArchitecture:'v2.6-architecture-hardening',
+    visualOwnership:'src/v2/styles/visual-experience.css',
     uiArchitecture:inspector.architecture,
     navigationWrapped:false,
     legacyLayers:{
@@ -288,9 +300,12 @@ async function boot(){
     detail:{version:V25_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V24_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
   window.dispatchEvent(new CustomEvent('footmate:v2.6:ready',{
-    detail:{version:RELEASE_VERSION,previousReleaseVersion:V25_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode}
+    detail:{version:V26_RELEASE_VERSION,currentReleaseVersion:RELEASE_VERSION,previousReleaseVersion:V25_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,compatibility:true}
   }));
-  console.info('[FootMate] v2.6 architecture hardening ready',RELEASE_VERSION,state.mode);
+  window.dispatchEvent(new CustomEvent('footmate:v2.7:ready',{
+    detail:{version:RELEASE_VERSION,previousReleaseVersion:V26_RELEASE_VERSION,schemaVersion:VERSION,mode:state.mode,visualOwnership:'src/v2/styles/visual-experience.css'}
+  }));
+  console.info('[FootMate] v2.7 visual experience ready',RELEASE_VERSION,state.mode);
 }
 
 boot().catch(error=>{

@@ -21,7 +21,7 @@ test('v2.2 product inspector owns DOM rendering outside product hardening', () =
   assert.equal(validation.includes('fmProductLauncher'), false);
 });
 
-test('v2.6 release metadata preserves v2.2-v2.5 compatibility and v2.1 storage/event contracts', () => {
+test('v2.7 release metadata preserves v2.2-v2.6 compatibility and v2.1 storage/event contracts', () => {
   const bootstrap = read('src/v2/bootstrap.js');
   const hardening = read('footmate-product-hardening.js');
   const caseStudy = read('index-experience.js');
@@ -30,16 +30,17 @@ test('v2.6 release metadata preserves v2.2-v2.5 compatibility and v2.1 storage/e
   assert.ok(bootstrap.includes("const V23_RELEASE_VERSION='2.3.0'"));
   assert.ok(bootstrap.includes("const V24_RELEASE_VERSION='2.4.0'"));
   assert.ok(bootstrap.includes("const V25_RELEASE_VERSION='2.5.0'"));
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.6.0'"));
-  assert.ok(bootstrap.includes("releaseArchitecture:'v2.6-architecture-hardening'"));
-  assert.ok(bootstrap.includes("previousReleaseArchitecture:'v2.5-decision-recovery-experience'"));
-  for(const event of ['v2.2','v2.3','v2.4','v2.5','v2.6'])assert.ok(bootstrap.includes(`'footmate:${event}:ready'`));
-  for(const alias of ['FootMateV22','FootMateV23','FootMateV24','FootMateV25','FootMateV26'])assert.ok(bootstrap.includes(`window.${alias}`));
+  assert.ok(bootstrap.includes("const V26_RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.7.0'"));
+  assert.ok(bootstrap.includes("releaseArchitecture:'v2.7-visual-experience'"));
+  assert.ok(bootstrap.includes("previousReleaseArchitecture:'v2.6-architecture-hardening'"));
+  for(const event of ['v2.2','v2.3','v2.4','v2.5','v2.6','v2.7'])assert.ok(bootstrap.includes(`'footmate:${event}:ready'`));
+  for(const alias of ['FootMateV22','FootMateV23','FootMateV24','FootMateV25','FootMateV26','FootMateV27'])assert.ok(bootstrap.includes(`window.${alias}`));
   assert.ok(hardening.includes("eventContractVersion:'2.1.0'"));
-  assert.ok(caseStudy.includes('v2.6.0 Architecture Hardening'));
+  assert.ok(caseStudy.includes('v2.7.0 Visual Experience'));
 });
 
-test('v2.2 inspector CSS compatibility alias remains while v2.6 shell loads canonical ownership', () => {
+test('v2.2 inspector CSS compatibility alias remains while v2.7 shell loads canonical ownership', () => {
   const alias = read('footmate-product-hardening.css');
   const styles = read('src/v2/styles/product-inspector.css');
   const shell = read('demo-shell.html');
@@ -49,5 +50,6 @@ test('v2.2 inspector CSS compatibility alias remains while v2.6 shell loads cano
   assert.ok(shell.includes('/src/v2/styles/product-inspector.css?v=20260918-1'));
   assert.ok(shell.includes('/src/v2/styles/core-funnel.css?v=20260919-1'));
   assert.ok(shell.includes('/src/v2/styles/decision-recovery.css?v=20260919-1'));
-  assert.ok(shell.includes('bootstrap.js?v=20260919-2'));
+  assert.ok(shell.includes('/src/v2/styles/visual-experience.css?v=20260919-1'));
+  assert.ok(shell.includes('bootstrap.js?v=20260919-3'));
 });
