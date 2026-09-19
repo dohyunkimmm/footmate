@@ -1,0 +1,72 @@
+/* FootMate v4.0 Case Study · editorial and text-flow hardening */
+html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
+
+.fm-next-cover-title-line{display:block}
+
+.fm-next-cover h1,
+.fm-next-story h2,
+.fm-next-cs-card h3,
+.fm-next-cs-reco-card h3,
+.fm-next-cs-closing h3{
+  text-wrap:balance;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+
+.fm-next-cover-lead,
+.fm-next-story-lead,
+.fm-next-cs-card p,
+.fm-next-cs-jtbd p,
+.fm-next-cs-scope p,
+.fm-next-cs-sticky p,
+.fm-next-cs-note,
+.fm-next-cs-before-after b,
+.fm-next-cs-before-after p,
+.fm-next-cs-journey p,
+.fm-next-cs-modes p,
+.fm-next-cover-proof span{
+  text-wrap:pretty;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+
+.fm-next-story h2{max-width:20ch}
+.fm-next-story-lead{max-width:66ch}
+.fm-next-cs-card,
+.fm-next-cs-quote,
+.fm-next-cs-jtbd,
+.fm-next-cs-decision,
+.fm-next-cs-scope,
+.fm-next-cs-sticky,
+.fm-next-cs-note,
+.fm-next-cs-before-after>div,
+.fm-next-cs-auth-flow>div,
+.fm-next-cs-modes>div{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.fm-next-cs-state-line span,
+.fm-next-cs-agent b,
+.fm-next-cs-auth-flow b,
+.fm-next-cs-modes h3,
+.fm-next-cs-metric span{
+  overflow-wrap:anywhere;
+}
+
+@media(max-width:560px){
+  .fm-next-cover h1{
+    font-size:clamp(34px,10.7vw,46px);
+    line-height:1.08;
+    letter-spacing:-.055em;
+  }
+  .fm-next-cover-title-line{max-width:100%}
+  .fm-next-story h2{
+    max-width:100%;
+    font-size:clamp(30px,9.2vw,36px);
+    line-height:1.16;
+    letter-spacing:-.045em;
+  }
+  .fm-next-cover-lead,
+  .fm-next-story-lead{line-height:1.72}
+}

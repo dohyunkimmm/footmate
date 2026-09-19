@@ -40,8 +40,8 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v4.0 browser, state, responsive and accessibility gates
-        run: npx playwright test tests/e2e/v40-major.spec.cjs
+      - name: Run v4.0 browser, state, responsive, editorial and accessibility gates
+        run: npx playwright test tests/e2e/v40-major.spec.cjs tests/e2e/v40-case-study-editorial.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
