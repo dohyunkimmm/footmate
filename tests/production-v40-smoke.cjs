@@ -1,0 +1,12 @@
+const fs=require('node:fs');const path=require('node:path');
+const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate-black.vercel.app').replace(/\/$/,'');
+const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
+const reportDir=path.resolve('test-results');const reportFile=path.join(reportDir,'production-v40-smoke.json');
+function assert(c,m){if(!c)throw new Error(m)}async function fetchText(route){const r=await fetch(base+route,{redirect:'follow',headers:{'user-agent':'FootMate-v4-QA/1.0'}});return{status:r.status,contentType:r.headers.get('content-type')||'',body:await r.text()}}
+async function check(name,route,verify,checks){try{const r=await fetchText(route);assert(r.status>=200&&r.status<300,`${route} returned ${r.status}`);verify(r);checks.push({name,route,ok:true,status:r.status})}catch(e){checks.push({name,route,ok:false,error:e.message})}}
+(async()=>{fs.mkdirSync(reportDir,{recursive:true});if(!strict){fs.writeFileSync(reportFile,JSON.stringify({base,strictProduction:false,skipped:true,passed:true},null,2));console.log('SKIP v4 exact Production HTTP smoke');return}const checks=[];
+await check('case-study','/',({body})=>{assert(body.includes('footmate-case-study-release" content="4.0.0"'),'case study v4 metadata missing');assert(body.includes('/src/v4/case-study.js'),'v4 case study runtime missing')},checks);
+for(const route of ['/app','/demo','/next'])await check(`app-${route}`,route,({body})=>{assert(body.includes('footmate-release" content="4.0.0"'),`${route} v4 release metadata missing`);assert(body.includes('/src/v4/app.js'),`${route} v4 app module missing`)},checks);
+await check('v4-data','/src/v4/data.js',({body})=>{assert(body.includes("RELEASE_VERSION='4.0.0'"),'release marker missing');assert(body.includes("footmate:v4:session"),'v4 storage missing')},checks);
+await check('v4-hardening','/src/v4/release-hardening.js',({body})=>{assert(body.includes('validateLogin'),'login validation missing');assert(body.includes('detailReturnRoute'),'return navigation missing');assert(body.includes('checkedInMatchId'),'check-in persistence missing')},checks);
+const payload={base,checkedAt:new Date().toISOString(),githubSha:process.env.GITHUB_SHA||null,strictProduction:true,passed:checks.every(x=>x.ok),checks};fs.writeFileSync(reportFile,JSON.stringify(payload,null,2));checks.forEach(x=>console.log(`${x.ok?'PASS':'FAIL'} ${x.name} ${x.route}`));if(!payload.passed)process.exitCode=1})().catch(e=>{console.error(e);process.exitCode=1});

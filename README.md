@@ -1,171 +1,62 @@
-# ⚽ FootMate
+# FootMate v4.0 — Matchday Companion
 
-**AI 기반 풋살 매칭 서비스 기획 · 인터랙티브 프로토타입**
+FootMate는 **내 수준에 맞는 풋살 경기를 찾고, 왜 잘 맞는지 이해하고, 안심하고 참가해 경기 당일까지 이어지는 경험**을 설계한 인터랙티브 서비스 기획 프로젝트입니다.
 
-포지션, 경기 빈도, 실력, 지역, 시간대 입력을 기반으로 초기 ELO를 계산하고, 경기 추천 → 상세 → 결제 → 체크인 → 경기 결과 → 평가 → 재참여까지의 흐름을 구현한 서비스 기획 검증용 프로토타입입니다.
+## Current release
 
-## 🔗 Links
+- Release: **v4.0.0 · Matchday Companion**
+- Primary user journey: **Find → Decide → Join → Play → Return**
+- Real App: `/app`
+- Guided Case Study: `/app?mode=guided`
+- Evidence / Reviewer mode: `/app?mode=evidence`
+- Case Study: `/`
+- Compatibility aliases: `/demo`, `/next` → v4.0 Real App surface
+- Current GitHub main: promoted after PR merge
+- Exact Vercel Production verification: **Not yet verified**
+- Render backup verification: **Not yet verified**
 
-- [Live Demo · Stable Product mode](https://footmate-black.vercel.app/demo)
-- [Live Demo · Stable Portfolio mode](https://footmate-black.vercel.app/demo?mode=portfolio)
-- [Next Major Candidate · Matchday Companion](https://footmate-black.vercel.app/next)
-- [Case Study](https://footmate-black.vercel.app/)
-- [Backup deployment · Render](https://footmate-backup.onrender.com)
-- [Release History](docs/RELEASE-HISTORY.md)
+## Product decisions
 
-## 🚀 Current Stable Release · v3.0.0
+v4.0은 화면 수나 기능 수보다 사용자의 결정 비용과 경기 전후 연속성을 우선합니다.
 
-**v3.0.0 · Unified App Architecture**
+1. **Value before account** — 계정 생성 전에 지역·포지션·레벨을 설정하고 추천 가치를 먼저 확인합니다.
+2. **Reason before score** — 추천 카드에서 계산 점수보다 레벨·거리·남은 포지션처럼 결정에 필요한 이유를 먼저 보여줍니다.
+3. **Single decision CTA** — 경기 상세에서 정보 우선순위를 정리하고 참가 행동을 하나의 primary CTA로 고정합니다.
+4. **State-aware Matchday** — 참가 전에는 추천, 참가 후에는 다가오는 경기, 경기 당일에는 체크인, 경기 후에는 평가와 다음 행동이 홈의 중심이 됩니다.
+5. **Real / Guided / Evidence separation** — 실제 사용자 화면과 리뷰어 설명·상태 검증 UI를 분리합니다.
 
-v3.0은 v2.8 Matchday Visual Identity를 Product 회귀 기준으로 유지하면서, 앱 수준 IA · view state · reusable chrome ownership을 `src/v3/`로 분리한 아키텍처 릴리스입니다. Product mode는 검증된 v2.8 375×780 phone/frame/legacy navigation과 39개 화면을 유지하고, Portfolio mode에서만 v3의 4개 primary destination과 app rail/context chrome을 노출합니다.
+## Implemented scope
 
-- stable product/runtime baseline: `cf766cb047b23ef302f06a80429765f45511bdcf` · PR #79
-- v3 architecture introduction: `50e63eeaa4939f7a397941e7c7a8af408ad4cf92` · PR #74
-- Release runtime: `3.0.0`
-- Storage / schema / Product Hardening event contract: `2.1.0` compatibility 유지
-- Product visual baseline: **v2.8 Matchday Visual Identity**
-- Product screen baseline: **39 screens**
-- Portfolio primary destinations: **4** · 탐색 / 추천 / 참가 / 내 정보
-- Matching / ELO / decision / payment / persistence semantics: 유지
-- Product / Portfolio mode: 분리 유지
+- Guest-first preferences → recommendation → detail → sign-in → checkout → confirmation flow
+- ID/password sign-in UI, sign-up validation and consent UX
+- Kakao · Naver · Apple · Google SSO selection UI
+- Selected-match continuity across sign-in and checkout
+- Detail return navigation based on entry surface
+- Persistent matchday check-in completion state
+- Responsive experience at 320 / 375 / 390 / 430px
+- Real App / Guided / Evidence mode isolation
+- 16-section product-first Case Study
 
-### v3.0 architecture
+## Prototype boundary
 
-- `src/v3/release.js` — v3.0 release/runtime promotion contract
-- `src/v3/app-shell.js` — unified app shell + mode-aware chrome ownership
-- `src/v3/ia/navigation.js` — 4-primary-destination IA와 39 legacy route mapping
-- `src/v3/state/view-state.js` — `footmate:v3:view` view-state boundary
-- `src/v3/components/` — reusable v3 UI primitives
-- `src/v3/styles/` — Portfolio-only app shell/component/token ownership
-- `src/v2/` — Product visual baseline, domain/state/matching/ELO/decision/payment compatibility ownership 유지
+FootMate v4.0은 서비스 기획 검증용 인터랙티브 프로토타입입니다. 현재 추천은 규칙·샘플 데이터·세션 상태로 동작하며 **외부 AI 모델, 회원 DB, 실제 OAuth, 실제 PG 결제, 실시간 수용량, 실시간 알림 backend는 연결하지 않았습니다.** UI에서 제공하는 로그인·결제·운영 상태는 해당 서비스 계약을 검증하기 위한 시뮬레이션 범위입니다.
 
-## 🧪 Production-verified Candidate · Matchday Companion
+## Architecture
 
-PR #83은 기존 v3.0을 안정 회귀 기준으로 유지한 채 `/next`에 다음 Major 후보를 분리해 구현했습니다. **Stable `/demo` v3.0으로 승격된 상태는 아니지만 `/next` 후보 자체의 exact Production verification은 완료했습니다.**
+- `src/v4/` — v4.0 Real App, Case Study, release-hardening ownership
+- `src/v2/domain/` — Matching / ELO domain logic의 historical regression reference
+- `app.html` — official Real App entry
+- `index.html` — official v4.0 Case Study entry
+- `tests/e2e/v40-major.spec.cjs` — v4.0 browser / responsive / accessibility / state gate
+- `tests/production-v40-smoke.cjs` — exact Production HTTP gate
+- `tests/e2e/v40-production.spec.cjs` — exact Production Chromium gate
 
-핵심 사용자 흐름은 화면 수가 아니라 다음 5개 행동으로 재구성합니다.
+Pre-v4 구현은 현재 제품·Case Study·문서의 공개 동선에서 제거하고 회귀 이력으로만 취급합니다. GitHub의 과거 commit history는 저장소 특성상 별도 파일 단위 비공개화 대상이 아닙니다.
 
-`Find → Decide → Join → Play → Return`
+## QA / release process
 
-- Guest-first entry: `Value → Preferences → Recommendation → Detail → Sign in to Join`
-- 추천 카드: 매칭 퍼센트보다 레벨 · 거리 · 남은 포지션 등 판단 이유 우선
-- 경기 상세: 시간·장소 → 적합 이유 → 자리 → 참가자/시설 → 취소 정책 → 단일 참가 CTA
-- Sign in: **아이디/비밀번호 로그인 + Kakao · Naver · Apple · Google SSO UI**와 회원가입 경로
-- 선택한 경기와 플레이 설정을 Sign in → Checkout → 참가 확정까지 유지
-- Home state: discover → upcoming → matchday → postgame
-- Real App / Guided Case Study / Evidence mode 분리
-- Case Study: Problem → Persona/JTBD → Product Thesis → Design Decisions → Recovery → System Evidence → Validation → Limits로 재구성
+Protected `main`은 다음 순서를 따릅니다.
 
-### Authentication scope
+`branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable docs sync`
 
-Next Major 후보는 로그인·회원가입·SSO 선택 UI와 세션 상태 전환을 구현합니다. **실제 Kakao/Naver/Apple/Google OAuth, 회원 DB, 서버 인증 세션은 연동하지 않았습니다.** 외부 인증 연동 완료로 표현하지 않습니다.
-
-### Candidate release evidence
-
-- PR #83 merge SHA: `5215f5c7ea2b2599793b4b78db289f1e181ae28e`
-- Production verification closure: PR #84 · runtime-bearing main SHA `a4408623402b266f15fde3e7d2ef1c49e3048b37`
-- GitHub Actions `FootMate QA` run #305 · ID `35440699193`: **SUCCESS**
-  - Regression 36 **PASS**
-  - Browser E2E + axe **PASS**
-  - stable `/demo` exact v2.8 39-screen visual parity **PASS**
-  - guest-first / account login + SSO / sign-up / checkout continuity **PASS**
-  - responsive 320 / 375 / 390 / 430 **PASS**
-  - Case Study mobile scroll + embedded `/next` **PASS**
-  - Production compatibility HTTP/Chromium **PASS**
-  - v3 exact Production HTTP/Chromium **PASS**
-  - next-major exact Production HTTP/Chromium **PASS**
-- exact verified Vercel Production:
-  - SHA `a4408623402b266f15fde3e7d2ef1c49e3048b37`
-  - deployment `dpl_GfrE1QiCyuabPiySofrmuNRqY3dc`
-  - target `production` · state **READY**
-  - `/`, `/demo`, `/next` HTTP **200**
-- Render backup release point:
-  - SHA `a4408623402b266f15fde3e7d2ef1c49e3048b37`
-  - deployment `dep-dan78p2jnfac738k44ng`
-  - state **LIVE**
-
-Vercel과 Render는 독립적인 배포 경로입니다. 문서-only merge로 moving `main`이 전진하더라도 stable product/runtime baseline `cf766cb...`, Next candidate runtime release point `a440862...`, 마지막 exact verified Vercel Production을 별도로 구분합니다.
-
-## ✨ Key Features
-
-- 5개 사용자 입력 기반 동적 ELO 계산
-- 날짜 · 지역 · 시간대 · 거리 · 경기 방식 · 모집 포지션 기반 후보 eligibility
-- ELO · 플레이 조건 · 위치 기반 매칭 점수와 추천 정렬
-- 추천 점수 분해, 제외 이유, 필터 완화 fallback, 조건 변경 전/후 비교
-- Home → Filter → Results → Detail → Payment core funnel
-- 추천 후보 comparison · 참가 전 preflight · decision trace
-- Payment · Participation · Match 상태 머신 기반 운영 시뮬레이션
-- 결제 실패/재시도 · 중복 신청 차단 · 취소/환불 · 노쇼 · 대기→빈자리 제안→참가 · 경기 취소
-- 결제/참가 전 guardrail과 inline recovery
-- 경기 결과 ELO 업데이트와 다음 추천 반영
-- 브라우저 재진입 시 핵심 진행 상태와 사용자 선택·decision trace 복원
-- 39-screen Product mode와 4-destination Portfolio app shell 분리
-- 접근 가능한 Product Validation Inspector
-- Case Study의 제품 가치 → 의사결정 → 검증 근거 중심 스토리
-
-## 🧩 Runtime Structure
-
-### next-major ownership
-
-- `src/next/app.js` — Matchday Companion real/guided/evidence runtime
-- `src/next/data.js` — candidate sample/session state
-- `src/next/app.css` / `real-app-experience.css` — next-major product/auth visual ownership
-- `src/next/case-study.js` / `case-study.css` — redesigned 16-section Case Study content/visual ownership
-- `/next` — candidate product route; stable `/demo`와 분리
-
-### v3 ownership
-
-- `src/v3/release.js` — release/runtime contract
-- `src/v3/app-shell.js` — app-shell orchestration
-- `src/v3/ia/navigation.js` — primary IA / compatibility route mapping
-- `src/v3/state/view-state.js` — v3 view-state persistence
-- `src/v3/components/` — reusable app components
-- `src/v3/styles/app-shell.css` — Portfolio app shell
-- `src/v3/styles/components.css` — Portfolio component chrome
-- `src/v3/styles/tokens.css` — v3 app-shell tokens
-
-### preserved v2 ownership
-
-- `src/v2/bootstrap.js` — verified v2 runtime composition
-- `src/v2/v28-release.js` — v2.8 visual baseline release adapter
-- `src/v2/domain/` — matching / ELO / decision / availability boundaries
-- `src/v2/state/` — product / scenario / decision-trace persistence
-- `src/v2/ui/` — Product controllers, recovery, payment, inspector
-- `src/v2/styles/visual-identity.css` / `visual-tokens.css` / `visual-guardrails.css` — Product v2.8 Matchday visual baseline
-
-## 🛠 Tech
-
-HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Playwright · axe-core · GitHub Actions · GitHub · Vercel · Render
-
-## 📌 Project Scope
-
-실제 상용 서비스가 아닌 **서비스 기획 검증용 인터랙티브 프로토타입**입니다. 추천·ELO·decision·availability verification은 규칙 기반 로직과 샘플/세션 상태를 사용하며 실제 결제 · 외부 AI 모델 · DB · 실시간 정원/알림 · 운영자 백엔드는 연동하지 않았습니다. Next Major의 SSO 역시 실제 OAuth가 아니라 인터랙티브 UX 검증 범위입니다.
-
-## ✅ Verification
-
-| 검증 | 상태 |
-| --- | --- |
-| Stable v3.0 product/runtime baseline | **cf766cb0 · PR #79 · v3.0.0** |
-| Stable Product visual baseline | **v2.8 Matchday · 39 screens · PASS** |
-| Next Major implementation | **PR #83 · 5215f5c7** |
-| Next Production verification closure | **PR #84 · a4408623** |
-| Current release-point QA | **PASS · FootMate QA #305 · ID 35440699193** |
-| Regression 36 + v2.4–v3.0 boundaries | **PASS** |
-| Browser E2E · axe | **PASS** |
-| Responsive 320 / 375 / 390 / 430 / desktop | **PASS** |
-| Production compatibility HTTP + Chromium | **PASS** |
-| v3 exact Production HTTP + Chromium | **PASS** |
-| Next exact Production HTTP + Chromium | **PASS** |
-| exact verified Vercel Production | **a4408623 · dpl_GfrE1QiCyuabPiySofrmuNRqY3dc · READY** |
-| Render backup release point | **a4408623 · dep-dan78p2jnfac738k44ng · LIVE** |
-| Stable v3.0 release gate | **CLOSED** |
-| Next candidate exact Production verification | **VERIFIED** |
-
-## 📚 Documentation policy
-
-- `README.md` — 현재 stable 제품 · candidate · 구조 · 검증 상태
-- `docs/RELEASE-HISTORY.md` — 릴리스 · 검증 baseline · compatibility history
-- moving `main`은 docs-only merge로 전진할 수 있으므로 stable product/runtime baseline, candidate runtime release point, exact verified Production SHA를 별도로 유지
-- compatibility smoke와 exact Production verification을 구분
-- Render와 Vercel은 독립적인 배포 경로로 기록
-- temporary quota/rate-limit/canceled/pending 상태는 durable documentation에 누적하지 않음
+Production verification 전에는 release state를 완료로 기록하지 않습니다.
