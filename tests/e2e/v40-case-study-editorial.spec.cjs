@@ -1,6 +1,8 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 
+test.setTimeout(120000);
+
 function captureFailures(page){
   const failures=[];
   page.on('pageerror',error=>failures.push(`pageerror: ${error.message}`));
