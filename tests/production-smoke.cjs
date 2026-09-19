@@ -43,8 +43,13 @@ async function main() {
       assert(body.includes('/src/v2/styles/visual-experience.css?v=20260919-1'), '/demo v2.7 visual experience stylesheet missing');
       assert(body.includes('/src/v2/styles/visual-tokens.css?v=20260919-1'), '/demo v2.8 token stylesheet missing');
       assert(body.includes('/src/v2/styles/visual-identity.css?v=20260919-1'), '/demo v2.8 identity stylesheet missing');
+      assert(body.includes('/src/v3/styles/tokens.css?v=20260919-1'), '/demo v3.0 token stylesheet missing');
+      assert(body.includes('/src/v3/styles/app-shell.css?v=20260919-1'), '/demo v3.0 app shell stylesheet missing');
+      assert(body.includes('/src/v3/styles/components.css?v=20260919-1'), '/demo v3.0 component stylesheet missing');
       assert(body.includes('/src/v2/bootstrap.js?v=20260919-3'), '/demo v2.7 bootstrap cache key missing');
       assert(body.includes('/src/v2/v28-release.js?v=20260919-1'), '/demo v2.8 release module missing');
+      assert(body.includes('/src/v3/release.js?v=20260919-1'), '/demo v3.0 release module missing');
+      assert(body.indexOf('/src/v2/v28-release.js') < body.indexOf('/src/v3/release.js'), '/demo v3.0 release must load after v2.8');
     }
   });
 
@@ -64,6 +69,8 @@ async function main() {
       assert(!body.includes('fm26-'), 'v2.6 architecture markup leaked into demo-source');
       assert(!body.includes('fm27-'), 'v2.7 visual markup leaked into demo-source');
       assert(!body.includes('fm28-'), 'v2.8 visual identity markup leaked into demo-source');
+      assert(!body.includes('fm30-'), 'v3.0 app component markup leaked into demo-source');
+      assert(!body.includes('/src/v3/'), 'v3.0 module ownership leaked into demo-source');
     }
   });
 
@@ -98,6 +105,54 @@ async function main() {
   });
 
   if (strictProduction) {
+    await run('v3-release-runtime', '/src/v3/release.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v3 release content type unexpected');
+      assert(body.includes("RELEASE_VERSION='3.0.0'"), 'v3 release marker missing');
+      assert(body.includes("PREVIOUS_RELEASE_VERSION='2.8.0'"), 'v3 previous release marker missing');
+      assert(body.includes("SCHEMA_VERSION='2.1.0'"), 'v3 schema compatibility marker missing');
+      assert(body.includes('FootMateV3Runtime'), 'v3 runtime contract missing');
+      assert(body.includes('FootMateV30'), 'v3 release contract missing');
+      assert(body.includes("releaseArchitecture:'v3.0-unified-app-architecture'"), 'v3 architecture marker missing');
+      assert(body.includes("stateCompatibility:'v2.1-domain-state-preserved'"), 'v3 domain state compatibility marker missing');
+    });
+    await run('v3-app-shell', '/src/v3/app-shell.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v3 app shell content type unexpected');
+      assert(body.includes("architecture:'v3.0-unified-app-shell'"), 'v3 app shell architecture missing');
+      assert(body.includes("componentArchitecture:'v3.0-reusable-component-system'"), 'v3 component architecture missing');
+      assert(body.includes('createAppNavigation'), 'v3 app navigation ownership missing');
+      assert(body.includes('createViewState'), 'v3 view state ownership missing');
+      assert(body.includes('MutationObserver'), 'v3 screen synchronization missing');
+    });
+    await run('v3-navigation-ia', '/src/v3/ia/navigation.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v3 navigation content type unexpected');
+      assert(body.includes("RELEASE_VERSION='3.0.0'"), 'v3 IA version marker missing');
+      for (const id of ['discover','recommendations','participation','profile']) assert(body.includes(`id:'${id}'`), `v3 destination ${id} missing`);
+      for (const target of ['s-home','s-results','s-pay','s-profile']) assert(body.includes(`target:'${target}'`), `v3 target ${target} missing`);
+    });
+    await run('v3-view-state', '/src/v3/state/view-state.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v3 view state content type unexpected');
+      assert(body.includes("VIEW_STATE_VERSION='3.0.0'"), 'v3 view state version missing');
+      assert(body.includes("VIEW_STATE_KEY='footmate:v3:view'"), 'v3 view state storage key missing');
+      assert(!body.includes('scenarioStore'), 'v3 view state must remain isolated from scenario state');
+    });
+    await run('v3-tokens', '/src/v3/styles/tokens.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v3 token content type unexpected');
+      assert(body.includes('FootMate v3.0'), 'v3 token stylesheet marker missing');
+    });
+    await run('v3-app-shell-style', '/src/v3/styles/app-shell.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v3 app shell style content type unexpected');
+      assert(body.includes('FootMate v3.0 · Responsive app shell'), 'v3 app shell style marker missing');
+      assert(body.includes('@media(min-width:800px)'), 'v3 desktop workspace breakpoint missing');
+      assert(body.includes('grid-template-columns:104px minmax(0,1fr)'), 'v3 desktop rail layout missing');
+      assert(body.includes('@media(prefers-reduced-motion:reduce)'), 'v3 reduced motion safeguard missing');
+    });
+    await run('v3-component-style', '/src/v3/styles/components.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v3 component style content type unexpected');
+      assert(body.includes('FootMate v3.0 · Reusable component and IA layer'), 'v3 component style marker missing');
+      assert(body.includes('grid-template-columns:repeat(4,minmax(0,1fr))'), 'v3 four-destination layout missing');
+      assert(body.includes('min-height:52px'), 'v3 mobile touch target contract missing');
+    });
+
     await run('v2.8-release-runtime', '/src/v2/v28-release.js', ({ body, contentType }) => {
       assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2.8 release content type unexpected');
       assert(body.includes("RELEASE_VERSION='2.8.0'"), 'v2.8 release marker missing');
