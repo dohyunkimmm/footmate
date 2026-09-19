@@ -30,6 +30,7 @@
 .fm-decision-policy-grid>div{display:flex;min-height:118px;flex-direction:column;padding:13px;border:1px solid var(--fm-line);border-radius:16px;background:#fff}
 .fm-decision-policy-grid>div.is-strong{background:var(--fm-lime-soft);border-color:rgba(27,87,63,.16)}
 .fm-decision-policy-grid small{font-size:10px;color:var(--fm-muted);font-weight:800;line-height:1.45}
+.fm-decision-policy-grid>div.is-strong small{color:var(--fm-pitch-3)}
 .fm-decision-policy-grid b{margin-top:8px;font-size:15px;letter-spacing:-.03em}
 .fm-decision-policy-grid span{margin-top:auto;font-size:11px;color:var(--fm-ink-soft)}
 .fm-decision-compare-bar{position:relative;z-index:12;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 8px;padding:13px 14px;border-radius:17px;background:var(--fm-pitch);color:#fff;box-shadow:var(--fm-shadow-soft)}
