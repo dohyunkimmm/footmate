@@ -1,5 +1,41 @@
 # FootMate Release History
 
+## v4.2.0 — Discovery & Search · 2026-09-20
+
+**Status:** Verified staged feature release. Product/runtime baseline `896be56a2e2438fd383c46152ad8f1d5f11e89b0` passed FootMate QA #344 (run `35473666410`), including Regression 36, recommendation regression, Discovery filter/sort/persistence/recovery E2E, Browser E2E + axe, responsive/state/Case Study layout gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_oiHYN6EaeNumD3GsmQKDQyjt6xpg` is **READY** and Render deployment `dep-dangrd17lnhs73e7cr40` was **LIVE** at the same exact SHA at release verification time.
+
+v4.2 builds on the verified v4.1 Recommendation Core by turning recommendation into a starting point for user-controlled exploration. Users can narrow currently relevant matches without losing the underlying explainable recommendation contract.
+
+### Release scope
+
+- date / time / distance / price / available-position filters on 경기 찾기
+- fit / distance / closing-soon sorting
+- active filter summary with per-filter removal and clear-all
+- zero-result recovery with condition widening and full reset
+- discovery state persistence through `footmate:v4:discovery` and `d_*` URL query parameters
+- responsive mobile filter sheet with dialog semantics, Escape close, focus trap/restore and 44px+ targets
+- v4.1 region / position / level recommendation scoring retained as the ranking baseline
+- 16-section Case Study updated with Discovery & Search journey and zero-result recovery evidence
+- existing guest-first auth timing, recommendation explanations, selected-match continuity, detail-return navigation, match-specific check-in, responsive layout, Case Study panel sizing and accessibility remain regression gates
+
+### Release verification
+
+- Discovery & Search PR #97: final PR QA #343 · run `35473512165` · PASS
+- Verified product/runtime baseline: `896be56a2e2438fd383c46152ad8f1d5f11e89b0`
+- Post-merge QA + exact Production verification: FootMate QA #344 · run `35473666410` · PASS
+- Exact Vercel Production: `dpl_oiHYN6EaeNumD3GsmQKDQyjt6xpg` · SHA `896be56a2e2438fd383c46152ad8f1d5f11e89b0` · **READY**
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-dangrd17lnhs73e7cr40` · SHA `896be56a2e2438fd383c46152ad8f1d5f11e89b0` · **LIVE at verification time**
+
+### Scope boundary
+
+This remains an interactive service-planning prototype. Recommendation is deterministic rules-based ranking over sample records; Discovery is deterministic filtering/sorting over those records with browser/URL persistence. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity and notification backend are not connected.
+
+### Next staged release
+
+v4.3 is **Decision Detail**: recommendation reason breakdown, participant/position composition, facility and operation rules, cancellation/refund policy hierarchy, non-exaggerated availability urgency, and save/compare intent states.
+
 ## v4.1.0 — Recommendation Core · 2026-09-20
 
 **Status:** Verified staged feature release. Product/runtime baseline `352ffe08a72e145311e043f1292950d8a3041859` passed FootMate QA #339 (run `35456762270`), including Regression 36, preference-aware recommendation E2E, Browser E2E + axe, responsive/state/Case Study layout gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_HyZn9wb5boHQ3wZTUNMFsuMSRkVC` is **READY** and Render deployment `dep-danbvlvavr4c73aab5s0` is **LIVE** at the same exact SHA.
