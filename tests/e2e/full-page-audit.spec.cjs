@@ -59,8 +59,9 @@ async function collectMetrics(page,id){
       const right=Math.max(0,rect.right-screenRect.right);
       if(left>2||right>2){
         const tag=node.tagName.toLowerCase();
-        const name=node.id?`#${node.id}`:node.classList.length?`.${[...node.classList].slice(0,2).join('.')}`:tag;
-        outside.push(`${name}[L${left.toFixed(1)}/R${right.toFixed(1)}]`);
+        const name=node.id?`#${node.id}`:node.classList.length?`.${[...node.classList].slice(0,3).join('.')}`:tag;
+        const text=(node.getAttribute('aria-label')||node.textContent||'').replace(/\s+/g,' ').trim().slice(0,42);
+        outside.push(`${name}{${text}}[L${left.toFixed(1)}/R${right.toFixed(1)} W${rect.width.toFixed(1)}]`);
         if(outside.length>=12)break;
       }
     }
@@ -96,6 +97,26 @@ for(const viewport of VIEWPORTS){
   });
 }
 
+test('source-owned onboarding artwork survives the v2.8/v3 release layers',async({page})=>{
+  const{failures}=await boot(page,{width:390,height:844});
+  await page.evaluate(()=>window.goScreen('s-splash'));
+  const visual=await page.locator('#s-splash').evaluate(screen=>{
+    const content=screen.querySelector('.pcnt');
+    const title=screen.querySelector('.splash-title');
+    const subtitle=screen.querySelector('.splash-sub');
+    return{
+      background:getComputedStyle(content).backgroundImage,
+      backgroundColor:getComputedStyle(content).backgroundColor,
+      titleColor:getComputedStyle(title).color,
+      subtitleColor:getComputedStyle(subtitle).color
+    };
+  });
+  expect(visual.background).toContain('linear-gradient');
+  expect(visual.background).toContain('rgb(15, 26, 58)');
+  expect(visual.titleColor).toBe('rgb(255, 255, 255)');
+  expect(failures,failures.join('\n')).toEqual([]);
+});
+
 test('all 39 product screens have no serious or critical axe violations at 390px',async({page})=>{
   const{failures,ids}=await boot(page,{width:390,height:844});
   const problems=[];
@@ -104,7 +125,13 @@ test('all 39 product screens have no serious or critical axe violations at 390px
     await page.waitForFunction(screenId=>document.getElementById(screenId)?.classList.contains('active'),id);
     const result=await new AxeBuilder({page}).include(`#${id}`).withTags(['wcag2a','wcag2aa']).analyze();
     const blocking=result.violations.filter(item=>['serious','critical'].includes(item.impact));
-    if(blocking.length)problems.push(`${id}: ${blocking.map(item=>`${item.id}(${item.nodes.length})`).join(', ')}`);
+    for(const item of blocking){
+      for(const node of item.nodes){
+        const target=node.target.join(' > ');
+        const summary=(node.failureSummary||'').replace(/\s+/g,' ').trim();
+        problems.push(`${id}: ${item.id} target=${target} ${summary}`);
+      }
+    }
   }
   failures.forEach(item=>problems.push(item));
   expect(problems,problems.join('\n')).toEqual([]);
