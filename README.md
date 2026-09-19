@@ -11,10 +11,10 @@ FootMate는 **내 수준에 맞는 풋살 경기를 찾고, 왜 잘 맞는지 �
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Case Study: `/`
 - Compatibility aliases: `/demo`, `/next` → v4.0 Real App
-- Product/runtime + public-surface baseline: `fa150f183f6a821edd04e49c3496559e5ebecc8e`
-- GitHub Actions: **FootMate QA #318 · run 35447147842 · PASS**
-- Exact Vercel Production: `fa150f183f6a821edd04e49c3496559e5ebecc8e` · `dpl_ALtasaHtBQZZthkEgMtxomN2p4GP` · **READY** · HTTP/Chromium smoke PASS
-- Render backup: `fa150f183f6a821edd04e49c3496559e5ebecc8e` · `dep-dan989e8bjmc73abijrg` · **LIVE**
+- Verified runtime + public-surface baseline: `130231c935958651e9e2e50e1dbda3df3df978f3`
+- GitHub Actions: **FootMate QA #327 · run 35449553358 · PASS**
+- Exact Vercel Production: `130231c935958651e9e2e50e1dbda3df3df978f3` · `dpl_69iQCJKfXtC3i8ZwWqKvLjJcfdEh` · **READY** · exact HTTP/Chromium smoke PASS
+- Render backup: `130231c935958651e9e2e50e1dbda3df3df978f3` · `dep-dan9ujrtqb8s73abvdjg` · **LIVE**
 
 ## Product decisions
 
@@ -37,6 +37,7 @@ v4.0은 화면 수보다 사용자의 결정 비용과 경기 전후 연속성�
 - Responsive 320 / 375 / 390 / 430px
 - Real App / Guided / Evidence mode isolation
 - 16-section product-first Case Study
+- Case Study source-level editorial QA: Korean copy, heading/body text flow, mobile overflow, desktop/mobile review screenshots and axe accessibility gate
 
 ## Prototype boundary
 
@@ -48,6 +49,7 @@ FootMate v4.0은 서비스 기획 검증용 인터랙티브 프로토타입입�
 - `app.html` — official Real App entry
 - `index.html` — official v4.0 Case Study entry
 - `tests/e2e/v40-major.spec.cjs` — browser / responsive / accessibility / state gate
+- `tests/e2e/v40-case-study-editorial.spec.cjs` — 16-section editorial / overflow / axe gate
 - `tests/production-v40-smoke.cjs` — exact Production HTTP gate
 - `tests/e2e/v40-production.spec.cjs` — exact Production Chromium gate
 
@@ -58,3 +60,5 @@ FootMate v4.0은 서비스 기획 검증용 인터랙티브 프로토타입입�
 Protected `main`은 다음 순서를 따릅니다.
 
 `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable docs sync`
+
+문서-only merge로 `main` SHA가 이동하더라도 위 **verified runtime + public-surface baseline**과 exact Production SHA는 별도로 유지해 제품 검증 기준과 moving `main`을 구분합니다.
