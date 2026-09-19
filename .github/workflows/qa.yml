@@ -47,17 +47,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Checkout exact v2.8 visual baseline
+        uses: actions/checkout@v5
+        with:
+          ref: d8014978cf6a1a5621f09ff098f48ac4821b615b
+          path: .qa-baseline/v28
+          persist-credentials: false
       - name: Use Node.js 24
         uses: actions/setup-node@v5
         with:
           node-version: '24'
           package-manager-cache: false
       - name: Install browser QA dependencies
-        run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
+        run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2 pixelmatch@5.3.0 pngjs@7.0.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run browser E2E, accessibility, responsive and v3.0 app gates
-        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs
+      - name: Start exact v2.8 baseline server
+        run: |
+          PORT=4180 FOOTMATE_SERVER_ROOT="$GITHUB_WORKSPACE/.qa-baseline/v28" node tests/e2e/server.cjs > /tmp/footmate-v28-baseline.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4180/demo >/dev/null; then
+              echo "Exact v2.8 baseline server is ready."
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/footmate-v28-baseline.log
+          exit 1
+      - name: Run browser E2E, accessibility, responsive and 39-screen visual parity gates
+        env:
+          FOOTMATE_V28_BASELINE_URL: http://127.0.0.1:4180
+        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs tests/e2e/v30-full-screen-qa.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6

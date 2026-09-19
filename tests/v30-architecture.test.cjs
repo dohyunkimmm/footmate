@@ -18,7 +18,6 @@ test('v3.0 promotes a new app runtime while preserving the v2.8 domain baseline'
   assert.match(release,/SCHEMA_VERSION='2\.1\.0'/);
   assert.match(release,/window\.FootMateV3Runtime=runtime/);
   assert.match(release,/window\.FootMateV30=/);
-  assert.match(release,/baseRuntime:baseRuntime|baseRuntime,/);
   assert.match(release,/scenarioStore:baseRuntime\.scenarioStore/);
   assert.match(release,/decisionEngine:baseRuntime\.decisionEngine/);
   assert.match(release,/availabilityGateway:baseRuntime\.availabilityGateway/);
@@ -42,19 +41,27 @@ test('v3.0 view state is isolated from product domain persistence',()=>{
   assert.match(appShell,/runtime\.scenarioStore/);
 });
 
-test('v3.0 shell is loaded after v2.8 and owns responsive navigation chrome',()=>{
+test('v3.0 product mode preserves v2.8 shell ownership and portfolio mode owns v3 chrome',()=>{
   assert.ok(shell.indexOf('/src/v2/v28-release.js')<shell.indexOf('/src/v3/release.js'));
   for(const asset of ['/src/v3/styles/tokens.css','/src/v3/styles/app-shell.css','/src/v3/styles/components.css'])assert.ok(shell.includes(asset));
+  assert.match(appShell,/const portfolioChrome=mode==='portfolio'/);
+  assert.match(appShell,/v2\.8-product-baseline/);
+  assert.match(appShell,/portfolio-app-shell/);
+  assert.match(appShell,/restoreLegacyNavigation/);
+  assert.match(appShell,/document\.querySelectorAll\('\[data-fm30-slot="context"\]'\)/);
+  assert.match(shellCss,/data-fm30-mode="portfolio"/);
+  assert.doesNotMatch(shellCss,/html\[data-footmate-current-release="3\.0"\] \.device-shell/);
   assert.match(shellCss,/grid-template-rows:minmax\(0,1fr\) 72px/);
   assert.match(shellCss,/@media\(min-width:800px\)/);
   assert.match(shellCss,/width:min\(560px,calc\(100vw - 48px\)\)/);
-  assert.match(shellCss,/grid-template-columns:104px minmax\(0,1fr\)/);
   assert.match(shellCss,/@media\(prefers-reduced-motion:reduce\)/);
+  assert.match(componentCss,/data-fm30-mode="portfolio"/);
   assert.match(componentCss,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
   assert.match(componentCss,/min-height:52px/);
 });
 
-test('v3.0 does not override v2.8 legacy screen color, typography or surface geometry',()=>{
+test('v3.0 has no unscoped structural override of v2.8 product screens',()=>{
+  assert.doesNotMatch(shellCss,/html\[data-footmate-current-release="3\.0"\](?!\[data-fm30-mode="portfolio"\])[^\n]*\.(?:prototype-layout|device-col|device-shell|device-screen|tab-bar|sbar|nbar|pcnt)/);
   assert.doesNotMatch(shellCss,/\.screen\{[^}]*background/s);
   assert.doesNotMatch(shellCss,/\.pcnt\{/);
   assert.doesNotMatch(shellCss,/\.nbar\{/);
@@ -62,5 +69,5 @@ test('v3.0 does not override v2.8 legacy screen color, typography or surface geo
   assert.doesNotMatch(componentCss,/:is\(\.fm24-panel,\.fm25-panel\)/);
   assert.doesNotMatch(componentCss,/#s-home \.fm24-home-decision/);
   assert.doesNotMatch(componentCss,/#s-results \.fm25-compare-grid/);
-  assert.match(componentCss,/v2\.8 remains the visual owner of legacy screens/);
+  assert.match(componentCss,/Product mode intentionally renders no v3 visual chrome/);
 });
