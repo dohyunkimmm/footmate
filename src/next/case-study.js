@@ -87,7 +87,7 @@
 
     shell('12 · IA / MODES','실제 앱과 포트폴리오 설명을 한 화면 안에 섞지 않았습니다.','동일한 제품 경험을 세 가지 모드로 분리해 사용자는 서비스만 보고, 리뷰어는 필요할 때 설계 근거와 상태를 확인할 수 있습니다.',
       `<div class="fm-next-cs-modes"><div class="is-focus"><small>REAL APP</small><b>/next</b><p>실제 사용자 UI만 노출</p></div><div><small>GUIDED</small><b>?mode=guided</b><p>사용 흐름 옆에 설계 이유</p></div><div><small>EVIDENCE</small><b>?mode=evidence</b><p>상태 시나리오·검증 범위</p></div></div>`,
-      `<div class="fm-next-cs-note">기존 v3.0 `/demo` Product/Portfolio 구조는 회귀 기준으로 유지하며 Next Major와 분리했습니다.</div>`),
+      `<div class="fm-next-cs-note">기존 v3.0 /demo Product/Portfolio 구조는 회귀 기준으로 유지하며 Next Major와 분리했습니다.</div>`),
 
     shell('13 · SYSTEM EVIDENCE','보이지 않는 로직은 Evidence에서만 설명하고, Product에서는 행동으로 증명합니다.','AI와 데이터 구조는 화면을 장식하는 기능명이 아니라 추천·복구·운영 판단을 만드는 계약으로 정리했습니다.',
       `<div class="fm-next-cs-agent"><b>Context</b><i>→</i><b>Plan</b><i>→</i><b>Tools</b><i>→</i><b>Guardrail</b><i>→</i><b>Observe</b></div><div class="fm-next-cs-grid three">${card('State contract','setupComplete · selectedMatchId · signedIn · joinedMatchId · matchStage')}${card('Data quality','Completeness · Validity · Freshness · Consistency · Traceability')}${card('HITL boundary','외부 인증·결제·운영 판단은 자동화 범위와 실제 연동 범위를 분리')}</div>`,
