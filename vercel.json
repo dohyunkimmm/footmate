@@ -1,1 +1,33 @@
-{"cleanUrls":false,"trailingSlash":false,"rewrites":[{"source":"/demo","destination":"/demo-shell.html"},{"source":"/demo.html","destination":"/demo-shell.html"},{"source":"/demo-shell","destination":"/demo-shell.html"},{"source":"/index-source","destination":"/index-source.html"},{"source":"/demo-source","destination":"/demo-source.html"}]}
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "main": true
+    }
+  },
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/demo",
+      "destination": "/demo-shell.html"
+    },
+    {
+      "source": "/demo.html",
+      "destination": "/demo-shell.html"
+    },
+    {
+      "source": "/demo-shell",
+      "destination": "/demo-shell.html"
+    },
+    {
+      "source": "/index-source",
+      "destination": "/index-source.html"
+    },
+    {
+      "source": "/demo-source",
+      "destination": "/demo-source.html"
+    }
+  ]
+}
