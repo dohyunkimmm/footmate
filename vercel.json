@@ -10,29 +10,12 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/demo",
-      "destination": "/demo-shell.html"
-    },
-    {
-      "source": "/demo.html",
-      "destination": "/demo-shell.html"
-    },
-    {
-      "source": "/demo-shell",
-      "destination": "/demo-shell.html"
-    },
-    {
-      "source": "/next",
-      "destination": "/next.html"
-    },
-    {
-      "source": "/index-source",
-      "destination": "/index-source.html"
-    },
-    {
-      "source": "/demo-source",
-      "destination": "/demo-source.html"
-    }
+    {"source":"/app","destination":"/app.html"},
+    {"source":"/demo","destination":"/app.html"},
+    {"source":"/demo.html","destination":"/app.html"},
+    {"source":"/demo-shell","destination":"/app.html"},
+    {"source":"/next","destination":"/app.html"},
+    {"source":"/demo-source","destination":"/app.html"},
+    {"source":"/index-source","destination":"/index.html"}
   ]
 }

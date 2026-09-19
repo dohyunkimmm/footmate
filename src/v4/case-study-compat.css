@@ -1,0 +1,81 @@
+/* Next-major compatibility with the established Case Study mobile scroll contract. */
+@media(max-width:900px){
+  .fm-next-cover-slide:after,
+  .fm-next-story-slide:after{
+    display:none!important;
+  }
+
+  .fm-next-cover-slide .fm-next-cover.cover{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    height:100%!important;
+    max-height:100%!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain;
+    gap:52px;
+    align-items:flex-start;
+    padding-bottom:32px;
+  }
+
+  .fm-next-story,
+  .fm-next-story-copy,
+  .fm-next-story-aside,
+  .fm-next-cs-auth-flow,
+  .fm-next-cs-state-line,
+  .fm-next-cs-agent,
+  .fm-next-cs-loop,
+  .fm-next-cs-detail-order{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+
+  .fm-next-cs-auth-flow{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    gap:10px!important;
+  }
+  .fm-next-cs-auth-flow>div{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  .fm-next-cs-auth-flow>i{
+    justify-self:center;
+    transform:rotate(90deg);
+  }
+
+  .fm-next-cs-state-line,
+  .fm-next-cs-agent,
+  .fm-next-cs-detail-order{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    width:100%!important;
+    gap:9px!important;
+  }
+  .fm-next-cs-state-line>*,
+  .fm-next-cs-agent>*,
+  .fm-next-cs-detail-order>*{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  .fm-next-cs-state-line>i,
+  .fm-next-cs-agent>i{
+    align-self:center;
+    transform:rotate(90deg);
+  }
+
+  .fm-next-cs-loop{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    gap:8px!important;
+  }
+  .fm-next-cs-loop>i{
+    justify-self:center;
+    transform:rotate(90deg);
+  }
+}

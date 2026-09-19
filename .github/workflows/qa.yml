@@ -19,72 +19,34 @@ jobs:
     name: Regression 36
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Use Node.js 24
-        uses: actions/setup-node@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Check v2.4 component/source boundary
-        run: node scripts/check-v24-boundary.cjs
-      - name: Check v2.5 decision/recovery boundary
-        run: node scripts/check-v25-boundary.cjs
-      - name: Check v2.6 architecture ownership boundary
-        run: node scripts/check-v26-boundary.cjs
-      - name: Check v2.7 visual ownership boundary
-        run: node scripts/check-v27-boundary.cjs
-      - name: Check v2.8 visual identity boundary
-        run: node scripts/check-v28-boundary.cjs
-      - name: Check v3.0 unified app boundary
-        run: node scripts/check-v30-boundary.cjs
-      - name: Check next-major real app boundary
-        run: node scripts/check-next-boundary.cjs
-      - name: Run regression and architecture suite
-        run: node --test tests/*.test.cjs
+      - name: Check v4.0 release boundary
+        run: node scripts/check-v40-boundary.cjs
 
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Checkout exact v2.8 visual baseline
-        uses: actions/checkout@v5
-        with:
-          ref: d8014978cf6a1a5621f09ff098f48ac4821b615b
-          path: .qa-baseline/v28
-          persist-credentials: false
-      - name: Use Node.js 24
-        uses: actions/setup-node@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
           package-manager-cache: false
       - name: Install browser QA dependencies
-        run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2 pixelmatch@5.3.0 pngjs@7.0.0
+        run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Start exact v2.8 baseline server
-        run: |
-          PORT=4180 FOOTMATE_SERVER_ROOT="$GITHUB_WORKSPACE/.qa-baseline/v28" node tests/e2e/server.cjs > /tmp/footmate-v28-baseline.log 2>&1 &
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:4180/demo >/dev/null; then
-              echo "Exact v2.8 baseline server is ready."
-              exit 0
-            fi
-            sleep 1
-          done
-          cat /tmp/footmate-v28-baseline.log
-          exit 1
-      - name: Run browser E2E, accessibility, responsive, stable visual parity and next-major gates
-        env:
-          FOOTMATE_V28_BASELINE_URL: http://127.0.0.1:4180
-        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs tests/e2e/v30-full-screen-qa.spec.cjs tests/e2e/next-major.spec.cjs tests/e2e/next-hotfix.spec.cjs
+      - name: Run v4.0 browser, state, responsive and accessibility gates
+        run: npx playwright test tests/e2e/v40-major.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: browser-e2e-${{ github.run_id }}
+          name: v40-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -97,101 +59,46 @@ jobs:
     needs: [regression, browser-e2e]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Use Node.js 24
-        uses: actions/setup-node@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Determine production impact
-        id: impact
+      - name: Wait for exact Vercel deployment
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          changed_files="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" --jq '.files[].filename')"
-          echo "Changed files:"
-          echo "$changed_files"
-          if printf '%s\n' "$changed_files" | grep -Ev '^(tests/|docs/|README\.md$|\.github/|playwright\.config\.cjs$)' >/dev/null; then
-            echo "deployment_required=true" >> "$GITHUB_OUTPUT"
-            echo "Production-impacting files changed; exact-SHA deployment is required."
-          else
-            echo "deployment_required=false" >> "$GITHUB_OUTPUT"
-            echo "QA/docs-only change; validate the current Production deployment."
-          fi
-      - name: Wait for Vercel deployment of this commit
-        id: deployment
-        if: steps.impact.outputs.deployment_required == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          for attempt in $(seq 1 36); do
+          for attempt in $(seq 1 42); do
             status_json="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/status")"
             state="$(printf '%s' "$status_json" | jq -r '[.statuses[] | select(.context=="Vercel")][0].state // ""')"
             description="$(printf '%s' "$status_json" | jq -r '[.statuses[] | select(.context=="Vercel")][0].description // ""')"
             echo "Vercel status: ${state:-pending} ${description}"
-            if [ "$state" = "success" ]; then
-              echo "deployment_pending=false" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then
-              if printf '%s' "$description" | grep -qi 'rate limited'; then
-                echo "deployment_pending=true" >> "$GITHUB_OUTPUT"
-                echo "::warning::Vercel deployment is rate-limited; validating the last verified Production deployment in compatibility mode."
-                exit 0
-              fi
-              exit 1
-            fi
+            if [ "$state" = "success" ]; then exit 0; fi
+            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then exit 1; fi
             sleep 10
           done
-          echo "Timed out waiting for the Vercel status for ${GITHUB_SHA}."
+          echo "Timed out waiting for exact Vercel deployment ${GITHUB_SHA}."
           exit 1
-      - name: Run production compatibility HTTP smoke
-        env:
-          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
-          FOOTMATE_STRICT_PRODUCTION: 'false'
-        run: node tests/production-smoke.cjs
-      - name: Run v3 exact production HTTP smoke
-        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
+      - name: Run v4 exact Production HTTP smoke
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
           FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: node tests/production-v30-smoke.cjs
-      - name: Run next-major exact production HTTP smoke
-        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
-        env:
-          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
-          FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: node tests/production-next-smoke.cjs
-      - name: Install production browser dependency
+        run: node tests/production-v40-smoke.cjs
+      - name: Install Production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run production compatibility browser smoke
-        env:
-          BASE_URL: https://footmate-black.vercel.app
-          PRODUCTION_SMOKE: '1'
-          FOOTMATE_STRICT_PRODUCTION: 'false'
-        run: npx playwright test tests/e2e/production.spec.cjs
-      - name: Run v3 exact production browser smoke
-        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
+      - name: Run v4 exact Production Chromium smoke
         env:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
           FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: npx playwright test tests/e2e/v30-production.spec.cjs
-      - name: Run next-major exact production browser smoke
-        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
-        env:
-          BASE_URL: https://footmate-black.vercel.app
-          PRODUCTION_SMOKE: '1'
-          FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: npx playwright test tests/e2e/next-production.spec.cjs
-      - name: Upload production QA evidence
+        run: npx playwright test tests/e2e/v40-production.spec.cjs
+      - name: Upload Production QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: production-smoke-${{ github.run_id }}
+          name: v40-production-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
