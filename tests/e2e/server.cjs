@@ -2,7 +2,9 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const root = path.resolve(__dirname, '../..');
+const root = process.env.FOOTMATE_SERVER_ROOT
+  ? path.resolve(process.env.FOOTMATE_SERVER_ROOT)
+  : path.resolve(__dirname, '../..');
 const port = Number(process.env.PORT || 4173);
 const host = process.env.HOST || '127.0.0.1';
 
@@ -55,5 +57,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`FootMate test server listening on http://${host}:${port}`);
+  console.log(`FootMate test server serving ${root} at http://${host}:${port}`);
 });

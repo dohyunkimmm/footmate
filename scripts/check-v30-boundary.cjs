@@ -17,23 +17,10 @@ const legacyPatch=read('footmate-patches.js');
 const caseStudy=read('index-experience.js');
 const caseStudyPatches=read('index-patches.js');
 
-for(const asset of [
-  '/src/v3/styles/tokens.css',
-  '/src/v3/styles/app-shell.css',
-  '/src/v3/styles/components.css',
-  '/src/v3/release.js'
-])assert(shell.includes(asset),`demo shell missing ${asset}`);
+for(const asset of ['/src/v3/styles/tokens.css','/src/v3/styles/app-shell.css','/src/v3/styles/components.css','/src/v3/release.js'])assert(shell.includes(asset),`demo shell missing ${asset}`);
 assert(shell.indexOf('/src/v2/v28-release.js')<shell.indexOf('/src/v3/release.js'),'v3 release must load after v2.8 baseline');
 
-for(const marker of [
-  "RELEASE_VERSION='3.0.0'",
-  "PREVIOUS_RELEASE_VERSION='2.8.0'",
-  "SCHEMA_VERSION='2.1.0'",
-  'FootMateV3Runtime',
-  'FootMateV30',
-  "releaseArchitecture:'v3.0-unified-app-architecture'",
-  "stateCompatibility:'v2.1-domain-state-preserved'"
-])assert(release.includes(marker),`v3 release missing ${marker}`);
+for(const marker of ["RELEASE_VERSION='3.0.0'","PREVIOUS_RELEASE_VERSION='2.8.0'","SCHEMA_VERSION='2.1.0'",'FootMateV3Runtime','FootMateV30',"releaseArchitecture:'v3.0-unified-app-architecture'","stateCompatibility:'v2.1-domain-state-preserved'"])assert(release.includes(marker),`v3 release missing ${marker}`);
 
 for(const id of ['discover','recommendations','participation','profile'])assert(navigation.includes(`id:'${id}'`),`v3 IA missing ${id}`);
 assert(navigation.includes('PRIMARY_DESTINATIONS'),'v3 primary destination registry missing');
@@ -47,16 +34,21 @@ assert(!viewState.includes('scenarioStore'),'v3 view state must not own domain s
 assert(!viewState.includes('matching-engine'),'v3 view state must not own matching domain');
 assert(!viewState.includes('elo-engine'),'v3 view state must not own ELO domain');
 
-for(const marker of ['createAppNavigation','createViewState','MutationObserver','scenarioStore'])assert(appShell.includes(marker),`v3 app shell missing ${marker}`);
+for(const marker of ['createAppNavigation','createViewState','MutationObserver','scenarioStore',"const portfolioChrome=mode==='portfolio'",'restoreLegacyNavigation','v2.8-product-baseline','portfolio-app-shell'])assert(appShell.includes(marker),`v3 app shell missing ${marker}`);
 assert(appShell.includes("architecture:'v3.0-unified-app-shell'"),'v3 app shell architecture marker missing');
 assert(appShell.includes("componentArchitecture:'v3.0-reusable-component-system'"),'v3 component architecture marker missing');
 assert(appNav.includes("aria-label','FootMate 주요 메뉴'"),'v3 navigation accessibility label missing');
 assert(appNav.includes("aria-current','page'"),'v3 active navigation semantics missing');
 
 assert(tokens.includes('FootMate v3.0'),'v3 token marker missing');
-assert(shellCss.includes('@media(min-width:800px)'),'v3 desktop app-shell breakpoint missing');
+assert(shellCss.includes('data-fm30-mode="portfolio"'),'v3 structural shell must be portfolio-scoped');
+assert(!shellCss.includes('html[data-footmate-current-release="3.0"] .device-shell'),'unscoped v3 device-shell override is forbidden');
+assert(!shellCss.includes('html[data-footmate-current-release="3.0"] .prototype-layout'),'unscoped v3 prototype-layout override is forbidden');
+assert(!shellCss.includes('html[data-footmate-current-release="3.0"] .tab-bar'),'unscoped v3 tab-bar override is forbidden');
+assert(shellCss.includes('@media(min-width:800px)'),'v3 portfolio desktop breakpoint missing');
 assert(shellCss.includes('@media(prefers-reduced-motion:reduce)'),'v3 reduced-motion guard missing');
-assert(componentsCss.includes('grid-template-columns:repeat(4,minmax(0,1fr))'),'v3 four-destination mobile navigation layout missing');
+assert(componentsCss.includes('data-fm30-mode="portfolio"'),'v3 components must be portfolio-scoped');
+assert(componentsCss.includes('grid-template-columns:repeat(4,minmax(0,1fr))'),'v3 four-destination portfolio navigation layout missing');
 assert(componentsCss.includes('min-height:52px'),'v3 mobile touch target floor missing');
 
 for(const source of [legacySource,legacyPatch]){

@@ -21,10 +21,29 @@ function replaceContext(root,node){
   else root.prepend(node);
 }
 
+function clearContext(root){
+  root?.querySelector(':scope > [data-fm30-slot="context"]')?.remove();
+}
+
 function markSurfaces(screen){
   screen.querySelectorAll('.card,.fm24-panel,.fm25-panel,[data-match-card],.profile-elo-card,.profile-menu-item').forEach((node,index)=>{
     node.dataset.fm30Surface='true';
     node.style.setProperty('--fm30-order',String(Math.min(index,12)));
+  });
+}
+
+function ensureScrollableAccessibility(screen){
+  if(screen?.id!=='s-playstyle')return;
+  const content=screen.querySelector('.pcnt');
+  if(!content)return;
+  if(!content.hasAttribute('tabindex'))content.tabIndex=0;
+  if(!content.hasAttribute('aria-label'))content.setAttribute('aria-label','플레이 성향 상세 내용');
+}
+
+function restoreLegacyNavigation(){
+  document.querySelectorAll('.tab-bar').forEach(tab=>{
+    tab.removeAttribute('aria-hidden');
+    delete tab.dataset.fm30LegacyNav;
   });
 }
 
@@ -35,20 +54,30 @@ export function installAppShell({runtime,mode='product'}={}){
   const deviceScreen=document.querySelector('.device-screen');
   if(!shell||!deviceScreen)throw new Error('FootMate v3 app shell host is missing');
 
+  const portfolioChrome=mode==='portfolio';
+  document.documentElement.dataset.fm30Mode=mode;
+  document.documentElement.dataset.fm30Chrome=portfolioChrome?'portfolio-shell':'v2.8-product-baseline';
+
   let currentDestination=destinationForScreen(activeScreenId(),'discover');
   const viewState=createViewState(currentDestination);
   currentDestination=viewState.getState().activeDestination||currentDestination;
 
   let nav=document.getElementById('fm30AppNav');
-  if(!nav){
-    nav=createAppNavigation(PRIMARY_DESTINATIONS);
-    shell.insertBefore(nav,deviceScreen);
+  if(portfolioChrome){
+    if(!nav){
+      nav=createAppNavigation(PRIMARY_DESTINATIONS);
+      shell.insertBefore(nav,deviceScreen);
+    }
+    document.querySelectorAll('.tab-bar').forEach(tab=>{
+      tab.dataset.fm30LegacyNav='true';
+      tab.setAttribute('aria-hidden','true');
+    });
+  }else{
+    nav?.remove();
+    nav=null;
+    restoreLegacyNavigation();
+    document.querySelectorAll('[data-fm30-slot="context"]').forEach(node=>node.remove());
   }
-
-  document.querySelectorAll('.tab-bar').forEach(tab=>{
-    tab.dataset.fm30LegacyNav='true';
-    tab.setAttribute('aria-hidden','true');
-  });
 
   let destroyed=false;
   let scheduled=false;
@@ -64,12 +93,16 @@ export function installAppShell({runtime,mode='product'}={}){
     screen.dataset.fm30Area=destination;
     screen.dataset.fm30Architecture='app-shell';
     markSurfaces(screen);
-    if(CONTEXT_SCREENS.has(screenId)){
-      replaceContext(contentRoot(screenId),createContextBar({
+    ensureScrollableAccessibility(screen);
+    const root=contentRoot(screenId);
+    if(portfolioChrome&&CONTEXT_SCREENS.has(screenId)){
+      replaceContext(root,createContextBar({
         screenId,
         destinationId:destination,
         state:scenarioState()
       }));
+    }else{
+      clearContext(root);
     }
   }
 
@@ -97,7 +130,7 @@ export function installAppShell({runtime,mode='product'}={}){
 
   function onNavigationClick(event){
     const button=event.target.closest?.('[data-fm30-destination]');
-    if(!button||!nav.contains(button))return;
+    if(!button||!nav?.contains(button))return;
     event.preventDefault();
     const destinationId=button.dataset.fm30Destination;
     currentDestination=destinationId;
@@ -113,7 +146,7 @@ export function installAppShell({runtime,mode='product'}={}){
   });
   observer.observe(deviceScreen,{subtree:true,attributes:true,attributeFilter:['class']});
 
-  nav.addEventListener('click',onNavigationClick);
+  nav?.addEventListener('click',onNavigationClick);
   const stopScenario=runtime.scenarioStore.subscribe?.(()=>schedule())||(()=>{});
 
   sync();
@@ -122,24 +155,21 @@ export function installAppShell({runtime,mode='product'}={}){
     architecture:'v3.0-unified-app-shell',
     componentArchitecture:'v3.0-reusable-component-system',
     ia:'4-primary-destinations',
+    visualMode:portfolioChrome?'portfolio-app-shell':'v2.8-product-baseline',
     primaryDestinations:PRIMARY_DESTINATIONS.map(({id,label,target})=>({id,label,target})),
     preservedLegacyRoutes:document.querySelectorAll('.screen').length,
     viewState,
     navigation:nav,
-    refresh(){
-      sync();
-    },
+    refresh(){sync()},
     onScreen:sync,
     destroy(){
       destroyed=true;
       observer.disconnect();
       stopScenario();
-      nav.removeEventListener('click',onNavigationClick);
-      nav.remove();
-      document.querySelectorAll('.tab-bar[data-fm30-legacy-nav="true"]').forEach(tab=>{
-        tab.removeAttribute('aria-hidden');
-        delete tab.dataset.fm30LegacyNav;
-      });
+      nav?.removeEventListener('click',onNavigationClick);
+      nav?.remove();
+      document.querySelectorAll('[data-fm30-slot="context"]').forEach(node=>node.remove());
+      restoreLegacyNavigation();
     }
   };
 }
