@@ -98,6 +98,35 @@ src/v3/
 - decision trace를 server-side durable audit/event storage로 확장
 - legacy DOM/persistence compatibility ownership 추가 축소
 
+## Next Major Candidate — Matchday Companion
+
+Status: **Not yet verified for Production** · PR #83
+
+기존 v3.0을 안정 회귀 기준으로 유지하면서 `/next`에 새로운 제품 경험을 분리해 검증합니다. 화면 수를 목표로 두지 않고 `Find → Decide → Join → Play → Return`의 사용자 행동과 경기 상태를 중심으로 재설계합니다.
+
+- Guest-first: `Value → Preferences → Recommendation → Detail → Sign in to Join`
+- Recommendation: 퍼센트 점수보다 레벨 · 거리 · 남은 포지션 등 판단 이유 우선
+- Detail: 의사결정 순서와 단일 참가 CTA
+- Sign in: 아이디/비밀번호 + Kakao · Naver · Apple · Google SSO UI + 회원가입 경로
+- Context continuity: 선택 경기와 플레이 설정을 Sign in → Checkout → 참가 완료까지 유지
+- Matchday: discover → upcoming → matchday → postgame 상태 기반 홈
+- Mode isolation: Real App / Guided Case Study / Evidence 분리
+- Case Study: Problem → Persona/JTBD → Product Thesis → Design Decisions → Recovery → System Evidence → Validation → Limits
+
+Authentication implementation scope:
+- 구현: 로그인/회원가입/SSO 선택 UX, 세션 기반 `signedIn` 상태, 참가 흐름 연속성
+- 미연동: 실제 Kakao/Naver/Apple/Google OAuth, 회원 DB, 서버 인증 세션
+
+QA scope:
+- v2.4–v3.0 regression / architecture boundary 유지
+- v2.8 39-screen stable Product visual parity 유지
+- guest-first / sign-in gate / checkout continuity
+- 320 / 375 / 390 / 430 responsive
+- axe serious/critical gate
+- Case Study mobile scroll / embedded `/next` interaction
+
+정확한 GitHub Actions run, merge SHA, Vercel deployment ID, exact Production verification은 완료된 뒤 이 섹션에 기록합니다.
+
 ## v2.8.0 — Matchday Visual Identity
 
 - Product/runtime baseline: `d8014978cf6a1a5621f09ff098f48ac4821b615b` · PR #71
