@@ -2,7 +2,7 @@
 
 ## v4.0.0 — Matchday Companion · 2026-09-19
 
-**Status:** Official Major release. Verified release baseline `fcb01400ecc6ee34bd70bf2da9c1ee8b114375f9` passed FootMate QA #316 (run `35445575340`) and exact Vercel Production HTTP/Chromium verification. Vercel deployment `dpl_AAvMY6CCkf8GpsFTVoir38TNxELh` is READY and Render deployment `dep-dan8p7e8bjmc73ab4os0` is LIVE at the same SHA.
+**Status:** Official Major release. Product/runtime + public-surface baseline `fa150f183f6a821edd04e49c3496559e5ebecc8e` passed FootMate QA #318 (run `35447147842`) including v4 release boundary, Browser E2E + axe, responsive/state gates and exact Vercel Production HTTP/Chromium verification. Vercel deployment `dpl_ALtasaHtBQZZthkEgMtxomN2p4GP` is **READY** and Render deployment `dep-dan989e8bjmc73abijrg` is **LIVE** at the same SHA.
 
 FootMate v4.0 promotes Matchday Companion to the official product and Case Study baseline.
 
@@ -25,4 +25,4 @@ This is an interactive service-planning prototype. External AI inference, member
 
 ### Legacy handling
 
-Pre-v4 product/source material is removed from the current public branch and from the current product narrative. GitHub commit history remains historical repository data while the repository is public; it is not a current release surface.
+Pre-v4 runtime/source/test/checker material is removed from the current public branch and current product narrative. GitHub commit history remains historical repository data while the repository itself is public; it is not a current release surface.

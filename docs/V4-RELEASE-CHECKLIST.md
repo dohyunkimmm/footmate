@@ -16,21 +16,23 @@
 - [x] Current narrative is v4.0-only
 - [x] Mobile Case Study is horizontally safe
 
-## QA / Production baseline
-- [x] FootMate QA #316 · run `35445575340` PASS
+## QA / Production
+- [x] FootMate QA #318 · run `35447147842` PASS
 - [x] v4 static release boundary
 - [x] Browser E2E + axe
 - [x] 320 / 375 / 390 / 430 responsive gate
 - [x] persistence / reload / compatibility alias / console-error gates
-- [x] exact Vercel Production SHA `fcb01400ecc6ee34bd70bf2da9c1ee8b114375f9`
-- [x] Vercel deployment `dpl_AAvMY6CCkf8GpsFTVoir38TNxELh` READY
+- [x] exact Vercel Production SHA `fa150f183f6a821edd04e49c3496559e5ebecc8e`
+- [x] Vercel deployment `dpl_ALtasaHtBQZZthkEgMtxomN2p4GP` READY
 - [x] exact Production HTTP + Chromium smoke
-- [x] Render `dep-dan8p7e8bjmc73ab4os0` LIVE at the same SHA
+- [x] Render `dep-dan989e8bjmc73abijrg` LIVE at the same SHA
 
 ## Public-surface cleanup
-- [ ] Current public branch contains v4 runtime ownership only
-- [ ] Pre-v4 source/test/checker files removed from current public tree
-- [ ] README / Release History / Architecture synchronized
-- [ ] Notion representative project and Portfolio synchronized to v4
-- [ ] Supporting Notion PRD / Flowchart / Workflow moved to private workspace area
-- [ ] Cleanup merge exact Production and Render re-verified
+- [x] Current public branch contains v4 runtime ownership only
+- [x] Pre-v4 source/test/checker files removed from current public tree
+- [x] README / Release History / Architecture synchronized
+- [x] Notion representative project and Portfolio synchronized to v4
+- [x] Supporting Notion PRD / Flowchart / Workflow moved to private workspace area
+- [x] Cleanup merge exact Production and Render re-verified
+
+GitHub repository visibility is still public. Historical commits therefore remain repository history even though pre-v4 material has been removed from the current branch and public product/documentation surfaces.
