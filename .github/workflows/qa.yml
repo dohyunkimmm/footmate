@@ -36,6 +36,8 @@ jobs:
         run: node scripts/check-v27-boundary.cjs
       - name: Check v2.8 visual identity boundary
         run: node scripts/check-v28-boundary.cjs
+      - name: Check v3.0 unified app boundary
+        run: node scripts/check-v30-boundary.cjs
       - name: Run regression and architecture suite
         run: node --test tests/*.test.cjs
 
@@ -54,8 +56,8 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run browser E2E, accessibility, responsive and v2.8 visual gates
-        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs
+      - name: Run browser E2E, accessibility, responsive and v3.0 app gates
+        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -126,7 +128,7 @@ jobs:
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
           FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
-        run: node tests/production-smoke.cjs
+        run: node tests/production-smoke.cjs && node tests/production-v30-smoke.cjs
       - name: Install production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
@@ -136,7 +138,7 @@ jobs:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
           FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
-        run: npx playwright test tests/e2e/production.spec.cjs
+        run: npx playwright test tests/e2e/production.spec.cjs tests/e2e/v30-production.spec.cjs
       - name: Upload production QA evidence
         if: always()
         uses: actions/upload-artifact@v6

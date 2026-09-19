@@ -20,7 +20,7 @@ function collectFailures(page) {
   return failures;
 }
 
-test('production case study and v2 product/portfolio modes render after deployment', async ({ page }) => {
+test('production case study and v3 product/portfolio modes render after deployment', async ({ page }) => {
   const failures = collectFailures(page);
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -33,12 +33,16 @@ test('production case study and v2 product/portfolio modes render after deployme
     await expect(page.locator('.slide')).toHaveCount(16);
     await expect(page.locator('.toc-item')).toHaveCount(16);
     await expect(page.locator('#cnt')).toContainText('/ 16');
-    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V2.8');
+    await expect(page.locator('#fmReleaseVersionBadge')).toContainText('V3.0');
     await page.evaluate(() => window.goTo(4));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('User Journey');
     await page.evaluate(() => window.goTo(7));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('서비스 구조를 4개 핵심 탭으로 단순화');
     await expect(page.locator('.slide[aria-hidden="false"] .ia-row > span')).toHaveCount(4);
+    await expect(page.locator('.slide[aria-hidden="false"] .ia-row')).toContainText('탐색');
+    await expect(page.locator('.slide[aria-hidden="false"] .ia-row')).toContainText('추천');
+    await expect(page.locator('.slide[aria-hidden="false"] .ia-row')).toContainText('참가');
+    await expect(page.locator('.slide[aria-hidden="false"] .ia-row')).toContainText('내 정보');
     await page.evaluate(() => window.goTo(8));
     await expect(page.locator('.slide[aria-hidden="false"] h2')).toHaveText('입력부터 경기 결과까지 이어지는 동적 ELO 구조');
     await page.evaluate(() => window.goTo(10));
@@ -47,7 +51,7 @@ test('production case study and v2 product/portfolio modes render after deployme
 
   await page.goto('/demo', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
-  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV28 && !!window.FootMateV27 && !!window.FootMateV26 && window.FootMateV2Runtime?.version === '2.8.0');
+  if (strictProduction) await page.waitForFunction(() => window.__footmateV3 === true && !!window.FootMateV30 && !!window.FootMateV28 && !!window.FootMateV27 && !!window.FootMateV26 && window.FootMateV3Runtime?.version === '3.0.0' && window.FootMateV2Runtime?.version === '2.8.0');
   await expect(page.locator('.top-bar')).toBeHidden();
   await expect(page.locator('.flow-nav')).toBeHidden();
   await page.evaluate(() => window.goScreen('s-home'));
@@ -55,6 +59,9 @@ test('production case study and v2 product/portfolio modes render after deployme
   if (strictProduction) {
     await expect(page.locator('#s-home [data-fm25-slot="next-action"]')).toBeVisible();
     await expect(page.locator('#s-home')).toHaveAttribute('data-fm28-identity','true');
+    await expect(page.locator('#s-home')).toHaveAttribute('data-fm30-area','discover');
+    await expect(page.locator('#fm30AppNav')).toBeVisible();
+    await expect(page.locator('#fm30AppNav [data-fm30-destination]')).toHaveCount(4);
   }
   await expect(page.locator('#v3Launcher')).toBeHidden();
   let state = await page.evaluate(() => ({mode: window.FootMateV2Runtime.mode,operation: window.FootMateProductOps.operation()}));
@@ -63,8 +70,8 @@ test('production case study and v2 product/portfolio modes render after deployme
 
   if (!strictProduction) {
     const compatibility = await page.evaluate(() => ({
-      runtimeVersion: window.FootMateV2Runtime?.version || null,
-      availableReleaseVersion: window.FootMateV28?.version || window.FootMateV27?.version || window.FootMateV26?.version || window.FootMateV25?.version || null
+      runtimeVersion: window.FootMateV3Runtime?.version || window.FootMateV2Runtime?.version || null,
+      availableReleaseVersion: window.FootMateV30?.version || window.FootMateV28?.version || window.FootMateV27?.version || window.FootMateV26?.version || window.FootMateV25?.version || null
     }));
     expect(compatibility.runtimeVersion).toBeTruthy();
     expect(compatibility.availableReleaseVersion).toBeTruthy();
@@ -72,6 +79,20 @@ test('production case study and v2 product/portfolio modes render after deployme
 
   if (strictProduction) {
     const release = await page.evaluate(() => ({
+      v3Runtime:{
+        version:window.FootMateV3Runtime?.version,
+        schemaVersion:window.FootMateV3Runtime?.schemaVersion,
+        architecture:window.FootMateV3Runtime?.architecture,
+        releaseArchitecture:window.FootMateV3Runtime?.releaseArchitecture,
+        previousReleaseArchitecture:window.FootMateV3Runtime?.previousReleaseArchitecture,
+        shellOwnership:window.FootMateV3Runtime?.shellOwnership,
+        componentOwnership:window.FootMateV3Runtime?.componentOwnership,
+        visualBaselineOwnership:window.FootMateV3Runtime?.visualBaselineOwnership
+      },
+      v30:window.FootMateV30,
+      currentReleaseDataset:document.documentElement.dataset.footmateCurrentRelease,
+      currentArchitectureDataset:document.documentElement.dataset.footmateArchitecture,
+      visualBaselineDataset:document.documentElement.dataset.footmateVisualBaseline,
       version: window.FootMateV2Runtime?.version,
       schemaVersion: window.FootMateV2Runtime?.schemaVersion,
       releaseArchitecture: window.FootMateV2Runtime?.releaseArchitecture,
@@ -90,8 +111,16 @@ test('production case study and v2 product/portfolio modes render after deployme
       v24: window.FootMateV24,
       v23: window.FootMateV23,
       v22: window.FootMateV22,
-      availability: window.FootMateV2Runtime?.availabilityGateway?.read()
+      availability: window.FootMateV2Runtime?.availabilityGateway?.read(),
+      viewState:window.FootMateV3Runtime?.viewState?.getState?.()
     }));
+    expect(release.v3Runtime).toMatchObject({version:'3.0.0',schemaVersion:'2.1.0',architecture:'v3.0-modular-app-runtime',releaseArchitecture:'v3.0-unified-app-architecture',previousReleaseArchitecture:'v2.8-visual-identity',shellOwnership:'src/v3/styles/app-shell.css',componentOwnership:'src/v3/components',visualBaselineOwnership:'src/v2/styles/visual-identity.css'});
+    expect(release.v30).toMatchObject({version:'3.0.0',previousReleaseVersion:'2.8.0',schemaVersion:'2.1.0',architecture:'v3.0-unified-app-architecture',runtimeArchitecture:'v3.0-modular-app-runtime',appShell:'v3.0-unified-app-shell',componentArchitecture:'v3.0-reusable-component-system',componentOwnership:'src/v3/components',ia:'4-primary-destinations',primaryDestinationCount:4,preservedLegacyScreens:39,visualBaseline:'v2.8-matchday',stateCompatibility:'v2.1-domain-state-preserved'});
+    expect(release.currentReleaseDataset).toBe('3.0');
+    expect(release.currentArchitectureDataset).toBe('unified-app');
+    expect(release.visualBaselineDataset).toBe('2.8');
+    expect(release.viewState).toMatchObject({version:'3.0.0'});
+
     expect(release.version).toBe('2.8.0');
     expect(release.schemaVersion).toBe('2.1.0');
     expect(release.releaseArchitecture).toBe('v2.8-visual-identity');
@@ -112,9 +141,13 @@ test('production case study and v2 product/portfolio modes render after deployme
     expect(release.v22).toMatchObject({version:'2.2.0',currentReleaseVersion:'2.8.0',compatibility:true});
     expect(release.availability).toMatchObject({architecture:'v2.6-availability-verification-boundary',freshness:{source:'prototype-session',realtime:false,serverVerified:false}});
 
+    await page.locator('#fm30AppNav [data-fm30-destination="recommendations"]').click();
+    await expect(page.locator('#s-results')).toHaveClass(/active/);
+    await expect(page.locator('#s-results')).toHaveAttribute('data-fm30-area','recommendations');
     await page.evaluate(() => window.FootMateV2Runtime.scenarioStore.navigateToMatch('seongnam', true));
     await expect(page.locator('#s-detail')).toHaveAttribute('data-v2-presentation', 'scenario-presenter');
     await expect(page.locator('#s-detail')).toHaveAttribute('data-fm28-identity','true');
+    await expect(page.locator('#s-detail')).toHaveAttribute('data-fm30-area','recommendations');
     await expect(page.locator('#s-detail .fm24-detail-decision')).toBeVisible();
     await expect(page.locator('#s-detail [data-fm25-slot="preflight"]')).toBeVisible();
     const decision = await page.evaluate(() => window.FootMateV2Runtime.decisionEngine.evaluate('s-detail',{record:false}));
@@ -123,15 +156,19 @@ test('production case study and v2 product/portfolio modes render after deployme
 
   await page.goto('/demo?mode=portfolio', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__footmateV2 === true && document.querySelectorAll('.screen').length === 39);
-  if (strictProduction) await page.waitForFunction(() => !!window.FootMateV28 && window.FootMateV2Runtime?.version === '2.8.0');
+  if (strictProduction) await page.waitForFunction(() => window.__footmateV3 === true && !!window.FootMateV30 && !!window.FootMateV28 && window.FootMateV3Runtime?.version === '3.0.0' && window.FootMateV2Runtime?.version === '2.8.0');
   const intro = page.locator('#demoOnboarding');
   if (await intro.isVisible()) await page.locator('.demo-onboarding-start').click();
   await page.evaluate(() => window.goScreen('s-home'));
   const validationLauncher = page.getByRole('button', { name: '제품 검증 패널 열기' });
   await expect(validationLauncher).toBeVisible();
-  if (strictProduction) await expect(page.locator('#s-home [data-fm25-slot="next-action"]')).toBeVisible();
-  state = await page.evaluate(() => ({ mode: window.FootMateV2Runtime.mode }));
+  if (strictProduction) {
+    await expect(page.locator('#s-home [data-fm25-slot="next-action"]')).toBeVisible();
+    await expect(page.locator('#fm30AppNav [data-fm30-destination]')).toHaveCount(4);
+  }
+  state = await page.evaluate(() => ({ mode: window.FootMateV2Runtime.mode, v3Mode:window.FootMateV3Runtime?.mode }));
   expect(state.mode).toBe('portfolio');
+  if(strictProduction)expect(state.v3Mode).toBe('portfolio');
 
   if (strictProduction) {
     await validationLauncher.click();

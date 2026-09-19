@@ -23,12 +23,12 @@ function syncCaseStudy(){
   const row=document.querySelector('.slide[data-i="7"] .ia-row');
   if(row){
     row.style.gridTemplateColumns='repeat(4,1fr)';
-    row.innerHTML='<span>홈</span><span>탐색</span><span>일정</span><span>프로필</span>';
+    row.innerHTML='<span>탐색</span><span>추천</span><span>참가</span><span>내 정보</span>';
   }
   const detail=document.querySelector('.slide[data-i="7"] .ia-detail');
   if(detail){
     detail.style.gridTemplateColumns='repeat(4,1fr)';
-    detail.innerHTML='<p>홈: 추천 경기 · 홈 필터</p><p>탐색: 조건 설정 · 추천 결과 · 팀 상세</p><p>일정: 참가 확정 · 경기일 · 알림</p><p>프로필: ELO · 성장 기록 · 설정</p>';
+    detail.innerHTML='<p>탐색: 오늘의 경기 · 조건 설정</p><p>추천: 추천 결과 · 경기 상세 · 추천 근거</p><p>참가: 결제 · 체크인 · 경기일 · 평가</p><p>내 정보: 프로필 · ELO · 커뮤니티 활동</p>';
   }
   const cover=document.querySelector('.slide[data-i="0"] .cover');
   if(cover&&!document.getElementById('fmDecisionSummary')){
@@ -36,12 +36,12 @@ function syncCaseStudy(){
     summary.id='fmDecisionSummary';
     summary.className='fm-decision-summary';
     summary.setAttribute('aria-label','프로젝트 의사결정 요약');
-    summary.innerHTML='<span><b>Problem</b>실력 편차 · 노쇼 · 관계 단절</span><span><b>Hypothesis</b>ELO·선결제·성장 기록이 신뢰를 높인다</span><span><b>Design</b>39화면 · 상태 기반 핵심 여정</span><span><b>Validation</b>36 회귀 · Chromium · axe · Production Smoke</span><span><b>Result</b>설명 가능한 추천·운영 예외·검증 증거를 연결</span>';
+    summary.innerHTML='<span><b>Problem</b>실력 편차 · 노쇼 · 관계 단절</span><span><b>Hypothesis</b>ELO·선결제·성장 기록이 신뢰를 높인다</span><span><b>Design</b>39 compatibility routes · 4 primary destinations</span><span><b>Validation</b>36 회귀 · Chromium · axe · Production Smoke</span><span><b>Result</b>설명 가능한 추천·운영 예외·검증 증거를 연결</span>';
     const hero=cover.querySelector('.hero-grid');
     if(hero)cover.insertBefore(summary,hero);
   }
   const hint=document.querySelector('.showcase-hint');
-  if(hint)hint.textContent='앱 우측 하단의 ‘매칭 로직’과 ‘제품 검증’에서 Agent Workflow, 운영 상태 전이, 추천 근거와 이벤트 로그를 확인할 수 있습니다.';
+  if(hint)hint.textContent='앱의 ‘추천’과 Portfolio 제품 검증 패널에서 Agent Workflow, 운영 상태 전이, 추천 근거와 이벤트 로그를 확인할 수 있습니다.';
   const qualityNote=document.querySelector('.slide[data-i="10"] .note');
   if(qualityNote)qualityNote.textContent='※ 현재 프로토타입은 입력·상태·퍼널 이벤트에 따라 PASS·CHECK를 판정하며, 서버 최신성이 필요한 Freshness는 SAMPLE로 구분합니다. 운영 연동 후 오류율·최신성·상태 충돌을 실제 지표로 수집합니다.';
   const validation=document.querySelector('.slide[data-i="14"]');
