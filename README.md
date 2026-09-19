@@ -61,6 +61,39 @@ v3.0은 v2.8 Matchday Visual Identity를 Product 회귀 기준으로 유지하�
 
 Vercel exact Production verification과 Render backup은 독립적인 배포 경로입니다. QA/docs-only merge로 moving `main`이 전진해도 product/runtime baseline과 exact verified Production SHA는 별도로 유지하며, Render current-main exact 상태는 deployment source와 Notion current-state에서 추적합니다.
 
+## 🧪 Next Major Candidate · Matchday Companion
+
+PR #83에서는 기존 v3.0을 안정 회귀 기준으로 유지한 채 `/next`에 다음 Major 후보를 분리해 개발합니다. **아직 stable Product 또는 exact verified Production으로 승격된 상태가 아닙니다.**
+
+핵심 사용자 흐름은 화면 수가 아니라 다음 5개 행동으로 재구성합니다.
+
+`Find → Decide → Join → Play → Return`
+
+- Guest-first entry: `Value → Preferences → Recommendation → Detail → Sign in to Join`
+- 추천 카드: 매칭 퍼센트보다 레벨 · 거리 · 남은 포지션 등 판단 이유 우선
+- 경기 상세: 시간·장소 → 적합 이유 → 자리 → 참가자/시설 → 취소 정책 → 단일 참가 CTA
+- Sign in: **아이디/비밀번호 로그인 + Kakao · Naver · Apple · Google SSO UI**와 회원가입 경로
+- 선택한 경기와 플레이 설정을 Sign in → Checkout → 참가 확정까지 유지
+- Home state: discover → upcoming → matchday → postgame
+- Real App / Guided Case Study / Evidence mode 분리
+- Case Study: Problem → Persona/JTBD → Product Thesis → Design Decisions → Recovery → System Evidence → Validation → Limits로 재구성
+
+### Authentication scope
+
+Next Major 후보는 로그인·회원가입·SSO 선택 UI와 세션 상태 전환을 구현합니다. **실제 Kakao/Naver/Apple/Google OAuth, 회원 DB, 서버 인증 세션은 연동하지 않았습니다.** 외부 인증 연동 완료로 표현하지 않습니다.
+
+### Candidate QA scope
+
+- 기존 v2.4–v3.0 architecture / regression contract 유지
+- stable `/demo`의 exact v2.8 39-screen visual parity 유지
+- guest-first recommendation flow
+- account login + SSO + sign-up surface
+- selected-match continuity through sign in / checkout
+- Real App / Guided / Evidence isolation
+- responsive 320 / 375 / 390 / 430
+- axe serious / critical accessibility gate
+- Case Study mobile vertical scroll 및 `/next` live interaction
+
 ## ✨ Key Features
 
 - 5개 사용자 입력 기반 동적 ELO 계산

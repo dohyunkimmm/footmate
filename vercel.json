@@ -23,6 +23,10 @@
       "destination": "/demo-shell.html"
     },
     {
+      "source": "/next",
+      "destination": "/next.html"
+    },
+    {
       "source": "/index-source",
       "destination": "/index-source.html"
     },

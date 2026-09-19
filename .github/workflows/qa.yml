@@ -38,6 +38,8 @@ jobs:
         run: node scripts/check-v28-boundary.cjs
       - name: Check v3.0 unified app boundary
         run: node scripts/check-v30-boundary.cjs
+      - name: Check next-major real app boundary
+        run: node scripts/check-next-boundary.cjs
       - name: Run regression and architecture suite
         run: node --test tests/*.test.cjs
 
@@ -74,10 +76,10 @@ jobs:
           done
           cat /tmp/footmate-v28-baseline.log
           exit 1
-      - name: Run browser E2E, accessibility, responsive and 39-screen visual parity gates
+      - name: Run browser E2E, accessibility, responsive, stable visual parity and next-major gates
         env:
           FOOTMATE_V28_BASELINE_URL: http://127.0.0.1:4180
-        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs tests/e2e/v30-full-screen-qa.spec.cjs
+        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs tests/e2e/v30-full-screen-qa.spec.cjs tests/e2e/next-major.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -155,6 +157,12 @@ jobs:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
           FOOTMATE_STRICT_PRODUCTION: 'true'
         run: node tests/production-v30-smoke.cjs
+      - name: Run next-major exact production HTTP smoke
+        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
+        env:
+          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
+          FOOTMATE_STRICT_PRODUCTION: 'true'
+        run: node tests/production-next-smoke.cjs
       - name: Install production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
@@ -172,6 +180,13 @@ jobs:
           PRODUCTION_SMOKE: '1'
           FOOTMATE_STRICT_PRODUCTION: 'true'
         run: npx playwright test tests/e2e/v30-production.spec.cjs
+      - name: Run next-major exact production browser smoke
+        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
+        env:
+          BASE_URL: https://footmate-black.vercel.app
+          PRODUCTION_SMOKE: '1'
+          FOOTMATE_STRICT_PRODUCTION: 'true'
+        run: npx playwright test tests/e2e/next-production.spec.cjs
       - name: Upload production QA evidence
         if: always()
         uses: actions/upload-artifact@v6
