@@ -24,8 +24,8 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Check v4.0 release boundary
-        run: node scripts/check-v40-boundary.cjs
+      - name: Check v4 release boundary
+        run: node scripts/check-v4-boundary.cjs
 
   browser-e2e:
     name: Browser E2E + axe
@@ -40,13 +40,13 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v4.0 browser, state, responsive, editorial and accessibility gates
-        run: npx playwright test tests/e2e/v40-major.spec.cjs tests/e2e/v40-case-study-editorial.spec.cjs
+      - name: Run v4 browser, state, responsive, editorial and accessibility gates
+        run: npx playwright test tests/e2e/v4-app.spec.cjs tests/e2e/v4-case-study.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v40-browser-e2e-${{ github.run_id }}
+          name: v4-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -83,7 +83,7 @@ jobs:
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
           FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: node tests/production-v40-smoke.cjs
+        run: node tests/production-v4-smoke.cjs
       - name: Install Production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
@@ -93,12 +93,12 @@ jobs:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
           FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: npx playwright test tests/e2e/v40-production.spec.cjs
+        run: npx playwright test tests/e2e/v4-production.spec.cjs
       - name: Upload Production QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v40-production-${{ github.run_id }}
+          name: v4-production-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
