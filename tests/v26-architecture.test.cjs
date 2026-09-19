@@ -5,7 +5,7 @@ const path=require('node:path');
 const root=process.env.FOOTMATE_SOURCE_DIR||path.join(__dirname,'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 
-test('v2.6 hardens ownership without changing the v2.5 decision UX contract',()=>{
+test('v2.6 hardens ownership and remains intact under the v2.7 visual release',()=>{
   const bootstrap=read('src/v2/bootstrap.js');
   const boundary=read('src/v2/demo/runtime-boundary.js');
   const availability=read('src/v2/domain/availability-gateway.js');
@@ -13,11 +13,13 @@ test('v2.6 hardens ownership without changing the v2.5 decision UX contract',()=
   const patch=read('footmate-patches.js');
   const source=read('demo-source.html');
   const shell=read('demo-shell.html');
-  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const V26_RELEASE_VERSION='2.6.0'"));
+  assert.ok(bootstrap.includes("const RELEASE_VERSION='2.7.0'"));
   assert.ok(bootstrap.includes("const V25_RELEASE_VERSION='2.5.0'"));
   assert.ok(bootstrap.includes('window.FootMateV26'));
-  assert.ok(bootstrap.includes("releaseArchitecture:'v2.6-architecture-hardening'"));
-  assert.ok(bootstrap.includes("previousReleaseArchitecture:'v2.5-decision-recovery-experience'"));
+  assert.ok(bootstrap.includes("architecture:'v2.6-architecture-hardening'"));
+  assert.ok(bootstrap.includes("releaseArchitecture:'v2.7-visual-experience'"));
+  assert.ok(bootstrap.includes("previousReleaseArchitecture:'v2.6-architecture-hardening'"));
   assert.ok(bootstrap.includes('createDecisionTracePersistence'));
   assert.ok(bootstrap.includes('createAvailabilityGateway'));
   assert.ok(boundary.includes("role:'39-screen-regression-fixture'"));
@@ -28,5 +30,6 @@ test('v2.6 hardens ownership without changing the v2.5 decision UX contract',()=
   assert.ok(traces.includes("createStorage('decision-traces')"));
   assert.equal(source.includes('fm26-'),false);
   assert.equal(patch.includes('v2.6-'),false);
-  assert.ok(shell.includes('/src/v2/bootstrap.js?v=20260919-2'));
+  assert.ok(shell.includes('/src/v2/styles/visual-experience.css?v=20260919-1'));
+  assert.ok(shell.includes('/src/v2/bootstrap.js?v=20260919-3'));
 });
