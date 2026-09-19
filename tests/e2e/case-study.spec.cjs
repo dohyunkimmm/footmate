@@ -93,7 +93,7 @@ test('mobile Case Study can scroll vertically and reveal the embedded demo', asy
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('.slide').length === 16);
   await page.waitForFunction(() => typeof window.goTo === 'function');
-  await page.waitForSelector('#fmDecisionSummary');
+  await page.waitForSelector('#fmDecisionSummary', { state: 'attached' });
 
   const cover = page.locator('.slide[data-i="0"] .cover');
   const coverMetrics = await cover.evaluate(element => {
