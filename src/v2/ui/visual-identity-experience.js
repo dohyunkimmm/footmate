@@ -28,15 +28,26 @@ function markScreen(id){
 
 export function installVisualIdentityExperience(){
   let destroyed=false;
+  let scheduled=false;
   const refresh=()=>{
     if(destroyed)return;
+    scheduled=false;
     document.documentElement.dataset.footmateVisualIdentity='matchday';
     OWNED_SCREENS.forEach(markScreen);
+  };
+  const scheduleRefresh=()=>{
+    if(destroyed||scheduled)return;
+    scheduled=true;
+    queueMicrotask(refresh);
   };
   const onScreen=id=>{
     if(destroyed)return;
     if(OWNED_SCREENS.includes(id))markScreen(id);
   };
+  const observer=new MutationObserver(mutations=>{
+    if(mutations.some(mutation=>mutation.type==='childList'&&(mutation.addedNodes.length||mutation.removedNodes.length)))scheduleRefresh();
+  });
+  observer.observe(document.body,{childList:true,subtree:true});
   refresh();
   return{
     architecture:'v2.8-visual-identity-experience',
@@ -48,6 +59,7 @@ export function installVisualIdentityExperience(){
     onScreen,
     destroy(){
       destroyed=true;
+      observer.disconnect();
     }
   };
 }
