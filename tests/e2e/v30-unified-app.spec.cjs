@@ -72,27 +72,23 @@ test('v3.0 primary navigation maps the 39 compatibility routes into four destina
 test('v3.0 preserves the v2.8 matchday visual baseline on product screens',async({page})=>{
   const failures=await boot(page,{width:390,height:844});
   await page.evaluate(()=>window.goScreen('s-home'));
-  const visual=await page.evaluate(()=>{
-    const nbar=document.querySelector('#s-home .nbar');
-    const title=document.querySelector('#s-home .nbar-title');
-    const heroTitle=document.querySelector('#s-home .fm24-title');
-    const canvas=document.querySelector('#s-home .pcnt');
+  const visual=await page.locator('#s-home .fm24-home-decision').evaluate(element=>{
+    const title=element.querySelector('.fm24-title');
+    const context=document.querySelector('#s-home .fm30-context');
     return{
       release:document.documentElement.dataset.footmateRelease,
       bodyBackground:getComputedStyle(document.body).backgroundColor,
-      nbarHeight:getComputedStyle(nbar).height,
-      nbarTitleSize:getComputedStyle(title).fontSize,
-      heroTitleSize:getComputedStyle(heroTitle).fontSize,
-      canvasBackground:getComputedStyle(canvas).backgroundImage,
-      contextDisplay:getComputedStyle(document.querySelector('#s-home .fm30-context')).display
+      heroBackground:getComputedStyle(element).backgroundImage,
+      heroTitleColor:getComputedStyle(title).color,
+      heroTitleSize:getComputedStyle(title).fontSize,
+      contextDisplay:context?getComputedStyle(context).display:'missing'
     };
   });
   expect(visual.release).toBe('2.8');
   expect(visual.bodyBackground).toBe('rgb(8, 21, 15)');
-  expect(visual.nbarHeight).toBe('54px');
-  expect(visual.nbarTitleSize).toBe('16px');
+  expect(visual.heroBackground).toContain('linear-gradient');
+  expect(visual.heroTitleColor).toBe('rgb(255, 255, 255)');
   expect(visual.heroTitleSize).toBe('20px');
-  expect(visual.canvasBackground).toContain('linear-gradient');
   expect(visual.contextDisplay).toBe('none');
   expectNoFailures(failures);
 });

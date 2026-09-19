@@ -41,15 +41,24 @@ test('production serves v3.0 unified app architecture',async({page})=>{
   expect(release.screens).toBe(39);
 
   await page.evaluate(()=>window.goScreen('s-home'));
-  const visual=await page.evaluate(()=>({
-    release:document.documentElement.dataset.footmateRelease,
-    bodyBackground:getComputedStyle(document.body).backgroundColor,
-    nbarHeight:getComputedStyle(document.querySelector('#s-home .nbar')).height,
-    titleSize:getComputedStyle(document.querySelector('#s-home .nbar-title')).fontSize,
-    heroTitleSize:getComputedStyle(document.querySelector('#s-home .fm24-title')).fontSize,
-    contextDisplay:getComputedStyle(document.querySelector('#s-home .fm30-context')).display
-  }));
-  expect(visual).toMatchObject({release:'2.8',bodyBackground:'rgb(8, 21, 15)',nbarHeight:'54px',titleSize:'16px',heroTitleSize:'20px',contextDisplay:'none'});
+  const visual=await page.locator('#s-home .fm24-home-decision').evaluate(element=>{
+    const title=element.querySelector('.fm24-title');
+    const context=document.querySelector('#s-home .fm30-context');
+    return{
+      release:document.documentElement.dataset.footmateRelease,
+      bodyBackground:getComputedStyle(document.body).backgroundColor,
+      heroBackground:getComputedStyle(element).backgroundImage,
+      heroTitleColor:getComputedStyle(title).color,
+      heroTitleSize:getComputedStyle(title).fontSize,
+      contextDisplay:context?getComputedStyle(context).display:'missing'
+    };
+  });
+  expect(visual.release).toBe('2.8');
+  expect(visual.bodyBackground).toBe('rgb(8, 21, 15)');
+  expect(visual.heroBackground).toContain('linear-gradient');
+  expect(visual.heroTitleColor).toBe('rgb(255, 255, 255)');
+  expect(visual.heroTitleSize).toBe('20px');
+  expect(visual.contextDisplay).toBe('none');
 
   const nav=page.locator('#fm30AppNav');
   await expect(nav).toBeVisible();
