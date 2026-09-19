@@ -7,37 +7,36 @@ async function boot(page,width=375,height=812){
   page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))failures.push(`console.error: ${message.text()}`)});
   await page.setViewportSize({width,height});
   await page.goto('/demo',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV27&&!!window.FootMateV26);
+  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV28&&!!window.FootMateV27&&!!window.FootMateV26);
   return failures;
 }
 function expectNoFailures(failures){expect(failures,failures.join('\n')).toEqual([])}
 
-test('v2.7 exposes visual ownership while preserving the v2.6 product baseline',async({page})=>{
+test('v2.7 visual ownership remains compatible under v2.8',async({page})=>{
   const failures=await boot(page);
   const snapshot=await page.evaluate(()=>({
     runtime:window.FootMateV2Runtime?.version,
     architecture:window.FootMateV2Runtime?.releaseArchitecture,
     previous:window.FootMateV2Runtime?.previousReleaseArchitecture,
-    visualOwnership:window.FootMateV2Runtime?.visualOwnership,
     release:window.FootMateV27,
     v26:window.FootMateV26,
     dataset:document.documentElement.dataset.footmateRelease,
     screens:document.querySelectorAll('.screen').length,
     styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(link=>new URL(link.href).pathname)
   }));
-  expect(snapshot.runtime).toBe('2.7.0');
-  expect(snapshot.architecture).toBe('v2.7-visual-experience');
-  expect(snapshot.previous).toBe('v2.6-architecture-hardening');
-  expect(snapshot.visualOwnership).toBe('src/v2/styles/visual-experience.css');
-  expect(snapshot.dataset).toBe('2.7');
+  expect(snapshot.runtime).toBe('2.8.0');
+  expect(snapshot.architecture).toBe('v2.8-visual-identity');
+  expect(snapshot.previous).toBe('v2.7-visual-experience');
+  expect(snapshot.dataset).toBe('2.8');
   expect(snapshot.screens).toBe(39);
-  expect(snapshot.release).toMatchObject({version:'2.7.0',previousReleaseVersion:'2.6.0',schemaVersion:'2.1.0',visualOwnership:'src/v2/styles/visual-experience.css',baselineArchitecture:'v2.6-architecture-hardening',preservedScreens:39,caseStudySlides:16,architecture:'v2.7-visual-experience'});
-  expect(snapshot.v26).toMatchObject({version:'2.6.0',currentReleaseVersion:'2.7.0',compatibility:true});
-  expect(snapshot.styles.at(-1)).toBe('/src/v2/styles/visual-experience.css');
+  expect(snapshot.release).toMatchObject({version:'2.7.0',previousReleaseVersion:'2.6.0',schemaVersion:'2.1.0',visualOwnership:'src/v2/styles/visual-experience.css',baselineArchitecture:'v2.6-architecture-hardening',preservedScreens:39,caseStudySlides:16,architecture:'v2.7-visual-experience',currentReleaseVersion:'2.8.0',compatibility:true});
+  expect(snapshot.v26).toMatchObject({version:'2.6.0',currentReleaseVersion:'2.8.0',compatibility:true});
+  expect(snapshot.styles).toContain('/src/v2/styles/visual-experience.css');
+  expect(snapshot.styles).toContain('/src/v2/styles/visual-identity.css');
   expectNoFailures(failures);
 });
 
-test('v2.7 applies one visual hierarchy across the decision funnel',async({page})=>{
+test('v2.7 decision funnel remains usable under the v2.8 identity layer',async({page})=>{
   const failures=await boot(page);
   const screens=['s-home','s-filter','s-results','s-detail','s-pay'];
   for(const screenId of screens){
@@ -55,29 +54,25 @@ test('v2.7 applies one visual hierarchy across the decision funnel',async({page}
       panelRadius:parseFloat(getComputedStyle(panel).borderRadius),
       compareRadius:parseFloat(getComputedStyle(compare).borderRadius),
       actionHeight:action.getBoundingClientRect().height,
-      brand:root.getPropertyValue('--fm27-brand').trim(),
-      canvas:root.getPropertyValue('--fm27-canvas').trim()
+      v27Brand:root.getPropertyValue('--fm27-brand').trim(),
+      v28Pitch:root.getPropertyValue('--fm28-pitch').trim()
     };
   });
   expect(visuals.panelRadius).toBeGreaterThanOrEqual(18);
   expect(visuals.compareRadius).toBeGreaterThanOrEqual(14);
   expect(visuals.actionHeight).toBeGreaterThanOrEqual(44);
-  expect(visuals.brand).toBe('#214F9B');
-  expect(visuals.canvas).toBe('#F2F5F9');
+  expect(visuals.v27Brand).toBe('#214F9B');
+  expect(visuals.v28Pitch).toBe('#165B40');
   expectNoFailures(failures);
 });
 
-test('v2.7 stays accessible and touch-safe at 320px',async({page})=>{
+test('v2.7 accessibility and touch guarantees stay intact at 320px',async({page})=>{
   const failures=await boot(page,320,740);
   for(const screenId of ['s-home','s-results','s-detail','s-pay']){
     await page.evaluate(id=>window.goScreen(id),screenId);
     const metrics=await page.locator(`#${screenId}`).evaluate(screen=>({
       overflowX:screen.scrollWidth-screen.clientWidth,
-      targets:[...screen.querySelectorAll('.fm24-action,.fm25-action,.btn-primary,.btn-secondary')].filter(el=>{
-        const style=getComputedStyle(el);
-        const rect=el.getBoundingClientRect();
-        return style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;
-      }).map(el=>el.getBoundingClientRect().height)
+      targets:[...screen.querySelectorAll('.fm24-action,.fm25-action,.btn-primary,.btn-secondary')].filter(el=>{const style=getComputedStyle(el);const rect=el.getBoundingClientRect();return style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0}).map(el=>el.getBoundingClientRect().height)
     }));
     expect(metrics.overflowX).toBeLessThanOrEqual(1);
     metrics.targets.forEach(height=>expect(height).toBeGreaterThanOrEqual(44));
