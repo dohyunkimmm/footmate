@@ -1,40 +1,36 @@
 # FootMate v4.0 Release Checklist
 
 ## Product
-- [ ] `/app` boots v4.0 release metadata and Real App
-- [ ] Guest-first setup reaches recommendations without account creation
-- [ ] Detail → sign-in → checkout preserves selected match
-- [ ] Account and sign-up validation blocks invalid input
-- [ ] Detail back returns to Home / Discover / My Matches entry surface
-- [ ] Check-in completion is visible and persists across reload
-- [ ] Real App hides reviewer/prototype language
-- [ ] Guided / Evidence context stays outside the Real App surface
+- [x] `/app` boots v4.0 release metadata and Real App
+- [x] Guest-first setup reaches recommendations without account creation
+- [x] Detail → sign-in → checkout preserves selected match
+- [x] Account and sign-up validation blocks invalid input
+- [x] Detail back returns to the actual entry surface
+- [x] Check-in completion is visible and persists across reload
+- [x] Real App hides reviewer/prototype language
+- [x] Guided / Evidence context stays outside Real App
 
 ## Case Study
-- [ ] `/` renders 16 product-first sections
-- [ ] Cover and CTAs link to `/app`
-- [ ] No candidate / pre-v4 current-release wording remains
-- [ ] Mobile Case Study scrolls vertically without horizontal overflow
+- [x] `/` renders 16 product-first sections
+- [x] Cover and CTAs link to `/app`
+- [x] Current narrative is v4.0-only
+- [x] Mobile Case Study is horizontally safe
 
-## QA
-- [ ] v4 static release boundary
-- [ ] Browser E2E
-- [ ] axe serious/critical gate
-- [ ] 320 / 375 / 390 / 430 responsive gate
-- [ ] persistence / reload restoration
-- [ ] deep-link / compatibility alias gate
-- [ ] console error gate
+## QA / Production baseline
+- [x] FootMate QA #316 · run `35445575340` PASS
+- [x] v4 static release boundary
+- [x] Browser E2E + axe
+- [x] 320 / 375 / 390 / 430 responsive gate
+- [x] persistence / reload / compatibility alias / console-error gates
+- [x] exact Vercel Production SHA `fcb01400ecc6ee34bd70bf2da9c1ee8b114375f9`
+- [x] Vercel deployment `dpl_AAvMY6CCkf8GpsFTVoir38TNxELh` READY
+- [x] exact Production HTTP + Chromium smoke
+- [x] Render `dep-dan8p7e8bjmc73ab4os0` LIVE at the same SHA
 
-## Production
-- [ ] exact merged `main` SHA deployed to Vercel Production
-- [ ] Vercel state READY
-- [ ] `/`, `/app`, `/demo`, `/next` HTTP smoke
-- [ ] exact Production Chromium smoke
-- [ ] required CSS/JS assets reachable
-- [ ] Render backup exact main SHA LIVE
-
-## Durable docs
-- [ ] README current main + exact verified Production SHA/deployment
-- [ ] Release History current main + verification state
-- [ ] Notion current project page updated to v4.0
-- [ ] Pre-v4 Notion project/supporting pages moved to private workspace area
+## Public-surface cleanup
+- [ ] Current public branch contains v4 runtime ownership only
+- [ ] Pre-v4 source/test/checker files removed from current public tree
+- [ ] README / Release History / Architecture synchronized
+- [ ] Notion representative project and Portfolio synchronized to v4
+- [ ] Supporting Notion PRD / Flowchart / Workflow moved to private workspace area
+- [ ] Cleanup merge exact Production and Render re-verified
