@@ -9,23 +9,28 @@ const experience=read('src/v4/experience.js');
 const recommendation=read('src/v4/recommendation.js');
 const discovery=read('src/v4/discovery.js');
 const discoveryCss=read('src/v4/discovery.css');
+const decision=read('src/v4/decision.js');
+const decisionCss=read('src/v4/decision.css');
 const caseStudy=read('index.html');
 const story=read('src/v4/case-study.js');
 const caseStudyRecommendation=read('src/v4/case-study-recommendation.js');
 const caseStudyDiscovery=read('src/v4/case-study-discovery.js');
+const caseStudyDecision=read('src/v4/case-study-decision.js');
 const editorial=read('src/v4/case-study-editorial.css');
 const productionSmoke=read('tests/production-v4-smoke.cjs');
 const routes=read('vercel.json');
 const readme=read('README.md');
 const roadmap=read('docs/V4.1-V5.0-ROADMAP.md');
 
-assert(app.includes('name="footmate-release" content="4.2.0"'),'v4.2.0 release metadata missing');
-assert(app.includes('/src/v4/app.js?v=420'),'v4 app module missing');
-assert(app.includes('/src/v4/experience.js?v=420'),'consolidated v4 experience module missing');
-assert(app.includes('/src/v4/recommendation.js?v=420'),'v4.1 recommendation core module missing');
-assert(app.includes('/src/v4/discovery.js?v=420'),'v4.2 discovery module missing');
-assert(app.includes('/src/v4/discovery.css?v=420'),'v4.2 discovery stylesheet missing');
-assert(data.includes("RELEASE_VERSION='4.2.0'"),'v4.2.0 data release marker missing');
+assert(app.includes('name="footmate-release" content="4.3.0"'),'v4.3.0 release metadata missing');
+assert(app.includes('/src/v4/app.js?v=430'),'v4 app module missing');
+assert(app.includes('/src/v4/experience.js?v=430'),'consolidated v4 experience module missing');
+assert(app.includes('/src/v4/recommendation.js?v=430'),'v4.1 recommendation core module missing');
+assert(app.includes('/src/v4/discovery.js?v=430'),'v4.2 discovery module missing');
+assert(app.includes('/src/v4/discovery.css?v=430'),'v4.2 discovery stylesheet missing');
+assert(app.includes('/src/v4/decision.js?v=430'),'v4.3 decision module missing');
+assert(app.includes('/src/v4/decision.css?v=430'),'v4.3 decision stylesheet missing');
+assert(data.includes("RELEASE_VERSION='4.3.0'"),'v4.3.0 data release marker missing');
 assert(data.includes("NEXT_STORAGE_KEY='footmate:v4:session'"),'v4 storage namespace missing');
 assert(data.includes('sampleSchedule'),'relative sample schedule helper missing');
 assert(data.includes('샘플 일정'),'sample schedule disclosure missing');
@@ -46,16 +51,31 @@ assert(discovery.includes("event.key==='Escape'"),'filter dialog Escape recovery
 assert(discovery.includes('조건 넓히기'),'zero-result recovery action missing');
 assert(discoveryCss.includes('.fm-discovery-sheet-backdrop'),'discovery sheet styling missing');
 assert(discoveryCss.includes('min-height:44px'),'discovery target-size contract missing');
+assert(decision.includes("DECISION_VERSION='4.3.0'"),'v4.3 decision version missing');
+assert(decision.includes("DECISION_STORAGE_KEY='footmate:v4:decision'"),'decision persistence namespace missing');
+assert(decision.includes('MAX_COMPARE=2'),'two-match compare contract missing');
+assert(decision.includes('추천 점수 대신 실제로 확인할 조건'),'decision reason breakdown copy missing');
+assert(decision.includes('실시간 정원이 아닌 현재 샘플 경기 데이터 기준입니다.'),'non-realtime capacity disclosure missing');
+assert(decision.includes('시설·운영 정보는 서비스 기획 검증용 샘플 데이터입니다.'),'facility sample disclosure missing');
+assert(decision.includes('경기 24시간 전까지'),'refund policy visualization missing');
+assert(decision.includes('toggle-save'),'save intent state missing');
+assert(decision.includes('toggle-compare'),'compare intent state missing');
+assert(decision.includes("event.key==='Escape'"),'compare dialog Escape recovery missing');
+assert(decisionCss.includes('.fm-decision-compare-grid'),'decision comparison styling missing');
+assert(decisionCss.includes('min-height:44px'),'decision target-size contract missing');
 assert(appRuntime.includes("location.href='/app'"),'guided mode must return to /app');
 assert(appRuntime.includes("setAttribute('tabindex','-1')"),'active-screen focus contract missing');
-assert(caseStudy.includes('FootMate v4.2.0'),'v4.2.0 Case Study shell missing');
-assert(caseStudy.includes('/src/v4/case-study.js?v=420'),'v4 Case Study runtime missing');
-assert(caseStudy.includes('/src/v4/case-study-recommendation.js?v=420'),'recommendation Case Study evidence missing');
-assert(caseStudy.includes('/src/v4/case-study-discovery.js?v=420'),'v4.2 discovery Case Study evidence missing');
-assert(caseStudy.includes('/src/v4/case-study-editorial.css?v=420'),'Case Study editorial stylesheet missing');
+assert(caseStudy.includes('FootMate v4.3.0'),'v4.3.0 Case Study shell missing');
+assert(caseStudy.includes('/src/v4/case-study.js?v=430'),'v4 Case Study runtime missing');
+assert(caseStudy.includes('/src/v4/case-study-recommendation.js?v=430'),'recommendation Case Study evidence missing');
+assert(caseStudy.includes('/src/v4/case-study-discovery.js?v=430'),'v4.2 discovery Case Study evidence missing');
+assert(caseStudy.includes('/src/v4/case-study-decision.js?v=430'),'v4.3 decision Case Study evidence missing');
+assert(caseStudy.includes('/src/v4/case-study-editorial.css?v=430'),'Case Study editorial stylesheet missing');
 assert(caseStudyRecommendation.includes('선호 조건이 실제 추천에 반영'),'Case Study recommendation narrative missing');
 assert(caseStudyDiscovery.includes('날짜·시간·거리·가격·포지션'),'Case Study discovery narrative missing');
 assert(caseStudyDiscovery.includes('검색 결과가 0개'),'Case Study zero-result recovery narrative missing');
+assert(caseStudyDecision.includes('저장·비교'),'Case Study decision intent narrative missing');
+assert(caseStudyDecision.includes('실제 backend 연동으로 오해하지 않게'),'Case Study decision integration boundary missing');
 assert(!caseStudy.includes('case-study-release.js'),'Case Study must not depend on release overlay copy mutation');
 assert(!fs.existsSync('src/v4/case-study-release.js'),'obsolete Case Study release overlay must be absent');
 
@@ -64,13 +84,9 @@ for(const path of ['src/next','src/v2','src/v3','footmate-core.js','footmate-pat
 
 const forbidden=['Next Major','Next major candidate','Next Major Candidate','다음 버전 경험입니다.','v3.0 stable baseline preserved','기존 v3.0 /demo','v2.4~v3.0','/next?embed=1','stable required check key','legacy screen visual parity',"location.href='/next'","dateLabel:'9월 21일 · 20:00'"];
 for(const token of forbidden){
-  assert(!story.includes(token),`legacy/editorial token remains in Case Study source: ${token}`);
-  assert(!caseStudy.includes(token),`legacy/editorial token remains in Case Study shell: ${token}`);
-  assert(!appRuntime.includes(token),`legacy/runtime token remains in app source: ${token}`);
-  assert(!experience.includes(token),`legacy/runtime token remains in experience source: ${token}`);
-  assert(!data.includes(token),`legacy/runtime token remains in data source: ${token}`);
-  assert(!recommendation.includes(token),`legacy/runtime token remains in recommendation source: ${token}`);
-  assert(!discovery.includes(token),`legacy/runtime token remains in discovery source: ${token}`);
+  for(const [name,source] of Object.entries({story,caseStudy,appRuntime,experience,data,recommendation,discovery,decision})){
+    assert(!source.includes(token),`legacy token remains in ${name}: ${token}`);
+  }
 }
 
 assert(story.includes('iframe src="/app?embed=1"'),'Case Study app iframe must use /app');
@@ -87,9 +103,10 @@ assert(editorial.includes('.fm-next-cs-outcomes'),'Outcome structured grid styli
 assert(editorial.includes('.fm-next-cs-final'),'final companion panel styling missing');
 assert(productionSmoke.includes("'/src/v4/experience.js'"),'Production smoke must validate consolidated experience runtime');
 assert(productionSmoke.includes("'/src/v4/discovery.js'"),'Production smoke must validate discovery runtime');
+assert(productionSmoke.includes("'/src/v4/decision.js'"),'Production smoke must validate decision runtime');
 assert(!productionSmoke.includes("'/src/v4/release-hardening.js'"),'Production smoke must not reference removed release hardening file');
-assert(roadmap.includes('## v4.2 — Discovery & Search'),'v4.2 roadmap missing');
+assert(roadmap.includes('## v4.3 — Decision Detail'),'v4.3 roadmap missing');
 assert(roadmap.includes('## v5.0 — Connected Matchday Platform'),'v5.0 roadmap missing');
 assert(!readme.includes('Not yet verified'),'README release verification is stale');
 
-console.log('FootMate v4.2 runtime + discovery + repository boundary PASS');
+console.log('FootMate v4.3 runtime + decision detail + repository boundary PASS');
