@@ -11,24 +11,33 @@ function capture(page){
   return errors;
 }
 
-test('v4 exact Production app and Case Study render',async({page})=>{
+test('v4.1 exact Production app, recommendation and Case Study render',async({page})=>{
   const errors=capture(page);
   await page.setViewportSize({width:390,height:844});
   await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.0.1');
+  await page.evaluate(()=>localStorage.clear());
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.1.0');
   await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  await page.locator('[data-action="choose-setup"][data-field="region"][data-value="서울 · 강남"]').click();
   await page.getByRole('button',{name:'다음'}).click();
+  await page.locator('[data-action="choose-setup"][data-field="position"][data-value="GK"]').click();
   await page.getByRole('button',{name:'다음'}).click();
+  await page.locator('[data-action="choose-setup"][data-field="level"][data-value="입문"]').click();
   await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await expect(page.locator('.fm-next-match-card').first()).toHaveAttribute('data-match-id','songpa-2100');
+  await expect(page.locator('.fm-next-match-card').first()).toHaveAttribute('data-recommendation-score',/\d+/);
   expect(errors).toEqual([]);
 
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelector('.fm-next-cover'));
-  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.0.1');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.1.0');
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveAttribute('src','/app?embed=1');
+  await page.evaluate(()=>window.goTo(6));
+  await expect(page.locator('.slide.on')).toContainText('실제 순위 로직');
   const stylesheetHrefs=await page.locator('link[rel="stylesheet"]').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('href')));
   expect(stylesheetHrefs.some(href=>href&&href.includes('/src/v4/case-study-editorial.css'))).toBe(true);
   const body=(await page.locator('body').innerText()).replace(/\s+/g,' ');
@@ -38,7 +47,7 @@ test('v4 exact Production app and Case Study render',async({page})=>{
   expect(errors).toEqual([]);
 });
 
-test('v4 exact Production Case Study stays mobile-safe across all 16 sections',async({page})=>{
+test('v4.1 exact Production Case Study stays mobile-safe across all 16 sections',async({page})=>{
   const errors=capture(page);
   await page.setViewportSize({width:390,height:844});
   await page.goto('/',{waitUntil:'domcontentloaded'});
@@ -52,10 +61,10 @@ test('v4 exact Production Case Study stays mobile-safe across all 16 sections',a
   expect(errors).toEqual([]);
 });
 
-test('v4 exact Production compatibility aliases no longer expose pre-v4 product',async({page})=>{
+test('v4.1 exact Production compatibility aliases stay on the current product',async({page})=>{
   for(const route of ['/demo','/next']){
     await page.goto(route,{waitUntil:'domcontentloaded'});
-    await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.0.1');
+    await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.1.0');
     await expect(page.locator('#footmate-next')).toBeVisible();
   }
 });
