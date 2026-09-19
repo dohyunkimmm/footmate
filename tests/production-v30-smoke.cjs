@@ -42,6 +42,7 @@ async function main(){
     assert(body.includes("architecture:'v3.0-unified-app-architecture'"),'v3 release architecture missing');
     assert(body.includes("architecture:'v3.0-modular-app-runtime'"),'v3 runtime architecture missing');
     assert(body.includes("stateCompatibility:'v2.1-domain-state-preserved'"),'v3 state compatibility missing');
+    assert(body.includes("PRODUCTION_CONTRACT='v3.0-product-v28-visual-baseline'"),'v3 production contract missing');
     assert(body.includes('FootMateV3Runtime'),'v3 runtime contract missing');
     assert(body.includes('FootMateV30'),'v3 release contract missing');
   },checks);
@@ -63,12 +64,12 @@ async function main(){
     assert(body.includes("VIEW_STATE_KEY='footmate:v3:view'"),'v3 view state key missing');
   },checks);
   await check('v3-shell-styles','/src/v3/styles/app-shell.css',({body})=>{
-    assert(body.includes('FootMate v3.0 · Responsive app shell'),'v3 app shell stylesheet marker missing');
+    assert(body.includes('data-fm30-mode="portfolio"'),'v3 app shell portfolio scope missing');
     assert(body.includes('@media(min-width:800px)'),'v3 desktop breakpoint missing');
     assert(body.includes('@media(prefers-reduced-motion:reduce)'),'v3 reduced-motion guard missing');
   },checks);
   await check('v3-component-styles','/src/v3/styles/components.css',({body})=>{
-    assert(body.includes('FootMate v3.0 · Reusable component and IA layer'),'v3 component stylesheet marker missing');
+    assert(body.includes('data-fm30-mode="portfolio"'),'v3 component portfolio scope missing');
     assert(body.includes('.fm30-app-nav'),'v3 app navigation style missing');
     assert(body.includes('.fm30-context'),'v3 contextual header style missing');
   },checks);
