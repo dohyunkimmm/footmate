@@ -31,6 +31,8 @@ jobs:
           text=path.read_text()
           text=text.replace("[\\`${relative}.html\\`,relative]","[relative+'.html',relative]")
           text=text.replace("console.log(\\`FootMate v4 test server serving ${root} at http://${host}:${port}\\`)","console.log('FootMate v4 test server serving '+root+' at http://'+host+':'+port)")
+          for name in ('route','path','token'):
+              text=text.replace('${'+name+'}', r'\${'+name+'}')
           path.write_text(text)
           PY
       - name: Apply deterministic v4.0.1 patch
