@@ -2,76 +2,80 @@
 
 현재 릴리스 상태와 검증 기준만 간결하게 보존합니다. 세부 변경은 Git commit / Pull Request / GitHub Actions를 source of truth로 사용합니다.
 
-## Current Release — v2.7.0 Visual Experience
+## Current Release — v2.8.0 Matchday Visual Identity
 
-- product/runtime baseline: `c88c9d2` · PR #67
-- Release runtime version: `2.7.0`
-- baseline architecture: v2.6 Architecture Hardening
-- visual ownership: `src/v2/styles/visual-experience.css`
+- product/runtime baseline: `d8014978cf6a1a5621f09ff098f48ac4821b615b` · PR #71
+- Release runtime version: `2.8.0`
+- baseline visual experience: v2.7 Visual Experience
+- release adapter: `src/v2/v28-release.js`
+- visual identity module: `src/v2/ui/visual-identity-experience.js`
+- visual token ownership: `src/v2/styles/visual-tokens.css`
+- visual ownership: `src/v2/styles/visual-identity.css`
+- visual guardrails: `src/v2/styles/visual-guardrails.css`
 - Storage/schema/Product Hardening event contract: `2.1.0` compatibility 유지
-- v2.2 / v2.3 / v2.4 / v2.5 / v2.6 runtime alias/event: compatibility 유지
+- v2.2 / v2.3 / v2.4 / v2.5 / v2.6 / v2.7 runtime compatibility 유지
 - Product / Portfolio mode: 유지
 - Product screen baseline: 39 screens
 - Case Study information architecture: 16 slides
 - Matching / ELO / decision / payment / persistence semantics: 유지
-- v2.7 exact Vercel Production verification: **Not yet verified**
+- exact Production release gate: **CLOSED**
 
-### v2.7 changes
+### v2.8 changes
 
-PR #67 · `c88c9d2`
-- 검증된 v2.6 Architecture Hardening을 회귀 기준으로 사용
-- `src/v2/styles/visual-experience.css`를 v2.7 전용 visual ownership layer로 추가
-- Home · Filter impact · Results comparison · Detail/Recommendation Reason preflight · Payment guard · recovery · decision trace의 시각 위계 통합
-- typography, spacing, cards, surfaces, radius, shadow, CTA priority, semantic state styling을 일관된 visual system으로 정리
-- 320 / 375 / 390 / 430 px 모바일 밀도와 touch target을 보강하고 reduced-motion contract 유지
-- 보조 텍스트 대비를 axe WCAG 2 A/AA serious/critical gate 기준으로 보강
-- hidden ancestor 내부 DOM이 0px touch target으로 오인되지 않도록 v2.7 browser gate를 실제 rendered target 기준으로 정리하되 44px 기준은 유지
+PR #71 · `d8014978`
+- 검증된 v2.7 Visual Experience를 회귀 기준으로 사용
+- pitch green + lime 기반 Matchday visual tokens와 sports-specific visual identity 도입
+- Home decision hero, Filter selection, Results match ticket/featured state, Detail Match Preview/preflight, Payment guard의 시각 위계 고도화
+- `visual-identity-experience.js`가 v2.8 DOM identity ownership과 dynamic refresh를 소유
+- `visual-identity.css` / `visual-tokens.css` / `visual-guardrails.css`로 visual ownership을 분리
+- dynamic Results/Detail 렌더 이후 identity refresh, narrow-screen decorative containment, muted text contrast를 browser/axe gate 기준으로 보강
+- 320 / 375 / 390 / 430 px responsive, >=44px touch target, reduced-motion compatibility 유지
 - 39-screen Product, 16-slide Case Study, Matching/ELO, decision/recovery, availability boundary, trace persistence를 회귀 기준으로 유지
 - 실제 backend capacity/freshness API, payment, DB, LLM 연동은 추가하지 않음
 
 ### QA
 
-- PR #67 final run #203:
+- PR #71 final run #220:
   - Regression 36 **PASS**
   - v2.4 component/source boundary **PASS**
   - v2.5 decision/recovery boundary **PASS**
   - v2.6 architecture ownership boundary **PASS**
-  - v2.7 visual ownership boundary **PASS**
-  - Browser E2E + axe · responsive · v2.7 visual gate **PASS**
-- main run #204 on `c88c9d2`:
+  - v2.7 visual compatibility boundary **PASS**
+  - v2.8 visual identity boundary **PASS**
+  - Browser E2E + axe · responsive · v2.8 visual gate **PASS**
+- main exact verification run #221 on `d8014978cf6a1a5621f09ff098f48ac4821b615b`:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
-  - Production compatibility HTTP smoke **PASS**
-  - Production compatibility Chromium render smoke **PASS**
-  - exact v2.7 Vercel Production verification: **Not yet verified**
-
-Compatibility smoke는 exact Production verification으로 간주하지 않습니다.
+  - exact Vercel deployment wait **PASS**
+  - Production HTTP smoke **PASS**
+  - strict Production Chromium render smoke **PASS**
 
 ### Deployment / release gate
 
-v2.7 product/runtime baseline:
-- SHA: `c88c9d2d302e632e2187fc092c273d18c514bb48`
-- PR: #67
-- exact Vercel Production: **Not yet verified**
-- exact Production release gate: **Not yet verified**
+v2.8 product/runtime baseline:
+- SHA: `d8014978cf6a1a5621f09ff098f48ac4821b615b`
+- PR: #71
+- exact verification run: #221
 
-Render v2.7 exact live backup:
-- SHA: `c88c9d2d302e632e2187fc092c273d18c514bb48`
-- deployment: `dep-damthpijnfac738cuqt0`
+Exact verified Vercel Production:
+- SHA: `d8014978cf6a1a5621f09ff098f48ac4821b615b`
+- deployment: `dpl_GtHGNwyRuDYWVkuswgVHryTkHtVp`
+- state: **READY**
+- exact wait + strict HTTP + Chromium: **PASS**
+
+Render exact product backup:
+- SHA: `d8014978cf6a1a5621f09ff098f48ac4821b615b`
+- deployment: `dep-damungojo6nc7392taug`
 - state: **live**
-
-Last exact verified Vercel Production remains v2.6:
-- SHA: `eddbaa607fcf1db516a1d5ab8ee27eb8dad9ad25`
-- deployment: `dpl_9A1BD9X95NDccjrCMhEPsqXBBkyX`
-- exact verification run: #199 · exact wait + strict HTTP + Chromium **PASS**
 
 Render backup is an independent deployment path and is not used as a substitute for Vercel exact Production verification.
 
-### v2.7 ownership
+### v2.8 ownership
 
 ```text
 src/v2/
   bootstrap.js
+  v28-release.js
   demo/
     runtime-boundary.js
     core-funnel-components.js
@@ -93,6 +97,7 @@ src/v2/
   compat/
     scenario-persistence-bridge.js
   ui/
+    visual-identity-experience.js
     scenario-presenter.js
     decision-recovery-experience.js
     home-controller.js
@@ -103,6 +108,9 @@ src/v2/
     screen-effects.js
     validation-entry.js
   styles/
+    visual-tokens.css
+    visual-identity.css
+    visual-guardrails.css
     visual-experience.css
     decision-recovery.css
     core-funnel.css
@@ -114,20 +122,31 @@ src/v2/
     app.css
 ```
 
-- `visual-experience.css`가 v2.7 typography/surface/card/CTA/state/responsive visual ownership을 소유합니다.
+- v2.8 Matchday visual ownership은 `v28-release.js`, `visual-identity-experience.js`, `visual-tokens.css`, `visual-identity.css`, `visual-guardrails.css`가 소유합니다.
+- v2.7 visual experience와 v2.6 architecture boundary는 compatibility baseline으로 유지됩니다.
 - Matching score/ranking과 ELO 계산은 기존 v2 domain engine이 계속 소유합니다.
 - `decision-engine`과 `decision-recovery-experience`의 판단/복구 semantics는 변경하지 않습니다.
 - `availability-gateway`는 여전히 prototype/session 상태 기반 boundary이며 실제 server verification은 연결하지 않습니다.
 - `decision-trace-persistence`는 browser persistence/replay를 유지합니다.
-- `demo-source.html`은 39-screen regression fixture이고 신규 v2.7 visual ownership을 갖지 않습니다.
-- `footmate-patches.js`에는 일부 legacy DOM/persistence compatibility가 남지만 신규 v2.7 ownership을 갖지 않습니다.
+- `demo-source.html`은 39-screen regression fixture이고 신규 v2.8 visual ownership을 갖지 않습니다.
+- `footmate-patches.js`에는 일부 legacy DOM/persistence compatibility가 남지만 신규 v2.8 ownership을 갖지 않습니다.
 
 ### Next candidates
 
-- v2.7 exact Vercel Production verification 완료 후 release gate close-out
+- v3.0에서 v2.8 verified baseline을 회귀 기준으로 IA · component system · architecture 재설계
 - 실제 backend 연동 시 `availability-gateway`를 server-side freshness/capacity verifier로 교체
 - decision trace를 server-side durable audit/event storage로 확장
 - `footmate-patches.js` legacy DOM/persistence compatibility ownership 추가 축소
+
+## v2.7.0 — Visual Experience
+
+- Product/runtime baseline: `c88c9d2` · PR #67
+- Runtime: `2.7.0`
+- visual ownership: `src/v2/styles/visual-experience.css`
+- PR QA run #203: Regression / Browser E2E + axe **PASS**
+- main run #204: Regression / Browser E2E + axe / Production compatibility HTTP + Chromium **PASS**
+- v2.6 Architecture Hardening을 회귀 기준으로 typography, surfaces, CTA hierarchy, semantic state, responsive/accessibility visual system을 정리
+- Matching/ELO/decision/payment/persistence semantics와 39 screens / 16 slides 유지
 
 ## v2.6.0 — Architecture Hardening
 
