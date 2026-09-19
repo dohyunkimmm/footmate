@@ -1,9 +1,11 @@
 const { test, expect } = require('@playwright/test');
 
-async function boot(page) {
+async function boot(page, mode='product') {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto('/demo', { waitUntil: 'domcontentloaded' });
+  await page.goto(`/demo${mode==='portfolio'?'?mode=portfolio':''}`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__footmateV3 === true && window.FootMateV3Runtime?.version === '3.0.0' && window.__footmateV2 === true);
+  const intro=page.locator('#demoOnboarding');
+  if(await intro.isVisible())await page.locator('.demo-onboarding-start').click();
 }
 
 async function visualContract(page, id) {
@@ -33,8 +35,8 @@ async function visualContract(page, id) {
   });
 }
 
-test('v3 visual contract preserves v2 product surfaces while promoting app navigation ownership', async ({ page }) => {
-  await boot(page);
+test('v3 visual contract preserves the v2 product shell and surfaces in Product mode', async ({ page }) => {
+  await boot(page, 'product');
 
   const tokens = await page.evaluate(() => {
     const style = getComputedStyle(document.documentElement);
@@ -69,9 +71,20 @@ test('v3 visual contract preserves v2 product surfaces while promoting app navig
     if (contracts[id].cardRadius != null) {
       expect(contracts[id].cardRadius, `${id} card radius`).toBeGreaterThanOrEqual(10);
     }
-    expect(contracts[id].appNavHeight, `${id} v3 app navigation`).toBeGreaterThanOrEqual(70);
+    expect(contracts[id].appNavHeight, `${id} Product mode v3 app navigation`).toBeNull();
   }
 
-  expect(contracts['s-home'].legacyTabHeight).toBe(0);
-  expect(contracts['s-profile'].legacyTabHeight).toBe(0);
+  expect(contracts['s-home'].legacyTabHeight).toBeGreaterThanOrEqual(72);
+  expect(contracts['s-profile'].legacyTabHeight).toBeGreaterThanOrEqual(72);
+});
+
+test('v3 visual navigation ownership is isolated to Portfolio mode', async ({ page }) => {
+  await boot(page, 'portfolio');
+  await page.evaluate(() => window.goScreen('s-home'));
+  const nav = page.locator('#fm30AppNav');
+  await expect(nav).toBeVisible();
+  const navHeight = await nav.evaluate(node => node.getBoundingClientRect().height);
+  expect(navHeight).toBeGreaterThanOrEqual(70);
+  const legacyHeight = await page.locator('#s-home .tab-bar').evaluate(node => node.getBoundingClientRect().height);
+  expect(legacyHeight).toBe(0);
 });

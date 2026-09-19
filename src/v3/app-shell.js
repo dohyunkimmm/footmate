@@ -32,6 +32,14 @@ function markSurfaces(screen){
   });
 }
 
+function ensureScrollableAccessibility(screen){
+  if(screen?.id!=='s-playstyle')return;
+  const content=screen.querySelector('.pcnt');
+  if(!content)return;
+  if(!content.hasAttribute('tabindex'))content.tabIndex=0;
+  if(!content.hasAttribute('aria-label'))content.setAttribute('aria-label','플레이 성향 상세 내용');
+}
+
 function restoreLegacyNavigation(){
   document.querySelectorAll('.tab-bar').forEach(tab=>{
     tab.removeAttribute('aria-hidden');
@@ -85,6 +93,7 @@ export function installAppShell({runtime,mode='product'}={}){
     screen.dataset.fm30Area=destination;
     screen.dataset.fm30Architecture='app-shell';
     markSurfaces(screen);
+    ensureScrollableAccessibility(screen);
     const root=contentRoot(screenId);
     if(portfolioChrome&&CONTEXT_SCREENS.has(screenId)){
       replaceContext(root,createContextBar({

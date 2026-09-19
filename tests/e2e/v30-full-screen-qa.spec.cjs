@@ -13,6 +13,12 @@ const VIEWPORTS=[
   {name:'430',width:430,height:900},
   {name:'desktop',width:1280,height:900}
 ];
+const INTENTIONAL_VISUAL_FIXES=new Set(['s-splash','s-sso']);
+const INTENTIONAL_STRUCTURAL_FIXES=Object.freeze({
+  's-splash':new Set(['pcntStyle']),
+  's-sso':new Set(['pcntStyle']),
+  's-eloUpdate':new Set(['pcntOverflowX'])
+});
 
 function attachFailureWatch(page){
   const failures=[];
@@ -58,13 +64,6 @@ async function screenIds(page){
   return page.evaluate(()=>[...document.querySelectorAll('.screen')].map(node=>node.id));
 }
 
-function round(value){return Math.round(value*100)/100}
-function rect(element){
-  if(!element)return null;
-  const r=element.getBoundingClientRect();
-  return{x:round(r.x),y:round(r.y),width:round(r.width),height:round(r.height)};
-}
-
 async function metrics(page,id){
   return page.evaluate(screenId=>{
     const screen=document.getElementById(screenId);
@@ -106,19 +105,46 @@ async function metrics(page,id){
 function writeOutput(testInfo,name,data){
   const file=testInfo.outputPath(name);
   fs.mkdirSync(path.dirname(file),{recursive:true});
-  fs.writeFileSync(file,typeof data==='string'?data:JSON.stringify(data,null,2));
+  fs.writeFileSync(file,typeof data==='string'||Buffer.isBuffer(data)?data:JSON.stringify(data,null,2));
   return file;
 }
 
-function mismatchSummary(candidate,baseline){
+function mismatchSummary(candidate,baseline,ignored=new Set()){
   const fields=[];
   for(const key of Object.keys(baseline)){
+    if(ignored.has(key))continue;
     if(JSON.stringify(candidate[key])!==JSON.stringify(baseline[key]))fields.push({key,candidate:candidate[key],baseline:baseline[key]});
   }
   return fields;
 }
 
-test('v3.0 product mode matches the exact v2.8 structure on all 39 screens and all supported viewports',async({browser},testInfo)=>{
+async function intentionalVisualContract(page,id){
+  return page.evaluate(screenId=>{
+    const screen=document.getElementById(screenId);
+    const pcnt=screen?.querySelector('.pcnt');
+    const css=pcnt?getComputedStyle(pcnt):null;
+    if(screenId==='s-splash'){
+      const kakao=screen.querySelector('.btn-kakao');
+      const title=screen.querySelector('.splash-title');
+      return{
+        backgroundImage:css?.backgroundImage||'',
+        titleColor:title?getComputedStyle(title).color:null,
+        kakaoBackground:kakao?getComputedStyle(kakao).backgroundColor:null,
+        kakaoColor:kakao?getComputedStyle(kakao).color:null
+      };
+    }
+    if(screenId==='s-sso'){
+      const title=screen.querySelector('#sso-step2>div:nth-child(2)');
+      return{
+        backgroundColor:css?.backgroundColor||'',
+        titleColor:title?getComputedStyle(title).color:null
+      };
+    }
+    return{};
+  },id);
+}
+
+test('v3.0 product mode matches the v2.8 structure on all 39 screens while applying explicit QA corrections',async({browser},testInfo)=>{
   test.setTimeout(300_000);
   const issues=[];
   const evidence=[];
@@ -142,8 +168,9 @@ test('v3.0 product mode matches the exact v2.8 structure on all 39 screens and a
       await showScreen(baselinePage,id);
       const candidate=await metrics(candidatePage,id);
       const baseline=await metrics(baselinePage,id);
-      const differences=mismatchSummary(candidate,baseline);
-      evidence.push({viewport:viewport.name,id,candidate,baseline,differences});
+      const ignored=INTENTIONAL_STRUCTURAL_FIXES[id]||new Set();
+      const differences=mismatchSummary(candidate,baseline,ignored);
+      evidence.push({viewport:viewport.name,id,candidate,baseline,ignored:[...ignored],differences});
       if(differences.length)issues.push({viewport:viewport.name,id,type:'structural-parity',differences});
       if((candidate.screenOverflowX??0)>1||(candidate.pcntOverflowX??0)>1){
         issues.push({viewport:viewport.name,id,type:'horizontal-overflow',screenOverflowX:candidate.screenOverflowX,pcntOverflowX:candidate.pcntOverflowX});
@@ -184,7 +211,24 @@ test('v3.0 product mode has no serious or critical axe violations on all 39 scre
   expect(failures,failures.join('\n')).toEqual([]);
 });
 
-test('v3.0 product mode stays visually within one percent of exact v2.8 on every screen',async({browser},testInfo)=>{
+test('authentication screens restore their intended dark readable surfaces and provider identity',async({page})=>{
+  const failures=await boot(page,{baseURL:'http://127.0.0.1:4173',candidate:true,viewport:{width:390,height:844}});
+  await showScreen(page,'s-splash');
+  const splash=await intentionalVisualContract(page,'s-splash');
+  expect(splash.backgroundImage).toContain('linear-gradient');
+  expect(splash.backgroundImage).toContain('rgb(15, 26, 58)');
+  expect(splash.titleColor).toBe('rgb(255, 255, 255)');
+  expect(splash.kakaoBackground).toBe('rgb(254, 229, 0)');
+  expect(splash.kakaoColor).toBe('rgb(57, 27, 27)');
+
+  await showScreen(page,'s-sso');
+  const sso=await intentionalVisualContract(page,'s-sso');
+  expect(sso.backgroundColor).toBe('rgb(26, 26, 46)');
+  expect(sso.titleColor).toBe('rgb(255, 255, 255)');
+  expect(failures,failures.join('\n')).toEqual([]);
+});
+
+test('v3.0 product mode remains within one percent of exact v2.8 except documented baseline corrections',async({browser},testInfo)=>{
   test.setTimeout(300_000);
   const viewport={width:390,height:844};
   const candidateContext=await browser.newContext({viewport});
@@ -214,16 +258,22 @@ test('v3.0 product mode stays visually within one percent of exact v2.8 on every
       diffBuffer=PNG.sync.write(diff);
     }
 
-    results.push({id,ratio,candidateSize:[candidate.width,candidate.height],baselineSize:[baseline.width,baseline.height]});
-    if(ratio>.01){
+    const intentional=INTENTIONAL_VISUAL_FIXES.has(id);
+    results.push({id,ratio,intentional,candidateSize:[candidate.width,candidate.height],baselineSize:[baseline.width,baseline.height]});
+    if(!intentional&&ratio>.01){
       issues.push({id,ratio,candidateSize:[candidate.width,candidate.height],baselineSize:[baseline.width,baseline.height]});
       writeOutput(testInfo,`visual-diff/${id}-candidate.png`,candidateBuffer);
       writeOutput(testInfo,`visual-diff/${id}-baseline.png`,baselineBuffer);
       if(diffBuffer)writeOutput(testInfo,`visual-diff/${id}-diff.png`,diffBuffer);
     }
+    if(intentional){
+      writeOutput(testInfo,`visual-corrections/${id}-candidate.png`,candidateBuffer);
+      writeOutput(testInfo,`visual-corrections/${id}-baseline.png`,baselineBuffer);
+      if(diffBuffer)writeOutput(testInfo,`visual-corrections/${id}-diff.png`,diffBuffer);
+    }
   }
 
-  writeOutput(testInfo,'full-screen-visual-parity.json',{threshold:.01,results,issues,candidateFailures,baselineFailures});
+  writeOutput(testInfo,'full-screen-visual-parity.json',{threshold:.01,intentionalVisualFixes:[...INTENTIONAL_VISUAL_FIXES],results,issues,candidateFailures,baselineFailures});
   expect(issues,JSON.stringify(issues,null,2)).toEqual([]);
   expect(candidateFailures,candidateFailures.join('\n')).toEqual([]);
   expect(baselineFailures,baselineFailures.join('\n')).toEqual([]);
@@ -231,9 +281,10 @@ test('v3.0 product mode stays visually within one percent of exact v2.8 on every
   await baselineContext.close();
 });
 
-test('portfolio mode keeps v3 chrome isolated while all 39 routes remain contained',async({browser},testInfo)=>{
-  test.setTimeout(180_000);
+test('portfolio mode keeps v3 chrome isolated while all 39 routes remain contained and accessible',async({browser},testInfo)=>{
+  test.setTimeout(300_000);
   const issues=[];
+  const onboardingIds=new Set(['s-splash','s-sso','s-quiz','s-location','s-manual-location','s-elo']);
   for(const viewport of [{name:'mobile',width:390,height:844},{name:'desktop',width:1280,height:900}]){
     const context=await browser.newContext({viewport});
     const page=await context.newPage();
@@ -248,18 +299,18 @@ test('portfolio mode keeps v3 chrome isolated while all 39 routes remain contain
         return{
           screenOverflowX:screen?screen.scrollWidth-screen.clientWidth:0,
           pcntOverflowX:pcnt?pcnt.scrollWidth-pcnt.clientWidth:0,
-          onboarding:['s-splash','s-quiz','s-location','s-manual-location','s-elo'].includes(screenId),
           navVisible:!!document.querySelector('#fm30AppNav')&&getComputedStyle(document.querySelector('#fm30AppNav')).display!=='none'
         };
       },id);
+      const onboarding=onboardingIds.has(id);
       if(state.screenOverflowX>1||state.pcntOverflowX>1)issues.push({viewport:viewport.name,id,type:'overflow',state});
-      if(state.navVisible===state.onboarding)issues.push({viewport:viewport.name,id,type:'nav-phase',state});
+      if(state.navVisible===onboarding)issues.push({viewport:viewport.name,id,type:'nav-phase',state,onboarding});
+      const axe=await new AxeBuilder({page}).include(`#${id}`).withTags(['wcag2a','wcag2aa']).analyze();
+      const blocking=axe.violations.filter(item=>['serious','critical'].includes(item.impact));
+      if(blocking.length)issues.push({viewport:viewport.name,id,type:'axe',blocking:blocking.map(item=>({id:item.id,impact:item.impact,nodes:item.nodes.map(node=>node.target)}))});
     }
     await showScreen(page,'s-home');
     await expect(page.locator('#fm30AppNav [data-fm30-destination]')).toHaveCount(4);
-    const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa']).analyze();
-    const blocking=axe.violations.filter(item=>['serious','critical'].includes(item.impact));
-    if(blocking.length)issues.push({viewport:viewport.name,type:'axe',blocking});
     if(failures.length)issues.push({viewport:viewport.name,type:'runtime',failures});
     await context.close();
   }

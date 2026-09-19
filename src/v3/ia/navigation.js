@@ -26,7 +26,7 @@ export const PRIMARY_DESTINATIONS=Object.freeze([
     description:'결제부터 경기 당일까지 상태를 확인합니다.',
     icon:'participation',
     target:'s-pay',
-    screens:Object.freeze(['s-pay','s-pay-low','s-charge','s-charge-done','s-confirm','s-checkin','s-gameday','s-postgame','s-eval','s-eloUpdate'])
+    screens:Object.freeze(['s-pay','s-pay-low','s-charge','s-charge-done','s-confirm','s-notifs','s-checkin','s-gameday','s-postgame','s-eval','s-eloUpdate'])
   }),
   Object.freeze({
     id:'profile',
@@ -40,7 +40,7 @@ export const PRIMARY_DESTINATIONS=Object.freeze([
 ]);
 
 export const ONBOARDING_SCREENS=Object.freeze([
-  's-splash','s-quiz','s-location','s-manual-location','s-elo'
+  's-splash','s-sso','s-quiz','s-location','s-manual-location','s-elo'
 ]);
 
 const destinationByScreen=new Map();
@@ -59,6 +59,7 @@ const titleByScreen=Object.freeze({
   's-charge':'크레딧 충전',
   's-charge-done':'충전 완료',
   's-confirm':'참가 완료',
+  's-notifs':'알림',
   's-checkin':'체크인',
   's-gameday':'경기 진행',
   's-postgame':'경기 결과',
@@ -74,9 +75,9 @@ export function isOnboardingScreen(screenId=''){
 
 export function destinationForScreen(screenId='',fallback='discover'){
   if(destinationByScreen.has(screenId))return destinationByScreen.get(screenId);
-  if(/^s-(pay|charge|confirm|checkin|gameday|postgame|eval)/.test(screenId))return'participation';
+  if(/^s-(pay|charge|confirm|notif|checkin|gameday|postgame|eval)/.test(screenId))return'participation';
   if(/^s-(result|detail|reason|match)/.test(screenId))return'recommendations';
-  if(/^s-(profile|chat|friend|notif|setting)/.test(screenId))return'profile';
+  if(/^s-(profile|chat|friend|setting)/.test(screenId))return'profile';
   if(/^s-(home|filter)/.test(screenId))return'discover';
   return PRIMARY_DESTINATIONS.some(item=>item.id===fallback)?fallback:'discover';
 }

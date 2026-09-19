@@ -56,9 +56,9 @@ test('v3.0 route state still maps compatibility screens into four destinations i
     ['s-results','recommendations'],
     ['s-detail','recommendations'],
     ['s-pay','participation'],
+    ['s-notifs','participation'],
     ['s-gameday','participation'],
-    ['s-profile','profile'],
-    ['s-notifications','profile']
+    ['s-profile','profile']
   ];
   for(const [screen,area] of cases){
     await page.evaluate(screenId=>window.goScreen(screenId),screen);
