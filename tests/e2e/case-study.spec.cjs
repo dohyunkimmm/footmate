@@ -49,7 +49,7 @@ test('case study tells the next-major product-first story across 16 compatibilit
   await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('Observe');
 
   await page.evaluate(() => window.goTo(14));
-  await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('Regression');
+  await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('regression');
   await expect(page.locator('.slide[aria-hidden="false"]')).toContainText('axe');
 
   await page.evaluate(() => window.goTo(15));
