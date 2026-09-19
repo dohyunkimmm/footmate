@@ -1,4 +1,6 @@
 /* FootMate v4.0 Case Study · editorial and text-flow hardening */
+html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
+
 .fm-next-cover-title-line{display:block}
 
 .fm-next-cover h1,
