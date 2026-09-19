@@ -43,7 +43,7 @@ html[data-footmate-release="2.8"] #s-eloUpdate .pcnt>div{
   width:100%!important;
   max-width:100%!important;
 }
-html[data-footmate-release="2.8"] #s-pay-low [style*="color:var(--red)"],
+html[data-footmate-release="2.8"] #s-pay-low>.pcnt>div:nth-child(2)>div:nth-child(2)>div:nth-child(1),
 html[data-footmate-release="2.8"] #s-noshow .noshow-auto{
   color:#B33636!important;
 }
@@ -53,10 +53,14 @@ html[data-footmate-release="2.8"] #s-growth [style*="color:#bbb"]{
   color:#53627D!important;
 }
 
-/* Portfolio chrome changes the surrounding canvas, so keep legacy semantic
-   helper text above WCAG AA contrast without changing Product-mode pixels. */
+/* Portfolio chrome inserts a context row ahead of legacy content, so selectors
+   that were position-based in the prototype need semantic contrast guardrails. */
 html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #s-filter .filter-arr{
   color:#255AAE!important;
+}
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #s-pay-low [style*="color:var(--red)"]{
+  color:#B33636!important;
+  opacity:1!important;
 }
 html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #s-pay .pay-refund-banner>div:nth-child(2)>div:nth-child(2),
 html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #chargeDoneBalance{
