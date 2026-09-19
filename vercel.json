@@ -13,9 +13,7 @@
     {"source":"/app","destination":"/app.html"},
     {"source":"/demo","destination":"/app.html"},
     {"source":"/demo.html","destination":"/app.html"},
-    {"source":"/demo-shell","destination":"/app.html"},
     {"source":"/next","destination":"/app.html"},
-    {"source":"/demo-source","destination":"/app.html"},
-    {"source":"/index-source","destination":"/index.html"}
+    {"source":"/next.html","destination":"/app.html"}
   ]
 }

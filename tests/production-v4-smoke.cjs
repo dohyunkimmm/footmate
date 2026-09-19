@@ -30,19 +30,19 @@ async function check(name,route,verify,checks){
   }
   const checks=[];
   await check('case-study','/',({body})=>{
-    assert(body.includes('footmate-case-study-release" content="4.0.0"'),'case study v4 metadata missing');
+    assert(body.includes('footmate-case-study-release" content="4.0.1"'),'case study v4 metadata missing');
     assert(body.includes('/src/v4/case-study.js'),'v4 case study runtime missing');
     assert(body.includes('/src/v4/case-study-editorial.css'),'Case Study editorial stylesheet missing');
     assert(!body.includes('case-study-release.js'),'obsolete Case Study release overlay still loaded');
   },checks);
   for(const route of ['/app','/demo','/next']){
     await check(`app-${route}`,route,({body})=>{
-      assert(body.includes('footmate-release" content="4.0.0"'),`${route} v4 release metadata missing`);
+      assert(body.includes('footmate-release" content="4.0.1"'),`${route} v4 release metadata missing`);
       assert(body.includes('/src/v4/app.js'),`${route} v4 app module missing`);
     },checks);
   }
   await check('v4-data','/src/v4/data.js',({body})=>{
-    assert(body.includes("RELEASE_VERSION='4.0.0'"),'release marker missing');
+    assert(body.includes("RELEASE_VERSION='4.0.1'"),'release marker missing');
     assert(body.includes("footmate:v4:session"),'v4 storage missing');
   },checks);
   await check('v4-hardening','/src/v4/release-hardening.js',({body})=>{

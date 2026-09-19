@@ -39,7 +39,7 @@
         <div class="fm-next-cover-flow" aria-label="핵심 사용자 흐름"><b>Find</b><i>→</i><b>Decide</b><i>→</i><b>Join</b><i>→</i><b>Play</b><i>→</i><b>Return</b></div>
         <div class="fm-next-cover-proof"><div><b>가입 전에 추천부터</b><span>계정을 만들기 전에 경기 추천을 확인합니다.</span></div><div><b>추천 이유를 바로 이해</b><span>점수보다 레벨·거리·남은 자리를 먼저 봅니다.</span></div><div><b>참가 뒤 일정까지 연결</b><span>결제에서 끝내지 않고 체크인과 경기 후까지 이어집니다.</span></div></div>
       </div>
-      <div class="fm-next-cover-visual" aria-label="FootMate v4.0 앱 미리보기"><div class="fm-next-cover-glow" aria-hidden="true"></div><div class="fm-next-cover-frame"><div class="fm-next-cover-frame-meta">Live interaction</div><iframe src="/app?embed=1" title="FootMate v4.0 실제 앱 흐름 미리보기" loading="eager"></iframe></div><div class="fm-next-cover-note">v4.0.0 · Official Major Release<br>Matchday Companion</div></div>
+      <div class="fm-next-cover-visual" aria-label="FootMate v4.0 앱 미리보기"><div class="fm-next-cover-glow" aria-hidden="true"></div><div class="fm-next-cover-frame"><div class="fm-next-cover-frame-meta">Live interaction</div><iframe src="/app?embed=1" title="FootMate v4.0 실제 앱 흐름 미리보기" loading="eager"></iframe></div><div class="fm-next-cover-note">v4.0.1 · Official Major Release<br>Matchday Companion</div></div>
     </div>`,
 
     shell('01 · PROBLEM','경기는 많아도, 나에게 맞는 한 경기를 고르기는 어렵습니다.','시간, 거리, 레벨, 포지션, 남은 자리와 가격을 따로 확인해야 했습니다. 참가한 뒤에는 일정과 경기 당일 정보가 다시 흩어져 흐름이 끊겼습니다.',

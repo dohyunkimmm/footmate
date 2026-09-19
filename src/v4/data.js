@@ -1,15 +1,24 @@
-export const RELEASE_VERSION='4.0.0';
+export const RELEASE_VERSION='4.0.1';
 export const RELEASE_NAME='Matchday Companion';
 export const RELEASE_STAGE='stable';
 // Kept as an internal compatibility export for the v4 runtime module.
 export const NEXT_RELEASE=RELEASE_VERSION;
 export const NEXT_STORAGE_KEY='footmate:v4:session';
 
+function sampleSchedule(offsetDays,time){
+  const date=new Date();
+  date.setHours(12,0,0,0);
+  date.setDate(date.getDate()+offsetDays);
+  const day=new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric'}).format(date);
+  const weekday=new Intl.DateTimeFormat('ko-KR',{weekday:'short'}).format(date);
+  return Object.freeze({dateLabel:`샘플 일정 · ${day} · ${time}`,shortDate:`${weekday} · ${time}`});
+}
+const SAMPLE_SCHEDULES=Object.freeze([sampleSchedule(1,'20:00'),sampleSchedule(2,'21:30'),sampleSchedule(3,'19:00')]);
+
 export const MATCHES=Object.freeze([
   Object.freeze({
     id:'suwon-ingye-2000',
-    dateLabel:'9월 21일 · 20:00',
-    shortDate:'월 · 20:00',
+    ...SAMPLE_SCHEDULES[0],
     place:'수원 인계 풋살파크',
     area:'수원 인계동',
     address:'경기 수원시 팔달구 인계로 126',
@@ -32,8 +41,7 @@ export const MATCHES=Object.freeze([
   }),
   Object.freeze({
     id:'gwanggyo-2130',
-    dateLabel:'9월 22일 · 21:30',
-    shortDate:'화 · 21:30',
+    ...SAMPLE_SCHEDULES[1],
     place:'광교 웨스트파크',
     area:'수원 광교',
     address:'경기 수원시 영통구 광교중앙로 145',
@@ -56,8 +64,7 @@ export const MATCHES=Object.freeze([
   }),
   Object.freeze({
     id:'yeongtong-1900',
-    dateLabel:'9월 23일 · 19:00',
-    shortDate:'수 · 19:00',
+    ...SAMPLE_SCHEDULES[2],
     place:'영통 스타필드 코트',
     area:'수원 영통',
     address:'경기 수원시 영통구 봉영로 1579',

@@ -100,7 +100,7 @@ test('Case Study editorial source renders as official v4 copy',async({page})=>{
     expect(body).not.toContain(forbidden);
   }
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveAttribute('src','/app?embed=1');
-  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.0.0');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.0.1');
   await expect(page.getByText('실제 OAuth, 회원 DB, 서버 인증 세션은 연결하지 않은 UX 시뮬레이션입니다.')).toHaveCount(1);
   expect(failures).toEqual([]);
 });

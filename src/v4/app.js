@@ -116,7 +116,7 @@ function guide(){
     <div class="fm-next-guide-brand"><span class="fm-next-brand-mark">${icon('logo')}</span>FootMate</div>
     <div class="fm-next-guide-kicker">${mode==='evidence'?'Reviewer Evidence':'Guided Case Study'}</div>
     <h1>실제 사용자 흐름을 먼저 보여줍니다.</h1>
-    <p>기술 설명보다 사용자가 언제 가치를 느끼고, 왜 가입하며, 어떻게 경기 당일까지 이어지는지를 앞에 둔 다음 버전 경험입니다.</p>
+    <p>기술 설명보다 사용자가 언제 가치를 느끼고, 왜 가입하며, 어떻게 경기 당일까지 이어지는지를 앞에 둔 v4 공식 경험입니다.</p>
     ${scenario}
     <div class="fm-next-guide-steps">
       ${steps.map((item,index)=>`<div class="fm-next-guide-step${routeStep===index?' is-current':''}"><b>${index+1}. ${item[0]}</b><span>${item[1]}</span></div>`).join('')}
@@ -316,7 +316,11 @@ function currentView(){
 
 function render(){
   root.innerHTML=`<div class="fm-next-page" data-mode="${mode}">${guide()}<div class="fm-next-stage"><div class="fm-next-app" data-embed="${embed}">${currentView()}</div></div><span class="fm-next-mode-pill">${mode==='evidence'?'Evidence mode':'Guided mode'}</span></div><div class="fm-next-toast" role="status" aria-live="polite"></div>`;
-  root.querySelector('[data-screen]')?.focus?.({preventScroll:true});
+  const activeScreen=root.querySelector('[data-screen]');
+  if(activeScreen){
+    activeScreen.setAttribute('tabindex','-1');
+    activeScreen.focus({preventScroll:true});
+  }
   document.documentElement.dataset.footmateNext=mode;
 }
 
@@ -380,7 +384,7 @@ root.addEventListener('click',event=>{
   if(action==='rate-match'){toast('경기 평가 플로우를 준비 중입니다.');return;}
   if(action==='show-policy'){toast('경기 24시간 전까지 전액 환불됩니다.');return;}
   if(action==='reset-flow'){resetFlow();return;}
-  if(action==='open-real'){location.href='/next';return;}
+  if(action==='open-real'){location.href='/app';return;}
   if(action==='scenario-discover'){
     state=createState({setupComplete:true,route:'home',signedIn:true});render();return;
   }
