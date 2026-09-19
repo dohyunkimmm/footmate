@@ -100,11 +100,14 @@
       const panelButton=event.target.closest('[data-auth-panel]');
       if(panelButton){
         event.preventDefault();
+        event.stopPropagation();
         renderPanel(screen,panelButton.dataset.authPanel);
         return;
       }
       const toggle=event.target.closest('[data-auth-toggle-password]');
       if(toggle){
+        event.preventDefault();
+        event.stopPropagation();
         const field=toggle.closest('.fm-auth-password')?.querySelector('input');
         if(!field)return;
         const showing=field.type==='text';
@@ -126,7 +129,7 @@
     });
     screen.addEventListener('submit',event=>{
       event.preventDefault();
-      const submit=event.currentTarget.querySelector('[data-action="sign-in"]');
+      const submit=screen.querySelector('[data-action="sign-in"]');
       if(submit&&!submit.disabled)submit.click();
     });
   }
