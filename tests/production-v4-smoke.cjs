@@ -3,7 +3,7 @@ const path=require('node:path');
 const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate-black.vercel.app').replace(/\/$/,'');
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
 const reportDir=path.resolve('test-results');
-const reportFile=path.join(reportDir,'production-v40-smoke.json');
+const reportFile=path.join(reportDir,'production-v4-smoke.json');
 
 function assert(condition,message){if(!condition)throw new Error(message)}
 async function fetchText(route){
@@ -39,13 +39,14 @@ async function check(name,route,verify,checks){
     await check(`app-${route}`,route,({body})=>{
       assert(body.includes('footmate-release" content="4.0.1"'),`${route} v4 release metadata missing`);
       assert(body.includes('/src/v4/app.js'),`${route} v4 app module missing`);
+      assert(body.includes('/src/v4/experience.js'),`${route} consolidated v4 experience module missing`);
     },checks);
   }
   await check('v4-data','/src/v4/data.js',({body})=>{
     assert(body.includes("RELEASE_VERSION='4.0.1'"),'release marker missing');
     assert(body.includes("footmate:v4:session"),'v4 storage missing');
   },checks);
-  await check('v4-hardening','/src/v4/release-hardening.js',({body})=>{
+  await check('v4-experience','/src/v4/experience.js',({body})=>{
     assert(body.includes('validateLogin'),'login validation missing');
     assert(body.includes('detailReturnRoute'),'return navigation missing');
     assert(body.includes('checkedInMatchId'),'check-in persistence missing');
@@ -61,6 +62,8 @@ async function check(name,route,verify,checks){
     assert(body.includes('text-wrap:balance'),'balanced heading wrap CSS missing');
     assert(body.includes('text-wrap:pretty'),'body wrap CSS missing');
     assert(body.includes('overflow-wrap:anywhere'),'overflow fallback missing');
+    assert(body.includes('minmax(340px,360px)'),'desktop Case Study aside sizing contract missing');
+    assert(body.includes('.fm-next-cs-final'),'Case Study final panel styling missing');
   },checks);
 
   const payload={base,checkedAt:new Date().toISOString(),githubSha:process.env.GITHUB_SHA||null,strictProduction:true,passed:checks.every(item=>item.ok),checks};

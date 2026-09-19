@@ -123,6 +123,33 @@ test('all 16 Case Study sections stay readable at supported mobile widths',async
   }
 });
 
+test('Case Study desktop companion panels keep substantial width and spacing',async({page})=>{
+  const failures=await openCaseStudy(page,1440,900);
+  for(let index=1;index<16;index+=1){
+    await goToSlide(page,index);
+    const panel=await page.locator('.slide.on').evaluate(slide=>{
+      const story=slide.querySelector('.fm-next-story');
+      const aside=slide.querySelector('.fm-next-story-aside');
+      if(!story||!aside)return null;
+      const storyRect=story.getBoundingClientRect();
+      const asideRect=aside.getBoundingClientRect();
+      const structured=[...slide.querySelectorAll('.fm-next-cs-day-states,.fm-next-cs-recovery,.fm-next-cs-outcomes')].map(grid=>({
+        width:grid.getBoundingClientRect().width,
+        childWidths:[...grid.children].map(child=>child.getBoundingClientRect().width)
+      }));
+      return {storyWidth:storyRect.width,asideWidth:asideRect.width,structured};
+    });
+    expect(panel,`missing story panel on slide ${index+1}`).not.toBeNull();
+    expect(panel.asideWidth,`aside too narrow on slide ${index+1}`).toBeGreaterThanOrEqual(339);
+    expect(panel.asideWidth/panel.storyWidth,`aside ratio too small on slide ${index+1}`).toBeGreaterThanOrEqual(0.30);
+    panel.structured.forEach((grid,gridIndex)=>{
+      expect(grid.width,`structured grid ${gridIndex+1} too narrow on slide ${index+1}`).toBeGreaterThan(500);
+      grid.childWidths.forEach((width,childIndex)=>expect(width,`structured cell ${childIndex+1} too narrow on slide ${index+1}`).toBeGreaterThan(145));
+    });
+  }
+  expect(failures).toEqual([]);
+});
+
 test('Case Study desktop sections have no overflow and produce review screenshots',async({page})=>{
   const failures=await openCaseStudy(page,1440,900);
   for(let index=0;index<16;index+=1){
