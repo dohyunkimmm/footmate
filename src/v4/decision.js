@@ -114,8 +114,8 @@ function decisionSections(match,session){
   </section>
   <section class="fm-next-detail-section fm-decision-section" data-decision-section="capacity">
     <div class="fm-next-section-head"><div><h2>자리와 포지션</h2><p>실시간 정원이 아닌 현재 샘플 경기 데이터 기준입니다.</p></div></div>
-    <div class="fm-decision-capacity"><div><small>현재 샘플 잔여</small><strong>${remaining}자리</strong><span>${match.joined}/${match.capacity}명 참가 상태</span></div><div class="fm-decision-meter" aria-label="샘플 정원 ${match.capacity}명 중 ${match.joined}명 참가"><span style="width:${Math.min(100,Math.round((match.joined/match.capacity)*100))}%"></span></div></div>
-    <div class="fm-decision-position-grid" aria-label="샘플 참가자 포지션 구성">${positionBalance(match)}</div>
+    <div class="fm-decision-capacity"><div><small>현재 샘플 잔여</small><strong>${remaining}자리</strong><span>${match.joined}/${match.capacity}명 참가 상태</span></div><div class="fm-decision-meter" role="progressbar" aria-label="샘플 참가 인원" aria-valuemin="0" aria-valuemax="${match.capacity}" aria-valuenow="${match.joined}"><span style="width:${Math.min(100,Math.round((match.joined/match.capacity)*100))}%"></span></div></div>
+    <div class="fm-decision-position-grid" role="group" aria-label="샘플 참가자 포지션 구성">${positionBalance(match)}</div>
     <p class="fm-decision-disclosure">포지션 구성은 프로토타입용 샘플이며 실제 참가자 정보나 실시간 좌석을 의미하지 않습니다.</p>
   </section>
   <section class="fm-next-detail-section fm-decision-section" data-decision-section="venue">
