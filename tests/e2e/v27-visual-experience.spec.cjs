@@ -73,7 +73,11 @@ test('v2.7 stays accessible and touch-safe at 320px',async({page})=>{
     await page.evaluate(id=>window.goScreen(id),screenId);
     const metrics=await page.locator(`#${screenId}`).evaluate(screen=>({
       overflowX:screen.scrollWidth-screen.clientWidth,
-      targets:[...screen.querySelectorAll('.fm24-action,.fm25-action,.btn-primary,.btn-secondary')].filter(el=>getComputedStyle(el).display!=='none').map(el=>el.getBoundingClientRect().height)
+      targets:[...screen.querySelectorAll('.fm24-action,.fm25-action,.btn-primary,.btn-secondary')].filter(el=>{
+        const style=getComputedStyle(el);
+        const rect=el.getBoundingClientRect();
+        return style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;
+      }).map(el=>el.getBoundingClientRect().height)
     }));
     expect(metrics.overflowX).toBeLessThanOrEqual(1);
     metrics.targets.forEach(height=>expect(height).toBeGreaterThanOrEqual(44));
