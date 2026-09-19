@@ -41,7 +41,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm scripts/apply-v401-hotfix.cjs .github/workflows/apply-v401-hotfix.yml
+          git rm -f scripts/apply-v401-hotfix.cjs .github/workflows/apply-v401-hotfix.yml
           git add -A
           git commit -m "fix(v4.0.1): harden runtime and clean repository"
           git push origin HEAD:hotfix/v4.0.1-runtime-repo-cleanup
