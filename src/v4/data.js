@@ -1,4 +1,4 @@
-export const RELEASE_VERSION='4.1.0';
+export const RELEASE_VERSION='4.2.0';
 export const RELEASE_NAME='Matchday Companion';
 export const RELEASE_STAGE='stable';
 // Kept as an internal compatibility export for the v4 runtime module.
