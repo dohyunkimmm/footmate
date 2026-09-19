@@ -4,7 +4,6 @@ import{PRIMARY_DESTINATIONS}from'./ia/navigation.js';
 const RELEASE_VERSION='3.0.0';
 const PREVIOUS_RELEASE_VERSION='2.8.0';
 const SCHEMA_VERSION='2.1.0';
-const PRODUCTION_CONTRACT='v3.0-product-v28-visual-baseline';
 
 function promote(){
   if(window.FootMateV30||window.FootMateV3Runtime)return;
@@ -25,7 +24,6 @@ function promote(){
     architecture:'v3.0-modular-app-runtime',
     releaseArchitecture:'v3.0-unified-app-architecture',
     previousReleaseArchitecture:'v2.8-visual-identity',
-    productionContract:PRODUCTION_CONTRACT,
     baseRuntime,
     productStore:baseRuntime.productStore,
     scenarioStore:baseRuntime.scenarioStore,
@@ -68,8 +66,7 @@ function promote(){
     preservedLegacyScreens:appShell.preservedLegacyRoutes,
     visualBaseline:'v2.8-matchday',
     legacyVisualReleaseMarker:'2.8',
-    stateCompatibility:'v2.1-domain-state-preserved',
-    productionContract:PRODUCTION_CONTRACT
+    stateCompatibility:'v2.1-domain-state-preserved'
   };
 
   appShell.refresh();
