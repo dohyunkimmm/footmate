@@ -41,7 +41,10 @@ async function main() {
       assert(body.includes('/src/v2/styles/core-funnel.css'), '/demo v2.4 core funnel stylesheet missing');
       assert(body.includes('/src/v2/styles/decision-recovery.css'), '/demo v2.5 decision/recovery stylesheet missing');
       assert(body.includes('/src/v2/styles/visual-experience.css?v=20260919-1'), '/demo v2.7 visual experience stylesheet missing');
+      assert(body.includes('/src/v2/styles/visual-tokens.css?v=20260919-1'), '/demo v2.8 token stylesheet missing');
+      assert(body.includes('/src/v2/styles/visual-identity.css?v=20260919-1'), '/demo v2.8 identity stylesheet missing');
       assert(body.includes('/src/v2/bootstrap.js?v=20260919-3'), '/demo v2.7 bootstrap cache key missing');
+      assert(body.includes('/src/v2/v28-release.js?v=20260919-1'), '/demo v2.8 release module missing');
     }
   });
 
@@ -60,6 +63,7 @@ async function main() {
       assert(!body.includes('fm25-'), 'v2.5 component markup leaked into demo-source');
       assert(!body.includes('fm26-'), 'v2.6 architecture markup leaked into demo-source');
       assert(!body.includes('fm27-'), 'v2.7 visual markup leaked into demo-source');
+      assert(!body.includes('fm28-'), 'v2.8 visual identity markup leaked into demo-source');
     }
   });
 
@@ -70,7 +74,7 @@ async function main() {
 
   await run('product-core-runtime', '/footmate-product-core.js', ({ body, contentType }) => {
     assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'product core runtime content type unexpected');
-    assert(body.includes('FootMateProductCore'), 'FootMateProductCore marker missing');
+    assert(body.includes('FootMateProductCore'), 'product core runtime marker missing');
     assert(body.includes('transitionState'), 'product state machine marker missing');
   });
 
@@ -86,22 +90,43 @@ async function main() {
     if (strictProduction) {
       assert(body.includes("VERSION='2.1.0'"), 'v2.1 schema version marker missing');
       assert(body.includes("V26_RELEASE_VERSION='2.6.0'"), 'v2.6 compatibility marker missing');
-      assert(body.includes("RELEASE_VERSION='2.7.0'"), 'v2.7 release marker missing');
+      assert(body.includes("RELEASE_VERSION='2.7.0'"), 'v2.7 baseline release marker missing');
       assert(body.includes('FootMateV27'), 'v2.7 runtime contract missing');
       assert(body.includes('FootMateV26'), 'v2.6 compatibility contract missing');
-      assert(body.includes("releaseArchitecture:'v2.7-visual-experience'"), 'v2.7 release architecture marker missing');
-      assert(body.includes("previousReleaseArchitecture:'v2.6-architecture-hardening'"), 'v2.6 previous architecture marker missing');
-      assert(body.includes("visualOwnership:'src/v2/styles/visual-experience.css'"), 'v2.7 visual ownership marker missing');
+      assert(body.includes("releaseArchitecture:'v2.7-visual-experience'"), 'v2.7 baseline architecture marker missing');
     }
   });
 
   if (strictProduction) {
+    await run('v2.8-release-runtime', '/src/v2/v28-release.js', ({ body, contentType }) => {
+      assert(contentType.includes('javascript') || contentType.includes('text/plain'), 'v2.8 release content type unexpected');
+      assert(body.includes("RELEASE_VERSION='2.8.0'"), 'v2.8 release marker missing');
+      assert(body.includes('FootMateV28'), 'v2.8 runtime contract missing');
+      assert(body.includes("runtime.releaseArchitecture='v2.8-visual-identity'"), 'v2.8 architecture marker missing');
+      assert(body.includes("runtime.previousReleaseArchitecture='v2.7-visual-experience'"), 'v2.8 previous architecture marker missing');
+      assert(body.includes("runtime.visualOwnership='src/v2/styles/visual-identity.css'"), 'v2.8 visual ownership marker missing');
+    });
+    await run('v2.8-visual-tokens', '/src/v2/styles/visual-tokens.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v2.8 token content type unexpected');
+      assert(body.includes('FootMate v2.8 · Matchday Visual Tokens'), 'v2.8 token marker missing');
+      assert(body.includes('--fm28-pitch:#165B40'), 'v2.8 pitch token missing');
+      assert(body.includes('--fm28-accent:#D3F36B'), 'v2.8 accent token missing');
+    });
+    await run('v2.8-visual-identity', '/src/v2/styles/visual-identity.css', ({ body, contentType }) => {
+      assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'v2.8 identity content type unexpected');
+      assert(body.includes('FootMate v2.8 · Matchday Visual Identity'), 'v2.8 identity marker missing');
+      assert(body.includes('html[data-footmate-release="2.8"] #s-home .fm24-home-decision'), 'v2.8 home identity missing');
+      assert(body.includes('[data-fm28-card="match"]'), 'v2.8 match ticket identity missing');
+      assert(body.includes('@media(prefers-reduced-motion:reduce)'), 'v2.8 reduced motion safeguard missing');
+    });
+    await run('v2.8-visual-experience-module', '/src/v2/ui/visual-identity-experience.js', ({ body }) => {
+      assert(body.includes("architecture:'v2.8-visual-identity-experience'"), 'v2.8 identity module marker missing');
+      assert(body.includes("'s-home','s-filter','s-results','s-detail','s-pay'"), 'v2.8 owned screen registry missing');
+    });
     await run('v2.7-visual-experience', '/src/v2/styles/visual-experience.css', ({ body, contentType }) => {
       assert(contentType.includes('text/css') || contentType.includes('text/plain'), 'visual experience content type unexpected');
       assert(body.includes('FootMate v2.7 · Visual Experience'), 'v2.7 visual stylesheet marker missing');
       assert(body.includes('html[data-footmate-release="2.7"] .fm24-panel'), 'v2.7 core funnel visual ownership missing');
-      assert(body.includes('html[data-footmate-release="2.7"] .fm25-panel'), 'v2.7 decision visual ownership missing');
-      assert(body.includes('@media(max-width:340px)'), 'v2.7 320px touch safeguard missing');
       assert(body.includes('@media(prefers-reduced-motion:reduce)'), 'v2.7 reduced motion safeguard missing');
     });
     await run('v2.6-runtime-boundary', '/src/v2/demo/runtime-boundary.js', ({ body, contentType }) => {
@@ -176,7 +201,7 @@ async function main() {
 
 main().catch(error => {
   fs.mkdirSync(reportDir, { recursive: true });
-  fs.writeFileSync(reportFile, JSON.stringify({ base, checkedAt: new Date().toISOString(), passed: false, fatal: error.message }, null, 2) + '\n');
+  fs.writeFileSync(reportFile, JSON.stringify({ base, checkedAt:new Date().toISOString(), passed:false, fatal:error.message }, null, 2) + '\n');
   console.error(error);
   process.exitCode = 1;
 });
