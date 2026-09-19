@@ -79,7 +79,7 @@ jobs:
       - name: Run browser E2E, accessibility, responsive, stable visual parity and next-major gates
         env:
           FOOTMATE_V28_BASELINE_URL: http://127.0.0.1:4180
-        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs tests/e2e/v30-full-screen-qa.spec.cjs tests/e2e/next-major.spec.cjs
+        run: npx playwright test tests/e2e/footmate.spec.cjs tests/e2e/domain-engine.spec.cjs tests/e2e/case-study.spec.cjs tests/e2e/responsive.spec.cjs tests/e2e/visual-regression.spec.cjs tests/e2e/v23-architecture.spec.cjs tests/e2e/v24-core-funnel.spec.cjs tests/e2e/v25-decision-recovery.spec.cjs tests/e2e/v26-architecture-hardening.spec.cjs tests/e2e/v27-visual-experience.spec.cjs tests/e2e/v28-visual-identity.spec.cjs tests/e2e/v30-unified-app.spec.cjs tests/e2e/v30-full-screen-qa.spec.cjs tests/e2e/next-major.spec.cjs tests/e2e/next-hotfix.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
