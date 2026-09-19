@@ -9,6 +9,7 @@ const experience=read('src/v4/experience.js');
 const caseStudy=read('index.html');
 const story=read('src/v4/case-study.js');
 const editorial=read('src/v4/case-study-editorial.css');
+const productionSmoke=read('tests/production-v4-smoke.cjs');
 const routes=read('vercel.json');
 const readme=read('README.md');
 
@@ -45,9 +46,16 @@ assert(story.includes('iframe src="/app?embed=1"'),'Case Study app iframe must u
 assert(story.includes('실제 OAuth, 회원 DB, 서버 인증 세션은 연결하지 않은 UX 시뮬레이션입니다.'),'auth integration boundary missing');
 assert(story.includes('외부 AI 모델, 회원 DB, 실시간 정원, 실제 결제, 알림 backend는 연결하지 않았습니다.'),'prototype integration boundary missing');
 assert(editorial.includes('text-wrap:balance'),'balanced heading wrap contract missing');
-assert(editorial.includes('text-wrap:pretty'),'body text wrap contract missing');
+assert(editorial.includes('text-wrap:pretty'),'body wrap contract missing');
 assert(editorial.includes('overflow-wrap:anywhere'),'overflow-wrap fallback missing');
 assert(editorial.includes('word-break:keep-all'),'Korean word-break contract missing');
+assert(editorial.includes('minmax(340px,360px)'),'desktop companion panel sizing contract missing');
+assert(editorial.includes('.fm-next-cs-day-states'),'Matchday structured grid styling missing');
+assert(editorial.includes('.fm-next-cs-recovery'),'Recovery structured grid styling missing');
+assert(editorial.includes('.fm-next-cs-outcomes'),'Outcome structured grid styling missing');
+assert(editorial.includes('.fm-next-cs-final'),'final companion panel styling missing');
+assert(productionSmoke.includes("'/src/v4/experience.js'"),'Production smoke must validate consolidated experience runtime');
+assert(!productionSmoke.includes("'/src/v4/release-hardening.js'"),'Production smoke must not reference removed release hardening file');
 assert(!readme.includes('Not yet verified'),'README release verification is stale');
 
 console.log('FootMate v4.0.1 runtime + repository boundary PASS');
