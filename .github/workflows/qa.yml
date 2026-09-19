@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   regression:
-    name: Regression 37
+    name: Regression 36
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
