@@ -73,14 +73,14 @@ test('production product mode keeps the baseline phone geometry on desktop',asyn
   await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__footmateV3===true&&window.FootMateV3Runtime?.version==='3.0.0');
   await dismissIntro(page);
-  await page.evaluate(()=>window.goScreen('s-results'));
+  await page.evaluate(()=>window.goScreen('s-home'));
   const layout=await page.evaluate(()=>({
     shellCssWidth:getComputedStyle(document.querySelector('.device-shell')).width,
     shellCssHeight:getComputedStyle(document.querySelector('.device-shell')).height,
     layoutTransform:getComputedStyle(document.querySelector('.prototype-layout')).transform,
     notchDisplay:getComputedStyle(document.querySelector('.device-notch')).display,
     v3Nav:document.querySelectorAll('#fm30AppNav').length,
-    legacyTabDisplay:getComputedStyle(document.querySelector('#s-results .tab-bar')).display
+    legacyTabDisplay:getComputedStyle(document.querySelector('#s-home .tab-bar')).display
   }));
   expect(layout.shellCssWidth).toBe('375px');
   expect(layout.shellCssHeight).toBe('780px');
