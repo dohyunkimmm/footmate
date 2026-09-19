@@ -39,7 +39,11 @@ html[data-footmate-release="2.8"] #s-sso .pcnt{
 html[data-footmate-release="2.8"] #s-eloUpdate .pcnt{
   overflow-x:hidden!important;
 }
-html[data-footmate-release="2.8"] #s-pay-low>.pcnt>div:nth-child(2)>div:nth-child(2)>div:nth-child(1),
+html[data-footmate-release="2.8"] #s-eloUpdate .pcnt>div{
+  width:100%!important;
+  max-width:100%!important;
+}
+html[data-footmate-release="2.8"] #s-pay-low [style*="color:var(--red)"],
 html[data-footmate-release="2.8"] #s-noshow .noshow-auto{
   color:#B33636!important;
 }
@@ -47,6 +51,26 @@ html[data-footmate-release="2.8"] #s-lockin .home-header>div:first-child>div:fir
 html[data-footmate-release="2.8"] #s-venue [style*="color:#888"],
 html[data-footmate-release="2.8"] #s-growth [style*="color:#bbb"]{
   color:#53627D!important;
+}
+
+/* Portfolio chrome changes the surrounding canvas, so keep legacy semantic
+   helper text above WCAG AA contrast without changing Product-mode pixels. */
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #s-filter .filter-arr{
+  color:#255AAE!important;
+}
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #s-pay .pay-refund-banner>div:nth-child(2)>div:nth-child(2),
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #chargeDoneBalance{
+  color:#146B4D!important;
+  opacity:1!important;
+}
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #s-charge-done>.pcnt>div:nth-child(2)>div:nth-child(2)>div:nth-child(2),
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #pg-elo-preview{
+  color:#255AAE!important;
+  opacity:1!important;
+}
+html[data-footmate-release="2.8"][data-fm30-mode="portfolio"] #kickoffBanner>div>div:nth-child(2){
+  color:#7A4B00!important;
+  opacity:1!important;
 }
 
 /* The fixed 375px product frame scales down at 320px. Raise legacy tab targets
