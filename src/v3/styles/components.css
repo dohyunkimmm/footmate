@@ -1,0 +1,248 @@
+/* FootMate v3.0 · Reusable component and IA layer */
+html[data-footmate-current-release="3.0"] .fm30-app-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  gap:4px;
+  padding:8px max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
+  background:rgba(8,28,19,.98);
+  border-top:1px solid rgba(255,255,255,.07);
+  color:#fff;
+}
+html[data-footmate-current-release="3.0"] .fm30-brand,
+html[data-footmate-current-release="3.0"] .fm30-version{
+  display:none;
+}
+html[data-footmate-current-release="3.0"] .fm30-nav-list{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:4px;
+}
+html[data-footmate-current-release="3.0"] .fm30-nav-item{
+  min-height:52px;
+  padding:5px 6px;
+  border:0;
+  border-radius:14px;
+  background:transparent;
+  color:#A9B9B0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font:inherit;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  cursor:pointer;
+  transition:background var(--fm30-motion-fast) ease,color var(--fm30-motion-fast) ease,transform var(--fm30-motion-fast) var(--fm30-ease);
+}
+html[data-footmate-current-release="3.0"] .fm30-nav-item[data-active="true"]{
+  background:rgba(211,243,107,.13);
+  color:var(--fm30-accent);
+}
+html[data-footmate-current-release="3.0"] .fm30-nav-item:active{transform:scale(.97)}
+html[data-footmate-current-release="3.0"] .fm30-nav-item:focus-visible{
+  outline:3px solid rgba(211,243,107,.38)!important;
+  outline-offset:-2px!important;
+}
+html[data-footmate-current-release="3.0"] .fm30-icon{
+  display:inline-grid;
+  width:22px;
+  height:22px;
+  place-items:center;
+}
+html[data-footmate-current-release="3.0"] .fm30-icon svg{
+  width:100%;
+  height:100%;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+html[data-footmate-current-release="3.0"] .fm30-context{
+  position:sticky;
+  top:0;
+  z-index:24;
+  min-height:76px;
+  margin:0 0 14px!important;
+  padding:14px 16px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  border-bottom:1px solid rgba(22,91,64,.10);
+  background:rgba(247,251,248,.94);
+  backdrop-filter:blur(18px) saturate(1.12);
+  -webkit-backdrop-filter:blur(18px) saturate(1.12);
+}
+html[data-footmate-current-release="3.0"] .fm30-context-heading{min-width:0}
+html[data-footmate-current-release="3.0"] .fm30-context-kicker{
+  display:block;
+  margin-bottom:2px;
+  color:var(--fm30-pitch);
+  font-size:9px;
+  line-height:1.2;
+  font-weight:950;
+  letter-spacing:.14em;
+}
+html[data-footmate-current-release="3.0"] .fm30-context-title{
+  margin:0;
+  color:var(--fm30-ink);
+  font-size:20px;
+  line-height:1.25;
+  font-weight:950;
+  letter-spacing:-.045em;
+}
+html[data-footmate-current-release="3.0"] .fm30-context-status{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+}
+html[data-footmate-current-release="3.0"] .fm30-metric{
+  min-width:58px;
+  padding:7px 9px;
+  display:grid;
+  gap:1px;
+  border:1px solid var(--fm30-line);
+  border-radius:12px;
+  background:#fff;
+}
+html[data-footmate-current-release="3.0"] .fm30-metric-label{
+  color:var(--fm30-muted);
+  font-size:8px;
+  font-weight:800;
+}
+html[data-footmate-current-release="3.0"] .fm30-metric-value{
+  color:var(--fm30-ink);
+  font-size:12px;
+  font-weight:950;
+}
+html[data-footmate-current-release="3.0"] .fm30-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 9px;
+  border-radius:999px;
+  background:#EAF0EC;
+  color:var(--fm30-ink-soft);
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.09em;
+}
+html[data-footmate-current-release="3.0"] .fm30-badge[data-tone="accent"]{
+  background:var(--fm30-accent);
+  color:var(--fm30-accent-ink);
+}
+
+html[data-footmate-current-release="3.0"] [data-fm30-surface="true"]{
+  border-radius:var(--fm30-radius-card)!important;
+  box-shadow:var(--fm30-shadow-card)!important;
+}
+html[data-footmate-current-release="3.0"] :is(.fm24-panel,.fm25-panel)[data-fm30-surface="true"]{
+  border-color:rgba(22,91,64,.13)!important;
+}
+html[data-footmate-current-release="3.0"] #s-home .fm24-home-decision{
+  border-radius:28px!important;
+}
+html[data-footmate-current-release="3.0"] #s-results .fm25-compare-grid{
+  gap:12px!important;
+}
+html[data-footmate-current-release="3.0"] #s-results .fm25-compare-card{
+  border-radius:18px!important;
+}
+html[data-footmate-current-release="3.0"] #s-detail .fm24-detail-decision,
+html[data-footmate-current-release="3.0"] #s-pay .fm25-panel{
+  border-radius:24px!important;
+}
+html[data-footmate-current-release="3.0"] :is(button,[role="button"],a):focus-visible{
+  outline-color:rgba(22,91,64,.42)!important;
+}
+
+@media(max-width:374px){
+  html[data-footmate-current-release="3.0"] .fm30-context{
+    padding-left:12px;
+    padding-right:12px;
+    gap:8px;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-context-title{font-size:18px}
+  html[data-footmate-current-release="3.0"] .fm30-context-status .fm30-metric:nth-child(2){display:none}
+  html[data-footmate-current-release="3.0"] .fm30-badge{display:none}
+}
+@media(min-width:800px){
+  html[data-footmate-current-release="3.0"] .fm30-app-nav{
+    height:100%;
+    flex-direction:column;
+    justify-content:flex-start;
+    padding:18px 12px;
+    border-top:0;
+    border-right:1px solid rgba(255,255,255,.07);
+    background:
+      radial-gradient(circle at 50% 0%,rgba(211,243,107,.12),transparent 22%),
+      linear-gradient(180deg,#0B2418 0%,#081B13 100%);
+  }
+  html[data-footmate-current-release="3.0"] .fm30-brand{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    margin-bottom:34px;
+    color:#fff;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-brand-mark{
+    width:44px;
+    height:44px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(211,243,107,.32);
+    border-radius:15px;
+    background:rgba(211,243,107,.10);
+    color:var(--fm30-accent);
+    font-size:12px;
+    font-weight:950;
+    letter-spacing:.04em;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-brand-name{
+    font-size:10px;
+    font-weight:850;
+    color:#DCE7E0;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-nav-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-nav-item{
+    width:100%;
+    min-height:66px;
+    border-radius:18px;
+    gap:6px;
+    font-size:10px;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-nav-item[data-active="true"]{
+    box-shadow:inset 0 0 0 1px rgba(211,243,107,.15);
+  }
+  html[data-footmate-current-release="3.0"] .fm30-version{
+    display:block;
+    margin-top:auto;
+    color:#6F8478;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.08em;
+  }
+  html[data-footmate-current-release="3.0"] .fm30-context{
+    min-height:88px;
+    margin-left:calc(clamp(12px,3vw,44px) * -1)!important;
+    margin-right:calc(clamp(12px,3vw,44px) * -1)!important;
+    padding:18px clamp(20px,3vw,44px);
+  }
+  html[data-footmate-current-release="3.0"] .fm30-context-title{font-size:24px}
+  html[data-footmate-current-release="3.0"] #s-results .fm25-compare-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
