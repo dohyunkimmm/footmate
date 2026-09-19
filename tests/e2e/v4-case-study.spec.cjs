@@ -93,14 +93,17 @@ async function activeSlideMetrics(page){
   });
 }
 
-test('Case Study editorial source renders as official v4 copy',async({page})=>{
+test('Case Study renders as official v4.1 Recommendation Core copy',async({page})=>{
   const failures=await openCaseStudy(page,1440,900);
   const body=(await page.locator('body').innerText()).replace(/\s+/g,' ');
   for(const forbidden of ['Next Major','next major candidate','v3.0 stable','기존 v3.0','v2.4~v3.0','stable required check key','legacy screen visual parity']){
     expect(body).not.toContain(forbidden);
   }
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveAttribute('src','/app?embed=1');
-  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.0.1');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.1.0');
+  await goToSlide(page,6);
+  await expect(page.locator('.slide.on')).toContainText('실제 순위 로직');
+  await expect(page.locator('.slide.on')).toContainText('생활권 일치');
   await expect(page.getByText('실제 OAuth, 회원 DB, 서버 인증 세션은 연결하지 않은 UX 시뮬레이션입니다.')).toHaveCount(1);
   expect(failures).toEqual([]);
 });

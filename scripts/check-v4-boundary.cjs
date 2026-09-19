@@ -6,27 +6,38 @@ const app=read('app.html');
 const appRuntime=read('src/v4/app.js');
 const data=read('src/v4/data.js');
 const experience=read('src/v4/experience.js');
+const recommendation=read('src/v4/recommendation.js');
 const caseStudy=read('index.html');
 const story=read('src/v4/case-study.js');
+const caseStudyRecommendation=read('src/v4/case-study-recommendation.js');
 const editorial=read('src/v4/case-study-editorial.css');
 const productionSmoke=read('tests/production-v4-smoke.cjs');
 const routes=read('vercel.json');
 const readme=read('README.md');
+const roadmap=read('docs/V4.1-V5.0-ROADMAP.md');
 
-assert(app.includes('name="footmate-release" content="4.0.1"'),'v4.0.1 release metadata missing');
-assert(app.includes('/src/v4/app.js?v=401'),'v4 app module missing');
-assert(app.includes('/src/v4/experience.js?v=401'),'consolidated v4 experience module missing');
-assert(data.includes("RELEASE_VERSION='4.0.1'"),'v4.0.1 data release marker missing');
+assert(app.includes('name="footmate-release" content="4.1.0"'),'v4.1.0 release metadata missing');
+assert(app.includes('/src/v4/app.js?v=410'),'v4 app module missing');
+assert(app.includes('/src/v4/experience.js?v=410'),'consolidated v4 experience module missing');
+assert(app.includes('/src/v4/recommendation.js?v=410'),'v4.1 recommendation module missing');
+assert(data.includes("RELEASE_VERSION='4.1.0'"),'v4.1.0 data release marker missing');
 assert(data.includes("NEXT_STORAGE_KEY='footmate:v4:session'"),'v4 storage namespace missing');
 assert(data.includes('sampleSchedule'),'relative sample schedule helper missing');
 assert(data.includes('샘플 일정'),'sample schedule disclosure missing');
+assert(data.includes('positionSlots'),'v4.1 position availability data missing');
+assert(data.includes("region:'서울 · 강남'"),'v4.1 cross-region recommendation data missing');
 assert(experience.includes("SESSION_KEY='footmate:v4:session'"),'v4 experience session boundary missing');
 assert(experience.includes('state.checkedInMatchId!==currentMatchId'),'match-specific check-in guard missing');
+assert(recommendation.includes("version:'4.1.0'"),'recommendation engine version missing');
+assert(recommendation.includes('recommendationFor'),'recommendation scoring contract missing');
+assert(recommendation.includes('data-recommendation-score'),'recommendation QA evidence attribute missing');
 assert(appRuntime.includes("location.href='/app'"),'guided mode must return to /app');
 assert(appRuntime.includes("setAttribute('tabindex','-1')"),'active-screen focus contract missing');
-assert(caseStudy.includes('FootMate v4.0.1'),'v4.0.1 Case Study shell missing');
-assert(caseStudy.includes('/src/v4/case-study.js'),'v4 Case Study runtime missing');
-assert(caseStudy.includes('/src/v4/case-study-editorial.css'),'Case Study editorial stylesheet missing');
+assert(caseStudy.includes('FootMate v4.1.0'),'v4.1.0 Case Study shell missing');
+assert(caseStudy.includes('/src/v4/case-study.js?v=410'),'v4 Case Study runtime missing');
+assert(caseStudy.includes('/src/v4/case-study-recommendation.js?v=410'),'v4.1 Case Study recommendation evidence missing');
+assert(caseStudy.includes('/src/v4/case-study-editorial.css?v=410'),'Case Study editorial stylesheet missing');
+assert(caseStudyRecommendation.includes('선호 조건이 실제 추천에 반영'),'Case Study recommendation narrative missing');
 assert(!caseStudy.includes('case-study-release.js'),'Case Study must not depend on release overlay copy mutation');
 assert(!fs.existsSync('src/v4/case-study-release.js'),'obsolete Case Study release overlay must be absent');
 
@@ -40,6 +51,7 @@ for(const token of forbidden){
   assert(!appRuntime.includes(token),`legacy/runtime token remains in app source: ${token}`);
   assert(!experience.includes(token),`legacy/runtime token remains in experience source: ${token}`);
   assert(!data.includes(token),`legacy/runtime token remains in data source: ${token}`);
+  assert(!recommendation.includes(token),`legacy/runtime token remains in recommendation source: ${token}`);
 }
 
 assert(story.includes('iframe src="/app?embed=1"'),'Case Study app iframe must use /app');
@@ -56,6 +68,8 @@ assert(editorial.includes('.fm-next-cs-outcomes'),'Outcome structured grid styli
 assert(editorial.includes('.fm-next-cs-final'),'final companion panel styling missing');
 assert(productionSmoke.includes("'/src/v4/experience.js'"),'Production smoke must validate consolidated experience runtime');
 assert(!productionSmoke.includes("'/src/v4/release-hardening.js'"),'Production smoke must not reference removed release hardening file');
+assert(roadmap.includes('## v4.1 — Recommendation Core'),'v4.1 roadmap missing');
+assert(roadmap.includes('## v5.0 — Connected Matchday Platform'),'v5.0 roadmap missing');
 assert(!readme.includes('Not yet verified'),'README release verification is stale');
 
-console.log('FootMate v4.0.1 runtime + repository boundary PASS');
+console.log('FootMate v4.1 runtime + recommendation + repository boundary PASS');
