@@ -6,12 +6,12 @@ async function boot(page,width=375,height=812){
   page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))failures.push(`console.error: ${message.text()}`)});
   await page.setViewportSize({width,height});
   await page.goto('/demo',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV25&&!!window.FootMateV24);
+  await page.waitForFunction(()=>window.__footmateV2===true&&!!window.FootMateV27&&!!window.FootMateV26&&!!window.FootMateV25&&!!window.FootMateV24);
   return failures;
 }
 function expectNoFailures(failures){expect(failures,failures.join('\n')).toEqual([])}
 
-test('v2.5 decision/recovery runtime remains compatible under v2.6',async({page})=>{
+test('v2.5 decision/recovery runtime remains compatible under v2.7',async({page})=>{
   const failures=await boot(page);
   const snapshot=await page.evaluate(()=>({
     version:window.FootMateV2Runtime?.version,
@@ -23,18 +23,19 @@ test('v2.5 decision/recovery runtime remains compatible under v2.6',async({page}
     styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(link=>new URL(link.href).pathname),
     decision:window.FootMateV2Runtime?.decisionEngine?.evaluate('s-home',{record:false})
   }));
-  expect(snapshot.version).toBe('2.6.0');
-  expect(snapshot.architecture).toBe('v2.6-architecture-hardening');
-  expect(snapshot.dataset).toBe('2.6');
+  expect(snapshot.version).toBe('2.7.0');
+  expect(snapshot.architecture).toBe('v2.7-visual-experience');
+  expect(snapshot.dataset).toBe('2.7');
   expect(snapshot.screens).toBe(39);
-  expect(snapshot.release).toMatchObject({version:'2.5.0',currentReleaseVersion:'2.6.0',previousReleaseVersion:'2.4.0',schemaVersion:'2.1.0',decisionEngine:'v2.5-decision-recovery-engine',decisionRecoveryExperience:'v2.5-decision-recovery-experience',traceReplay:true,compatibility:true});
-  expect(snapshot.v24).toMatchObject({version:'2.4.0',currentReleaseVersion:'2.6.0',compatibility:true});
+  expect(snapshot.release).toMatchObject({version:'2.5.0',currentReleaseVersion:'2.7.0',previousReleaseVersion:'2.4.0',schemaVersion:'2.1.0',decisionEngine:'v2.5-decision-recovery-engine',decisionRecoveryExperience:'v2.5-decision-recovery-experience',traceReplay:true,compatibility:true});
+  expect(snapshot.v24).toMatchObject({version:'2.4.0',currentReleaseVersion:'2.7.0',compatibility:true});
   expect(snapshot.styles).toContain('/src/v2/styles/decision-recovery.css');
+  expect(snapshot.styles).toContain('/src/v2/styles/visual-experience.css');
   expect(snapshot.decision.traceId).toMatch(/^fm25-/);
   expectNoFailures(failures);
 });
 
-test('v2.5 connects next-action, comparison, preflight and payment guard IX',async({page})=>{
+test('v2.5 connects next-action, comparison, preflight and payment guard IX under v2.7',async({page})=>{
   const failures=await boot(page);
   await page.evaluate(()=>window.goScreen('s-home'));
   await expect(page.locator('#s-home [data-fm25-slot="next-action"]')).toBeVisible();
@@ -56,7 +57,7 @@ test('v2.5 connects next-action, comparison, preflight and payment guard IX',asy
   expectNoFailures(failures);
 });
 
-test('v2.5 blocks low-credit payment and offers inline recovery',async({page})=>{
+test('v2.5 blocks low-credit payment and offers inline recovery under v2.7',async({page})=>{
   const failures=await boot(page);
   await page.evaluate(()=>{
     window.FootMateV2Runtime.productStore.set({creditBalance:3000},'e2e-low-credit');
@@ -73,7 +74,7 @@ test('v2.5 blocks low-credit payment and offers inline recovery',async({page})=>
   expectNoFailures(failures);
 });
 
-test('v2.5 converts a full match into waitlist recovery instead of payment',async({page})=>{
+test('v2.5 converts a full match into waitlist recovery instead of payment under v2.7',async({page})=>{
   const failures=await boot(page);
   await page.evaluate(()=>{
     const ops=window.FootMateProductOps;
@@ -90,7 +91,7 @@ test('v2.5 converts a full match into waitlist recovery instead of payment',asyn
   expectNoFailures(failures);
 });
 
-test('v2.5 decision surfaces remain usable at 320px',async({page})=>{
+test('v2.5 decision surfaces remain usable at 320px under v2.7',async({page})=>{
   const failures=await boot(page,320,740);
   await page.evaluate(()=>window.goScreen('s-results'));
   const metrics=await page.locator('#s-results').evaluate(screen=>({overflowX:screen.scrollWidth-screen.clientWidth,actionHeights:[...screen.querySelectorAll('.fm25-action')].map(button=>button.getBoundingClientRect().height)}));
