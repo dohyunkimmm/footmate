@@ -32,7 +32,7 @@
     if(!response.ok)throw new Error('index source '+response.status);
     let html=await response.text();
     const styles='<link rel="stylesheet" href="/case-study-experience.css?v=20260918-1"><link rel="stylesheet" href="/src/next/case-study.css?v=20260919-1">';
-    const patch='<script src="/index-patches.js?v=20260917-1"><\\/script><script src="/index-experience.js?v=20260919-1"><\\/script><script src="/src/next/case-study.js?v=20260919-1"><\\/script>';
+    const patch='<script src="/index-patches.js?v=20260917-1"><\/script><script src="/index-experience.js?v=20260919-1"><\/script><script src="/src/next/case-study.js?v=20260919-1"><\/script>';
     html=html.includes('</head>')?html.replace('</head>',styles+'</head>'):styles+html;
     html=html.includes('</body>')?html.replace('</body>',patch+'</body>'):html+patch;
     document.open();
