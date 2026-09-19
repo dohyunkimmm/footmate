@@ -4,6 +4,12 @@ const RELEASE_VERSION='2.8.0';
 const PREVIOUS_RELEASE_VERSION='2.7.0';
 const SCHEMA_VERSION='2.1.0';
 
+function syncScrollableRegions(){
+  document.querySelectorAll('.screen .pcnt').forEach(region=>{
+    if(!region.hasAttribute('tabindex'))region.tabIndex=0;
+  });
+}
+
 function promote(){
   if(window.FootMateV28)return;
   const runtime=window.FootMateV2Runtime;
@@ -12,6 +18,7 @@ function promote(){
   const visualIdentity=installVisualIdentityExperience();
   document.documentElement.dataset.footmateRelease='2.8';
   document.documentElement.dataset.footmateVisualIdentity='matchday';
+  syncScrollableRegions();
 
   for(const key of ['FootMateV22','FootMateV23','FootMateV24','FootMateV25','FootMateV26']){
     if(window[key])window[key].currentReleaseVersion=RELEASE_VERSION;
@@ -33,6 +40,7 @@ function promote(){
   runtime.controllers.visualIdentity=visualIdentity;
   runtime.refresh=function(){
     previousRefresh?.();
+    syncScrollableRegions();
     visualIdentity.refresh();
   };
   runtime.destroy=function(){
