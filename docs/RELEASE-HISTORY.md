@@ -63,12 +63,13 @@ Exact verified Vercel Production:
 - state: **READY**
 - exact wait + strict HTTP + Chromium: **PASS**
 
-Render exact product backup:
+Render product release-point verification:
 - SHA: `d8014978cf6a1a5621f09ff098f48ac4821b615b`
 - deployment: `dep-damungojo6nc7392taug`
-- state: **live**
+- state: **verified live at product release**
+- 이후 docs-only moving-main 배포가 current backup을 승계하므로 release-point deployment의 현재 상태를 `live`로 고정하지 않음
 
-Render backup is an independent deployment path and is not used as a substitute for Vercel exact Production verification.
+Render backup is an independent deployment path and is not used as a substitute for Vercel exact Production verification. Render current-main의 exact SHA/deployment/live 상태는 moving main을 재귀적으로 repo 문서에 고정하지 않고 deployment source와 Notion current-state에서 유지합니다.
 
 ### v2.8 ownership
 
@@ -210,9 +211,10 @@ src/v2/
 
 ## Documentation policy
 
-- Current state: `README.md`
+- Current product/release state: `README.md`
 - Release history / compatibility boundary: 이 문서
 - moving `main`은 QA/docs-only merge로 전진할 수 있으므로 product/runtime baseline과 exact verified Production SHA를 별도로 유지
+- Render current-main의 exact SHA/deployment/live 상태는 deployment source와 Notion current-state에서 유지해 repo 문서 업데이트 자체가 다시 current main을 이동시키는 재귀를 피함
 - exact Production이 완료되지 않은 경우 `Not yet verified`로 기록
 - temporary quota/rate-limit/canceled/pending 상태는 durable documentation에 누적하지 않음
 - compatibility smoke와 exact Production verification을 구분

@@ -63,12 +63,12 @@ v2.8은 검증된 v2.7 Visual Experience를 회귀 기준으로 유지하면서 
   - SHA `d8014978cf6a1a5621f09ff098f48ac4821b615b`
   - deployment `dpl_GtHGNwyRuDYWVkuswgVHryTkHtVp`
   - state **READY**
-- Render exact product backup:
+- Render product release-point verification:
   - SHA `d8014978cf6a1a5621f09ff098f48ac4821b615b`
   - deployment `dep-damungojo6nc7392taug`
-  - state **live**
+  - state **verified live at product release**; 이후 docs-only moving-main 배포가 current backup을 승계
 
-Vercel exact Production verification과 Render backup은 독립적인 배포 경로로 기록합니다.
+Vercel exact Production verification과 Render backup은 독립적인 배포 경로로 기록합니다. Render current-main의 exact SHA/deployment/live 상태는 moving main을 재귀적으로 문서에 고정하지 않고 deployment source와 Notion current-state에서 유지합니다.
 
 ## ✨ Key Features
 
@@ -150,7 +150,7 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 | Production HTTP smoke | **PASS** · run #221 |
 | strict Production Chromium render smoke | **PASS** · run #221 |
 | exact verified Vercel Production | **d8014978 · dpl_GtHGNwyRuDYWVkuswgVHryTkHtVp · READY** |
-| Render exact product backup | **d8014978 · dep-damungojo6nc7392taug · live** |
+| Render product release-point verification | **d8014978 · dep-damungojo6nc7392taug · verified live at product release** |
 | v2.8 exact Production release gate | **CLOSED** |
 
 ## 📚 Documentation
