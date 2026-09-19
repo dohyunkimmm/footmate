@@ -60,11 +60,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
       - uses: actions/setup-node@v5
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Determine production impact
+        id: impact
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA" | tee /tmp/footmate-changed-files.txt
+          runtime=false
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            case "$file" in
+              README.md|docs/*|.github/*)
+                ;;
+              *)
+                runtime=true
+                ;;
+            esac
+          done < /tmp/footmate-changed-files.txt
+          echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
+          echo "Production-impacting change: $runtime"
       - name: Wait for exact Vercel deployment
+        if: steps.impact.outputs.runtime == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -80,6 +102,13 @@ jobs:
           echo "Timed out waiting for exact Vercel deployment ${GITHUB_SHA}."
           exit 1
       - name: Run v4 exact Production HTTP smoke
+        if: steps.impact.outputs.runtime == 'true'
+        env:
+          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
+          FOOTMATE_STRICT_PRODUCTION: 'true'
+        run: node tests/production-v4-smoke.cjs
+      - name: Run v4 compatibility Production HTTP smoke
+        if: steps.impact.outputs.runtime != 'true'
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
           FOOTMATE_STRICT_PRODUCTION: 'true'
@@ -89,6 +118,14 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v4 exact Production Chromium smoke
+        if: steps.impact.outputs.runtime == 'true'
+        env:
+          BASE_URL: https://footmate-black.vercel.app
+          PRODUCTION_SMOKE: '1'
+          FOOTMATE_STRICT_PRODUCTION: 'true'
+        run: npx playwright test tests/e2e/v4-production.spec.cjs
+      - name: Run v4 compatibility Production Chromium smoke
+        if: steps.impact.outputs.runtime != 'true'
         env:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
