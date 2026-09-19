@@ -1,0 +1,123 @@
+const {test,expect}=require('@playwright/test');
+const AxeBuilder=require('@axe-core/playwright').default;
+
+async function boot(page,path='/next',viewport={width:390,height:844}){
+  const failures=[];
+  page.on('pageerror',error=>failures.push(`pageerror: ${error.message}`));
+  page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))failures.push(`console.error: ${message.text()}`)});
+  await page.setViewportSize(viewport);
+  await page.goto(path,{waitUntil:'domcontentloaded'});
+  await page.waitForSelector('#footmate-next [data-screen]');
+  return failures;
+}
+function expectNoFailures(failures){expect(failures,failures.join('\n')).toEqual([])}
+
+async function finishPreferences(page){
+  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  await expect(page.locator('[data-screen="setup"]')).toBeVisible();
+  await page.getByRole('button',{name:'다음'}).click();
+  await page.getByRole('button',{name:'다음'}).click();
+  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+}
+
+test('next-major reveals value and recommendations before asking for an account',async({page})=>{
+  const failures=await boot(page);
+  await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
+  await expect(page.getByText('둘러보는 데 계정이 필요하지 않아요.')).toBeVisible();
+  await finishPreferences(page);
+  await expect(page.getByText('지금 잘 맞는 경기')).toBeVisible();
+  await expect(page.getByText('카카오로 계속하기')).toHaveCount(0);
+  await expect(page.locator('.fm-next-match-card')).toHaveCount(2);
+  expectNoFailures(failures);
+});
+
+test('join intent gates sign-in, then continues through checkout without losing the chosen match',async({page})=>{
+  const failures=await boot(page);
+  await finishPreferences(page);
+  await page.locator('.fm-next-match-card').first().click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  const title=await page.locator('[data-screen="detail"] h1').innerText();
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  await expect(page.getByRole('button',{name:'카카오로 계속하기'})).toBeVisible();
+  await page.getByRole('button',{name:'카카오로 계속하기'}).click();
+  await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
+  await expect(page.locator('.fm-next-checkout-summary')).toContainText(title);
+  await page.getByRole('button',{name:/결제하고 참가 확정/}).click();
+  await expect(page.locator('[data-screen="success"]')).toBeVisible();
+  await expect(page.locator('.fm-next-ticket')).toContainText(title);
+  await page.getByRole('button',{name:'내 경기 보기'}).click();
+  await expect(page.locator('[data-screen="schedule"]')).toBeVisible();
+  await expect(page.locator('.fm-next-upcoming')).toContainText(title);
+  expectNoFailures(failures);
+});
+
+test('real app mode hides reviewer language and keeps four user destinations',async({page})=>{
+  const failures=await boot(page);
+  await finishPreferences(page);
+  await expect(page.locator('.fm-next-nav button')).toHaveCount(4);
+  await expect(page.getByText('Guided Case Study')).toHaveCount(0);
+  await expect(page.getByText('EVIDENCE MODE')).toHaveCount(0);
+  const text=await page.locator('#footmate-next').innerText();
+  expect(text).not.toContain('AI Agent Workflow');
+  expect(text).not.toContain('프로토타입');
+  expect(text).not.toContain('시뮬레이션');
+  expectNoFailures(failures);
+});
+
+test('guided and evidence modes keep reviewer context outside the real app surface',async({page})=>{
+  let failures=await boot(page,'/next?mode=guided',{width:1280,height:900});
+  await expect(page.getByText('Guided Case Study')).toBeVisible();
+  await expect(page.locator('.fm-next-guide')).toBeVisible();
+  await expect(page.locator('.fm-next-app')).toBeVisible();
+  expectNoFailures(failures);
+
+  failures=[];
+  await page.goto('/next?mode=evidence',{waitUntil:'domcontentloaded'});
+  await page.waitForSelector('[data-screen="home"]');
+  await expect(page.getByText('EVIDENCE MODE')).toBeVisible();
+  await page.getByRole('button',{name:'경기 당일'}).click();
+  await expect(page.getByText('경기까지 1시간 20분')).toBeVisible();
+  await page.getByRole('button',{name:'경기 후'}).click();
+  await expect(page.getByText('오늘 경기, 어땠나요?')).toBeVisible();
+});
+
+test('next-major stays horizontally safe at the supported mobile widths',async({page})=>{
+  for(const width of [320,375,390,430]){
+    const failures=await boot(page,'/next',{width,height:780});
+    const introOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    expect(introOverflow).toBeLessThanOrEqual(1);
+    await finishPreferences(page);
+    const metrics=await page.evaluate(()=>({
+      doc:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+      app:document.querySelector('.fm-next-app').scrollWidth-document.querySelector('.fm-next-app').clientWidth,
+      targets:[...document.querySelectorAll('.fm-next-nav button')].map(el=>el.getBoundingClientRect().height)
+    }));
+    expect(metrics.doc).toBeLessThanOrEqual(1);
+    expect(metrics.app).toBeLessThanOrEqual(1);
+    metrics.targets.forEach(height=>expect(height).toBeGreaterThanOrEqual(44));
+    expectNoFailures(failures);
+    await page.evaluate(()=>localStorage.clear());
+  }
+});
+
+test('next-major core recommendation screen has no serious or critical axe findings',async({page})=>{
+  const failures=await boot(page);
+  await finishPreferences(page);
+  const accessibility=await new AxeBuilder({page}).include('.fm-next-app').withTags(['wcag2a','wcag2aa']).analyze();
+  const serious=accessibility.violations.filter(item=>['serious','critical'].includes(item.impact));
+  expect(serious,JSON.stringify(serious,null,2)).toEqual([]);
+  expectNoFailures(failures);
+});
+
+test('case study cover leads with the user value and embeds the next app without changing the 16-section baseline',async({page})=>{
+  const failures=await boot(page,'/',{width:1440,height:900});
+  await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelector('.fm-next-cover'));
+  await expect(page.locator('.slide')).toHaveCount(16);
+  await expect(page.locator('.fm-next-cover')).toContainText('내 수준에 맞는 경기부터');
+  await expect(page.locator('.fm-next-cover')).toContainText('Find');
+  await expect(page.locator('.fm-next-cover')).toContainText('Matchday continuity');
+  await expect(page.locator('.fm-next-cover-frame iframe')).toHaveAttribute('src','/next?embed=1');
+  expectNoFailures(failures);
+});
