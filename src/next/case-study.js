@@ -7,7 +7,7 @@
     firstSlide.dataset.fmNextCover='true';
     firstSlide.classList.add('fm-next-cover-slide');
     firstSlide.innerHTML=`
-      <div class="fm-next-cover">
+      <div class="fm-next-cover cover">
         <div class="fm-next-cover-copy">
           <div class="fm-next-cover-kicker">FootMate · Matchday Companion</div>
           <h1>내 수준에 맞는 경기부터,<br><span>경기 당일까지.</span></h1>
