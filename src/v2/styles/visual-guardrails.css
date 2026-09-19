@@ -1,0 +1,18 @@
+/* FootMate v2.8 · Visual Guardrails
+   Layout/accessibility corrections for decorative identity layers. */
+html[data-footmate-release="2.8"] [data-fm28-surface="true"]::after{
+  inset:auto 0 -28px 52%!important;
+  height:84px!important;
+}
+html[data-footmate-release="2.8"] #s-home .fm24-home-decision::before{
+  width:96px!important;
+  height:96px!important;
+  right:12px!important;
+}
+html[data-footmate-release="2.8"] :is(.btn-primary,.fm24-action-primary,.fm25-action-primary){
+  position:relative;
+  overflow:hidden;
+}
+html[data-footmate-release="2.8"] :is(.fm25-data-note,.fm25-trace-label){
+  color:var(--fm28-muted)!important;
+}
