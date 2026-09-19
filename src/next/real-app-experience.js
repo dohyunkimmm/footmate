@@ -3,6 +3,8 @@
 (function(){
   const root=document.getElementById('footmate-next');
   if(!root)return;
+  const requestedMode=new URLSearchParams(location.search).get('mode');
+  const isRealMode=!['guided','evidence'].includes(requestedMode);
 
   const backIcon='<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
   const eyeIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-5.2 9.2-5.2S21.2 12 21.2 12 17.8 17.2 12 17.2 2.8 12 2.8 12Z"/><circle cx="12" cy="12" r="2.4"/></svg>';
@@ -134,6 +136,12 @@
     });
   }
 
+  function sanitizeRealMode(){
+    if(!isRealMode)return;
+    root.querySelector('.fm-next-guide')?.remove();
+    root.querySelector('.fm-next-mode-pill')?.remove();
+  }
+
   function enhanceAuth(){
     const screen=root.querySelector('[data-screen="auth"]');
     if(!screen||screen.dataset.fmAuthExperience==='3')return;
@@ -146,7 +154,11 @@
     wire(screen);
   }
 
-  const observer=new MutationObserver(enhanceAuth);
+  const observer=new MutationObserver(()=>{
+    sanitizeRealMode();
+    enhanceAuth();
+  });
   observer.observe(root,{childList:true,subtree:true});
+  sanitizeRealMode();
   enhanceAuth();
 })();
