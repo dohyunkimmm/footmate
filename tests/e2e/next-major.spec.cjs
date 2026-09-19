@@ -25,26 +25,38 @@ async function finishPreferences(page){
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 
-test('next-major reveals value and recommendations before asking for an account',async({page})=>{
-  const failures=await boot(page);
-  await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
-  await expect(page.getByText('둘러보는 데 계정이 필요하지 않아요.')).toBeVisible();
-  await finishPreferences(page);
-  await expect(page.getByText('지금 잘 맞는 경기')).toBeVisible();
-  await expect(page.getByText('카카오로 계속하기')).toHaveCount(0);
-  await expect(page.locator('.fm-next-match-card')).toHaveCount(2);
-  expectNoFailures(failures);
-});
-
-test('join intent gates sign-in, then continues through checkout without losing the chosen match',async({page})=>{
-  const failures=await boot(page);
+async function openAuth(page){
   await finishPreferences(page);
   await page.locator('.fm-next-match-card').first().click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
   const title=await page.locator('[data-screen="detail"] h1').innerText();
   await page.getByRole('button',{name:'참가하기'}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  await expect(page.getByRole('heading',{name:/로그인 후 더 많은 경기를/})).toBeVisible();
+  return title;
+}
+
+test('next-major reveals value and recommendations before asking for an account',async({page})=>{
+  const failures=await boot(page);
+  await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
+  await expect(page.getByText('둘러보는 데 계정이 필요하지 않아요.')).toBeVisible();
+  await finishPreferences(page);
+  await expect(page.getByText('지금 잘 맞는 경기')).toBeVisible();
+  await expect(page.getByRole('button',{name:'카카오로 계속하기'})).toHaveCount(0);
+  await expect(page.locator('.fm-next-match-card')).toHaveCount(2);
+  expectNoFailures(failures);
+});
+
+test('join intent opens account login plus SSO and continues through checkout without losing the chosen match',async({page})=>{
+  const failures=await boot(page);
+  const title=await openAuth(page);
+  await expect(page.getByRole('textbox',{name:'아이디 또는 이메일'})).toBeVisible();
+  await expect(page.getByLabel('비밀번호',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'로그인'})).toBeVisible();
   await expect(page.getByRole('button',{name:'카카오로 계속하기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'네이버로 계속하기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Apple로 계속하기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await page.getByRole('button',{name:'카카오로 계속하기'}).click();
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
   await expect(page.locator('.fm-next-checkout-summary')).toContainText(title);
@@ -57,12 +69,29 @@ test('join intent gates sign-in, then continues through checkout without losing 
   expectNoFailures(failures);
 });
 
+test('sign-up panel mirrors the account form pattern and requires core consent',async({page})=>{
+  const failures=await boot(page);
+  await openAuth(page);
+  await page.getByRole('button',{name:'회원가입'}).click();
+  await expect(page.getByRole('heading',{name:'회원가입'})).toBeVisible();
+  await expect(page.getByRole('textbox',{name:'회원가입 아이디'})).toBeVisible();
+  await expect(page.getByLabel('회원가입 비밀번호')).toBeVisible();
+  await expect(page.getByRole('textbox',{name:'회원가입 이메일'})).toBeVisible();
+  const submit=page.getByRole('button',{name:'가입하고 계속'});
+  await expect(submit).toBeDisabled();
+  await page.getByText('모두 동의합니다.').click();
+  await expect(submit).toBeEnabled();
+  await page.getByRole('button',{name:/이미 계정이 있어요/}).click();
+  await expect(page.getByRole('button',{name:'로그인'})).toBeVisible();
+  expectNoFailures(failures);
+});
+
 test('real app mode hides reviewer language and keeps four user destinations',async({page})=>{
   const failures=await boot(page);
   await finishPreferences(page);
   await expect(page.locator('.fm-next-nav button')).toHaveCount(4);
   await expect(page.getByText('Guided Case Study')).toHaveCount(0);
-  await expect(page.getByText('EVIDENCE MODE')).toHaveCount(0);
+  await expect(page.getByText('EVIDENCE MODE',{exact:true})).toHaveCount(0);
   const text=await page.locator('#footmate-next').innerText();
   expect(text).not.toContain('AI Agent Workflow');
   expect(text).not.toContain('프로토타입');
@@ -77,7 +106,7 @@ test('guided and evidence modes keep reviewer context outside the real app surfa
   await expect(page.locator('.fm-next-app')).toBeVisible();
   await page.goto('/next?mode=evidence',{waitUntil:'domcontentloaded'});
   await page.waitForSelector('[data-screen="home"]');
-  await expect(page.getByText('EVIDENCE MODE')).toBeVisible();
+  await expect(page.getByText('EVIDENCE MODE',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'경기 당일'}).click();
   await expect(page.getByText('경기까지 1시간 20분')).toBeVisible();
   await page.getByRole('button',{name:'경기 후'}).click();
@@ -104,11 +133,17 @@ test('next-major stays horizontally safe at the supported mobile widths',async({
   }
 });
 
-test('next-major core recommendation screen has no serious or critical axe findings',async({page})=>{
+test('next-major auth and recommendation surfaces have no serious or critical axe findings',async({page})=>{
   const failures=await boot(page);
   await finishPreferences(page);
-  const accessibility=await new AxeBuilder({page}).include('.fm-next-app').withTags(['wcag2a','wcag2aa']).analyze();
-  const serious=accessibility.violations.filter(item=>['serious','critical'].includes(item.impact));
+  let accessibility=await new AxeBuilder({page}).include('.fm-next-app').withTags(['wcag2a','wcag2aa']).analyze();
+  let serious=accessibility.violations.filter(item=>['serious','critical'].includes(item.impact));
+  expect(serious,JSON.stringify(serious,null,2)).toEqual([]);
+  await page.locator('.fm-next-match-card').first().click();
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  accessibility=await new AxeBuilder({page}).include('.fm-next-app').withTags(['wcag2a','wcag2aa']).analyze();
+  serious=accessibility.violations.filter(item=>['serious','critical'].includes(item.impact));
   expect(serious,JSON.stringify(serious,null,2)).toEqual([]);
   expectNoFailures(failures);
 });
