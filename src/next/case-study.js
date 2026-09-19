@@ -9,7 +9,7 @@
     ['Core Journey','Find → Decide → Join → Play → Return'],
     ['Decision 01','Guest-first onboarding'],
     ['Decision 02','Explainable match fit'],
-    ['Decision 03','경기 상세과 단일 CTA'],
+    ['Decision 03','경기 상세와 단일 CTA'],
     ['Sign in','참가 의도 시점의 로그인'],
     ['Join · Payment','선택 맥락을 잃지 않는 전환'],
     ['Matchday','참가 이후가 홈의 주인공'],
@@ -42,7 +42,7 @@
     </div>`,
 
     shell('01 · PROBLEM','경기를 찾는 것보다, “나한테 맞는 경기인가”를 판단하는 일이 더 어려웠습니다.','시간·거리·레벨·포지션·남은 자리·가격을 각각 확인해야 했고, 참가 이후의 일정과 경기 당일 경험은 탐색 화면과 끊겨 있었습니다.',
-      `<div class="fm-next-cs-grid three">${card('정보가 흩어짐','경기 하나를 고르기 위해 여러 조건을 머릿속에서 다시 조합해야 했습니다.','DECISION COST')}${card('가입이 너무 이름','가치를 확인하기 전에 계정 생성부터 요구하면 사용자는 아직 이유를 모릅니다.','EARLY FRICTION')}${card('참가 후 단절','결제 이후 일정·체크인·경기 후 평가가 별도 기능처럼 느껴집니다.','CONTINUITY')}</div>`,
+      `<div class="fm-next-cs-grid three">${card('정보가 흩어짐','경기 하나를 고르기 위해 여러 조건을 머릿속에서 다시 조합해야 했습니다.','DECISION COST')}${card('가입이 너무 이른 시점','가치를 확인하기 전에 계정 생성부터 요구하면 사용자는 아직 이유를 모릅니다.','EARLY FRICTION')}${card('참가 후 단절','결제 이후 일정·체크인·경기 후 평가가 별도 기능처럼 느껴집니다.','CONTINUITY')}</div>`,
       `<div class="fm-next-cs-quote"><span>핵심 질문</span><b>“오늘 내가 안심하고 뛸 경기를 가장 빨리 결정하려면?”</b></div>`),
 
     shell('02 · PERSONA / JTBD','경기력이 아니라 “결정할 수 있는 확신”이 필요한 사용자.','핵심 Persona는 퇴근 후 주 1~2회 풋살을 즐기며, 이동 시간과 경기 강도를 빠르게 비교하고 실패 없는 참가를 원하는 직장인 플레이어로 설정했습니다.',
@@ -65,71 +65,71 @@
       `<div class="fm-next-cs-reco"><div class="fm-next-cs-reco-card"><span>오늘 20:00 · 수원 인계</span><h3>내 수준과 잘 맞아요</h3><div><b>ELO 비슷함</b><b>15분 거리</b><b>MF 1자리</b></div><strong>12,000원</strong></div><div class="fm-next-cs-stack"><p><b>1.</b> 경기 시각·장소</p><p><b>2.</b> 적합 이유 2~3개</p><p><b>3.</b> 남은 포지션·가격</p><p><b>4.</b> 상세 근거는 필요할 때</p></div></div>`,
       `<div class="fm-next-cs-note">기존 ELO/매칭 로직은 설명 근거로 남기되, 사용자의 첫 판단 화면을 계산 결과로 채우지 않습니다.</div>`),
 
-    shell('07 · DESIGN DECISION 03','경기 상세은 정보 페이지가 아니라 “참가 결정을 끝내는 화면”으로 바꿨습니다.','사용자가 가장 먼저 확인하는 순서에 맞춰 시간·장소 → 적합도 → 자리 → 참가자 → 시설/규칙 → 취소 정책으로 정리하고 CTA를 하나로 고정했습니다.',
+    shell('07 · DESIGN DECISION 03','경기 상세는 정보 페이지가 아니라 “참가 결정을 끝내는 화면”으로 바꿨습니다.','사용자가 가장 먼저 확인하는 순서에 맞춰 시간·장소 → 적합도 → 자리 → 참가자 → 시설/규칙 → 취소 정책으로 정리하고 CTA를 하나로 고정했습니다.',
       `<div class="fm-next-cs-detail-order"><span>시간 · 장소</span><i>↓</i><span>내게 맞는 이유</span><i>↓</i><span>자리 · 포지션</span><i>↓</i><span>참가자 · 시설 · 규칙</span><i>↓</i><span>취소·환불</span></div>`,
       `<div class="fm-next-cs-sticky"><small>STICKY PRIMARY CTA</small><b>참가하기 · 12,000원</b><p>여러 행동을 경쟁시키지 않고 다음 행동 하나를 명확하게 유지합니다.</p></div>`),
 
-    shell('08 · SIGN IN','Sign in은 앱의 시작이 아니라 “참가를 이어가기 위한 마지막 준비”로 이동했습니다.','선택한 경기를 잃지 않은 상태에서 로그인하고 바로 결제로 이어집니다. Real App에서는 실제 서비스처럼 보이되, Case Study에서는 외부 인증이 연결되지 않은 검증용 상태임을 명확히 구분합니다.',
-      `<div class="fm-next-cs-auth-flow"><div><small>GUEST</small><b>추천·상세 확인</b></div><i>→</i><div><small>INTENT</small><b>참가하기</b></div><i>→</i><div class="is-focus"><small>SIGN IN</small><b>카카오 / Apple / Google / 이메일</b></div><i>→</i><div><small>CONTINUE</small><b>결제</b></div></div>`,
-      `<div class="fm-next-cs-scope"><span>현재 범위</span><b>로그인 UX + 세션 상태 전환</b><p>실제 Kakao OAuth, Apple/Google 인증, 회원 DB, 서버 세션은 미연동입니다.</p></div>`),
+    shell('08 · SIGN IN','Sign in은 앱의 시작이 아니라 “참가를 이어가기 위한 마지막 준비”로 이동했습니다.','아이디·비밀번호 로그인과 SSO를 함께 제공하되, 선택한 경기를 잃지 않은 상태에서 바로 결제로 이어집니다. Real App에서는 실제 서비스처럼 보이되, Case Study에서는 외부 인증이 연결되지 않은 검증용 상태임을 명확히 구분합니다.',
+      `<div class="fm-next-cs-auth-flow"><div><small>GUEST</small><b>추천·상세 확인</b></div><i>→</i><div><small>INTENT</small><b>참가하기</b></div><i>→</i><div class="is-focus"><small>SIGN IN</small><b>ID·PW / Kakao / Naver / Apple / Google</b></div><i>→</i><div><small>CONTINUE</small><b>결제</b></div></div>`,
+      `<div class="fm-next-cs-scope"><span>현재 범위</span><b>로그인 UX + 세션 상태 전환</b><p>실제 Kakao/Naver/Apple/Google OAuth, 회원 DB, 서버 세션은 미연동입니다.</p></div>`),
 
-    shell('09 · JOIN / PAYMENT','로그인 때문에 사용자의 선택 맥락이 리셋되지 않도록 했습니다.','경기 상세에서 선택한 match ID와 설정값을 유지한 채 Sign in → Checkout → 참가 완료 → 내 경기로 이어집니다.',
-      `<div class="fm-next-cs-state-chain"><span>selected match</span><i>→</i><span>auth gate</span><i>→</i><span>checkout</span><i>→</i><span>joined match</span><i>→</i><span>upcoming</span></div><div class="fm-next-cs-grid three">${card('Selection preserved','로그인 전 선택한 경기가 결제 요약에 그대로 남습니다.')}${card('Single confirmation','결제 완료가 참가 상태를 한 번만 확정합니다.')}${card('Immediate next step','완료 화면에서 바로 내 경기로 이동합니다.')}</div>`,
-      `<div class="fm-next-cs-scope"><span>현재 범위</span><b>결제 UX 시뮬레이션</b><p>실제 PG, 카드 승인, 환불 API는 연결되어 있지 않습니다.</p></div>`),
+    shell('09 · JOIN / PAYMENT','로그인 때문에 사용자의 선택 맥락이 리셋되지 않도록 했습니다.','경기 상세에서 선택한 match ID, 추천 근거, 참가비를 유지한 채 로그인 → 결제 → 참가 완료로 이어집니다.',
+      `<div class="fm-next-cs-state-line"><span>selectedMatchId</span><i>→</i><span>signedIn</span><i>→</i><span>checkout</span><i>→</i><span>joinedMatchId</span><i>→</i><span>upcoming</span></div><div class="fm-next-cs-grid three">${card('Selection continuity','인증 전후에도 선택 경기가 유지됩니다.')}${card('Single charge intent','결제 CTA는 한 번의 참가 의도로 처리합니다.')}${card('Confirmation','완료 후 “내 경기”가 다음 목적지가 됩니다.')}</div>`,
+      `<div class="fm-next-cs-note">현재 결제는 샘플 상태 전환이며 실제 PG·잔액·영수증 API는 연결하지 않았습니다.</div>`),
 
-    shell('10 · MATCHDAY','참가 후에는 홈의 주인공이 추천 경기가 아니라 “지금 내 경기”가 됩니다.','같은 홈이 사용자의 경기 상태에 따라 추천 → 다가오는 경기 → 경기 당일 → 경기 후로 바뀌도록 상태 중심으로 설계했습니다.',
-      `<div class="fm-next-cs-state-home"><div><small>BEFORE JOIN</small><b>추천 경기</b></div><div><small>UPCOMING</small><b>다가오는 경기</b></div><div class="is-focus"><small>MATCHDAY</small><b>길찾기 · 체크인 · 운영 도움</b></div><div><small>POSTGAME</small><b>평가 · ELO 변화</b></div></div>`,
-      `<div class="fm-next-cs-matchday"><strong>경기까지 1시간 20분</strong><span>경기장까지 18분</span><div><b>길찾기</b><b>체크인</b></div><small>도착 7/10 · 운영 도움 요청</small></div>`),
+    shell('10 · MATCHDAY','참가가 끝이 아니라, 참가 이후가 홈의 주인공이 됩니다.','예약 전에는 추천을, 예약 후에는 다가오는 경기를, 경기 당일에는 이동·체크인을, 경기 후에는 평가와 다음 행동을 먼저 보여줍니다.',
+      `<div class="fm-next-cs-day-states"><div><small>DISCOVER</small><b>지금 잘 맞는 경기</b></div><div><small>UPCOMING</small><b>다가오는 경기</b></div><div class="is-focus"><small>MATCHDAY</small><b>경기까지 1시간 20분</b><p>길찾기 · 체크인 · 운영 도움</p></div><div><small>POSTGAME</small><b>오늘 경기, 어땠나요?</b></div></div>`,
+      `<a class="fm-next-cs-link" href="/next?mode=evidence" target="_blank" rel="noopener">상태 시나리오 보기 <span>↗</span></a>`),
 
-    shell('11 · RECOVERY','실제 서비스처럼 보이려면 정상 흐름보다 “막혔을 때 무엇을 할 수 있는가”가 더 중요했습니다.','빈 결과, 자리 마감, 결제 실패, 체크인 문제, 노쇼 같은 상태를 단순 오류 화면이 아니라 다음 행동을 제시하는 복구 흐름으로 정의했습니다.',
-      `<div class="fm-next-cs-grid three">${card('No match','조건 완화 우선순위와 다시 탐색할 수 있는 선택지를 제공합니다.','EMPTY')}${card('Seat / payment issue','대기·다른 경기·재시도 중 상황에 맞는 회복 행동을 제공합니다.','RECOVERY')}${card('Matchday exception','체크인 실패와 운영 도움 요청을 경기 당일 맥락 안에서 해결합니다.','OPERATIONS')}</div>`,
-      `<div class="fm-next-cs-note">Reviewer 시나리오 컨트롤은 Evidence Mode 밖에 두고, Real App에는 사용자가 실제로 보게 될 결과 상태만 노출합니다.</div>`),
+    shell('11 · RECOVERY','정상 플로우보다 “중간에 실패했을 때 어디로 돌아오는가”를 먼저 정의했습니다.','빈 추천, 자리 마감, 결제 실패, 노쇼·체크인 지연처럼 경기 서비스에서 반복되는 실패를 상태와 다음 행동으로 분리했습니다.',
+      `<div class="fm-next-cs-recovery"><div><b>Empty</b><span>조건 완화 · 지역/시간 수정</span></div><div><b>Full</b><span>대기 등록 · 유사 경기 탐색</span></div><div><b>Payment fail</b><span>재시도 · 결제수단 변경</span></div><div><b>Matchday issue</b><span>체크인 재시도 · 운영 도움</span></div></div>`,
+      `<div class="fm-next-cs-decision"><span>Fallback 원칙</span><b>오류를 설명하는 화면보다 사용자가 다시 진행할 수 있는 행동을 우선합니다.</b></div>`),
 
-    shell('12 · IA / MODES','제품 경험과 포트폴리오 설명을 물리적으로 분리했습니다.','하나의 화면에서 사용자 UI와 디버그·검증 설명이 경쟁하지 않도록 Real App, Guided Case Study, Evidence를 서로 다른 맥락으로 분리했습니다.',
-      `<div class="fm-next-cs-modes"><div><small>REAL APP</small><h3>사용자 경험</h3><p>프로토타입·시뮬레이션·AI 내부 용어를 노출하지 않습니다.</p></div><div><small>GUIDED</small><h3>설계 의도</h3><p>같은 앱 옆에서 단계별 디자인 결정을 설명합니다.</p></div><div><small>EVIDENCE</small><h3>검증 상태</h3><p>시나리오·상태·미연동 범위·QA 증거를 확인합니다.</p></div></div>`,
-      `<div class="fm-next-cs-ia"><b>홈</b><b>경기 찾기</b><b>내 경기</b><b>MY</b><span>4개 사용자 목적지</span></div>`),
+    shell('12 · IA / MODES','실제 앱과 포트폴리오 설명을 한 화면 안에 섞지 않았습니다.','동일한 제품 경험을 세 가지 모드로 분리해 사용자는 서비스만 보고, 리뷰어는 필요할 때 설계 근거와 상태를 확인할 수 있습니다.',
+      `<div class="fm-next-cs-modes"><div class="is-focus"><small>REAL APP</small><b>/next</b><p>실제 사용자 UI만 노출</p></div><div><small>GUIDED</small><b>?mode=guided</b><p>사용 흐름 옆에 설계 이유</p></div><div><small>EVIDENCE</small><b>?mode=evidence</b><p>상태 시나리오·검증 범위</p></div></div>`,
+      `<div class="fm-next-cs-note">기존 v3.0 `/demo` Product/Portfolio 구조는 회귀 기준으로 유지하며 Next Major와 분리했습니다.</div>`),
 
-    shell('13 · SYSTEM EVIDENCE','기술 구조는 첫인상이 아니라 설계 결정을 증명하는 후반 Evidence로 배치했습니다.','AI Agent Workflow, 상태 모델, 데이터 품질, 이벤트 추적은 사용자가 보는 화면을 설명하기 위한 근거로 사용합니다.',
-      `<div class="fm-next-cs-agent"><b>Context</b><i>→</i><b>Plan</b><i>→</i><b>Tools</b><i>→</i><b>Guardrail</b><i>→</i><b>Observe</b></div><div class="fm-next-cs-quality"><span>Completeness</span><span>Validity</span><span>Freshness</span><span>Consistency</span><span>Traceability</span></div>`,
-      `<div class="fm-next-cs-scope"><span>구현 현실</span><b>Rules + sample/session state prototype</b><p>실제 외부 AI 모델, 데이터베이스, 실시간 capacity/notification backend는 통합하지 않았습니다.</p></div>`),
+    shell('13 · SYSTEM EVIDENCE','보이지 않는 로직은 Evidence에서만 설명하고, Product에서는 행동으로 증명합니다.','AI와 데이터 구조는 화면을 장식하는 기능명이 아니라 추천·복구·운영 판단을 만드는 계약으로 정리했습니다.',
+      `<div class="fm-next-cs-agent"><b>Context</b><i>→</i><b>Plan</b><i>→</i><b>Tools</b><i>→</i><b>Guardrail</b><i>→</i><b>Observe</b></div><div class="fm-next-cs-grid three">${card('State contract','setupComplete · selectedMatchId · signedIn · joinedMatchId · matchStage')}${card('Data quality','Completeness · Validity · Freshness · Consistency · Traceability')}${card('HITL boundary','외부 인증·결제·운영 판단은 자동화 범위와 실제 연동 범위를 분리')}</div>`,
+      `<div class="fm-next-cs-scope"><span>구현 사실</span><b>rules / sample / session state 기반 인터랙티브 제품 설계</b><p>외부 AI 모델·DB·실시간 수용량·실제 결제·알림 backend는 미연동입니다.</p></div>`),
 
-    shell('14 · VALIDATION','새 디자인이 좋아 보여도 기존 안정 동작을 깨면 버전업이 아닙니다.','기존 v3.0을 회귀 기준으로 두고 새 journey는 별도 gate로 검증하도록 구성했습니다.',
-      `<div class="fm-next-cs-metrics">${metric('39','기존 화면 회귀 기준')}${metric('320–430','모바일 폭 QA')}${metric('axe','접근성 gate')}${metric('Deep Link','상태 복원')}${metric('State','선택·참가 일관성')}</div><div class="fm-next-cs-grid three">${card('Regression','v2.4~v3.0 architecture / behavior 계약을 유지합니다.')}${card('Next journey','Guest-first, Sign in gate, checkout continuity를 별도 테스트합니다.')}${card('Production','merge 이후 exact SHA에서 HTTP·browser smoke를 분리 검증합니다.')}</div>`,
-      `<div class="fm-next-cs-note">검증이 끝나지 않은 항목은 완료로 표현하지 않고, PR QA → merge → exact Production 순서로 닫습니다.</div>`),
+    shell('14 · VALIDATION','새 경험만 통과하면 끝이 아니라, 기존 안정 버전이 깨지지 않는지도 함께 확인합니다.','기존 v2.4~v3.0 regression과 v2.8 39-screen visual baseline을 유지한 채 Next Major 전용 QA를 추가했습니다.',
+      `<div class="fm-next-cs-metrics">${metric('36','stable required check key')}${metric('39','legacy screen visual parity')}${metric('320–430','mobile responsive widths')}${metric('axe','serious / critical gate')}</div><div class="fm-next-cs-grid three">${card('Guest-first','가입 전 추천 노출과 참가 시점 로그인')}${card('State continuity','선택 경기 → 로그인 → 결제 → 내 경기')}${card('Mode isolation','Real App에는 reviewer 문구 미노출')}</div>`,
+      `<div class="fm-next-cs-note">검증 결과는 GitHub Actions와 exact Production verification을 구분해 기록합니다.</div>`),
 
-    shell('15 · OUTCOME / LIMITS','다음 버전의 목표는 “화면이 더 많아진 FootMate”가 아니라 “설명 없이도 실제 서비스처럼 이해되는 FootMate”입니다.','제품의 중심을 사용자 상태와 경기 당일 연속성으로 옮기고, 기술 증거는 필요한 순간에만 드러나도록 정보 구조를 재정렬했습니다.',
-      `<div class="fm-next-cs-outcome"><div><small>KEEP</small><b>ELO · matching semantics · recovery thinking · QA discipline</b></div><div><small>CHANGE</small><b>IA · onboarding · recommendation hierarchy · Sign in timing · visual system</b></div><div><small>NEXT</small><b>실제 인증/결제/backend 통합과 운영 데이터 검증</b></div></div>`,
-      `<div class="fm-next-cs-closing"><span>FootMate · Matchday Companion</span><h3>Find less.<br>Decide better.<br><em>Play with confidence.</em></h3><div><a href="/next" target="_blank" rel="noopener">Real App 열기 ↗</a><a href="/next?mode=evidence" target="_blank" rel="noopener">Evidence Mode ↗</a></div></div>`)
+    shell('15 · OUTCOME / LIMITS','기능을 더 늘리는 대신, 제품이 스스로 설명되도록 구조를 줄였습니다.','다음 버전의 목표는 “화면이 많다”가 아니라 사용자가 설명 없이도 자신의 상태와 다음 행동을 이해하고, 리뷰어가 필요할 때만 시스템 근거를 확인할 수 있게 하는 것입니다.',
+      `<div class="fm-next-cs-outcomes"><div><b>제품</b><p>Guest-first → 추천 → 판단 → 참가 → Matchday의 하나의 이야기</p></div><div><b>Case Study</b><p>Problem → Persona/JTBD → Design Decision → Evidence → Limits로 재구성</p></div><div><b>남은 실제 연동</b><p>OAuth · 회원 DB · PG · realtime capacity · notification backend</p></div></div>`,
+      `<div class="fm-next-cs-final"><span>Next</span><b>실제 연동이 붙어도 UX 계약이 바뀌지 않도록 상태·Fallback·검증 기준을 먼저 고정합니다.</b><a href="/next" target="_blank" rel="noopener">FootMate Next 경험하기 ↗</a></div>`)
   ];
 
   function enhance(){
-    const nodes=[...document.querySelectorAll('.track .slide')];
-    if(nodes.length<16||document.documentElement.dataset.fmNextCaseStudy==='true')return;
-    document.documentElement.dataset.fmNextCaseStudy='true';
-    nodes.slice(0,16).forEach((slide,index)=>{
-      slide.classList.add(index===0?'fm-next-cover-slide':'fm-next-story-slide');
-      slide.dataset.fmNextStory='true';
+    const slideNodes=[...document.querySelectorAll('.track .slide,.slide')].slice(0,16);
+    if(slideNodes.length<16||document.documentElement.dataset.fmNextStory==='true')return;
+    document.documentElement.dataset.fmNextStory='true';
+    slideNodes.forEach((slide,index)=>{
+      slide.classList.add('fm-next-story-slide');
+      if(index===0)slide.classList.add('fm-next-cover-slide');
       slide.innerHTML=slides[index];
     });
-    const toc=[...document.querySelectorAll('.toc-item')];
-    toc.slice(0,16).forEach((item,index)=>{
+    const toc=[...document.querySelectorAll('.toc-item')].slice(0,16);
+    toc.forEach((item,index)=>{
       const title=item.querySelector('.toc-t');
       const sub=item.querySelector('.toc-s');
       if(title)title.textContent=sections[index][0];
       if(sub)sub.textContent=sections[index][1];
     });
     const sub=document.querySelector('.sb-sub');
-    if(sub)sub.textContent='Matchday Companion · 16 sections';
-    const top=document.querySelector('.topbar-title');
-    if(top)top.textContent='FootMate · Product-first Case Study';
-    document.querySelector('[data-fm-next-cover-next]')?.addEventListener('click',()=>{
+    if(sub)sub.textContent='Next Major · 16장';
+    const topTitle=document.querySelector('.topbar-title');
+    if(topTitle)topTitle.textContent='FootMate · Matchday Companion Case Study';
+    slideNodes[0]?.querySelector('[data-fm-next-cover-next]')?.addEventListener('click',()=>{
       if(typeof window.goTo==='function'){window.goTo(1);return;}
-      toc[1]?.click();
+      const next=document.querySelector('.btn-next');
+      if(next)next.click();
     });
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance,{once:true});
   else enhance();
   setTimeout(enhance,80);
-  setTimeout(enhance,300);
 })();
