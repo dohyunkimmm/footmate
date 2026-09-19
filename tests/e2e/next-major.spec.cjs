@@ -1,10 +1,14 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 
-async function boot(page,path='/next',viewport={width:390,height:844}){
+function captureFailures(page){
   const failures=[];
   page.on('pageerror',error=>failures.push(`pageerror: ${error.message}`));
   page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))failures.push(`console.error: ${message.text()}`)});
+  return failures;
+}
+async function boot(page,path='/next',viewport={width:390,height:844}){
+  const failures=captureFailures(page);
   await page.setViewportSize(viewport);
   await page.goto(path,{waitUntil:'domcontentloaded'});
   await page.waitForSelector('#footmate-next [data-screen]');
@@ -67,13 +71,10 @@ test('real app mode hides reviewer language and keeps four user destinations',as
 });
 
 test('guided and evidence modes keep reviewer context outside the real app surface',async({page})=>{
-  let failures=await boot(page,'/next?mode=guided',{width:1280,height:900});
+  const failures=await boot(page,'/next?mode=guided',{width:1280,height:900});
   await expect(page.getByText('Guided Case Study')).toBeVisible();
   await expect(page.locator('.fm-next-guide')).toBeVisible();
   await expect(page.locator('.fm-next-app')).toBeVisible();
-  expectNoFailures(failures);
-
-  failures=[];
   await page.goto('/next?mode=evidence',{waitUntil:'domcontentloaded'});
   await page.waitForSelector('[data-screen="home"]');
   await expect(page.getByText('EVIDENCE MODE')).toBeVisible();
@@ -81,6 +82,7 @@ test('guided and evidence modes keep reviewer context outside the real app surfa
   await expect(page.getByText('경기까지 1시간 20분')).toBeVisible();
   await page.getByRole('button',{name:'경기 후'}).click();
   await expect(page.getByText('오늘 경기, 어땠나요?')).toBeVisible();
+  expectNoFailures(failures);
 });
 
 test('next-major stays horizontally safe at the supported mobile widths',async({page})=>{
@@ -112,7 +114,9 @@ test('next-major core recommendation screen has no serious or critical axe findi
 });
 
 test('case study cover leads with the user value and embeds the next app without changing the 16-section baseline',async({page})=>{
-  const failures=await boot(page,'/',{width:1440,height:900});
+  const failures=captureFailures(page);
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelector('.fm-next-cover'));
   await expect(page.locator('.slide')).toHaveCount(16);
   await expect(page.locator('.fm-next-cover')).toContainText('내 수준에 맞는 경기부터');
