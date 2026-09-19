@@ -128,7 +128,7 @@ jobs:
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
           FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
-        run: node tests/production-smoke.cjs
+        run: node tests/production-smoke.cjs && node tests/production-v30-smoke.cjs
       - name: Install production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
@@ -138,7 +138,7 @@ jobs:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
           FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
-        run: npx playwright test tests/e2e/production.spec.cjs
+        run: npx playwright test tests/e2e/production.spec.cjs tests/e2e/v30-production.spec.cjs
       - name: Upload production QA evidence
         if: always()
         uses: actions/upload-artifact@v6
