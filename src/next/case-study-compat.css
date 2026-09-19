@@ -1,5 +1,10 @@
 /* Next-major compatibility with the established Case Study mobile scroll contract. */
 @media(max-width:900px){
+  .fm-next-cover-slide:after,
+  .fm-next-story-slide:after{
+    display:none!important;
+  }
+
   .fm-next-cover-slide .fm-next-cover.cover{
     display:flex!important;
     flex-direction:column!important;
