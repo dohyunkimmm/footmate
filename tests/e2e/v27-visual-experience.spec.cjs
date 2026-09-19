@@ -54,14 +54,14 @@ test('v2.7 decision funnel remains usable under the v2.8 identity layer',async({
       panelRadius:parseFloat(getComputedStyle(panel).borderRadius),
       compareRadius:parseFloat(getComputedStyle(compare).borderRadius),
       actionHeight:action.getBoundingClientRect().height,
-      v27Brand:root.getPropertyValue('--fm27-brand').trim(),
+      v27Compatibility:window.FootMateV27?.compatibility,
       v28Pitch:root.getPropertyValue('--fm28-pitch').trim()
     };
   });
   expect(visuals.panelRadius).toBeGreaterThanOrEqual(18);
   expect(visuals.compareRadius).toBeGreaterThanOrEqual(14);
   expect(visuals.actionHeight).toBeGreaterThanOrEqual(44);
-  expect(visuals.v27Brand).toBe('#214F9B');
+  expect(visuals.v27Compatibility).toBe(true);
   expect(visuals.v28Pitch).toBe('#165B40');
   expectNoFailures(failures);
 });
