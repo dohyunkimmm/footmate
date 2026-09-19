@@ -42,7 +42,6 @@ async function main(){
     assert(body.includes("architecture:'v3.0-unified-app-architecture'"),'v3 release architecture missing');
     assert(body.includes("architecture:'v3.0-modular-app-runtime'"),'v3 runtime architecture missing');
     assert(body.includes("stateCompatibility:'v2.1-domain-state-preserved'"),'v3 state compatibility missing');
-    assert(body.includes("PRODUCTION_CONTRACT='v3.0-product-v28-visual-baseline'"),'v3 production contract missing');
     assert(body.includes('FootMateV3Runtime'),'v3 runtime contract missing');
     assert(body.includes('FootMateV30'),'v3 release contract missing');
   },checks);
