@@ -1,0 +1,35 @@
+name: Apply v4.0.1 patch
+
+on:
+  push:
+    branches: ['hotfix/v4.0.1-runtime-repo-cleanup']
+    paths:
+      - 'scripts/apply-v401-hotfix.cjs'
+      - '.github/workflows/apply-v401-hotfix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: hotfix/v4.0.1-runtime-repo-cleanup
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply deterministic v4.0.1 patch
+        run: node scripts/apply-v401-hotfix.cjs
+      - name: Commit patched repository state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm scripts/apply-v401-hotfix.cjs .github/workflows/apply-v401-hotfix.yml
+          git add -A
+          git commit -m "fix(v4.0.1): harden runtime and clean repository"
+          git push origin HEAD:hotfix/v4.0.1-runtime-repo-cleanup
