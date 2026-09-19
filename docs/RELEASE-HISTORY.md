@@ -1,8 +1,44 @@
 # FootMate Release History
 
+## v4.1.0 — Recommendation Core · 2026-09-20
+
+**Status:** Verified staged feature release. Product/runtime baseline `352ffe08a72e145311e043f1292950d8a3041859` passed FootMate QA #339 (run `35456762270`), including Regression 36, preference-aware recommendation E2E, Browser E2E + axe, responsive/state/Case Study layout gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_HyZn9wb5boHQ3wZTUNMFsuMSRkVC` is **READY** and Render deployment `dep-danbvlvavr4c73aab5s0` is **LIVE** at the same exact SHA.
+
+v4.1 starts the staged v4.1 → v5.0 product evolution plan by connecting the preferences collected in the guest-first setup to actual recommendation ordering and human-readable recommendation reasons.
+
+### Release scope
+
+- region / position / level preferences now change the actual recommendation order
+- explainable deterministic ranking uses living area fit, level gap, preferred-position availability and distance
+- internal fit values are used for sorting and QA evidence; the product UI remains reason-first rather than exposing a numeric score as the primary decision signal
+- Home / Discover / Detail share the same recommendation contract
+- sample match coverage expanded across Suwon, Yongin and Seoul to make preference changes observable
+- deterministic QA profiles verify that different preference combinations produce different top matches
+- Case Study Decision 02 now documents that recommendation reasons are backed by actual ranking behavior
+- existing v4.0.1 guest-first auth timing, selected-match continuity, detail-return navigation, match-specific check-in, responsive layout, Case Study panel sizing and accessibility remain regression gates
+- staged roadmap added in `docs/V4.1-V5.0-ROADMAP.md`
+
+### Release verification
+
+- Recommendation Core PR #95: final PR QA #338 · run `35456601863` · PASS
+- Verified product/runtime baseline: `352ffe08a72e145311e043f1292950d8a3041859`
+- Post-merge QA + exact Production verification: FootMate QA #339 · run `35456762270` · PASS
+- Exact Vercel Production: `dpl_HyZn9wb5boHQ3wZTUNMFsuMSRkVC` · SHA `352ffe08a72e145311e043f1292950d8a3041859` · **READY**
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danbvlvavr4c73aab5s0` · SHA `352ffe08a72e145311e043f1292950d8a3041859` · **LIVE**
+
+### Scope boundary
+
+This remains an interactive service-planning prototype. The v4.1 Recommendation Core is deterministic rules-based ranking over sample match records and browser/session state. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity and notification backend are not connected.
+
+### Next staged release
+
+v4.2 is **Discovery & Search**: filters, sorting, zero-result recovery and persisted discovery state. It starts only after this v4.1 durable release sync is merged and verified as a documentation-only change.
+
 ## v4.0.1 — Matchday Companion hardening · 2026-09-19
 
-**Status:** Verified patch release. Product/runtime baseline `b2509f5759194ab0db46a8c5429f3b422e9c59d8` passed FootMate QA #333 (run `35455137726`), including Regression 36, Browser E2E + axe, responsive/state/editorial gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` is **READY** and Render deployment `dep-danbgvbtqb8s73adkk00` is **LIVE** at the same exact SHA.
+**Status:** Verified patch release. Product/runtime baseline `b2509f5759194ab0db46a8c5429f3b422e9c59d8` passed FootMate QA #333 (run `35455137726`), including Regression 36, Browser E2E + axe, responsive/state/editorial gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` is **READY** and Render deployment `dep-danbgvbtqb8s73adkk00` was **LIVE** at the same exact SHA at release verification time.
 
 v4.0.1 hardens the official Matchday Companion experience and current repository structure without changing the core Find → Decide → Join → Play → Return product thesis.
 
@@ -25,10 +61,10 @@ v4.0.1 hardens the official Matchday Companion experience and current repository
 - Case Study layout + Production smoke closure PR #93: PR QA #332 · run `35454879661` · PASS
 - Verified product/runtime baseline: `b2509f5759194ab0db46a8c5429f3b422e9c59d8`
 - Post-merge QA + exact Production verification: FootMate QA #333 · run `35455137726` · PASS
-- Exact Vercel Production: `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` · SHA `b2509f5759194ab0db46a8c5429f3b422e9c59d8` · **READY**
+- Exact Vercel Production: `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` · SHA `b2509f5759194ab0db46a8c5429f3b422e9c59d8` · **READY at verification time**
 - Exact Production HTTP smoke: PASS
 - Exact Production Chromium smoke: PASS
-- Render backup: `dep-danbgvbtqb8s73adkk00` · SHA `b2509f5759194ab0db46a8c5429f3b422e9c59d8` · **LIVE**
+- Render backup: `dep-danbgvbtqb8s73adkk00` · SHA `b2509f5759194ab0db46a8c5429f3b422e9c59d8` · **LIVE at verification time**
 
 ### Scope boundary
 
