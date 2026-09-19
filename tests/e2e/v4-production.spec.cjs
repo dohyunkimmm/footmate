@@ -11,13 +11,13 @@ function capture(page){
   return errors;
 }
 
-test('v4.1 exact Production app, recommendation and Case Study render',async({page})=>{
+test('v4.2 exact Production app, recommendation, discovery and Case Study render',async({page})=>{
   const errors=capture(page);
   await page.setViewportSize({width:390,height:844});
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
-  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.1.0');
+  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.2.0');
   await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
   await page.locator('[data-action="choose-setup"][data-field="region"][data-value="서울 · 강남"]').click();
@@ -29,13 +29,24 @@ test('v4.1 exact Production app, recommendation and Case Study render',async({pa
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('.fm-next-match-card').first()).toHaveAttribute('data-match-id','songpa-2100');
   await expect(page.locator('.fm-next-match-card').first()).toHaveAttribute('data-recommendation-score',/\d+/);
+  await page.getByRole('button',{name:'전체 보기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toHaveAttribute('data-discovery-version','4.2.0');
+  await page.getByRole('button',{name:'필터 열기'}).click();
+  await page.getByLabel('거리').selectOption('25');
+  await page.getByLabel('포지션').selectOption('GK');
+  await page.getByRole('button',{name:'결과 보기'}).click();
+  await expect(page.getByRole('button',{name:'필터 2개 적용됨'})).toBeVisible();
+  expect(new URL(page.url()).searchParams.get('d_distance')).toBe('25');
+  expect(new URL(page.url()).searchParams.get('d_position')).toBe('GK');
   expect(errors).toEqual([]);
 
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelector('.fm-next-cover'));
-  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.1.0');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.2.0');
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveAttribute('src','/app?embed=1');
+  await page.evaluate(()=>window.goTo(4));
+  await expect(page.locator('.slide.on')).toContainText('날짜·시간·거리·가격·포지션');
   await page.evaluate(()=>window.goTo(6));
   await expect(page.locator('.slide.on')).toContainText('실제 순위 로직');
   const stylesheetHrefs=await page.locator('link[rel="stylesheet"]').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('href')));
@@ -47,7 +58,7 @@ test('v4.1 exact Production app, recommendation and Case Study render',async({pa
   expect(errors).toEqual([]);
 });
 
-test('v4.1 exact Production Case Study stays mobile-safe across all 16 sections',async({page})=>{
+test('v4.2 exact Production Case Study stays mobile-safe across all 16 sections',async({page})=>{
   const errors=capture(page);
   await page.setViewportSize({width:390,height:844});
   await page.goto('/',{waitUntil:'domcontentloaded'});
@@ -61,10 +72,10 @@ test('v4.1 exact Production Case Study stays mobile-safe across all 16 sections'
   expect(errors).toEqual([]);
 });
 
-test('v4.1 exact Production compatibility aliases stay on the current product',async({page})=>{
+test('v4.2 exact Production compatibility aliases stay on the current product',async({page})=>{
   for(const route of ['/demo','/next']){
     await page.goto(route,{waitUntil:'domcontentloaded'});
-    await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.1.0');
+    await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.2.0');
     await expect(page.locator('#footmate-next')).toBeVisible();
   }
 });

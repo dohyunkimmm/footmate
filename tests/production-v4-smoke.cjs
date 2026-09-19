@@ -30,22 +30,25 @@ async function check(name,route,verify,checks){
   }
   const checks=[];
   await check('case-study','/',({body})=>{
-    assert(body.includes('footmate-case-study-release" content="4.1.0"'),'case study v4.1 metadata missing');
-    assert(body.includes('/src/v4/case-study.js?v=410'),'v4 case study runtime missing');
-    assert(body.includes('/src/v4/case-study-recommendation.js?v=410'),'v4.1 recommendation Case Study evidence missing');
-    assert(body.includes('/src/v4/case-study-editorial.css?v=410'),'Case Study editorial stylesheet missing');
+    assert(body.includes('footmate-case-study-release" content="4.2.0"'),'case study v4.2 metadata missing');
+    assert(body.includes('/src/v4/case-study.js?v=420'),'v4 case study runtime missing');
+    assert(body.includes('/src/v4/case-study-recommendation.js?v=420'),'recommendation Case Study evidence missing');
+    assert(body.includes('/src/v4/case-study-discovery.js?v=420'),'v4.2 discovery Case Study evidence missing');
+    assert(body.includes('/src/v4/case-study-editorial.css?v=420'),'Case Study editorial stylesheet missing');
     assert(!body.includes('case-study-release.js'),'obsolete Case Study release overlay still loaded');
   },checks);
   for(const route of ['/app','/demo','/next']){
     await check(`app-${route}`,route,({body})=>{
-      assert(body.includes('footmate-release" content="4.1.0"'),`${route} v4.1 release metadata missing`);
-      assert(body.includes('/src/v4/app.js?v=410'),`${route} v4 app module missing`);
-      assert(body.includes('/src/v4/experience.js?v=410'),`${route} consolidated v4 experience module missing`);
-      assert(body.includes('/src/v4/recommendation.js?v=410'),`${route} v4.1 recommendation module missing`);
+      assert(body.includes('footmate-release" content="4.2.0"'),`${route} v4.2 release metadata missing`);
+      assert(body.includes('/src/v4/app.js?v=420'),`${route} v4 app module missing`);
+      assert(body.includes('/src/v4/experience.js?v=420'),`${route} consolidated v4 experience module missing`);
+      assert(body.includes('/src/v4/recommendation.js?v=420'),`${route} recommendation module missing`);
+      assert(body.includes('/src/v4/discovery.js?v=420'),`${route} v4.2 discovery module missing`);
+      assert(body.includes('/src/v4/discovery.css?v=420'),`${route} v4.2 discovery stylesheet missing`);
     },checks);
   }
   await check('v4-data','/src/v4/data.js',({body})=>{
-    assert(body.includes("RELEASE_VERSION='4.1.0'"),'release marker missing');
+    assert(body.includes("RELEASE_VERSION='4.2.0'"),'release marker missing');
     assert(body.includes("footmate:v4:session"),'v4 storage missing');
     assert(body.includes('positionSlots'),'position availability data missing');
   },checks);
@@ -55,9 +58,19 @@ async function check(name,route,verify,checks){
     assert(body.includes('checkedInMatchId'),'check-in persistence missing');
   },checks);
   await check('v4-recommendation','/src/v4/recommendation.js',({body})=>{
-    assert(body.includes("version:'4.1.0'"),'recommendation version missing');
+    assert(body.includes("version:'4.1.0'"),'recommendation core version missing');
     assert(body.includes('recommendationFor'),'recommendation scoring contract missing');
     assert(body.includes('data-recommendation-score'),'recommendation evidence attribute missing');
+  },checks);
+  await check('v4-discovery','/src/v4/discovery.js',({body})=>{
+    assert(body.includes("DISCOVERY_VERSION='4.2.0'"),'discovery version missing');
+    assert(body.includes("DISCOVERY_STORAGE_KEY='footmate:v4:discovery'"),'discovery persistence missing');
+    assert(body.includes('history.replaceState'),'discovery URL state missing');
+    assert(body.includes('조건 넓히기'),'zero-result recovery missing');
+  },checks);
+  await check('v4-discovery-css','/src/v4/discovery.css',({body})=>{
+    assert(body.includes('.fm-discovery-sheet-backdrop'),'discovery sheet style missing');
+    assert(body.includes('min-height:44px'),'filter target size rule missing');
   },checks);
   await check('case-study-story','/src/v4/case-study.js',({body})=>{
     assert(body.includes('iframe src="/app?embed=1"'),'Case Study /app iframe missing');
@@ -67,8 +80,13 @@ async function check(name,route,verify,checks){
     assert(body.includes('UX 시뮬레이션입니다.'),'auth simulation boundary missing');
   },checks);
   await check('case-study-recommendation','/src/v4/case-study-recommendation.js',({body})=>{
-    assert(body.includes('v4.1.0'),'v4.1 Case Study recommendation marker missing');
-    assert(body.includes('선호 조건이 실제 추천에 반영'),'v4.1 recommendation narrative missing');
+    assert(body.includes('v4.1.0'),'recommendation core Case Study marker missing');
+    assert(body.includes('선호 조건이 실제 추천에 반영'),'recommendation narrative missing');
+  },checks);
+  await check('case-study-discovery','/src/v4/case-study-discovery.js',({body})=>{
+    assert(body.includes('v4.2.0'),'v4.2 discovery Case Study marker missing');
+    assert(body.includes('날짜·시간·거리·가격·포지션'),'discovery narrative missing');
+    assert(body.includes('검색 결과가 0개'),'zero-result narrative missing');
   },checks);
   await check('case-study-editorial','/src/v4/case-study-editorial.css',({body})=>{
     assert(body.includes('text-wrap:balance'),'balanced heading wrap CSS missing');
