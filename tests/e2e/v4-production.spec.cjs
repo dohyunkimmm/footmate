@@ -15,7 +15,7 @@ test('v4 exact Production app and Case Study render',async({page})=>{
   const errors=capture(page);
   await page.setViewportSize({width:390,height:844});
   await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.0.0');
+  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.0.1');
   await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
   await page.getByRole('button',{name:'다음'}).click();
@@ -27,7 +27,7 @@ test('v4 exact Production app and Case Study render',async({page})=>{
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelector('.fm-next-cover'));
-  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.0.0');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('v4.0.1');
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveAttribute('src','/app?embed=1');
   const stylesheetHrefs=await page.locator('link[rel="stylesheet"]').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('href')));
   expect(stylesheetHrefs.some(href=>href&&href.includes('/src/v4/case-study-editorial.css'))).toBe(true);
@@ -55,7 +55,7 @@ test('v4 exact Production Case Study stays mobile-safe across all 16 sections',a
 test('v4 exact Production compatibility aliases no longer expose pre-v4 product',async({page})=>{
   for(const route of ['/demo','/next']){
     await page.goto(route,{waitUntil:'domcontentloaded'});
-    await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.0.0');
+    await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','4.0.1');
     await expect(page.locator('#footmate-next')).toBeVisible();
   }
 });
