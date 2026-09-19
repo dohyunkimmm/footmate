@@ -93,15 +93,17 @@ test('next-major Case Study TOC stays readable on desktop', async ({ page }) => 
 test('mobile Case Study scrolls vertically and keeps the live next app reachable', async ({ page }) => {
   await bootCaseStudy(page, { width: 390, height: 844 });
 
-  const cover = page.locator('.slide[data-i="0"] .fm-next-cover-slide, .slide[data-i="0"]');
-  const activeCover = page.locator('.slide[data-i="0"]');
-  const metrics = await activeCover.evaluate(element => ({
+  const cover = page.locator('.slide[data-i="0"] .fm-next-cover.cover');
+  const metrics = await cover.evaluate(element => ({
     overflowY: getComputedStyle(element).overflowY,
     clientHeight: element.clientHeight,
     scrollHeight: element.scrollHeight
   }));
   expect(['auto', 'scroll']).toContain(metrics.overflowY);
-  expect(metrics.scrollHeight).toBeGreaterThanOrEqual(metrics.clientHeight);
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+
+  await cover.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  expect(await cover.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
 
   const frame = page.locator('.slide[data-i="0"] .fm-next-cover-frame iframe');
   await frame.scrollIntoViewIfNeeded();
