@@ -12,63 +12,54 @@
 - [Backup deployment · Render](https://footmate-backup.onrender.com)
 - [Release History](docs/RELEASE-HISTORY.md)
 
-## 🚀 Current Release · v2.8.0
+## 🚀 Current Release · v3.0.0
 
-**v2.8.0 · Matchday Visual Identity**
+**v3.0.0 · Unified App Architecture**
 
-v2.8은 검증된 v2.7 Visual Experience를 회귀 기준으로 유지하면서 FootMate에 sports-specific Matchday identity를 부여한 디자인 릴리스입니다. Pitch green + lime visual tokens, Home hero, recommendation ticket, Match Preview, Payment guard, motion/focus hierarchy를 별도 v2 ownership layer로 추가했으며 Matching/ELO, decision engine, payment/state/persistence semantics는 변경하지 않았습니다.
+v3.0은 v2.8 Matchday Visual Identity를 Product 회귀 기준으로 유지하면서, 앱 수준 IA · view state · reusable chrome ownership을 `src/v3/`로 분리한 아키텍처 릴리스입니다. Product mode는 검증된 v2.8 375×780 phone/frame/legacy navigation과 39개 화면을 유지하고, Portfolio mode에서만 v3의 4개 primary destination과 app rail/context chrome을 노출합니다.
 
-- product/runtime baseline: `d8014978cf6a1a5621f09ff098f48ac4821b615b` · PR #71
-- Release runtime: `2.8.0`
-- release adapter: `src/v2/v28-release.js`
-- visual identity ownership: `src/v2/styles/visual-identity.css`
-- visual token ownership: `src/v2/styles/visual-tokens.css`
-- visual identity module: `src/v2/ui/visual-identity-experience.js`
-- baseline visual experience: v2.7 Visual Experience
+- product/runtime baseline: `cf766cb047b23ef302f06a80429765f45511bdcf` · PR #79
+- v3 architecture introduction: `50e63eeaa4939f7a397941e7c7a8af408ad4cf92` · PR #74
+- Release runtime: `3.0.0`
 - Storage / schema / Product Hardening event contract: `2.1.0` compatibility 유지
-- v2.2 / v2.3 / v2.4 / v2.5 / v2.6 / v2.7 runtime compatibility 유지
-- Product / Portfolio mode: 유지
-- Product screen baseline: 39 screens
-- Case Study information architecture: 16 slides
+- Product visual baseline: **v2.8 Matchday Visual Identity**
+- Product screen baseline: **39 screens**
+- Portfolio primary destinations: **4** · 탐색 / 추천 / 참가 / 내 정보
 - Matching / ELO / decision / payment / persistence semantics: 유지
+- Product / Portfolio mode: 분리 유지
 
-### v2.8 visual identity upgrade
+### v3.0 architecture
 
-- pitch green + lime 기반 Matchday visual tokens와 sports-specific hierarchy 도입
-- Home decision hero를 matchday focal surface로 재설계
-- Filter selection, Results recommendation ticket/featured state, Detail Match Preview/preflight, Payment guard에 일관된 identity 적용
-- dynamic Results/Detail DOM 갱신 뒤에도 v2.8 visual ownership이 유지되도록 identity refresh 경계 보강
-- semantic surface, CTA, focus-visible, touch target, reduced-motion contract 유지
-- 320 / 375 / 390 / 430 px responsive behavior 보존
-- muted/supporting text 대비와 narrow-screen decorative containment를 axe/visual gate 기준으로 보강
-- 신규 v2.8 ownership은 `src/v2/`에만 두고 `demo-source.html`과 legacy patch layer는 compatibility source로 유지
+- `src/v3/release.js` — v3.0 release/runtime promotion contract
+- `src/v3/app-shell.js` — unified app shell + mode-aware chrome ownership
+- `src/v3/ia/navigation.js` — 4-primary-destination IA와 39 legacy route mapping
+- `src/v3/state/view-state.js` — `footmate:v3:view` view-state boundary
+- `src/v3/components/` — reusable v3 UI primitives
+- `src/v3/styles/` — Portfolio-only app shell/component/token ownership
+- `src/v2/` — Product visual baseline, domain/state/matching/ELO/decision/payment compatibility ownership 유지
 
 ### QA / deployment state
 
-- PR #71 final QA run #220:
-  - Regression 36 **PASS**
-  - v2.4 component/source boundary **PASS**
-  - v2.5 decision/recovery boundary **PASS**
-  - v2.6 architecture ownership boundary **PASS**
-  - v2.7 visual ownership compatibility **PASS**
-  - v2.8 visual identity boundary **PASS**
-  - Browser E2E + axe · responsive · v2.8 visual gate **PASS**
-- main exact verification run #221 on `d8014978cf6a1a5621f09ff098f48ac4821b615b`:
+- PR #79 final QA run #254:
   - Regression 36 **PASS**
   - Browser E2E + axe **PASS**
-  - exact Vercel deployment wait **PASS**
+  - 39-screen structure / horizontal-overflow QA at 320 / 375 / 390 / 430 / 1280 **PASS**
+  - exact v2.8 Product visual parity with documented corrections **PASS**
+  - Portfolio 39-route containment / accessibility **PASS**
+- PR #81 baseline-sync QA run #260:
+  - Regression 36 **PASS**
+  - Browser E2E + axe · full 39-screen regression **PASS**
+- exact Production baseline verification:
+  - GitHub Actions `FootMate Exact Production Baseline` run #2 · ID `35427738247`
   - Production HTTP smoke **PASS**
-  - strict Production Chromium render smoke **PASS**
+  - strict Production Chromium smoke **PASS**
 - exact verified Vercel Production:
-  - SHA `d8014978cf6a1a5621f09ff098f48ac4821b615b`
-  - deployment `dpl_GtHGNwyRuDYWVkuswgVHryTkHtVp`
-  - state **READY**
-- Render product release-point verification:
-  - SHA `d8014978cf6a1a5621f09ff098f48ac4821b615b`
-  - deployment `dep-damungojo6nc7392taug`
-  - state **verified live at product release**; 이후 docs-only moving-main 배포가 current backup을 승계
+  - SHA `cf766cb047b23ef302f06a80429765f45511bdcf`
+  - deployment `dpl_51Gki6ZZhy2shP6QH9U1yifT98zG`
+  - target `production` · state **READY**
+- v3.0 exact Production release gate: **CLOSED**
 
-Vercel exact Production verification과 Render backup은 독립적인 배포 경로로 기록합니다. Render current-main의 exact SHA/deployment/live 상태는 moving main을 재귀적으로 문서에 고정하지 않고 deployment source와 Notion current-state에서 유지합니다.
+Vercel exact Production verification과 Render backup은 독립적인 배포 경로입니다. QA/docs-only merge로 moving `main`이 전진해도 product/runtime baseline과 exact verified Production SHA는 별도로 유지하며, Render current-main exact 상태는 deployment source와 Notion current-state에서 추적합니다.
 
 ## ✨ Key Features
 
@@ -83,46 +74,31 @@ Vercel exact Production verification과 Render backup은 독립적인 배포 경
 - 결제/참가 전 guardrail과 inline recovery
 - 경기 결과 ELO 업데이트와 다음 추천 반영
 - 브라우저 재진입 시 핵심 진행 상태와 사용자 선택·decision trace 복원
-- AI Agent Workflow 및 데이터 품질 상태(`PASS` · `CHECK` · `SAMPLE`)
-- 이벤트 계약과 핵심 퍼널/KPI 관측
+- 39-screen Product mode와 4-destination Portfolio app shell 분리
 - 접근 가능한 Product Validation Inspector
 - Case Study의 `Problem → Hypothesis → Design → Validation → Result` 구조
 
 ## 🧩 Runtime Structure
 
-### v2.8 ownership
+### v3 ownership
 
-- `src/v2/bootstrap.js` — v2.7 verified runtime composition baseline / compatibility source
-- `src/v2/v28-release.js` — v2.8 release promotion adapter
-- `src/v2/ui/visual-identity-experience.js` — v2.8 visual identity DOM ownership / dynamic refresh
-- `src/v2/styles/visual-tokens.css` — v2.8 Matchday visual tokens
-- `src/v2/styles/visual-identity.css` — v2.8 sports visual identity ownership
-- `src/v2/styles/visual-guardrails.css` — narrow-screen/accessibility guardrails
-- `src/v2/styles/visual-experience.css` — v2.7 visual compatibility baseline
-- `src/v2/demo/runtime-boundary.js` — legacy source / 신규 feature ownership contract
-- `src/v2/domain/matching-engine.js` — matching domain engine
-- `src/v2/domain/elo-engine.js` — ELO domain engine
-- `src/v2/domain/decision-engine.js` — deterministic decision / guardrail / trace engine
-- `src/v2/domain/availability-gateway.js` — async availability verification boundary; 현재 prototype/session adapter
-- `src/v2/state/scenario-persistence.js` — canonical scenario persistence
-- `src/v2/state/decision-trace-persistence.js` — decision trace persistence / replay boundary
-- `src/v2/ui/decision-recovery-experience.js` — decision/recovery action orchestration
-- `src/v2/ui/payment-controller.js` — Charge/Payment/Participation + decision guard adapter
+- `src/v3/release.js` — release/runtime contract
+- `src/v3/app-shell.js` — app-shell orchestration
+- `src/v3/ia/navigation.js` — primary IA / compatibility route mapping
+- `src/v3/state/view-state.js` — v3 view-state persistence
+- `src/v3/components/` — reusable app components
+- `src/v3/styles/app-shell.css` — Portfolio app shell
+- `src/v3/styles/components.css` — Portfolio component chrome
+- `src/v3/styles/tokens.css` — v3 app-shell tokens
 
-### Compatibility boundary
+### preserved v2 ownership
 
-- `demo-source.html` — 39-screen regression fixture; 신규 v2.8 visual ownership 없음
-- `footmate-patches.js` — 일부 기존 DOM/persistence compatibility; 신규 v2.8 ownership 없음
-- `footmate-finalize.js` — persisted state compatibility bridge only
-- `footmate-product-hardening.js` — policy/state/analytics adapter + Inspector UI bridge
-- v2.8은 visual identity를 고도화하고 Matching/ELO, decision/payment state, persistence 계약은 유지
-
-## 🔭 Next Evolution Candidates
-
-- v3.0에서 v2.8 verified baseline을 회귀 기준으로 IA · component system · architecture를 재설계
-- 실제 backend 연동 시 `availability-gateway`의 prototype adapter를 server-side freshness/capacity verifier로 교체
-- decision trace를 server-side durable audit/event storage로 확장
-- `footmate-patches.js`에 남은 legacy DOM/persistence compatibility ownership 추가 축소
+- `src/v2/bootstrap.js` — verified v2 runtime composition
+- `src/v2/v28-release.js` — v2.8 visual baseline release adapter
+- `src/v2/domain/` — matching / ELO / decision / availability boundaries
+- `src/v2/state/` — product / scenario / decision-trace persistence
+- `src/v2/ui/` — Product controllers, recovery, payment, inspector
+- `src/v2/styles/visual-identity.css` / `visual-tokens.css` / `visual-guardrails.css` — Product v2.8 Matchday visual baseline
 
 ## 🛠 Tech
 
@@ -136,26 +112,26 @@ HTML · CSS · JavaScript ES Modules · Node.js 24 · Node.js Test Runner · Pla
 
 | 검증 | 상태 |
 | --- | --- |
-| v2.8 product/runtime baseline | **d8014978 · PR #71 · v2.8.0** |
-| PR required QA | **PASS** · run #220 |
-| Main Regression suite | **PASS** · run #221 |
-| Main Browser E2E · axe · responsive | **PASS** · run #221 |
-| v2.4 + v2.5 + v2.6 + v2.7 + v2.8 ownership/compatibility boundary | **PASS** |
-| Matching / ELO / decision / persistence compatibility | **PASS** |
-| axe WCAG 2 A/AA serious / critical | **0 · PASS** |
-| Responsive 320 / 375 / 390 / 430 px | **PASS** |
-| 39-screen product baseline | **PASS** |
-| 16-slide Case Study IA | **PASS** |
-| exact Vercel deployment wait | **PASS** · run #221 |
-| Production HTTP smoke | **PASS** · run #221 |
-| strict Production Chromium render smoke | **PASS** · run #221 |
-| exact verified Vercel Production | **d8014978 · dpl_GtHGNwyRuDYWVkuswgVHryTkHtVp · READY** |
-| Render product release-point verification | **d8014978 · dep-damungojo6nc7392taug · verified live at product release** |
-| v2.8 exact Production release gate | **CLOSED** |
+| v3.0 product/runtime baseline | **cf766cb0 · PR #79 · v3.0.0** |
+| v3 architecture introduction | **50e63eea · PR #74** |
+| PR #79 full-screen QA | **PASS · run #254** |
+| PR #81 baseline-sync QA | **PASS · run #260** |
+| Regression 36 + v2.4–v3.0 boundaries | **PASS** |
+| Browser E2E · axe | **PASS** |
+| 39-screen Product regression | **PASS** |
+| Product visual baseline | **v2.8 Matchday · PASS** |
+| Responsive 320 / 375 / 390 / 430 / desktop | **PASS** |
+| Portfolio 4-primary-destination / 39-route containment | **PASS** |
+| Production HTTP smoke | **PASS · exact baseline run #2** |
+| strict Production Chromium smoke | **PASS · exact baseline run #2** |
+| exact verified Vercel Production | **cf766cb0 · dpl_51Gki6ZZhy2shP6QH9U1yifT98zG · READY** |
+| v3.0 exact Production release gate | **CLOSED** |
 
-## 📚 Documentation
+## 📚 Documentation policy
 
 - `README.md` — 현재 제품 · 구조 · 검증 상태
-- `docs/RELEASE-HISTORY.md` — 현재/과거 릴리스 · 검증 baseline · 후속 후보
-
-moving `main`은 QA/docs-only merge로 전진할 수 있으므로 product/runtime baseline과 exact verified Production SHA를 별도로 유지합니다. temporary quota/rate-limit/canceled/pending 상태는 durable documentation에 누적하지 않습니다.
+- `docs/RELEASE-HISTORY.md` — 릴리스 · 검증 baseline · compatibility history
+- moving `main`은 QA/docs-only merge로 전진할 수 있으므로 product/runtime baseline과 exact verified Production SHA를 별도로 유지
+- Render current-main exact SHA/deployment/live 상태는 deployment source와 Notion current-state에서 유지
+- compatibility smoke와 exact Production verification을 구분
+- temporary quota/rate-limit/canceled/pending 상태는 durable documentation에 누적하지 않음
