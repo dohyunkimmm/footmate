@@ -41,6 +41,26 @@ test('production serves v3.0 unified app architecture',async({page})=>{
   expect(release.screens).toBe(39);
 
   await page.evaluate(()=>window.goScreen('s-home'));
+  const visual=await page.locator('#s-home .fm24-home-decision').evaluate(element=>{
+    const title=element.querySelector('.fm24-title');
+    const context=document.querySelector('#s-home .fm30-context');
+    return{
+      release:document.documentElement.dataset.footmateRelease,
+      bodyBackground:getComputedStyle(document.body).backgroundColor,
+      heroBackground:getComputedStyle(element).backgroundImage,
+      heroTitleColor:getComputedStyle(title).color,
+      heroTitleSize:getComputedStyle(title).fontSize,
+      contextDisplay:context?getComputedStyle(context).display:'missing'
+    };
+  });
+  expect(visual.release).toBe('2.8');
+  expect(visual.bodyBackground).toBe('rgb(8, 21, 15)');
+  expect(visual.heroBackground).toContain('linear-gradient');
+  expect(visual.heroTitleColor).toBe('rgb(255, 255, 255)');
+  // Lock the effective v2.8 cascade, not the nominal token declaration.
+  expect(visual.heroTitleSize).toBe('19px');
+  expect(visual.contextDisplay).toBe('none');
+
   const nav=page.locator('#fm30AppNav');
   await expect(nav).toBeVisible();
   await expect(nav.locator('[data-fm30-destination]')).toHaveCount(4);
@@ -51,7 +71,7 @@ test('production serves v3.0 unified app architecture',async({page})=>{
   expect(failures,failures.join('\n')).toEqual([]);
 });
 
-test('production v3.0 desktop renders responsive workspace and left rail',async({page})=>{
+test('production v3.0 desktop keeps the left rail without stretching the v2.8 viewport',async({page})=>{
   const failures=collectFailures(page);
   await page.setViewportSize({width:1280,height:900});
   await page.goto('/demo',{waitUntil:'domcontentloaded'});
@@ -61,13 +81,14 @@ test('production v3.0 desktop renders responsive workspace and left rail',async(
     const shell=document.querySelector('.device-shell').getBoundingClientRect();
     const nav=document.querySelector('#fm30AppNav').getBoundingClientRect();
     const screen=document.querySelector('.device-screen').getBoundingClientRect();
-    return{shellWidth:shell.width,navWidth:nav.width,navLeft:nav.left,screenLeft:screen.left,screenWidth:screen.width,columns:getComputedStyle(document.querySelector('#s-results .fm25-compare-grid')).gridTemplateColumns};
+    return{shellWidth:shell.width,navWidth:nav.width,navLeft:nav.left,screenLeft:screen.left,screenWidth:screen.width};
   });
-  expect(layout.shellWidth).toBeGreaterThan(900);
+  expect(layout.shellWidth).toBeGreaterThanOrEqual(520);
+  expect(layout.shellWidth).toBeLessThanOrEqual(580);
   expect(layout.navWidth).toBeGreaterThanOrEqual(90);
   expect(layout.screenLeft).toBeGreaterThan(layout.navLeft);
-  expect(layout.screenWidth).toBeGreaterThan(700);
-  expect(layout.columns.split(' ').length).toBeGreaterThanOrEqual(3);
+  expect(layout.screenWidth).toBeGreaterThanOrEqual(400);
+  expect(layout.screenWidth).toBeLessThanOrEqual(470);
   await expect(page.locator('#s-results .fm30-context')).toBeVisible();
   expect(failures,failures.join('\n')).toEqual([]);
 });

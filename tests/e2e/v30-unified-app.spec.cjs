@@ -69,6 +69,31 @@ test('v3.0 primary navigation maps the 39 compatibility routes into four destina
   expectNoFailures(failures);
 });
 
+test('v3.0 preserves the v2.8 matchday visual baseline on product screens',async({page})=>{
+  const failures=await boot(page,{width:390,height:844});
+  await page.evaluate(()=>window.goScreen('s-home'));
+  const visual=await page.locator('#s-home .fm24-home-decision').evaluate(element=>{
+    const title=element.querySelector('.fm24-title');
+    const context=document.querySelector('#s-home .fm30-context');
+    return{
+      release:document.documentElement.dataset.footmateRelease,
+      bodyBackground:getComputedStyle(document.body).backgroundColor,
+      heroBackground:getComputedStyle(element).backgroundImage,
+      heroTitleColor:getComputedStyle(title).color,
+      heroTitleSize:getComputedStyle(title).fontSize,
+      contextDisplay:context?getComputedStyle(context).display:'missing'
+    };
+  });
+  expect(visual.release).toBe('2.8');
+  expect(visual.bodyBackground).toBe('rgb(8, 21, 15)');
+  expect(visual.heroBackground).toContain('linear-gradient');
+  expect(visual.heroTitleColor).toBe('rgb(255, 255, 255)');
+  // Lock the effective v2.8 cascade, not the nominal token declaration.
+  expect(visual.heroTitleSize).toBe('19px');
+  expect(visual.contextDisplay).toBe('none');
+  expectNoFailures(failures);
+});
+
 test('v3.0 mobile shell is touch-safe, contained and accessible at 320px',async({page})=>{
   const failures=await boot(page,{width:320,height:740});
   await page.evaluate(()=>window.goScreen('s-home'));
@@ -88,19 +113,21 @@ test('v3.0 mobile shell is touch-safe, contained and accessible at 320px',async(
   expectNoFailures(failures);
 });
 
-test('v3.0 desktop replaces the phone mock with a left rail and responsive workspace',async({page})=>{
+test('v3.0 desktop keeps a left rail without stretching the v2.8 product viewport',async({page})=>{
   const failures=await boot(page,{width:1280,height:900});
   await page.evaluate(()=>window.goScreen('s-results'));
   const layout=await page.evaluate(()=>{
     const shell=document.querySelector('.device-shell').getBoundingClientRect();
     const nav=document.querySelector('#fm30AppNav').getBoundingClientRect();
     const screen=document.querySelector('.device-screen').getBoundingClientRect();
-    return{shellWidth:shell.width,shellHeight:shell.height,navLeft:nav.left,navWidth:nav.width,screenLeft:screen.left,screenWidth:screen.width,resultsColumns:getComputedStyle(document.querySelector('#s-results .fm25-compare-grid')).gridTemplateColumns};
+    return{shellWidth:shell.width,shellHeight:shell.height,navLeft:nav.left,navWidth:nav.width,screenLeft:screen.left,screenWidth:screen.width};
   });
-  expect(layout.shellWidth).toBeGreaterThan(900);
+  expect(layout.shellWidth).toBeGreaterThanOrEqual(520);
+  expect(layout.shellWidth).toBeLessThanOrEqual(580);
   expect(layout.navWidth).toBeGreaterThanOrEqual(90);
   expect(layout.screenLeft).toBeGreaterThan(layout.navLeft);
-  expect(layout.screenWidth).toBeGreaterThan(700);
-  expect(layout.resultsColumns.split(' ').length).toBeGreaterThanOrEqual(3);
+  expect(layout.screenWidth).toBeGreaterThanOrEqual(400);
+  expect(layout.screenWidth).toBeLessThanOrEqual(470);
+  await expect(page.locator('#s-results .fm30-context')).toBeVisible();
   expectNoFailures(failures);
 });
