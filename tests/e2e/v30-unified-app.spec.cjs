@@ -88,7 +88,8 @@ test('v3.0 preserves the v2.8 matchday visual baseline on product screens',async
   expect(visual.bodyBackground).toBe('rgb(8, 21, 15)');
   expect(visual.heroBackground).toContain('linear-gradient');
   expect(visual.heroTitleColor).toBe('rgb(255, 255, 255)');
-  expect(visual.heroTitleSize).toBe('20px');
+  // Lock the effective v2.8 cascade, not the nominal token declaration.
+  expect(visual.heroTitleSize).toBe('19px');
   expect(visual.contextDisplay).toBe('none');
   expectNoFailures(failures);
 });
