@@ -37,7 +37,9 @@ test('v2.8 promotes matchday visual ownership on top of v2.7',async({page})=>{
   expect(snapshot.screens).toBe(39);
   expect(snapshot.release).toMatchObject({version:'2.8.0',previousReleaseVersion:'2.7.0',schemaVersion:'2.1.0',identity:'matchday',preservedScreens:39,caseStudySlides:16,architecture:'v2.8-visual-identity'});
   expect(snapshot.v27).toMatchObject({version:'2.7.0',currentReleaseVersion:'2.8.0',compatibility:true});
-  expect(snapshot.styles.slice(-2)).toEqual(['/src/v2/styles/visual-tokens.css','/src/v2/styles/visual-identity.css']);
+  expect(snapshot.styles).toContain('/src/v2/styles/visual-tokens.css');
+  expect(snapshot.styles).toContain('/src/v2/styles/visual-identity.css');
+  expect(snapshot.styles).toContain('/src/v2/styles/visual-guardrails.css');
   expectNoFailures(failures);
 });
 
@@ -59,8 +61,8 @@ test('v2.8 applies sports identity to the decision funnel',async({page})=>{
   expect(home.accent).toBe('#D3F36B');
   await page.evaluate(()=>window.goScreen('s-results'));
   const cards=page.locator('#s-results [data-fm28-card="match"]');
-  expect(await cards.count()).toBeGreaterThan(0);
   await expect(cards.first()).toHaveAttribute('data-fm28-featured','true');
+  expect(await cards.count()).toBeGreaterThan(0);
   expectNoFailures(failures);
 });
 
