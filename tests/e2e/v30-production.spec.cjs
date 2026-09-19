@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const enabled=process.env.PRODUCTION_SMOKE==='1';
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
-test.skip(!enabled,'v3 Production browser smoke runs only after a main deployment.');
+test.skip(!enabled||!strict,'v3 exact Production browser smoke runs only after an exact main deployment is verified.');
 
 function collectFailures(page){
   const failures=[];
@@ -68,6 +68,6 @@ test('production v3.0 desktop renders responsive workspace and left rail',async(
   expect(layout.screenLeft).toBeGreaterThan(layout.navLeft);
   expect(layout.screenWidth).toBeGreaterThan(700);
   expect(layout.columns.split(' ').length).toBeGreaterThanOrEqual(3);
-  if(strict)await expect(page.locator('#s-results .fm30-context')).toBeVisible();
+  await expect(page.locator('#s-results .fm30-context')).toBeVisible();
   expect(failures,failures.join('\n')).toEqual([]);
 });

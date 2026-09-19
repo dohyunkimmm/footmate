@@ -124,21 +124,34 @@ jobs:
           done
           echo "Timed out waiting for the Vercel status for ${GITHUB_SHA}."
           exit 1
-      - name: Run production HTTP smoke
+      - name: Run production compatibility HTTP smoke
         env:
           FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
-          FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
-        run: node tests/production-smoke.cjs && node tests/production-v30-smoke.cjs
+          FOOTMATE_STRICT_PRODUCTION: 'false'
+        run: node tests/production-smoke.cjs
+      - name: Run v3 exact production HTTP smoke
+        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
+        env:
+          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
+          FOOTMATE_STRICT_PRODUCTION: 'true'
+        run: node tests/production-v30-smoke.cjs
       - name: Install production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run production browser render smoke
+      - name: Run production compatibility browser smoke
         env:
           BASE_URL: https://footmate-black.vercel.app
           PRODUCTION_SMOKE: '1'
-          FOOTMATE_STRICT_PRODUCTION: ${{ steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true' }}
-        run: npx playwright test tests/e2e/production.spec.cjs tests/e2e/v30-production.spec.cjs
+          FOOTMATE_STRICT_PRODUCTION: 'false'
+        run: npx playwright test tests/e2e/production.spec.cjs
+      - name: Run v3 exact production browser smoke
+        if: steps.impact.outputs.deployment_required == 'true' && steps.deployment.outputs.deployment_pending != 'true'
+        env:
+          BASE_URL: https://footmate-black.vercel.app
+          PRODUCTION_SMOKE: '1'
+          FOOTMATE_STRICT_PRODUCTION: 'true'
+        run: npx playwright test tests/e2e/v30-production.spec.cjs
       - name: Upload production QA evidence
         if: always()
         uses: actions/upload-artifact@v6

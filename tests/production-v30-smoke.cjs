@@ -21,6 +21,14 @@ async function check(name,route,verify,checks){
 }
 
 async function main(){
+  fs.mkdirSync(reportDir,{recursive:true});
+  if(!strict){
+    const payload={base,checkedAt:new Date().toISOString(),githubSha:process.env.GITHUB_SHA||null,strictProduction:false,skipped:true,passed:true,checks:[]};
+    fs.writeFileSync(reportFile,JSON.stringify(payload,null,2)+'\n');
+    console.log('SKIP v3 exact Production HTTP smoke: strict exact deployment was not verified.');
+    return;
+  }
+
   const checks=[];
   await check('v3-demo-shell','/demo',({body,contentType})=>{
     assert(contentType.includes('text/html'),'/demo must return HTML');
@@ -64,14 +72,11 @@ async function main(){
     assert(body.includes('.fm30-app-nav'),'v3 app navigation style missing');
     assert(body.includes('.fm30-context'),'v3 contextual header style missing');
   },checks);
-  if(strict){
-    await check('v3-case-study','/',({body})=>{
-      assert(body.includes('index-experience.js'),'/ case study experience loader missing');
-      assert(body.includes('index-patches.js'),'/ case study patch loader missing');
-    },checks);
-  }
-  fs.mkdirSync(reportDir,{recursive:true});
-  const payload={base,checkedAt:new Date().toISOString(),githubSha:process.env.GITHUB_SHA||null,strictProduction:strict,passed:checks.every(check=>check.ok),checks};
+  await check('v3-case-study','/',({body})=>{
+    assert(body.includes('index-experience.js'),'/ case study experience loader missing');
+    assert(body.includes('index-patches.js'),'/ case study patch loader missing');
+  },checks);
+  const payload={base,checkedAt:new Date().toISOString(),githubSha:process.env.GITHUB_SHA||null,strictProduction:true,passed:checks.every(check=>check.ok),checks};
   fs.writeFileSync(reportFile,JSON.stringify(payload,null,2)+'\n');
   for(const item of checks){console.log(`${item.ok?'PASS':'FAIL'} ${item.name} ${item.route}${item.status?` (${item.status})`:''}`);if(!item.ok)console.error(`  ${item.error}`)}
   if(!payload.passed)process.exitCode=1;
