@@ -27,7 +27,8 @@ test('production case study and v3 product/portfolio modes render after deployme
   await page.waitForFunction(() => document.body.textContent.includes('FootMate') || document.body.textContent.includes('풋메이트'));
   await expect(page.locator('meta[name="description"]')).toHaveCount(1);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://footmate-black.vercel.app/');
-  await expect(page.locator('#fmDecisionSummary')).toContainText('Validation');
+  await page.waitForFunction(() => document.querySelectorAll('.slide').length === 16);
+  await expect(page.locator('.slide')).toHaveCount(16);
   if (strictProduction) {
     await page.waitForFunction(() => typeof window.goTo === 'function');
     await expect(page.locator('.slide')).toHaveCount(16);

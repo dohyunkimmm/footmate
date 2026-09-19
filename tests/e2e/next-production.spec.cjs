@@ -7,6 +7,7 @@ test('next-major exact Production guest-to-join path renders',async({page})=>{
   const failures=captureFailures(page);
   await page.setViewportSize({width:390,height:844});
   await page.goto('/next',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('meta[name="footmate-next-release"]')).toHaveAttribute('content','matchday-companion-candidate');
   await expect(page.getByRole('heading',{name:/내 수준에 맞는 경기부터/})).toBeVisible();
   await expect(page.getByText('둘러보는 데 계정이 필요하지 않아요.')).toBeVisible();
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
