@@ -1,0 +1,24 @@
+/* FootMate v4.4 · Join & Payment State Machine */
+.fm-participation-methods{display:grid;gap:10px;margin-top:14px}
+.fm-participation-methods button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:64px;padding:14px 16px;border:1px solid var(--fm-line-strong);border-radius:16px;background:#fff;color:var(--fm-ink);text-align:left;cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .16s ease}
+.fm-participation-methods button:hover:not(:disabled){border-color:#91aa9a;background:#f7faf7}
+.fm-participation-methods button:active:not(:disabled){transform:scale(.99)}
+.fm-participation-methods button.is-selected{border-color:var(--fm-pitch-3);background:#eef5f0;box-shadow:inset 0 0 0 1px rgba(27,87,63,.08)}
+.fm-participation-methods button[aria-checked="true"] span:after{content:" · 선택됨";color:var(--fm-success);font-size:12px}
+.fm-participation-methods button:disabled{cursor:not-allowed;opacity:.64}
+.fm-participation-methods span{font-weight:800;font-size:15px}
+.fm-participation-methods small{color:var(--fm-muted);font-size:12px;line-height:1.45}
+.fm-participation-disclosure{margin:10px 0 0;color:var(--fm-muted);font-size:12px;line-height:1.55}
+.fm-participation-state{margin:18px 0 0;padding:18px;border:1px solid #cddad1;border-radius:18px;background:#f2f7f3;box-shadow:var(--fm-shadow-soft)}
+.fm-participation-state.is-failure{border-color:#e9c4c1;background:var(--fm-danger-soft)}
+.fm-participation-state>small{display:block;margin-bottom:6px;color:var(--fm-muted);font-size:11px;font-weight:800;letter-spacing:.08em}
+.fm-participation-state h2{margin:0;font-size:18px;letter-spacing:-.035em}
+.fm-participation-state p{margin:7px 0 0;color:var(--fm-ink-soft);font-size:13px;line-height:1.6}
+.fm-participation-state>div{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.fm-participation-state button{min-height:44px;padding:0 14px;border-radius:12px;background:var(--fm-pitch);color:#fff;font-weight:800;cursor:pointer}
+.fm-participation-state button.is-ghost{background:#fff;color:var(--fm-pitch);border:1px solid var(--fm-line-strong)}
+.fm-participation-live{position:fixed;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[data-screen="checkout"][data-participation-status="pending"] [data-participation-submit]{opacity:.72;cursor:wait}
+@media (min-width:520px){.fm-participation-methods{grid-template-columns:1fr 1fr}.fm-participation-methods button{min-height:76px}}
+@media (max-width:360px){.fm-participation-state>div{display:grid}.fm-participation-state button{width:100%}}
+@media (prefers-reduced-motion:reduce){.fm-participation-methods button{transition:none}}
