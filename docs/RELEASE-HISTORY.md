@@ -1,5 +1,43 @@
 # FootMate Release History
 
+## v4.5.0 — Matchday Operations · 2026-09-20
+
+**Status:** Verified staged feature release. Product/runtime baseline `072eff6e597c98bb370ece61cba4e74d5975c4a3` passed FootMate QA #367 (run `35485268368`), including Regression 36, v4.5 Browser E2E + axe, Matchday Operations state/recovery gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_DQWXcq8BHG5ZHsudN2YWaEZz8xUY` is **READY** and Render deployment `dep-dankmf2jnfac738vj0u0` is **LIVE** at the same exact SHA at release verification time.
+
+v4.5 builds on the verified v4.4 Join & Payment release by making the post-join experience an explicit operating state instead of a static confirmation. Arrival, check-in, late recovery, operational updates and cancellation recovery are separated from payment state and persisted independently.
+
+### Release scope
+
+- separate Matchday Operations persistence in `footmate:v4:matchday`
+- `upcoming → matchday → checked-in` state contract
+- arrival status and explicit late → arrival recovery
+- operational update acknowledgement and cancellation recovery
+- venue/check-in/team-notice UX contract
+- actionable Home / Schedule surfaces after participation
+- 320 / 375 / 390 / 430 responsive coverage and axe accessibility gate
+- explicit boundary that realtime location, map, team chat and notification backend are not connected
+- v4.1 Recommendation Core, v4.2 Discovery & Search, v4.3 Decision Detail and v4.4 Join & Payment remain regression contracts
+- 16-section Case Study updated with Matchday Operations evidence
+
+### Release verification
+
+- Matchday Operations PR #103: final PR QA #364 · run `35484349288` · PASS
+- Production locator fix PR #104: QA #366 · run `35485163542` · PASS
+- Verified product/runtime baseline: `072eff6e597c98bb370ece61cba4e74d5975c4a3`
+- Post-merge QA + exact Production verification: FootMate QA #367 · run `35485268368` · PASS
+- Exact Vercel Production: `dpl_DQWXcq8BHG5ZHsudN2YWaEZz8xUY` · SHA `072eff6e597c98bb370ece61cba4e74d5975c4a3` · **READY**
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-dankmf2jnfac738vj0u0` · SHA `072eff6e597c98bb370ece61cba4e74d5975c4a3` · **LIVE at verification time**
+
+### Scope boundary
+
+This remains an interactive service-planning prototype. Matchday Operations uses deterministic state, sample venue/notice content and browser persistence. Realtime location, map routing, team chat, notification delivery, external AI inference, member DB, real OAuth, real PG and realtime capacity/participant data are not connected.
+
+### Next staged release
+
+v4.6 is **Return Loop & Reputation**: postgame rating, attendance/completion history, perceived-difficulty feedback, feedback-aware next recommendation, careful reliability/sportsmanship expression, and repeat-match discovery.
+
 ## v4.4.0 — Join & Payment State Machine · 2026-09-20
 
 **Status:** Verified staged feature release. Product/runtime baseline `27f78394c32475e818afd97bf590d6448403f938` passed FootMate QA #357 (run `35483442042`), including Regression 36, Recommendation Core / Discovery / Decision regressions, Join & Payment state recovery E2E, Browser E2E + axe, responsive/state/Case Study gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_GS2Cotyf5UFdDA4gyoCfMFqfa5Pq` is **READY** and Render deployment `dep-dank2n8jo6nc739k8egg` is **LIVE** at the same exact SHA at release verification time.
