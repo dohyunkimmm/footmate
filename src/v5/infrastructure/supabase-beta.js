@@ -16,6 +16,12 @@ function nonEmpty(value,name){
   return text;
 }
 
+function betaPosition(value){
+  const position=String(value||'').trim().toUpperCase();
+  if(!['MF','FW','DF','GK'].includes(position))throw new TypeError('position must be MF, FW, DF, or GK');
+  return position;
+}
+
 function baseUrl(value){
   const url=new URL(nonEmpty(value,'Supabase URL'));
   return url.toString().replace(/\/$/,'');
@@ -42,6 +48,12 @@ function clampLimit(value){
   if(!Number.isFinite(numeric))return 20;
   return Math.max(1,Math.min(50,Math.trunc(numeric)));
 }
+
+const MATCH_SELECT=[
+  'id','title','venue_name','area_label','address','region','level','starts_at','price_krw',
+  'capacity_total','joined_count','remaining_spots','format_label','surface','duration_minutes','status',
+  'match_slots(position,capacity_total,joined_count,remaining_spots)'
+].join(',');
 
 export async function loadBetaBackendConfig({fetchImpl=globalThis.fetch,endpoint=BETA_BACKEND_CONFIG_ENDPOINT}={}){
   if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
@@ -95,6 +107,10 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
       method:'POST',
       body:{email:nonEmpty(email,'email'),password:nonEmpty(password,'password')}
     }),
+    refresh:({refreshToken})=>request('/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      body:{refresh_token:nonEmpty(refreshToken,'refresh token')}
+    }),
     getUser:({accessToken})=>request('/auth/v1/user',{accessToken:nonEmpty(accessToken,'access token')}),
     signOut:({accessToken})=>request('/auth/v1/logout',{method:'POST',accessToken:nonEmpty(accessToken,'access token')})
   });
@@ -102,8 +118,9 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
   const matches=Object.freeze({
     list:({region=null,limit=20}={})=>{
       const query=new URLSearchParams();
-      query.set('select','id,title,venue_name,address,region,level_min,level_max,positions,starts_at,price_krw,capacity_total,joined_count,remaining_spots,status');
+      query.set('select',MATCH_SELECT);
       query.set('status','in.(open,full)');
+      query.set('starts_at',`gt.${new Date().toISOString()}`);
       if(region)query.set('region',`eq.${String(region).trim()}`);
       query.set('order','starts_at.asc');
       query.set('limit',String(clampLimit(limit)));
@@ -111,7 +128,7 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
     },
     get:({matchId})=>{
       const query=new URLSearchParams();
-      query.set('select','id,title,venue_name,address,region,level_min,level_max,positions,starts_at,price_krw,capacity_total,joined_count,remaining_spots,status');
+      query.set('select',MATCH_SELECT);
       query.set('id',`eq.${nonEmpty(matchId,'match id')}`);
       query.set('limit','1');
       return request(`/rest/v1/matches?${query}`).then(rows=>Array.isArray(rows)?rows[0]||null:null);
@@ -144,14 +161,14 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
   const participation=Object.freeze({
     listMine:({accessToken})=>{
       const query=new URLSearchParams();
-      query.set('select','id,match_id,status,joined_at,canceled_at,created_at,updated_at');
+      query.set('select','id,match_id,position,status,joined_at,canceled_at,created_at,updated_at');
       query.set('order','created_at.desc');
       return request(`/rest/v1/participations?${query}`,{accessToken:nonEmpty(accessToken,'access token')});
     },
-    join:({accessToken,matchId})=>request('/rest/v1/rpc/join_match',{
+    join:({accessToken,matchId,position})=>request('/rest/v1/rpc/join_match_position',{
       method:'POST',
       accessToken:nonEmpty(accessToken,'access token'),
-      body:{p_match_id:nonEmpty(matchId,'match id')}
+      body:{p_match_id:nonEmpty(matchId,'match id'),p_position:betaPosition(position)}
     }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
     cancel:({accessToken,matchId})=>request('/rest/v1/rpc/cancel_participation',{
       method:'POST',
