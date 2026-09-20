@@ -133,6 +133,15 @@ for(const required of [
 ])assert.ok(positionMigration.includes(required),`missing position migration contract: ${required}`);
 assert.ok(!positionMigration.includes('service_role'),'service-role credentials must not be embedded in the position migration');
 
+const openMatchIntegrityMigration=await readFile(new URL('../../supabase/migrations/20260920_open_match_integrity.sql',import.meta.url),'utf8');
+for(const required of [
+  'select coalesce(sum(capacity_total), 0)::integer',
+  'where match_id = new.id',
+  'v_slot_capacity <> new.capacity_total',
+  "raise exception 'POSITION_CAPACITY_INCOMPLETE'"
+])assert.ok(openMatchIntegrityMigration.includes(required),`missing open match integrity contract: ${required}`);
+assert.ok(!openMatchIntegrityMigration.includes('service_role'),'service-role credentials must not be embedded in the open match integrity migration');
+
 const configRoute=await readFile(new URL('../../api/beta-config.js',import.meta.url),'utf8');
 assert.ok(configRoute.includes('SUPABASE_PUBLISHABLE_KEY'));
 assert.ok(configRoute.includes('SUPABASE_ANON_KEY'));
