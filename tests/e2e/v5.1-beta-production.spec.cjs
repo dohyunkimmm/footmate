@@ -10,7 +10,7 @@ test('closed beta production connects to Supabase without browser errors',async(
   expect(response?.status()).toBe(200);
   await expect(page).toHaveTitle('FootMate | Closed Beta');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
-  await expect(page.getByText('Supabase Connected')).toBeVisible();
+  await expect(page.getByText('Supabase Connected',{exact:true})).toBeVisible();
   await expect(page.getByText(/실제 경기/)).toBeVisible();
   expect(errors).toEqual([]);
 });
