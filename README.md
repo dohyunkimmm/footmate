@@ -9,6 +9,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Primary journey: **Find → Decide → Join → Play → Return**
 - Case Study: `/`
 - Real App: `/app`
+- Closed Beta: `/beta` — Supabase Auth / Postgres / capacity / participation connected
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Compatibility aliases: `/demo`, `/next` → current Real App
@@ -44,6 +45,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Sign in / checkout / pending / retry / cancel / reload recovery
 - Matchday check-in과 운영 상태 복구
 - postgame Return과 browser-local personalization
+- Closed Beta email/password Auth, profile persistence, live match read, position-aware join/cancel, reload session recovery
 - Real / Guided / Evidence mode 분리
 - responsive 320 / 375 / 390 / 430px
 - Browser E2E + axe accessibility regression
@@ -52,12 +54,14 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 
 현재 실제 연결과 simulation 경계를 다음처럼 구분합니다.
 
-- AI Gateway: **connected and Production-verified**
-- recommendation ranking: **deterministic runtime logic**
-- match catalog / capacity / participant composition: **sample records**
-- auth / payment / capacity / notification providers: **deterministic mock**
-- persistence: **browser local state**
-- member DB / cross-device sync / real OAuth / real PG / realtime capacity backend / actual notification delivery / external analytics: **미연동**
+- Vercel AI Gateway: **connected and Production-verified**
+- `/app` recommendation ranking: **deterministic runtime logic**
+- `/app` match catalog / capacity / participant composition: **sample records**
+- `/app` auth / payment / capacity / notification providers: **deterministic mock**
+- `/app` persistence: **browser local state**
+- `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
+- `/beta` join/cancel: **database transaction + row lock + RLS**, free-participation only
+- real OAuth / real PG / notification delivery / external analytics: **미연동**
 - Render: static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
 
 ## Release readiness
@@ -70,21 +74,27 @@ Release gate는 다음을 포함합니다.
 - Browser E2E + axe
 - responsive 320 / 375 / 390 / 430px
 - Deep Link / State Consistency / persistence restoration
+- Closed Beta backend config / Auth / join / cancel / reload recovery
 - AI connected / provider fallback / browser fallback / timeout recovery
 - exact Production HTTP / AI inference / Chromium smoke
 - Vercel exact SHA verification
 - Render backup verification
 
-실제 서비스 출시로 확장할 때의 주요 미연동 범위는 member DB, real auth, PG, realtime match capacity/participant data, notification delivery입니다. 이 범위를 연결하기 전까지는 현재 제품을 Interactive Prototype / Production-validated prototype 경계로 명확히 표현합니다.
+Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 운영자 경기 관리와 실제 데이터 입력 경로를 연결한 뒤 실사용자 beta를 시작하며, PG와 notification은 그 이후 별도 release gate로 다룹니다.
 
 ## Architecture
 
 - `api/ai-match-assistant.js` — AI Gateway, OIDC, provider fallback, request/time/cost guardrails
+- `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
 - `src/v5/ai-match-assistant.js` — AI UI/application bridge, browser timeout/fallback, reload restoration
+- `src/v5/beta.js` — Closed Beta Auth / profile / match / participation UI state
+- `src/v5/infrastructure/supabase-beta.js` — Supabase Auth / REST / RPC browser adapter
+- `src/v5/domain/beta-match-contract.js` — connected match normalization contract
+- `supabase/migrations/` — profiles / operators / matches / match_slots / participation, RLS and atomic RPC ownership
 - `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
 - `src/v5/infrastructure/providers.js` — auth/payment/capacity/notification provider registry
-- `src/v4/recommendation.js` — deterministic ranking Source of Truth
-- `src/v4/data.js` — sample match records and user-visible recommendation reasons
+- `src/v4/recommendation.js` — deterministic ranking Source of Truth for the current `/app` runtime
+- `src/v4/data.js` — current `/app` sample match records and user-visible recommendation reasons
 
 ## Release engineering
 
