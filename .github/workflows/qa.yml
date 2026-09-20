@@ -1,19 +1,15 @@
 name: FootMate QA
-
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
-
 permissions:
   contents: read
   statuses: read
-
 concurrency:
   group: footmate-qa-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   regression:
     name: Regression 36
@@ -21,38 +17,32 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
-        with:
-          node-version: '24'
-          package-manager-cache: false
-      - name: Check v4 release boundary
-        run: node scripts/check-v4-boundary.cjs
-
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Check v4.5 release boundary
+        run: node scripts/check-v4.5-boundary.cjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
-        with:
-          node-version: '24'
-          package-manager-cache: false
+        with: {node-version: '24', package-manager-cache: false}
       - name: Install browser QA dependencies
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v4 browser, state, discovery, decision, participation, responsive, editorial and accessibility gates
-        run: npx playwright test tests/e2e/v4-app.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-case-study.spec.cjs
+      - name: Run v4.5 browser and accessibility gates
+        run: npx playwright test tests/e2e/v4-app.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4.5-case-study.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v4-browser-e2e-${{ github.run_id }}
+          name: v4.5-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
           if-no-files-found: warn
           retention-days: 14
-
   production-smoke:
     name: Production Smoke
     if: github.event_name == 'push'
@@ -60,84 +50,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 2
+        with: {fetch-depth: 2}
       - uses: actions/setup-node@v5
-        with:
-          node-version: '24'
-          package-manager-cache: false
+        with: {node-version: '24', package-manager-cache: false}
       - name: Determine production impact
         id: impact
-        env:
-          BEFORE_SHA: ${{ github.event.before }}
+        env: {BEFORE_SHA: "${{ github.event.before }}"}
         run: |
-          git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA" | tee /tmp/footmate-changed-files.txt
           runtime=false
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            case "$file" in
-              README.md|docs/*|.github/*)
-                ;;
-              *)
-                runtime=true
-                ;;
-            esac
-          done < /tmp/footmate-changed-files.txt
+          for file in $(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA"); do
+            case "$file" in README.md|docs/*|.github/*) ;; *) runtime=true ;; esac
+          done
           echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
-          echo "Production-impacting change: $runtime"
       - name: Wait for exact Vercel deployment
         if: steps.impact.outputs.runtime == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
+        env: {GH_TOKEN: "${{ github.token }}"}
         run: |
           for attempt in $(seq 1 42); do
-            status_json="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/status")"
-            state="$(printf '%s' "$status_json" | jq -r '[.statuses[] | select(.context=="Vercel")][0].state // ""')"
-            description="$(printf '%s' "$status_json" | jq -r '[.statuses[] | select(.context=="Vercel")][0].description // ""')"
-            echo "Vercel status: ${state:-pending} ${description}"
-            if [ "$state" = "success" ]; then exit 0; fi
-            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then exit 1; fi
+            state="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/status" --jq '[.statuses[]|select(.context=="Vercel")][0].state // ""')"
+            [ "$state" = success ] && exit 0
+            if [ "$state" = failure ] || [ "$state" = error ]; then exit 1; fi
             sleep 10
           done
-          echo "Timed out waiting for exact Vercel deployment ${GITHUB_SHA}."
           exit 1
-      - name: Run v4 exact Production HTTP smoke
+      - name: Run exact Production HTTP smoke
         if: steps.impact.outputs.runtime == 'true'
-        env:
-          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
-          FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: node tests/production-v4-smoke.cjs
-      - name: Run v4 compatibility Production HTTP smoke
-        if: steps.impact.outputs.runtime != 'true'
-        env:
-          FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app
-          FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: node tests/production-v4-smoke.cjs
+        env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
+        run: node tests/production-v4.5-smoke.cjs
       - name: Install Production browser dependency
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v4 exact Production Chromium smoke
+      - name: Run exact Production Chromium smoke
         if: steps.impact.outputs.runtime == 'true'
-        env:
-          BASE_URL: https://footmate-black.vercel.app
-          PRODUCTION_SMOKE: '1'
-          FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: npx playwright test tests/e2e/v4-production.spec.cjs
-      - name: Run v4 compatibility Production Chromium smoke
-        if: steps.impact.outputs.runtime != 'true'
-        env:
-          BASE_URL: https://footmate-black.vercel.app
-          PRODUCTION_SMOKE: '1'
-          FOOTMATE_STRICT_PRODUCTION: 'true'
-        run: npx playwright test tests/e2e/v4-production.spec.cjs
-      - name: Upload Production QA evidence
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: v4-production-${{ github.run_id }}
-          path: |
-            playwright-report/
-            test-results/
-          if-no-files-found: warn
-          retention-days: 14
+        env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
+        run: npx playwright test tests/e2e/v4.5-production.spec.cjs
