@@ -113,6 +113,46 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
 .fm-next-cs-final>b{display:block;color:#fff;font-size:18px;line-height:1.55}
 .fm-next-cs-final>a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:18px;padding:0 14px;border-radius:12px;background:#c9ef62;color:#0b251b;font-size:11px;font-weight:900;text-decoration:none}
 
+/* Layout QA readability floor for structured/table-like content. */
+.fm-next-cs-card p,
+.fm-next-cs-journey p,
+.fm-next-cs-stack p,
+.fm-next-cs-modes p,
+.fm-next-cs-metric span,
+.fm-next-cs-day-states p,
+.fm-next-cs-recovery span,
+.fm-next-cs-outcomes p{
+  font-size:13px;
+  line-height:1.62;
+}
+.fm-next-cs-card small,
+.fm-next-cs-persona span,
+.fm-next-cs-auth-flow small,
+.fm-next-cs-state-home small,
+.fm-next-cs-modes small,
+.fm-next-cs-day-states small,
+.fm-next-cs-outcomes b,
+.fm-next-cs-quality span,
+.fm-next-cs-final>span{
+  font-size:11px;
+  line-height:1.4;
+}
+.fm-next-cs-persona b,
+.fm-next-cs-auth-flow b,
+.fm-next-cs-state-home b,
+.fm-next-cs-day-states b,
+.fm-next-cs-recovery b,
+.fm-next-cs-detail-order span,
+.fm-next-cs-ia b{
+  font-size:14px;
+  line-height:1.5;
+}
+.fm-next-cs-loop span{font-size:12px;line-height:1.5}
+.fm-next-cs-loop b,
+.fm-next-cs-agent b,
+.fm-next-cs-state-chain span{font-size:14px;line-height:1.5}
+.fm-next-cs-metric{padding:16px}
+
 @media(min-width:1181px){
   .fm-next-story{
     width:min(1180px,100%);
@@ -163,6 +203,9 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
 }
 
 @media(max-width:900px){
+  .fm-next-cs-day-states,
+  .fm-next-cs-outcomes,
+  .fm-next-cs-ia{grid-template-columns:repeat(2,minmax(0,1fr))}
   .fm-next-cs-recovery{grid-template-columns:1fr}
 }
 
@@ -181,4 +224,10 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
   }
   .fm-next-cover-lead,
   .fm-next-story-lead{line-height:1.72}
+  .fm-next-cs-day-states,
+  .fm-next-cs-outcomes,
+  .fm-next-cs-ia{grid-template-columns:1fr}
+  .fm-next-cs-day-states>div,
+  .fm-next-cs-recovery>div,
+  .fm-next-cs-outcomes>div{padding:17px 16px}
 }
