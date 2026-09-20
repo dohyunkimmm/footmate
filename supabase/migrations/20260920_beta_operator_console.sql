@@ -142,7 +142,7 @@ begin
   end if;
 
   if v_match_id is not null then
-    select * into v_existing from public.matches where id = v_match_id for update;
+    select * into v_existing from public.matches m where m.id = v_match_id for update;
     if v_existing.id is null then
       raise exception 'MATCH_NOT_FOUND' using errcode = 'P0002';
     end if;
@@ -151,7 +151,7 @@ begin
     end if;
     v_old_capacity := v_existing.capacity_total;
     v_work_capacity := greatest(v_old_capacity, p_capacity_total);
-    update public.matches set status = 'draft', capacity_total = v_work_capacity where id = v_match_id;
+    update public.matches m set status = 'draft', capacity_total = v_work_capacity where m.id = v_match_id;
   else
     insert into public.matches (
       title, venue_name, area_label, address, region, level, positions, starts_at,
@@ -187,7 +187,7 @@ begin
     end if;
   end loop;
 
-  select * into v_existing from public.matches where id = v_match_id for update;
+  select * into v_existing from public.matches m where m.id = v_match_id for update;
   if v_existing.joined_count > p_capacity_total then
     raise exception 'MATCH_CAPACITY_BELOW_JOINED' using errcode = '23514';
   end if;
@@ -197,7 +197,7 @@ begin
     else p_status
   end;
 
-  update public.matches
+  update public.matches m
   set
     title = coalesce(p_title,''),
     venue_name = coalesce(p_venue_name,''),
@@ -213,7 +213,7 @@ begin
     surface = p_surface,
     duration_minutes = p_duration_minutes,
     status = v_final_status
-  where id = v_match_id;
+  where m.id = v_match_id;
 
   return query select v_match_id, v_final_status;
 end;
@@ -235,18 +235,18 @@ begin
     raise exception 'OPERATOR_REQUIRED' using errcode = '42501';
   end if;
 
-  select * into v_match from public.matches where id = p_match_id for update;
+  select * into v_match from public.matches m where m.id = p_match_id for update;
   if v_match.id is null then raise exception 'MATCH_NOT_FOUND' using errcode = 'P0002'; end if;
   if v_match.status = 'completed' then raise exception 'MATCH_NOT_CANCELABLE' using errcode = 'P0001'; end if;
   if v_match.status = 'canceled' then return query select v_match.id, v_match.status, 0; return; end if;
 
-  update public.participations
+  update public.participations p
   set status = 'canceled', canceled_at = now()
-  where match_id = p_match_id and status = 'confirmed';
+  where p.match_id = p_match_id and p.status = 'confirmed';
   get diagnostics v_count = row_count;
 
-  update public.match_slots set joined_count = 0 where match_id = p_match_id;
-  update public.matches set joined_count = 0, status = 'canceled' where id = p_match_id;
+  update public.match_slots s set joined_count = 0 where s.match_id = p_match_id;
+  update public.matches m set joined_count = 0, status = 'canceled' where m.id = p_match_id;
 
   return query select p_match_id, 'canceled'::text, v_count;
 end;
@@ -268,12 +268,12 @@ begin
     raise exception 'OPERATOR_REQUIRED' using errcode = '42501';
   end if;
 
-  select * into v_match from public.matches where id = p_match_id for update;
+  select * into v_match from public.matches m where m.id = p_match_id for update;
   if v_match.id is null then raise exception 'MATCH_NOT_FOUND' using errcode = 'P0002'; end if;
 
   select * into v_participation
-  from public.participations
-  where match_id = p_match_id and user_id = p_user_id
+  from public.participations p
+  where p.match_id = p_match_id and p.user_id = p_user_id
   for update;
   if v_participation.id is null then raise exception 'PARTICIPATION_NOT_FOUND' using errcode = 'P0002'; end if;
   if v_participation.status = 'canceled' then
@@ -281,24 +281,24 @@ begin
     return;
   end if;
 
-  update public.participations
+  update public.participations p
   set status = 'canceled', canceled_at = now()
-  where id = v_participation.id;
+  where p.id = v_participation.id;
 
   if v_participation.position is not null then
-    update public.match_slots
-    set joined_count = greatest(joined_count - 1, 0)
-    where match_id = p_match_id and position = v_participation.position;
+    update public.match_slots s
+    set joined_count = greatest(s.joined_count - 1, 0)
+    where s.match_id = p_match_id and s.position = v_participation.position;
   end if;
 
-  update public.matches
+  update public.matches m
   set
-    joined_count = greatest(joined_count - 1, 0),
+    joined_count = greatest(m.joined_count - 1, 0),
     status = case
-      when status in ('canceled','completed','draft') then status
+      when m.status in ('canceled','completed','draft') then m.status
       else 'open'
     end
-  where id = p_match_id;
+  where m.id = p_match_id;
 
   return query select v_participation.id, p_match_id, p_user_id, 'canceled'::text;
 end;
