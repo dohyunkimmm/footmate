@@ -14,6 +14,7 @@
   },
   "rewrites": [
     {"source":"/app","destination":"/app.html"},
+    {"source":"/beta","destination":"/beta.html"},
     {"source":"/demo","destination":"/app.html"},
     {"source":"/demo.html","destination":"/app.html"},
     {"source":"/next","destination":"/app.html"},
