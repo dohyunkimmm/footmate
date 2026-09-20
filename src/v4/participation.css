@@ -4,6 +4,7 @@
 .fm-participation-methods button:hover:not(:disabled){border-color:#91aa9a;background:#f7faf7}
 .fm-participation-methods button:active:not(:disabled){transform:scale(.99)}
 .fm-participation-methods button.is-selected{border-color:var(--fm-pitch-3);background:#eef5f0;box-shadow:inset 0 0 0 1px rgba(27,87,63,.08)}
+.fm-participation-methods button.is-selected small{color:var(--fm-ink-soft)}
 .fm-participation-methods button[aria-checked="true"] span:after{content:" · 선택됨";color:var(--fm-success);font-size:12px}
 .fm-participation-methods button:disabled{cursor:not-allowed;opacity:.64}
 .fm-participation-methods span{font-weight:800;font-size:15px}
