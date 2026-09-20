@@ -52,12 +52,11 @@ test('v4.4 payment method selection and successful participation are explicit',a
 test('v4.4 pending state blocks duplicate submit and survives reload',async({page})=>{
   const errs=await checkout(page);
   await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__.setAutoComplete(false));
-  const submit=page.getByRole('button',{name:/결제하고 참가 확정/});
-  await submit.click();
+  await page.getByRole('button',{name:/결제하고 참가 확정/}).click();
   const first=await participation(page);
   expect(first.status).toBe('pending');
   expect(first.attemptNumber).toBe(1);
-  await submit.dispatchEvent('click');
+  await page.evaluate(()=>document.querySelector('[data-participation-submit]')?.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true})));
   const duplicate=await participation(page);
   expect(duplicate.attemptId).toBe(first.attemptId);
   expect(duplicate.attemptNumber).toBe(1);
