@@ -1,5 +1,43 @@
 # FootMate Release History
 
+## v4.3.0 — Decision Detail · 2026-09-20
+
+**Status:** Verified staged feature release. Product/runtime baseline `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` passed FootMate QA #351 (run `35476071931`), including Regression 36, Recommendation Core regression, Discovery & Search regression, Decision Detail disclosure/save/compare E2E, Browser E2E + axe, responsive/state/Case Study gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_G2Bg6oTEq4LJDWetzwoXYQtXMz6K` is **READY** and Render deployment `dep-danhjl7lk1mc73fd27u0` is **LIVE** at the same exact SHA at release verification time.
+
+v4.3 builds on the verified v4.2 Discovery & Search release by turning match detail into the actual participation-decision surface. Recommendation evidence, participant/position composition, facility and operation information, refund timing, availability context, save intent and comparison are brought into one decision flow without changing the v4.1 recommendation or v4.2 discovery contracts.
+
+### Release scope
+
+- recommendation reason breakdown on Match Detail
+- clearly disclosed prototype sample remaining-seat and participant-position composition
+- facility / operating-rule / gear information with sample-data disclosure
+- cancellation / refund timing visualization using the existing prototype policy boundary
+- non-exaggerated availability wording; sample capacity is not presented as realtime inventory
+- persistent save intent stored in `footmate:v4:decision`
+- max-two-match comparison state and accessible comparison dialog
+- Escape close and focus restore for compare interaction
+- `참가하기` retained as the participation-contract primary CTA while save/compare remain secondary intents
+- v4.1 Recommendation Core and v4.2 Discovery & Search remain regression contracts
+- 16-section Case Study updated with Decision Detail evidence
+
+### Release verification
+
+- Decision Detail PR #99: final PR QA #350 · run `35475947701` · PASS
+- Verified product/runtime baseline: `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746`
+- Post-merge QA + exact Production verification: FootMate QA #351 · run `35476071931` · PASS
+- Exact Vercel Production: `dpl_G2Bg6oTEq4LJDWetzwoXYQtXMz6K` · SHA `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` · **READY**
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danhjl7lk1mc73fd27u0` · SHA `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` · **LIVE at verification time**
+
+### Scope boundary
+
+This remains an interactive service-planning prototype. Recommendation is deterministic rules-based ranking over sample records; Discovery is deterministic filtering/sorting over those records with browser/URL persistence. Decision Detail capacity, participant composition and facility information are explicit sample data. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity, realtime participant data and notification backend are not connected.
+
+### Next staged release
+
+v4.4 is **Join & Payment State Machine**: explicit auth → checkout → confirmation states, pending/success/failure/retry/cancel recovery, payment-method simulation, duplicate-submit protection, selected-match/price/policy snapshot consistency and reload-safe participation state.
+
 ## v4.2.0 — Discovery & Search · 2026-09-20
 
 **Status:** Verified staged feature release. Product/runtime baseline `896be56a2e2438fd383c46152ad8f1d5f11e89b0` passed FootMate QA #344 (run `35473666410`), including Regression 36, recommendation regression, Discovery filter/sort/persistence/recovery E2E, Browser E2E + axe, responsive/state/Case Study layout gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_oiHYN6EaeNumD3GsmQKDQyjt6xpg` is **READY** and Render deployment `dep-dangrd17lnhs73e7cr40` was **LIVE** at the same exact SHA at release verification time.
@@ -81,7 +119,7 @@ v4.0.1 hardens the official Matchday Companion experience and current repository
 ### Release scope
 
 - Guided / Evidence “Real App만 보기” returns to the official `/app` surface
-- stale candidate / next-version public copy removed from the v4 runtime and Case Study narrative
+- stale candidate / next-version public copy removed from the v4 runtime
 - fixed calendar dates replaced by clearly disclosed date-safe sample schedules
 - match-specific check-in persistence prevents state leakage between matches
 - SPA screen transitions move programmatic focus to the active screen
