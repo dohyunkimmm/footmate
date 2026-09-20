@@ -2,6 +2,25 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v4.8.0 — Platform Architecture · 2026-09-20
+
+**Status:** Verified staged architecture release.
+
+- Scope: domain → application → infrastructure → presentation bridge 경계, session schema migration, browser/memory storage provider, JSON repository, local event contract
+- Session boundary: 기존 `footmate:v4:session`의 unversioned/legacy 상태를 schema v2로 정규화하면서 v4.7 runtime UX를 compatibility layer로 보존
+- Provider boundary: runtime persistence는 browser `localStorage`; memory provider는 deterministic contract test용이며 회원 DB·원격 저장소는 미연동
+- Event boundary: `footmate:v4:events`에 recommendation.selected / join.started / join.completed / checkin.completed / postgame.submitted를 sequence·dedupe 계약으로 기록; external analytics 미연동
+- Compatibility fix: 취소된 participation snapshot을 checkout observer가 덮어쓰지 않도록 `canceled` 상태 ownership 보강
+- Feature PR: #111 (#110은 동일 branch의 QA ref 교체 과정에서 merge 없이 종료)
+- Final PR QA: FootMate QA #400 · run `35494541917` · PASS
+- Product/runtime baseline: `076950f257fce3c5e445d0801c998fc935265dd8`
+- Post-merge QA: FootMate QA #401 · run `35494664726` · PASS
+- Exact Vercel Production: `dpl_Av3cxidUfJ2vj5hHowCtFg3zAfHq` · SHA `076950f257fce3c5e445d0801c998fc935265dd8` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danntpgjo6nc739md83g` · SHA `076950f257fce3c5e445d0801c998fc935265dd8` · LIVE at verification time
+- Next staged release: **v4.9 · v5 Release Candidate**
+
 ## v4.7.0 — Personalization & Memory · 2026-09-20
 
 **Status:** Verified staged feature release.
