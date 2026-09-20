@@ -1,5 +1,6 @@
 const GATEWAY_URL='https://ai-gateway.vercel.sh/v1/responses';
 const MODEL=process.env.FOOTMATE_AI_MODEL||'openai/gpt-5.4-mini';
+const FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'inclusionai/ling-3.0-flash-vl-free';
 const VERSION='5.1.0';
 const LIMIT_WINDOW_MS=5*60*1000;
 const LIMIT_MAX=12;
@@ -58,6 +59,14 @@ function extractOutputText(payload){
   for(const item of payload?.output||[]){for(const part of item?.content||[]){if(part?.type==='output_text'&&typeof part.text==='string')return part.text}}
   return'';
 }
+function parseOutputText(text){
+  const raw=String(text||'').trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');
+  try{return JSON.parse(raw)}catch{}
+  const start=raw.indexOf('{');
+  const end=raw.lastIndexOf('}');
+  if(start>=0&&end>start){try{return JSON.parse(raw.slice(start,end+1))}catch{}}
+  return null;
+}
 function normalizeResult(candidate={}){
   const intent=['search','refine','explain','compare'].includes(candidate.intent)?candidate.intent:'search';
   const region=REGIONS.includes(candidate.region)?candidate.region:null;
@@ -69,10 +78,11 @@ function normalizeResult(candidate={}){
   const reply=typeof candidate.reply==='string'?candidate.reply.trim().slice(0,180):'요청을 경기 검색 조건으로 정리했어요.';
   return {intent,region,position,level,maxPrice,maxDistanceMin,afterTime,reply};
 }
+function gatewayErrorType(payload){return typeof payload?.error?.type==='string'?payload.error.type:null}
 
 module.exports=async function handler(req,res){
   const token=await resolveGatewayToken();
-  if(req.method==='GET')return send(res,200,{version:VERSION,provider:'vercel-ai-gateway',model:MODEL,configured:Boolean(token),workflow:'Context → Plan → Tools → Guardrail → Observe'});
+  if(req.method==='GET')return send(res,200,{version:VERSION,provider:'vercel-ai-gateway',model:MODEL,fallbackModel:FALLBACK_MODEL,configured:Boolean(token),workflow:'Context → Plan → Tools → Guardrail → Observe'});
   if(req.method!=='POST')return send(res,405,{error:'method_not_allowed'});
   if(!sameOrigin(req))return send(res,403,{error:'origin_not_allowed'});
   if(!allowedByRateLimit(req))return send(res,429,{error:'rate_limited',retryable:true});
@@ -107,19 +117,33 @@ module.exports=async function handler(req,res){
     'Convert Korean price expressions such as 2만원 이하 to integer KRW. Convert time such as 8시 이후 to HH:MM. If the user says 가까운 경기 without a number, use maxDistanceMin 20.',
     'reply must be one short Korean sentence describing only the interpreted constraints, never claiming a specific match exists or is available.'
   ].join(' ');
-  try{
-    const gateway=await fetch(GATEWAY_URL,{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:JSON.stringify({model:MODEL,instructions,input:`현재 설정: ${JSON.stringify(preferences)}\n사용자 요청: ${message}`,reasoning:{effort:'none'},max_output_tokens:300,text:{format:{type:'json_schema',name:'footmate_match_constraints',strict:true,schema}}})});
+  const input=`현재 설정: ${JSON.stringify(preferences)}\n사용자 요청: ${message}`;
+  async function requestModel(model,{strictSchema}){
+    const requestBody={model,instructions,input,max_output_tokens:300};
+    if(strictSchema){requestBody.reasoning={effort:'none'};requestBody.text={format:{type:'json_schema',name:'footmate_match_constraints',strict:true,schema}}}
+    else requestBody.instructions+=` Return only one JSON object with exactly these keys: ${Object.keys(schema.properties).join(', ')}. Use null for unknown values. Do not wrap the JSON in markdown.`;
+    const gateway=await fetch(GATEWAY_URL,{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:JSON.stringify(requestBody)});
     const payload=await gateway.json().catch(()=>({}));
-    if(!gateway.ok){
-      const gatewayType=typeof payload?.error?.type==='string'?payload.error.type:null;
-      console.warn('FootMate AI Gateway rejected request',{status:gateway.status,type:gatewayType,model:MODEL});
-      return send(res,502,{mode:'unavailable',error:'ai_gateway_error',retryable:true,status:gateway.status,gatewayType});
+    return {gateway,payload,model};
+  }
+  try{
+    let attempt=await requestModel(MODEL,{strictSchema:true});
+    let usedFallback=false;
+    if(!attempt.gateway.ok&&attempt.gateway.status===403&&['no_providers_available','access_denied'].includes(gatewayErrorType(attempt.payload))&&FALLBACK_MODEL&&FALLBACK_MODEL!==MODEL){
+      console.warn('FootMate AI Gateway primary unavailable; retrying fallback',{status:attempt.gateway.status,type:gatewayErrorType(attempt.payload),model:MODEL,fallbackModel:FALLBACK_MODEL});
+      attempt=await requestModel(FALLBACK_MODEL,{strictSchema:false});
+      usedFallback=true;
     }
-    const text=extractOutputText(payload);
-    if(!text)return send(res,502,{mode:'unavailable',error:'ai_empty_output',retryable:true});
-    let parsed;
-    try{parsed=JSON.parse(text)}catch{return send(res,502,{mode:'unavailable',error:'ai_invalid_output',retryable:true})}
-    return send(res,200,{version:VERSION,mode:'connected-ai',provider:'vercel-ai-gateway',model:MODEL,result:normalizeResult(parsed)});
+    if(!attempt.gateway.ok){
+      const gatewayType=gatewayErrorType(attempt.payload);
+      console.warn('FootMate AI Gateway rejected request',{status:attempt.gateway.status,type:gatewayType,model:attempt.model});
+      return send(res,502,{mode:'unavailable',error:'ai_gateway_error',retryable:true,status:attempt.gateway.status,gatewayType,model:attempt.model});
+    }
+    const text=extractOutputText(attempt.payload);
+    if(!text)return send(res,502,{mode:'unavailable',error:'ai_empty_output',retryable:true,model:attempt.model});
+    const parsed=parseOutputText(text);
+    if(!parsed)return send(res,502,{mode:'unavailable',error:'ai_invalid_output',retryable:true,model:attempt.model});
+    return send(res,200,{version:VERSION,mode:'connected-ai',provider:'vercel-ai-gateway',model:attempt.model,fallbackUsed:usedFallback,result:normalizeResult(parsed)});
   }catch{
     return send(res,502,{mode:'unavailable',error:'ai_request_failed',retryable:true});
   }
