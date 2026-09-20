@@ -89,6 +89,10 @@ jobs:
         if: steps.impact.outputs.runtime == 'true'
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: node tests/production-v5.1-smoke.cjs
+      - name: Run exact Production AI inference
+        if: steps.impact.outputs.runtime == 'true'
+        env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
+        run: node tests/production-v5.1-ai.cjs
       - name: Install Production browser dependency
         if: steps.impact.outputs.runtime == 'true'
         run: npm install --no-save @playwright/test@1.55.0
