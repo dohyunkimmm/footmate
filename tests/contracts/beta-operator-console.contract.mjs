@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
 const migration=await readFile(new URL('../../supabase/migrations/20260920_beta_operator_console.sql',import.meta.url),'utf8');
+const hotfix=await readFile(new URL('../../supabase/migrations/20260921_operator_save_match_conflict_fix.sql',import.meta.url),'utf8');
 const adapter=await readFile(new URL('../../src/v5/infrastructure/supabase-beta.js',import.meta.url),'utf8');
 
 for(const required of [
@@ -41,5 +42,8 @@ assert.ok(!migration.includes('service_role'),'operator migration must not embed
 assert.ok(!adapter.includes('service_role'),'browser adapter must not use service-role credentials');
 assert.ok(migration.includes("p_status not in ('draft','open')"),'operator save must restrict editable statuses');
 assert.ok(migration.includes("price_krw = 0"),'closed beta operator save must keep payment disabled');
+assert.ok(hotfix.includes('create or replace function public.operator_save_match('),'hotfix must replace operator save RPC');
+assert.ok(hotfix.includes('on conflict on constraint match_slots_pkey'),'operator save hotfix must target the slot primary-key constraint explicitly');
+assert.ok(!hotfix.includes('on conflict (match_id, position)'),'operator save hotfix must not reintroduce PL/pgSQL output-column ambiguity');
 
 console.log('PASS beta operator console contracts');
