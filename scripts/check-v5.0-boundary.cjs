@@ -11,5 +11,5 @@ for(const name of ['auth','payment','capacity','notification'])must(providers.in
 must(providers.includes("mode:connected?'connected':'mock'"),'provider mode disclosure');
 must(bootstrap.includes('externalProductionFeatures'),'runtime external capability disclosure');
 must(caseV5.includes("data-v5-provider-evidence','mock-only'"),'case provider boundary evidence');
-must(doc.includes('deterministic mock')&&doc.includes('실제로 연결한 것으로 표현하지 않습니다'),'durable prototype boundary');
+must(doc.includes('deterministic mock')&&doc.includes('실제 연결한 것으로 표현하지 않습니다'),'durable prototype boundary');
 console.log('PASS v5.0 connected platform boundary');
