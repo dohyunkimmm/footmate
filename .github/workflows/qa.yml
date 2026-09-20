@@ -18,8 +18,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
-      - name: Check v4.5 release boundary
-        run: node scripts/check-v4.5-boundary.cjs
+      - name: Check v4.6 release boundary
+        run: node scripts/check-v4.6-boundary.cjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
@@ -31,13 +31,13 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v4.5 browser and accessibility gates
-        run: npx playwright test tests/e2e/v4.5-core.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4.5-case-study.spec.cjs
+      - name: Run v4.6 browser and accessibility gates
+        run: npx playwright test tests/e2e/v4.6-core.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4.6-case-study.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v4.5-browser-e2e-${{ github.run_id }}
+          name: v4.6-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -76,12 +76,14 @@ jobs:
       - name: Run exact Production HTTP smoke
         if: steps.impact.outputs.runtime == 'true'
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: node tests/production-v4.5-smoke.cjs
+        run: node tests/production-v4.6-smoke.cjs
       - name: Install Production browser dependency
+        if: steps.impact.outputs.runtime == 'true'
         run: npm install --no-save @playwright/test@1.55.0
       - name: Install Chromium
+        if: steps.impact.outputs.runtime == 'true'
         run: npx playwright install --with-deps chromium
       - name: Run exact Production Chromium smoke
         if: steps.impact.outputs.runtime == 'true'
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test tests/e2e/v4.5-production.spec.cjs
+        run: npx playwright test tests/e2e/v4.6-production.spec.cjs
