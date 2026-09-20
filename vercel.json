@@ -9,6 +9,9 @@
   "ignoreCommand": "node scripts/vercel-ignore-build.cjs",
   "cleanUrls": false,
   "trailingSlash": false,
+  "functions": {
+    "api/ai-match-assistant.js": {"maxDuration": 10}
+  },
   "rewrites": [
     {"source":"/app","destination":"/app.html"},
     {"source":"/demo","destination":"/app.html"},
