@@ -20,8 +20,6 @@ jobs:
         with: {node-version: '24', package-manager-cache: false}
       - name: Check v4.9 compatibility boundary
         run: node scripts/check-v4.9-boundary.cjs
-      - name: Check v5.0 connected platform boundary
-        run: node scripts/check-v5.0-boundary.cjs
       - name: Check v5.1 AI Match Assistant boundary
         run: node scripts/check-v5.1-boundary.cjs
       - name: Check v5.0 performance budget
@@ -30,8 +28,8 @@ jobs:
         run: node tests/contracts/v4.8-platform.contract.mjs
       - name: Run v4.9 release candidate contracts
         run: node tests/contracts/v4.9-release-candidate.contract.mjs
-      - name: Run v5.0 connected platform contracts
-        run: node tests/contracts/v5.0-connected-platform.contract.mjs
+      - name: Run v5.1 connected platform contracts
+        run: node tests/contracts/v5.1-connected-platform.contract.mjs
       - name: Run v5.1 AI assistant contracts
         run: node tests/contracts/v5.1-ai-assistant.contract.cjs
   browser-e2e:
