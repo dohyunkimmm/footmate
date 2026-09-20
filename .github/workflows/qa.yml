@@ -20,16 +20,18 @@ jobs:
         with: {node-version: '24', package-manager-cache: false}
       - name: Check v4.9 compatibility boundary
         run: node scripts/check-v4.9-boundary.cjs
-      - name: Check v5.0 connected platform boundary
-        run: node scripts/check-v5.0-boundary.cjs
-      - name: Check v5.0 performance budget
+      - name: Check v5.1 AI Match Assistant boundary
+        run: node scripts/check-v5.1-boundary.cjs
+      - name: Check current performance budget
         run: node scripts/check-v4.9-performance-budget.cjs
       - name: Run v4.8 platform regression contracts
         run: node tests/contracts/v4.8-platform.contract.mjs
       - name: Run v4.9 release candidate contracts
         run: node tests/contracts/v4.9-release-candidate.contract.mjs
-      - name: Run v5.0 connected platform contracts
-        run: node tests/contracts/v5.0-connected-platform.contract.mjs
+      - name: Run v5.1 connected platform contracts
+        run: node tests/contracts/v5.1-connected-platform.contract.mjs
+      - name: Run v5.1 AI assistant contracts
+        run: node tests/contracts/v5.1-ai-assistant.contract.cjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
@@ -41,13 +43,13 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v5.0 browser, recovery and accessibility gates
-        run: npx playwright test tests/e2e/v5.0-core.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.0-case-study.spec.cjs
+      - name: Run v5.1 browser, AI, recovery and accessibility gates
+        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v5.0-browser-e2e-${{ github.run_id }}
+          name: v5.1-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -86,7 +88,11 @@ jobs:
       - name: Run exact Production HTTP smoke
         if: steps.impact.outputs.runtime == 'true'
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: node tests/production-v5.0-smoke.cjs
+        run: node tests/production-v5.1-smoke.cjs
+      - name: Run exact Production AI inference
+        if: steps.impact.outputs.runtime == 'true'
+        env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
+        run: node tests/production-v5.1-ai.cjs
       - name: Install Production browser dependency
         if: steps.impact.outputs.runtime == 'true'
         run: npm install --no-save @playwright/test@1.55.0
@@ -96,4 +102,4 @@ jobs:
       - name: Run exact Production Chromium smoke
         if: steps.impact.outputs.runtime == 'true'
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test tests/e2e/v5.0-production.spec.cjs
+        run: npx playwright test tests/e2e/v5.1-production.spec.cjs
