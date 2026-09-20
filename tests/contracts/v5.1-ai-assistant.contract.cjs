@@ -38,7 +38,7 @@ async function invoke(options){const req=request(options);const res=response();a
       assert.equal(url,'https://ai-gateway.vercel.sh/v1/responses');
       assert.equal(options.method,'POST');
       const payload=JSON.parse(options.body);
-      assert.equal(payload.model,'openai/gpt-5.6-luna');
+      assert.equal(payload.model,'openai/gpt-5.4-mini');
       assert.equal(payload.text.format.type,'json_schema');
       assert.equal(payload.text.format.strict,true);
       return {ok:true,status:200,json:async()=>({output:[{content:[{type:'output_text',text:JSON.stringify({intent:'search',region:'수원 · 인계',position:'MF',level:'초중급',maxPrice:18000,maxDistanceMin:20,afterTime:'20:00',reply:'수원 인계에서 20시 이후 조건으로 정리했어요.'})}]}]})};
@@ -47,6 +47,7 @@ async function invoke(options){const req=request(options);const res=response();a
     assert.equal(connected.statusCode,200);
     assert.equal(connected.body.mode,'connected-ai');
     assert.equal(connected.body.provider,'vercel-ai-gateway');
+    assert.equal(connected.body.model,'openai/gpt-5.4-mini');
     assert.equal(connected.body.result.region,'수원 · 인계');
     assert.equal(connected.body.result.position,'MF');
     assert.equal(connected.body.result.afterTime,'20:00');
@@ -62,10 +63,17 @@ async function invoke(options){const req=request(options);const res=response();a
     assert.equal(guarded.body.result.maxDistanceMin,5);
     assert.equal(guarded.body.result.afterTime,null);
 
+    global.fetch=async()=>({ok:false,status:403,json:async()=>({error:{type:'access_denied',message:'Forbidden.'}})});
+    const denied=await invoke({method:'POST',body:{message:'가까운 경기',preferences:{}},ip:'10.0.0.5'});
+    assert.equal(denied.statusCode,502);
+    assert.equal(denied.body.error,'ai_gateway_error');
+    assert.equal(denied.body.gatewayType,'access_denied');
+
     const health=await invoke({method:'GET',ip:'10.0.0.4'});
     assert.equal(health.statusCode,200);
     assert.equal(health.body.version,'5.1.0');
     assert.equal(health.body.provider,'vercel-ai-gateway');
+    assert.equal(health.body.model,'openai/gpt-5.4-mini');
     assert.equal(health.body.configured,true);
     console.log('PASS v5.1 AI assistant contract');
   }finally{

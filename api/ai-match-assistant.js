@@ -1,5 +1,5 @@
 const GATEWAY_URL='https://ai-gateway.vercel.sh/v1/responses';
-const MODEL=process.env.FOOTMATE_AI_MODEL||'openai/gpt-5.6-luna';
+const MODEL=process.env.FOOTMATE_AI_MODEL||'openai/gpt-5.4-mini';
 const VERSION='5.1.0';
 const LIMIT_WINDOW_MS=5*60*1000;
 const LIMIT_MAX=12;
@@ -110,7 +110,11 @@ module.exports=async function handler(req,res){
   try{
     const gateway=await fetch(GATEWAY_URL,{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:JSON.stringify({model:MODEL,instructions,input:`현재 설정: ${JSON.stringify(preferences)}\n사용자 요청: ${message}`,reasoning:{effort:'none'},max_output_tokens:300,text:{format:{type:'json_schema',name:'footmate_match_constraints',strict:true,schema}}})});
     const payload=await gateway.json().catch(()=>({}));
-    if(!gateway.ok)return send(res,502,{mode:'unavailable',error:'ai_gateway_error',retryable:true,status:gateway.status});
+    if(!gateway.ok){
+      const gatewayType=typeof payload?.error?.type==='string'?payload.error.type:null;
+      console.warn('FootMate AI Gateway rejected request',{status:gateway.status,type:gatewayType,model:MODEL});
+      return send(res,502,{mode:'unavailable',error:'ai_gateway_error',retryable:true,status:gateway.status,gatewayType});
+    }
     const text=extractOutputText(payload);
     if(!text)return send(res,502,{mode:'unavailable',error:'ai_empty_output',retryable:true});
     let parsed;
