@@ -1,0 +1,29 @@
+/* FootMate v4.9 Release Candidate design-system contract.
+   Existing v4 selectors remain as compatibility surfaces; these semantic aliases are the v5 handoff contract. */
+:root{
+  --fm-ds-color-bg:var(--fm-bg);
+  --fm-ds-color-surface:var(--fm-surface);
+  --fm-ds-color-ink:var(--fm-ink);
+  --fm-ds-color-muted:var(--fm-muted);
+  --fm-ds-color-accent:var(--fm-lime);
+  --fm-ds-color-success:var(--fm-success);
+  --fm-ds-color-danger:var(--fm-danger);
+  --fm-ds-space-1:4px;
+  --fm-ds-space-2:8px;
+  --fm-ds-space-3:12px;
+  --fm-ds-space-4:16px;
+  --fm-ds-space-5:24px;
+  --fm-ds-space-6:32px;
+  --fm-ds-control-min:44px;
+  --fm-ds-radius-action:15px;
+  --fm-ds-radius-card:22px;
+  --fm-ds-shadow-card:var(--fm-shadow-soft);
+  --fm-ds-motion:var(--fm-ease);
+}
+:where(.fm-next-button,.fm-next-icon-button,.fm-discovery-filter-trigger,.fm-personalization-action){min-block-size:var(--fm-ds-control-min)}
+.fm-next-choice[aria-pressed="true"] span{color:var(--fm-ink-soft)}
+html[data-footmate-rc-version="4.9.0"] #footmate-next{--fm-release-candidate-ready:1}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}

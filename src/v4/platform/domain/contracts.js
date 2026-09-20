@@ -1,4 +1,4 @@
-export const PLATFORM_VERSION='4.8.0';
+export const PLATFORM_VERSION='4.9.0';
 export const SESSION_SCHEMA_VERSION=2;
 export const EVENT_SCHEMA_VERSION=1;
 
