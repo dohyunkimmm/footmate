@@ -100,7 +100,7 @@ function matchFromCheckout(){
   return MATCHES.find(match=>match.place===place)||matchById(readSession().selectedMatchId)||MATCHES[0];
 }
 function isLocked(){return state.status==='pending'}
-function isActiveSnapshot(){return ['pending','failure','success'].includes(state.status)&&Boolean(state.matchId)}
+function isActiveSnapshot(){return ['pending','failure','canceled','success'].includes(state.status)&&Boolean(state.matchId)}
 function authoritativeMatch(fallback){return isActiveSnapshot()?matchById(state.matchId)||fallback:fallback}
 
 function snapshotFor(match){
