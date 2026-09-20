@@ -48,6 +48,7 @@ async function invoke(options){const req=request(options);const res=response();a
     assert.equal(connected.body.mode,'connected-ai');
     assert.equal(connected.body.provider,'vercel-ai-gateway');
     assert.equal(connected.body.model,'openai/gpt-5.4-mini');
+    assert.equal(connected.body.fallbackUsed,false);
     assert.equal(connected.body.result.region,'수원 · 인계');
     assert.equal(connected.body.result.position,'MF');
     assert.equal(connected.body.result.afterTime,'20:00');
@@ -63,17 +64,39 @@ async function invoke(options){const req=request(options);const res=response();a
     assert.equal(guarded.body.result.maxDistanceMin,5);
     assert.equal(guarded.body.result.afterTime,null);
 
+    let calls=0;
+    global.fetch=async(_url,options)=>{
+      calls+=1;
+      const payload=JSON.parse(options.body);
+      if(calls===1){
+        assert.equal(payload.model,'openai/gpt-5.4-mini');
+        return {ok:false,status:403,json:async()=>({error:{type:'no_providers_available',message:'No providers available'}})};
+      }
+      assert.equal(payload.model,'inclusionai/ling-3.0-flash-vl-free');
+      assert.equal(payload.text,undefined);
+      return {ok:true,status:200,json:async()=>({output_text:'```json\n{"intent":"search","region":"수원 · 인계","position":"MF","level":"초중급","maxPrice":18000,"maxDistanceMin":20,"afterTime":"20:00","reply":"무료 provider fallback으로 조건을 해석했어요."}\n```'})};
+    };
+    const fallback=await invoke({method:'POST',body:{message:'인계에서 초중급 MF 경기',preferences:{}},ip:'10.0.0.6'});
+    assert.equal(fallback.statusCode,200);
+    assert.equal(fallback.body.mode,'connected-ai');
+    assert.equal(fallback.body.model,'inclusionai/ling-3.0-flash-vl-free');
+    assert.equal(fallback.body.fallbackUsed,true);
+    assert.equal(fallback.body.result.region,'수원 · 인계');
+    assert.equal(calls,2);
+
     global.fetch=async()=>({ok:false,status:403,json:async()=>({error:{type:'access_denied',message:'Forbidden.'}})});
     const denied=await invoke({method:'POST',body:{message:'가까운 경기',preferences:{}},ip:'10.0.0.5'});
     assert.equal(denied.statusCode,502);
     assert.equal(denied.body.error,'ai_gateway_error');
     assert.equal(denied.body.gatewayType,'access_denied');
+    assert.equal(denied.body.model,'inclusionai/ling-3.0-flash-vl-free');
 
     const health=await invoke({method:'GET',ip:'10.0.0.4'});
     assert.equal(health.statusCode,200);
     assert.equal(health.body.version,'5.1.0');
     assert.equal(health.body.provider,'vercel-ai-gateway');
     assert.equal(health.body.model,'openai/gpt-5.4-mini');
+    assert.equal(health.body.fallbackModel,'inclusionai/ling-3.0-flash-vl-free');
     assert.equal(health.body.configured,true);
     console.log('PASS v5.1 AI assistant contract');
   }finally{
