@@ -1,0 +1,164 @@
+export const BETA_BACKEND_CONFIG_ENDPOINT='/api/beta-config';
+
+export class SupabaseBetaError extends Error{
+  constructor(message,{status=0,code=null,details=null}={}){
+    super(message);
+    this.name='SupabaseBetaError';
+    this.status=status;
+    this.code=code;
+    this.details=details;
+  }
+}
+
+function nonEmpty(value,name){
+  const text=String(value||'').trim();
+  if(!text)throw new TypeError(`${name} is required`);
+  return text;
+}
+
+function baseUrl(value){
+  const url=new URL(nonEmpty(value,'Supabase URL'));
+  return url.toString().replace(/\/$/,'');
+}
+
+async function parseBody(response){
+  const contentType=String(response.headers?.get?.('content-type')||'');
+  if(contentType.includes('application/json')){
+    try{return await response.json()}catch{return null}
+  }
+  const text=await response.text();
+  return text||null;
+}
+
+function errorMessage(payload,status){
+  if(payload&&typeof payload==='object'){
+    return String(payload.msg||payload.message||payload.error_description||payload.error||`Supabase request failed (${status})`);
+  }
+  return String(payload||`Supabase request failed (${status})`);
+}
+
+function clampLimit(value){
+  const numeric=Number(value);
+  if(!Number.isFinite(numeric))return 20;
+  return Math.max(1,Math.min(50,Math.trunc(numeric)));
+}
+
+export async function loadBetaBackendConfig({fetchImpl=globalThis.fetch,endpoint=BETA_BACKEND_CONFIG_ENDPOINT}={}){
+  if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
+  const response=await fetchImpl(endpoint,{headers:{accept:'application/json'},cache:'no-store'});
+  const payload=await parseBody(response);
+  if(!response.ok||!payload?.connected){
+    throw new SupabaseBetaError(errorMessage(payload,response.status),{
+      status:response.status,
+      code:payload?.code||'BETA_BACKEND_UNAVAILABLE',
+      details:payload
+    });
+  }
+  return Object.freeze({
+    url:nonEmpty(payload.url,'Supabase URL'),
+    publishableKey:nonEmpty(payload.publishableKey,'Supabase publishable key')
+  });
+}
+
+export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThis.fetch}){
+  if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
+  const origin=baseUrl(url);
+  const apiKey=nonEmpty(publishableKey,'Supabase publishable key');
+
+  async function request(path,{method='GET',accessToken=null,body,headers={}}={}){
+    const requestHeaders={apikey:apiKey,accept:'application/json',...headers};
+    if(accessToken)requestHeaders.authorization=`Bearer ${accessToken}`;
+    if(body!==undefined)requestHeaders['content-type']='application/json';
+    const response=await fetchImpl(`${origin}${path}`,{
+      method,
+      headers:requestHeaders,
+      body:body===undefined?undefined:JSON.stringify(body),
+      cache:'no-store'
+    });
+    const payload=await parseBody(response);
+    if(!response.ok){
+      throw new SupabaseBetaError(errorMessage(payload,response.status),{
+        status:response.status,
+        code:payload?.code||payload?.error_code||null,
+        details:payload
+      });
+    }
+    return payload;
+  }
+
+  const auth=Object.freeze({
+    signUp:({email,password,displayName=''})=>request('/auth/v1/signup',{
+      method:'POST',
+      body:{email:nonEmpty(email,'email'),password:nonEmpty(password,'password'),data:{display_name:String(displayName||'').trim()}}
+    }),
+    signIn:({email,password})=>request('/auth/v1/token?grant_type=password',{
+      method:'POST',
+      body:{email:nonEmpty(email,'email'),password:nonEmpty(password,'password')}
+    }),
+    getUser:({accessToken})=>request('/auth/v1/user',{accessToken:nonEmpty(accessToken,'access token')}),
+    signOut:({accessToken})=>request('/auth/v1/logout',{method:'POST',accessToken:nonEmpty(accessToken,'access token')})
+  });
+
+  const matches=Object.freeze({
+    list:({region=null,limit=20}={})=>{
+      const query=new URLSearchParams();
+      query.set('select','id,title,venue_name,address,region,level_min,level_max,positions,starts_at,price_krw,capacity_total,joined_count,remaining_spots,status');
+      query.set('status','in.(open,full)');
+      if(region)query.set('region',`eq.${String(region).trim()}`);
+      query.set('order','starts_at.asc');
+      query.set('limit',String(clampLimit(limit)));
+      return request(`/rest/v1/matches?${query}`);
+    },
+    get:({matchId})=>{
+      const query=new URLSearchParams();
+      query.set('select','id,title,venue_name,address,region,level_min,level_max,positions,starts_at,price_krw,capacity_total,joined_count,remaining_spots,status');
+      query.set('id',`eq.${nonEmpty(matchId,'match id')}`);
+      query.set('limit','1');
+      return request(`/rest/v1/matches?${query}`).then(rows=>Array.isArray(rows)?rows[0]||null:null);
+    }
+  });
+
+  const profile=Object.freeze({
+    get:({accessToken,userId})=>{
+      const query=new URLSearchParams();
+      query.set('select','id,display_name,region,position,level,created_at,updated_at');
+      query.set('id',`eq.${nonEmpty(userId,'user id')}`);
+      query.set('limit','1');
+      return request(`/rest/v1/profiles?${query}`,{accessToken:nonEmpty(accessToken,'access token')})
+        .then(rows=>Array.isArray(rows)?rows[0]||null:null);
+    },
+    update:({accessToken,userId,changes={}})=>{
+      const allowed=['display_name','region','position','level'];
+      const body=Object.fromEntries(allowed.filter(key=>Object.prototype.hasOwnProperty.call(changes,key)).map(key=>[key,changes[key]]));
+      const query=new URLSearchParams();
+      query.set('id',`eq.${nonEmpty(userId,'user id')}`);
+      return request(`/rest/v1/profiles?${query}`,{
+        method:'PATCH',
+        accessToken:nonEmpty(accessToken,'access token'),
+        body,
+        headers:{prefer:'return=representation'}
+      }).then(rows=>Array.isArray(rows)?rows[0]||null:null);
+    }
+  });
+
+  const participation=Object.freeze({
+    listMine:({accessToken})=>{
+      const query=new URLSearchParams();
+      query.set('select','id,match_id,status,joined_at,canceled_at,created_at,updated_at');
+      query.set('order','created_at.desc');
+      return request(`/rest/v1/participations?${query}`,{accessToken:nonEmpty(accessToken,'access token')});
+    },
+    join:({accessToken,matchId})=>request('/rest/v1/rpc/join_match',{
+      method:'POST',
+      accessToken:nonEmpty(accessToken,'access token'),
+      body:{p_match_id:nonEmpty(matchId,'match id')}
+    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
+    cancel:({accessToken,matchId})=>request('/rest/v1/rpc/cancel_participation',{
+      method:'POST',
+      accessToken:nonEmpty(accessToken,'access token'),
+      body:{p_match_id:nonEmpty(matchId,'match id')}
+    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows)
+  });
+
+  return Object.freeze({origin,auth,matches,profile,participation});
+}
