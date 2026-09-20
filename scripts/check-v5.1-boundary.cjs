@@ -27,6 +27,7 @@ assert(api.includes("process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOK
 assert(api.includes("MODEL=process.env.FOOTMATE_AI_MODEL||'inclusionai/ling-3.0-flash-vl-free'"),'verified primary AI model missing');
 assert(api.includes("FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'inclusionai/ling-3.0-flash-fin-free'"),'AI fallback model missing');
 assert(api.includes('GATEWAY_TIMEOUT_MS=3000'),'server AI timeout guard missing');
+assert(api.includes("reasoning:{effort:'none'}"),'AI reasoning must be disabled for bounded constraint extraction');
 assert(api.includes('sameOrigin(req)')&&api.includes('sameSite(req)'),'request-origin guardrail missing');
 assert(api.includes('isJsonRequest(req)'),'JSON request guardrail missing');
 assert(api.includes('allowedByRateLimit(req)'),'rate-limit guardrail missing');

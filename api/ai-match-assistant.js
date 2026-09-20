@@ -98,7 +98,7 @@ function shouldTryFallback(attempt){
 module.exports=async function handler(req,res){
   if(req.method==='GET'){
     const token=await resolveGatewayToken();
-    return send(res,200,{version:VERSION,provider:'vercel-ai-gateway',model:MODEL,fallbackModel:FALLBACK_MODEL,configured:Boolean(token),gatewayTimeoutMs:GATEWAY_TIMEOUT_MS,workflow:'Context → Plan → Tools → Guardrail → Observe'});
+    return send(res,200,{version:VERSION,provider:'vercel-ai-gateway',model:MODEL,fallbackModel:FALLBACK_MODEL,configured:Boolean(token),gatewayTimeoutMs:GATEWAY_TIMEOUT_MS,reasoningEffort:'none',workflow:'Context → Plan → Tools → Guardrail → Observe'});
   }
   if(req.method!=='POST')return send(res,405,{error:'method_not_allowed'});
   if(!sameOrigin(req)||!sameSite(req))return send(res,403,{error:'origin_not_allowed'});
@@ -126,8 +126,8 @@ module.exports=async function handler(req,res){
   ].join(' ');
   const input=`현재 설정: ${JSON.stringify(preferences)}\n사용자 요청: ${message}`;
   async function requestModel(model){
-    const requestBody={model,instructions,input,max_output_tokens:300};
-    if(supportsStrictSchema(model)){requestBody.reasoning={effort:'none'};requestBody.text={format:{type:'json_schema',name:'footmate_match_constraints',strict:true,schema}}}
+    const requestBody={model,instructions,input,max_output_tokens:300,reasoning:{effort:'none'}};
+    if(supportsStrictSchema(model))requestBody.text={format:{type:'json_schema',name:'footmate_match_constraints',strict:true,schema}};
     else requestBody.instructions+=` Return only one JSON object with exactly these keys: ${Object.keys(schema.properties).join(', ')}. Use null for unknown values. Do not wrap the JSON in markdown.`;
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),GATEWAY_TIMEOUT_MS);
