@@ -2,6 +2,25 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v4.7.0 — Personalization & Memory · 2026-09-20
+
+**Status:** Verified staged feature release.
+
+- Scope: saved local preference profile, returning-user quick resume, recent-match behavior, favorite area/time/format signals, personalized recommendation reasons, explicit reset/edit controls
+- Persistence: `footmate:v4:personalization`
+- Ranking boundary: verified Recommendation + Return contract 위에 deterministic personalization adjustment를 보조 신호로 추가
+- Privacy boundary: 회원 DB·server memory·cross-device sync 미연동; 개인화 상태는 현재 브라우저 로컬 저장소에만 유지
+- Accessibility hardening: personalization controls 44px+, 320/375/390/430 responsive coverage, inactive navigation contrast 보강
+- Feature PR: #108
+- Final PR QA: FootMate QA #380 · run `35487691154` · PASS
+- Product/runtime baseline: `117c6ee36e91344355644811410a88898c279f21`
+- Post-merge QA: FootMate QA #381 · run `35487802885` · PASS
+- Exact Vercel Production: `dpl_6TFsiiKXNzkrbxD6V1xdMQEhoJHF` · SHA `117c6ee36e91344355644811410a88898c279f21` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danli4btqb8s73alhnp0` · SHA `117c6ee36e91344355644811410a88898c279f21` · LIVE at verification time
+- Next staged release: **v4.8 · Platform Architecture**
+
 ## v4.6.0 — Return Loop & Reputation · 2026-09-20
 
 **Status:** Verified staged feature release.
@@ -18,7 +37,6 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup: `dep-danl6cp7lnhs73ea5cp0` · SHA `409adefd40698a7c30202ad6e570445bde8dea8c` · LIVE at verification time
-- Next staged release: **v4.7 · Personalization & Memory**
 
 ## v4.5.0 — Matchday Operations · 2026-09-20
 
@@ -116,6 +134,6 @@
 
 ## Shared prototype boundary
 
-v4.x는 인터랙티브 서비스 기획 프로토타입이다. 외부 AI inference, 회원 DB, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend는 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
+v4.x는 인터랙티브 서비스 기획 프로토타입이다. 외부 AI inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend는 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
