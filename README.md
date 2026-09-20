@@ -10,6 +10,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Case Study: `/`
 - Real App: `/app`
 - Closed Beta: `/beta` — Supabase Auth / Postgres / capacity / participation connected
+- Closed Beta Operator: `/beta/operator` — allowlisted operator match / participant operations connected
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Compatibility aliases: `/demo`, `/next` → current Real App
@@ -46,6 +47,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Matchday check-in과 운영 상태 복구
 - postgame Return과 browser-local personalization
 - Closed Beta email/password Auth, profile persistence, live match read, position-aware join/cancel, reload session recovery
+- Closed Beta operator match create/edit/cancel, MF/FW/DF/GK capacity allocation, participant cancel/capacity recovery
 - Real / Guided / Evidence mode 분리
 - responsive 320 / 375 / 390 / 430px
 - Browser E2E + axe accessibility regression
@@ -61,6 +63,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - `/app` persistence: **browser local state**
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
 - `/beta` join/cancel: **database transaction + row lock + RLS**, free-participation only
+- `/beta/operator`: **Supabase connected** — explicit `public.operators` allowlist, atomic match / participant RPC, browser service-role credentials 없음
 - real OAuth / real PG / notification delivery / external analytics: **미연동**
 - Render: static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
 
@@ -75,12 +78,14 @@ Release gate는 다음을 포함합니다.
 - responsive 320 / 375 / 390 / 430px
 - Deep Link / State Consistency / persistence restoration
 - Closed Beta backend config / Auth / join / cancel / reload recovery
+- Closed Beta operator allowlist / match create-edit-cancel / participant cancel / capacity recovery
+- Supabase RLS / RPC security boundary
 - AI connected / provider fallback / browser fallback / timeout recovery
 - exact Production HTTP / AI inference / Chromium smoke
 - Vercel exact SHA verification
 - Render backup verification
 
-Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 운영자 경기 관리와 실제 데이터 입력 경로를 연결한 뒤 실사용자 beta를 시작하며, PG와 notification은 그 이후 별도 release gate로 다룹니다.
+Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소 경로는 Supabase에 연결되어 있습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, PG와 notification은 이후 별도 release gate로 다룹니다.
 
 ## Architecture
 
@@ -88,9 +93,10 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 운영자 
 - `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
 - `src/v5/ai-match-assistant.js` — AI UI/application bridge, browser timeout/fallback, reload restoration
 - `src/v5/beta.js` — Closed Beta Auth / profile / match / participation UI state
+- `src/v5/beta-operator.js` — allowlisted operator match / participant management UI state
 - `src/v5/infrastructure/supabase-beta.js` — Supabase Auth / REST / RPC browser adapter
 - `src/v5/domain/beta-match-contract.js` — connected match normalization contract
-- `supabase/migrations/` — profiles / operators / matches / match_slots / participation, RLS and atomic RPC ownership
+- `supabase/migrations/` — profiles / operators / matches / match_slots / participation, RLS and atomic user/operator RPC ownership
 - `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
 - `src/v5/infrastructure/providers.js` — auth/payment/capacity/notification provider registry
 - `src/v4/recommendation.js` — deterministic ranking Source of Truth for the current `/app` runtime

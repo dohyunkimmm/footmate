@@ -17,19 +17,40 @@
 - Request guard: same-origin, Fetch Metadata, JSON content-type, 16KB body limit, instance-local per-IP/global rate window
 - Persistence: 기존 `footmate:v5.1:ai` key 유지; reload 후 UI mode와 `window.__FOOTMATE_AI__.mode` 복원
 - HITL: join/payment 자동 실행 없음
-- Data boundary: 경기·가격·잔여 자리·주소·참가자 구성은 sample records 기준; AI가 생성하지 않음
+- Data boundary: `/app` 경기·가격·잔여 자리·주소·참가자 구성은 sample records 기준이며 AI가 생성하지 않음; `/beta`는 별도 Supabase connected 경로
 - Hotfix implementation PRs: #123 · #124
 - Version sync PR: #125
 - Release-readiness surface cleanup PR: #128 · PR QA #448 · run `35510271305` · PASS
-- Product/runtime baseline: `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48`
+- Product/runtime baseline at surface freeze: `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48`
 - Post-merge QA: FootMate QA #449 · run `35510438544` · PASS
 - Regression 36: PASS
 - Browser E2E + axe: PASS
-- Exact Vercel Production: `dpl_F9SKqKt2his5v7K1PogXH2HSwMzz` · SHA `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48` · READY
+- Exact Vercel Production at surface freeze: `dpl_F9SKqKt2his5v7K1PogXH2HSwMzz` · SHA `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48` · READY
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS · `inclusionai/ling-3.0-flash-vl-free` · `fallbackUsed=false`
 - Exact Production Chromium smoke: PASS · 2/2
-- Render backup: `dep-dant04ss728c73b4g6t0` · SHA `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48` · LIVE at verification time
+- Render backup at surface freeze: `dep-dant04ss728c73b4g6t0` · SHA `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48` · LIVE at verification time
+
+### Closed Beta release-readiness closure · 2026-09-20
+
+- Scope: Supabase backend foundation, position-aware capacity, RLS/security hardening, connected user Beta, allowlisted operator match/participant operations
+- Backend foundation / capacity / security PRs: #130 · #131 · #132
+- Connected user runtime: PR #133
+- Production Chromium smoke selector fix: PR #134
+- Operator blocker closure: PR #135 · PR QA #471 · run `35543950160` · PASS
+- Current product/runtime baseline: `b84b571c4d62070109089cf515fa9eb63f338f53`
+- Post-merge QA: FootMate QA #472 · run `35544089076` · PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Supabase: `beta_operator_console` migration applied; Auth/profile/match/position capacity/participation/user join-cancel/operator match-participant operations connected
+- Security boundary: RLS + authenticated RPC; operator RPC는 추가로 `public.operators` allowlist를 검증하며 browser service-role credentials 없음
+- Operator provisioning boundary: normal Beta account를 만든 뒤 `public.operators`에 명시적으로 allowlist; self-service admin bootstrap 없음
+- Exact Vercel Production: `dpl_AA4AbahVZK65imQ1Tb12TMFBs6Zm` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
+- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
@@ -250,6 +271,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고 exact Production에서 primary model이 fallback 없이 검증됐다. 다만 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 현재도 연결하지 않았다. 경기 사실과 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
