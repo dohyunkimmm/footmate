@@ -21,6 +21,7 @@
   --fm-ds-motion:var(--fm-ease);
 }
 :where(.fm-next-button,.fm-next-icon-button,.fm-discovery-filter-trigger,.fm-personalization-action){min-block-size:var(--fm-ds-control-min)}
+.fm-next-choice[aria-pressed="true"] span{color:var(--fm-ink-soft)}
 html[data-footmate-rc-version="4.9.0"] #footmate-next{--fm-release-candidate-ready:1}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
