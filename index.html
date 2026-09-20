@@ -3,32 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>FootMate v4.3.0 | Matchday Companion Case Study</title>
-<meta name="description" content="추천·탐색 이후 경기 상세에서 추천 근거, 샘플 참가자 구성, 시설·운영 정보, 환불 기준, 저장·비교 의도를 연결한 FootMate v4.3.0 Decision Detail Case Study입니다.">
-<meta name="footmate-case-study-release" content="4.3.0">
+<title>FootMate v4.4.0 | Matchday Companion Case Study</title>
+<meta name="description" content="추천·탐색·Decision Detail 이후 참가 과정에서 결제 수단 선택, pending·failure·retry·cancel recovery, duplicate-submit 방지와 snapshot consistency를 연결한 FootMate v4.4.0 Case Study입니다.">
+<meta name="footmate-case-study-release" content="4.4.0">
 <meta name="theme-color" content="#07130E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://footmate-black.vercel.app/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:url" content="https://footmate-black.vercel.app/">
-<meta property="og:title" content="FootMate v4.3.0 | Matchday Companion Case Study">
-<meta property="og:description" content="추천과 탐색을 실제 참가 결정으로 연결하는 Decision Detail 경험을 설계했습니다.">
+<meta property="og:title" content="FootMate v4.4.0 | Matchday Companion Case Study">
+<meta property="og:description" content="결제 성공만이 아니라 pending·failure·retry·cancel까지 복구 가능한 Join & Payment State Machine을 설계했습니다.">
 <meta property="og:image" content="https://footmate-black.vercel.app/og-footmate.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap">
-<link rel="stylesheet" href="/src/v4/case-study-shell.css?v=430">
-<link rel="stylesheet" href="/src/v4/case-study.css?v=430">
-<link rel="stylesheet" href="/src/v4/case-study-compat.css?v=430">
-<link rel="stylesheet" href="/src/v4/case-study-editorial.css?v=430">
+<link rel="stylesheet" href="/src/v4/case-study-shell.css?v=440">
+<link rel="stylesheet" href="/src/v4/case-study.css?v=440">
+<link rel="stylesheet" href="/src/v4/case-study-compat.css?v=440">
+<link rel="stylesheet" href="/src/v4/case-study-editorial.css?v=440">
 </head>
 <body>
-<div class="cs-mobile-head"><b>FootMate v4.3.0 · Case Study</b><a href="/app">App 보기 ↗</a></div>
+<div class="cs-mobile-head"><b>FootMate v4.4.0 · Case Study</b><a href="/app">App 보기 ↗</a></div>
 <div class="fm-cs-shell">
   <aside class="sidebar" aria-label="Case Study 목차">
-    <div class="sb-brand"><div class="sb-logo">FootMate</div><div class="sb-sub">v4.3 · 16 sections</div></div>
+    <div class="sb-brand"><div class="sb-logo">FootMate</div><div class="sb-sub">v4.4 · 16 sections</div></div>
     <nav class="toc">
       <button class="toc-item on"><span class="toc-n">01</span><span class="toc-t">Overview</span><span class="toc-s">Matchday Companion</span></button>
       <button class="toc-item"><span class="toc-n">02</span><span class="toc-t">Problem</span><span class="toc-s">판단이 오래 걸리는 경기 탐색</span></button>
@@ -39,9 +39,9 @@
       <button class="toc-item"><span class="toc-n">07</span><span class="toc-t">Decision 02</span><span class="toc-s">추천을 기준으로 탐색 범위 조절</span></button>
       <button class="toc-item"><span class="toc-n">08</span><span class="toc-t">Decision 03</span><span class="toc-s">상세에서 결정 근거·저장·비교</span></button>
       <button class="toc-item"><span class="toc-n">09</span><span class="toc-t">Sign in</span><span class="toc-s">참가 직전의 로그인</span></button>
-      <button class="toc-item"><span class="toc-n">10</span><span class="toc-t">Join · Payment</span><span class="toc-s">선택을 잃지 않는 참가</span></button>
+      <button class="toc-item"><span class="toc-n">10</span><span class="toc-t">Join · Payment</span><span class="toc-s">pending·retry·cancel까지 복구</span></button>
       <button class="toc-item"><span class="toc-n">11</span><span class="toc-t">Matchday</span><span class="toc-s">참가 후가 홈의 중심</span></button>
-      <button class="toc-item"><span class="toc-n">12</span><span class="toc-t">Recovery</span><span class="toc-s">0개 결과에서도 다음 행동</span></button>
+      <button class="toc-item"><span class="toc-n">12</span><span class="toc-t">Recovery</span><span class="toc-s">검색·결제 실패에서 다음 행동</span></button>
       <button class="toc-item"><span class="toc-n">13</span><span class="toc-t">IA · Modes</span><span class="toc-s">사용자 화면과 리뷰 화면 분리</span></button>
       <button class="toc-item"><span class="toc-n">14</span><span class="toc-t">System Evidence</span><span class="toc-s">상태·데이터·연동 경계</span></button>
       <button class="toc-item"><span class="toc-n">15</span><span class="toc-t">Validation</span><span class="toc-s">반응형·접근성·Production</span></button>
@@ -49,8 +49,8 @@
     </nav>
   </aside>
   <main class="viewer">
-    <header class="topbar"><span class="topbar-title">FootMate v4.3.0 · Matchday Companion Case Study</span><span class="topbar-count">01 / 16</span></header>
-    <span class="label">Decision Detail</span>
+    <header class="topbar"><span class="topbar-title">FootMate v4.4.0 · Matchday Companion Case Study</span><span class="topbar-count">01 / 16</span></header>
+    <span class="label">Join & Payment State Machine</span>
     <div class="track" aria-live="polite">
       <section class="slide on"></section><section class="slide"></section><section class="slide"></section><section class="slide"></section>
       <section class="slide"></section><section class="slide"></section><section class="slide"></section><section class="slide"></section>
@@ -70,10 +70,11 @@
     <div class="pbar"><span class="pbar-fill"></span></div>
   </main>
 </div>
-<script src="/src/v4/case-study-shell.js?v=430"></script>
-<script src="/src/v4/case-study.js?v=430"></script>
-<script src="/src/v4/case-study-recommendation.js?v=430"></script>
-<script src="/src/v4/case-study-discovery.js?v=430"></script>
-<script src="/src/v4/case-study-decision.js?v=430"></script>
+<script src="/src/v4/case-study-shell.js?v=440"></script>
+<script src="/src/v4/case-study.js?v=440"></script>
+<script src="/src/v4/case-study-recommendation.js?v=440"></script>
+<script src="/src/v4/case-study-discovery.js?v=440"></script>
+<script src="/src/v4/case-study-decision.js?v=440"></script>
+<script src="/src/v4/case-study-participation.js?v=440"></script>
 </body>
 </html>
