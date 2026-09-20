@@ -1,0 +1,8 @@
+.fm-matchday-panel{margin:16px 20px 24px;padding:18px;border:1px solid rgba(11,37,27,.14);border-radius:20px;background:#f5fbf7;display:grid;gap:14px}
+.fm-matchday-kicker{font-size:11px;font-weight:800;letter-spacing:.08em;color:#2f6f52}
+.fm-matchday-status{display:grid;gap:4px}.fm-matchday-status b{font-size:20px}.fm-matchday-status span,.fm-matchday-grid span,.fm-matchday-boundary{font-size:13px;line-height:1.55;color:#496058}
+.fm-matchday-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.fm-matchday-grid article{display:grid;gap:5px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(11,37,27,.09)}.fm-matchday-grid small{font-size:11px;color:#5b7168}.fm-matchday-grid b{font-size:14px}
+.fm-matchday-actions{display:flex;flex-wrap:wrap;gap:8px}.fm-matchday-actions button,.fm-matchday-home button{min-height:44px;border-radius:12px;border:1px solid #0b251b;background:#fff;padding:0 14px;font:inherit;font-weight:700;color:#0b251b}.fm-matchday-actions button:first-child,.fm-matchday-home button{background:#0b251b;color:#fff}
+.fm-matchday-boundary{margin:0;padding-top:10px;border-top:1px dashed rgba(11,37,27,.15)}
+.fm-matchday-home{margin:0 20px 18px;padding:14px 16px;border-radius:18px;background:#eaf7ef;display:grid;gap:5px}.fm-matchday-home small{font-size:10px;font-weight:800;letter-spacing:.08em;color:#2f6f52}.fm-matchday-home b{font-size:16px}.fm-matchday-home span{font-size:13px;color:#496058}.fm-matchday-home button{margin-top:6px;width:max-content}
+@media(max-width:560px){.fm-matchday-grid{grid-template-columns:1fr}.fm-matchday-panel{margin-inline:16px}.fm-matchday-home{margin-inline:16px}.fm-matchday-actions{display:grid}.fm-matchday-actions button{width:100%}}
