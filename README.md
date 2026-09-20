@@ -1,20 +1,22 @@
-# FootMate v4.8.0 — Matchday Companion
+# FootMate v4.9.0 — v5 Release Candidate
 
 FootMate는 **내 수준에 맞는 풋살 경기를 찾고, 왜 잘 맞는지 이해하고, 조건을 직접 좁힌 뒤 참가·결제·경기 당일 운영·경기 후 피드백·개인화까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
 
+v4.9는 v4.8의 사용자 흐름과 Platform Architecture를 유지하면서 **v5 전환 전에 바뀌면 안 되는 IA·design system·성능·접근성·관측·provider·migration 계약을 고정한 Release Candidate**입니다.
+
 ## Current release
 
-- Release: **v4.8.0 · Platform Architecture**
+- Release: **v4.9.0 · v5 Release Candidate**
 - Primary journey: **Find → Decide → Join → Play → Return → Personalize**
 - Real App: `/app`
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Case Study: `/`
 - Compatibility aliases: `/demo`, `/next` → current v4 Real App
-- Product/runtime baseline: `076950f257fce3c5e445d0801c998fc935265dd8`
-- GitHub Actions: **FootMate QA #401 · run 35494664726 · PASS**
-- Exact Vercel Production: `076950f257fce3c5e445d0801c998fc935265dd8` · `dpl_Av3cxidUfJ2vj5hHowCtFg3zAfHq` · **READY** · exact HTTP/Chromium smoke PASS
-- Render backup: `076950f257fce3c5e445d0801c998fc935265dd8` · `dep-danntpgjo6nc739md83g` · **LIVE** at release verification time
+- Product/runtime baseline: `702ed926f47749802e323a67c92e2552ceadd271`
+- GitHub Actions: **FootMate QA #406 · run 35495900622 · PASS**
+- Exact Vercel Production: `702ed926f47749802e323a67c92e2552ceadd271` · `dpl_Ar2C7xD2NopX1YN85RpXaQN4ShG6` · **READY** · exact HTTP/Chromium smoke PASS
+- Render backup: `702ed926f47749802e323a67c92e2552ceadd271` · `dep-danob1navr4c73ajij90` · **LIVE** at release verification time
 - Evolution roadmap: `docs/V4.1-V5.0-ROADMAP.md`
 
 ## Product decisions
@@ -30,11 +32,14 @@ FootMate는 **내 수준에 맞는 풋살 경기를 찾고, 왜 잘 맞는지 �
 9. **State-aware Matchday** — 참가 후 `upcoming → matchday → checked-in`과 late·update·cancel recovery를 분리합니다.
 10. **Return as a product state** — postgame 체감 난이도·참여 완료·반복 의도를 개인 이력으로 저장하고 다음 추천의 보조 신호로 사용합니다.
 11. **Local personalization, not hidden server memory** — 저장 프로필·최근 확인 경기·선호 지역/시간/포맷은 `footmate:v4:personalization`에 분리 저장하고 추천 보조 신호로만 사용합니다.
-12. **Explicit platform ownership** — v4.8은 domain → application → infrastructure → presentation bridge 경계를 추가해 session migration, storage provider/repository, event contract의 소유권을 분리합니다.
-13. **Migration before replacement** — 기존 v4.7 로컬 세션과 화면 동작을 compatibility runtime으로 보존하면서 unversioned/legacy session을 schema v2로 정규화합니다.
-14. **Provider boundary, not fake backend** — 현재 runtime provider는 브라우저 `localStorage`이며 memory provider는 deterministic contract test용입니다. 회원 DB나 원격 저장소가 연결된 것처럼 표현하지 않습니다.
-15. **Local event contract** — recommendation 선택, 참가 시작/완료, check-in, postgame 제출을 순서·dedupe 가능한 로컬 이벤트 계약으로 기록하되 외부 analytics 전송은 하지 않습니다.
-16. **Real / Guided / Evidence separation** — 실제 사용자 화면과 리뷰어 설명·검증 UI를 분리합니다.
+12. **Frozen IA for v5 handoff** — `welcome → setup → home → discover → detail → auth → checkout → success → schedule → profile`을 v5 handoff 기준으로 고정합니다.
+13. **Semantic design-system contract** — 기존 v4 visual token을 semantic alias로 묶고 최소 44px control과 reduced-motion 기준을 공통 계약으로 둡니다.
+14. **Performance as a release gate** — first-party HTML/CSS/JS/request 수에 정적 budget을 두고 PR/merge마다 검증합니다.
+15. **Full-flow accessibility** — welcome → setup → home → detail → auth → checkout 전체 흐름에서 serious/critical axe violation 0을 RC 기준으로 확인합니다.
+16. **Stable observability contract** — recommendation 선택, 참가 시작/완료, check-in, postgame 제출 이벤트 이름과 schema를 고정하고 현재는 local log에만 기록합니다.
+17. **Provider contract, not fake integration** — auth/payment/capacity/notification을 interface-compatible deterministic mock으로 고정하되 외부 OAuth·PG·실시간 정원·알림 backend가 연결됐다고 표현하지 않습니다.
+18. **Migration + rollback rehearsal** — session schema v2를 유지하면서 migration 전 snapshot checkpoint와 원본 rollback 가능성을 deterministic contract로 검증합니다.
+19. **Real / Guided / Evidence separation** — 실제 사용자 화면과 리뷰어 설명·검증 UI를 분리합니다.
 
 ## Implemented scope
 
@@ -49,47 +54,46 @@ FootMate는 **내 수준에 맞는 풋살 경기를 찾고, 왜 잘 맞는지 �
 - `footmate:v4:return` postgame state with perceived difficulty, completion history and repeat intent
 - `footmate:v4:personalization` local profile / recent-match / favorite area·time·format state
 - returning-user quick resume from a saved local preference profile
-- explainable personalization adjustment layered on the verified Recommendation + Return ranking contract
 - session schema v2 migration for existing `footmate:v4:session` state
+- domain → application → infrastructure → presentation platform boundary
 - browser + memory storage provider interfaces and JSON repository boundary
 - `footmate:v4:events` local event log with schema, sequence, dedupe and retention contract
-- recommendation.selected / join.started / join.completed / checkin.completed / postgame.submitted event contracts
-- explicit local-browser provider and `externalAnalytics: false` runtime disclosure
+- stable event catalog: recommendation.selected / join.started / join.completed / checkin.completed / postgame.submitted
+- auth / payment / capacity / notification deterministic mock-provider contracts with `external: false`
+- semantic v5 design token aliases, 44px control baseline and reduced-motion contract
+- performance budget: app HTML ≤ 16KB, first-party CSS ≤ 180KB, JS ≤ 320KB, CSS/JS requests ≤ 24
+- verified RC measurement: app HTML 2,337B · CSS 56,044B · JS 142,101B · first-party CSS/JS requests 20
+- migration checkpoint / restore / rollback rehearsal against session schema v2
 - ID/password sign-in UI, sign-up validation and Kakao · Naver · Apple · Google SSO selection UI as simulation
 - SPA route focus management, responsive 320 / 375 / 390 / 430px, Real / Guided / Evidence isolation
-- 16-section Case Study with Recommendation Core + Discovery & Search + Decision Detail + Join & Payment + Matchday Operations + Return Loop + Personalization + Platform Architecture evidence
-- deterministic platform contract tests, Browser E2E + axe and exact Production HTTP/Chromium gates
+- 16-section Case Study with v5 Release Candidate IA / design system / observability / provider / validation narrative
+- deterministic platform + RC contract tests, Browser E2E + axe and exact Production HTTP/Chromium gates
 
 ## Prototype boundary
 
-FootMate v4.8.0은 서비스 기획 검증용 인터랙티브 프로토타입입니다. 추천·Return Loop·Personalization은 **규칙 기반 explainable ranking + 샘플 데이터 + 브라우저 상태**로 동작합니다. Decision Detail의 잔여 자리·참가자 구성·시설·운영 정보, Join & Payment의 결제 수단과 결제 상태, Matchday Operations의 arrival/check-in/update/cancel, Return Loop의 postgame 피드백과 개인 이력은 deterministic sample/simulation입니다.
+FootMate v4.9.0은 서비스 기획 검증용 인터랙티브 프로토타입입니다. 추천·Return Loop·Personalization은 **규칙 기반 explainable ranking + 샘플 데이터 + 브라우저 상태**로 동작합니다. Decision Detail의 잔여 자리·참가자 구성·시설·운영 정보, Join & Payment의 결제 수단과 결제 상태, Matchday Operations의 arrival/check-in/update/cancel, Return Loop의 postgame 피드백과 개인 이력은 deterministic sample/simulation입니다.
 
-Platform Architecture는 실제 backend 도입이 아니라 **교체 가능한 경계와 데이터 계약을 먼저 고정한 구조 개선**입니다. 현재 session/repository/event persistence는 브라우저 로컬 저장소를 사용하며 외부 analytics 전송도 하지 않습니다. **외부 AI 모델, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, 실시간 수용량·참가자 데이터, 실시간 위치·지도, 팀 채팅, 실시간 알림, 외부 reputation backend는 연결하지 않았습니다.**
+v4.9의 auth/payment/capacity/notification provider는 **v5 연결 인터페이스를 검증하기 위한 deterministic mock**입니다. 현재 session/repository/event persistence는 브라우저 로컬 저장소를 사용하며 event delivery도 local-only입니다. **외부 AI/ML inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, 실시간 수용량·참가자 데이터, 실시간 위치·지도, 팀 채팅, 실시간 알림, 외부 reputation backend, external analytics는 연결하지 않았습니다.**
 
 ## Architecture
 
-- `src/v4/` — 공식 v4 Real App / Case Study runtime ownership
 - `src/v4/platform/domain/contracts.js` — platform version, storage keys, session migration and event domain contract
+- `src/v4/platform/domain/release-candidate.js` — frozen IA, stable event catalog, provider contracts, performance/accessibility budget, migration rollback contract
 - `src/v4/platform/application/platform.js` — session/event application services
-- `src/v4/platform/infrastructure/storage.js` — browser/memory provider and JSON repositories
+- `src/v4/platform/application/release-candidate.js` — provider-contract validation and v5 readiness gate
+- `src/v4/platform/infrastructure/storage.js` — browser/memory storage provider and JSON repositories
+- `src/v4/platform/infrastructure/provider-mocks.js` — deterministic auth/payment/capacity/notification mocks
 - `src/v4/platform/presentation/bootstrap.js` — compatibility runtime bridge, migration bootstrap and local event capture
-- `src/v4/platform/package.json` — browser/Node shared ESM boundary
-- `src/v4/experience.js` / `experience.css` — account UX, validation and interaction safeguards
-- `src/v4/recommendation.js` — v4.1 preference-aware explainable ranking contract
-- `src/v4/discovery.js` / `discovery.css` — v4.2 filtering, sorting, recovery, URL/session persistence
-- `src/v4/decision.js` / `decision.css` — v4.3 Decision Detail save/compare/evidence/policy interaction
-- `src/v4/participation.js` / `participation.css` — v4.4 payment state, attempt snapshot and recovery ownership
-- `src/v4/matchday.js` / `matchday.css` — v4.5 Matchday Operations state and recovery ownership
-- `src/v4/return.js` / `return.css` — v4.6 postgame feedback, personal history and recommendation-adjustment ownership
-- `src/v4/personalization.js` / `personalization.css` — v4.7 local preference memory, recent behavior, favorite signals, explanation and reset ownership
-- `src/v4/case-study-*.js` — staged 16-section Case Study evidence patches
-- `tests/contracts/v4.8-platform.contract.mjs` — deterministic migration/provider/repository/event contract gate
-- `tests/e2e/v4.8-core.spec.cjs`, `tests/e2e/v4-platform.spec.cjs` — current core journey and platform browser gates
-- `tests/e2e/v4-discovery.spec.cjs`, `v4-decision.spec.cjs`, `v4-participation.spec.cjs`, `v4-matchday.spec.cjs`, `v4-return.spec.cjs`, `v4-personalization.spec.cjs` — staged regression and state gates
-- `tests/e2e/v4.8-case-study.spec.cjs` — 16-section Platform Architecture evidence / mobile gate
-- `tests/production-v4.8-smoke.cjs`, `tests/e2e/v4.8-production.spec.cjs` — exact Production HTTP/Chromium gates
-- `scripts/check-v4.8-boundary.cjs` — current-tree v4.8 release boundary
-- `docs/V4.8-PLATFORM-ARCHITECTURE.md` — platform ownership, migration and integration boundaries
+- `src/v4/platform/presentation/release-candidate.js` — RC runtime disclosure and setup accessibility hardening
+- `src/v4/release-candidate.css` — semantic design-system aliases, control and reduced-motion contract
+- `src/v4/case-study-release-candidate.js` — v5 RC Case Study evidence patch
+- `docs/V4.9-V5-RELEASE-CANDIDATE.md` — frozen IA, provider, observability, migration, performance and promotion rules
+- `tests/contracts/v4.8-platform.contract.mjs` — v4.8 platform regression contract
+- `tests/contracts/v4.9-release-candidate.contract.mjs` — v4.9 provider/IA/observability/migration deterministic contract
+- `tests/e2e/v4.9-core.spec.cjs`, `tests/e2e/v4-platform.spec.cjs` — core journey, full-flow axe, responsive, platform browser gates
+- `tests/e2e/v4.9-case-study.spec.cjs` — 16-section v5 RC evidence / mobile / axe gate
+- `scripts/check-v4.9-performance-budget.cjs` — current first-party asset budget gate
+- `tests/production-v4.9-smoke.cjs`, `tests/e2e/v4.9-production.spec.cjs` — exact Production HTTP/Chromium gates
 - `docs/V4.1-V5.0-ROADMAP.md` — staged product evolution plan
 
 ## QA / release process
@@ -98,4 +102,4 @@ Protected `main`은 다음 순서를 따릅니다.
 
 `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable docs sync`
 
-문서-only merge로 `main` SHA가 이동하더라도 위 **product/runtime baseline**과 exact Production SHA는 별도로 유지합니다. 다음 staged release는 **v4.9 · v5 Release Candidate**입니다.
+문서-only merge로 `main` SHA가 이동하더라도 위 **product/runtime baseline**과 exact Production SHA는 별도로 유지합니다. 다음 staged release는 **v5.0 · Connected Matchday Platform**입니다.
