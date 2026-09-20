@@ -1,47 +1,28 @@
-# FootMate v5.1.1 — AI Match Assistant Resilience Patch
+# FootMate — AI-assisted Futsal Match Discovery
 
-FootMate는 **내 수준에 맞는 풋살 경기를 자연어로 찾고, 추천 이유를 확인한 뒤 참가·결제·경기 당일 운영·경기 후 피드백까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
+FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에게 맞는지 이해한 뒤 참가·경기 당일·경기 후까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
 
-v5.1.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommendation ownership을 유지하면서 **AI provider 안정성, bounded timeout, reload state consistency, 요청 비용 보호, 제품 사실 정확성**을 보강한 verified patch입니다. AI는 검색 조건만 해석하고 실제 경기 후보·순위·추천 이유는 기존 recommendation engine이 계속 소유합니다.
+현재 제품은 자연어 경기 탐색을 실제 AI inference와 연결하되, 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유하도록 설계했습니다. AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, 참가와 결제는 항상 사용자가 직접 확인합니다.
 
-## Current release
+## Product at a glance
 
-- Release: **v5.1.1 · AI Match Assistant Resilience Patch**
 - Primary journey: **Find → Decide → Join → Play → Return**
+- Case Study: `/`
 - Real App: `/app`
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
-- Case Study: `/`
 - Compatibility aliases: `/demo`, `/next` → current Real App
-- Product/runtime baseline: **`2417cf83c48c8326a1c54069fd81c97931d1e93f`**
-- Version sync PR: **#125**
-- Hotfix implementation PRs: **#123 · #124**
-- Post-merge QA: **FootMate QA #443 · run `35508056753` · PASS**
-- Regression 36: **PASS**
-- Browser E2E + axe: **PASS**
-- Exact Vercel Production: **`dpl_2FcWRe6d2aecf6fu2SGdY6H2Fyrr` · SHA `2417cf83c48c8326a1c54069fd81c97931d1e93f` · READY**
-- Exact Production HTTP smoke: **PASS**
-- Exact Production AI inference: **PASS · `inclusionai/ling-3.0-flash-vl-free` · `fallbackUsed=false`**
-- Exact Production Chromium smoke: **PASS · 2/2**
-- Vercel runtime warning/error/fatal logs at verification time: **none observed**
-- Render backup: **`dep-dans7u7lk1mc73fjst2g` · SHA `2417cf83c48c8326a1c54069fd81c97931d1e93f` · LIVE**
-- Patch contract: `docs/V5.1.1-AI-RESILIENCE-PATCH.md`
-- Historical AI architecture contract: `docs/V5.1-AI-MATCH-ASSISTANT.md`
-
-## Patch scope
-
-1. **Stable AI primary path** — 이전 Production에서 primary가 403 후 fallback으로 동작하던 경로를 정리하고, 실제 Production에서 검증한 `inclusionai/ling-3.0-flash-vl-free`를 기본 primary로 사용합니다. `inclusionai/ling-3.0-flash-fin-free`는 한 번의 provider fallback candidate로 둡니다.
-2. **Bounded recovery** — server-side Gateway 요청은 provider당 3초로 제한하고 browser 요청은 7초 후 abort하여 rules fallback으로 복구합니다. Vercel Function `maxDuration`은 10초로 제한합니다.
-3. **Request abuse guard** — POST는 same-origin / Fetch Metadata / JSON content-type 검사를 통과해야 하며 IP + instance window rate guard와 explicit 429 `Retry-After`를 적용합니다.
-4. **Reload State Consistency** — 기존 `footmate:v5.1:ai` storage key를 compatibility boundary로 유지하면서 저장된 `connected-ai` / `rules-fallback` mode를 reload 후 runtime과 UI에 함께 복원합니다.
-5. **Product fact correction** — 현재 recommendation이 사용하지 않는 ELO 설명을 제거하고, 지원하지 않는 날짜 intent인 “오늘”을 AI 검색 예시에서 제거합니다.
+- Case Study IA: **16 sections**
 
 ## Product decisions
 
-- **AI interprets, deterministic engine ranks** — AI는 자연어를 조건으로 변환하고 실제 경기 후보·순위·추천 이유는 기존 recommendation engine이 결정합니다.
-- **Graceful fallback** — primary provider → one bounded provider fallback → browser rules fallback 순서로 복구합니다.
+- **Value before account** — 추천과 경기 상세을 먼저 확인하고 참가 의도가 생겼을 때 로그인합니다.
+- **Reason before score** — 내부 적합도는 정렬에 사용하되 사용자는 생활권·레벨·포지션·거리처럼 판단 가능한 이유를 먼저 봅니다.
+- **AI interprets, deterministic engine ranks** — AI는 자연어를 검색 조건으로 바꾸고 실제 경기 후보·순위·추천 이유는 recommendation engine이 결정합니다.
+- **Recoverable participation** — checkout → pending → success | failure | canceled를 분리하고 retry·status check·reload recovery를 제공합니다.
+- **State-aware Matchday** — upcoming → matchday → checked-in과 late·update·cancel recovery를 분리합니다.
+- **Return loop** — 경기 후 체감 난이도·완료·반복 의도를 다음 추천의 보조 신호로 사용합니다.
 - **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가와 결제를 자동 실행하지 않습니다.
-- **Compatibility first** — recommendation / participation / matchday / return domain ownership, browser persistence, session schema, 16-section Case Study IA를 유지합니다.
 
 ## AI Agent Workflow
 
@@ -49,41 +30,67 @@ v5.1.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommend
 
 - **Context** — 현재 region / position / level browser state와 사용자의 자연어 요청
 - **Plan** — 지역·포지션·레벨·최대 가격·최대 이동 시간·시작 시간 조건으로 구조화
-- **Tools** — Vercel AI Gateway + 기존 deterministic recommendation ranking + sample match catalog
-- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 allowlist/range validation 적용, join/payment는 HITL 유지
-- **Observe** — `connected-ai` / `rules-fallback`, 실제 사용 model, `fallbackUsed`, 마지막 검색 조건을 추적
+- **Tools** — Vercel AI Gateway + deterministic recommendation ranking + sample match catalog
+- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 join/payment는 HITL로 유지
+- **Observe** — connected-ai / rules-fallback, 실제 사용 model, fallback 여부와 마지막 검색 조건을 추적
+
+## Implemented experience
+
+- 자연어 경기 탐색 → structured constraints
+- AI connected path + provider fallback + browser rules fallback
+- deterministic recommendation ranking과 human-readable recommendation reason
+- Discovery filter/sort, zero-result recovery, URL/session persistence
+- Decision Detail, save, 최대 2경기 compare
+- Sign in / checkout / pending / retry / cancel / reload recovery
+- Matchday check-in과 운영 상태 복구
+- postgame Return과 browser-local personalization
+- Real / Guided / Evidence mode 분리
+- responsive 320 / 375 / 390 / 430px
+- Browser E2E + axe accessibility regression
 
 ## Production / integration boundary
 
-v5.1.1의 connected AI path는 exact Vercel Production에서 검증됐습니다. 다만 실제 경기 데이터와 다른 provider boundary는 아래와 같이 구분합니다.
+현재 실제 연결과 simulation 경계를 다음처럼 구분합니다.
 
-- AI Gateway: **connected + exact Production verified**
-- primary model: `inclusionai/ling-3.0-flash-vl-free`
-- provider fallback candidate: `inclusionai/ling-3.0-flash-fin-free`
-- reasoning: constraint extraction은 `reasoning.effort = none`
-- auth: Vercel deployment OIDC 또는 configured AI Gateway credential
-- auth / payment / capacity / notification: **deterministic mock**
+- AI Gateway: **connected and Production-verified**
+- recommendation ranking: **deterministic runtime logic**
 - match catalog / capacity / participant composition: **sample records**
+- auth / payment / capacity / notification providers: **deterministic mock**
 - persistence: **browser local state**
 - member DB / cross-device sync / real OAuth / real PG / realtime capacity backend / actual notification delivery / external analytics: **미연동**
-- Render는 static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
+- Render: static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
+
+## Release readiness
+
+FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완결성과 복구 가능성을 release 기준으로 관리합니다.
+
+Release gate는 다음을 포함합니다.
+
+- Regression suite
+- Browser E2E + axe
+- responsive 320 / 375 / 390 / 430px
+- Deep Link / State Consistency / persistence restoration
+- AI connected / provider fallback / browser fallback / timeout recovery
+- exact Production HTTP / AI inference / Chromium smoke
+- Vercel exact SHA verification
+- Render backup verification
+
+실제 서비스 출시로 확장할 때의 주요 미연동 범위는 member DB, real auth, PG, realtime match capacity/participant data, notification delivery입니다. 이 범위를 연결하기 전까지는 현재 제품을 Interactive Prototype / Production-validated prototype 경계로 명확히 표현합니다.
 
 ## Architecture
 
 - `api/ai-match-assistant.js` — AI Gateway, OIDC, provider fallback, request/time/cost guardrails
-- `src/v5/ai-match-assistant.js` — AI UI/application bridge, browser timeout/fallback, reload mode restoration
-- `src/v5/domain/journey.js` — Find → Decide → Join → Play → Return consistency guardrail
+- `src/v5/ai-match-assistant.js` — AI UI/application bridge, browser timeout/fallback, reload restoration
+- `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
 - `src/v5/infrastructure/providers.js` — auth/payment/capacity/notification provider registry
 - `src/v4/recommendation.js` — deterministic ranking Source of Truth
-- `src/v4/data.js` — current sample match records and user-visible recommendation reasons
-- `tests/contracts/v5.1-ai-assistant.contract.cjs` — AI request/provider/guardrail contract
-- `tests/e2e/v5.1-ai-assistant.spec.cjs` — AI connected/fallback/timeout/reload/responsive/axe gates
-- `tests/production-v5.1-ai.cjs` — exact Production primary-model + no-fallback inference gate
+- `src/v4/data.js` — sample match records and user-visible recommendation reasons
 
-## QA / release process
+## Release engineering
 
-Protected `main`은 다음 순서를 따릅니다.
+버전 번호는 제품의 외부 이름이 아니라 개발·QA·배포 추적용 식별자로만 사용합니다.
 
-`branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable docs sync`
-
-Docs-only merge로 이후 `main` SHA가 이동하더라도 v5.1.1 product/runtime baseline과 exact verified Production SHA는 `2417cf83c48c8326a1c54069fd81c97931d1e93f`로 별도 유지합니다.
+- Current internal release identifier: **v5.1.1**
+- Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
+- Documentation index: `docs/README.md`
+- Release flow: `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable release history sync`
