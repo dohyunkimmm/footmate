@@ -8,11 +8,11 @@
     for(const node of nodes){
       const before=node.nodeValue||'';
       const after=before
-        .replace(/\bv\d+(?:\.\d+){0,2}부터\s*/gi,'')
-        .replace(/\bv\d+(?:\.\d+){0,2}(?:은|는)\s*/gi,'현재 제품은 ')
-        .replace(/\bv\d+(?:\.\d+){0,2}의\s*/gi,'현재 ')
-        .replace(/\bv\d+(?:\.\d+){0,2}\s*·\s*/gi,'')
-        .replace(/\bv\d+(?:\.\d+){0,2}\b/gi,'')
+        .replace(/\bv\d+\.\d+(?:\.\d+)?부터\s*/gi,'')
+        .replace(/\bv\d+\.\d+(?:\.\d+)?(?:은|는)\s*/gi,'현재 제품은 ')
+        .replace(/\bv\d+\.\d+(?:\.\d+)?의\s*/gi,'현재 ')
+        .replace(/\bv\d+\.\d+(?:\.\d+)?\s*·\s*/gi,'')
+        .replace(/\bv\d+\.\d+(?:\.\d+)?\b/gi,'')
         .replace(/\s{2,}/g,' ');
       if(after!==before)node.nodeValue=after;
     }
