@@ -47,8 +47,6 @@ async function serious(page){
   return result.violations.filter(v=>['serious','critical'].includes(v.impact));
 }
 
-test.beforeEach(async({page})=>{await page.addInitScript(()=>localStorage.clear())});
-
 test('closed beta signs in, joins atomically, restores session and cancels',async({page})=>{
   const backend=await mockBackend(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
