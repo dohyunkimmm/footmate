@@ -1,10 +1,10 @@
 # FootMate Documentation
 
-현재 개발 기준은 **v5.5.1 · AI Match Assistant Resilience Patch**입니다. 검증 완료된 durable release 사실은 `RELEASE-HISTORY.md`, 현재 release candidate 경계는 root `README.md`와 patch contract를 함께 확인합니다.
+현재 개발 기준은 **v5.1.1 · AI Match Assistant Resilience Patch**입니다. 검증 완료된 durable release 사실은 `RELEASE-HISTORY.md`, 현재 release candidate 경계는 root `README.md`와 patch contract를 함께 확인합니다.
 
 ## Current
 
-- `V5.5.1-AI-RESILIENCE-PATCH.md` — v5.5.1 provider/timeout/state/abuse guard patch contract와 acceptance
+- `V5.1.1-AI-RESILIENCE-PATCH.md` — v5.1.1 provider/timeout/state/abuse guard patch contract와 acceptance
 - `V5.1-AI-MATCH-ASSISTANT.md` — v5.1 AI Agent Workflow와 verified historical architecture baseline
 - `RELEASE-HISTORY.md` — 검증된 durable release history
 - `V5.0-CONNECTED-MATCHDAY-PLATFORM.md` — v5.0 domain/provider/consistency contract
