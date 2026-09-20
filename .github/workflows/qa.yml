@@ -22,7 +22,7 @@ jobs:
         run: node scripts/check-v4.9-boundary.cjs
       - name: Check v5.1 AI Match Assistant boundary
         run: node scripts/check-v5.1-boundary.cjs
-      - name: Check v5.0 performance budget
+      - name: Check current performance budget
         run: node scripts/check-v4.9-performance-budget.cjs
       - name: Run v4.8 platform regression contracts
         run: node tests/contracts/v4.8-platform.contract.mjs
