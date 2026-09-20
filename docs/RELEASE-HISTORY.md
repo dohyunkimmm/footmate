@@ -2,6 +2,34 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
+
+**Status:** Verified patch release.
+
+- Scope: AI primary provider 안정화, bounded server/browser timeout, provider/rules fallback recovery, reload state consistency, request/cost guard, 제품 사실 문구 정정
+- AI Agent Workflow: `Context → Plan → Tools → Guardrail → Observe`
+- Ranking boundary: AI는 자연어 검색 조건만 해석하며 실제 경기 후보·순위·추천 이유는 기존 deterministic recommendation engine이 소유
+- Primary AI model: `inclusionai/ling-3.0-flash-vl-free`
+- Provider fallback model: `inclusionai/ling-3.0-flash-fin-free`
+- Reasoning boundary: constraint extraction은 `reasoning.effort = none`
+- Timeout boundary: provider request 3s / browser request 7s / Vercel Function maxDuration 10s
+- Request guard: same-origin, Fetch Metadata, JSON content-type, 16KB body limit, instance-local per-IP/global rate window
+- Persistence: 기존 `footmate:v5.1:ai` key 유지; reload 후 UI mode와 `window.__FOOTMATE_AI__.mode` 복원
+- HITL: join/payment 자동 실행 없음
+- Data boundary: 경기·가격·잔여 자리·주소·참가자 구성은 sample records 기준; AI가 생성하지 않음
+- Hotfix implementation PRs: #123 · #124
+- Version sync PR: #125
+- Product/runtime baseline: `2417cf83c48c8326a1c54069fd81c97931d1e93f`
+- Post-merge QA: FootMate QA #443 · run `35508056753` · PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Exact Vercel Production: `dpl_2FcWRe6d2aecf6fu2SGdY6H2Fyrr` · SHA `2417cf83c48c8326a1c54069fd81c97931d1e93f` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS · `inclusionai/ling-3.0-flash-vl-free` · `fallbackUsed=false`
+- Exact Production Chromium smoke: PASS · 2/2
+- Vercel runtime warning/error/fatal logs: none observed at verification time
+- Render backup: `dep-dans7u7lk1mc73fjst2g` · SHA `2417cf83c48c8326a1c54069fd81c97931d1e93f` · LIVE at verification time
+
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
 **Status:** Verified AI feature release.
@@ -221,6 +249,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. 다만 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 현재도 연결하지 않았다. 경기 사실과 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고 exact Production에서 primary model이 fallback 없이 검증됐다. 다만 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 현재도 연결하지 않았다. 경기 사실과 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
