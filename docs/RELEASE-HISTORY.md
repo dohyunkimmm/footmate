@@ -2,6 +2,29 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v5.0.0 — Connected Matchday Platform · 2026-09-20
+
+**Status:** Verified major architecture release.
+
+- Scope: recommendation / participation / matchday / return domain separation, injectable provider registry, provider connection disclosure, cross-domain state consistency guardrail, v5 Case Study/QA/Production gates
+- Journey contract: `Find → Decide → Join → Play → Return`
+- Compatibility boundary: v4.9 product UX, session schema v2, local persistence/event contract, recovery and accessibility behavior retained
+- Domain boundary: recommendation / participation / matchday / return ownership and normalization are explicit
+- Consistency guardrail: selected match → participation success → matchday check-in → Return의 match identity와 상태 순서를 deterministic contract로 검증
+- Provider boundary: auth/payment/capacity/notification은 injectable registry로 분리되었으나 current Production mode는 `mock-only`; connected providers 없음
+- Integration boundary: 실제 OAuth·회원 DB·PG·realtime capacity/participant backend·notification delivery·external AI inference·external analytics 미연동
+- Performance measurement: app HTML `2,422B` · CSS `56,112B` · JS `144,952B` · first-party CSS/JS requests `21` · frozen budget PASS
+- Accessibility / responsive: full decision flow serious/critical axe violations 0, 320/375/390/430 coverage and existing recovery regression PASS
+- Case Study: 16-section IA 유지; Domain Architecture / Provider Registry / v5 Validation / Production Boundary evidence로 v5 구현과 한계를 동기화
+- Feature PR: #115
+- Final PR QA: FootMate QA #411 · run `35497512505` · PASS
+- Product/runtime baseline: `031873c2d6e83a0b531ee1503bd6845aa95b7618`
+- Post-merge QA: FootMate QA #412 · run `35497619885` · PASS
+- Exact Vercel Production: `dpl_EhsahEM5UAD85BbytAjiWcge3enU` · SHA `031873c2d6e83a0b531ee1503bd6845aa95b7618` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danot26q1p3s73ckn19g` · SHA `031873c2d6e83a0b531ee1503bd6845aa95b7618` · LIVE at verification time
+
 ## v4.9.0 — v5 Release Candidate · 2026-09-20
 
 **Status:** Verified release candidate.
@@ -23,7 +46,6 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup: `dep-danob1navr4c73ajij90` · SHA `702ed926f47749802e323a67c92e2552ceadd271` · LIVE at verification time
-- Next staged release: **v5.0 · Connected Matchday Platform**
 
 ## v4.8.0 — Platform Architecture · 2026-09-20
 
@@ -42,7 +64,6 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup: `dep-danntpgjo6nc739md83g` · SHA `076950f257fce3c5e445d0801c998fc935265dd8` · LIVE at verification time
-- Next staged release: **v4.9 · v5 Release Candidate**
 
 ## v4.7.0 — Personalization & Memory · 2026-09-20
 
@@ -61,7 +82,6 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup: `dep-danli4btqb8s73alhnp0` · SHA `117c6ee36e91344355644811410a88898c279f21` · LIVE at verification time
-- Next staged release: **v4.8 · Platform Architecture**
 
 ## v4.6.0 — Return Loop & Reputation · 2026-09-20
 
@@ -176,6 +196,6 @@
 
 ## Shared prototype boundary
 
-v4.x는 인터랙티브 서비스 기획 프로토타입이다. 외부 AI inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. 외부 AI inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 현재 v5.0 Production에도 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
