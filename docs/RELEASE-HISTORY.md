@@ -2,6 +2,29 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v4.9.0 — v5 Release Candidate · 2026-09-20
+
+**Status:** Verified release candidate.
+
+- Scope: final IA, semantic design-system contract, performance budget, full-flow accessibility, stable event naming, auth/payment/capacity/notification provider mocks, session migration/rollback rehearsal, v5 Case Study narrative
+- Frozen IA: `welcome → setup → home → discover → detail → auth → checkout → success → schedule → profile`
+- Design-system boundary: 기존 v4 visual token을 semantic alias로 묶고 44px control baseline과 reduced-motion 기준을 공통 contract로 고정
+- Observability boundary: recommendation.selected / join.started / join.completed / checkin.completed / postgame.submitted event names와 schema를 유지하며 delivery는 `local-only`; external analytics 미연동
+- Provider boundary: auth/payment/capacity/notification은 deterministic mock이며 `external: false`; 실제 OAuth·회원 DB·PG·realtime capacity·notification backend 미연동
+- Migration boundary: session schema v2 유지; migration 전 checkpoint와 원본 rollback rehearsal을 deterministic contract로 검증
+- Performance budget: app HTML ≤ 16KB · first-party CSS ≤ 180KB · JS ≤ 320KB · first-party CSS/JS requests ≤ 24
+- Verified performance measurement: app HTML `2,337B` · CSS `56,044B` · JS `142,101B` · first-party CSS/JS requests `20`
+- Accessibility: welcome → setup → home → detail → auth → checkout full-flow serious/critical axe violations 0; 320/375/390/430 responsive coverage
+- Feature PR: #113
+- Final PR QA: FootMate QA #405 · run `35495751133` · PASS
+- Product/runtime baseline: `702ed926f47749802e323a67c92e2552ceadd271`
+- Post-merge QA: FootMate QA #406 · run `35495900622` · PASS
+- Exact Vercel Production: `dpl_Ar2C7xD2NopX1YN85RpXaQN4ShG6` · SHA `702ed926f47749802e323a67c92e2552ceadd271` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danob1navr4c73ajij90` · SHA `702ed926f47749802e323a67c92e2552ceadd271` · LIVE at verification time
+- Next staged release: **v5.0 · Connected Matchday Platform**
+
 ## v4.8.0 — Platform Architecture · 2026-09-20
 
 **Status:** Verified staged architecture release.
@@ -11,7 +34,7 @@
 - Provider boundary: runtime persistence는 browser `localStorage`; memory provider는 deterministic contract test용이며 회원 DB·원격 저장소는 미연동
 - Event boundary: `footmate:v4:events`에 recommendation.selected / join.started / join.completed / checkin.completed / postgame.submitted를 sequence·dedupe 계약으로 기록; external analytics 미연동
 - Compatibility fix: 취소된 participation snapshot을 checkout observer가 덮어쓰지 않도록 `canceled` 상태 ownership 보강
-- Feature PR: #111 (#110은 동일 branch의 QA ref 교체 과정에서 merge 없이 종료)
+- Feature PR: #111
 - Final PR QA: FootMate QA #400 · run `35494541917` · PASS
 - Product/runtime baseline: `076950f257fce3c5e445d0801c998fc935265dd8`
 - Post-merge QA: FootMate QA #401 · run `35494664726` · PASS
@@ -153,6 +176,6 @@
 
 ## Shared prototype boundary
 
-v4.x는 인터랙티브 서비스 기획 프로토타입이다. 외부 AI inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend는 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
+v4.x는 인터랙티브 서비스 기획 프로토타입이다. 외부 AI inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
