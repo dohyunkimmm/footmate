@@ -74,12 +74,27 @@ test('structured Case Study content keeps readable type and no horizontal overfl
       ].join(',')
     }
   ];
+  const layoutSelectors=[
+    '.fm-next-cs-grid',
+    '.fm-next-cs-persona',
+    '.fm-next-cs-journey',
+    '.fm-next-cs-before-after',
+    '.fm-next-cs-reco',
+    '.fm-next-cs-auth-flow',
+    '.fm-next-cs-state-home',
+    '.fm-next-cs-modes',
+    '.fm-next-cs-ia',
+    '.fm-next-cs-metrics',
+    '.fm-next-cs-day-states',
+    '.fm-next-cs-recovery',
+    '.fm-next-cs-outcomes'
+  ].join(',');
 
   for(const width of [1440,1180,430,390,375,320]){
     await openCaseStudy(page,width,width<=430?844:900);
     for(let index=0;index<16;index+=1){
       await goToSlide(page,index);
-      const metrics=await page.locator('.slide.on').evaluate((slide,groups)=>{
+      const metrics=await page.locator('.slide.on').evaluate((slide,{groups,layoutSelectors})=>{
         const offenders=[];
         for(const group of groups){
           for(const el of slide.querySelectorAll(group.selector)){
@@ -89,14 +104,19 @@ test('structured Case Study content keeps readable type and no horizontal overfl
             }
           }
         }
+        const layoutOverflow=[];
+        for(const el of slide.querySelectorAll(layoutSelectors)){
+          const overflow=el.scrollWidth-el.clientWidth;
+          if(overflow>1)layoutOverflow.push({className:el.className,overflow});
+        }
         return {
           documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
-          slideOverflow:slide.scrollWidth-slide.clientWidth,
+          layoutOverflow,
           offenders
         };
-      },floors);
+      },{groups:floors,layoutSelectors});
       expect(metrics.documentOverflow,`document overflow at ${width}px slide ${index+1}`).toBeLessThanOrEqual(1);
-      expect(metrics.slideOverflow,`slide overflow at ${width}px slide ${index+1}`).toBeLessThanOrEqual(1);
+      expect(metrics.layoutOverflow,`structured layout overflow at ${width}px slide ${index+1}`).toEqual([]);
       expect(metrics.offenders,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
     }
   }
