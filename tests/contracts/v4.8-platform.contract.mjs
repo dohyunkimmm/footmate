@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import {SESSION_SCHEMA_VERSION,EVENT_SCHEMA_VERSION,STORAGE_KEYS,createDomainEvent} from '../../src/v4/platform/domain/contracts.mjs';
-import {createMemoryStorageProvider,createJsonRepository} from '../../src/v4/platform/infrastructure/storage.mjs';
-import {createFootMatePlatform} from '../../src/v4/platform/application/platform.mjs';
+import {SESSION_SCHEMA_VERSION,EVENT_SCHEMA_VERSION,STORAGE_KEYS,createDomainEvent} from '../../src/v4/platform/domain/contracts.js';
+import {createMemoryStorageProvider,createJsonRepository} from '../../src/v4/platform/infrastructure/storage.js';
+import {createFootMatePlatform} from '../../src/v4/platform/application/platform.js';
 
 const fixedNow=()=>new Date('2026-09-20T00:00:00.000Z');
 const provider=createMemoryStorageProvider({
