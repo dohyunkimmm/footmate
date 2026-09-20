@@ -21,6 +21,10 @@ begin
       raise exception 'MATCH_CONTRACT_INCOMPLETE' using errcode = '23514';
     end if;
 
+    if new.price_krw <> 0 then
+      raise exception 'PAYMENT_NOT_CONNECTED' using errcode = '23514';
+    end if;
+
     select coalesce(sum(capacity_total), 0)::integer
     into v_slot_capacity
     from public.match_slots
