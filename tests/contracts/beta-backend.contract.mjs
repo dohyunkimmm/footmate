@@ -138,7 +138,9 @@ for(const required of [
   'select coalesce(sum(capacity_total), 0)::integer',
   'where match_id = new.id',
   'v_slot_capacity <> new.capacity_total',
-  "raise exception 'POSITION_CAPACITY_INCOMPLETE'"
+  "raise exception 'POSITION_CAPACITY_INCOMPLETE'",
+  'new.price_krw <> 0',
+  "raise exception 'PAYMENT_NOT_CONNECTED'"
 ])assert.ok(openMatchIntegrityMigration.includes(required),`missing open match integrity contract: ${required}`);
 assert.ok(!openMatchIntegrityMigration.includes('service_role'),'service-role credentials must not be embedded in the open match integrity migration');
 
