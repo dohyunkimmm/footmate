@@ -35,6 +35,16 @@ async function readBody(req){
   if(!chunks.length)return{};
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
+async function resolveGatewayToken(){
+  const direct=process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
+  if(direct)return direct;
+  try{
+    const {getVercelOidcToken}=await import('@vercel/oidc');
+    return await getVercelOidcToken()||'';
+  }catch{
+    return'';
+  }
+}
 function cleanPreferences(value){
   const candidate=value&&typeof value==='object'?value:{};
   return {
@@ -61,7 +71,7 @@ function normalizeResult(candidate={}){
 }
 
 module.exports=async function handler(req,res){
-  const token=process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
+  const token=await resolveGatewayToken();
   if(req.method==='GET')return send(res,200,{version:VERSION,provider:'vercel-ai-gateway',model:MODEL,configured:Boolean(token),workflow:'Context → Plan → Tools → Guardrail → Observe'});
   if(req.method!=='POST')return send(res,405,{error:'method_not_allowed'});
   if(!sameOrigin(req))return send(res,403,{error:'origin_not_allowed'});
