@@ -34,6 +34,8 @@ jobs:
         run: node tests/contracts/beta-backend.contract.mjs
       - name: Run beta Supabase hardening contracts
         run: node tests/contracts/beta-supabase-hardening.contract.mjs
+      - name: Run beta operator console contracts
+        run: node tests/contracts/beta-operator-console.contract.mjs
       - name: Run v5.1.1 AI assistant contracts
         run: node tests/contracts/v5.1-ai-assistant.contract.cjs
   browser-e2e:
@@ -48,7 +50,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v5.1.1 browser, beta, AI, recovery and accessibility gates
-        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs
+        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6

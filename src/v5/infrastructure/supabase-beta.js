@@ -54,6 +54,7 @@ const MATCH_SELECT=[
   'capacity_total','joined_count','remaining_spots','format_label','surface','duration_minutes','status',
   'match_slots(position,capacity_total,joined_count,remaining_spots)'
 ].join(',');
+const OPERATOR_MATCH_SELECT=`${MATCH_SELECT},created_by,created_at,updated_at`;
 
 export async function loadBetaBackendConfig({fetchImpl=globalThis.fetch,endpoint=BETA_BACKEND_CONFIG_ENDPOINT}={}){
   if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
@@ -177,5 +178,73 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
     }).then(rows=>Array.isArray(rows)?rows[0]||null:rows)
   });
 
-  return Object.freeze({origin,auth,matches,profile,participation});
+  const operator=Object.freeze({
+    self:({accessToken})=>{
+      const query=new URLSearchParams();
+      query.set('select','user_id,created_at');
+      query.set('limit','1');
+      return request(`/rest/v1/operators?${query}`,{accessToken:nonEmpty(accessToken,'access token')})
+        .then(rows=>Array.isArray(rows)?rows[0]||null:null);
+    },
+    listMatches:({accessToken,limit=50})=>{
+      const query=new URLSearchParams();
+      query.set('select',OPERATOR_MATCH_SELECT);
+      query.set('order','starts_at.desc');
+      query.set('limit',String(clampLimit(limit)));
+      return request(`/rest/v1/matches?${query}`,{accessToken:nonEmpty(accessToken,'access token')});
+    },
+    saveMatch:({accessToken,match})=>{
+      const slots=Array.isArray(match?.slots)?match.slots:[];
+      return request('/rest/v1/rpc/operator_save_match',{
+        method:'POST',
+        accessToken:nonEmpty(accessToken,'access token'),
+        body:{
+          p_match_id:match?.id||null,
+          p_title:String(match?.title||'').trim(),
+          p_venue_name:String(match?.venueName||'').trim(),
+          p_area_label:String(match?.areaLabel||'').trim()||null,
+          p_address:String(match?.address||'').trim(),
+          p_region:String(match?.region||'').trim(),
+          p_level:String(match?.level||'').trim()||null,
+          p_starts_at:nonEmpty(match?.startsAt,'match start'),
+          p_capacity_total:Number(match?.capacityTotal||0),
+          p_format_label:String(match?.formatLabel||'').trim()||null,
+          p_surface:String(match?.surface||'').trim()||null,
+          p_duration_minutes:Number(match?.durationMinutes||0),
+          p_status:String(match?.status||'draft').trim(),
+          p_slots:slots.map(slot=>({position:betaPosition(slot.position),capacity_total:Number(slot.capacityTotal||0)}))
+        }
+      }).then(rows=>Array.isArray(rows)?rows[0]||null:rows);
+    },
+    cancelMatch:({accessToken,matchId})=>request('/rest/v1/rpc/operator_cancel_match',{
+      method:'POST',
+      accessToken:nonEmpty(accessToken,'access token'),
+      body:{p_match_id:nonEmpty(matchId,'match id')}
+    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
+    listParticipants:async({accessToken,matchId})=>{
+      const token=nonEmpty(accessToken,'access token');
+      const query=new URLSearchParams();
+      query.set('select','id,match_id,user_id,position,status,joined_at,canceled_at,created_at,updated_at');
+      query.set('match_id',`eq.${nonEmpty(matchId,'match id')}`);
+      query.set('status','eq.confirmed');
+      query.set('order','joined_at.asc');
+      const rows=await request(`/rest/v1/participations?${query}`,{accessToken:token});
+      const participations=Array.isArray(rows)?rows:[];
+      const ids=[...new Set(participations.map(item=>String(item.user_id||'')).filter(Boolean))];
+      if(!ids.length)return [];
+      const profilesQuery=new URLSearchParams();
+      profilesQuery.set('select','id,display_name,region,position,level');
+      profilesQuery.set('id',`in.(${ids.join(',')})`);
+      const profiles=await request(`/rest/v1/profiles?${profilesQuery}`,{accessToken:token});
+      const byId=new Map((Array.isArray(profiles)?profiles:[]).map(item=>[item.id,item]));
+      return participations.map(item=>({...item,profile:byId.get(item.user_id)||null}));
+    },
+    cancelParticipant:({accessToken,matchId,userId})=>request('/rest/v1/rpc/operator_cancel_participant',{
+      method:'POST',
+      accessToken:nonEmpty(accessToken,'access token'),
+      body:{p_match_id:nonEmpty(matchId,'match id'),p_user_id:nonEmpty(userId,'user id')}
+    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows)
+  });
+
+  return Object.freeze({origin,auth,matches,profile,participation,operator});
 }
