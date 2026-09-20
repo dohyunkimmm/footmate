@@ -28,27 +28,29 @@ async function check(name,route,verify,checks){
   }
   const checks=[];
   await check('case-study','/',({body})=>{
-    assert(body.includes('footmate-case-study-release" content="4.3.0"'),'case study v4.3 metadata missing');
-    assert(body.includes('/src/v4/case-study.js?v=430'),'v4 case study runtime missing');
-    assert(body.includes('/src/v4/case-study-recommendation.js?v=430'),'recommendation Case Study evidence missing');
-    assert(body.includes('/src/v4/case-study-discovery.js?v=430'),'v4.2 discovery Case Study evidence missing');
-    assert(body.includes('/src/v4/case-study-decision.js?v=430'),'v4.3 decision Case Study evidence missing');
-    assert(body.includes('/src/v4/case-study-editorial.css?v=430'),'Case Study editorial stylesheet missing');
+    assert(body.includes('footmate-case-study-release" content="4.4.0"'),'case study v4.4 metadata missing');
+    assert(body.includes('/src/v4/case-study.js?v=440'),'v4 case study runtime missing');
+    assert(body.includes('/src/v4/case-study-recommendation.js?v=440'),'recommendation Case Study evidence missing');
+    assert(body.includes('/src/v4/case-study-discovery.js?v=440'),'v4.2 discovery Case Study evidence missing');
+    assert(body.includes('/src/v4/case-study-decision.js?v=440'),'v4.3 decision Case Study evidence missing');
+    assert(body.includes('/src/v4/case-study-participation.js?v=440'),'v4.4 participation Case Study evidence missing');
+    assert(body.includes('/src/v4/case-study-editorial.css?v=440'),'Case Study editorial stylesheet missing');
     assert(!body.includes('case-study-release.js'),'obsolete Case Study release overlay still loaded');
   },checks);
   for(const route of ['/app','/demo','/next']){
     await check(`app-${route}`,route,({body})=>{
-      assert(body.includes('footmate-release" content="4.3.0"'),`${route} v4.3 release metadata missing`);
-      assert(body.includes('/src/v4/app.js?v=430'),`${route} v4 app module missing`);
-      assert(body.includes('/src/v4/experience.js?v=430'),`${route} consolidated v4 experience module missing`);
-      assert(body.includes('/src/v4/recommendation.js?v=430'),`${route} recommendation module missing`);
-      assert(body.includes('/src/v4/discovery.js?v=430'),`${route} v4.2 discovery module missing`);
-      assert(body.includes('/src/v4/decision.js?v=430'),`${route} v4.3 decision module missing`);
-      assert(body.includes('/src/v4/decision.css?v=430'),`${route} v4.3 decision stylesheet missing`);
+      assert(body.includes('footmate-release" content="4.4.0"'),`${route} v4.4 release metadata missing`);
+      assert(body.includes('/src/v4/app.js?v=440'),`${route} v4 app module missing`);
+      assert(body.includes('/src/v4/experience.js?v=440'),`${route} consolidated v4 experience module missing`);
+      assert(body.includes('/src/v4/recommendation.js?v=440'),`${route} recommendation module missing`);
+      assert(body.includes('/src/v4/discovery.js?v=440'),`${route} v4.2 discovery module missing`);
+      assert(body.includes('/src/v4/decision.js?v=440'),`${route} v4.3 decision module missing`);
+      assert(body.includes('/src/v4/participation.js?v=440'),`${route} v4.4 participation module missing`);
+      assert(body.includes('/src/v4/participation.css?v=440'),`${route} v4.4 participation stylesheet missing`);
     },checks);
   }
   await check('v4-data','/src/v4/data.js',({body})=>{
-    assert(body.includes("RELEASE_VERSION='4.3.0'"),'release marker missing');
+    assert(body.includes("RELEASE_VERSION='4.4.0'"),'release marker missing');
     assert(body.includes("footmate:v4:session"),'v4 storage missing');
     assert(body.includes('positionSlots'),'position availability data missing');
   },checks);
@@ -76,9 +78,20 @@ async function check(name,route,verify,checks){
     assert(body.includes('toggle-save'),'save intent missing');
     assert(body.includes('toggle-compare'),'compare intent missing');
   },checks);
-  await check('v4-decision-css','/src/v4/decision.css',({body})=>{
-    assert(body.includes('.fm-decision-compare-grid'),'decision compare styling missing');
-    assert(body.includes('min-height:44px'),'decision target size rule missing');
+  await check('v4-participation','/src/v4/participation.js',({body})=>{
+    assert(body.includes("PARTICIPATION_VERSION='4.4.0'"),'participation version missing');
+    assert(body.includes("PARTICIPATION_STORAGE_KEY='footmate:v4:participation'"),'participation persistence missing');
+    assert(body.includes("status:'pending'"),'pending transition missing');
+    assert(body.includes("status:'failure'"),'failure transition missing');
+    assert(body.includes("status:'success'"),'success transition missing');
+    assert(body.includes("status:'canceled'"),'cancel transition missing');
+    assert(body.includes('attemptId'),'duplicate-submit identity missing');
+    assert(body.includes('policySnapshot'),'snapshot consistency missing');
+    assert(body.includes('실제 PG 결제나 카드 승인은 연결하지 않았습니다.'),'PG boundary missing');
+  },checks);
+  await check('v4-participation-css','/src/v4/participation.css',({body})=>{
+    assert(body.includes('.fm-participation-state'),'participation recovery styling missing');
+    assert(body.includes('min-height:44px'),'participation target-size rule missing');
   },checks);
   await check('case-study-story','/src/v4/case-study.js',({body})=>{
     assert(body.includes('iframe src="/app?embed=1"'),'Case Study /app iframe missing');
@@ -97,6 +110,11 @@ async function check(name,route,verify,checks){
     assert(body.includes('v4.3.0'),'v4.3 decision Case Study marker missing');
     assert(body.includes('저장·비교'),'decision intent narrative missing');
     assert(body.includes('샘플 잔여 자리'),'decision capacity narrative missing');
+  },checks);
+  await check('case-study-participation','/src/v4/case-study-participation.js',({body})=>{
+    assert(body.includes('v4.4.0'),'v4.4 participation Case Study marker missing');
+    assert(body.includes('checkout → pending → success | failure | canceled'),'participation state narrative missing');
+    assert(body.includes('실제 PG 승인은 연결하지 않습니다.'),'payment simulation boundary missing');
   },checks);
   await check('case-study-editorial','/src/v4/case-study-editorial.css',({body})=>{
     assert(body.includes('text-wrap:balance'),'balanced heading wrap CSS missing');
