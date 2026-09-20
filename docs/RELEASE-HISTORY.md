@@ -1,266 +1,121 @@
 # FootMate Release History
 
-## v4.5.0 — Matchday Operations · 2026-09-20
+이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
-**Status:** Verified staged feature release. Product/runtime baseline `072eff6e597c98bb370ece61cba4e74d5975c4a3` passed FootMate QA #367 (run `35485268368`), including Regression 36, v4.5 Browser E2E + axe, Matchday Operations state/recovery gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_DQWXcq8BHG5ZHsudN2YWaEZz8xUY` is **READY** and Render deployment `dep-dankmf2jnfac738vj0u0` is **LIVE** at the same exact SHA at release verification time.
+## v4.6.0 — Return Loop & Reputation · 2026-09-20
 
-v4.5 builds on the verified v4.4 Join & Payment release by making the post-join experience an explicit operating state instead of a static confirmation. Arrival, check-in, late recovery, operational updates and cancellation recovery are separated from payment state and persisted independently.
+**Status:** Verified staged feature release.
 
-### Release scope
-
-- separate Matchday Operations persistence in `footmate:v4:matchday`
-- `upcoming → matchday → checked-in` state contract
-- arrival status and explicit late → arrival recovery
-- operational update acknowledgement and cancellation recovery
-- venue/check-in/team-notice UX contract
-- actionable Home / Schedule surfaces after participation
-- 320 / 375 / 390 / 430 responsive coverage and axe accessibility gate
-- explicit boundary that realtime location, map, team chat and notification backend are not connected
-- v4.1 Recommendation Core, v4.2 Discovery & Search, v4.3 Decision Detail and v4.4 Join & Payment remain regression contracts
-- 16-section Case Study updated with Matchday Operations evidence
-
-### Release verification
-
-- Matchday Operations PR #103: final PR QA #364 · run `35484349288` · PASS
-- Production locator fix PR #104: QA #366 · run `35485163542` · PASS
-- Verified product/runtime baseline: `072eff6e597c98bb370ece61cba4e74d5975c4a3`
-- Post-merge QA + exact Production verification: FootMate QA #367 · run `35485268368` · PASS
-- Exact Vercel Production: `dpl_DQWXcq8BHG5ZHsudN2YWaEZz8xUY` · SHA `072eff6e597c98bb370ece61cba4e74d5975c4a3` · **READY**
+- Scope: postgame perceived-difficulty feedback, attendance/completion history, repeat intent, feedback-aware next recommendation, personal-history disclosure
+- Persistence: `footmate:v4:return`
+- Reputation boundary: 개인 히스토리와 추천 보조 신호만 저장하며 공개 신뢰도·스포츠맨십 점수는 만들지 않음
+- Integration boundary: external reputation backend 미연동
+- Feature PR: #106
+- Final PR QA: FootMate QA #373 · run `35486637299` · PASS
+- Product/runtime baseline: `409adefd40698a7c30202ad6e570445bde8dea8c`
+- Post-merge QA: FootMate QA #374 · run `35486719124` · PASS
+- Exact Vercel Production: `dpl_Cz6RLRiM9DgSTod8QrNGCxEDQghA` · SHA `409adefd40698a7c30202ad6e570445bde8dea8c` · READY
 - Exact Production HTTP smoke: PASS
 - Exact Production Chromium smoke: PASS
-- Render backup: `dep-dankmf2jnfac738vj0u0` · SHA `072eff6e597c98bb370ece61cba4e74d5975c4a3` · **LIVE at verification time**
+- Render backup: `dep-danl6cp7lnhs73ea5cp0` · SHA `409adefd40698a7c30202ad6e570445bde8dea8c` · LIVE at verification time
+- Next staged release: **v4.7 · Personalization & Memory**
 
-### Scope boundary
+## v4.5.0 — Matchday Operations · 2026-09-20
 
-This remains an interactive service-planning prototype. Matchday Operations uses deterministic state, sample venue/notice content and browser persistence. Realtime location, map routing, team chat, notification delivery, external AI inference, member DB, real OAuth, real PG and realtime capacity/participant data are not connected.
+**Status:** Verified staged feature release.
 
-### Next staged release
-
-v4.6 is **Return Loop & Reputation**: postgame rating, attendance/completion history, perceived-difficulty feedback, feedback-aware next recommendation, careful reliability/sportsmanship expression, and repeat-match discovery.
+- Scope: separate Matchday Operations persistence, `upcoming → matchday → checked-in`, arrival/late recovery, operational update acknowledgement, cancellation recovery, venue/check-in/team-notice UX
+- Persistence: `footmate:v4:matchday`
+- Integration boundary: realtime location, map routing, team chat and notification backend 미연동
+- Feature PR: #103 · final PR QA #364 · run `35484349288` · PASS
+- Production locator fix PR: #104 · QA #366 · run `35485163542` · PASS
+- Product/runtime baseline: `072eff6e597c98bb370ece61cba4e74d5975c4a3`
+- Post-merge QA: FootMate QA #367 · run `35485268368` · PASS
+- Exact Vercel Production: `dpl_DQWXcq8BHG5ZHsudN2YWaEZz8xUY` · exact SHA · READY
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-dankmf2jnfac738vj0u0` · exact SHA · LIVE at verification time
 
 ## v4.4.0 — Join & Payment State Machine · 2026-09-20
 
-**Status:** Verified staged feature release. Product/runtime baseline `27f78394c32475e818afd97bf590d6448403f938` passed FootMate QA #357 (run `35483442042`), including Regression 36, Recommendation Core / Discovery / Decision regressions, Join & Payment state recovery E2E, Browser E2E + axe, responsive/state/Case Study gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_GS2Cotyf5UFdDA4gyoCfMFqfa5Pq` is **READY** and Render deployment `dep-dank2n8jo6nc739k8egg` is **LIVE** at the same exact SHA at release verification time.
+**Status:** Verified staged feature release.
 
-v4.4 builds on the verified v4.3 Decision Detail release by turning participation from a single success-path interaction into an explicit recoverable state contract. Checkout context is frozen into an authoritative attempt snapshot, pending submissions are guarded, reload can restore the active attempt, and failure/cancel paths never create participation prematurely.
-
-### Release scope
-
-- separate participation persistence in `footmate:v4:participation`
-- `checkout → pending → success | failure | canceled` payment state contract
-- easy-payment / card method simulation with explicit no-PG disclosure
-- duplicate-submit protection while pending
-- reload-safe pending restoration and explicit status-check recovery
-- failure → retry → success recovery
-- user cancel recovery without creating `joinedMatchId`
-- selected match / amount / refund-policy snapshot consistency across an attempt
-- final participation only from the authoritative payment snapshot
-- 320 / 375 / 390 / 430 responsive checkout coverage and axe accessibility gate
-- v4.1 Recommendation Core, v4.2 Discovery & Search and v4.3 Decision Detail retained as regression contracts
-- 16-section Case Study updated with Join & Payment State Machine evidence
-
-### Release verification
-
-- Join & Payment PR #101: final PR QA #356 · run `35483267720` · PASS
-- Verified product/runtime baseline: `27f78394c32475e818afd97bf590d6448403f938`
-- Post-merge QA + exact Production verification: FootMate QA #357 · run `35483442042` · PASS
-- Exact Vercel Production: `dpl_GS2Cotyf5UFdDA4gyoCfMFqfa5Pq` · SHA `27f78394c32475e818afd97bf590d6448403f938` · **READY**
-- Exact Production HTTP smoke: PASS
-- Exact Production Chromium smoke: PASS
-- Render backup: `dep-dank2n8jo6nc739k8egg` · SHA `27f78394c32475e818afd97bf590d6448403f938` · **LIVE at verification time**
-
-### Scope boundary
-
-This remains an interactive service-planning prototype. Recommendation, discovery, Decision Detail and participation use deterministic rules, sample records and browser persistence. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity, realtime participant data and notification backend are not connected. Payment states and methods are simulations for validating the service contract and recovery UX.
-
-### Next staged release
-
-v4.5 is **Matchday Operations**: upcoming → matchday → checked-in operations, arrival/check-in state, venue/route guidance, late/cancellation/update recovery, team notice contract and an actionable pre-kickoff home.
+- Scope: `checkout → pending → success | failure | canceled`, payment-method simulation, duplicate-submit guard, reload-safe pending restoration, failure retry, cancel recovery, immutable attempt snapshot
+- Persistence: `footmate:v4:participation`
+- Integration boundary: 실제 PG 미연동; payment states/methods는 deterministic simulation
+- Feature PR: #101 · final PR QA #356 · run `35483267720` · PASS
+- Product/runtime baseline: `27f78394c32475e818afd97bf590d6448403f938`
+- Post-merge QA: FootMate QA #357 · run `35483442042` · PASS
+- Exact Vercel Production: `dpl_GS2Cotyf5UFdDA4gyoCfMFqfa5Pq` · exact SHA · READY
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-dank2n8jo6nc739k8egg` · exact SHA · LIVE at verification time
 
 ## v4.3.0 — Decision Detail · 2026-09-20
 
-**Status:** Verified staged feature release. Product/runtime baseline `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` passed FootMate QA #351 (run `35476071931`), including Regression 36, Recommendation Core regression, Discovery & Search regression, Decision Detail disclosure/save/compare E2E, Browser E2E + axe, responsive/state/Case Study gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_G2Bg6oTEq4LJDWetzwoXYQtXMz6K` is **READY** and Render deployment `dep-danhjl7lk1mc73fd27u0` is **LIVE** at the same exact SHA at release verification time.
+**Status:** Verified staged feature release.
 
-v4.3 builds on the verified v4.2 Discovery & Search release by turning match detail into the actual participation-decision surface. Recommendation evidence, participant/position composition, facility and operation information, refund timing, availability context, save intent and comparison are brought into one decision flow without changing the v4.1 recommendation or v4.2 discovery contracts.
-
-### Release scope
-
-- recommendation reason breakdown on Match Detail
-- clearly disclosed prototype sample remaining-seat and participant-position composition
-- facility / operating-rule / gear information with sample-data disclosure
-- cancellation / refund timing visualization using the existing prototype policy boundary
-- non-exaggerated availability wording; sample capacity is not presented as realtime inventory
-- persistent save intent stored in `footmate:v4:decision`
-- max-two-match comparison state and accessible comparison dialog
-- Escape close and focus restore for compare interaction
-- `참가하기` retained as the participation-contract primary CTA while save/compare remain secondary intents
-- v4.1 Recommendation Core and v4.2 Discovery & Search remain regression contracts
-- 16-section Case Study updated with Decision Detail evidence
-
-### Release verification
-
-- Decision Detail PR #99: final PR QA #350 · run `35475947701` · PASS
-- Verified product/runtime baseline: `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746`
-- Post-merge QA + exact Production verification: FootMate QA #351 · run `35476071931` · PASS
-- Exact Vercel Production: `dpl_G2Bg6oTEq4LJDWetzwoXYQtXMz6K` · SHA `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` · **READY**
-- Exact Production HTTP smoke: PASS
-- Exact Production Chromium smoke: PASS
-- Render backup: `dep-danhjl7lk1mc73fd27u0` · SHA `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` · **LIVE at verification time**
-
-### Scope boundary
-
-This remains an interactive service-planning prototype. Recommendation is deterministic rules-based ranking over sample records; Discovery is deterministic filtering/sorting over those records with browser/URL persistence. Decision Detail capacity, participant composition and facility information are explicit sample data. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity, realtime participant data and notification backend are not connected.
-
-### Next staged release
-
-v4.4 is **Join & Payment State Machine**: explicit auth → checkout → confirmation states, pending/success/failure/retry/cancel recovery, payment-method simulation, duplicate-submit protection, selected-match/price/policy snapshot consistency and reload-safe participation state.
+- Scope: recommendation reason breakdown, disclosed sample participant/position composition, facility/operation information, refund timing, save intent, max-two comparison
+- Persistence: `footmate:v4:decision`
+- Data boundary: capacity/participant/facility data는 prototype sample이며 realtime inventory가 아님
+- Feature PR: #99 · final PR QA #350 · run `35475947701` · PASS
+- Product/runtime baseline: `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746`
+- Post-merge QA: FootMate QA #351 · run `35476071931` · PASS
+- Exact Vercel Production: `dpl_G2Bg6oTEq4LJDWetzwoXYQtXMz6K` · exact SHA · READY
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-danhjl7lk1mc73fd27u0` · exact SHA · LIVE at verification time
 
 ## v4.2.0 — Discovery & Search · 2026-09-20
 
-**Status:** Verified staged feature release. Product/runtime baseline `896be56a2e2438fd383c46152ad8f1d5f11e89b0` passed FootMate QA #344 (run `35473666410`), including Regression 36, recommendation regression, Discovery filter/sort/persistence/recovery E2E, Browser E2E + axe, responsive/state/Case Study layout gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_oiHYN6EaeNumD3GsmQKDQyjt6xpg` is **READY** and Render deployment `dep-dangrd17lnhs73e7cr40` was **LIVE** at the same exact SHA at release verification time.
+**Status:** Verified staged feature release.
 
-v4.2 builds on the verified v4.1 Recommendation Core by turning recommendation into a starting point for user-controlled exploration. Users can narrow currently relevant matches without losing the underlying explainable recommendation contract.
-
-### Release scope
-
-- date / time / distance / price / available-position filters on 경기 찾기
-- fit / distance / closing-soon sorting
-- active filter summary with per-filter removal and clear-all
-- zero-result recovery with condition widening and full reset
-- discovery state persistence through `footmate:v4:discovery` and `d_*` URL query parameters
-- responsive mobile filter sheet with dialog semantics, Escape close, focus trap/restore and 44px+ targets
-- v4.1 region / position / level recommendation scoring retained as the ranking baseline
-- 16-section Case Study updated with Discovery & Search journey and zero-result recovery evidence
-- existing guest-first auth timing, recommendation explanations, selected-match continuity, detail-return navigation, match-specific check-in, responsive layout, Case Study panel sizing and accessibility remain regression gates
-
-### Release verification
-
-- Discovery & Search PR #97: final PR QA #343 · run `35473512165` · PASS
-- Verified product/runtime baseline: `896be56a2e2438fd383c46152ad8f1d5f11e89b0`
-- Post-merge QA + exact Production verification: FootMate QA #344 · run `35473666410` · PASS
-- Exact Vercel Production: `dpl_oiHYN6EaeNumD3GsmQKDQyjt6xpg` · SHA `896be56a2e2438fd383c46152ad8f1d5f11e89b0` · **READY**
-- Exact Production HTTP smoke: PASS
-- Exact Production Chromium smoke: PASS
-- Render backup: `dep-dangrd17lnhs73e7cr40` · SHA `896be56a2e2438fd383c46152ad8f1d5f11e89b0` · **LIVE at verification time**
-
-### Scope boundary
-
-This remains an interactive service-planning prototype. Recommendation is deterministic rules-based ranking over sample records; Discovery is deterministic filtering/sorting over those records with browser/URL persistence. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity and notification backend are not connected.
-
-### Next staged release
-
-v4.3 is **Decision Detail**: recommendation reason breakdown, participant/position composition, facility and operation rules, cancellation/refund policy hierarchy, non-exaggerated availability urgency, and save/compare intent states.
+- Scope: date/time/distance/price/position filters, fit/distance/closing-soon sort, zero-result recovery, URL/session persistence, accessible mobile filter sheet
+- Persistence: `footmate:v4:discovery` + `d_*` URL query parameters
+- Feature PR: #97 · final PR QA #343 · run `35473512165` · PASS
+- Product/runtime baseline: `896be56a2e2438fd383c46152ad8f1d5f11e89b0`
+- Post-merge QA: FootMate QA #344 · run `35473666410` · PASS
+- Exact Vercel Production: `dpl_oiHYN6EaeNumD3GsmQKDQyjt6xpg` · exact SHA · READY
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-dangrd17lnhs73e7cr40` · exact SHA · LIVE at verification time
 
 ## v4.1.0 — Recommendation Core · 2026-09-20
 
-**Status:** Verified staged feature release. Product/runtime baseline `352ffe08a72e145311e043f1292950d8a3041859` passed FootMate QA #339 (run `35456762270`), including Regression 36, preference-aware recommendation E2E, Browser E2E + axe, responsive/state/Case Study layout gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_HyZn9wb5boHQ3wZTUNMFsuMSRkVC` is **READY** and Render deployment `dep-danbvlvavr4c73aab5s0` is **LIVE** at the same exact SHA.
+**Status:** Verified staged feature release.
 
-v4.1 starts the staged v4.1 → v5.0 product evolution plan by connecting the preferences collected in the guest-first setup to actual recommendation ordering and human-readable recommendation reasons.
-
-### Release scope
-
-- region / position / level preferences now change the actual recommendation order
-- explainable deterministic ranking uses living area fit, level gap, preferred-position availability and distance
-- internal fit values are used for sorting and QA evidence; the product UI remains reason-first rather than exposing a numeric score as the primary decision signal
-- Home / Discover / Detail share the same recommendation contract
-- sample match coverage expanded across Suwon, Yongin and Seoul to make preference changes observable
-- deterministic QA profiles verify that different preference combinations produce different top matches
-- Case Study Decision 02 now documents that recommendation reasons are backed by actual ranking behavior
-- existing v4.0.1 guest-first auth timing, selected-match continuity, detail-return navigation, match-specific check-in, responsive layout, Case Study panel sizing and accessibility remain regression gates
-- staged roadmap added in `docs/V4.1-V5.0-ROADMAP.md`
-
-### Release verification
-
-- Recommendation Core PR #95: final PR QA #338 · run `35456601863` · PASS
-- Verified product/runtime baseline: `352ffe08a72e145311e043f1292950d8a3041859`
-- Post-merge QA + exact Production verification: FootMate QA #339 · run `35456762270` · PASS
-- Exact Vercel Production: `dpl_HyZn9wb5boHQ3wZTUNMFsuMSRkVC` · SHA `352ffe08a72e145311e043f1292950d8a3041859` · **READY**
-- Exact Production HTTP smoke: PASS
-- Exact Production Chromium smoke: PASS
-- Render backup: `dep-danbvlvavr4c73aab5s0` · SHA `352ffe08a72e145311e043f1292950d8a3041859` · **LIVE**
-
-### Scope boundary
-
-This remains an interactive service-planning prototype. The v4.1 Recommendation Core is deterministic rules-based ranking over sample match records and browser/session state. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity and notification backend are not connected.
-
-### Next staged release
-
-v4.2 is **Discovery & Search**: filters, sorting, zero-result recovery and persisted discovery state. It starts only after this v4.1 durable release sync is merged and verified as a documentation-only change.
+- Scope: region/position/level-aware deterministic ranking, human-readable recommendation reasons, Home/Discover/Detail shared recommendation contract
+- Ranking boundary: external AI inference가 아닌 sample records + deterministic rules
+- Feature PR: #95 · final PR QA #338 · run `35456601863` · PASS
+- Product/runtime baseline: `352ffe08a72e145311e043f1292950d8a3041859`
+- Post-merge QA: FootMate QA #339 · run `35456762270` · PASS
+- Exact Vercel Production: `dpl_HyZn9wb5boHQ3wZTUNMFsuMSRkVC` · exact SHA · READY
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-danbvlvavr4c73aab5s0` · exact SHA · LIVE at verification time
 
 ## v4.0.1 — Matchday Companion hardening · 2026-09-19
 
-**Status:** Verified patch release. Product/runtime baseline `b2509f5759194ab0db46a8c5429f3b422e9c59d8` passed FootMate QA #333 (run `35455137726`), including Regression 36, Browser E2E + axe, responsive/state/editorial gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` is **READY** and Render deployment `dep-danbgvbtqb8s73adkk00` was **LIVE** at the same exact SHA at release verification time.
+**Status:** Verified patch release.
 
-v4.0.1 hardens the official Matchday Companion experience and current repository structure without changing the core Find → Decide → Join → Play → Return product thesis.
-
-### Release scope
-
-- Guided / Evidence “Real App만 보기” returns to the official `/app` surface
-- stale candidate / next-version public copy removed from the v4 runtime
-- fixed calendar dates replaced by clearly disclosed date-safe sample schedules
-- match-specific check-in persistence prevents state leakage between matches
-- SPA screen transitions move programmatic focus to the active screen
-- account validation, detail-return continuity and check-in safeguards consolidated into `src/v4/experience.js`
-- redundant current-tree root HTML copies and split runtime hardening files removed while `/demo` and `/next` remain compatibility aliases
-- v4 QA/checker filenames normalized around the official v4 release
-- Case Study right-side companion panels enlarged and rebalanced on desktop; 901–1180px uses a full-width companion row instead of a squeezed narrow column
-- Matchday / Recovery / Outcome / final-scope structured content restored as explicit card/grid layouts
-
-### Release verification
-
-- Runtime/repository hardening PR #92: merged main `27e6c8e4b3d463665b1158c7299c5ff6bd8ed36b`; PR QA passed. Its first post-merge exact Production run exposed a stale smoke-test path to the removed `release-hardening.js`, not a product-runtime failure.
-- Case Study layout + Production smoke closure PR #93: PR QA #332 · run `35454879661` · PASS
-- Verified product/runtime baseline: `b2509f5759194ab0db46a8c5429f3b422e9c59d8`
-- Post-merge QA + exact Production verification: FootMate QA #333 · run `35455137726` · PASS
-- Exact Vercel Production: `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` · SHA `b2509f5759194ab0db46a8c5429f3b422e9c59d8` · **READY at verification time**
-- Exact Production HTTP smoke: PASS
-- Exact Production Chromium smoke: PASS
-- Render backup: `dep-danbgvbtqb8s73adkk00` · SHA `b2509f5759194ab0db46a8c5429f3b422e9c59d8` · **LIVE at verification time**
-
-### Scope boundary
-
-This remains an interactive service-planning prototype. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity and notification backend are not connected. Recommendation and state transitions use rules, sample data and browser/local session state.
-
-### Repository handling
-
-The current public branch keeps the official v4 source and QA contract. Redundant current-tree files are removed or consolidated; historical Git commit data is unchanged and remains visible while the repository is public.
+- Scope: Guided/Evidence return path, date-safe sample schedules, match-specific check-in persistence, SPA focus, validation/detail continuity, repository/runtime consolidation, Case Study layout hardening
+- Runtime/repository hardening PR: #92
+- Case Study/Production smoke closure PR: #93 · PR QA #332 · run `35454879661` · PASS
+- Product/runtime baseline: `b2509f5759194ab0db46a8c5429f3b422e9c59d8`
+- Post-merge QA: FootMate QA #333 · run `35455137726` · PASS
+- Exact Vercel Production: `dpl_AEtpPnZpPQqTXA4DhUuRB7yJgzE8` · exact SHA · READY at verification time
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-danbgvbtqb8s73adkk00` · exact SHA · LIVE at verification time
 
 ## v4.0.0 — Matchday Companion · 2026-09-19
 
-**Status:** Official Major release. Verified runtime + public-surface baseline `130231c935958651e9e2e50e1dbda3df3df978f3` passed FootMate QA #327 (run `35449553358`), including the v4 release boundary, Browser E2E + axe, 320 / 375 / 390 / 430 responsive and state gates, 16-section Case Study editorial QA, and exact Vercel Production HTTP/Chromium verification. Vercel deployment `dpl_69iQCJKfXtC3i8ZwWqKvLjJcfdEh` was the verified Production deployment for this baseline and Render deployment `dep-dan9ujrtqb8s73abvdjg` was the matching live backup deployment at release verification time.
+**Status:** Official Major release.
 
-FootMate v4.0 promoted Matchday Companion to the official product and Case Study baseline.
-
-### Release scope
-
-- Official Real App `/app`
-- Case Study `/`
-- `/demo` and `/next` compatibility aliases serve v4 only
-- Guest-first Value → Preferences → Recommendation → Detail → Sign in → Checkout → Matchday flow
-- Real App / Guided / Evidence separation
-- account/sign-up validation and SSO selection UI
-- selected-match continuity and entry-aware back navigation
-- persistent matchday check-in state
-- product-first 16-section Case Study
-- source-level Case Study editorial cleanup with Korean text-flow hardening, mobile overflow coverage, desktop/mobile review evidence and WCAG axe gate
-- v4 browser, responsive, accessibility, state and exact Production gates
-
-### Scope boundary
-
-This is an interactive service-planning prototype. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity and notification backend are not connected. Recommendation and state transitions use rules, sample data and local/session state.
-
-### Release verification
-
+- Scope: official `/app`, Case Study `/`, `/demo` and `/next` compatibility aliases, guest-first Value → Preferences → Recommendation → Detail → Sign in → Checkout → Matchday flow, Real/Guided/Evidence separation, product-first 16-section Case Study
 - PR #90 editorial/release closeout QA: FootMate QA #326 · run `35449028478` · PASS
-- Merged runtime/public baseline: `130231c935958651e9e2e50e1dbda3df3df978f3`
-- Post-merge QA + exact Production verification: FootMate QA #327 · run `35449553358` · PASS
-- Exact Vercel Production: `dpl_69iQCJKfXtC3i8ZwWqKvLjJcfdEh` · SHA `130231c935958651e9e2e50e1dbda3df3df978f3` · **READY at verification time**
-- Exact Production HTTP smoke: PASS
-- Exact Production Chromium smoke: PASS
-- Render backup: `dep-dan9ujrtqb8s73abvdjg` · SHA `130231c935958651e9e2e50e1dbda3df3df978f3` · **LIVE at verification time**
+- Product/runtime baseline: `130231c935958651e9e2e50e1dbda3df3df978f3`
+- Post-merge QA: FootMate QA #327 · run `35449553358` · PASS
+- Exact Vercel Production: `dpl_69iQCJKfXtC3i8ZwWqKvLjJcfdEh` · exact SHA · READY at verification time
+- Exact Production HTTP/Chromium smoke: PASS
+- Render backup: `dep-dan9ujrtqb8s73abvdjg` · exact SHA · LIVE at verification time
 
-### Legacy handling
+## Shared prototype boundary
 
-Pre-v4 runtime/source/test/checker material is removed from the current public branch and current product narrative. GitHub commit history remains historical repository data while the repository itself is public; it is not a current release surface.
+v4.x는 인터랙티브 서비스 기획 프로토타입이다. 외부 AI inference, 회원 DB, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend는 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
 
-Documentation-only merges may move `main` beyond the verified runtime SHA. The verified runtime/public baseline and exact Production SHA above remain the release verification reference until a later runtime change is promoted and re-verified.
+GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
