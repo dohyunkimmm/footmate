@@ -1,12 +1,12 @@
-# FootMate v5.5.1 — AI Match Assistant Resilience Patch
+# FootMate v5.1.1 — AI Match Assistant Resilience Patch
 
 FootMate는 **내 수준에 맞는 풋살 경기를 자연어로 찾고, 추천 이유를 확인한 뒤 참가·결제·경기 당일 운영·경기 후 피드백까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
 
-v5.5.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommendation ownership을 유지하면서 **AI provider 안정성, bounded timeout, reload state consistency, 요청 비용 보호, 제품 사실 정확성**을 보강하는 patch입니다. AI는 검색 조건만 해석하고 실제 경기 후보·순위·추천 이유는 기존 recommendation engine이 계속 소유합니다.
+v5.1.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommendation ownership을 유지하면서 **AI provider 안정성, bounded timeout, reload state consistency, 요청 비용 보호, 제품 사실 정확성**을 보강하는 patch입니다. AI는 검색 조건만 해석하고 실제 경기 후보·순위·추천 이유는 기존 recommendation engine이 계속 소유합니다.
 
 ## Current release candidate
 
-- Release: **v5.5.1 · AI Match Assistant Resilience Patch**
+- Release: **v5.1.1 · AI Match Assistant Resilience Patch**
 - Primary journey: **Find → Decide → Join → Play → Return**
 - Real App: `/app`
 - Guided Case Study: `/app?mode=guided`
@@ -14,10 +14,10 @@ v5.5.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommend
 - Case Study: `/`
 - Compatibility aliases: `/demo`, `/next` → current Real App
 - Previous exact verified runtime: `7d0ee9307ba952e386c97b14c185fa24ebb38ed1` · v5.1.0
-- v5.5.1 product/runtime baseline: **Not yet verified**
-- v5.5.1 exact Vercel Production: **Not yet verified**
-- v5.5.1 Render backup: **Not yet verified**
-- Patch contract: `docs/V5.5.1-AI-RESILIENCE-PATCH.md`
+- v5.1.1 product/runtime baseline: **Not yet verified**
+- v5.1.1 exact Vercel Production: **Not yet verified**
+- v5.1.1 Render backup: **Not yet verified**
+- Patch contract: `docs/V5.1.1-AI-RESILIENCE-PATCH.md`
 - Historical AI architecture contract: `docs/V5.1-AI-MATCH-ASSISTANT.md`
 
 ## Patch scope
@@ -34,7 +34,7 @@ v5.5.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommend
 - **Graceful fallback** — primary provider → one bounded provider fallback → browser rules fallback 순서로 복구합니다.
 - **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가와 결제를 자동 실행하지 않습니다.
 - **Compatibility first** — recommendation / participation / matchday / return domain ownership, browser persistence, session schema, 16-section Case Study IA를 유지합니다.
-- **Connected only when verified** — v5.5.1은 exact Production AI inference와 exact deployment 검증 전까지 Production 완료로 표현하지 않습니다.
+- **Connected only when verified** — v5.1.1은 exact Production AI inference와 exact deployment 검증 전까지 Production 완료로 표현하지 않습니다.
 
 ## AI Agent Workflow
 
@@ -48,7 +48,7 @@ v5.5.1은 v5.1 AI Match Assistant의 사용자 흐름과 deterministic recommend
 
 ## Production / integration boundary
 
-v5.5.1 branch에서는 다음 runtime boundary를 구현했으며, **새 release의 exact Production 검증은 아직 완료되지 않았습니다.** 이전 검증된 v5.1 Production runtime은 별도 baseline으로 유지합니다.
+v5.1.1 branch에서는 다음 runtime boundary를 구현했으며, **새 release의 exact Production 검증은 아직 완료되지 않았습니다.** 이전 검증된 v5.1 Production runtime은 별도 baseline으로 유지합니다.
 
 - AI Gateway: server-side Vercel AI Gateway boundary
 - primary candidate: `inclusionai/ling-3.0-flash-vl-free`
@@ -77,4 +77,4 @@ Protected `main`은 다음 순서를 따릅니다.
 
 `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable docs sync`
 
-v5.5.1 exact Production 검증이 완료되면 product/runtime baseline SHA, Vercel deployment ID, QA run, 실제 AI model과 `fallbackUsed`, Render deploy ID를 durable docs에 동기화합니다.
+v5.1.1 exact Production 검증이 완료되면 product/runtime baseline SHA, Vercel deployment ID, QA run, 실제 AI model과 `fallbackUsed`, Render deploy ID를 durable docs에 동기화합니다.
