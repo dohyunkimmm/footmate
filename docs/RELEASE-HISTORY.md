@@ -2,6 +2,31 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v5.1.0 — AI Match Assistant · 2026-09-20
+
+**Status:** Verified AI feature release.
+
+- Scope: 자연어 경기 탐색, Vercel AI Gateway inference, structured constraint extraction, provider fallback, browser rules fallback, HITL join/payment boundary
+- AI Agent Workflow: `Context → Plan → Tools → Guardrail → Observe`
+- Ranking boundary: AI는 검색 조건만 해석하며 실제 경기 후보·순위·추천 이유는 기존 deterministic recommendation engine이 소유
+- Primary AI model: `openai/gpt-5.4-mini`
+- Provider fallback model: `inclusionai/ling-3.0-flash-vl-free`
+- Authentication: configured AI Gateway credential 또는 Vercel deployment OIDC
+- Compatibility boundary: v5.0 recommendation / participation / matchday / return domain ownership, browser persistence, v4.9 compatibility runtime 유지
+- HITL: join/payment 자동 실행 없음
+- Data boundary: 경기·가격·잔여 자리·주소·참가자 구성은 current runtime sample records 기준; AI가 생성하지 않음
+- Feature PR: #118
+- Production fixes: #119 · #120 · #121
+- Product/runtime baseline: `7d0ee9307ba952e386c97b14c185fa24ebb38ed1`
+- Post-merge QA: FootMate QA #435 · run `35504620675` · PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Exact Vercel Production: `dpl_4FChZeQLWWgPdcUBdG6uSZVExQrV` · SHA `7d0ee9307ba952e386c97b14c185fa24ebb38ed1` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-danr55p7lnhs73edu80g` · SHA `7d0ee9307ba952e386c97b14c185fa24ebb38ed1` · LIVE at verification time
+
 ## v5.0.0 — Connected Matchday Platform · 2026-09-20
 
 **Status:** Verified major architecture release.
@@ -196,6 +221,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. 외부 AI inference, 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 현재 v5.0 Production에도 연결하지 않았다. 연결되지 않은 기능은 sample/mock/simulation으로 명시한다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. 다만 회원 DB, server memory, cross-device sync, 실제 OAuth, 실제 PG 결제, realtime capacity/participant data, realtime map/location, team chat, notification delivery, reputation backend, external analytics는 현재도 연결하지 않았다. 경기 사실과 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
