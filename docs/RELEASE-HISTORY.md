@@ -4,9 +4,10 @@
 
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
-**Status:** Verified patch release.
+**Status:** Verified patch release · release-readiness surface freeze complete.
 
-- Scope: AI primary provider 안정화, bounded server/browser timeout, provider/rules fallback recovery, reload state consistency, request/cost guard, 제품 사실 문구 정정
+- Scope: AI primary provider 안정화, bounded server/browser timeout, provider/rules fallback recovery, reload state consistency, request/cost guard, 제품 사실 문구 정정, release-facing surface 정리
+- User-facing release surface: 제품명·Case Study·README는 버전 독립적인 현재 제품 설명을 사용하고 내부 release/QA/deployment 식별자는 `v5.1.1`로 유지
 - AI Agent Workflow: `Context → Plan → Tools → Guardrail → Observe`
 - Ranking boundary: AI는 자연어 검색 조건만 해석하며 실제 경기 후보·순위·추천 이유는 기존 deterministic recommendation engine이 소유
 - Primary AI model: `inclusionai/ling-3.0-flash-vl-free`
@@ -19,16 +20,16 @@
 - Data boundary: 경기·가격·잔여 자리·주소·참가자 구성은 sample records 기준; AI가 생성하지 않음
 - Hotfix implementation PRs: #123 · #124
 - Version sync PR: #125
-- Product/runtime baseline: `2417cf83c48c8326a1c54069fd81c97931d1e93f`
-- Post-merge QA: FootMate QA #443 · run `35508056753` · PASS
+- Release-readiness surface cleanup PR: #128 · PR QA #448 · run `35510271305` · PASS
+- Product/runtime baseline: `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48`
+- Post-merge QA: FootMate QA #449 · run `35510438544` · PASS
 - Regression 36: PASS
 - Browser E2E + axe: PASS
-- Exact Vercel Production: `dpl_2FcWRe6d2aecf6fu2SGdY6H2Fyrr` · SHA `2417cf83c48c8326a1c54069fd81c97931d1e93f` · READY
+- Exact Vercel Production: `dpl_F9SKqKt2his5v7K1PogXH2HSwMzz` · SHA `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48` · READY
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS · `inclusionai/ling-3.0-flash-vl-free` · `fallbackUsed=false`
 - Exact Production Chromium smoke: PASS · 2/2
-- Vercel runtime warning/error/fatal logs: none observed at verification time
-- Render backup: `dep-dans7u7lk1mc73fjst2g` · SHA `2417cf83c48c8326a1c54069fd81c97931d1e93f` · LIVE at verification time
+- Render backup: `dep-dant04ss728c73b4g6t0` · SHA `ed6b084719738a70bdc93f3bcca78f5f1ecf1e48` · LIVE at verification time
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
