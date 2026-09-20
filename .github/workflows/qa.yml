@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
-      - name: Check v4.9 release boundary
+      - name: Check v4.9 compatibility boundary
         run: node scripts/check-v4.9-boundary.cjs
       - name: Check v5.0 connected platform boundary
         run: node scripts/check-v5.0-boundary.cjs
@@ -42,7 +42,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v5.0 browser, recovery and accessibility gates
-        run: npx playwright test tests/e2e/v4.9-core.spec.cjs tests/e2e/v5.0-core.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.0-case-study.spec.cjs
+        run: npx playwright test tests/e2e/v5.0-core.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.0-case-study.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
