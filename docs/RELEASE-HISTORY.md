@@ -1,5 +1,44 @@
 # FootMate Release History
 
+## v4.4.0 — Join & Payment State Machine · 2026-09-20
+
+**Status:** Verified staged feature release. Product/runtime baseline `27f78394c32475e818afd97bf590d6448403f938` passed FootMate QA #357 (run `35483442042`), including Regression 36, Recommendation Core / Discovery / Decision regressions, Join & Payment state recovery E2E, Browser E2E + axe, responsive/state/Case Study gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_GS2Cotyf5UFdDA4gyoCfMFqfa5Pq` is **READY** and Render deployment `dep-dank2n8jo6nc739k8egg` is **LIVE** at the same exact SHA at release verification time.
+
+v4.4 builds on the verified v4.3 Decision Detail release by turning participation from a single success-path interaction into an explicit recoverable state contract. Checkout context is frozen into an authoritative attempt snapshot, pending submissions are guarded, reload can restore the active attempt, and failure/cancel paths never create participation prematurely.
+
+### Release scope
+
+- separate participation persistence in `footmate:v4:participation`
+- `checkout → pending → success | failure | canceled` payment state contract
+- easy-payment / card method simulation with explicit no-PG disclosure
+- duplicate-submit protection while pending
+- reload-safe pending restoration and explicit status-check recovery
+- failure → retry → success recovery
+- user cancel recovery without creating `joinedMatchId`
+- selected match / amount / refund-policy snapshot consistency across an attempt
+- final participation only from the authoritative payment snapshot
+- 320 / 375 / 390 / 430 responsive checkout coverage and axe accessibility gate
+- v4.1 Recommendation Core, v4.2 Discovery & Search and v4.3 Decision Detail retained as regression contracts
+- 16-section Case Study updated with Join & Payment State Machine evidence
+
+### Release verification
+
+- Join & Payment PR #101: final PR QA #356 · run `35483267720` · PASS
+- Verified product/runtime baseline: `27f78394c32475e818afd97bf590d6448403f938`
+- Post-merge QA + exact Production verification: FootMate QA #357 · run `35483442042` · PASS
+- Exact Vercel Production: `dpl_GS2Cotyf5UFdDA4gyoCfMFqfa5Pq` · SHA `27f78394c32475e818afd97bf590d6448403f938` · **READY**
+- Exact Production HTTP smoke: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: `dep-dank2n8jo6nc739k8egg` · SHA `27f78394c32475e818afd97bf590d6448403f938` · **LIVE at verification time**
+
+### Scope boundary
+
+This remains an interactive service-planning prototype. Recommendation, discovery, Decision Detail and participation use deterministic rules, sample records and browser persistence. External AI inference, member DB, real OAuth, real payment gateway, realtime capacity, realtime participant data and notification backend are not connected. Payment states and methods are simulations for validating the service contract and recovery UX.
+
+### Next staged release
+
+v4.5 is **Matchday Operations**: upcoming → matchday → checked-in operations, arrival/check-in state, venue/route guidance, late/cancellation/update recovery, team notice contract and an actionable pre-kickoff home.
+
 ## v4.3.0 — Decision Detail · 2026-09-20
 
 **Status:** Verified staged feature release. Product/runtime baseline `5f21bdaac8ab68fe5ccbf323caef0ffdb4213746` passed FootMate QA #351 (run `35476071931`), including Regression 36, Recommendation Core regression, Discovery & Search regression, Decision Detail disclosure/save/compare E2E, Browser E2E + axe, responsive/state/Case Study gates, and exact Vercel Production HTTP + Chromium verification. Vercel deployment `dpl_G2Bg6oTEq4LJDWetzwoXYQtXMz6K` is **READY** and Render deployment `dep-danhjl7lk1mc73fd27u0` is **LIVE** at the same exact SHA at release verification time.
