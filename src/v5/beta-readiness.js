@@ -14,7 +14,7 @@ if(root){
   let notifications=[];
   let localNotice=null;
 
-  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char]));
 
   function readSession(){
     try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}
@@ -29,11 +29,7 @@ if(root){
     const refreshToken=String(params.get('refresh_token')||'').trim();
     if(!accessToken||!refreshToken)return;
     const expiresIn=Number(params.get('expires_in')||3600)||3600;
-    localStorage.setItem(SESSION_KEY,JSON.stringify({
-      accessToken,
-      refreshToken,
-      expiresAt:Math.floor(Date.now()/1000)+expiresIn
-    }));
+    localStorage.setItem(SESSION_KEY,JSON.stringify({accessToken,refreshToken,expiresAt:Math.floor(Date.now()/1000)+expiresIn}));
     sessionStorage.setItem(RECOVERY_KEY,'1');
   }
 
@@ -102,6 +98,7 @@ if(root){
       notifications=Array.isArray(nextNotifications)?nextNotifications:[];
       lastRefresh=Date.now();
     }catch(error){
+      lastRefresh=Date.now();
       notice(String(error?.message||'Beta 운영 상태를 불러오지 못했습니다.'),'error');
     }finally{
       refreshing=false;
@@ -118,24 +115,19 @@ if(root){
       const match=matchById.get(matchId);
       container.querySelector('[data-readiness-participation]')?.remove();
       if(!participation||!match)return;
-
       const now=Date.now();
       const cutoff=match.cancel_cutoff_at?new Date(match.cancel_cutoff_at).getTime():null;
       const checkOpen=match.check_in_opens_at?new Date(match.check_in_opens_at).getTime():null;
       const endAt=new Date(match.starts_at).getTime()+Number(match.duration_minutes||0)*60_000;
       const cancelClosed=cutoff!==null&&now>=cutoff;
       const canCheckIn=!participation.checked_in_at&&checkOpen!==null&&now>=checkOpen&&now<=endAt&&['open','full'].includes(match.status);
-
       if(cancelClosed&&cancelButton){cancelButton.disabled=true;cancelButton.textContent='취소 마감'}
       const checkMarkup=participation.checked_in_at
         ?`<span class="fm-beta-badge">체크인 완료 · ${esc(format(participation.checked_in_at))}</span>`
         :canCheckIn
           ?`<button class="fm-beta-button fm-beta-button--primary" type="button" data-readiness-action="check-in" data-match-id="${esc(matchId)}">경기 체크인</button>`
           :`<span class="fm-beta-badge">체크인 ${esc(match.check_in_opens_at?format(match.check_in_opens_at):'시간 미설정')}</span>`;
-      container.insertAdjacentHTML('beforeend',`<div data-readiness-participation class="fm-beta-note" style="margin-top:10px">
-        <div>취소 마감 · <strong>${esc(match.cancel_cutoff_at?format(match.cancel_cutoff_at):'운영자 미설정')}</strong></div>
-        <div class="fm-beta-actions" style="margin-top:8px">${checkMarkup}</div>
-      </div>`);
+      container.insertAdjacentHTML('beforeend',`<div data-readiness-participation class="fm-beta-note" style="margin-top:10px"><div>취소 마감 · <strong>${esc(match.cancel_cutoff_at?format(match.cancel_cutoff_at):'운영자 미설정')}</strong></div><div class="fm-beta-actions" style="margin-top:8px">${checkMarkup}</div></div>`);
     });
   }
 
@@ -143,14 +135,8 @@ if(root){
     const aside=root.querySelector('.fm-beta-grid aside');
     if(!aside||aside.querySelector('[data-readiness-notifications]'))return;
     const unread=notifications.filter(item=>!item.read_at).length;
-    const body=notifications.length?notifications.map(item=>`<div class="fm-beta-participation" style="margin-top:8px">
-      <strong>${esc(item.title)}</strong>
-      <p>${esc(item.body)}</p>
-      <div class="fm-beta-actions" style="margin-top:8px"><span>${esc(format(item.created_at))}</span>${item.read_at?'':`<button class="fm-beta-link" type="button" data-readiness-action="read-notification" data-notification-id="${esc(item.id)}">확인</button>`}</div>
-    </div>`).join(''):`<div class="fm-beta-empty"><strong>새 알림이 없습니다.</strong>참가·취소·체크인·경기 종료 상태가 이곳에 기록됩니다.</div>`;
-    aside.insertAdjacentHTML('beforeend',`<div class="fm-beta-panel" data-readiness-notifications>
-      <div class="fm-beta-panel-head"><div><h3>운영 알림</h3><p>실제 참가 상태에서 생성된 in-app 알림입니다.</p></div>${unread?`<span class="fm-beta-badge">미확인 ${unread}</span>`:''}</div>${body}
-    </div>`);
+    const body=notifications.length?notifications.map(item=>`<div class="fm-beta-participation" style="margin-top:8px"><strong>${esc(item.title)}</strong><p>${esc(item.body)}</p><div class="fm-beta-actions" style="margin-top:8px"><span>${esc(format(item.created_at))}</span>${item.read_at?'':`<button class="fm-beta-link" type="button" data-readiness-action="read-notification" data-notification-id="${esc(item.id)}">확인</button>`}</div></div>`).join(''):`<div class="fm-beta-empty"><strong>새 알림이 없습니다.</strong>참가·취소·체크인·경기 종료 상태가 이곳에 기록됩니다.</div>`;
+    aside.insertAdjacentHTML('beforeend',`<div class="fm-beta-panel" data-readiness-notifications><div class="fm-beta-panel-head"><div><h3>운영 알림</h3><p>실제 참가 상태에서 생성된 in-app 알림입니다.</p></div>${unread?`<span class="fm-beta-badge">미확인 ${unread}</span>`:''}</div>${body}</div>`);
   }
 
   function enhance(){
