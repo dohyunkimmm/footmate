@@ -34,6 +34,8 @@ jobs:
         run: node tests/contracts/beta-backend.contract.mjs
       - name: Run beta Must recovery contracts
         run: node tests/contracts/beta-must-recovery.contract.mjs
+      - name: Run beta operation audit contracts
+        run: node tests/contracts/beta-operation-audit.contract.mjs
       - name: Run beta Supabase hardening contracts
         run: node tests/contracts/beta-supabase-hardening.contract.mjs
       - name: Run beta operator console contracts
