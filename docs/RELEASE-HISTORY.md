@@ -2,6 +2,29 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## v5.2.0 — Real Beta Readiness · 2026-09-21
+
+**Status:** Verified minor release · real-user Closed Beta operations ready for pilot activation.
+
+- Scope: account recovery, signup verification resend, 경기별 취소 마감, connected self/operator check-in, operator match completion, DB-backed in-app operation notification, check-in/completion audit 확장
+- Runtime PR: #159
+- PR QA: FootMate QA #562 · run `35564585265` · PASS
+- Regression 36: PASS · 기존 required check 이름을 유지하면서 v5.2 contract를 추가 실행
+- Browser E2E + axe: PASS · account recovery / resend / cancellation policy / check-in / notification / operator Matchday 포함
+- Supabase migration: `v5_2_real_beta_readiness` · version `20260921051924` · Production DB 적용 및 schema/RLS/RPC contract 확인
+- Supabase connected boundary: `matches.cancel_cutoff_at`, `matches.check_in_opens_at`, `participations.checked_in_at`, `beta_notifications`, self/operator check-in, match completion, notification read, policy-aware operator save
+- Security boundary: readiness RPC는 `SECURITY DEFINER` transaction entrypoint를 유지하되 `anon EXECUTE=false`, `authenticated EXECUTE=true`; operator RPC는 함수 내부에서 `auth.uid()`와 `public.operators` allowlist를 재검증
+- Product/runtime baseline: `30edb2a956b9be1371021f2d28e76d2021111c6e`
+- Post-merge QA: FootMate QA #563 · run `35564784647` · PASS
+- Exact Vercel Production: `dpl_BgvwN2RQhZufUpGwWVamyd1mCVzB` · SHA `30edb2a956b9be1371021f2d28e76d2021111c6e` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS · v5.2 Beta Production surface 포함
+- Pilot boundary: release 검증 중 실제 경기 장소·시간을 임의 생성하지 않았으며 Production DB의 future public match는 0건; 실제 Pilot 활성화는 운영자가 `/beta/operator`에서 실제 경기 정보를 입력하고 `open`으로 공개한 뒤 시작
+- Integration boundary: Closed Beta는 free-only; DB-backed in-app notification은 connected, 실제 PG·외부 email/push notification delivery·external analytics는 미연동
+- Remaining security hardening: Supabase Leaked Password Protection은 현재 비활성; hosted Auth 설정에서 별도 활성화 필요
+- Render backup: 이번 v5.2 release에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
@@ -352,6 +375,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 v5.2는 account recovery·경기별 취소 마감·connected check-in·operator completion·DB-backed in-app operation notification까지 실제 Beta 운영 경계를 확장했다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, 외부 email/push notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
