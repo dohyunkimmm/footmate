@@ -19,7 +19,13 @@
 <script type="module" src="/src/v5/beta-operator.js?v=1"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta-operator');
-const launch=()=>import('/src/v5/beta-operator-readiness.js?v=1');
+const syncConnectedBoundaryCopy=()=>{
+  const status=root.querySelector('.fm-beta-status-card p');
+  if(status)status.textContent='Closed Beta는 무료 경기 운영만 지원합니다. DB 기반 운영 알림과 transactional email은 연결되어 있고 실제 PG와 push notification은 연결하지 않습니다.';
+  const footer=root.querySelector('.fm-beta-footer');
+  if(footer)footer.textContent='Operator Console · Supabase connected · In-app + Transactional email connected · Payment / Push = not connected';
+};
+const launch=()=>{syncConnectedBoundaryCopy();return import('/src/v5/beta-operator-readiness.js?v=1')};
 if(root.dataset.operatorState!=='booting')launch();
 else{
   const observer=new MutationObserver(()=>{
