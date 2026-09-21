@@ -28,6 +28,13 @@ assert.equal(platform.architecture,'connected-capable');
 assert.equal(platform.connectionMode,'mock-only');
 assert.equal(platform.externalProductionFeatures,false);
 
+const v5Bootstrap=await readFile(new URL('../../src/v5/presentation/bootstrap.js',import.meta.url),'utf8');
+assert.ok(v5Bootstrap.includes("import {footmatePlatform} from '../../v4/platform/application/platform.js';"),'v5 bootstrap must read browser state through platform ownership');
+assert.equal(v5Bootstrap.includes('localStorage.getItem'),false,'v5 bootstrap must not bypass the platform storage provider');
+for(const legacyKey of ['footmate:v4:session','footmate:v4:participation','footmate:v4:matchday','footmate:v4:return']){
+  assert.equal(v5Bootstrap.includes(legacyKey),false,`v5 bootstrap must not own legacy storage key ${legacyKey}`);
+}
+
 const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
 for(const required of [
   '/app의 auth/payment/capacity/notification provider는 deterministic mock',
