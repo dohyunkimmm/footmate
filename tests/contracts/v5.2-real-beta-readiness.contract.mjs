@@ -3,6 +3,7 @@ import fs from 'node:fs';
 
 // Branch protection keeps the historical required check name "Regression 36" while this file adds the v5.2 contract.
 const migration=fs.readFileSync('supabase/migrations/20260921_v5_2_real_beta_readiness.sql','utf8');
+const notificationIndexMigration=fs.readFileSync('supabase/migrations/20260921_v5_2_notification_fk_index.sql','utf8');
 const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
 const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
 const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
@@ -22,6 +23,9 @@ assert.match(migration,/CHECKIN_OPEN_REQUIRED/);
 assert.match(migration,/revoke execute on function public\.operator_save_match_v2/);
 assert.match(migration,/grant execute on function public\.operator_save_match_v2[\s\S]*to authenticated/);
 assert.match(migration,/exists \(select 1 from public\.operators o where o\.user_id = v_user_id\)/);
+assert.match(notificationIndexMigration,/create index if not exists beta_notifications_participation_idx/);
+assert.match(notificationIndexMigration,/on public\.beta_notifications\(participation_id\)/);
+assert.match(notificationIndexMigration,/where participation_id is not null/);
 
 assert.match(client,/\/auth\/v1\/recover/);
 assert.match(client,/\/auth\/v1\/resend/);
