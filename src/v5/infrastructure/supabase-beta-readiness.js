@@ -186,13 +186,13 @@ export function createBetaReadinessClient({url,publishableKey,fetchImpl=globalTh
     },
     emailHealth:({accessToken,limit=30})=>request('/rest/v1/rpc/operator_beta_email_health',{
       method:'POST',accessToken:required(accessToken,'access token'),body:{p_limit:Math.max(1,Math.min(100,Number(limit)||30))}
-    }),
+    }).catch(error=>{console.warn('beta email health unavailable',String(error?.message||error));return []}),
     retryEmail:({accessToken,notificationId})=>request('/rest/v1/rpc/operator_retry_beta_notification_email',{
       method:'POST',accessToken:required(accessToken,'access token'),body:{p_notification_id:Number(notificationId)}
     }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
     metrics:({accessToken,since=null})=>request('/rest/v1/rpc/operator_beta_funnel_metrics',{
       method:'POST',accessToken:required(accessToken,'access token'),body:{p_since:since||null}
-    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows)
+    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows).catch(error=>{console.warn('beta funnel metrics unavailable',String(error?.message||error));return null})
   });
 
   return Object.freeze({origin,auth,matches,participation,notifications,operator});
