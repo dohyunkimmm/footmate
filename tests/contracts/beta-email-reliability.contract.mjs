@@ -26,11 +26,15 @@ assert.match(migration,/operator_beta_funnel_metrics/);
 
 assert.match(schedule,/create extension if not exists pg_net/);
 assert.match(schedule,/create extension if not exists pg_cron/);
+assert.match(schedule,/configure_beta_email_worker_schedule/);
+assert.match(schedule,/p_project_url/);
 assert.match(schedule,/cron\.schedule/);
 assert.match(schedule,/footmate-beta-email-outbox/);
 assert.match(schedule,/net\.http_post/);
 assert.match(schedule,/x-footmate-worker-token/);
 assert.match(schedule,/process-beta-email-outbox/);
+assert.match(schedule,/INVALID_SUPABASE_PROJECT_URL/);
+assert.doesNotMatch(schedule,/iihitfjphowjplxzfxtn/);
 
 for(const source of [userSender,worker]){
   assert.match(source,/claim_beta_notification_emails/);
