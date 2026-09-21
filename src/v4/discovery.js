@@ -1,8 +1,10 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {MATCHES,createState} from './data.js';
+import {footmatePlatform} from './platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const DISCOVERY_VERSION='4.2.0';
-const DISCOVERY_STORAGE_KEY='footmate:v4:discovery';
+const DISCOVERY_STORAGE_KEY=footmatePlatform.storageKeys.discovery;
+const discoveryRepository=footmatePlatform.repositories.discovery;
 const params=new URLSearchParams(location.search);
 const requestedMode=params.get('mode');
 const mode=['guided','evidence'].includes(requestedMode)?requestedMode:'real';
@@ -31,12 +33,7 @@ let applying=false;
 
 function readSession(){
   if(mode!=='real')return createState(mode==='evidence'?{setupComplete:true,route:'home',signedIn:true}:{});
-  try{
-    const raw=localStorage.getItem(NEXT_STORAGE_KEY);
-    return createState(raw?JSON.parse(raw):{});
-  }catch(_error){
-    return createState();
-  }
+  return createState(footmatePlatform.session.read()||{});
 }
 
 function normalize(candidate={}){
@@ -60,17 +57,12 @@ function readInitialFilters(){
     }
   }
   if(hasUrlState)return normalize(fromUrl);
-  try{
-    const raw=localStorage.getItem(DISCOVERY_STORAGE_KEY);
-    return normalize(raw?JSON.parse(raw):{});
-  }catch(_error){
-    return {...defaults};
-  }
+  return normalize(discoveryRepository.read({})||{});
 }
 
 function persist(){
   if(mode!=='real')return;
-  try{localStorage.setItem(DISCOVERY_STORAGE_KEY,JSON.stringify(filters));}catch(_error){}
+  discoveryRepository.write(filters);
   const url=new URL(location.href);
   for(const [key,param] of Object.entries(queryKeys)){
     if(filters[key]===defaults[key])url.searchParams.delete(param);
@@ -82,7 +74,7 @@ function persist(){
 function clearPersistedDiscovery(){
   filters={...defaults};
   if(mode!=='real')return;
-  try{localStorage.removeItem(DISCOVERY_STORAGE_KEY);}catch(_error){}
+  discoveryRepository.clear();
   const url=new URL(location.href);
   Object.values(queryKeys).forEach(key=>url.searchParams.delete(key));
   history.replaceState(history.state,'',url);
@@ -341,6 +333,6 @@ if(root){
     requestAnimationFrame(()=>{queued=false;apply()});
   });
   observer.observe(root,{childList:true,subtree:true});
-  window.__FOOTMATE_DISCOVERY__={version:DISCOVERY_VERSION,getState:()=>({...filters}),reset:()=>updateFilters({...defaults})};
+  window.__FOOTMATE_DISCOVERY__={version:DISCOVERY_VERSION,storageKey:DISCOVERY_STORAGE_KEY,getState:()=>({...filters}),reset:()=>updateFilters({...defaults})};
   apply();
 }
