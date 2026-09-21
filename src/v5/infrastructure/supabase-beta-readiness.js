@@ -56,10 +56,27 @@ export function createBetaReadinessClient({url,publishableKey,fetchImpl=globalTh
       if(!response.ok)throw new Error(message(payload,response.status));
       return payload;
     }catch(error){
-      if(controller?.signal.aborted)throw new Error('요청 시간이 초과됐습니다. 네트워크 상태를 확인해주세요.');
+      if(controller?.signal.aborted)throw new Error('요청 시간이 초과됐습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
       throw error;
     }finally{
       if(timer)clearTimeout(timer);
+    }
+  }
+
+  async function dispatchNotificationEmail({accessToken,matchId=null,participationId=null}){
+    const body={};
+    if(matchId)body.match_id=required(matchId,'match id');
+    if(participationId)body.participation_id=required(participationId,'participation id');
+    return request('/functions/v1/send-beta-notification-email',{
+      method:'POST',accessToken:required(accessToken,'access token'),body
+    });
+  }
+
+  async function dispatchNotificationEmailBestEffort(args){
+    try{return await dispatchNotificationEmail(args)}
+    catch(error){
+      console.warn('beta notification email dispatch deferred',String(error?.message||error));
+      return null;
     }
   }
 
@@ -96,22 +113,31 @@ export function createBetaReadinessClient({url,publishableKey,fetchImpl=globalTh
       query.set('order','created_at.desc');
       return request(`/rest/v1/participations?${query}`,{accessToken:required(accessToken,'access token')});
     },
-    checkIn:({accessToken,matchId})=>request('/rest/v1/rpc/check_in_participation',{
-      method:'POST',accessToken:required(accessToken,'access token'),body:{p_match_id:required(matchId,'match id')}
-    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows)
+    checkIn:async({accessToken,matchId})=>{
+      const token=required(accessToken,'access token');
+      const id=required(matchId,'match id');
+      const result=await request('/rest/v1/rpc/check_in_participation',{
+        method:'POST',accessToken:token,body:{p_match_id:id}
+      }).then(rows=>Array.isArray(rows)?rows[0]||null:rows);
+      await dispatchNotificationEmailBestEffort({accessToken:token,participationId:result?.participation_id||null,matchId:id});
+      return result;
+    }
   });
 
   const notifications=Object.freeze({
-    listMine:({accessToken,limit=20})=>{
+    listMine:async({accessToken,limit=20})=>{
+      const token=required(accessToken,'access token');
+      await dispatchNotificationEmailBestEffort({accessToken:token});
       const query=new URLSearchParams();
       query.set('select','id,event_type,match_id,participation_id,title,body,read_at,created_at');
       query.set('order','created_at.desc');
       query.set('limit',String(Math.max(1,Math.min(50,Number(limit)||20))));
-      return request(`/rest/v1/beta_notifications?${query}`,{accessToken:required(accessToken,'access token')});
+      return request(`/rest/v1/beta_notifications?${query}`,{accessToken:token});
     },
     markRead:({accessToken,notificationId})=>request('/rest/v1/rpc/mark_beta_notification_read',{
       method:'POST',accessToken:required(accessToken,'access token'),body:{p_notification_id:Number(notificationId)}
-    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows)
+    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
+    dispatchEmail:args=>dispatchNotificationEmailBestEffort(args)
   });
 
   const operator=Object.freeze({
@@ -138,9 +164,15 @@ export function createBetaReadinessClient({url,publishableKey,fetchImpl=globalTh
         }
       }).then(rows=>Array.isArray(rows)?rows[0]||null:rows);
     },
-    checkInParticipant:({accessToken,matchId,userId})=>request('/rest/v1/rpc/operator_check_in_participant',{
-      method:'POST',accessToken:required(accessToken,'access token'),body:{p_match_id:required(matchId,'match id'),p_user_id:required(userId,'user id')}
-    }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
+    checkInParticipant:async({accessToken,matchId,userId})=>{
+      const token=required(accessToken,'access token');
+      const id=required(matchId,'match id');
+      const result=await request('/rest/v1/rpc/operator_check_in_participant',{
+        method:'POST',accessToken:token,body:{p_match_id:id,p_user_id:required(userId,'user id')}
+      }).then(rows=>Array.isArray(rows)?rows[0]||null:rows);
+      await dispatchNotificationEmailBestEffort({accessToken:token,participationId:result?.participation_id||null,matchId:id});
+      return result;
+    },
     completeMatch:({accessToken,matchId})=>request('/rest/v1/rpc/operator_complete_match',{
       method:'POST',accessToken:required(accessToken,'access token'),body:{p_match_id:required(matchId,'match id')}
     }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
