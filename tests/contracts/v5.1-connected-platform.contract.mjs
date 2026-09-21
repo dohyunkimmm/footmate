@@ -35,6 +35,14 @@ for(const legacyKey of ['footmate:v4:session','footmate:v4:participation','footm
   assert.equal(v5Bootstrap.includes(legacyKey),false,`v5 bootstrap must not own legacy storage key ${legacyKey}`);
 }
 
+const rootApp=await readFile(new URL('../../src/v4/app.js',import.meta.url),'utf8');
+assert.ok(rootApp.includes("import {footmatePlatform} from './platform/application/platform.js';"),'root app must import platform session ownership');
+assert.ok(rootApp.includes('footmatePlatform.session.read()'),'root app must read through platform session service');
+assert.ok(rootApp.includes('footmatePlatform.session.write(state)'),'root app must persist through platform session service');
+assert.equal(/\blocalStorage\b/.test(rootApp),false,'root app must not access browser localStorage directly');
+assert.equal(rootApp.includes('NEXT_STORAGE_KEY'),false,'root app must not own the legacy session storage key constant');
+assert.equal(rootApp.includes('footmate:v4:'),false,'root app must not own legacy storage keys');
+
 for(const [path,repositoryName] of [
   ['../../src/v4/discovery.js','discovery'],
   ['../../src/v4/decision.js','decision'],

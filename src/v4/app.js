@@ -1,4 +1,5 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState,joinedMatch,selectedMatch} from './data.js';
+import {MATCHES,createState,joinedMatch,selectedMatch} from './data.js';
+import {footmatePlatform} from './platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const params=new URLSearchParams(location.search);
@@ -10,12 +11,7 @@ const allowedRoutes=new Set(['welcome','setup','home','discover','detail','auth'
 
 function safeLoad(){
   if(mode!=='real')return{};
-  try{
-    const raw=localStorage.getItem(NEXT_STORAGE_KEY);
-    return raw?JSON.parse(raw):{};
-  }catch(_error){
-    return{};
-  }
+  return footmatePlatform.session.read()||{};
 }
 
 let state=createState(safeLoad());
@@ -25,7 +21,7 @@ if(mode==='evidence')state=createState({setupComplete:true,route:'home',signedIn
 
 function persist(){
   if(mode!=='real')return;
-  try{localStorage.setItem(NEXT_STORAGE_KEY,JSON.stringify(state));}catch(_error){}
+  footmatePlatform.session.write(state);
 }
 
 function setState(patch,{renderNow=true}={}){
