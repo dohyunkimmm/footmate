@@ -63,10 +63,10 @@ const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',im
 for(const required of [
   '/app의 auth/payment/capacity/notification provider는 deterministic mock',
   '/beta는 Supabase Auth·Postgres·RLS·atomic RPC',
-  '/beta/operator는 allowlist 운영 경로',
-  '실제 PG·notification delivery·external analytics는 아직 연결하지 않았습니다.',
+  'Supabase Edge Function + Resend transactional email',
+  '실제 PG·push notification·external analytics는 아직 연결하지 않았습니다.',
   'account deletion boundary',
-  '물리 기기와 수동 접근성 점검은 별도 manual QA'
+  '물리 기기와 수동 접근성 점검은 manual QA'
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
 
 console.log('PASS v5.1.1 connected platform contracts');

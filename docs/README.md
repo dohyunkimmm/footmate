@@ -12,9 +12,10 @@
 
 ## Current release engineering docs
 
-현재 기준으로 직접 유지하는 문서는 아래 네 개입니다.
+현재 기준으로 직접 유지하는 문서는 아래 다섯 개입니다.
 
 - `RELEASE-HISTORY.md` — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
+- `BETA-PILOT-RUNBOOK.md` — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - `V5.1.1-AI-RESILIENCE-PATCH.md` — current AI provider/timeout/state/request guard patch contract
 - `V5.1-AI-MATCH-ASSISTANT.md` — current AI Match Assistant architecture and acceptance contract
 - `README.md` — 이 documentation index와 현재/역사 문서 경계

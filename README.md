@@ -9,7 +9,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Primary journey: **Find → Decide → Join → Play → Return**
 - Case Study: `/`
 - Real App: `/app`
-- Closed Beta: `/beta` — Supabase Auth / Postgres / capacity / participation / account recovery / check-in / in-app operation notification connected
+- Closed Beta: `/beta` — Supabase Auth / Postgres / capacity / participation / account recovery / check-in / in-app operation notification / transactional email connected
 - Closed Beta Operator: `/beta/operator` — allowlisted operator match / participant / policy / check-in / completion operations connected
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
@@ -50,6 +50,8 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Closed Beta password recovery, recovery-link password update, signup verification email resend
 - Closed Beta per-match cancellation cutoff with database-enforced join/cancel boundary
 - Closed Beta connected self check-in and DB-backed in-app operation notifications
+- Closed Beta participant transactional email outbox + Supabase Edge Function + Resend delivery for participation events
+- Closed Beta participant join / user cancellation transactional email actual Production delivery verified
 - Closed Beta operator match create/edit/cancel, MF/FW/DF/GK capacity allocation, participant cancel/capacity recovery
 - Closed Beta operator cancellation/check-in policy management, participant on-site check-in, match completion
 - Closed Beta request timeout / offline recovery / stale-tab refresh / last-sync state
@@ -71,11 +73,13 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
 - `/beta` account recovery / signup verification resend: **Supabase Auth connected**
 - `/beta` join / cancel / check-in: **database transaction + row lock/RLS**, free-participation only; 경기별 취소 마감·체크인 오픈 정책을 DB에서 강제
-- `/beta` operation notification: **Supabase DB-backed in-app notification connected**; 외부 email/push notification delivery는 미연동
+- `/beta` operation notification: **Supabase DB-backed in-app notification connected**
+- `/beta` transactional email: **Supabase notification outbox + Edge Function + Resend connected**; participant join / user cancellation은 실제 Production `delivered`까지 검증했고 operator cancellation / check-in은 동일 notification-email 경로에 연결
+- `/beta` push notification: **미연동**
 - `/beta` account deletion: **authenticated Supabase Edge Function**, privileged Auth deletion remains server-side
 - `/beta` operation traceability: **operator-readable DB audit trail** with user/match UUID and event/time only; email/name are not stored in audit payloads
 - `/beta/operator`: **Supabase connected** — explicit `public.operators` allowlist, atomic match / participant RPC, cancellation/check-in policy, participant check-in, match completion, browser service-role credentials 없음
-- real OAuth / real PG / external notification delivery / external analytics: **미연동**
+- real OAuth / real PG / push notification delivery / external analytics: **미연동**
 - Render: static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
 
 ## Release readiness
@@ -92,6 +96,7 @@ FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완
 - Closed Beta password recovery / signup verification resend / recovery-link password update
 - Closed Beta network timeout / offline / duplicate-action boundary / stale-tab refresh
 - Closed Beta cancellation cutoff / connected check-in / in-app notification / match completion
+- Closed Beta transactional email outbox / Edge Function / Resend integration contract
 - Closed Beta account deletion contract and audit traceability
 - Closed Beta operator allowlist / match create-edit-cancel / participant cancel / capacity recovery / policy / check-in / completion
 - Supabase RLS / RPC security boundary
@@ -100,7 +105,7 @@ FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완
 - Vercel exact SHA verification
 - 필요한 경우 Render backup verification
 
-Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소·체크인·경기 종료 경로는 Supabase에 연결되어 있습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, 실제 경기 장소·시간은 운영자가 `/beta/operator`에서 입력·공개합니다. 실제 PG와 외부 notification delivery는 이후 별도 release gate로 다룹니다. 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E는 PASS했으며 자동 gate 결과와 구분해 release history에 기록합니다.
+Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소·체크인·경기 종료 경로는 Supabase에 연결되어 있습니다. 참가 확정·사용자 취소 transactional email은 Resend를 통해 실제 Production 전달까지 검증했습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, 실제 경기 장소·시간은 운영자가 `/beta/operator`에서 입력·공개합니다. 실제 PG와 push notification은 이후 별도 release gate로 다룹니다. 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E는 PASS했으며 자동 gate 결과와 구분해 release history에 기록합니다.
 
 ## Architecture
 
@@ -113,10 +118,11 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - `src/v5/beta-operator.js` — allowlisted operator match / participant management UI state
 - `src/v5/beta-operator-readiness.js` — operator policy / participant check-in / match completion UI extension
 - `src/v5/infrastructure/supabase-beta.js` — Supabase Auth / REST / RPC / account-deletion browser adapter
-- `src/v5/infrastructure/supabase-beta-readiness.js` — Supabase Auth recovery / readiness REST / RPC adapter
+- `src/v5/infrastructure/supabase-beta-readiness.js` — Supabase Auth recovery / readiness REST / RPC / transactional email dispatch adapter
 - `src/v5/domain/beta-match-contract.js` — connected match normalization contract
 - `supabase/functions/delete-account/` — authenticated user account deletion; privileged Auth admin operation stays server-side
-- `supabase/migrations/` — profiles / operators / matches / match_slots / participation / notification / audit trail, RLS and atomic user/operator RPC ownership
+- `supabase/functions/send-beta-notification-email/` — authenticated transactional email outbox dispatcher backed by Resend
+- `supabase/migrations/` — profiles / operators / matches / match_slots / participation / notification / email outbox / audit trail, RLS and atomic user/operator RPC ownership
 - `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
 - `src/v5/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
 - `src/v4/platform/domain/contracts.js` — version-neutral `footmate:*` canonical storage keys + `footmate:v4:*` legacy compatibility key contract
@@ -130,6 +136,7 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 
 - Current internal release identifier: **v5.2.0**
 - Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
+- Closed Beta pilot operations: `docs/BETA-PILOT-RUNBOOK.md`
 - Documentation index: `docs/README.md`
 - Browser QA ownership: current `v5.1` suites + `v5.2` Beta readiness suite + 필요한 granular `v4` compatibility suites; release marker가 만료된 aggregate snapshot은 parity 이관 후 제거
 - Release flow: `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → durable release history sync`
