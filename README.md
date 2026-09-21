@@ -92,7 +92,7 @@ FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완
 - Vercel exact SHA verification
 - 필요한 경우 Render backup verification
 
-Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소 경로는 Supabase에 연결되어 있습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, PG와 notification은 이후 별도 release gate로 다룹니다. 물리 기기와 수동 접근성 점검은 자동 gate와 구분해 별도 manual QA로 관리합니다.
+Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소 경로는 Supabase에 연결되어 있습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, PG와 notification은 이후 별도 release gate로 다룹니다. 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E는 PASS했으며 자동 gate 결과와 구분해 release history에 기록합니다.
 
 ## Architecture
 
@@ -117,4 +117,5 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - Current internal release identifier: **v5.1.1**
 - Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
 - Documentation index: `docs/README.md`
+- Browser QA ownership: current `v5.1` suites + 필요한 granular `v4` compatibility suites; release marker가 만료된 aggregate snapshot은 parity 이관 후 제거
 - Release flow: `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → durable release history sync`

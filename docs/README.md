@@ -10,23 +10,24 @@
 - Guided `/app?mode=guided` — 설명이 포함된 리뷰 흐름
 - Evidence `/app?mode=evidence` — 구현·검증 근거 확인용 흐름
 
-## Release engineering
+## Current release engineering docs
 
-아래 문서는 버전별 개발·검증 사실을 보존하기 위한 내부 기록입니다. 현재 제품 설명보다 우선하지 않습니다.
+현재 기준으로 직접 유지하는 문서는 아래 네 개입니다.
 
 - `RELEASE-HISTORY.md` — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
-- `V5.1.1-AI-RESILIENCE-PATCH.md` — AI provider/timeout/state/request guard patch contract
-- `V5.1-AI-MATCH-ASSISTANT.md` — AI Match Assistant architecture and acceptance contract
-- `V5.0-CONNECTED-MATCHDAY-PLATFORM.md` — domain/provider/consistency architecture contract
-- `V4.1-V5.0-ROADMAP.md` — historical staged evolution roadmap
+- `V5.1.1-AI-RESILIENCE-PATCH.md` — current AI provider/timeout/state/request guard patch contract
+- `V5.1-AI-MATCH-ASSISTANT.md` — current AI Match Assistant architecture and acceptance contract
+- `README.md` — 이 documentation index와 현재/역사 문서 경계
 
 ## Historical archive
 
-과거 설계·운영 문서는 `archive/`에 보존합니다. 현재 runtime 또는 Production 사실의 Source of Truth로 사용하지 않습니다.
+완료된 roadmap·이전 release architecture·과거 운영 문서는 `archive/`에 보존합니다. 현재 runtime 또는 Production 사실의 Source of Truth로 사용하지 않습니다.
 
 - `archive/V4-ARCHITECTURE.md`
 - `archive/V4-RELEASE-CHECKLIST.md`
+- `archive/V4.1-V5.0-ROADMAP.md`
 - `archive/V4.8-ARCHITECTURE.md`
 - `archive/V4.9-V5-RELEASE-CANDIDATE.md`
+- `archive/V5.0-CONNECTED-MATCHDAY-PLATFORM.md`
 
-제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다.
+제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.

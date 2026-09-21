@@ -56,12 +56,12 @@
 
 - Scope: network timeout/offline recovery, real DB cancellation hotfix, operation audit trail, freshness recovery, 8-character signup minimum, authenticated account deletion, audit FK indexing, Case Study/product fact sync preparation, Case Study keyboard/Korean wrapping hardening
 - Must runtime PRs: #141 · #142 · #144 · #146
-- Current verified runtime baseline: `fc45f2a00a463a0275fcbff4c2b7994ed743f497`
-- Post-merge QA: FootMate QA #520 · run `35549728962` · PASS
+- Must hardening runtime baseline: `fc45f2a00a463a0275fcbff4c2b7994ed743f497`
+- Post-merge QA at Must closure: FootMate QA #520 · run `35549728962` · PASS
 - Regression 36: PASS
 - Browser E2E + axe: PASS
 - Case Study wrap/layout audit: 1440 / 1180 / 900 / 430 / 390 / 375 / 320px × 16 sections PASS
-- Exact Vercel Production: `dpl_HFZz3uYcfWzXh6ZZXxpB3573fwNa` · SHA `fc45f2a00a463a0275fcbff4c2b7994ed743f497` · READY
+- Exact Vercel Production at Must closure: `dpl_HFZz3uYcfWzXh6ZZXxpB3573fwNa` · SHA `fc45f2a00a463a0275fcbff4c2b7994ed743f497` · READY
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
@@ -73,6 +73,22 @@
 - Automated responsive coverage: 320 / 375 / 390 / 430px PASS
 - Manual gates: 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E 모두 PASS; 추적 issue #147 closed. 자동 QA 결과와 사용자 수동 검증 결과는 구분해 기록함
 - Integration boundary: `/app`는 sample/mock 경계를 유지하고 `/beta`는 Supabase connected; 실제 PG·notification delivery·external analytics는 미연동
+
+### Architecture / QA ownership cleanup · 2026-09-21
+
+- Storage ownership cleanup: PR #150에서 v5 bootstrap의 direct `localStorage` / `footmate:v4:*` read를 제거하고 기존 platform session/repositories를 통해 읽도록 통일
+- Historical QA parity cleanup: PR #151에서 current gate와 release marker가 맞지 않는 v4.5~v5.0 versioned E2E 18개 + standalone Production smoke 6개를 제거하고 auth→checkout continuity, Case Study accessibility coverage를 current gate에 이관
+- Accessibility fix: current Case Study axe gate가 P15 Validation의 `scrollable-region-focusable` serious 위반을 검출했고 active `.fm-next-story`를 keyboard-focusable하게 수정; 동일 axe rule로 재검증 PASS
+- Current product/runtime baseline: `1ad98c2cd69f002443d75d92e2d8ef1889ce11e1`
+- Post-merge QA: FootMate QA #529 · run `35554278219` · PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Current Case Study accessibility: 16 sections × 390 / 1440px axe serious/critical 0, console/pageerror 0 · PASS
+- Exact Vercel Production: `dpl_FqPyi5b6nYfmmZrtYTJi2SGRrGzr` · SHA `1ad98c2cd69f002443d75d92e2d8ef1889ce11e1` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: #150/#151 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
