@@ -35,6 +35,19 @@ for(const legacyKey of ['footmate:v4:session','footmate:v4:participation','footm
   assert.equal(v5Bootstrap.includes(legacyKey),false,`v5 bootstrap must not own legacy storage key ${legacyKey}`);
 }
 
+for(const [path,repositoryName] of [
+  ['../../src/v4/participation.js','participation'],
+  ['../../src/v4/matchday.js','matchday'],
+  ['../../src/v4/return.js','returnLoop'],
+  ['../../src/v4/personalization.js','personalization']
+]){
+  const source=await readFile(new URL(path,import.meta.url),'utf8');
+  assert.ok(source.includes("import {footmatePlatform} from './platform/application/platform.js';"),`${path} must import platform ownership`);
+  assert.ok(source.includes(`footmatePlatform.repositories.${repositoryName}`),`${path} must use ${repositoryName} repository`);
+  assert.equal(/\blocalStorage\b/.test(source),false,`${path} must not access browser localStorage directly`);
+  assert.equal(source.includes('footmate:v4:'),false,`${path} must not own legacy storage keys`);
+}
+
 const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
 for(const required of [
   '/app의 auth/payment/capacity/notification provider는 deterministic mock',
