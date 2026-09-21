@@ -19,13 +19,15 @@ async function activeSlideIndex(page){
 }
 
 async function focusCaseStudyShell(page){
+  await page.bringToFront();
   await page.evaluate(()=>{
     window.focus();
     const shell=document.querySelector('.viewer');
-    if(!(shell instanceof HTMLElement))return;
-    shell.setAttribute('tabindex','-1');
-    shell.focus({preventScroll:true});
+    if(shell instanceof HTMLElement)shell.setAttribute('tabindex','-1');
   });
+  const shell=page.locator('.viewer');
+  await shell.focus();
+  await expect(shell).toBeFocused();
 }
 
 test('Case Study keeps a product-first 16-section narrative without release labels',async({page})=>{
@@ -67,9 +69,11 @@ test('keyboard navigation works across viewports without hijacking text input',a
       document.body.appendChild(input);
       input.focus();
     });
+    const input=page.locator('[data-keyboard-guard-probe="true"]');
+    await expect(input).toBeFocused();
     await page.keyboard.press('ArrowRight');
     expect(await activeSlideIndex(page),`focused input should keep ArrowRight at ${width}px`).toBe(0);
-    await page.locator('[data-keyboard-guard-probe="true"]').evaluate(input=>input.remove());
+    await input.evaluate(element=>element.remove());
   }
 });
 
