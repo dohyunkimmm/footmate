@@ -3,6 +3,18 @@ export const SESSION_SCHEMA_VERSION=2;
 export const EVENT_SCHEMA_VERSION=1;
 
 export const STORAGE_KEYS=Object.freeze({
+  session:'footmate:session',
+  discovery:'footmate:discovery',
+  decision:'footmate:decision',
+  participation:'footmate:participation',
+  matchday:'footmate:matchday',
+  returnLoop:'footmate:return',
+  personalization:'footmate:personalization',
+  events:'footmate:events',
+  interaction:'footmate:interaction'
+});
+
+export const LEGACY_STORAGE_KEYS=Object.freeze({
   session:'footmate:v4:session',
   discovery:'footmate:v4:discovery',
   decision:'footmate:v4:decision',
@@ -10,7 +22,8 @@ export const STORAGE_KEYS=Object.freeze({
   matchday:'footmate:v4:matchday',
   returnLoop:'footmate:v4:return',
   personalization:'footmate:v4:personalization',
-  events:'footmate:v4:events'
+  events:'footmate:v4:events',
+  interaction:'footmate:v4:interaction'
 });
 
 export const EVENT_NAMES=Object.freeze([

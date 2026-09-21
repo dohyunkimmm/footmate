@@ -27,6 +27,49 @@ async function setup(page){
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 
+test('legacy v4 browser state migrates to version-neutral keys and stays rollback-mirrored',async({page})=>{
+  const errs=failures(page);
+  await page.addInitScript(()=>{
+    localStorage.clear();
+    localStorage.setItem('footmate:v4:session',JSON.stringify({route:'home',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:false,joinedMatchId:null,selectedMatchId:'gwanggyo-2130',matchStage:'discover',userName:'게스트'}));
+    localStorage.setItem('footmate:v4:discovery',JSON.stringify({date:'all',time:'20',distance:'all',price:'all',position:'MF',sort:'fit'}));
+    localStorage.setItem('footmate:v4:interaction',JSON.stringify({detailReturnRoute:'discover'}));
+  });
+  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window.__FOOTMATE_PLATFORM__?.storageKeys?.session==='footmate:session');
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-namespace','version-neutral');
+  await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-compatibility','legacy-mirror');
+
+  const migrated=await page.evaluate(()=>({
+    canonicalSession:JSON.parse(localStorage.getItem('footmate:session')),
+    legacySession:JSON.parse(localStorage.getItem('footmate:v4:session')),
+    canonicalDiscovery:JSON.parse(localStorage.getItem('footmate:discovery')),
+    legacyDiscovery:JSON.parse(localStorage.getItem('footmate:v4:discovery')),
+    canonicalInteraction:JSON.parse(localStorage.getItem('footmate:interaction')),
+    legacyInteraction:JSON.parse(localStorage.getItem('footmate:v4:interaction')),
+    migration:window.__FOOTMATE_PLATFORM__.storageMigration
+  }));
+  expect(migrated.canonicalSession.schemaVersion).toBe(2);
+  expect(migrated.canonicalSession).toEqual(migrated.legacySession);
+  expect(migrated.canonicalSession.selectedMatchId).toBe('gwanggyo-2130');
+  expect(migrated.canonicalDiscovery).toEqual(migrated.legacyDiscovery);
+  expect(migrated.canonicalDiscovery.time).toBe('20');
+  expect(migrated.canonicalInteraction).toEqual(migrated.legacyInteraction);
+  expect(migrated.migration.session.source).toBe('legacy');
+  expect(migrated.migration.discovery.source).toBe('legacy');
+  expect(migrated.migration.interaction.source).toBe('legacy');
+
+  await page.getByRole('button',{name:'전체 보기'}).click();
+  const mirroredAfterLegacyWrite=await page.evaluate(()=>({
+    canonical:localStorage.getItem('footmate:session'),
+    legacy:localStorage.getItem('footmate:v4:session')
+  }));
+  expect(mirroredAfterLegacyWrite.canonical).toBe(mirroredAfterLegacyWrite.legacy);
+  expect(JSON.parse(mirroredAfterLegacyWrite.canonical).route).toBe('discover');
+  expect(errs).toEqual([]);
+});
+
 test('current sample schedules remain date-safe instead of aging into past dates',async({page})=>{
   const errs=await openCleanApp(page);
   await setup(page);

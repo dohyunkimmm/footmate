@@ -6,6 +6,8 @@ if(root){
   root.dataset.platformVersion=footmatePlatform.version;
   root.dataset.sessionSchemaVersion=String(footmatePlatform.sessionSchemaVersion);
   root.dataset.platformProvider='local-browser';
+  root.dataset.storageNamespace='version-neutral';
+  root.dataset.storageCompatibility=footmatePlatform.storageCompatibility.installed||footmatePlatform.storageCompatibility.reused?'legacy-mirror':'repository-only';
 }
 
 const session=()=>footmatePlatform.session.read()||{};
@@ -56,6 +58,9 @@ window.__FOOTMATE_PLATFORM__=Object.freeze({
   sessionSchemaVersion:footmatePlatform.sessionSchemaVersion,
   eventSchemaVersion:footmatePlatform.eventSchemaVersion,
   storageKeys:footmatePlatform.storageKeys,
+  legacyStorageKeys:footmatePlatform.legacyStorageKeys,
+  storageMigration:footmatePlatform.storageMigration,
+  storageCompatibility:footmatePlatform.storageCompatibility,
   migration,
   readSession:()=>footmatePlatform.session.read(),
   readEvents:()=>footmatePlatform.events.read(),
