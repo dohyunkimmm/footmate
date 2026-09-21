@@ -54,13 +54,14 @@
 
 ### Closed Beta Must hardening · 2026-09-21
 
-- Scope: network timeout/offline recovery, real DB cancellation hotfix, operation audit trail, freshness recovery, 8-character signup minimum, authenticated account deletion, audit FK indexing, Case Study/product fact sync preparation
-- Must runtime PRs: #141 · #142 · #144
-- Current verified runtime baseline: `ef091b85ce0c8476bafdb6ed1c10cf590015cd80`
-- Post-merge QA: FootMate QA run `35547957515` · final rerun PASS
+- Scope: network timeout/offline recovery, real DB cancellation hotfix, operation audit trail, freshness recovery, 8-character signup minimum, authenticated account deletion, audit FK indexing, Case Study/product fact sync preparation, Case Study keyboard/Korean wrapping hardening
+- Must runtime PRs: #141 · #142 · #144 · #146
+- Current verified runtime baseline: `fc45f2a00a463a0275fcbff4c2b7994ed743f497`
+- Post-merge QA: FootMate QA #520 · run `35549728962` · PASS
 - Regression 36: PASS
 - Browser E2E + axe: PASS
-- Exact Vercel Production: `dpl_CEaaaDf7byTQxaJcZAGYK5ZwXj8H` · SHA `ef091b85ce0c8476bafdb6ed1c10cf590015cd80` · READY
+- Case Study wrap/layout audit: 1440 / 1180 / 900 / 430 / 390 / 375 / 320px × 16 sections PASS
+- Exact Vercel Production: `dpl_HFZz3uYcfWzXh6ZZXxpB3573fwNa` · SHA `fc45f2a00a463a0275fcbff4c2b7994ed743f497` · READY
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
@@ -70,7 +71,7 @@
 - Observability boundary: `beta_operation_events`는 event type / actor·subject UUID / match·participation UUID / position / time 중심의 최소 audit를 저장하고 email/name을 payload에 저장하지 않음
 - Security advisor remaining warnings: authenticated SECURITY DEFINER RPC 5개는 의도된 user/operator transaction entrypoint이며 각 함수 내부 auth/operator 검증을 유지; leaked-password protection은 현재 Supabase 프로젝트에서 비활성
 - Automated responsive coverage: 320 / 375 / 390 / 430px PASS
-- Manual gates: 물리 기기와 수동 접근성 검증은 자동 QA와 분리하며 이 문서에서 완료로 주장하지 않음
+- Manual gates: 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E 모두 PASS; 추적 issue #147 closed. 자동 QA 결과와 사용자 수동 검증 결과는 구분해 기록함
 - Integration boundary: `/app`는 sample/mock 경계를 유지하고 `/beta`는 Supabase connected; 실제 PG·notification delivery·external analytics는 미연동
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
