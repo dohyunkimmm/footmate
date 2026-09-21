@@ -90,6 +90,28 @@
 - Exact Production Chromium smoke: PASS
 - Render backup: #150/#151 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 
+### Version-neutral storage migration · 2026-09-21
+
+- Scope: `/app` browser persistence namespace를 제품 release marker와 분리하고 기존 사용자 상태와 rollback compatibility를 보존
+- Runtime PR: #153 · PR QA #537 · run `35557100418` · PASS
+- Canonical keys: `footmate:session`, `footmate:discovery`, `footmate:decision`, `footmate:participation`, `footmate:matchday`, `footmate:return`, `footmate:personalization`, `footmate:events`, `footmate:interaction`
+- Legacy compatibility: 기존 `footmate:v4:*` 9개 key를 alias/mirror로 유지하며 삭제하지 않음
+- Migration behavior: legacy-only state는 canonical key로 승격; canonical/legacy가 다르면 canonical을 우선해 legacy mirror를 reconciliation; 이후 write/remove는 canonical과 legacy에 동기화
+- Direct-access compatibility: 기존 v4 presentation module의 direct `localStorage` 호출도 browser compatibility bridge를 통해 canonical state와 동기화
+- Product behavior boundary: route / IA / copy / session schema v2 / discovery·decision·participation·matchday·return·personalization state shape 변경 없음
+- Current product/runtime baseline: `8c60c35b508366c49693326fffd7ab998f88c14a`
+- Post-merge QA: FootMate QA #538 · run `35557352406` · PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Legacy-only browser state → canonical promotion: PASS
+- Canonical/legacy rollback mirror parity and divergent-state reconciliation: PASS
+- Exact Vercel Production: `dpl_GRR1WmD1Mp53u26VBRrTVZEfze2g` · SHA `8c60c35b508366c49693326fffd7ab998f88c14a` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: 이번 migration 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+- Next cleanup boundary: legacy mirror 제거가 아니라 direct module `localStorage` 호출을 repository ownership으로 단계적으로 치환한 뒤 compatibility 제거 가능성을 별도 검증
+
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
 **Status:** Verified AI feature release.
