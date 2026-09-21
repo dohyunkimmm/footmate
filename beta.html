@@ -15,7 +15,20 @@
 <body>
 <main id="footmate-beta" class="fm-beta" data-beta-state="booting" aria-live="polite"></main>
 <noscript>FootMate Closed Beta를 이용하려면 JavaScript를 켜주세요.</noscript>
-<script type="module" src="/src/v5/beta-readiness.js?v=1"></script>
+<script src="/src/v5/beta-recovery-bootstrap.js?v=1"></script>
 <script type="module" src="/src/v5/beta.js?v=1"></script>
+<script type="module">
+const root=document.getElementById('footmate-beta');
+const launch=()=>import('/src/v5/beta-readiness.js?v=1');
+if(root.dataset.betaState!=='booting')launch();
+else{
+  const observer=new MutationObserver(()=>{
+    if(root.dataset.betaState==='booting')return;
+    observer.disconnect();
+    launch();
+  });
+  observer.observe(root,{attributes:true,attributeFilter:['data-beta-state']});
+}
+</script>
 </body>
 </html>
