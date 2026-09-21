@@ -40,16 +40,32 @@
     if(bar)bar.style.width=`${((current+1)/slides.length)*100}%`;
   }
 
+  function isEditingTarget(target){
+    if(!(target instanceof HTMLElement))return false;
+    if(target.isContentEditable)return true;
+    if(/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))return true;
+    return target.getAttribute('role')==='textbox';
+  }
+
   window.goTo=goTo;
   document.documentElement.dataset.fmNextCaseStudy='true';
   toc.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
   dots.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
   prev?.addEventListener('click',()=>goTo(current-1));
   next?.addEventListener('click',()=>goTo(current+1));
+  // Keep shell navigation viewport-independent while preserving editing interactions.
   document.addEventListener('keydown',event=>{
-    if(matchMedia('(max-width:900px)').matches)return;
-    if(event.key==='ArrowRight'||event.key==='PageDown')goTo(current+1);
-    if(event.key==='ArrowLeft'||event.key==='PageUp')goTo(current-1);
+    if(event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
+    if(isEditingTarget(event.target))return;
+    if(event.key==='ArrowRight'||event.key==='PageDown'){
+      event.preventDefault();
+      goTo(current+1);
+      return;
+    }
+    if(event.key==='ArrowLeft'||event.key==='PageUp'){
+      event.preventDefault();
+      goTo(current-1);
+    }
   });
   goTo(0);
 })();
