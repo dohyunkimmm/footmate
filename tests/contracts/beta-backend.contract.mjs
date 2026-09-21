@@ -1,10 +1,20 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError} from '../../src/v5/infrastructure/supabase-beta.js';
+import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_CONFIG_TIMEOUT_MS,BETA_REQUEST_TIMEOUT_MS} from '../../src/v5/infrastructure/supabase-beta.js';
 import {normalizeBetaMatch} from '../../src/v5/domain/beta-match-contract.js';
 
 function json(payload,status=200){
   return new Response(JSON.stringify(payload),{status,headers:{'content-type':'application/json'}});
+}
+
+function abortableNever(options={}){
+  return new Promise((resolve,reject)=>{
+    const signal=options.signal;
+    if(signal?.aborted){
+      const error=new Error('aborted');error.name='AbortError';reject(error);return;
+    }
+    signal?.addEventListener('abort',()=>{const error=new Error('aborted');error.name='AbortError';reject(error)},{once:true});
+  });
 }
 
 const connectedMatch={
@@ -32,6 +42,9 @@ const connectedMatch={
   ]
 };
 
+assert.equal(BETA_CONFIG_TIMEOUT_MS,5000);
+assert.equal(BETA_REQUEST_TIMEOUT_MS,8000);
+
 const calls=[];
 const fetchImpl=async (url,options={})=>{
   calls.push({url:String(url),options});
@@ -54,6 +67,7 @@ assert.equal(signIn.access_token,'access-token');
 const authCall=calls.find(call=>call.url.includes('/auth/v1/token?grant_type=password'));
 assert.equal(authCall.options.method,'POST');
 assert.equal(authCall.options.headers.apikey,'public-key');
+assert.ok(authCall.options.signal,'Supabase requests must carry an abort signal');
 assert.deepEqual(JSON.parse(authCall.options.body),{email:'beta@example.com',password:'safe-password'});
 
 const refreshed=await client.auth.refresh({refreshToken:'refresh-token'});
@@ -98,6 +112,31 @@ const failing=createSupabaseBetaClient({
 await assert.rejects(
   ()=>failing.participation.join({accessToken:'access-token',matchId:connectedMatch.id,position:'MF'}),
   error=>error instanceof SupabaseBetaError&&error.status===409&&error.code==='P0001'
+);
+
+const timeoutClient=createSupabaseBetaClient({
+  url:'https://demo.supabase.co',
+  publishableKey:'public-key',
+  requestTimeoutMs:50,
+  fetchImpl:async(_url,options)=>abortableNever(options)
+});
+await assert.rejects(
+  ()=>timeoutClient.matches.list(),
+  error=>error instanceof SupabaseBetaError&&error.code==='BETA_REQUEST_TIMEOUT'&&/시간이 초과/.test(error.message)
+);
+await assert.rejects(
+  ()=>loadBetaBackendConfig({timeoutMs:50,fetchImpl:async(_url,options)=>abortableNever(options)}),
+  error=>error instanceof SupabaseBetaError&&error.code==='BETA_REQUEST_TIMEOUT'
+);
+
+const networkFailure=createSupabaseBetaClient({
+  url:'https://demo.supabase.co',
+  publishableKey:'public-key',
+  fetchImpl:async()=>{throw new TypeError('fetch failed')}
+});
+await assert.rejects(
+  ()=>networkFailure.matches.list(),
+  error=>error instanceof SupabaseBetaError&&error.code==='BETA_NETWORK_ERROR'&&/네트워크/.test(error.message)
 );
 
 const foundationMigration=await readFile(new URL('../../supabase/migrations/20260920_beta_foundation.sql',import.meta.url),'utf8');
@@ -149,4 +188,4 @@ assert.ok(configRoute.includes('SUPABASE_PUBLISHABLE_KEY'));
 assert.ok(configRoute.includes('SUPABASE_ANON_KEY'));
 assert.ok(!configRoute.includes('SUPABASE_SERVICE_ROLE_KEY'));
 
-console.log('PASS beta backend foundation + position-aware contracts');
+console.log('PASS beta backend foundation + position-aware + network resilience contracts');
