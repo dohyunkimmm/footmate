@@ -54,7 +54,7 @@ jobs:
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Install browser QA dependencies
-        run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v5.2 browser, beta, AI, recovery and accessibility gates
@@ -109,7 +109,7 @@ jobs:
         run: node tests/production-v5.1-ai.cjs
       - name: Install Production browser dependency
         if: steps.impact.outputs.runtime == 'true'
-        run: npm install --no-save @playwright/test@1.55.0
+        run: npm install --no-save @playwright/test@1.55.1
       - name: Install Chromium
         if: steps.impact.outputs.runtime == 'true'
         run: npx playwright install --with-deps chromium

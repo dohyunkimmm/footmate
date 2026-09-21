@@ -1,7 +1,7 @@
 {
   "name": "footmate",
   "private": true,
-  "version": "5.1.1",
+  "version": "5.2.0",
   "dependencies": {
     "@vercel/oidc": "3.8.8"
   }
