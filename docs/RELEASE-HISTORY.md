@@ -21,9 +21,31 @@
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS · v5.2 Beta Production surface 포함
 - Pilot boundary: release 검증 중 실제 경기 장소·시간을 임의 생성하지 않았으며 Production DB의 future public match는 0건; 실제 Pilot 활성화는 운영자가 `/beta/operator`에서 실제 경기 정보를 입력하고 `open`으로 공개한 뒤 시작
-- Integration boundary: Closed Beta는 free-only; DB-backed in-app notification은 connected, 실제 PG·외부 email/push notification delivery·external analytics는 미연동
-- Remaining security hardening: Supabase Leaked Password Protection은 현재 비활성; hosted Auth 설정에서 별도 활성화 필요
+- Integration boundary: Closed Beta는 free-only; DB-backed in-app notification과 Resend transactional email은 connected; 실제 PG·push notification delivery·external analytics는 미연동
+- Remaining security hardening: Supabase Leaked Password Protection은 현재 플랜에서 Pro 이상 기능이라 unavailable; Beta release blocker로 취급하지 않고 추후 plan 전환 시 활성화 후보로 관리
 - Render backup: 이번 v5.2 release에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+
+### Closed Beta transactional email reliability closure · 2026-09-21
+
+- Scope: transactional email outbox reliability, server-driven worker, atomic claim/lease, bounded retry/backoff, Resend final-delivery webhook, operator email health/7-day funnel observability, check-in RPC blocker fix
+- Connection PRs: #164 · #165
+- Reliability runtime PR: #167 · PR QA FootMate QA #584 · run `35599581594` · PASS
+- Post-merge QA: FootMate QA #585 · run `35600051421` · PASS
+- Regression 36 / Browser E2E + axe / Production Smoke: PASS
+- Reliability DB migrations: `beta_email_reliability` · `beta_email_worker_schedule`
+- Production worker: `pg_cron + pg_net + Supabase Vault` 1-minute schedule; outbox는 atomic claim/lease, stale-claim recovery, max 5 attempts와 bounded retry/backoff를 사용
+- Edge Functions: `process-beta-email-outbox`, `resend-beta-email-webhook`, updated `send-beta-notification-email` ACTIVE
+- Delivery state: `email_status`와 `email_delivery_status`를 분리하고 Resend signed webhook으로 `sent / delivered / delivery_delayed / bounced / complained / suppressed / failed` 상태를 DB에 반영
+- Privacy boundary: webhook raw payload와 recipient email은 delivery observability DB에 저장하지 않음
+- Operator observability: `/beta/operator`에서 최근 email health, retry eligibility, 7-day join/check-in/delivery/failure KPI 제공
+- Production E2E: join, user cancel, operator cancel, check-in transactional email이 실제 Resend `delivered`; webhook endpoint HTTP 200 / `matched:true`
+- Server-worker independence: browser dispatch 없이 생성된 outbox를 Cron이 `processed:1 / sent:1 / failed:0`으로 처리하고 `delivered`까지 반영한 경로 PASS
+- Check-in blocker closure: PR #168 · PR QA FootMate QA #586 · run `35603949442` · PASS; Production migration `operator_check_in_ambiguity_fix` version `20260921131551` 적용
+- Check-in post-merge QA: FootMate QA #587 · run `35604424675` · PASS
+- Exact Vercel Production: `dpl_Cfp28eB41XA7FCuM1ipjSx47FCnG` · SHA `3a2b560a29d4ce6248551225e8df221a9ff2f80b` · READY
+- Production QA fixture cleanup: `[QA] Transactional Email Test`는 정상 `operator_cancel_match` 경로로 canceled, `joined_count=0 / remaining_spots=8`; cleanup email도 Cron worker에서 `processed:1 / sent:1 / failed:0` 후 `delivered`
+- Current product/runtime baseline: `3a2b560a29d4ce6248551225e8df221a9ff2f80b`
+- Render backup: 이번 reliability closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
@@ -375,6 +397,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 v5.2는 account recovery·경기별 취소 마감·connected check-in·operator completion·DB-backed in-app operation notification까지 실제 Beta 운영 경계를 확장했다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, 외부 email/push notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 v5.2는 account recovery·경기별 취소 마감·connected check-in·operator completion·DB-backed in-app operation notification과 Resend transactional email까지 실제 Beta 운영 경계를 확장했다. transactional email outbox는 server worker가 처리하고 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, push notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
