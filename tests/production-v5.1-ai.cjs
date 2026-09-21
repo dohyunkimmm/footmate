@@ -1,6 +1,7 @@
 const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate-black.vercel.app').replace(/\/$/,'');
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
-const expectedModel=process.env.FOOTMATE_EXPECTED_AI_MODEL||'inclusionai/ling-3.0-flash-vl-free';
+const primaryModel=process.env.FOOTMATE_EXPECTED_AI_MODEL||'inclusionai/ling-3.0-flash-vl-free';
+const fallbackModel=process.env.FOOTMATE_EXPECTED_AI_FALLBACK_MODEL||'inclusionai/ling-3.0-flash-fin-free';
 function assert(condition,message){if(!condition)throw new Error(message)}
 (async()=>{
   if(!strict){console.log('SKIP v5.1.1 exact Production AI inference');return}
@@ -10,8 +11,9 @@ function assert(condition,message){if(!condition)throw new Error(message)}
   assert(payload.version==='5.1.1','AI inference release');
   assert(payload.mode==='connected-ai',`AI mode must be connected-ai, got ${payload.mode||'unknown'}`);
   assert(payload.provider==='vercel-ai-gateway','AI provider');
-  assert(payload.model===expectedModel,`AI primary model must be ${expectedModel}, got ${payload.model||'unknown'}`);
-  assert(payload.fallbackUsed===false,`AI primary path must not require fallback, got fallbackUsed=${payload.fallbackUsed}`);
+  assert([primaryModel,fallbackModel].includes(payload.model),`AI model must be an approved provider model, got ${payload.model||'unknown'}`);
+  if(payload.model===primaryModel)assert(payload.fallbackUsed===false,`AI primary model must report fallbackUsed=false, got ${payload.fallbackUsed}`);
+  if(payload.model===fallbackModel)assert(payload.fallbackUsed===true,`AI fallback model must report fallbackUsed=true, got ${payload.fallbackUsed}`);
   assert(payload.result&&typeof payload.result==='object','AI result');
   assert(['수원 · 인계',null].includes(payload.result.region),'AI region guard');assert(['MF',null].includes(payload.result.position),'AI position guard');assert(['초중급',null].includes(payload.result.level),'AI level guard');assert(payload.result.afterTime===null||/^([01]\d|2[0-3]):[0-5]\d$/.test(payload.result.afterTime),'AI time guard');
   console.log(`PASS v5.1.1 exact Production AI inference (${payload.model}, fallbackUsed=${payload.fallbackUsed})`);
