@@ -28,7 +28,7 @@ function message(payload,status){
 
 function position(value){
   const normalized=required(value,'position').toUpperCase();
-  if(!POSITIONS.has(normalized))throw new TypeError('position must be MF, FW, DF, or GK');
+  if(!POSITIONS.has(normalized))throw new TypeError('position must be MF, FW, DF, GK');
   return normalized;
 }
 
@@ -56,7 +56,7 @@ export function createBetaReadinessClient({url,publishableKey,fetchImpl=globalTh
       if(!response.ok)throw new Error(message(payload,response.status));
       return payload;
     }catch(error){
-      if(controller?.signal.aborted)throw new Error('요청 시간이 초과됐습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
+      if(controller?.signal.aborted)throw new Error('요청 시간이 초과됐습니다. 네트워크 상태를 확인해주세요.');
       throw error;
     }finally{
       if(timer)clearTimeout(timer);
