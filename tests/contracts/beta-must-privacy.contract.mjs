@@ -14,7 +14,7 @@ const client=createSupabaseBetaClient({
   }
 });
 
-await assert.rejects(
+assert.throws(
   ()=>client.auth.signUp({email:'beta@example.com',password:'short7'}),
   error=>error instanceof TypeError&&/at least 8 characters/.test(error.message)
 );
