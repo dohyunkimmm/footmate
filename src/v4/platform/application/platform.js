@@ -1,8 +1,13 @@
-import {PLATFORM_VERSION,SESSION_SCHEMA_VERSION,EVENT_SCHEMA_VERSION,STORAGE_KEYS,migrateSession,createDomainEvent,isDomainEvent} from '../domain/contracts.js';
-import {createBrowserStorageProvider,createRepositories} from '../infrastructure/storage.js';
+import {PLATFORM_VERSION,SESSION_SCHEMA_VERSION,EVENT_SCHEMA_VERSION,STORAGE_KEYS,LEGACY_STORAGE_KEYS,migrateSession,createDomainEvent,isDomainEvent} from '../domain/contracts.js';
+import {createBrowserStorageProvider,createRepositories,migrateRepositories,installBrowserStorageCompatibility} from '../infrastructure/storage.js';
 
-export function createFootMatePlatform({provider=createBrowserStorageProvider(),now=()=>new Date(),maxEvents=100}={}){
+export function createFootMatePlatform(options={}){
+  const {provider:providedProvider,now=()=>new Date(),maxEvents=100}=options;
+  const browserBacked=!providedProvider;
+  const provider=providedProvider||createBrowserStorageProvider();
   const repositories=createRepositories(provider);
+  const storageMigration=migrateRepositories(repositories);
+  const storageCompatibility=browserBacked?installBrowserStorageCompatibility():Object.freeze({installed:false,reused:false,pairs:0});
   const session=Object.freeze({
     read(){const value=repositories.session.read(null);return value&&typeof value==='object'?migrateSession(value).state:null},
     migrate(){const current=repositories.session.read(null);if(!current||typeof current!=='object')return {state:null,fromVersion:null,toVersion:SESSION_SCHEMA_VERSION,migrated:false};const result=migrateSession(current);if(result.migrated)repositories.session.write(result.state);return result},
@@ -22,7 +27,7 @@ export function createFootMatePlatform({provider=createBrowserStorageProvider(),
     },
     clear(){repositories.events.clear()}
   });
-  return Object.freeze({version:PLATFORM_VERSION,sessionSchemaVersion:SESSION_SCHEMA_VERSION,eventSchemaVersion:EVENT_SCHEMA_VERSION,storageKeys:STORAGE_KEYS,repositories,session,events});
+  return Object.freeze({version:PLATFORM_VERSION,sessionSchemaVersion:SESSION_SCHEMA_VERSION,eventSchemaVersion:EVENT_SCHEMA_VERSION,storageKeys:STORAGE_KEYS,legacyStorageKeys:LEGACY_STORAGE_KEYS,storageMigration,storageCompatibility,repositories,session,events});
 }
 
 export const footmatePlatform=createFootMatePlatform();
