@@ -76,7 +76,7 @@ export function createJsonRepository(provider,key,{legacyKey=null,mirrorLegacy=t
     const canonical=provider.get(key);
     const legacy=legacyKey?provider.get(legacyKey):null;
     if(canonical!==null){
-      const mirroredLegacy=Boolean(mirrorLegacy&&legacyKey&&legacy===null&&provider.set(legacyKey,canonical));
+      const mirroredLegacy=Boolean(mirrorLegacy&&legacyKey&&legacy!==canonical&&provider.set(legacyKey,canonical));
       return Object.freeze({key,legacyKey,source:'canonical',migrated:false,mirroredLegacy});
     }
     if(legacyKey&&legacy!==null){
