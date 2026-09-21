@@ -11,6 +11,7 @@ if(root){
   let busy=false;
   let error='';
   let refreshing=false;
+  let loadedToken='';
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
   const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};
@@ -92,7 +93,8 @@ if(root){
   }
 
   async function refresh(){
-    if(refreshing||!token())return;
+    const accessToken=token();
+    if(refreshing||!accessToken||loadedToken===accessToken)return;
     refreshing=true;error='';
     try{
       if(!supported()){render();return}
@@ -101,7 +103,7 @@ if(root){
       subscription=await reg.pushManager.getSubscription();
       if(subscription)await storeSubscription(subscription);
     }catch(err){error=String(err?.message||err)}
-    finally{refreshing=false;render()}
+    finally{loadedToken=accessToken;refreshing=false;render()}
   }
 
   root.addEventListener('click',async event=>{
@@ -125,7 +127,12 @@ if(root){
     finally{busy=false;render()}
   });
 
-  const observer=new MutationObserver(()=>{render();if(root.querySelector('form[data-form="profile"]'))void refresh()});
+  const observer=new MutationObserver(()=>{
+    const hasProfile=Boolean(root.querySelector('form[data-form="profile"]'));
+    if(!hasProfile){panel()?.remove();loadedToken='';subscription=null;return}
+    if(!panel())render();
+    if(token()&&token()!==loadedToken)void refresh();
+  });
   observer.observe(root,{childList:true,subtree:true});
   render();void refresh();
 }
