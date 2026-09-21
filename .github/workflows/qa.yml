@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   regression:
-    name: Regression 36
+    name: Regression 37
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -44,6 +44,8 @@ jobs:
         run: node tests/contracts/beta-operator-console.contract.mjs
       - name: Run v5.1.1 AI assistant contracts
         run: node tests/contracts/v5.1-ai-assistant.contract.cjs
+      - name: Run v5.2 real beta readiness contracts
+        run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
@@ -55,13 +57,13 @@ jobs:
         run: npm install --no-save @playwright/test@1.55.0 @axe-core/playwright@4.10.2
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run v5.1.1 browser, beta, AI, recovery and accessibility gates
-        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
+      - name: Run v5.2 browser, beta, AI, recovery and accessibility gates
+        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v5.1.1-browser-e2e-${{ github.run_id }}
+          name: v5.2-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -114,4 +116,4 @@ jobs:
       - name: Run exact Production Chromium smoke
         if: steps.impact.outputs.runtime == 'true'
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs
+        run: npx playwright test tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs tests/e2e/v5.2-beta-production.spec.cjs
