@@ -1,6 +1,7 @@
 export const BETA_BACKEND_CONFIG_ENDPOINT='/api/beta-config';
 export const BETA_CONFIG_TIMEOUT_MS=5000;
 export const BETA_REQUEST_TIMEOUT_MS=8000;
+export const BETA_SIGNUP_PASSWORD_MIN_LENGTH=8;
 
 export class SupabaseBetaError extends Error{
   constructor(message,{status=0,code=null,details=null}={}){
@@ -16,6 +17,14 @@ function nonEmpty(value,name){
   const text=String(value||'').trim();
   if(!text)throw new TypeError(`${name} is required`);
   return text;
+}
+
+function betaSignupPassword(value){
+  const password=String(value||'');
+  if(password.length<BETA_SIGNUP_PASSWORD_MIN_LENGTH){
+    throw new TypeError(`password must be at least ${BETA_SIGNUP_PASSWORD_MIN_LENGTH} characters`);
+  }
+  return password;
 }
 
 function betaPosition(value){
@@ -129,7 +138,7 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
   const auth=Object.freeze({
     signUp:({email,password,displayName=''})=>request('/auth/v1/signup',{
       method:'POST',
-      body:{email:nonEmpty(email,'email'),password:nonEmpty(password,'password'),data:{display_name:String(displayName||'').trim()}}
+      body:{email:nonEmpty(email,'email'),password:betaSignupPassword(password),data:{display_name:String(displayName||'').trim()}}
     }),
     signIn:({email,password})=>request('/auth/v1/token?grant_type=password',{
       method:'POST',
@@ -140,7 +149,12 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
       body:{refresh_token:nonEmpty(refreshToken,'refresh token')}
     }),
     getUser:({accessToken})=>request('/auth/v1/user',{accessToken:nonEmpty(accessToken,'access token')}),
-    signOut:({accessToken})=>request('/auth/v1/logout',{method:'POST',accessToken:nonEmpty(accessToken,'access token')})
+    signOut:({accessToken})=>request('/auth/v1/logout',{method:'POST',accessToken:nonEmpty(accessToken,'access token')}),
+    deleteAccount:({accessToken})=>request('/functions/v1/delete-account',{
+      method:'POST',
+      accessToken:nonEmpty(accessToken,'access token'),
+      body:{confirm:true}
+    })
   });
 
   const matches=Object.freeze({
