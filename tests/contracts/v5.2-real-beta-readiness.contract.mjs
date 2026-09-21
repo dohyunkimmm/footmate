@@ -4,6 +4,7 @@ import fs from 'node:fs';
 // Branch protection keeps the historical required check name "Regression 36" while this file adds the v5.2 contract.
 const migration=fs.readFileSync('supabase/migrations/20260921_v5_2_real_beta_readiness.sql','utf8');
 const notificationIndexMigration=fs.readFileSync('supabase/migrations/20260921_v5_2_notification_fk_index.sql','utf8');
+const operatorCheckInFix=fs.readFileSync('supabase/migrations/20260921_operator_check_in_ambiguity_fix.sql','utf8');
 const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
 const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
 const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
@@ -26,6 +27,9 @@ assert.match(migration,/exists \(select 1 from public\.operators o where o\.user
 assert.match(notificationIndexMigration,/create index if not exists beta_notifications_participation_idx/);
 assert.match(notificationIndexMigration,/on public\.beta_notifications\(participation_id\)/);
 assert.match(notificationIndexMigration,/where participation_id is not null/);
+assert.match(operatorCheckInFix,/function public\.operator_check_in_participant\(p_match_id uuid, p_user_id uuid\)/);
+assert.match(operatorCheckInFix,/update public\.participations p[\s\S]*set checked_in_at = coalesce\(p\.checked_in_at, now\(\)\)[\s\S]*where p\.id = v_participation\.id/);
+assert.doesNotMatch(operatorCheckInFix,/coalesce\(checked_in_at, now\(\)\)/);
 
 assert.match(client,/\/auth\/v1\/recover/);
 assert.match(client,/\/auth\/v1\/resend/);
