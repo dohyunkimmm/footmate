@@ -1,16 +1,17 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {MATCHES,createState} from './data.js';
+import {footmatePlatform} from './platform/application/platform.js';
 
 const PERSONALIZATION_VERSION='4.7.0';
-const PERSONALIZATION_STORAGE_KEY='footmate:v4:personalization';
+const PERSONALIZATION_STORAGE_KEY=footmatePlatform.storageKeys.personalization;
+const personalizationRepository=footmatePlatform.repositories.personalization;
 const root=document.getElementById('footmate-next');
 let explanationOpen=false;
 
-function safeParse(value,fallback){try{return value?JSON.parse(value):fallback}catch(_error){return fallback}}
-function readSession(){return createState(safeParse(localStorage.getItem(NEXT_STORAGE_KEY),{}))}
+function readSession(){return createState(footmatePlatform.session.read()||{})}
 function defaults(){return {version:PERSONALIZATION_VERSION,profile:null,recentMatchIds:[],favorites:{areas:[],timeWindows:[],formats:[]}}}
-function readMemory(){const raw=safeParse(localStorage.getItem(PERSONALIZATION_STORAGE_KEY),{});return {version:PERSONALIZATION_VERSION,profile:raw.profile&&typeof raw.profile==='object'?raw.profile:null,recentMatchIds:Array.isArray(raw.recentMatchIds)?raw.recentMatchIds.filter(id=>MATCHES.some(match=>match.id===id)).slice(0,5):[],favorites:{areas:Array.isArray(raw.favorites?.areas)?raw.favorites.areas:[],timeWindows:Array.isArray(raw.favorites?.timeWindows)?raw.favorites.timeWindows:[],formats:Array.isArray(raw.favorites?.formats)?raw.favorites.formats:[]}}}
-function writeMemory(next){const value={...defaults(),...next,version:PERSONALIZATION_VERSION,favorites:{...defaults().favorites,...next.favorites}};localStorage.setItem(PERSONALIZATION_STORAGE_KEY,JSON.stringify(value));return value}
-function writeSession(patch){const next={...readSession(),...patch};localStorage.setItem(NEXT_STORAGE_KEY,JSON.stringify(next));return next}
+function readMemory(){const raw=personalizationRepository.read({})||{};return {version:PERSONALIZATION_VERSION,profile:raw.profile&&typeof raw.profile==='object'?raw.profile:null,recentMatchIds:Array.isArray(raw.recentMatchIds)?raw.recentMatchIds.filter(id=>MATCHES.some(match=>match.id===id)).slice(0,5):[],favorites:{areas:Array.isArray(raw.favorites?.areas)?raw.favorites.areas:[],timeWindows:Array.isArray(raw.favorites?.timeWindows)?raw.favorites.timeWindows:[],formats:Array.isArray(raw.favorites?.formats)?raw.favorites.formats:[]}}}
+function writeMemory(next){const value={...defaults(),...next,version:PERSONALIZATION_VERSION,favorites:{...defaults().favorites,...next.favorites}};personalizationRepository.write(value);return value}
+function writeSession(patch){const next={...readSession(),...patch};footmatePlatform.session.write(next);return next}
 function memorySignature(memory=readMemory()){const profile=memory.profile?`${memory.profile.region}|${memory.profile.position}|${memory.profile.level}`:'none';return encodeURIComponent([profile,memory.recentMatchIds.join(','),memory.favorites.areas.join(','),memory.favorites.timeWindows.join(','),memory.favorites.formats.join(',')].join('::'))}
 function timeWindow(match){const found=String(match.shortDate||match.dateLabel||'').match(/(\d{1,2}):\d{2}/);const hour=Number(found?.[1]);if(!Number.isFinite(hour))return '20';if(hour<20)return '19';if(hour<21)return '20';return '21+'}
 const timeLabels={'19':'19시대','20':'20시대','21+':'21시 이후'};
@@ -29,7 +30,7 @@ function enhanceProfile(){if(!root)return;const screen=root.querySelector('[data
 function enhanceExplanation(){if(!root)return;for(const screen of root.querySelectorAll('[data-screen="home"],[data-screen="discover"]')){const existing=screen.querySelector('[data-personalization-explanation]');const html=explanationHtml();if(!html)continue;const probe=document.createElement('div');probe.innerHTML=html;const sig=probe.firstElementChild?.dataset.explanationSignature;if(existing?.dataset.explanationSignature===sig)continue;if(existing){existing.outerHTML=html;continue}const section=screen.querySelector('.fm-next-section');if(section){section.insertAdjacentHTML('afterbegin',html);continue}const list=screen.querySelector('.fm-next-list');if(list)list.insertAdjacentHTML('beforebegin',html)}}
 function enhanceRanking(){if(!root)return;const memory=readMemory();const ranked=rank();const order=new Map(ranked.map((item,index)=>[item.id,{index,item}]));const scoreSig=ranked.map(item=>`${item.id}:${item.score}`).join(',');const sig=encodeURIComponent(`${memorySignature(memory)}|${scoreSig}`);for(const screen of root.querySelectorAll('[data-screen="home"],[data-screen="discover"]')){const list=screen.querySelector('.fm-next-list');if(!list||list.dataset.fmPersonalizationSignature===sig)continue;list.dataset.fmPersonalizationSignature=sig;const cards=[...list.querySelectorAll('.fm-next-match-card')];cards.sort((a,b)=>(order.get(a.dataset.matchId)?.index??999)-(order.get(b.dataset.matchId)?.index??999));cards.forEach(card=>{card.querySelectorAll('.fm-personalization-reason').forEach(node=>node.remove());const item=order.get(card.dataset.matchId)?.item;if(item?.personalizationAdjustment>0){const body=card.querySelector('.fm-next-match-body')||card;body.insertAdjacentHTML('afterbegin',`<span class="fm-personalization-reason">내 이용 기록 반영 +${item.personalizationAdjustment}</span>`)}list.appendChild(card)})}}
 function refresh(){if(!root)return;enhanceWelcome();enhanceProfile();enhanceRanking();enhanceExplanation();root.dataset.personalizationVersion=PERSONALIZATION_VERSION}
-function reset(){localStorage.removeItem(PERSONALIZATION_STORAGE_KEY);explanationOpen=false;refresh();return readMemory()}
+function reset(){personalizationRepository.clear();explanationOpen=false;refresh();return readMemory()}
 
 document.addEventListener('click',event=>{const open=event.target.closest('[data-action="open-match"]');if(open?.dataset.matchId){rememberMatch(open.dataset.matchId);return}const target=event.target.closest('[data-personalization-action]');if(!target)return;event.preventDefault();event.stopPropagation();const action=target.dataset.personalizationAction;if(action==='save-profile'){saveProfile();refresh();return}if(action==='toggle'){toggleFavorite(target.dataset.kind,target.dataset.value);refresh();return}if(action==='reset'){reset();return}if(action==='explain'){explanationOpen=!explanationOpen;enhanceExplanation();return}if(action==='apply-profile'){const profile=readMemory().profile;if(!profile)return;writeSession({...profile,setupComplete:true,route:'home'});location.reload()}},true);
 const observer=new MutationObserver(()=>requestAnimationFrame(refresh));if(root)observer.observe(root,{childList:true,subtree:true});
