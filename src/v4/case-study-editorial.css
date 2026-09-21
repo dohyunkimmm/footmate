@@ -177,7 +177,11 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
 .fm-next-cs-ia,
 .fm-next-cs-metrics,
 .fm-next-cs-stack,
-.fm-next-cs-outcome{gap:10px}
+.fm-next-cs-outcome,
+.fm-next-cs-loop,
+.fm-next-cs-agent,
+.fm-next-cs-state-chain,
+.fm-next-cs-state-line{gap:10px}
 .fm-next-cover-proof div{padding:14px 15px}
 .fm-next-cs-journey>div{padding:16px 14px}
 .fm-next-cs-stack p{padding:13px 14px}
