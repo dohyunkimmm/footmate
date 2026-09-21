@@ -48,6 +48,9 @@ test('operator observes transactional email health and schedules safe retry',asy
   const backend=await mockOperator(page);
   await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
   await expect(page.getByRole('heading',{name:'Transactional email 운영 상태'})).toBeVisible();
+  await expect(page.getByText(/DB 기반 운영 알림과 transactional email은 연결/)).toBeVisible();
+  await expect(page.getByText(/Payment \/ Push = not connected/)).toBeVisible();
+  await expect(page.getByText('결제와 알림은 연결하지 않습니다.')).toHaveCount(0);
   await expect(page.getByText('메일 전달 완료')).toBeVisible();
   await expect(page.getByText('전달 완료',{exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'재시도 예약'})).toBeVisible();
