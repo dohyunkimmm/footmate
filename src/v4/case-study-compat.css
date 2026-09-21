@@ -72,7 +72,7 @@
     display:grid!important;
     grid-template-columns:minmax(0,1fr)!important;
     width:100%!important;
-    gap:8px!important;
+    gap:10px!important;
   }
   .fm-next-cs-loop>i{
     justify-self:center;
