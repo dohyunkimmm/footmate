@@ -48,6 +48,8 @@ jobs:
         run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs
       - name: Run beta transactional email contracts
         run: node tests/contracts/beta-transactional-email.contract.mjs
+      - name: Run beta email reliability contracts
+        run: node tests/contracts/beta-email-reliability.contract.mjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
@@ -60,7 +62,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v5.2 browser, beta, AI, recovery and accessibility gates
-        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
+        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
