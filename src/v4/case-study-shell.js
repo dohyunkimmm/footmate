@@ -54,7 +54,7 @@
   prev?.addEventListener('click',()=>goTo(current-1));
   next?.addEventListener('click',()=>goTo(current+1));
   document.addEventListener('keydown',event=>{
-    if(event.defaultPrevented||event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
+    if(event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
     if(isEditingTarget(event.target))return;
     if(event.key==='ArrowRight'||event.key==='PageDown'){
       event.preventDefault();
