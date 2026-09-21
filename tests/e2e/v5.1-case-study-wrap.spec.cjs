@@ -27,13 +27,32 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
           return style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;
         };
         const textOf=el=>(el.textContent||'').trim().replace(/\s+/g,' ').slice(0,100);
-        const structuralRoots=[...slide.querySelectorAll('.fm-next-cover-proof,[class*="fm-next-cs-"]')].filter(visible);
+        const hasDirectText=el=>[...el.childNodes].some(node=>node.nodeType===Node.TEXT_NODE&&/[0-9A-Za-z가-힣]/.test(node.nodeValue||''));
+        const scope=[slide.querySelector('.fm-next-cover-copy'),slide.querySelector('.fm-next-story')].filter(Boolean);
+        const allElements=[];
+        for(const root of scope){
+          if(visible(root))allElements.push(root);
+          for(const el of root.querySelectorAll('*'))if(visible(el))allElements.push(el);
+        }
+        const structuralRoots=allElements.filter(el=>el.matches('.fm-next-cover-proof,[class*="fm-next-cs-"]'));
+        const surfaceCells=allElements.filter(el=>{
+          if(['A','BUTTON','I','IFRAME'].includes(el.tagName))return false;
+          const text=textOf(el);
+          if(!/[0-9A-Za-z가-힣]/.test(text))return false;
+          const style=getComputedStyle(el);
+          const rect=el.getBoundingClientRect();
+          const border=Math.max(parseFloat(style.borderTopWidth)||0,parseFloat(style.borderRightWidth)||0,parseFloat(style.borderBottomWidth)||0,parseFloat(style.borderLeftWidth)||0);
+          const radius=parseFloat(style.borderRadius)||0;
+          const background=style.backgroundColor;
+          const hasSurface=border>0||radius>=8||(background&&background!=='rgba(0, 0, 0, 0)'&&background!=='transparent');
+          return hasSurface&&rect.width>=90;
+        });
+
         const textElements=new Set();
         for(const root of structuralRoots){
-          if(root.matches('p,small,span,b,strong,h3,a'))textElements.add(root);
+          if(root.matches('p,small,span,b,strong,h3,a')||hasDirectText(root))textElements.add(root);
           for(const el of root.querySelectorAll('p,small,span,b,strong,h3,a'))if(visible(el))textElements.add(el);
         }
-
         const smallText=[];
         for(const el of textElements){
           const text=textOf(el);
@@ -44,7 +63,7 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
           const radius=parseFloat(style.borderRadius)||0;
           const isPill=radius>=999||(rect.height<=34&&['B','SPAN'].includes(el.tagName));
           let min=11;
-          if(el.tagName==='P')min=13;
+          if(el.tagName==='P'||(hasDirectText(el)&&el.tagName==='DIV'))min=13;
           else if(el.tagName==='H3')min=14;
           else if(['B','STRONG'].includes(el.tagName)&&!isPill)min=12;
           if(Number.isFinite(size)&&size+0.01<min)smallText.push({tag:el.tagName,className:el.className||'',text,size,min});
@@ -77,32 +96,20 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
         }
 
         const tightPadding=[];
-        const overflow=[];
-        const clipping=[];
-        for(const el of structuralRoots){
+        for(const el of surfaceCells){
           const style=getComputedStyle(el);
           const rect=el.getBoundingClientRect();
-          const text=textOf(el);
-          const border=Math.max(parseFloat(style.borderTopWidth)||0,parseFloat(style.borderRightWidth)||0,parseFloat(style.borderBottomWidth)||0,parseFloat(style.borderLeftWidth)||0);
-          const background=style.backgroundColor;
           const radius=parseFloat(style.borderRadius)||0;
-          const hasSurface=border>0||radius>=8||(background&&background!=='rgba(0, 0, 0, 0)'&&background!=='transparent');
-          const isInteractive=['A','BUTTON'].includes(el.tagName);
           const isPill=radius>=999||rect.height<=40;
-          if(hasSurface&&!isInteractive&&!isPill&&/[0-9A-Za-z가-힣]/.test(text)&&rect.width>=90){
-            const vertical=Math.min(parseFloat(style.paddingTop)||0,parseFloat(style.paddingBottom)||0);
-            const horizontal=Math.min(parseFloat(style.paddingLeft)||0,parseFloat(style.paddingRight)||0);
-            const roomy=rect.height>=58;
-            const minVertical=roomy?14:11;
-            const minHorizontal=roomy?14:12;
-            if(vertical+0.01<minVertical||horizontal+0.01<minHorizontal){
-              tightPadding.push({className:el.className||el.tagName,text,vertical,horizontal,min:`${minVertical}px vertical / ${minHorizontal}px horizontal`});
-            }
+          if(isPill)continue;
+          const vertical=Math.min(parseFloat(style.paddingTop)||0,parseFloat(style.paddingBottom)||0);
+          const horizontal=Math.min(parseFloat(style.paddingLeft)||0,parseFloat(style.paddingRight)||0);
+          const roomy=rect.height>=58;
+          const minVertical=roomy?14:11;
+          const minHorizontal=roomy?14:12;
+          if(vertical+0.01<minVertical||horizontal+0.01<minHorizontal){
+            tightPadding.push({className:el.className||el.tagName,text:textOf(el),vertical,horizontal,min:`${minVertical}px vertical / ${minHorizontal}px horizontal`});
           }
-          const xOverflow=el.scrollWidth-el.clientWidth;
-          if(xOverflow>1)overflow.push({className:el.className||el.tagName,text,xOverflow});
-          const yOverflow=el.scrollHeight-el.clientHeight;
-          if(yOverflow>1&&['hidden','clip'].includes(style.overflowY))clipping.push({className:el.className||el.tagName,text,yOverflow});
         }
 
         const tightGaps=[];
@@ -118,8 +125,20 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
           if(usedGap+0.01<min)tightGaps.push({className:el.className||el.tagName,gap:usedGap,min});
         }
 
+        const overflow=[];
+        const clipping=[];
+        const layoutCandidates=[...new Set([...structuralRoots,...surfaceCells])];
+        for(const el of layoutCandidates){
+          const style=getComputedStyle(el);
+          const xOverflow=el.scrollWidth-el.clientWidth;
+          if(xOverflow>1)overflow.push({className:el.className||el.tagName,text:textOf(el),xOverflow});
+          const yOverflow=el.scrollHeight-el.clientHeight;
+          if(yOverflow>1&&['hidden','clip'].includes(style.overflowY))clipping.push({className:el.className||el.tagName,text:textOf(el),yOverflow});
+        }
+
         return {
           structuralRootCount:structuralRoots.length,
+          surfaceCellCount:surfaceCells.length,
           auditedTextCount:textElements.size,
           documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
           smallText,
@@ -132,6 +151,7 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
       });
 
       expect(audit.structuralRootCount,`structured coverage at ${width}px P${index+1}`).toBeGreaterThan(0);
+      expect(audit.surfaceCellCount,`cell coverage at ${width}px P${index+1}`).toBeGreaterThan(0);
       expect(audit.auditedTextCount,`text coverage at ${width}px P${index+1}`).toBeGreaterThan(0);
       expect(audit.documentOverflow,`document overflow at ${width}px P${index+1}`).toBeLessThanOrEqual(1);
       expect(audit.smallText,`small structured text at ${width}px P${index+1}`).toEqual([]);
