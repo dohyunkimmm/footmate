@@ -70,7 +70,7 @@ test('operator creates, edits and cancels real match operations with participant
   await page.getByLabel('경기명').fill('새 Closed Beta 경기');
   await page.getByLabel('구장명').fill('광교 풋살장');
   await page.getByLabel('주소').fill('경기도 수원시 영통구 광교');
-  await page.getByLabel('시작 시간').fill('2099-09-25T20:00');
+  await page.getByLabel('시작 시간',{exact:true}).fill('2099-09-25T20:00');
   await page.getByLabel('사용자 취소 마감').fill('2099-09-25T18:00');
   await page.getByLabel('체크인 오픈').fill('2099-09-25T19:30');
   await page.getByLabel('MF · 현재 0명').fill('4');
