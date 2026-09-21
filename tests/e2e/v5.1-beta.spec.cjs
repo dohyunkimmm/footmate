@@ -10,6 +10,7 @@ function fulfill(route,payload,status=200){return route.fulfill({status,contentT
 
 async function mockBackend(page,{empty=false}={}){
   let joined=false;
+  let deleted=false;
   let profile={id:userId,display_name:'도현',region:'수원 · 영통',position:'MF',level:'초중급',created_at:'2099-01-01T00:00:00Z',updated_at:'2099-01-01T00:00:00Z'};
   await page.route('**/api/beta-config',route=>fulfill(route,{connected:true,url:origin,publishableKey:'public-key'}));
   await page.route(`${origin}/**`,async route=>{
@@ -21,6 +22,9 @@ async function mockBackend(page,{empty=false}={}){
     if(path==='/auth/v1/user')return fulfill(route,{user:{id:userId,email:'beta@example.com'}});
     if(path==='/auth/v1/logout')return fulfill(route,{});
     if(path==='/auth/v1/signup')return fulfill(route,{user:{id:userId,email:'beta@example.com'},session:null});
+    if(url.pathname==='/functions/v1/delete-account'){
+      deleted=true;return fulfill(route,{deleted:true});
+    }
     if(url.pathname==='/rest/v1/profiles'&&request.method()==='GET')return fulfill(route,[profile]);
     if(url.pathname==='/rest/v1/profiles'&&request.method()==='PATCH'){
       profile={...profile,...JSON.parse(request.postData()||'{}')};return fulfill(route,[profile]);
@@ -39,7 +43,7 @@ async function mockBackend(page,{empty=false}={}){
     }
     return fulfill(route,{message:`Unhandled ${request.method()} ${path}`},500);
   });
-  return {isJoined:()=>joined};
+  return {isJoined:()=>joined,isDeleted:()=>deleted};
 }
 
 async function serious(page){
@@ -75,6 +79,31 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await expect(page.getByText('참가를 취소했습니다. 잔여 자리가 복구됐습니다.')).toBeVisible();
   expect(backend.isJoined()).toBe(false);
   await expect(page.getByText('아직 참가한 경기가 없습니다.')).toBeVisible();
+  await expect(page.getByText(/동기화/)).toBeVisible();
+  expect(await serious(page)).toEqual([]);
+});
+
+test('closed beta enforces signup baseline and deletes account with explicit confirmation',async({page})=>{
+  const backend=await mockBackend(page);
+  await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await page.getByRole('button',{name:'처음이에요 · 가입하기'}).click();
+  const signupPassword=page.getByLabel('비밀번호');
+  await expect(signupPassword).toHaveAttribute('minlength','8');
+  await expect(signupPassword).toHaveAttribute('placeholder','8자 이상');
+  await page.getByRole('button',{name:'이미 계정이 있어요 · 로그인'}).click();
+
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
+  await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
+
+  page.once('dialog',dialog=>dialog.accept());
+  await page.getByRole('button',{name:'계정·참가 데이터 삭제'}).click();
+  await expect(page.getByText('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.')).toBeVisible();
+  await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeVisible();
+  expect(backend.isDeleted()).toBe(true);
+  expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:auth:v1'))).toBeNull();
   expect(await serious(page)).toEqual([]);
 });
 
