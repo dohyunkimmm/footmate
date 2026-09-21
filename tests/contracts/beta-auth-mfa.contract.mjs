@@ -33,8 +33,9 @@ assert.ok(beta.includes('/src/v5/beta-social-auth-bootstrap.js?v=1'));
 assert.ok(beta.includes("import('/src/v5/beta-social-auth.js?v=1')"));
 assert.ok(social.includes('/auth/v1/settings'),'social buttons must reflect actually enabled providers');
 assert.ok(social.includes('/auth/v1/authorize'),'social auth must use Supabase OAuth authorize flow');
-assert.ok(social.includes("provider==='google'"));
-assert.ok(social.includes("provider==='kakao'"));
+assert.ok(social.includes('payload?.external?.google'));
+assert.ok(social.includes('payload?.external?.kakao'));
+assert.ok(social.includes("provider==='google'?'Google':'Kakao'"));
 assert.ok(socialBootstrap.includes("params.get('type')==='recovery'"),'social callback must not steal password recovery flow');
 
 assert.ok(operator.includes('/src/v5/beta-operator-mfa.js?v=1'));
