@@ -38,6 +38,13 @@ function baseUrl(value){
   return url.toString().replace(/\/$/,'');
 }
 
+function betaRedirectUrl(value){
+  const explicit=String(value||'').trim();
+  if(explicit)return explicit;
+  const origin=String(globalThis.location?.origin||'').trim().replace(/\/$/,'');
+  return origin?`${origin}/beta`:null;
+}
+
 function normalizedTimeout(value,fallback){
   const numeric=Number(value);
   return Number.isFinite(numeric)&&numeric>0?Math.max(50,Math.trunc(numeric)):fallback;
@@ -136,10 +143,14 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
   }
 
   const auth=Object.freeze({
-    signUp:({email,password,displayName=''})=>request('/auth/v1/signup',{
-      method:'POST',
-      body:{email:nonEmpty(email,'email'),password:betaSignupPassword(password),data:{display_name:String(displayName||'').trim()}}
-    }),
+    signUp:({email,password,displayName='',redirectTo=null})=>{
+      const target=betaRedirectUrl(redirectTo);
+      const path=target?`/auth/v1/signup?redirect_to=${encodeURIComponent(target)}`:'/auth/v1/signup';
+      return request(path,{
+        method:'POST',
+        body:{email:nonEmpty(email,'email'),password:betaSignupPassword(password),data:{display_name:String(displayName||'').trim()}}
+      });
+    },
     signIn:({email,password})=>request('/auth/v1/token?grant_type=password',{
       method:'POST',
       body:{email:nonEmpty(email,'email'),password:nonEmpty(password,'password')}
