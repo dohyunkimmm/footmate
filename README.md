@@ -63,7 +63,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - `/app` recommendation ranking: **deterministic runtime logic**
 - `/app` match catalog / capacity / participant composition: **sample records**
 - `/app` auth / payment / capacity / notification providers: **deterministic mock**
-- `/app` persistence: **browser local state**
+- `/app` persistence: **browser local state** — `footmate:*` canonical keys를 primary로 사용하고 기존 `footmate:v4:*` 9개 key는 migration/rollback compatibility mirror로 유지
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
 - `/beta` join/cancel: **database transaction + row lock + RLS**, free-participation only
 - `/beta` account deletion: **authenticated Supabase Edge Function**, privileged Auth deletion remains server-side
@@ -107,6 +107,8 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - `supabase/migrations/` — profiles / operators / matches / match_slots / participation / audit trail, RLS and atomic user/operator RPC ownership
 - `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
 - `src/v5/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
+- `src/v4/platform/domain/contracts.js` — version-neutral `footmate:*` canonical storage keys + `footmate:v4:*` legacy compatibility key contract
+- `src/v4/platform/infrastructure/storage.js` — legacy promotion, canonical-first reconciliation, dual-write rollback mirror, JSON repository ownership
 - `src/v4/recommendation.js` — deterministic ranking Source of Truth for the current `/app` runtime
 - `src/v4/data.js` — current `/app` sample match records and user-visible recommendation reasons
 
