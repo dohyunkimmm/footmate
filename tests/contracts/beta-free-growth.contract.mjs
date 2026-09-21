@@ -25,8 +25,8 @@ assert.ok(migration.includes('for update skip locked'),'waitlist promotion must 
 assert.ok(migration.includes('transaction_timestamp()'),'waitlist promotion must be distinguishable inside the participation trigger transaction');
 assert.ok(migration.includes("perform public.promote_beta_waitlist_for_slot(p_match_id,v_position)"),'user/operator participant cancellation must refill from waitlist');
 assert.ok(migration.includes("update public.beta_waitlist set status='canceled'"),'match cancellation must cancel queued waitlist rows');
-assert.ok(migration.includes("m.status='completed'"),'feedback requires a completed real match');
-assert.ok(migration.includes("p.checked_in_at is null"),'feedback requires a real check-in');
+assert.ok(migration.includes("if v_match.status<>'completed' then raise exception 'MATCH_NOT_COMPLETED'"),'feedback requires a completed real match');
+assert.ok(migration.includes("v_part.checked_in_at is null"),'feedback requires a real check-in');
 
 for(const token of ['realtime/v1/websocket','postgres_changes','Live catalog','join_beta_waitlist','submit_beta_match_feedback','/api/ai-match-assistant'])
   assert.ok(growth.includes(token),`missing browser growth contract: ${token}`);
