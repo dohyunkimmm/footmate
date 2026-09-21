@@ -28,20 +28,18 @@ function koreanWordSplitAudit(slide){
       const start=match.index||0;
       const word=match[0];
       let previousTop=null;
-      let visible=false;
       for(let offset=0;offset<word.length;offset+=1){
         const range=document.createRange();
         range.setStart(node,start+offset);
         range.setEnd(node,start+offset+1);
         const rect=range.getBoundingClientRect();
-        if(rect.width>0&&rect.height>0)visible=true;
+        if(rect.width<=0||rect.height<=0)continue;
         if(previousTop!==null&&Math.abs(rect.top-previousTop)>2){
           offenders.push({word,parent:parent.className||parent.tagName,reason:'Hangul word split across lines'});
           break;
         }
         previousTop=rect.top;
       }
-      if(!visible)continue;
     }
   }
   return offenders;
@@ -89,20 +87,22 @@ test('P3 and all 16 Case Study sections keep Korean words intact and structured 
     await openCaseStudy(page,width,width<=430?844:900);
     for(let index=0;index<16;index+=1){
       await goToSlide(page,index);
-      const audit=await page.locator('.slide.on').evaluate((slide,{bodySelectors,labelSelectors})=>{
-        const smallText=[];
+      const active=page.locator('.slide.on');
+      const smallText=await active.evaluate((slide,{bodySelectors,labelSelectors})=>{
+        const offenders=[];
         for(const el of slide.querySelectorAll(bodySelectors)){
           const size=parseFloat(getComputedStyle(el).fontSize);
-          if(size+0.01<13)smallText.push({text:(el.textContent||'').trim().slice(0,80),size,min:13});
+          if(size+0.01<13)offenders.push({text:(el.textContent||'').trim().slice(0,80),size,min:13});
         }
         for(const el of slide.querySelectorAll(labelSelectors)){
           const size=parseFloat(getComputedStyle(el).fontSize);
-          if(size+0.01<11)smallText.push({text:(el.textContent||'').trim().slice(0,80),size,min:11});
+          if(size+0.01<11)offenders.push({text:(el.textContent||'').trim().slice(0,80),size,min:11});
         }
-        return {smallText,wordSplits:koreanWordSplitAudit(slide)};
+        return offenders;
       },{bodySelectors,labelSelectors});
-      expect(audit.smallText,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
-      expect(audit.wordSplits,`Korean word split at ${width}px slide ${index+1}`).toEqual([]);
+      const wordSplits=await active.evaluate(koreanWordSplitAudit);
+      expect(smallText,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
+      expect(wordSplits,`Korean word split at ${width}px slide ${index+1}`).toEqual([]);
     }
   }
 
