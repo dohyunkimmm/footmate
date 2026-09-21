@@ -1,15 +1,16 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {MATCHES,createState} from './data.js';
+import {footmatePlatform} from './platform/application/platform.js';
 
 const RETURN_VERSION='4.6.0';
-const RETURN_STORAGE_KEY='footmate:v4:return';
+const RETURN_STORAGE_KEY=footmatePlatform.storageKeys.returnLoop;
+const returnRepository=footmatePlatform.repositories.returnLoop;
 const root=document.getElementById('footmate-next');
 const LEVELS=['입문','초중급','중급','중급+'];
 
-function safeParse(value,fallback){try{return value?JSON.parse(value):fallback}catch(_error){return fallback}}
-function readSession(){return createState(safeParse(localStorage.getItem(NEXT_STORAGE_KEY),{}))}
-function readReturn(){const value=safeParse(localStorage.getItem(RETURN_STORAGE_KEY),{});return {version:RETURN_VERSION,history:Array.isArray(value.history)?value.history:[],draft:value.draft&&typeof value.draft==='object'?value.draft:null}}
-function writeReturn(next){const value={version:RETURN_VERSION,history:next.history||[],draft:next.draft||null};localStorage.setItem(RETURN_STORAGE_KEY,JSON.stringify(value));return value}
-function updateSession(patch){const next={...readSession(),...patch};localStorage.setItem(NEXT_STORAGE_KEY,JSON.stringify(next));return next}
+function readSession(){return createState(footmatePlatform.session.read()||{})}
+function readReturn(){const value=returnRepository.read({})||{};return {version:RETURN_VERSION,history:Array.isArray(value.history)?value.history:[],draft:value.draft&&typeof value.draft==='object'?value.draft:null}}
+function writeReturn(next){const value={version:RETURN_VERSION,history:next.history||[],draft:next.draft||null};returnRepository.write(value);return value}
+function updateSession(patch){const next={...readSession(),...patch};footmatePlatform.session.write(next);return next}
 function currentMatch(session=readSession()){return MATCHES.find(match=>match.id===session.joinedMatchId)||null}
 function latestFeedback(state=readReturn()){return state.history[state.history.length-1]||null}
 function targetLevel(feedback){if(!feedback)return null;const match=MATCHES.find(item=>item.id===feedback.matchId);if(!match)return null;const index=LEVELS.indexOf(match.level);if(index<0)return match.level;if(feedback.difficulty==='hard')return LEVELS[Math.max(0,index-1)];if(feedback.difficulty==='easy')return LEVELS[Math.min(LEVELS.length-1,index+1)];return match.level}
@@ -27,5 +28,5 @@ function enhance(){enhancePanel();enhanceRanking();if(root)root.dataset.returnVe
 
 document.addEventListener('click',event=>{const target=event.target.closest('[data-return-action],[data-action="rate-match"]');if(!target)return;if(target.matches('[data-action="rate-match"]')){const session=readSession();if(session.matchStage!=='postgame')return;event.preventDefault();event.stopPropagation();updateSession({route:'schedule'});location.reload();return}const action=target.dataset.returnAction;if(!action)return;event.preventDefault();event.stopPropagation();if(action==='difficulty'){saveDraft({difficulty:target.dataset.value});rerenderPanel();return}if(action==='repeat'){saveDraft({repeatIntent:target.dataset.value==='true'});rerenderPanel();return}if(action==='save'){saveFeedback();rerenderPanel();enhanceRanking();return}},true);
 const observer=new MutationObserver(()=>requestAnimationFrame(enhance));if(root)observer.observe(root,{childList:true,subtree:true});
-window.__FOOTMATE_RETURN__={version:RETURN_VERSION,storageKey:RETURN_STORAGE_KEY,read:readReturn,rank:feedbackRank,save:saveFeedback,reset:()=>{localStorage.removeItem(RETURN_STORAGE_KEY);enhance();return readReturn()}};
+window.__FOOTMATE_RETURN__={version:RETURN_VERSION,storageKey:RETURN_STORAGE_KEY,read:readReturn,rank:feedbackRank,save:saveFeedback,reset:()=>{returnRepository.clear();enhance();return readReturn()}};
 enhance();
