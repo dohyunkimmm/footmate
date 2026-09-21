@@ -18,6 +18,16 @@ async function activeSlideIndex(page){
   return page.locator('.slide').evaluateAll(slides=>slides.findIndex(slide=>slide.classList.contains('on')));
 }
 
+async function focusCaseStudyShell(page){
+  await page.evaluate(()=>{
+    window.focus();
+    const shell=document.querySelector('.viewer');
+    if(!(shell instanceof HTMLElement))return;
+    shell.setAttribute('tabindex','-1');
+    shell.focus({preventScroll:true});
+  });
+}
+
 test('Case Study keeps a product-first 16-section narrative without release labels',async({page})=>{
   await openCaseStudy(page);
   await expect(page).toHaveTitle('FootMate | AI-assisted Futsal Match Discovery Case Study');
@@ -36,6 +46,7 @@ test('Case Study keeps a product-first 16-section narrative without release labe
 test('keyboard navigation works across viewports without hijacking text input',async({page})=>{
   for(const width of [1440,900,430,320]){
     await openCaseStudy(page,width,width<=430?844:900);
+    await focusCaseStudyShell(page);
     expect(await activeSlideIndex(page),`initial slide at ${width}px`).toBe(0);
 
     await page.keyboard.press('ArrowRight');
