@@ -31,6 +31,7 @@ assert.ok(migration.includes("position('require_beta_operator_aal2' in v_def)=0"
 assert.ok(migration.includes('MFA_GUARD_PATCH_FAILED'),'migration must fail if an RPC definition cannot be patched');
 assert.ok(migration.includes('MFA_GUARD_VERIFY_FAILED'),'migration must verify every patched RPC before commit');
 assert.ok(migration.includes("position('require_beta_operator_aal2' in pg_get_functiondef(v_oid))=0"),'post-patch verification must inspect the live function definition');
+assert.ok(!migration.includes("E'\\\\nbegin"),'MFA patch must not double-escape newline sequences');
 
 assert.ok(beta.includes('/src/v5/beta-social-auth-bootstrap.js?v=1'));
 assert.ok(beta.includes("import('/src/v5/beta-social-auth.js?v=1')"));
