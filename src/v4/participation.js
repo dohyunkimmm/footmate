@@ -1,8 +1,10 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {MATCHES,createState} from './data.js';
+import {footmatePlatform} from './platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const PARTICIPATION_VERSION='4.4.0';
-const PARTICIPATION_STORAGE_KEY='footmate:v4:participation';
+const PARTICIPATION_STORAGE_KEY=footmatePlatform.storageKeys.participation;
+const participationRepository=footmatePlatform.repositories.participation;
 const params=new URLSearchParams(location.search);
 const requestedMode=params.get('mode');
 const mode=['guided','evidence'].includes(requestedMode)?requestedMode:'real';
@@ -61,35 +63,25 @@ function normalize(candidate={}){
 
 function readParticipation(){
   if(mode!=='real')return emptyState();
-  try{
-    const raw=localStorage.getItem(PARTICIPATION_STORAGE_KEY);
-    return normalize(raw?JSON.parse(raw):{});
-  }catch(_error){
-    return emptyState();
-  }
+  return normalize(participationRepository.read({})||{});
 }
 
 function persist(){
   state.updatedAt=Date.now();
   if(mode!=='real')return;
-  try{localStorage.setItem(PARTICIPATION_STORAGE_KEY,JSON.stringify(state));}catch(_error){}
+  participationRepository.write(state);
 }
 
 function readSession(){
   if(mode!=='real')return createState();
-  try{
-    const raw=localStorage.getItem(NEXT_STORAGE_KEY);
-    return createState(raw?JSON.parse(raw):{});
-  }catch(_error){
-    return createState();
-  }
+  return createState(footmatePlatform.session.read()||{});
 }
 
 function writeSession(patch){
   if(mode!=='real')return null;
   const current=readSession();
   const next={...current,...patch};
-  try{localStorage.setItem(NEXT_STORAGE_KEY,JSON.stringify(next));}catch(_error){}
+  footmatePlatform.session.write(next);
   return next;
 }
 
