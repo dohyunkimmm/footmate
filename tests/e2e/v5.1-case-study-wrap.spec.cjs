@@ -82,26 +82,80 @@ const labelSelectors=[
   '.fm-next-cs-final>span'
 ].join(',');
 
-test('P3 and all 16 Case Study sections keep Korean words intact and structured text readable',async({page})=>{
+const roomyCellSelectors=[
+  '.fm-next-cs-persona>div',
+  '.fm-next-cs-journey>div',
+  '.fm-next-cs-before-after>div',
+  '.fm-next-cs-auth-flow>div',
+  '.fm-next-cs-state-home>div',
+  '.fm-next-cs-modes>div',
+  '.fm-next-cs-metric',
+  '.fm-next-cs-day-states>div',
+  '.fm-next-cs-recovery>div',
+  '.fm-next-cs-outcomes>div'
+].join(',');
+
+const compactCellSelectors=[
+  '.fm-next-cs-stack p',
+  '.fm-next-cs-detail-order span',
+  '.fm-next-cs-ia b'
+].join(',');
+
+const gridGapSelectors=[
+  '.fm-next-cs-persona',
+  '.fm-next-cs-journey',
+  '.fm-next-cs-before-after',
+  '.fm-next-cs-reco',
+  '.fm-next-cs-auth-flow',
+  '.fm-next-cs-state-home',
+  '.fm-next-cs-modes',
+  '.fm-next-cs-ia',
+  '.fm-next-cs-metrics',
+  '.fm-next-cs-day-states',
+  '.fm-next-cs-recovery',
+  '.fm-next-cs-outcomes'
+].join(',');
+
+test('P3 and all 16 Case Study sections keep Korean words intact with readable type and spacing',async({page})=>{
   for(const width of [1440,1180,900,430,390,375,320]){
     await openCaseStudy(page,width,width<=430?844:900);
     for(let index=0;index<16;index+=1){
       await goToSlide(page,index);
       const active=page.locator('.slide.on');
-      const smallText=await active.evaluate((slide,{bodySelectors,labelSelectors})=>{
-        const offenders=[];
+      const audit=await active.evaluate((slide,{bodySelectors,labelSelectors,roomyCellSelectors,compactCellSelectors,gridGapSelectors})=>{
+        const smallText=[];
+        const tightPadding=[];
+        const tightGaps=[];
         for(const el of slide.querySelectorAll(bodySelectors)){
           const size=parseFloat(getComputedStyle(el).fontSize);
-          if(size+0.01<13)offenders.push({text:(el.textContent||'').trim().slice(0,80),size,min:13});
+          if(size+0.01<13)smallText.push({text:(el.textContent||'').trim().slice(0,80),size,min:13});
         }
         for(const el of slide.querySelectorAll(labelSelectors)){
           const size=parseFloat(getComputedStyle(el).fontSize);
-          if(size+0.01<11)offenders.push({text:(el.textContent||'').trim().slice(0,80),size,min:11});
+          if(size+0.01<11)smallText.push({text:(el.textContent||'').trim().slice(0,80),size,min:11});
         }
-        return offenders;
-      },{bodySelectors,labelSelectors});
+        for(const el of slide.querySelectorAll(roomyCellSelectors)){
+          const style=getComputedStyle(el);
+          const values=[style.paddingTop,style.paddingRight,style.paddingBottom,style.paddingLeft].map(parseFloat);
+          if(values.some(value=>value+0.01<14))tightPadding.push({className:el.className||el.tagName,padding:values,min:14});
+        }
+        for(const el of slide.querySelectorAll(compactCellSelectors)){
+          const style=getComputedStyle(el);
+          const vertical=Math.min(parseFloat(style.paddingTop),parseFloat(style.paddingBottom));
+          const horizontal=Math.min(parseFloat(style.paddingLeft),parseFloat(style.paddingRight));
+          if(vertical+0.01<11||horizontal+0.01<12)tightPadding.push({className:el.className||el.tagName,vertical,horizontal,min:'11px vertical / 12px horizontal'});
+        }
+        for(const el of slide.querySelectorAll(gridGapSelectors)){
+          const style=getComputedStyle(el);
+          const gap=Math.min(parseFloat(style.rowGap)||0,parseFloat(style.columnGap)||0);
+          if(gap+0.01<10)tightGaps.push({className:el.className,gap,min:10});
+        }
+        return {smallText,tightPadding,tightGaps};
+      },{bodySelectors,labelSelectors,roomyCellSelectors,compactCellSelectors,gridGapSelectors});
       const wordSplits=await active.evaluate(koreanWordSplitAudit);
-      expect(smallText,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
+      expect(audit.smallText,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
+      expect(audit.tightPadding,`tight cell padding at ${width}px slide ${index+1}`).toEqual([]);
+      expect(audit.tightGaps,`tight structured gap at ${width}px slide ${index+1}`).toEqual([]);
       expect(wordSplits,`Korean word split at ${width}px slide ${index+1}`).toEqual([]);
     }
   }
