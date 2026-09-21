@@ -5,6 +5,7 @@ const migration=fs.readFileSync('supabase/migrations/20260921_v5_2_real_beta_rea
 const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
 const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
 const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
+const betaBootstrap=fs.readFileSync('src/v5/beta-recovery-bootstrap.js','utf8');
 const betaHtml=fs.readFileSync('beta.html','utf8');
 const operatorHtml=fs.readFileSync('beta-operator.html','utf8');
 
@@ -29,6 +30,8 @@ assert.match(client,/\/rest\/v1\/beta_notifications/);
 assert.match(client,/operator_save_match_v2/);
 assert.match(client,/operator_complete_match/);
 
+assert.match(betaBootstrap,/type'\)!=='recovery'/);
+assert.match(betaBootstrap,/footmate:beta:recovery:v1/);
 assert.match(beta,/비밀번호 찾기/);
 assert.match(beta,/가입 인증메일 다시 보내기/);
 assert.match(beta,/경기 체크인/);
@@ -42,9 +45,11 @@ assert.match(operator,/현장 체크인/);
 assert.match(operator,/경기 종료 처리/);
 assert.match(operator,/stopImmediatePropagation/);
 
-assert.match(betaHtml,/beta-readiness\.js/);
-assert.ok(betaHtml.indexOf('beta-readiness.js')<betaHtml.indexOf('beta.js'));
-assert.match(operatorHtml,/beta-operator-readiness\.js/);
-assert.ok(operatorHtml.indexOf('beta-operator-readiness.js')<operatorHtml.indexOf('beta-operator.js'));
+assert.match(betaHtml,/beta-recovery-bootstrap\.js/);
+assert.ok(betaHtml.indexOf('beta-recovery-bootstrap.js')<betaHtml.indexOf('beta.js'));
+assert.match(betaHtml,/import\('\/src\/v5\/beta-readiness\.js\?v=1'\)/);
+assert.match(betaHtml,/data-beta-state/);
+assert.match(operatorHtml,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
+assert.match(operatorHtml,/data-operator-state/);
 
 console.log('v5.2 real beta readiness contracts PASS');
