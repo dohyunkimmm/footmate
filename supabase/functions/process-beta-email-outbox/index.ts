@@ -2,7 +2,7 @@ import {withSupabase} from 'npm:@supabase/server';
 
 const CORS_HEADERS={
   'Access-Control-Allow-Origin':'*',
-  'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':'content-type, x-footmate-worker-token',
   'Access-Control-Allow-Methods':'POST, OPTIONS'
 };
 const RESEND_ENDPOINT='https://api.resend.com/emails';
@@ -24,6 +24,10 @@ function formatStart(value:unknown){
     timeZone:'Asia/Seoul',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false
   }).format(date);
 }
+function constantEqual(left:string,right:string){
+  if(!left||!right||left.length!==right.length)return false;
+  let diff=0;for(let i=0;i<left.length;i++)diff|=left.charCodeAt(i)^right.charCodeAt(i);return diff===0;
+}
 function nextAttemptAt(attempt:number){
   if(attempt>=MAX_ATTEMPTS)return null;
   const seconds=BACKOFF_SECONDS[Math.max(0,Math.min(BACKOFF_SECONDS.length-1,attempt-1))];
@@ -32,7 +36,7 @@ function nextAttemptAt(attempt:number){
 
 async function releaseFailure(ctx:any,row:any,error:unknown){
   const attempt=Number(row.email_attempts||0)+1;
-  await ctx.supabaseAdmin.from('beta_notifications').update({
+  const update={
     email_status:'failed',
     email_attempts:attempt,
     email_last_attempt_at:new Date().toISOString(),
@@ -40,7 +44,9 @@ async function releaseFailure(ctx:any,row:any,error:unknown){
     email_claimed_at:null,
     email_claim_token:null,
     email_last_error:safeError(error)
-  }).eq('id',row.id).eq('email_claim_token',row.email_claim_token);
+  };
+  await ctx.supabaseAdmin.from('beta_notifications').update(update)
+    .eq('id',row.id).eq('email_claim_token',row.email_claim_token);
   return {id:row.id,status:'failed',attempt};
 }
 
@@ -97,33 +103,27 @@ async function sendOne(ctx:any,row:any,apiKey:string,from:string,betaUrl:string)
   return {id:row.id,status:'sent',attempt};
 }
 
-const authenticated=withSupabase({auth:'user'},async(req,ctx)=>{
+const worker=withSupabase({auth:'none'},async(req,ctx)=>{
   if(req.method!=='POST')return Response.json({code:'METHOD_NOT_ALLOWED',message:'POST 요청만 허용됩니다.'},{status:405,headers:{...CORS_HEADERS,allow:'POST'}});
-  const actorId=text(ctx.userClaims?.id);
-  if(!actorId)return Response.json({code:'AUTH_REQUIRED',message:'로그인이 필요합니다.'},{status:401,headers:CORS_HEADERS});
+
+  const supplied=text(req.headers.get('x-footmate-worker-token'));
+  if(!supplied)return Response.json({code:'WORKER_AUTH_REQUIRED',message:'Worker authentication is required.'},{status:401,headers:CORS_HEADERS});
+  const {data:expected,error:tokenError}=await ctx.supabaseAdmin.rpc('get_beta_email_worker_token');
+  if(tokenError||!constantEqual(supplied,text(expected))){
+    return Response.json({code:'WORKER_AUTH_INVALID',message:'Worker authentication failed.'},{status:401,headers:CORS_HEADERS});
+  }
 
   const apiKey=text(Deno.env.get('RESEND_API_KEY'));
   if(!apiKey)return Response.json({code:'EMAIL_PROVIDER_NOT_CONFIGURED',message:'Transactional email provider is not configured.'},{status:503,headers:CORS_HEADERS});
   const from=text(Deno.env.get('FOOTMATE_EMAIL_FROM'))||DEFAULT_FROM;
   const betaUrl=text(Deno.env.get('FOOTMATE_BETA_URL'))||DEFAULT_BETA_URL;
-  const body=await req.json().catch(()=>({}));
-  const participationId=text(body?.participation_id)||null;
-  const matchId=text(body?.match_id)||null;
-
-  const {data:operatorRow}=await ctx.supabaseAdmin.from('operators').select('user_id').eq('user_id',actorId).maybeSingle();
-  const isOperator=Boolean(operatorRow?.user_id);
-  const scopeUserId=isOperator&&(participationId||matchId)?null:actorId;
 
   const {data:rows,error}=await ctx.supabaseAdmin.rpc('claim_beta_notification_emails',{
-    p_limit:MAX_BATCH,
-    p_user_id:scopeUserId,
-    p_match_id:matchId,
-    p_participation_id:participationId
+    p_limit:MAX_BATCH,p_user_id:null,p_match_id:null,p_participation_id:null
   });
   if(error)return Response.json({code:'EMAIL_OUTBOX_CLAIM_FAILED',message:'메일 대기열을 확보하지 못했습니다.'},{status:500,headers:CORS_HEADERS});
-  const claimed=Array.isArray(rows)?rows:[];
-  if(!isOperator&&claimed.some(row=>row.user_id!==actorId))return Response.json({code:'EMAIL_DISPATCH_FORBIDDEN',message:'다른 사용자의 알림 메일을 발송할 수 없습니다.'},{status:403,headers:CORS_HEADERS});
 
+  const claimed=Array.isArray(rows)?rows:[];
   const results=[];
   for(const row of claimed)results.push(await sendOne(ctx,row,apiKey,from,betaUrl));
   return Response.json({processed:results.length,sent:results.filter(item=>item.status==='sent').length,failed:results.filter(item=>item.status==='failed').length},{headers:CORS_HEADERS});
@@ -132,7 +132,7 @@ const authenticated=withSupabase({auth:'user'},async(req,ctx)=>{
 export default {
   async fetch(req:Request){
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers:CORS_HEADERS});
-    const response=await authenticated(req);
+    const response=await worker(req);
     const headers=new Headers(response.headers);for(const [key,value] of Object.entries(CORS_HEADERS))headers.set(key,value);
     return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
   }
