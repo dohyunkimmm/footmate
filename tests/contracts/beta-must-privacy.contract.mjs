@@ -34,6 +34,9 @@ for(const required of [
   "ctx.userClaims?.id",
   'ctx.supabaseAdmin.auth.admin.deleteUser(userId)',
   "req.method!=='POST'",
+  "req.method==='OPTIONS'",
+  "'Access-Control-Allow-Origin':'*'",
+  "'Access-Control-Allow-Methods':'POST, OPTIONS'",
   "code:'ACCOUNT_DELETE_FAILED'"
 ])assert.ok(fn.includes(required),`missing delete-account boundary: ${required}`);
 for(const forbidden of ['SUPABASE_SERVICE_ROLE_KEY','SUPABASE_SECRET_KEY','service_role']){
