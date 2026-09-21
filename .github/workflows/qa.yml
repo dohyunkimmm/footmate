@@ -46,6 +46,8 @@ jobs:
         run: node tests/contracts/v5.1-ai-assistant.contract.cjs
       - name: Run v5.2 real beta readiness contracts
         run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs
+      - name: Run beta transactional email contracts
+        run: node tests/contracts/beta-transactional-email.contract.mjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
