@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -60,7 +60,7 @@ test('legacy v4 browser state migrates to version-neutral keys and stays rollbac
   expect(migrated.migration.discovery.source).toBe('legacy');
   expect(migrated.migration.interaction.source).toBe('legacy');
 
-  await page.locator('[data-action="nav-discover"]').click();
+  await page.getByRole('button',{name:'전체 보기'}).click();
   const mirroredAfterLegacyWrite=await page.evaluate(()=>({
     canonical:localStorage.getItem('footmate:session'),
     legacy:localStorage.getItem('footmate:v4:session')
