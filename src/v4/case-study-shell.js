@@ -47,14 +47,7 @@
     return target.getAttribute('role')==='textbox';
   }
 
-  window.goTo=goTo;
-  document.documentElement.dataset.fmNextCaseStudy='true';
-  toc.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
-  dots.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
-  prev?.addEventListener('click',()=>goTo(current-1));
-  next?.addEventListener('click',()=>goTo(current+1));
-  // Keep shell navigation viewport-independent while preserving editing interactions.
-  document.addEventListener('keydown',event=>{
+  function handleKeydown(event){
     if(event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
     if(isEditingTarget(event.target))return;
     if(event.key==='ArrowRight'||event.key==='PageDown'){
@@ -66,6 +59,15 @@
       event.preventDefault();
       goTo(current-1);
     }
-  });
+  }
+
+  window.goTo=goTo;
+  document.documentElement.dataset.fmNextCaseStudy='true';
+  toc.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
+  dots.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
+  prev?.addEventListener('click',()=>goTo(current-1));
+  next?.addEventListener('click',()=>goTo(current+1));
+  // Capture at the window boundary so shell navigation is not lost to nested handlers.
+  window.addEventListener('keydown',handleKeydown,{capture:true});
   goTo(0);
 })();
