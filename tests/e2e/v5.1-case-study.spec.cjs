@@ -14,6 +14,20 @@ async function goToSlide(page,index){
   await expect(page.locator('.slide.on')).toHaveCount(1);
 }
 
+async function activeSlideIndex(page){
+  return page.locator('.slide').evaluateAll(slides=>slides.findIndex(slide=>slide.classList.contains('on')));
+}
+
+async function focusCaseStudyShell(page){
+  await page.evaluate(()=>{
+    window.focus();
+    const shell=document.querySelector('.viewer');
+    if(!(shell instanceof HTMLElement))return;
+    shell.setAttribute('tabindex','-1');
+    shell.focus({preventScroll:true});
+  });
+}
+
 test('Case Study keeps a product-first 16-section narrative without release labels',async({page})=>{
   await openCaseStudy(page);
   await expect(page).toHaveTitle('FootMate | AI-assisted Futsal Match Discovery Case Study');
@@ -29,7 +43,37 @@ test('Case Study keeps a product-first 16-section narrative without release labe
   expect(visible).not.toMatch(/\bV4\b/);
 });
 
-test('structured Case Study content keeps readable type and no horizontal overflow',async({page})=>{
+test('keyboard navigation works across viewports without hijacking text input',async({page})=>{
+  for(const width of [1440,900,430,320]){
+    await openCaseStudy(page,width,width<=430?844:900);
+    await focusCaseStudyShell(page);
+    expect(await activeSlideIndex(page),`initial slide at ${width}px`).toBe(0);
+
+    await page.keyboard.press('ArrowRight');
+    expect(await activeSlideIndex(page),`ArrowRight at ${width}px`).toBe(1);
+
+    await page.keyboard.press('PageDown');
+    expect(await activeSlideIndex(page),`PageDown at ${width}px`).toBe(2);
+
+    await page.keyboard.press('ArrowLeft');
+    expect(await activeSlideIndex(page),`ArrowLeft at ${width}px`).toBe(1);
+
+    await page.keyboard.press('PageUp');
+    expect(await activeSlideIndex(page),`PageUp at ${width}px`).toBe(0);
+
+    await page.evaluate(()=>{
+      const input=document.createElement('input');
+      input.setAttribute('data-keyboard-guard-probe','true');
+      document.body.appendChild(input);
+      input.focus();
+    });
+    await page.keyboard.press('ArrowRight');
+    expect(await activeSlideIndex(page),`focused input should keep ArrowRight at ${width}px`).toBe(0);
+    await page.locator('[data-keyboard-guard-probe="true"]').evaluate(input=>input.remove());
+  }
+});
+
+test('structured Case Study content keeps readable type, Korean words, and no horizontal overflow',async({page})=>{
   const floors=[
     {
       min:13,
@@ -89,12 +133,44 @@ test('structured Case Study content keeps readable type and no horizontal overfl
     '.fm-next-cs-recovery',
     '.fm-next-cs-outcomes'
   ].join(',');
+  const wrapSelectors=[
+    '.fm-next-cs-persona span',
+    '.fm-next-cs-persona b',
+    '.fm-next-cs-journey h3',
+    '.fm-next-cs-journey p',
+    '.fm-next-cs-stack p',
+    '.fm-next-cs-detail-order span',
+    '.fm-next-cs-auth-flow small',
+    '.fm-next-cs-auth-flow b',
+    '.fm-next-cs-state-home small',
+    '.fm-next-cs-state-home b',
+    '.fm-next-cs-modes small',
+    '.fm-next-cs-modes h3',
+    '.fm-next-cs-modes p',
+    '.fm-next-cs-ia b',
+    '.fm-next-cs-ia span',
+    '.fm-next-cs-metric span',
+    '.fm-next-cs-day-states small',
+    '.fm-next-cs-day-states b',
+    '.fm-next-cs-day-states p',
+    '.fm-next-cs-recovery b',
+    '.fm-next-cs-recovery span',
+    '.fm-next-cs-outcomes b',
+    '.fm-next-cs-outcomes p',
+    '.fm-next-cs-quality span',
+    '.fm-next-cs-final>span',
+    '.fm-next-cs-final>b',
+    '.fm-next-cs-loop b',
+    '.fm-next-cs-loop span',
+    '.fm-next-cs-agent b',
+    '.fm-next-cs-state-chain span'
+  ].join(',');
 
-  for(const width of [1440,1180,430,390,375,320]){
+  for(const width of [1440,1180,900,430,390,375,320]){
     await openCaseStudy(page,width,width<=430?844:900);
     for(let index=0;index<16;index+=1){
       await goToSlide(page,index);
-      const metrics=await page.locator('.slide.on').evaluate((slide,{groups,layoutSelectors})=>{
+      const metrics=await page.locator('.slide.on').evaluate((slide,{groups,layoutSelectors,wrapSelectors})=>{
         const offenders=[];
         for(const group of groups){
           for(const el of slide.querySelectorAll(group.selector)){
@@ -109,15 +185,52 @@ test('structured Case Study content keeps readable type and no horizontal overfl
           const overflow=el.scrollWidth-el.clientWidth;
           if(overflow>1)layoutOverflow.push({className:el.className,overflow});
         }
+        const wrapOffenders=[];
+        for(const el of slide.querySelectorAll(wrapSelectors)){
+          const style=getComputedStyle(el);
+          if(style.wordBreak!=='keep-all'){
+            wrapOffenders.push({text:(el.textContent||'').trim().replace(/\s+/g,' ').slice(0,80),reason:`word-break:${style.wordBreak}`});
+            continue;
+          }
+          const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+          while(walker.nextNode()){
+            const node=walker.currentNode;
+            const value=node.nodeValue||'';
+            for(const match of value.matchAll(/[가-힣]{2,}/g)){
+              const start=match.index||0;
+              const word=match[0];
+              let previousTop=null;
+              for(let offset=0;offset<word.length;offset+=1){
+                const range=document.createRange();
+                range.setStart(node,start+offset);
+                range.setEnd(node,start+offset+1);
+                const rect=range.getBoundingClientRect();
+                if(previousTop!==null&&Math.abs(rect.top-previousTop)>2){
+                  wrapOffenders.push({text:word,reason:'Hangul word split across lines'});
+                  break;
+                }
+                previousTop=rect.top;
+              }
+            }
+          }
+        }
         return {
           documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
           layoutOverflow,
-          offenders
+          offenders,
+          wrapOffenders
         };
-      },{groups:floors,layoutSelectors});
+      },{groups:floors,layoutSelectors,wrapSelectors});
       expect(metrics.documentOverflow,`document overflow at ${width}px slide ${index+1}`).toBeLessThanOrEqual(1);
       expect(metrics.layoutOverflow,`structured layout overflow at ${width}px slide ${index+1}`).toEqual([]);
       expect(metrics.offenders,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
+      expect(metrics.wrapOffenders,`broken Korean word at ${width}px slide ${index+1}`).toEqual([]);
     }
   }
+
+  await openCaseStudy(page,1440,900);
+  await goToSlide(page,2);
+  const personaRisk=page.locator('.fm-next-cs-persona b').filter({hasText:'경기 당일 변수'});
+  await expect(personaRisk).toHaveCount(1);
+  await expect(personaRisk).toHaveCSS('word-break','keep-all');
 });

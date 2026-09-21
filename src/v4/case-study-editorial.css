@@ -153,6 +153,42 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
 .fm-next-cs-state-chain span{font-size:14px;line-height:1.5}
 .fm-next-cs-metric{padding:16px}
 
+/* Preserve Korean words/phrases inside compact structured layouts. */
+.fm-next-cs-persona span,
+.fm-next-cs-persona b,
+.fm-next-cs-journey h3,
+.fm-next-cs-journey p,
+.fm-next-cs-stack p,
+.fm-next-cs-detail-order span,
+.fm-next-cs-auth-flow small,
+.fm-next-cs-auth-flow b,
+.fm-next-cs-state-home small,
+.fm-next-cs-state-home b,
+.fm-next-cs-modes small,
+.fm-next-cs-modes h3,
+.fm-next-cs-modes p,
+.fm-next-cs-ia b,
+.fm-next-cs-ia span,
+.fm-next-cs-metric span,
+.fm-next-cs-day-states small,
+.fm-next-cs-day-states b,
+.fm-next-cs-day-states p,
+.fm-next-cs-recovery b,
+.fm-next-cs-recovery span,
+.fm-next-cs-outcomes b,
+.fm-next-cs-outcomes p,
+.fm-next-cs-quality span,
+.fm-next-cs-final>span,
+.fm-next-cs-final>b,
+.fm-next-cs-loop b,
+.fm-next-cs-loop span,
+.fm-next-cs-agent b,
+.fm-next-cs-state-chain span{
+  word-break:keep-all;
+  overflow-wrap:break-word;
+  line-break:strict;
+}
+
 @media(min-width:1181px){
   .fm-next-story{
     width:min(1180px,100%);
