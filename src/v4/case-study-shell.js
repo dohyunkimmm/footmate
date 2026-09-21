@@ -53,6 +53,7 @@
   dots.forEach((item,i)=>item.addEventListener('click',()=>goTo(i)));
   prev?.addEventListener('click',()=>goTo(current-1));
   next?.addEventListener('click',()=>goTo(current+1));
+  // Keep shell navigation viewport-independent while preserving editing interactions.
   document.addEventListener('keydown',event=>{
     if(event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
     if(isEditingTarget(event.target))return;
