@@ -11,6 +11,7 @@ const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
 const betaBootstrap=fs.readFileSync('src/v5/beta-recovery-bootstrap.js','utf8');
 const betaHtml=fs.readFileSync('beta.html','utf8');
 const operatorHtml=fs.readFileSync('beta-operator.html','utf8');
+const operatorMfa=fs.existsSync('src/v5/beta-operator-mfa.js')?fs.readFileSync('src/v5/beta-operator-mfa.js','utf8'):'';
 
 for(const column of ['cancel_cutoff_at','check_in_opens_at','checked_in_at'])assert.match(migration,new RegExp(column));
 for(const rpc of ['check_in_participation','operator_check_in_participant','operator_complete_match','mark_beta_notification_read','operator_save_match_v2'])assert.match(migration,new RegExp(`function public\\.${rpc}`));
@@ -58,7 +59,13 @@ assert.match(betaHtml,/beta-recovery-bootstrap\.js/);
 assert.ok(betaHtml.indexOf('beta-recovery-bootstrap.js')<betaHtml.indexOf('beta.js'));
 assert.match(betaHtml,/import\('\/src\/v5\/beta-readiness\.js\?v=1'\)/);
 assert.match(betaHtml,/data-beta-state/);
-assert.match(operatorHtml,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
 assert.match(operatorHtml,/data-operator-state/);
+if(operatorMfa){
+  assert.match(operatorHtml,/beta-operator-mfa\.js\?v=1/);
+  assert.match(operatorMfa,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
+  assert.ok(operatorMfa.indexOf("import('/src/v5/beta-operator.js?v=1')")<operatorMfa.indexOf("import('/src/v5/beta-operator-readiness.js?v=1')"));
+}else{
+  assert.match(operatorHtml,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
+}
 
 console.log('v5.2 real beta readiness contracts PASS');
