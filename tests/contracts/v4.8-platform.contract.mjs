@@ -45,6 +45,16 @@ platform.repositories.interaction.clear();
 assert.equal(provider.snapshot()[STORAGE_KEYS.interaction],undefined);
 assert.equal(provider.snapshot()[LEGACY_STORAGE_KEYS.interaction],undefined);
 
+const divergentProvider=createMemoryStorageProvider({
+  [STORAGE_KEYS.discovery]:JSON.stringify({sort:'distance',position:'MF'}),
+  [LEGACY_STORAGE_KEYS.discovery]:JSON.stringify({sort:'fit',position:'FW'})
+});
+const divergentPlatform=createFootMatePlatform({provider:divergentProvider});
+assert.equal(divergentPlatform.storageMigration.discovery.source,'canonical');
+assert.equal(divergentPlatform.storageMigration.discovery.mirroredLegacy,true);
+assert.deepEqual(JSON.parse(divergentProvider.snapshot()[LEGACY_STORAGE_KEYS.discovery]),JSON.parse(divergentProvider.snapshot()[STORAGE_KEYS.discovery]));
+assert.deepEqual(divergentPlatform.repositories.discovery.read({}),{sort:'distance',position:'MF'});
+
 const scratch=createJsonRepository(provider,'footmate:test:repository');
 scratch.write({ok:true,count:1});
 assert.deepEqual(scratch.read({}),{ok:true,count:1});
