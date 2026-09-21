@@ -146,7 +146,7 @@ export function createBetaReadinessClient({url,publishableKey,fetchImpl=globalTh
     }).then(rows=>Array.isArray(rows)?rows[0]||null:rows),
     listParticipants:({accessToken,matchId})=>{
       const query=new URLSearchParams();
-      query.set('select','id,match_id,user_id,position,status,joined_at,canceled_at,checked_in_at,profiles(id,display_name,region,position,level)');
+      query.set('select','id,match_id,user_id,position,status,joined_at,canceled_at,checked_in_at');
       query.set('match_id',`eq.${required(matchId,'match id')}`);
       query.set('status','eq.confirmed');
       query.set('order','joined_at.asc');
