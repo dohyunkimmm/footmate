@@ -12,17 +12,20 @@
 <link rel="stylesheet" href="/src/v5/beta.css?v=1">
 <link rel="stylesheet" href="/src/v5/beta-readiness.css?v=1">
 <link rel="stylesheet" href="/src/v5/beta-growth.css?v=1">
+<link rel="stylesheet" href="/src/v5/beta-auth.css?v=1">
 </head>
 <body>
 <main id="footmate-beta" class="fm-beta" data-beta-state="booting" aria-live="polite"></main>
 <noscript>FootMate Closed Beta를 이용하려면 JavaScript를 켜주세요.</noscript>
 <script src="/src/v5/beta-recovery-bootstrap.js?v=1"></script>
+<script src="/src/v5/beta-social-auth-bootstrap.js?v=1"></script>
 <script type="module" src="/src/v5/beta.js?v=1"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
   await import('/src/v5/beta-readiness.js?v=1');
   await import('/src/v5/beta-growth.js?v=1');
+  await import('/src/v5/beta-social-auth.js?v=1');
 };
 if(root.dataset.betaState!=='booting')launch();
 else{
