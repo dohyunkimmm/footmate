@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="/src/v5/beta.css?v=1">
 <link rel="stylesheet" href="/src/v5/beta-readiness.css?v=1">
+<link rel="stylesheet" href="/src/v5/beta-growth.css?v=1">
 </head>
 <body>
 <main id="footmate-beta" class="fm-beta" data-beta-state="booting" aria-live="polite"></main>
@@ -19,7 +20,10 @@
 <script type="module" src="/src/v5/beta.js?v=1"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta');
-const launch=()=>import('/src/v5/beta-readiness.js?v=1');
+const launch=async()=>{
+  await import('/src/v5/beta-readiness.js?v=1');
+  await import('/src/v5/beta-growth.js?v=1');
+};
 if(root.dataset.betaState!=='booting')launch();
 else{
   const observer=new MutationObserver(()=>{
