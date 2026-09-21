@@ -1,4 +1,5 @@
 import {connectedMatchdayPlatform} from '../application/connected-platform.js';
+import {footmatePlatform} from '../../v4/platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 document.documentElement.dataset.footmateV5Version=connectedMatchdayPlatform.version;
@@ -9,12 +10,11 @@ if(root){
   root.dataset.providerBoundary='explicit';
 }
 
-const readJson=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}};
 function currentJourneyCandidate(){
-  const session=readJson('footmate:v4:session');
-  const participation=readJson('footmate:v4:participation');
-  const matchday=readJson('footmate:v4:matchday');
-  const returnLoop=readJson('footmate:v4:return');
+  const session=footmatePlatform.session.read()||{};
+  const participation=footmatePlatform.repositories.participation.read({})||{};
+  const matchday=footmatePlatform.repositories.matchday.read({})||{};
+  const returnLoop=footmatePlatform.repositories.returnLoop.read({})||{};
   return {
     recommendation:{selectedMatchId:session.selectedMatchId||participation.matchId||null},
     participation:{status:participation.status||'idle',matchId:participation.matchId||session.joinedMatchId||null,attemptId:participation.attemptId||null},
