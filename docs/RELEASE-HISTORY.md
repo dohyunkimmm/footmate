@@ -38,19 +38,40 @@
 - Connected user runtime: PR #133
 - Production Chromium smoke selector fix: PR #134
 - Operator blocker closure: PR #135 · PR QA #471 · run `35543950160` · PASS
-- Current product/runtime baseline: `b84b571c4d62070109089cf515fa9eb63f338f53`
+- Product/runtime baseline at blocker closure: `b84b571c4d62070109089cf515fa9eb63f338f53`
 - Post-merge QA: FootMate QA #472 · run `35544089076` · PASS
 - Regression 36: PASS
 - Browser E2E + axe: PASS
 - Supabase: `beta_operator_console` migration applied; Auth/profile/match/position capacity/participation/user join-cancel/operator match-participant operations connected
 - Security boundary: RLS + authenticated RPC; operator RPC는 추가로 `public.operators` allowlist를 검증하며 browser service-role credentials 없음
 - Operator provisioning boundary: normal Beta account를 만든 뒤 `public.operators`에 명시적으로 allowlist; self-service admin bootstrap 없음
-- Exact Vercel Production: `dpl_AA4AbahVZK65imQ1Tb12TMFBs6Zm` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · READY
+- Exact Vercel Production at blocker closure: `dpl_AA4AbahVZK65imQ1Tb12TMFBs6Zm` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · READY
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
-- Render backup: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
+- Render backup at blocker closure: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
 - Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동
+
+### Closed Beta Must hardening · 2026-09-21
+
+- Scope: network timeout/offline recovery, real DB cancellation hotfix, operation audit trail, freshness recovery, 8-character signup minimum, authenticated account deletion, audit FK indexing, Case Study/product fact sync preparation
+- Must runtime PRs: #141 · #142 · #144
+- Current verified runtime baseline: `ef091b85ce0c8476bafdb6ed1c10cf590015cd80`
+- Post-merge QA: FootMate QA run `35547957515` · final rerun PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Exact Vercel Production: `dpl_CEaaaDf7byTQxaJcZAGYK5ZwXj8H` · SHA `ef091b85ce0c8476bafdb6ed1c10cf590015cd80` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Supabase migration: `beta_operation_audit_indexes` applied; audit foreign-key coverage warnings cleared
+- Supabase Edge Function: `delete-account` ACTIVE with JWT verification enabled; browser에 privileged Auth key를 노출하지 않음
+- Privacy boundary: Beta UI는 저장 데이터 범위를 명시하고, 계정 삭제는 사용자의 명시적 확인 뒤 server-side Auth deletion으로 처리하며 성공 시 local session을 제거
+- Observability boundary: `beta_operation_events`는 event type / actor·subject UUID / match·participation UUID / position / time 중심의 최소 audit를 저장하고 email/name을 payload에 저장하지 않음
+- Security advisor remaining warnings: authenticated SECURITY DEFINER RPC 5개는 의도된 user/operator transaction entrypoint이며 각 함수 내부 auth/operator 검증을 유지; leaked-password protection은 현재 Supabase 프로젝트에서 비활성
+- Automated responsive coverage: 320 / 375 / 390 / 430px PASS
+- Manual gates: 물리 기기와 수동 접근성 검증은 자동 QA와 분리하며 이 문서에서 완료로 주장하지 않음
+- Integration boundary: `/app`는 sample/mock 경계를 유지하고 `/beta`는 Supabase connected; 실제 PG·notification delivery·external analytics는 미연동
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
@@ -271,6 +292,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.

@@ -48,6 +48,9 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - postgame Return과 browser-local personalization
 - Closed Beta email/password Auth, profile persistence, live match read, position-aware join/cancel, reload session recovery
 - Closed Beta operator match create/edit/cancel, MF/FW/DF/GK capacity allocation, participant cancel/capacity recovery
+- Closed Beta request timeout / offline recovery / stale-tab refresh / last-sync state
+- Closed Beta account deletion with authenticated server-side Edge Function and local-session cleanup
+- Closed Beta minimal operation audit trail without email/name payloads
 - Real / Guided / Evidence mode 분리
 - responsive 320 / 375 / 390 / 430px
 - Browser E2E + axe accessibility regression
@@ -63,6 +66,8 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - `/app` persistence: **browser local state**
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
 - `/beta` join/cancel: **database transaction + row lock + RLS**, free-participation only
+- `/beta` account deletion: **authenticated Supabase Edge Function**, privileged Auth deletion remains server-side
+- `/beta` operation traceability: **operator-readable DB audit trail** with user/match UUID and event/time only; email/name are not stored in audit payloads
 - `/beta/operator`: **Supabase connected** — explicit `public.operators` allowlist, atomic match / participant RPC, browser service-role credentials 없음
 - real OAuth / real PG / notification delivery / external analytics: **미연동**
 - Render: static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
@@ -71,34 +76,37 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 
 FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완결성과 복구 가능성을 release 기준으로 관리합니다.
 
-Release gate는 다음을 포함합니다.
+자동 release gate는 다음을 포함합니다.
 
 - Regression suite
 - Browser E2E + axe
 - responsive 320 / 375 / 390 / 430px
 - Deep Link / State Consistency / persistence restoration
 - Closed Beta backend config / Auth / join / cancel / reload recovery
+- Closed Beta network timeout / offline / duplicate-action boundary / stale-tab refresh
+- Closed Beta account deletion contract and audit traceability
 - Closed Beta operator allowlist / match create-edit-cancel / participant cancel / capacity recovery
 - Supabase RLS / RPC security boundary
 - AI connected / provider fallback / browser fallback / timeout recovery
 - exact Production HTTP / AI inference / Chromium smoke
 - Vercel exact SHA verification
-- Render backup verification
+- 필요한 경우 Render backup verification
 
-Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소 경로는 Supabase에 연결되어 있습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, PG와 notification은 이후 별도 release gate로 다룹니다.
+Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소 경로는 Supabase에 연결되어 있습니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며, PG와 notification은 이후 별도 release gate로 다룹니다. 물리 기기와 수동 접근성 점검은 자동 gate와 구분해 별도 manual QA로 관리합니다.
 
 ## Architecture
 
 - `api/ai-match-assistant.js` — AI Gateway, OIDC, provider fallback, request/time/cost guardrails
 - `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
 - `src/v5/ai-match-assistant.js` — AI UI/application bridge, browser timeout/fallback, reload restoration
-- `src/v5/beta.js` — Closed Beta Auth / profile / match / participation UI state
+- `src/v5/beta.js` — Closed Beta Auth / profile / match / participation / freshness / account-data UI state
 - `src/v5/beta-operator.js` — allowlisted operator match / participant management UI state
-- `src/v5/infrastructure/supabase-beta.js` — Supabase Auth / REST / RPC browser adapter
+- `src/v5/infrastructure/supabase-beta.js` — Supabase Auth / REST / RPC / account-deletion browser adapter
 - `src/v5/domain/beta-match-contract.js` — connected match normalization contract
-- `supabase/migrations/` — profiles / operators / matches / match_slots / participation, RLS and atomic user/operator RPC ownership
+- `supabase/functions/delete-account/` — authenticated user account deletion; privileged Auth admin operation stays server-side
+- `supabase/migrations/` — profiles / operators / matches / match_slots / participation / audit trail, RLS and atomic user/operator RPC ownership
 - `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
-- `src/v5/infrastructure/providers.js` — auth/payment/capacity/notification provider registry
+- `src/v5/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
 - `src/v4/recommendation.js` — deterministic ranking Source of Truth for the current `/app` runtime
 - `src/v4/data.js` — current `/app` sample match records and user-visible recommendation reasons
 
@@ -109,4 +117,4 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - Current internal release identifier: **v5.1.1**
 - Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
 - Documentation index: `docs/README.md`
-- Release flow: `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → Render verification → durable release history sync`
+- Release flow: `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → durable release history sync`

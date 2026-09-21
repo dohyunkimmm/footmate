@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import {CONNECTED_PLATFORM_VERSION,DOMAIN_OWNERSHIP,JOURNEY_CONTRACT,evaluateJourneyConsistency} from '../../src/v5/domain/journey.js';
 import {createProviderRegistry} from '../../src/v5/infrastructure/providers.js';
 import {createConnectedMatchdayPlatform} from '../../src/v5/application/connected-platform.js';
@@ -26,4 +27,15 @@ assert.equal(platform.version,'5.1.1');
 assert.equal(platform.architecture,'connected-capable');
 assert.equal(platform.connectionMode,'mock-only');
 assert.equal(platform.externalProductionFeatures,false);
+
+const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
+for(const required of [
+  '/app의 auth/payment/capacity/notification provider는 deterministic mock',
+  '/beta는 Supabase Auth·Postgres·RLS·atomic RPC',
+  '/beta/operator는 allowlist 운영 경로',
+  '실제 PG·notification delivery·external analytics는 아직 연결하지 않았습니다.',
+  'account deletion boundary',
+  '물리 기기와 수동 접근성 점검은 별도 manual QA'
+])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
+
 console.log('PASS v5.1.1 connected platform contracts');
