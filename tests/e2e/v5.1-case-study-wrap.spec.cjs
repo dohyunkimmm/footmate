@@ -16,6 +16,7 @@ async function goToSlide(page,index){
 
 test('all 16 Case Study sections pass full structured layout audit',async({page})=>{
   const widths=[1440,1180,900,430,390,375,320];
+  const failures=[];
   for(const width of widths){
     await openCaseStudy(page,width,width<=430?844:900);
     for(let index=0;index<16;index+=1){
@@ -122,7 +123,7 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
           const columnGap=parseFloat(style.columnGap)||0;
           const usedGap=Math.min(rowGap,columnGap);
           const min=style.display==='grid'?10:8;
-          if(usedGap+0.01<min)tightGaps.push({className:el.className||el.tagName,gap:usedGap,min});
+          if(usedGap+0.01<min)tightGaps.push({className:el.className||el.tagName,display:style.display,gap:usedGap,min});
         }
 
         const overflow=[];
@@ -150,25 +151,28 @@ test('all 16 Case Study sections pass full structured layout audit',async({page}
         };
       });
 
-      expect(audit.structuralRootCount,`structured coverage at ${width}px P${index+1}`).toBeGreaterThan(0);
-      expect(audit.surfaceCellCount,`cell coverage at ${width}px P${index+1}`).toBeGreaterThan(0);
-      expect(audit.auditedTextCount,`text coverage at ${width}px P${index+1}`).toBeGreaterThan(0);
-      expect(audit.documentOverflow,`document overflow at ${width}px P${index+1}`).toBeLessThanOrEqual(1);
-      expect(audit.smallText,`small structured text at ${width}px P${index+1}`).toEqual([]);
-      expect(audit.wordSplits,`Korean word split at ${width}px P${index+1}`).toEqual([]);
-      expect(audit.tightPadding,`tight structured padding at ${width}px P${index+1}`).toEqual([]);
-      expect(audit.tightGaps,`tight structured gap at ${width}px P${index+1}`).toEqual([]);
-      expect(audit.overflow,`structured horizontal overflow at ${width}px P${index+1}`).toEqual([]);
-      expect(audit.clipping,`structured vertical clipping at ${width}px P${index+1}`).toEqual([]);
+      const pageId=`${width}px P${index+1}`;
+      if(audit.structuralRootCount<=0)failures.push({page:pageId,type:'structured coverage',details:audit.structuralRootCount});
+      if(audit.surfaceCellCount<=0)failures.push({page:pageId,type:'cell coverage',details:audit.surfaceCellCount});
+      if(audit.auditedTextCount<=0)failures.push({page:pageId,type:'text coverage',details:audit.auditedTextCount});
+      if(audit.documentOverflow>1)failures.push({page:pageId,type:'document overflow',details:audit.documentOverflow});
+      if(audit.smallText.length)failures.push({page:pageId,type:'small structured text',details:audit.smallText});
+      if(audit.wordSplits.length)failures.push({page:pageId,type:'Korean word split',details:audit.wordSplits});
+      if(audit.tightPadding.length)failures.push({page:pageId,type:'tight structured padding',details:audit.tightPadding});
+      if(audit.tightGaps.length)failures.push({page:pageId,type:'tight structured gap',details:audit.tightGaps});
+      if(audit.overflow.length)failures.push({page:pageId,type:'structured horizontal overflow',details:audit.overflow});
+      if(audit.clipping.length)failures.push({page:pageId,type:'structured vertical clipping',details:audit.clipping});
     }
   }
 
   await openCaseStudy(page,1440,900);
   await goToSlide(page,0);
-  await expect(page.locator('.fm-next-cover-proof>div')).toHaveCount(3);
+  if(await page.locator('.fm-next-cover-proof>div').count()!==3)failures.push({page:'1440px P1',type:'cover proof count',details:'expected 3'});
 
   await goToSlide(page,2);
   const risk=page.locator('.fm-next-cs-persona b').filter({hasText:'경기 당일 변수'});
-  await expect(risk).toHaveCount(1);
-  await expect(risk).toHaveCSS('word-break','keep-all');
+  if(await risk.count()!==1)failures.push({page:'1440px P3',type:'P3 wrap target missing',details:'경기 당일 변수'});
+  else if(await risk.evaluate(el=>getComputedStyle(el).wordBreak)!=='keep-all')failures.push({page:'1440px P3',type:'P3 word-break',details:await risk.evaluate(el=>getComputedStyle(el).wordBreak)});
+
+  expect(failures,'full P1-P16 layout audit failures').toEqual([]);
 });
