@@ -151,6 +151,7 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
   font-size:11px;
   line-height:1.4;
 }
+.fm-next-cover-proof b,
 .fm-next-cover-proof span{font-size:12px;line-height:1.5}
 .fm-next-cs-persona b,
 .fm-next-cs-auth-flow b,
@@ -169,11 +170,13 @@ html[data-fm-next-case-study="true"] .toc-s{color:#8ca094}
 .fm-next-cs-metric{padding:16px}
 
 /* Keep structured rows and cells roomy enough after the type floor increase. */
+.fm-next-cover-proof,
 .fm-next-cs-journey,
 .fm-next-cs-auth-flow,
 .fm-next-cs-state-home,
 .fm-next-cs-ia,
 .fm-next-cs-metrics{gap:10px}
+.fm-next-cover-proof div{padding:14px 15px}
 .fm-next-cs-journey>div{padding:16px 14px}
 .fm-next-cs-stack p{padding:13px 14px}
 .fm-next-cs-detail-order span{padding:11px 13px}
