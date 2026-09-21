@@ -47,17 +47,70 @@ function koreanWordSplitAudit(slide){
   return offenders;
 }
 
-test('P3 and all 16 Case Study sections keep Korean words intact across release widths',async({page})=>{
+const bodySelectors=[
+  '.fm-next-cs-card p',
+  '.fm-next-cs-jtbd p',
+  '.fm-next-cs-scope p',
+  '.fm-next-cs-sticky p',
+  '.fm-next-cs-note',
+  '.fm-next-cs-before-after p',
+  '.fm-next-cs-journey p',
+  '.fm-next-cs-stack p',
+  '.fm-next-cs-modes p',
+  '.fm-next-cs-metric span',
+  '.fm-next-cs-day-states p',
+  '.fm-next-cs-recovery span',
+  '.fm-next-cs-outcomes p'
+].join(',');
+
+const labelSelectors=[
+  '.fm-next-cs-card small',
+  '.fm-next-cs-quote span',
+  '.fm-next-cs-jtbd small',
+  '.fm-next-cs-decision span',
+  '.fm-next-cs-scope span',
+  '.fm-next-cs-sticky small',
+  '.fm-next-cs-persona span',
+  '.fm-next-cs-before-after small',
+  '.fm-next-cs-reco-card>span',
+  '.fm-next-cs-reco-card>div b',
+  '.fm-next-cs-auth-flow small',
+  '.fm-next-cs-state-home small',
+  '.fm-next-cs-modes small',
+  '.fm-next-cs-ia span',
+  '.fm-next-cs-day-states small',
+  '.fm-next-cs-outcomes b',
+  '.fm-next-cs-quality span',
+  '.fm-next-cs-final>span'
+].join(',');
+
+test('P3 and all 16 Case Study sections keep Korean words intact and structured text readable',async({page})=>{
   for(const width of [1440,1180,900,430,390,375,320]){
     await openCaseStudy(page,width,width<=430?844:900);
     for(let index=0;index<16;index+=1){
       await goToSlide(page,index);
-      const offenders=await page.locator('.slide.on').evaluate(koreanWordSplitAudit);
-      expect(offenders,`Korean word split at ${width}px slide ${index+1}`).toEqual([]);
+      const audit=await page.locator('.slide.on').evaluate((slide,{bodySelectors,labelSelectors})=>{
+        const smallText=[];
+        for(const el of slide.querySelectorAll(bodySelectors)){
+          const size=parseFloat(getComputedStyle(el).fontSize);
+          if(size+0.01<13)smallText.push({text:(el.textContent||'').trim().slice(0,80),size,min:13});
+        }
+        for(const el of slide.querySelectorAll(labelSelectors)){
+          const size=parseFloat(getComputedStyle(el).fontSize);
+          if(size+0.01<11)smallText.push({text:(el.textContent||'').trim().slice(0,80),size,min:11});
+        }
+        return {smallText,wordSplits:koreanWordSplitAudit(slide)};
+      },{bodySelectors,labelSelectors});
+      expect(audit.smallText,`small structured text at ${width}px slide ${index+1}`).toEqual([]);
+      expect(audit.wordSplits,`Korean word split at ${width}px slide ${index+1}`).toEqual([]);
     }
   }
 
   await openCaseStudy(page,1440,900);
+  await goToSlide(page,0);
+  const coverProof=await page.locator('.fm-next-cover-proof span').evaluateAll(elements=>elements.map(el=>parseFloat(getComputedStyle(el).fontSize)));
+  expect(coverProof.every(size=>size>=12)).toBe(true);
+
   await goToSlide(page,2);
   const risk=page.locator('.fm-next-cs-persona b').filter({hasText:'경기 당일 변수'});
   await expect(risk).toHaveCount(1);
