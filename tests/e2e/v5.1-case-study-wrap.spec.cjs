@@ -83,6 +83,7 @@ const labelSelectors=[
 ].join(',');
 
 const roomyCellSelectors=[
+  '.fm-next-cover-proof>div',
   '.fm-next-cs-persona>div',
   '.fm-next-cs-journey>div',
   '.fm-next-cs-before-after>div',
@@ -102,6 +103,7 @@ const compactCellSelectors=[
 ].join(',');
 
 const gridGapSelectors=[
+  '.fm-next-cover-proof',
   '.fm-next-cs-persona',
   '.fm-next-cs-journey',
   '.fm-next-cs-before-after',
@@ -162,8 +164,8 @@ test('P3 and all 16 Case Study sections keep Korean words intact with readable t
 
   await openCaseStudy(page,1440,900);
   await goToSlide(page,0);
-  const coverProof=await page.locator('.fm-next-cover-proof span').evaluateAll(elements=>elements.map(el=>parseFloat(getComputedStyle(el).fontSize)));
-  expect(coverProof.every(size=>size>=12)).toBe(true);
+  const coverProofType=await page.locator('.fm-next-cover-proof b,.fm-next-cover-proof span').evaluateAll(elements=>elements.map(el=>parseFloat(getComputedStyle(el).fontSize)));
+  expect(coverProofType.every(size=>size>=12)).toBe(true);
 
   await goToSlide(page,2);
   const risk=page.locator('.fm-next-cs-persona b').filter({hasText:'경기 당일 변수'});
