@@ -97,7 +97,7 @@
 - Canonical keys: `footmate:session`, `footmate:discovery`, `footmate:decision`, `footmate:participation`, `footmate:matchday`, `footmate:return`, `footmate:personalization`, `footmate:events`, `footmate:interaction`
 - Legacy compatibility: 기존 `footmate:v4:*` 9개 key를 alias/mirror로 유지하며 삭제하지 않음
 - Migration behavior: legacy-only state는 canonical key로 승격; canonical/legacy가 다르면 canonical을 우선해 legacy mirror를 reconciliation; 이후 write/remove는 canonical과 legacy에 동기화
-- Direct-access compatibility: 기존 v4 presentation module의 direct `localStorage` 호출도 browser compatibility bridge를 통해 canonical state와 동기화
+- Compatibility bridge: browser compatibility bridge는 canonical/legacy interop·rollback safeguard로 infrastructure에 유지하되 current feature runtime은 direct `localStorage`를 사용하지 않음
 - Product behavior boundary: route / IA / copy / session schema v2 / discovery·decision·participation·matchday·return·personalization state shape 변경 없음
 - Current product/runtime baseline: `8c60c35b508366c49693326fffd7ab998f88c14a`
 - Post-merge QA: FootMate QA #538 · run `35557352406` · PASS
@@ -110,7 +110,28 @@
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup: 이번 migration 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
-- Next cleanup boundary: legacy mirror 제거가 아니라 direct module `localStorage` 호출을 repository ownership으로 단계적으로 치환한 뒤 compatibility 제거 가능성을 별도 검증
+- Follow-up closure: PR #155 · #156 · #157에서 direct module `localStorage` ownership을 platform session/repositories로 전환했으며 상세 검증은 아래 Repository storage ownership closure에 기록
+
+### Repository storage ownership closure · 2026-09-21
+
+- Scope: `/app` feature runtime의 browser persistence read/write ownership을 `footmatePlatform.session`과 `footmatePlatform.repositories.*`로 통일
+- Runtime PRs: #155 · #156 · #157
+- Module coverage: root `app.js`, discovery, decision, participation, matchday, return, personalization, interaction
+- Ownership boundary: feature runtime 8개 모듈은 direct `localStorage`와 `footmate:v4:*` key ownership을 갖지 않으며 `tests/contracts/v5.1-connected-platform.contract.mjs`가 이를 Regression gate에서 강제
+- Infrastructure boundary: `src/v4/platform/infrastructure/storage.js`가 canonical `footmate:*` provider, legacy promotion/reconciliation, rollback mirror와 browser compatibility bridge를 단독 소유
+- Legacy compatibility: 기존 `footmate:v4:*` 9개 alias/mirror는 기존 사용자 상태 및 rollback 보호를 위해 유지; 이번 closure에서 삭제하지 않음
+- Product behavior boundary: route / IA / copy / session schema v2 / recommendation·discovery·decision·participation·matchday·return·personalization behavior 변경 없음
+- Final PR QA: PR #157 · FootMate QA #545 · run `35560477667` · PASS
+- Final product/runtime baseline: `bce1f9c507f4777f83c09c2015ff3940e7f26bd7`
+- Post-merge QA: FootMate QA #546 · run `35560904642` · PASS
+- Regression 36: PASS
+- Browser E2E + axe: PASS
+- Exact Vercel Production: `dpl_GiL7Pa9YT2fEK9e1BSGFGm5Qu4n4` · SHA `bce1f9c507f4777f83c09c2015ff3940e7f26bd7` · READY
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Render backup: 이번 ownership closure 범위에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+- Next candidate: compatibility bridge / legacy mirror 제거는 기존 사용자 migration·rollback 필요성을 별도 검증한 뒤 별도 변경으로 판단
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
 
