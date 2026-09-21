@@ -1,4 +1,6 @@
 export const BETA_BACKEND_CONFIG_ENDPOINT='/api/beta-config';
+export const BETA_CONFIG_TIMEOUT_MS=5000;
+export const BETA_REQUEST_TIMEOUT_MS=8000;
 
 export class SupabaseBetaError extends Error{
   constructor(message,{status=0,code=null,details=null}={}){
@@ -25,6 +27,30 @@ function betaPosition(value){
 function baseUrl(value){
   const url=new URL(nonEmpty(value,'Supabase URL'));
   return url.toString().replace(/\/$/,'');
+}
+
+function normalizedTimeout(value,fallback){
+  const numeric=Number(value);
+  return Number.isFinite(numeric)&&numeric>0?Math.max(50,Math.trunc(numeric)):fallback;
+}
+
+async function fetchWithTimeout(fetchImpl,url,options={},timeoutMs=BETA_REQUEST_TIMEOUT_MS){
+  if(globalThis.navigator?.onLine===false){
+    throw new SupabaseBetaError('인터넷 연결이 없습니다. 연결 후 다시 시도해주세요.',{code:'BETA_OFFLINE'});
+  }
+  const controller=typeof AbortController==='function'?new AbortController():null;
+  const timeout=controller?setTimeout(()=>controller.abort(),normalizedTimeout(timeoutMs,BETA_REQUEST_TIMEOUT_MS)):null;
+  try{
+    return await fetchImpl(url,{...options,...(controller?{signal:controller.signal}:{})});
+  }catch(error){
+    if(controller?.signal.aborted||error?.name==='AbortError'){
+      throw new SupabaseBetaError('요청 시간이 초과됐습니다. 네트워크 상태를 확인하고 다시 시도해주세요.',{code:'BETA_REQUEST_TIMEOUT'});
+    }
+    if(error instanceof SupabaseBetaError)throw error;
+    throw new SupabaseBetaError('네트워크 연결을 확인해주세요.',{code:'BETA_NETWORK_ERROR',details:{cause:String(error?.message||error)}});
+  }finally{
+    if(timeout)clearTimeout(timeout);
+  }
 }
 
 async function parseBody(response){
@@ -56,9 +82,9 @@ const MATCH_SELECT=[
 ].join(',');
 const OPERATOR_MATCH_SELECT=`${MATCH_SELECT},created_by,created_at,updated_at`;
 
-export async function loadBetaBackendConfig({fetchImpl=globalThis.fetch,endpoint=BETA_BACKEND_CONFIG_ENDPOINT}={}){
+export async function loadBetaBackendConfig({fetchImpl=globalThis.fetch,endpoint=BETA_BACKEND_CONFIG_ENDPOINT,timeoutMs=BETA_CONFIG_TIMEOUT_MS}={}){
   if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
-  const response=await fetchImpl(endpoint,{headers:{accept:'application/json'},cache:'no-store'});
+  const response=await fetchWithTimeout(fetchImpl,endpoint,{headers:{accept:'application/json'},cache:'no-store'},normalizedTimeout(timeoutMs,BETA_CONFIG_TIMEOUT_MS));
   const payload=await parseBody(response);
   if(!response.ok||!payload?.connected){
     throw new SupabaseBetaError(errorMessage(payload,response.status),{
@@ -73,21 +99,22 @@ export async function loadBetaBackendConfig({fetchImpl=globalThis.fetch,endpoint
   });
 }
 
-export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThis.fetch}){
+export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThis.fetch,requestTimeoutMs=BETA_REQUEST_TIMEOUT_MS}){
   if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
   const origin=baseUrl(url);
   const apiKey=nonEmpty(publishableKey,'Supabase publishable key');
+  const timeoutMs=normalizedTimeout(requestTimeoutMs,BETA_REQUEST_TIMEOUT_MS);
 
   async function request(path,{method='GET',accessToken=null,body,headers={}}={}){
     const requestHeaders={apikey:apiKey,accept:'application/json',...headers};
     if(accessToken)requestHeaders.authorization=`Bearer ${accessToken}`;
     if(body!==undefined)requestHeaders['content-type']='application/json';
-    const response=await fetchImpl(`${origin}${path}`,{
+    const response=await fetchWithTimeout(fetchImpl,`${origin}${path}`,{
       method,
       headers:requestHeaders,
       body:body===undefined?undefined:JSON.stringify(body),
       cache:'no-store'
-    });
+    },timeoutMs);
     const payload=await parseBody(response);
     if(!response.ok){
       throw new SupabaseBetaError(errorMessage(payload,response.status),{
