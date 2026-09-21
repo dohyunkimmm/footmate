@@ -1,8 +1,10 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {MATCHES,createState} from './data.js';
+import {footmatePlatform} from './platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const DECISION_VERSION='4.3.0';
-const DECISION_STORAGE_KEY='footmate:v4:decision';
+const DECISION_STORAGE_KEY=footmatePlatform.storageKeys.decision;
+const decisionRepository=footmatePlatform.repositories.decision;
 const params=new URLSearchParams(location.search);
 const requestedMode=params.get('mode');
 const mode=['guided','evidence'].includes(requestedMode)?requestedMode:'real';
@@ -43,27 +45,17 @@ function normalize(candidate={}){
 
 function readDecision(){
   if(mode!=='real')return {...defaults,savedMatchIds:[],compareMatchIds:[]};
-  try{
-    const raw=localStorage.getItem(DECISION_STORAGE_KEY);
-    return normalize(raw?JSON.parse(raw):{});
-  }catch(_error){
-    return {...defaults,savedMatchIds:[],compareMatchIds:[]};
-  }
+  return normalize(decisionRepository.read({})||{});
 }
 
 function persist(){
   if(mode!=='real')return;
-  try{localStorage.setItem(DECISION_STORAGE_KEY,JSON.stringify(state));}catch(_error){}
+  decisionRepository.write(state);
 }
 
 function readSession(){
   if(mode!=='real')return createState(mode==='evidence'?{setupComplete:true,route:'home',signedIn:true}:{});
-  try{
-    const raw=localStorage.getItem(NEXT_STORAGE_KEY);
-    return createState(raw?JSON.parse(raw):{});
-  }catch(_error){
-    return createState();
-  }
+  return createState(footmatePlatform.session.read()||{});
 }
 
 function money(value){return new Intl.NumberFormat('ko-KR').format(value)+'원'}
@@ -264,7 +256,7 @@ function chooseCompareMatch(id){
   if(!match)return;
   if(mode==='real'){
     const session=readSession();
-    try{localStorage.setItem(NEXT_STORAGE_KEY,JSON.stringify({...session,selectedMatchId:id,route:'detail'}));}catch(_error){}
+    footmatePlatform.session.write({...session,selectedMatchId:id,route:'detail'});
   }
   closeCompare(false);
   const card=root.querySelector(`[data-action="open-match"][data-match-id="${CSS.escape(id)}"]`);
@@ -308,6 +300,7 @@ if(root){observer.observe(root,{childList:true,subtree:true});patchDetail();}
 
 window.__FOOTMATE_DECISION__={
   version:DECISION_VERSION,
+  storageKey:DECISION_STORAGE_KEY,
   read:()=>({...state,savedMatchIds:[...state.savedMatchIds],compareMatchIds:[...state.compareMatchIds]}),
   openSeats:id=>{const match=matchById(id);return match?openSeats(match):null;}
 };
