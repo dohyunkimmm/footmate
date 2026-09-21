@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const migration=fs.readFileSync('supabase/migrations/20260921_beta_transactional_email.sql','utf8');
+const grants=fs.readFileSync('supabase/migrations/20260921_fix_beta_email_service_role_grants.sql','utf8');
 const edge=fs.readFileSync('supabase/functions/send-beta-notification-email/index.ts','utf8');
 const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
 const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
@@ -14,6 +15,10 @@ assert.match(migration,/email_status in \('pending','sent','failed','skipped'\)/
 assert.match(migration,/set email_status = 'skipped'/);
 assert.match(migration,/alter column email_status set default 'pending'/);
 assert.match(migration,/beta_notifications_email_pending_idx/);
+
+assert.match(grants,/grant select on table public\.operators to service_role;/i);
+assert.match(grants,/grant select on table public\.matches to service_role;/i);
+assert.match(grants,/grant select,\s*update on table public\.beta_notifications to service_role;/i);
 
 assert.match(edge,/withSupabase\(\{auth:'user'\}/);
 assert.match(edge,/Deno\.env\.get\('RESEND_API_KEY'\)/);
