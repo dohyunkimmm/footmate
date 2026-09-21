@@ -91,6 +91,14 @@ if(root){
     queueMicrotask(()=>{suppressMutations=false});
   }
 
+  function scheduleMatchEmailDispatch(matchId){
+    const session=readSession();
+    if(!client||!session?.accessToken||!matchId)return;
+    for(const delay of [1200,4000]){
+      setTimeout(()=>void client.notifications.dispatchEmail({accessToken:session.accessToken,matchId}),delay);
+    }
+  }
+
   root.addEventListener('submit',async event=>{
     const form=event.target.closest('form[data-form="match"]');
     if(!form||!form.querySelector('[data-readiness-policy-fields]'))return;
@@ -131,6 +139,11 @@ if(root){
       try{await client.operator.completeMatch({accessToken:session.accessToken,matchId:target.dataset.matchId});location.reload()}
       catch(error){notice(String(error?.message||'경기를 종료 처리하지 못했습니다.'),'error');target.disabled=false}
     }
+  },true);
+
+  root.addEventListener('click',event=>{
+    const baseAction=event.target.closest('[data-action]')?.dataset.action;
+    if(baseAction==='cancel-participant'||baseAction==='cancel-match')scheduleMatchEmailDispatch(selectedMatchId());
   },true);
 
   const observer=new MutationObserver(()=>{if(!suppressMutations)enhance()});

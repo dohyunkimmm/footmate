@@ -145,6 +145,14 @@ if(root){
     queueMicrotask(()=>{suppressMutations=false});
   }
 
+  function scheduleOwnEmailDispatch(){
+    const session=readSession();
+    if(!client||!session?.accessToken)return;
+    for(const delay of [1200,4000]){
+      setTimeout(()=>void client.notifications.dispatchEmail({accessToken:session.accessToken}),delay);
+    }
+  }
+
   root.addEventListener('click',async event=>{
     const target=event.target.closest('[data-readiness-action]');
     if(!target||!client)return;
@@ -172,6 +180,11 @@ if(root){
       catch(error){notice(String(error?.message||'알림 상태를 변경하지 못했습니다.'),'error')}
     }
   });
+
+  root.addEventListener('click',event=>{
+    const baseAction=event.target.closest('[data-action]')?.dataset.action;
+    if(baseAction==='join'||baseAction==='cancel')scheduleOwnEmailDispatch();
+  },true);
 
   root.addEventListener('submit',async event=>{
     const form=event.target.closest('[data-readiness-form="update-password"]');
