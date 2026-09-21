@@ -37,6 +37,7 @@ test('all 16 Case Study sections have no serious or critical axe violations at m
     await openCaseStudy(page,viewport.width,viewport.height);
     for(let index=0;index<16;index+=1){
       await goToSlide(page,index);
+      if(index===14)await expect(page.locator('.slide.on .fm-next-story')).toHaveAttribute('tabindex','0');
       expect(await seriousOrCritical(page),`${viewport.width}px P${index+1} axe violations`).toEqual([]);
     }
   }
