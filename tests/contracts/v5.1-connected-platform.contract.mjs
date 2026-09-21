@@ -36,10 +36,13 @@ for(const legacyKey of ['footmate:v4:session','footmate:v4:participation','footm
 }
 
 for(const [path,repositoryName] of [
+  ['../../src/v4/discovery.js','discovery'],
+  ['../../src/v4/decision.js','decision'],
   ['../../src/v4/participation.js','participation'],
   ['../../src/v4/matchday.js','matchday'],
   ['../../src/v4/return.js','returnLoop'],
-  ['../../src/v4/personalization.js','personalization']
+  ['../../src/v4/personalization.js','personalization'],
+  ['../../src/v4/experience.js','interaction']
 ]){
   const source=await readFile(new URL(path,import.meta.url),'utf8');
   assert.ok(source.includes("import {footmatePlatform} from './platform/application/platform.js';"),`${path} must import platform ownership`);

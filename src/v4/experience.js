@@ -1,3 +1,5 @@
+import {footmatePlatform} from './platform/application/platform.js';
+
 /* FootMate v4 account experience.
    External authentication remains simulated; the UI models the official sign-in / sign-up interaction. */
 (function(){
@@ -170,14 +172,11 @@
   if(!root)return;
   const params=new URLSearchParams(location.search);
   const mode=['guided','evidence'].includes(params.get('mode'))?params.get('mode'):'real';
-  const SESSION_KEY='footmate:v4:session';
-  const INTERACTION_KEY='footmate:v4:interaction';
+  const interactionRepository=footmatePlatform.repositories.interaction;
 
-  function read(key){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(_error){return{}}}
-  function write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(_error){}}
-  function interaction(){return read(INTERACTION_KEY)}
-  function updateInteraction(patch){write(INTERACTION_KEY,{...interaction(),...patch})}
-  function clearInteraction(){try{localStorage.removeItem(INTERACTION_KEY)}catch(_error){}}
+  function interaction(){return interactionRepository.read({})||{}}
+  function updateInteraction(patch){interactionRepository.write({...interaction(),...patch})}
+  function clearInteraction(){interactionRepository.clear()}
   function setText(el,value){if(el&&el.textContent!==value)el.textContent=value}
   function setHtml(el,value){if(el&&el.innerHTML!==value)el.innerHTML=value}
 
@@ -259,7 +258,7 @@
 
   function patchIdentity(){
     if(mode!=='real')return;
-    const signedIn=Boolean(read(SESSION_KEY).signedIn);
+    const signedIn=Boolean((footmatePlatform.session.read()||{}).signedIn);
     const greeting=root.querySelector('[data-screen="home"] .fm-next-greeting');
     if(greeting){
       setText(greeting.querySelector('small'),signedIn?'다시 반가워요':'플레이 설정이 준비됐어요');
@@ -277,7 +276,7 @@
     const buttons=[...root.querySelectorAll('[data-action="check-in"]')];
     if(!buttons.length)return;
     const state=interaction();
-    const session=read(SESSION_KEY);
+    const session=footmatePlatform.session.read()||{};
     const currentMatchId=session.joinedMatchId||session.selectedMatchId||(mode==='evidence'?'evidence-match':null);
     if(!state.checkedInMatchId||state.checkedInMatchId!==currentMatchId)return;
     buttons.forEach(button=>{
@@ -352,7 +351,7 @@
     if(action==='check-in'){
       event.preventDefault();
       event.stopPropagation();
-      const session=read(SESSION_KEY);
+      const session=footmatePlatform.session.read()||{};
       updateInteraction({checkedInMatchId:session.joinedMatchId||session.selectedMatchId||'evidence-match',checkedInAt:Date.now()});
       patchCheckin();
       return;
