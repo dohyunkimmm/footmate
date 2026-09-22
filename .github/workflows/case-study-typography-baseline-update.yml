@@ -1,0 +1,47 @@
+name: Case Study Typography Baseline Update
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/v4/case-study-typography.css'
+      - 'index.html'
+      - '.github/workflows/case-study-typography-baseline-update.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    name: Update approved Case Study typography baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install Playwright
+        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Generate typography baseline from PR branch
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Verify screenshot comparison against updated baseline
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs
+      - name: Commit updated baseline and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/*.png
+          git rm .github/workflows/case-study-typography-baseline-update.yml
+          git commit -m 'test: update Case Study typography baselines'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+      - name: Upload typography baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: case-study-typography-baseline-${{ github.run_id }}
+          path: |
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
