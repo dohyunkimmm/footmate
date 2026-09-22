@@ -69,6 +69,8 @@ if(root){
 
   function panel(){return root.querySelector('[data-beta-push-panel]')}
   function render(){
+    const footer=root.querySelector('.fm-beta-footer');
+    if(footer)footer.textContent='Closed Beta · Supabase connected · In-app + Transactional email + Web Push connected · Payment = not connected';
     const profileForm=root.querySelector('form[data-form="profile"]');
     if(!profileForm){panel()?.remove();return}
     const host=profileForm.closest('.fm-beta-panel')||profileForm.parentElement;if(!host)return;
@@ -129,7 +131,7 @@ if(root){
 
   const observer=new MutationObserver(()=>{
     const hasProfile=Boolean(root.querySelector('form[data-form="profile"]'));
-    if(!hasProfile){panel()?.remove();loadedToken='';subscription=null;return}
+    if(!hasProfile){panel()?.remove();loadedToken='';subscription=null;render();return}
     if(!panel())render();
     if(token()&&token()!==loadedToken)void refresh();
   });
