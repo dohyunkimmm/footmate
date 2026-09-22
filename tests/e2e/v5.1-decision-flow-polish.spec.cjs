@@ -61,11 +61,16 @@ test('1440px Real App uses intentional desktop density through Detail, Checkout,
     const box=node.getBoundingClientRect();
     return {x:box.x,y:box.y,width:box.width,height:box.height};
   }));
-  expect(detailSections).toHaveLength(4);
-  expect(Math.abs(detailSections[0].y-detailSections[1].y)).toBeLessThanOrEqual(2);
-  expect(detailSections[1].x).toBeGreaterThan(detailSections[0].x+detailSections[0].width);
-  expect(detailSections[0].width).toBeGreaterThanOrEqual(430);
-  expect(detailSections[1].width).toBeGreaterThanOrEqual(430);
+  expect(detailSections.length).toBeGreaterThanOrEqual(4);
+  expect(detailSections.length%2).toBe(0);
+  for(let index=0;index<detailSections.length;index+=2){
+    const left=detailSections[index];
+    const right=detailSections[index+1];
+    expect(Math.abs(left.y-right.y),`detail row ${index/2+1} is not aligned`).toBeLessThanOrEqual(2);
+    expect(right.x,`detail row ${index/2+1} did not form a second column`).toBeGreaterThan(left.x+left.width);
+    expect(left.width).toBeGreaterThanOrEqual(430);
+    expect(right.width).toBeGreaterThanOrEqual(430);
+  }
 
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
   expect(sticky.width).toBeGreaterThanOrEqual(700);
@@ -77,11 +82,16 @@ test('1440px Real App uses intentional desktop density through Detail, Checkout,
     const box=node.getBoundingClientRect();
     return {x:box.x,y:box.y,width:box.width,height:box.height};
   }));
-  expect(checkoutSections).toHaveLength(2);
-  expect(Math.abs(checkoutSections[0].y-checkoutSections[1].y)).toBeLessThanOrEqual(2);
-  expect(checkoutSections[1].x).toBeGreaterThan(checkoutSections[0].x+checkoutSections[0].width);
-  expect(checkoutSections[0].width).toBeGreaterThanOrEqual(430);
-  expect(checkoutSections[1].width).toBeGreaterThanOrEqual(430);
+  expect(checkoutSections.length).toBeGreaterThanOrEqual(2);
+  expect(checkoutSections.length%2).toBe(0);
+  for(let index=0;index<checkoutSections.length;index+=2){
+    const left=checkoutSections[index];
+    const right=checkoutSections[index+1];
+    expect(Math.abs(left.y-right.y),`checkout row ${index/2+1} is not aligned`).toBeLessThanOrEqual(2);
+    expect(right.x,`checkout row ${index/2+1} did not form a second column`).toBeGreaterThan(left.x+left.width);
+    expect(left.width).toBeGreaterThanOrEqual(430);
+    expect(right.width).toBeGreaterThanOrEqual(430);
+  }
 
   const submit=await rect(page.locator('[data-participation-submit]'));
   expect(submit.width).toBeGreaterThanOrEqual(320);
@@ -117,12 +127,12 @@ test('430px decision flow keeps mobile scanning order and recovery actions uncra
     const box=node.getBoundingClientRect();
     return {x:box.x,y:box.y,width:box.width,height:box.height};
   }));
-  expect(detailSections).toHaveLength(4);
+  expect(detailSections.length).toBeGreaterThanOrEqual(4);
   for(let index=1;index<detailSections.length;index+=1){
     expect(detailSections[index].y).toBeGreaterThan(detailSections[index-1].y);
     expect(Math.abs(detailSections[index].x-detailSections[0].x)).toBeLessThanOrEqual(2);
   }
-  expect(detailSections[0].width).toBeGreaterThanOrEqual(390);
+  for(const section of detailSections)expect(section.width).toBeGreaterThanOrEqual(390);
 
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
   expect(sticky.width).toBeGreaterThanOrEqual(425);
@@ -133,9 +143,11 @@ test('430px decision flow keeps mobile scanning order and recovery actions uncra
     const box=node.getBoundingClientRect();
     return {x:box.x,y:box.y,width:box.width,height:box.height};
   }));
-  expect(checkoutSections).toHaveLength(2);
-  expect(checkoutSections[1].y).toBeGreaterThan(checkoutSections[0].y);
-  expect(Math.abs(checkoutSections[1].x-checkoutSections[0].x)).toBeLessThanOrEqual(2);
+  expect(checkoutSections.length).toBeGreaterThanOrEqual(2);
+  for(let index=1;index<checkoutSections.length;index+=1){
+    expect(checkoutSections[index].y).toBeGreaterThan(checkoutSections[index-1].y);
+    expect(Math.abs(checkoutSections[index].x-checkoutSections[0].x)).toBeLessThanOrEqual(2);
+  }
 
   await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__.setNextOutcome('failure'));
   await page.locator('[data-participation-submit]').click();
