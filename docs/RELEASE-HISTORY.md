@@ -144,6 +144,20 @@
 - Preservation: IA, copy, routes, feature behavior, sample data, internal release identifier 변경 없음; Case Study 16-section IA와 Closed Beta 운영 절차도 변경 없음
 - Render backup: 이번 patch에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
+### Real App design-system / visual regression closure · 2026-09-22
+
+- Runtime baseline follow-up: PR #188 · Real App UX/design-system baseline을 보강하면서 IA, copy, routes, feature behavior, sample data, internal release identifier는 유지
+- Product/runtime baseline: `20e9a86bc634e75cd4dfd4232be7ac2bbe187d5f`
+- Visual regression PR: #190 · Playwright screenshot baseline gate를 기존 `Browser E2E + axe`에 통합
+- Baseline coverage: 320px context actions + 390px AI card · GitHub Actions와 동일한 Ubuntu / Chromium 환경에서 기준 이미지 생성
+- Comparison contract: `toHaveScreenshot()` + `maxDiffPixels: 0`; baseline 생성만으로 완료 처리하지 않고 실제 rendered screenshot comparison PASS를 검증 기준으로 사용
+- PR QA: FootMate QA #677 · run `35714250012` · Regression 36 PASS · Browser E2E + axe + visual baseline PASS
+- Post-merge main QA: FootMate QA #679 · run `35714746096` · SUCCESS · Regression 36 PASS · Browser E2E + axe + visual baseline PASS · Production Smoke PASS
+- Exact Production smoke: HTTP PASS · AI inference PASS · Chromium PASS
+- Exact verified Vercel Production SHA: `0964f6f96366a6baee405e83a7d7b7300b8c9a90`
+- QA-only merge boundary: PR #190은 product UI/IA/copy/feature behavior를 변경하지 않았으며 current `main` SHA와 product/runtime baseline SHA를 구분해 관리
+- Render backup: 이번 visual regression QA/docs closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
