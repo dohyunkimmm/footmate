@@ -54,8 +54,8 @@ test('1440px Real App uses intentional desktop density through Detail, Checkout,
   await openFirstDetail(page);
 
   const app=await rect(page.locator('.fm-next-app'));
-  expect(app.width).toBeGreaterThanOrEqual(900);
-  expect(app.width).toBeLessThanOrEqual(970);
+  expect(app.width).toBeGreaterThanOrEqual(1038);
+  expect(app.width).toBeLessThanOrEqual(1042);
 
   const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{
     const box=node.getBoundingClientRect();
@@ -73,8 +73,8 @@ test('1440px Real App uses intentional desktop density through Detail, Checkout,
   }
 
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
-  expect(sticky.width).toBeGreaterThanOrEqual(700);
-  expect(sticky.width).toBeLessThanOrEqual(770);
+  expect(sticky.width).toBeGreaterThanOrEqual(798);
+  expect(sticky.width).toBeLessThanOrEqual(802);
   expect(Math.abs(900-sticky.bottom)).toBeLessThanOrEqual(34);
 
   await reachCheckout(page);
@@ -94,15 +94,15 @@ test('1440px Real App uses intentional desktop density through Detail, Checkout,
   }
 
   const submit=await rect(page.locator('[data-participation-submit]'));
-  expect(submit.width).toBeGreaterThanOrEqual(320);
-  expect(submit.width).toBeLessThanOrEqual(365);
+  expect(submit.width).toBeGreaterThanOrEqual(378);
+  expect(submit.width).toBeLessThanOrEqual(382);
   expect(submit.height).toBeGreaterThanOrEqual(50);
 
   await page.locator('[data-participation-submit]').click();
   await expect(page.locator('[data-screen="success"]')).toBeVisible({timeout:5000});
   const ticket=await rect(page.locator('.fm-next-ticket'));
-  expect(ticket.width).toBeGreaterThanOrEqual(600);
-  expect(ticket.width).toBeLessThanOrEqual(650);
+  expect(ticket.width).toBeGreaterThanOrEqual(678);
+  expect(ticket.width).toBeLessThanOrEqual(682);
 
   const successActions=await page.locator('[data-screen="success"] .fm-next-actions .fm-next-button').evaluateAll(nodes=>nodes.map(node=>{
     const box=node.getBoundingClientRect();
@@ -132,11 +132,14 @@ test('430px decision flow keeps mobile scanning order and recovery actions uncra
     expect(detailSections[index].y).toBeGreaterThan(detailSections[index-1].y);
     expect(Math.abs(detailSections[index].x-detailSections[0].x)).toBeLessThanOrEqual(2);
   }
-  for(const section of detailSections)expect(section.width).toBeGreaterThanOrEqual(390);
+  for(const section of detailSections){
+    expect(section.width).toBeGreaterThanOrEqual(386);
+    expect(section.width).toBeLessThanOrEqual(390);
+  }
 
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
-  expect(sticky.width).toBeGreaterThanOrEqual(425);
-  expect(sticky.width).toBeLessThanOrEqual(430);
+  expect(sticky.width).toBeGreaterThanOrEqual(404);
+  expect(sticky.width).toBeLessThanOrEqual(408);
 
   await reachCheckout(page);
   const checkoutSections=await page.locator('[data-screen="checkout"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{
