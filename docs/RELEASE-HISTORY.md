@@ -114,6 +114,20 @@
 - CI closure main SHA: `f11a36399cb2752e5b88f7790010694ce0faa774`
 - Runtime/deployment boundary: workflow-only 변경이므로 product/runtime baseline과 exact verified Vercel Production 사실은 변경하지 않음
 
+### Final Beta sync-up closure · 2026-09-22
+
+- Final sync PR: #184 · README / Release History / Case Study / Closed Beta runbook / connected-platform contract와 관련 Notion 상태를 오늘 최종 runtime·수동 QA 사실에 맞게 동기화
+- Manual Production QA closure: Google/Kakao 실제 provider credential/config 활성화 후 두 provider 실로그인 PASS; 실제 사용자 기기에서 Web Push 권한 승인 → subscription → server worker → 브라우저/OS 알림 표시 PASS
+- PR QA: FootMate QA #652 · run `35697093780` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS
+- Merge / current closure SHA: `ac474f32c5324368250e3a8fc9db57973a087686`
+- Post-merge main QA: FootMate QA #653 · run `35697469512` · SUCCESS
+- Main QA details: Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS
+- Exact Production smoke: HTTP PASS · AI inference PASS · Chromium PASS
+- Exact Vercel Production: `dpl_7RiCmWaCMVYoe5ZyVKfHgFverjrD` · SHA `ac474f32c5324368250e3a8fc9db57973a087686` · READY · production alias `footmate-black.vercel.app` 반영 확인
+- Product/runtime boundary: Case Study narrative/runtime copy는 #184에서 최신 수동 QA 사실로 동기화됐고, `/app`·`/beta` 제품 로직 자체는 #179 이후 변경하지 않음
+- Render backup: 이번 최종 sync-up에서는 재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+- Final sync rule: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 서로 상충하는 pending/미검증 문구 검색 → QA/merge`
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
