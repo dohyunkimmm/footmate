@@ -69,6 +69,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Real / Guided / Evidence mode 분리
 - responsive 320 / 375 / 390 / 430px
 - Browser E2E + axe accessibility regression
+- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 320px context actions와 390px AI card를 `toHaveScreenshot()`으로 exact pixel comparison
 
 ## Production / integration boundary
 
@@ -102,6 +103,7 @@ runtime-impacting 변경의 자동 release gate는 다음을 포함합니다. do
 
 - Regression suite
 - Browser E2E + axe
+- Playwright screenshot visual regression — approved Ubuntu/Chromium baseline과 actual render를 비교하고 mismatch 시 expected / actual / diff evidence를 남김
 - responsive 320 / 375 / 390 / 430px
 - Deep Link / State Consistency / persistence restoration
 - Closed Beta backend config / Auth / join / cancel / reload recovery
