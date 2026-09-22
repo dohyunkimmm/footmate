@@ -9,7 +9,7 @@ const MIME_EXT={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
 let config=null;
 const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};
 const token=()=>String(readSession()?.accessToken||'').trim();
-const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char]||char));
+const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
 async function ensureConfig(){if(!config)config=await loadBetaBackendConfig();return config}
 async function jsonResponse(response){const payload=await response.json().catch(()=>null);if(!response.ok)throw new Error(payload?.message||payload?.error_description||payload?.error||`요청 실패 (${response.status})`);return payload}
 async function request(path,{method='GET',body,headers={}}={}){
