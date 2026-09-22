@@ -47,6 +47,34 @@
 - Current product/runtime baseline: `3a2b560a29d4ce6248551225e8df221a9ff2f80b`
 - Render backup: 이번 reliability closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 
+### Closed Beta free-tier feature closure · 2026-09-22
+
+- Scope: Realtime 갱신, 24h/2h 경기 reminder, position-aware waitlist/FIFO 자동 승급, 실제 Beta 경기 기반 AI 조건 해석 + deterministic ranking, Google/Kakao provider-aware OAuth UI, 경기 후 feedback/attendance history, Operator TOTP MFA, browser Web Push, Supabase Storage media
+- Growth runtime PR: #170 · Realtime / reminder / waitlist / actual Beta match recommendation / feedback·attendance
+- Auth/security runtime PR: #171 · Google/Kakao provider-aware OAuth UI / Operator TOTP MFA; MFA migration hardening #172 · newline patch fix #173
+- Push/media runtime PR: #174 · Web Push subscription/service worker/server outbox + `beta-media` profile/match image upload
+- Production smoke alignment: #175 · current MFA/push/media loading structure를 exact Production smoke에 반영
+- Final product-boundary sync: #176 · README와 user/operator runtime copy를 connected Web Push/media 상태에 동기화
+- Production migrations: `beta_free_growth`, `beta_operator_mfa`, `beta_push_media`, `beta_push_worker_schedule` 적용
+- Realtime boundary: database change는 refresh signal로 사용하고 authoritative match/capacity/participation/notification/waitlist/feedback row는 REST에서 다시 읽음
+- Waitlist boundary: 포지션별 FIFO + 취소 transaction 내부 자동 승급; 기존 capacity transaction ownership을 유지
+- Recommendation boundary: AI는 실제 Beta 경기 검색 조건만 해석하고 후보·순위·추천 이유는 deterministic ranking이 소유; 실제 데이터가 없는 조건은 생성하지 않음
+- Operator security: allowlist + TOTP MFA; operator-only RLS와 SECURITY DEFINER RPC는 Production DB에서 `aal2`를 요구
+- Web Push: `process-beta-push-outbox` ACTIVE, Vault 기반 VAPID private material, `footmate-beta-push-outbox` 1-minute Cron active; stale subscription 제거와 bounded retry/backoff 적용
+- Push delivery boundary: DB `push_status=sent`는 push service acceptance를 의미하며 OS/browser device-level 표시 receipt는 아님; 실제 표시 여부는 사용자 권한과 기기에 의존
+- Media: Supabase Storage `beta-media` public-read, 5MB JPG/PNG/WebP; profile avatar는 own-folder RLS, match/venue image write는 operator `aal2` RLS
+- Outbox health at closure: email/push `pending / processing / failed` 0
+- PR #176 QA: FootMate QA #615 · run `35677537682` · Regression 36 PASS · Browser E2E + axe PASS
+- Post-merge QA: FootMate QA #616 · run `35677789340` · Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS
+- Exact Production HTTP smoke: PASS
+- Exact Production AI inference: PASS
+- Exact Production Chromium smoke: PASS
+- Product/runtime baseline: `afb404e94b9b606bc12518e63e8b44b3feb15141`
+- Exact Vercel Production: `dpl_EX4295ceYpG56WUUYAiQtUSRWYfP` · SHA `afb404e94b9b606bc12518e63e8b44b3feb15141` · READY
+- External/manual boundary: Google/Kakao 실로그인은 각 provider credential/config 활성화가 필요하고 device-level Web Push 표시는 실제 브라우저 권한 승인 기기에서 별도 확인 대상; server/runtime contracts와 Production infrastructure는 검증됨
+- Remaining free-plan boundary: Supabase Leaked Password Protection은 현재 플랜에서 Pro 이상 기능이라 unavailable; 실제 PG와 external analytics는 이번 free-only Beta scope 밖
+- Render backup: 이번 free-tier feature closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이고 Render는 backup/alternate deployment
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
@@ -274,7 +302,7 @@
 - Persistence: `footmate:v4:personalization`
 - Ranking boundary: verified Recommendation + Return contract 위에 deterministic personalization adjustment를 보조 신호로 추가
 - Privacy boundary: 회원 DB·server memory·cross-device sync 미연동; 개인화 상태는 현재 브라우저 로컬 저장소에만 유지
-- Accessibility hardening: personalization controls 44px+, 320/375/390/430 responsive coverage, inactive navigation contrast 보강
+- Accessibility hardening: personalization controls 44px+, 320/375/390/430px responsive coverage, inactive navigation contrast 보강
 - Feature PR: #108
 - Final PR QA: FootMate QA #380 · run `35487691154` · PASS
 - Product/runtime baseline: `117c6ee36e91344355644811410a88898c279f21`
@@ -397,6 +425,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 v5.2는 account recovery·경기별 취소 마감·connected check-in·operator completion·DB-backed in-app operation notification과 Resend transactional email까지 실제 Beta 운영 경계를 확장했다. transactional email outbox는 server worker가 처리하고 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며, `/beta`는 별도의 connected data path다. 실제 OAuth, PG 결제, push notification delivery, realtime map/location, team chat, reputation backend, external analytics는 현재도 연결하지 않았다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 Closed Beta는 account recovery·취소 마감·connected check-in·operator completion·DB-backed in-app notification·Resend transactional email에 더해 Realtime refresh, reminder, waitlist, actual Beta match ranking/feedback, provider-aware Google/Kakao OAuth UI, Operator TOTP MFA, opt-in Web Push, Supabase Storage media까지 연결되어 있다. transactional email과 Web Push outbox는 server worker/Cron이 처리하고, email은 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며 `/beta`는 별도의 connected data path다. 실제 PG와 external analytics는 연결하지 않았고, Google/Kakao 실제 로그인은 provider credential 활성화 상태, device-level Web Push 표시는 사용자 브라우저/OS 권한에 의존한다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
