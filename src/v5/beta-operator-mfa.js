@@ -13,6 +13,13 @@ if(root){
   let error='';
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
+  const qrImageSource=value=>{
+    const raw=String(value||'').trim();if(!raw)return '';
+    if(/^data:image\/(?:svg\+xml|png|jpeg|webp)[;,]/i.test(raw))return raw;
+    const svgStart=raw.indexOf('<svg');
+    if(svgStart>=0&&/<\/svg>\s*$/i.test(raw))return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(raw.slice(svgStart))}`;
+    return '';
+  };
   const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};
   const writeSession=payload=>{
     const accessToken=String(payload?.access_token||'').trim(),refreshToken=String(payload?.refresh_token||'').trim();
@@ -24,7 +31,7 @@ if(root){
     try{const raw=String(token||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return String(JSON.parse(atob(raw))?.aal||'aal1')}catch{return null}
   };
   async function request(path,{method='GET',body=null,accessToken=session?.accessToken}={}){
-    const response=await fetch(`${config.url}${path}`,{method,headers:{apikey:config.publishableKey,accept:'application/json',...(accessToken?{authorization:`Bearer ${accessToken}`}:{}),...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store'});
+    const response=await fetch(`${config.url}${path}`,{method,headers:{apikey:config.publishableKey,accept:'application/json',...(accessToken?{authorization:`Bearer ${accessToken}`}:{}) ,...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store'});
     const payload=await response.json().catch(()=>null);
     if(!response.ok)throw new Error(payload?.message||payload?.error_description||payload?.error||`요청 실패 (${response.status})`);
     return payload;
@@ -39,10 +46,12 @@ if(root){
   }
   async function launchConsole(){
     await import('/src/v5/beta-operator.js?v=1');
-    const launchReadiness=()=>{
+    const launchReadiness=async()=>{
       const status=root.querySelector('.fm-beta-status-card p');if(status)status.textContent='Closed Beta는 무료 경기 운영만 지원합니다. DB 기반 in-app·transactional email·Web Push와 media storage가 연결되어 있고 실제 PG는 연결하지 않습니다.';
       const footer=root.querySelector('.fm-beta-footer');if(footer)footer.textContent='Operator Console · Supabase connected · MFA protected · In-app + Transactional email + Web Push + Media connected · Payment = not connected';
-      return import('/src/v5/beta-operator-readiness.js?v=1');
+      const readiness=await import('/src/v5/beta-operator-readiness.js?v=1');
+      await import('/src/v5/beta-operator-polish.js?v=1');
+      return readiness;
     };
     if(root.dataset.operatorState!=='booting')void launchReadiness();
     else{
@@ -54,10 +63,10 @@ if(root){
   function unverifiedTotp(){return (user?.factors||[]).find(item=>item.factor_type==='totp'&&item.status!=='verified')||null}
   function renderGate(){
     root.dataset.operatorState='mfa-required';
-    const qr=enrollment?.totp?.qr_code||'';
+    const qr=qrImageSource(enrollment?.totp?.qr_code||'');
     const secret=enrollment?.totp?.secret||'';
     const hasVerified=Boolean(factor);
-    root.innerHTML=`<div class="fm-beta-shell"><header class="fm-beta-topbar"><div class="fm-beta-brand"><span class="fm-beta-mark">FM</span><span>FootMate Operator</span></div><a class="fm-beta-button" href="/beta">사용자 Beta</a></header><section class="fm-beta-panel fm-operator-mfa" aria-labelledby="operator-mfa-title"><span class="fm-beta-eyebrow">OPERATOR SECURITY · TOTP</span><h1 id="operator-mfa-title">${hasVerified?'운영자 MFA 확인':'운영자 MFA 설정'}</h1><p>${hasVerified?'Authenticator 앱의 6자리 코드를 확인하면 운영 콘솔을 엽니다.':'운영자 전용 데이터와 변경 작업은 AAL2 세션에서만 허용됩니다. Authenticator 앱에 TOTP를 등록해주세요.'}</p>${error?`<div class="fm-beta-note" data-tone="error">${esc(error)}</div>`:''}${!hasVerified&&!enrollment?`<button class="fm-beta-button fm-beta-button--primary" type="button" data-mfa-action="enroll" ${busy?'disabled':''}>Authenticator 설정 시작</button>`:''}${enrollment?`<div class="fm-operator-mfa-setup">${qr?`<img src="${esc(qr)}" alt="FootMate Operator TOTP QR 코드">`:''}<div><strong>Authenticator 앱에 등록</strong>${secret?`<code>${esc(secret)}</code>`:''}<small>QR을 스캔한 뒤 앱에 표시되는 코드를 입력하세요.</small></div></div>`:''}${hasVerified||enrollment?`<form data-mfa-form="verify"><label class="fm-beta-field"><span>인증 코드</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="000000"></label><button class="fm-beta-button fm-beta-button--primary" ${busy?'disabled':''}>${busy?'확인 중…':'MFA 확인'}</button></form>`:''}${!hasVerified&&unverifiedTotp()&&!enrollment?'<button class="fm-beta-link" type="button" data-mfa-action="reset">미완료 설정 다시 시작</button>':''}<div class="fm-beta-note">운영자 membership 확인은 1차 로그인으로 가능하지만, draft 경기·참가자·운영 지표 조회와 모든 operator RPC는 DB에서 <b>aal2</b>를 요구합니다.</div></section></div>`;
+    root.innerHTML=`<div class="fm-beta-shell"><header class="fm-beta-topbar"><div class="fm-beta-brand"><span class="fm-beta-mark">FM</span><span>FootMate Operator</span></div><a class="fm-beta-button" href="/beta">사용자 Beta</a></header><section class="fm-beta-panel fm-operator-mfa" aria-labelledby="operator-mfa-title"><span class="fm-beta-eyebrow">OPERATOR SECURITY · TOTP</span><h1 id="operator-mfa-title">${hasVerified?'운영자 MFA 확인':'운영자 MFA 설정'}</h1><p>${hasVerified?'Authenticator 앱의 6자리 코드를 확인하면 운영 콘솔을 엽니다.':'운영자 전용 데이터와 변경 작업은 AAL2 세션에서만 허용됩니다. Authenticator 앱에 TOTP를 등록해주세요.'}</p>${error?`<div class="fm-beta-note" data-tone="error" role="alert">${esc(error)}</div>`:''}${!hasVerified&&!enrollment?`<button class="fm-beta-button fm-beta-button--primary" type="button" data-mfa-action="enroll" ${busy?'disabled':''}>Authenticator 설정 시작</button>`:''}${enrollment?`<div class="fm-operator-mfa-setup">${qr?`<img src="${esc(qr)}" alt="FootMate Operator TOTP QR 코드">`:''}<div><strong>Authenticator 앱에 등록</strong><small>QR을 스캔하거나 아래 설정 키를 앱에 직접 입력하세요.</small>${secret?`<span class="fm-operator-mfa-manual">설정 키 · 시간 기반(TOTP)</span><code>${esc(secret)}</code>`:''}</div></div>`:''}${hasVerified||enrollment?`<form data-mfa-form="verify"><label class="fm-beta-field"><span>인증 코드</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="000000"></label><button class="fm-beta-button fm-beta-button--primary" ${busy?'disabled':''}>${busy?'확인 중…':'MFA 확인'}</button></form>`:''}${!hasVerified&&unverifiedTotp()&&!enrollment?'<button class="fm-beta-link" type="button" data-mfa-action="reset">미완료 설정 다시 시작</button>':''}<div class="fm-beta-note">운영자 membership 확인은 1차 로그인으로 가능하지만, draft 경기·참가자·운영 지표 조회와 모든 operator RPC는 DB에서 <b>aal2</b>를 요구합니다.</div></section></div>`;
   }
   async function enroll(){
     busy=true;error='';renderGate();

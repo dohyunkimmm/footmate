@@ -30,6 +30,19 @@ test('beta exposes only configured Google and Kakao OAuth providers',async({page
   expect(authorize.searchParams.get('redirect_to')).toContain('/beta');
 });
 
+test('beta turns technical OAuth callback errors into user-facing copy',async({page})=>{
+  await baseConfig(page);
+  await page.route(`${origin}/**`,async route=>{
+    const url=new URL(route.request().url());
+    if(url.pathname==='/auth/v1/settings')return fulfill(route,{external:{google:true,kakao:true}});
+    if(url.pathname==='/rest/v1/matches')return fulfill(route,[]);
+    return fulfill(route,[]);
+  });
+  await page.goto('/beta#error_description=Unable%2520to%2520exchange%2520external%2520code%253A%2520invalid_client',{waitUntil:'domcontentloaded'});
+  await expect(page.getByText('소셜 로그인 연결을 완료하지 못했습니다. 잠시 후 다시 시도해주세요.')).toBeVisible();
+  expect(page.url()).not.toContain('error_description');
+});
+
 test('operator aal1 session is blocked until verified TOTP upgrades to aal2',async({page})=>{
   let verified=false,challengeCount=0,verifyCount=0,matchReads=0;
   await baseConfig(page);
@@ -58,8 +71,9 @@ test('operator aal1 session is blocked until verified TOTP upgrades to aal2',asy
   expect(await serious(page,'.fm-operator')).toEqual([]);
 });
 
-test('operator without TOTP can enroll before entering console',async({page})=>{
+test('operator without TOTP can enroll from a raw Supabase SVG QR response',async({page})=>{
   let enrolled=false;
+  await page.setViewportSize({width:320,height:800});
   await baseConfig(page);
   await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:'footmate:beta:auth:v1',value:{accessToken:jwt(operatorId,'aal1'),refreshToken:'refresh-token',expiresAt:4102444800}});
   await page.route(`${origin}/**`,async route=>{
@@ -67,11 +81,51 @@ test('operator without TOTP can enroll before entering console',async({page})=>{
     if(url.pathname==='/auth/v1/token')return fulfill(route,{access_token:jwt(operatorId,'aal1'),refresh_token:'refresh-token-2',expires_in:3600,user:{id:operatorId,email:'operator@example.com'}});
     if(url.pathname==='/rest/v1/operators')return fulfill(route,[{user_id:operatorId}]);
     if(url.pathname==='/auth/v1/user')return fulfill(route,{id:operatorId,email:'operator@example.com',factors:enrolled?[{id:'factor-new',factor_type:'totp',status:'unverified'}]:[]});
-    if(url.pathname==='/auth/v1/factors'&&request.method()==='POST'){enrolled=true;return fulfill(route,{id:'factor-new',factor_type:'totp',status:'unverified',totp:{qr_code:'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"/%3E',secret:'TESTSECRET'}})}
+    if(url.pathname==='/auth/v1/factors'&&request.method()==='POST'){
+      enrolled=true;
+      return fulfill(route,{id:'factor-new',factor_type:'totp',status:'unverified',totp:{qr_code:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><rect width="2" height="2"/></svg>',secret:'TESTSECRET'}})
+    }
     return fulfill(route,{message:`Unhandled ${request.method()} ${url.pathname}`},500);
   });
   await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:'Authenticator 설정 시작'}).click();
   await expect(page.getByText('Authenticator 앱에 등록')).toBeVisible();
   await expect(page.getByText('TESTSECRET')).toBeVisible();
+  const qr=page.getByRole('img',{name:'FootMate Operator TOTP QR 코드'});
+  await expect(qr).toBeVisible();
+  await expect(qr).toHaveAttribute('src',/^data:image\/svg\+xml;charset=utf-8,/);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
+  expect(await serious(page,'.fm-operator')).toEqual([]);
+});
+
+test('new operator match pre-fills policy windows and keeps target mobile widths usable',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await baseConfig(page);
+  await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:'footmate:beta:auth:v1',value:{accessToken:jwt(operatorId,'aal2'),refreshToken:'refresh-token',expiresAt:4102444800}});
+  await page.route(`${origin}/**`,async route=>{
+    const request=route.request(),url=new URL(request.url());
+    if(url.pathname==='/auth/v1/token')return fulfill(route,{access_token:jwt(operatorId,'aal2'),refresh_token:'refresh-token-2',expires_in:3600,user:{id:operatorId,email:'operator@example.com'}});
+    if(url.pathname==='/rest/v1/operators')return fulfill(route,[{user_id:operatorId}]);
+    if(url.pathname==='/rest/v1/matches')return fulfill(route,[]);
+    if(url.pathname==='/rest/v1/rpc/operator_beta_email_health')return fulfill(route,[]);
+    if(url.pathname==='/rest/v1/rpc/operator_beta_funnel_metrics')return fulfill(route,[{}]);
+    return fulfill(route,{message:`Unhandled ${request.method()} ${url.pathname}`},500);
+  });
+  await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#footmate-beta-operator')).toHaveAttribute('data-operator-state','ready');
+  const starts=page.locator('input[name="startsAt"]');
+  const cancel=page.locator('input[name="cancelCutoffAt"]');
+  const checkIn=page.locator('input[name="checkInOpensAt"]');
+  await expect(cancel).not.toHaveValue('');
+  await expect(checkIn).not.toHaveValue('');
+  const [startsValue,cancelValue,checkValue]=await Promise.all([starts.inputValue(),cancel.inputValue(),checkIn.inputValue()]);
+  expect(new Date(startsValue).getTime()-new Date(cancelValue).getTime()).toBe(2*60*60*1000);
+  expect(new Date(startsValue).getTime()-new Date(checkValue).getTime()).toBe(60*60*1000);
+  const save=page.getByRole('button',{name:'경기 저장'});
+  for(const width of [320,375,390,430]){
+    await page.setViewportSize({width,height:844});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
+    expect(await save.evaluate(node=>Math.round(node.getBoundingClientRect().height))).toBeGreaterThanOrEqual(44);
+  }
+  expect(await serious(page,'.fm-operator')).toEqual([]);
 });
