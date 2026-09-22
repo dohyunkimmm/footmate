@@ -86,7 +86,7 @@
 - Docs / Case Study sync: PR #180 · connected Beta capability, provider/manual QA boundary, README, Closed Beta pilot runbook을 현재 제품 상태에 동기화하면서 Case Study 16-section IA / TOC / routes / headings 유지
 - Docs PR QA: FootMate QA #642 · run `35690365954` · PASS
 - Docs post-merge QA: FootMate QA #643 · run `35690669684` · PASS
-- Current `main`: `73b5192983e9728379fa68f85a89b3a65de3f2aa` · #180 docs-only sync on top of runtime baseline
+- Docs / Production closure SHA: `73b5192983e9728379fa68f85a89b3a65de3f2aa` · #180 docs-only sync on top of runtime baseline; 이후 docs-only history update로 moving `main`이 바뀌어도 이 verified Production SHA는 별도로 유지
 - Exact Vercel Production: `dpl_GdJUrxmqmCyskwMWNeA1aPyFZ76S` · SHA `73b5192983e9728379fa68f85a89b3a65de3f2aa` · READY
 - Exact Production HTTP smoke: `/` 200 · `/beta/operator` 200 · PASS
 - Exact Production QR path: served `/src/v5/beta-operator-mfa.js`에서 raw `<svg>` TOTP 응답을 `data:image/svg+xml`로 normalize하며 QR 미사용 시 수동 TOTP 설정 키 fallback을 유지
