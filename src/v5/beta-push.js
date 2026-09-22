@@ -12,6 +12,7 @@ if(root){
   let error='';
   let refreshing=false;
   let loadedToken='';
+  const FOOTER_COPY='Closed Beta · Supabase connected · In-app + Transactional email + Web Push connected · Payment = not connected';
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
   const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};
@@ -24,6 +25,10 @@ if(root){
     const padding='='.repeat((4-value.length%4)%4);
     const base64=(value+padding).replace(/-/g,'+').replace(/_/g,'/');
     const raw=atob(base64);const output=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)output[i]=raw.charCodeAt(i);return output;
+  };
+  const syncFooter=()=>{
+    const footer=root.querySelector('.fm-beta-footer');
+    if(footer&&footer.textContent!==FOOTER_COPY)footer.textContent=FOOTER_COPY;
   };
 
   async function ensureConfig(){
@@ -69,6 +74,7 @@ if(root){
 
   function panel(){return root.querySelector('[data-beta-push-panel]')}
   function render(){
+    syncFooter();
     const profileForm=root.querySelector('form[data-form="profile"]');
     if(!profileForm){panel()?.remove();return}
     const host=profileForm.closest('.fm-beta-panel')||profileForm.parentElement;if(!host)return;
@@ -128,6 +134,7 @@ if(root){
   });
 
   const observer=new MutationObserver(()=>{
+    syncFooter();
     const hasProfile=Boolean(root.querySelector('form[data-form="profile"]'));
     if(!hasProfile){panel()?.remove();loadedToken='';subscription=null;return}
     if(!panel())render();

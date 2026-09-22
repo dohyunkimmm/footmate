@@ -40,8 +40,8 @@ if(root){
   async function launchConsole(){
     await import('/src/v5/beta-operator.js?v=1');
     const launchReadiness=()=>{
-      const status=root.querySelector('.fm-beta-status-card p');if(status)status.textContent='Closed Beta는 무료 경기 운영만 지원합니다. DB 기반 운영 알림과 transactional email은 연결되어 있고 실제 PG와 push notification은 연결하지 않습니다.';
-      const footer=root.querySelector('.fm-beta-footer');if(footer)footer.textContent='Operator Console · Supabase connected · MFA protected · In-app + Transactional email connected · Payment / Push = not connected';
+      const status=root.querySelector('.fm-beta-status-card p');if(status)status.textContent='Closed Beta는 무료 경기 운영만 지원합니다. DB 기반 in-app·transactional email·Web Push와 media storage가 연결되어 있고 실제 PG는 연결하지 않습니다.';
+      const footer=root.querySelector('.fm-beta-footer');if(footer)footer.textContent='Operator Console · Supabase connected · MFA protected · In-app + Transactional email + Web Push + Media connected · Payment = not connected';
       return import('/src/v5/beta-operator-readiness.js?v=1');
     };
     if(root.dataset.operatorState!=='booting')void launchReadiness();
