@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const migration=fs.readFileSync('supabase/migrations/20260922_beta_push_media.sql','utf8');
+const hotfix=fs.readFileSync('supabase/migrations/20260922_beta_push_cancel_hotfix.sql','utf8');
 const schedule=fs.readFileSync('supabase/migrations/20260922_beta_push_worker_schedule.sql','utf8');
 const worker=fs.readFileSync('supabase/functions/process-beta-push-outbox/index.ts','utf8');
 const push=fs.readFileSync('src/v5/beta-push.js','utf8');
@@ -18,6 +19,10 @@ for(const token of [
 assert.ok(migration.includes("(storage.foldername(name))[2]=(select auth.uid())::text"),'profile objects must be scoped to the current user folder');
 assert.ok(migration.includes("coalesce(auth.jwt()->>'aal','aal1')='aal2'"),'match media writes must require operator AAL2');
 assert.ok(!migration.includes('iihitfjphowjplxzfxtn'),'migration must not hard-code the Production project ref');
+
+assert.ok(hotfix.includes('grant select, insert, update, delete on table public.beta_push_subscriptions to authenticated'),'authenticated users need table DML grants in addition to RLS');
+assert.ok(hotfix.includes('grant select, insert, update, delete on table public.beta_push_subscriptions to service_role'),'push worker needs explicit service-role table grants');
+assert.ok(hotfix.includes('revoke select, insert, update, delete on table public.beta_push_subscriptions from anon'),'anonymous clients must not receive push-subscription DML');
 
 for(const token of ['configure_beta_push_worker_schedule','process-beta-push-outbox','footmate-beta-push-outbox','footmate_beta_email_worker_token'])
   assert.ok(schedule.includes(token),`missing push schedule contract: ${token}`);
