@@ -1,0 +1,22 @@
+/* Real App visual polish: keep current IA/behavior while tightening primary-action hierarchy. */
+
+.fm-next-screen[data-screen="setup"]{
+  display:flex;
+  flex-direction:column;
+}
+
+.fm-next-screen[data-screen="setup"] .fm-next-setup-footer{
+  margin-top:auto;
+}
+
+.fm-next-screen[data-screen="setup"] .fm-next-setup-footer .fm-next-button{
+  width:100%;
+}
+
+[data-screen="checkout"] [data-participation-submit]{
+  width:100%;
+}
+
+[data-screen="checkout"][data-participation-status="failure"] [data-participation-submit]{
+  display:none;
+}
