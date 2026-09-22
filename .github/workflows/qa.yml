@@ -54,6 +54,8 @@ jobs:
         run: node tests/contracts/beta-free-growth.contract.mjs
       - name: Run beta social auth and operator MFA contracts
         run: node tests/contracts/beta-auth-mfa.contract.mjs
+      - name: Run beta web push and media contracts
+        run: node tests/contracts/beta-push-media.contract.mjs
   browser-e2e:
     name: Browser E2E + axe
     runs-on: ubuntu-latest
@@ -66,7 +68,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v5.3 browser, beta, AI, recovery and accessibility gates
-        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
+        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
