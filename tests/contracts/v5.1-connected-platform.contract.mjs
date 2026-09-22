@@ -68,7 +68,7 @@ for(const required of [
   'browser Web Push',
   'Supabase Storage media',
   '실제 PG와 external analytics는 아직 연결하지 않았습니다.',
-  'Web Push 브라우저/OS 표시는 Production 수동 QA'
+  'Google/Kakao 실제 로그인, transactional email delivery와 Web Push 브라우저/OS 표시는 2026-09-22 Production 수동 QA를 완료'
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
 
 console.log('PASS v5.1.1 connected platform contracts');
