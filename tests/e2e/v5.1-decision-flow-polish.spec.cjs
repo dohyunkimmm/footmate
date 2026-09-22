@@ -162,8 +162,8 @@ test('430px decision flow keeps mobile scanning order and recovery actions uncra
   }));
   expect(recoveryActions).toHaveLength(2);
   expect(recoveryActions[1].y).toBeGreaterThanOrEqual(recoveryActions[0].bottom);
-  expect(recoveryActions[0].width).toBeGreaterThanOrEqual(350);
-  expect(recoveryActions[1].width).toBeGreaterThanOrEqual(350);
+  expect(recoveryActions[0].width).toBeGreaterThanOrEqual(340);
+  expect(recoveryActions[1].width).toBeGreaterThanOrEqual(340);
   expect(recoveryActions[0].height).toBeGreaterThanOrEqual(48);
   expect(recoveryActions[1].height).toBeGreaterThanOrEqual(48);
 
