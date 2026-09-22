@@ -20,3 +20,37 @@
 [data-screen="checkout"][data-participation-status="failure"] [data-participation-submit]{
   display:none;
 }
+
+/* UX + Design System deep audit · batch 1
+   Preserve IA, copy, routes, feature behavior, sample data, and release identifiers. */
+:root{
+  --fm-type-micro:11px;
+  --fm-control-compact:36px;
+  --fm-field-default:50px;
+}
+
+.fm-ai-mode,
+.fm-ai-examples button,
+.fm-ai-status span,
+.fm-ai-conditions span,
+.fm-ai-result-copy small,
+.fm-ai-result-copy em,
+.fm-ai-empty span,
+.fm-ai-guardrail{
+  font-size:var(--fm-type-micro);
+}
+
+.fm-ai-input-row input,
+.fm-ai-input-row button{
+  height:var(--fm-field-default);
+}
+
+.fm-ai-examples button{
+  min-height:var(--fm-control-compact);
+}
+
+@media(max-width:340px){
+  .fm-next-context-actions{
+    grid-template-columns:1fr;
+  }
+}
