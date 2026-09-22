@@ -96,7 +96,7 @@
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
 
-- Scope: AI primary provider 안정화, bounded server/browser timeout, provider/rules fallback recovery, reload state consistency, request guard, 제품 사실 문구 정정, release-facing surface 정리
+- Scope: AI primary provider 안정화, bounded server/browser timeout, provider/rules fallback recovery, reload state consistency, request/cost guard, 제품 사실 문구 정정, release-facing surface 정리
 - User-facing release surface: 제품명·Case Study·README는 버전 독립적인 현재 제품 설명을 사용하고 내부 release/QA/deployment 식별자는 `v5.1.1`로 유지
 - AI Agent Workflow: `Context → Plan → Tools → Guardrail → Observe`
 - Ranking boundary: AI는 자연어 검색 조건만 해석하며 실제 경기 후보·순위·추천 이유는 기존 deterministic recommendation engine이 소유
