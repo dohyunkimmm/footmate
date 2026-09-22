@@ -128,6 +128,22 @@
 - Render backup: 이번 최종 sync-up에서는 재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 - Final sync rule: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 서로 상충하는 pending/미검증 문구 검색 → QA/merge`
 
+### Real App visual polish closure · 2026-09-22
+
+- Scope: Real App `/app`의 screen/state visual polish audit · 390px mobile + 1440px desktop에서 viewport당 21개 대표 상태, 총 42개 rendered state 확인
+- Audit coverage: onboarding, home/AI, discovery/filter/empty, detail/compare, auth, checkout/pending/failure/success, schedule/matchday/postgame, profile
+- Layout result: 두 audit viewport 모두 horizontal overflow 0
+- Confirmed fixes: setup primary CTA를 full-width + screen bottom hierarchy로 정리; checkout primary CTA full-width; checkout failure에서 중복 원본 submit CTA를 숨기고 명시적 `다시 결제하기` recovery action만 유지
+- Runtime PR: #186
+- PR QA: FootMate QA #661 · run `35704803515` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS
+- Post-merge main QA: FootMate QA #662 · run `35705251608` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS
+- Exact Production smoke: HTTP PASS · AI inference PASS · Chromium PASS
+- Product/runtime baseline: `f663b40adf270546557717c8eab6a47b32c79d05`
+- Exact Vercel Production: `dpl_B4Z821xPGAR487Zh3tMEnBHLcz2p` · SHA `f663b40adf270546557717c8eab6a47b32c79d05` · READY
+- Regression ownership: temporary visual capture spec/workflow는 audit 후 제거했고 `tests/e2e/v5.1-product-integrity.spec.cjs`에 setup/checkout primary-action hierarchy 검증을 permanent regression으로 유지
+- Preservation: IA, copy, routes, feature behavior, sample data, internal release identifier 변경 없음; Case Study 16-section IA와 Closed Beta 운영 절차도 변경 없음
+- Render backup: 이번 patch에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
