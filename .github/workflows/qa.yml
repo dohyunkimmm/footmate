@@ -11,8 +11,74 @@ concurrency:
   group: footmate-qa-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  impact:
+    name: Change Impact
+    runs-on: ubuntu-latest
+    outputs:
+      runtime: ${{ steps.impact.outputs.runtime }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - name: Determine runtime impact
+        id: impact
+        env:
+          EVENT_NAME: "${{ github.event_name }}"
+          PR_BASE_SHA: "${{ github.event.pull_request.base.sha }}"
+          PR_HEAD_SHA: "${{ github.event.pull_request.head.sha }}"
+          PUSH_BEFORE_SHA: "${{ github.event.before }}"
+          PUSH_HEAD_SHA: "${{ github.sha }}"
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+            head="$PR_HEAD_SHA"
+          else
+            base="$PUSH_BEFORE_SHA"
+            head="$PUSH_HEAD_SHA"
+          fi
+
+          runtime=false
+          for file in $(git diff --name-only "$base" "$head"); do
+            case "$file" in
+              README.md|docs/*|.github/*|*.md) ;;
+              *) runtime=true ;;
+            esac
+          done
+
+          echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
+
+  docs_only:
+    name: Docs-only QA
+    needs: impact
+    if: needs.impact.outputs.runtime == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Check docs diff integrity
+        env:
+          EVENT_NAME: "${{ github.event_name }}"
+          PR_BASE_SHA: "${{ github.event.pull_request.base.sha }}"
+          PR_HEAD_SHA: "${{ github.event.pull_request.head.sha }}"
+          PUSH_BEFORE_SHA: "${{ github.event.before }}"
+          PUSH_HEAD_SHA: "${{ github.sha }}"
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+            head="$PR_HEAD_SHA"
+          else
+            base="$PUSH_BEFORE_SHA"
+            head="$PUSH_HEAD_SHA"
+          fi
+          git diff --check "$base" "$head"
+      - name: Run documentation-facing connected platform contract
+        run: node tests/contracts/v5.1-connected-platform.contract.mjs
+
   regression:
     name: Regression 36
+    needs: impact
+    if: needs.impact.outputs.runtime == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -56,8 +122,11 @@ jobs:
         run: node tests/contracts/beta-auth-mfa.contract.mjs
       - name: Run beta web push and media contracts
         run: node tests/contracts/beta-push-media.contract.mjs
-  browser-e2e:
+
+  browser_e2e:
     name: Browser E2E + axe
+    needs: impact
+    if: needs.impact.outputs.runtime == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -79,27 +148,17 @@ jobs:
             test-results/
           if-no-files-found: warn
           retention-days: 14
-  production-smoke:
+
+  production_smoke:
     name: Production Smoke
-    if: github.event_name == 'push'
-    needs: [regression, browser-e2e]
+    needs: [impact, regression, browser_e2e]
+    if: github.event_name == 'push' && needs.impact.outputs.runtime == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with: {fetch-depth: 2}
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
-      - name: Determine production impact
-        id: impact
-        env: {BEFORE_SHA: "${{ github.event.before }}"}
-        run: |
-          runtime=false
-          for file in $(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA"); do
-            case "$file" in README.md|docs/*|.github/*) ;; *) runtime=true ;; esac
-          done
-          echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
       - name: Wait for exact Vercel deployment
-        if: steps.impact.outputs.runtime == 'true'
         env: {GH_TOKEN: "${{ github.token }}"}
         run: |
           for attempt in $(seq 1 42); do
@@ -110,20 +169,15 @@ jobs:
           done
           exit 1
       - name: Run exact Production HTTP smoke
-        if: steps.impact.outputs.runtime == 'true'
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: node tests/production-v5.1-smoke.cjs
       - name: Run exact Production AI inference
-        if: steps.impact.outputs.runtime == 'true'
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: node tests/production-v5.1-ai.cjs
       - name: Install Production browser dependency
-        if: steps.impact.outputs.runtime == 'true'
         run: npm install --no-save @playwright/test@1.55.1
       - name: Install Chromium
-        if: steps.impact.outputs.runtime == 'true'
         run: npx playwright install --with-deps chromium
       - name: Run exact Production Chromium smoke
-        if: steps.impact.outputs.runtime == 'true'
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: npx playwright test tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs tests/e2e/v5.2-beta-production.spec.cjs
