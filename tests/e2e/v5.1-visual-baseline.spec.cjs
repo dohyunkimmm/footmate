@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -119,8 +119,7 @@ test('1440px Detail matches the approved desktop visual baseline',async({page})=
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setup(page);
   await openFirstDetail(page);
-  const detail=page.locator('[data-screen="detail"]');
-  await expect(detail).toHaveScreenshot('real-app-detail-1440.png',exactScreenshot);
+  await expect(page).toHaveScreenshot('real-app-detail-1440.png',exactScreenshot);
   expect(errs).toEqual([]);
 });
 
@@ -129,8 +128,7 @@ test('1440px Checkout matches the approved desktop visual baseline',async({page}
   await setup(page);
   await openFirstDetail(page);
   await reachCheckout(page);
-  const checkout=page.locator('[data-screen="checkout"]');
-  await expect(checkout).toHaveScreenshot('real-app-checkout-1440.png',exactScreenshot);
+  await expect(page).toHaveScreenshot('real-app-checkout-1440.png',exactScreenshot);
   expect(errs).toEqual([]);
 });
 
@@ -142,7 +140,6 @@ test('1440px Success matches the approved desktop visual baseline',async({page})
   await page.locator('[data-participation-submit]').click();
   await expect(page.locator('[data-screen="success"]')).toBeVisible({timeout:5000});
   await page.mouse.move(1,1);
-  const success=page.locator('[data-screen="success"]');
-  await expect(success).toHaveScreenshot('real-app-success-1440.png',exactScreenshot);
+  await expect(page).toHaveScreenshot('real-app-success-1440.png',exactScreenshot);
   expect(errs).toEqual([]);
 });
