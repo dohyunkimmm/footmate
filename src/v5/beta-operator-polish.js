@@ -21,7 +21,7 @@ if(root){
     const selected=Boolean(root.querySelector('.fm-operator-item[aria-current="true"]'));
     const syncBounds=()=>{
       const max=String(starts.value||'');
-      if(max){cancel.max=max;checkIn.max=max}else{cancel.removeAttribute('max');checkIn.removeAttribute('max')}
+      if(max){cancel.max=offsetValue(max,-60*1000);checkIn.max=max}else{cancel.removeAttribute('max');checkIn.removeAttribute('max')}
     };
     const setAutoDefaults=()=>{
       if(selected||!starts.value)return;
