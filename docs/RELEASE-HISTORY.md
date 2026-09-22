@@ -75,6 +75,23 @@
 - Remaining free-plan boundary: Supabase Leaked Password Protection은 현재 플랜에서 Pro 이상 기능이라 unavailable; 실제 PG와 external analytics는 이번 free-only Beta scope 밖
 - Render backup: 이번 free-tier feature closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이고 Render는 backup/alternate deployment
 
+### Operator MFA QR / Beta UX polish closure · 2026-09-22
+
+- Scope: Supabase TOTP raw SVG QR normalization, 수동 설정 키 fallback, operator 경기 정책 기본값·picker bounds, 모바일 44px action target, helper text와 focus-visible polish
+- Runtime PR: #179
+- Runtime PR QA: FootMate QA #639 · run `35689461649` · PASS
+- Runtime post-merge QA: FootMate QA #640 · run `35689816248` · PASS
+- Product/runtime baseline: `fc94c375a4e0ebc2cf428df1f5a450a8ad630e97`
+- Runtime preservation: 기존 AAL2 enforcement, MFA flow, match/participation/email/push/media behavior, IA/routes/screen count 유지; DB migration 없음
+- Docs / Case Study sync: PR #180 · connected Beta capability, provider/manual QA boundary, README, Closed Beta pilot runbook을 현재 제품 상태에 동기화하면서 Case Study 16-section IA / TOC / routes / headings 유지
+- Docs PR QA: FootMate QA #642 · run `35690365954` · PASS
+- Docs post-merge QA: FootMate QA #643 · run `35690669684` · PASS
+- Current `main`: `73b5192983e9728379fa68f85a89b3a65de3f2aa` · #180 docs-only sync on top of runtime baseline
+- Exact Vercel Production: `dpl_GdJUrxmqmCyskwMWNeA1aPyFZ76S` · SHA `73b5192983e9728379fa68f85a89b3a65de3f2aa` · READY
+- Exact Production HTTP smoke: `/` 200 · `/beta/operator` 200 · PASS
+- Exact Production QR path: served `/src/v5/beta-operator-mfa.js`에서 raw `<svg>` TOTP 응답을 `data:image/svg+xml`로 normalize하며 QR 미사용 시 수동 TOTP 설정 키 fallback을 유지
+- Render backup: 이번 closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
