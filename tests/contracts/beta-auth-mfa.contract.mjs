@@ -46,6 +46,8 @@ assert.ok(social.includes('payload?.external?.google'));
 assert.ok(social.includes('payload?.external?.kakao'));
 assert.ok(social.includes("provider==='google'?'Google':'Kakao'"));
 assert.ok(socialBootstrap.includes("params.get('type')==='recovery'"),'social callback must not steal password recovery flow');
+assert.ok(socialBootstrap.includes('friendlyAuthError'),'OAuth callback errors must be normalized before they reach the user');
+assert.ok(socialBootstrap.includes('소셜 로그인 연결을 완료하지 못했습니다.'),'technical OAuth exchange errors must have user-facing Korean copy');
 
 assert.ok(operator.includes('/src/v5/beta-operator-mfa.js?v=1'));
 assert.ok(!operator.includes('src="/src/v5/beta-operator.js?v=1"'),'base operator console must not load before MFA gate');
