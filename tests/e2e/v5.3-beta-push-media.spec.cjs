@@ -98,7 +98,7 @@ test('AAL2 operator can upload a public match image through the media boundary',
   await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
   await expect(page.locator('#footmate-beta-operator')).toHaveAttribute('data-operator-state','ready');
   await page.getByRole('button',{name:/QA 경기/}).click();
-  await expect(page.getByText('경기장 이미지')).toBeVisible();
+  await expect(page.getByText('경기장 이미지',{exact:true})).toBeVisible();
   await page.locator('[data-beta-match-file]').setInputFiles({name:'venue.webp',mimeType:'image/webp',buffer:Buffer.from([82,73,70,70,0,0,0,0,87,69,66,80])});
   await page.locator('[data-action="upload-beta-match-image"]').click();
   await expect.poll(()=>matchUploaded).toBe(true);
