@@ -24,7 +24,7 @@ html[data-fm-next-case-study="true"] .sb-logo{
   letter-spacing:-.03em;
 }
 html[data-fm-next-case-study="true"] .sb-sub{
-  color:#6f7479;
+  color:#6b7075;
   font-size:10px;
   font-weight:500;
 }
@@ -48,7 +48,7 @@ html[data-fm-next-case-study="true"] .toc-t{
   font-weight:600;
 }
 html[data-fm-next-case-study="true"] .toc-s{
-  color:#6f7479;
+  color:#6b7075;
   font-size:9px;
   font-weight:400;
 }
@@ -60,7 +60,7 @@ html[data-fm-next-case-study="true"] .topbar{
   background:linear-gradient(180deg,rgba(255,255,255,.98) 0%,rgba(255,255,255,.9) 62%,rgba(255,255,255,0) 100%);
 }
 html[data-fm-next-case-study="true"] .topbar-title{
-  color:#6f7479;
+  color:#6b7075;
   font-size:11px;
   font-weight:600;
 }
@@ -182,7 +182,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
 }
 
 .fm-next-cover-flow{
-  color:#6f7479;
+  color:#6b7075;
   font-weight:600;
   letter-spacing:.02em;
 }
@@ -203,7 +203,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
   font-weight:600;
 }
 .fm-next-cover-proof span{
-  color:#6f7479;
+  color:#6b7075;
 }
 
 .fm-next-cover-glow{
@@ -220,7 +220,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
   transform:none;
 }
 .fm-next-cover-frame-meta{
-  color:#6f7479;
+  color:#6b7075;
   font-weight:600;
   letter-spacing:.08em;
 }
@@ -228,7 +228,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
   background:#188038;
 }
 .fm-next-cover-note{
-  color:#6f7479;
+  color:#6b7075;
 }
 
 .fm-next-story h2{
@@ -347,7 +347,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
 .fm-next-cs-matchday>span,
 .fm-next-cs-matchday small,
 .fm-next-cs-ia span{
-  color:#6f7479;
+  color:#6b7075;
 }
 .fm-next-cs-reco-card>div b{
   background:#e6f4ea;
@@ -371,7 +371,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
   font-weight:600;
 }
 .fm-next-cs-loop span{
-  color:#6f7479;
+  color:#6b7075;
 }
 .fm-next-cs-loop i,
 .fm-next-cs-agent i,
@@ -391,7 +391,7 @@ html[data-fm-next-case-study="true"] .pbar-fill{
 .fm-next-cs-before-after small,
 .fm-next-cs-auth-flow small,
 .fm-next-cs-state-home small{
-  color:#6f7479;
+  color:#6b7075;
 }
 .fm-next-cs-before-after .is-after small,
 .fm-next-cs-auth-flow .is-focus small,
