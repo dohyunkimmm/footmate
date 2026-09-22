@@ -98,7 +98,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 
 FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완결성과 복구 가능성을 release 기준으로 관리합니다.
 
-자동 release gate는 다음을 포함합니다.
+runtime-impacting 변경의 자동 release gate는 다음을 포함합니다. docs/workflow-only non-runtime 변경은 `Change Impact` 판정 후 `Docs-only QA`에서 `git diff --check`와 connected-platform contract를 실행하고, 영향이 없는 Regression / Browser E2E / Production Smoke는 skip합니다.
 
 - Regression suite
 - Browser E2E + axe
@@ -161,4 +161,6 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - Closed Beta pilot operations: `docs/BETA-PILOT-RUNBOOK.md`
 - Documentation index: `docs/README.md`
 - Browser QA ownership: current `v5.1` suites + `v5.2` Beta readiness + `v5.3` Beta growth/auth/push-media suites + 필요한 granular `v4` compatibility suites
-- Release flow: `branch → PR → GitHub Actions QA → merge → exact Vercel Production verification → durable release history sync`
+- QA scope: runtime-impacting 변경은 full Regression / Browser E2E + axe / 필요한 Production verification을 유지하고, docs/workflow-only non-runtime 변경은 lightweight Docs-only QA를 사용
+- Release flow: `branch → PR → impact-aware GitHub Actions QA → merge → runtime 영향 시 exact Vercel Production verification → durable release history sync`
+- Final sync-up: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 상충하는 pending/미검증 문구 검색 → QA/merge`
