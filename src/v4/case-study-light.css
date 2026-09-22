@@ -52,8 +52,14 @@ html[data-fm-next-case-study="true"] .toc-s{
   font-size:9px;
   font-weight:400;
 }
+html[data-fm-next-case-study="true"] .toc-item.on .toc-n{
+  color:#137333;
+}
 html[data-fm-next-case-study="true"] .toc-item.on .toc-t{
   color:#202124;
+}
+html[data-fm-next-case-study="true"] .toc-item.on .toc-s{
+  color:#5f6368;
 }
 
 html[data-fm-next-case-study="true"] .topbar{
