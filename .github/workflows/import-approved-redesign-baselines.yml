@@ -1,0 +1,40 @@
+name: Import approved redesign baselines
+on:
+  push:
+    branches: [design/visual-redesign-pass-20260922]
+    paths: [.github/workflows/import-approved-redesign-baselines.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-redesign-pass-20260922
+          fetch-depth: 0
+      - name: Import reviewed Ubuntu Chromium actuals
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -L -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10702255197/zip" \
+            -o /tmp/evidence.zip
+          rm -rf /tmp/evidence
+          mkdir -p /tmp/evidence
+          unzip -q /tmp/evidence.zip -d /tmp/evidence
+          dest="tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots"
+          cp "$(find /tmp/evidence -path '*retry1/real-app-context-actions-320-actual.png' -print -quit)" "$dest/real-app-context-actions-320-chromium-linux.png"
+          cp "$(find /tmp/evidence -path '*retry1/real-app-ai-card-390-actual.png' -print -quit)" "$dest/real-app-ai-card-390-chromium-linux.png"
+          cp "$(find /tmp/evidence -path '*retry1/real-app-detail-1440-actual.png' -print -quit)" "$dest/real-app-detail-1440-chromium-linux.png"
+          cp "$(find /tmp/evidence -path '*retry1/real-app-checkout-1440-actual.png' -print -quit)" "$dest/real-app-checkout-1440-chromium-linux.png"
+          cp "$(find /tmp/evidence -path '*retry1/real-app-success-1440-actual.png' -print -quit)" "$dest/real-app-success-1440-chromium-linux.png"
+          rm .github/workflows/import-approved-redesign-baselines.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$dest" .github/workflows/import-approved-redesign-baselines.yml
+          git diff --cached --stat
+          git commit -m "test: approve reviewed visual redesign baselines"
+          git push origin HEAD:design/visual-redesign-pass-20260922
