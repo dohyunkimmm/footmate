@@ -486,9 +486,10 @@
 }
 
 /* UX + Design System deep audit · batch 5
-   Finish desktop browse density and normalize the remaining 10px product micro labels. */
-.fm-next-nav button,
+   Finish desktop browse density and normalize remaining high-frequency 10px product micro labels. */
 .fm-next-upcoming-count,
+.fm-next-sticky-price small,
+.fm-next-profile-stats span,
 .fm-discovery-sheet-head small,
 .fm-decision-policy-grid small,
 .fm-decision-compare-bar small,
