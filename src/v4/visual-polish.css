@@ -182,3 +182,126 @@
   transform:none;
   box-shadow:none;
 }
+
+/* UX + Design System deep audit · batch 3
+   Clarify empty, loading, fallback, and recovery hierarchy without changing state behavior. */
+.fm-discovery-empty{
+  min-height:280px;
+  align-content:center;
+  border-style:solid;
+  border-color:#d8e3dc;
+  background:linear-gradient(180deg,#fbfdfb 0%,#f6faf7 100%);
+  box-shadow:0 12px 28px rgba(11,37,27,.055);
+}
+
+.fm-discovery-empty p{
+  max-width:320px;
+}
+
+.fm-discovery-empty-actions{
+  width:min(100%,320px);
+}
+
+.fm-discovery-empty-actions button{
+  flex:1 1 136px;
+}
+
+.fm-ai-loading{
+  min-height:82px;
+  align-items:center;
+  border:1px dashed #c8d6cf;
+  border-radius:14px;
+  background:#f8faf8;
+}
+
+.fm-ai-card:has(.fm-ai-loading) .fm-ai-status{
+  border:1px solid #c7d8ce;
+  background:#eef6f1;
+}
+
+.fm-ai-empty{
+  padding:16px;
+  border-style:solid;
+  border-color:#d5e0da;
+  background:#fbfcfb;
+}
+
+.fm-ai-empty b{
+  color:#20372d;
+  font-size:13px;
+}
+
+.fm-ai-empty span{
+  line-height:1.55;
+}
+
+.fm-ai-card:has(.fm-ai-mode[data-mode="rules-fallback"]) .fm-ai-status{
+  border:1px solid #ead2a1;
+  background:#fff7e8;
+}
+
+.fm-participation-state{
+  position:relative;
+  padding:20px;
+  border-color:#bcd0c3;
+  background:#f5faf6;
+  box-shadow:none;
+}
+
+.fm-participation-state[data-participation-panel="pending"]{
+  border-left:4px solid #4f8067;
+}
+
+.fm-participation-state[data-participation-panel="pending"]>small{
+  color:#38614e;
+}
+
+.fm-participation-state.is-failure{
+  border-color:#dfaaa6;
+  border-left:4px solid #b85c55;
+  background:#fff3f2;
+}
+
+.fm-participation-state.is-failure>small,
+.fm-participation-state.is-failure h2{
+  color:#7b342f;
+}
+
+.fm-participation-state[data-participation-panel="canceled"]{
+  border-style:dashed;
+  border-color:#cfd8d3;
+  background:#f7f8f7;
+}
+
+.fm-participation-state>div{
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:9px;
+}
+
+.fm-participation-state button{
+  width:100%;
+  min-height:46px;
+}
+
+.fm-participation-state button.is-ghost{
+  background:transparent;
+  border-color:#aebeb4;
+}
+
+[data-screen="checkout"][data-participation-status="pending"] [data-participation-submit]{
+  opacity:.45;
+  box-shadow:none;
+}
+
+@media(max-width:360px){
+  .fm-discovery-empty-actions,
+  .fm-participation-state>div{
+    grid-template-columns:1fr;
+  }
+
+  .fm-discovery-empty-actions{
+    display:grid;
+    width:100%;
+  }
+}

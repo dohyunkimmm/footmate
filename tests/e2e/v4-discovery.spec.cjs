@@ -74,6 +74,12 @@ test('v4.2 zero-result recovery widens restrictive conditions without losing pos
   await page.getByLabel('포지션').selectOption('GK');
   await page.getByRole('button',{name:'결과 보기'}).click();
   await expect(page.getByRole('heading',{name:'조건에 맞는 경기가 없어요.'})).toBeVisible();
+  const emptyHierarchy=await page.locator('.fm-discovery-empty').evaluate(element=>{const style=getComputedStyle(element),rect=element.getBoundingClientRect(),actions=element.querySelector('.fm-discovery-empty-actions'),primary=actions.querySelector('button:first-child'),secondary=actions.querySelector('button:last-child'),primaryStyle=getComputedStyle(primary),secondaryStyle=getComputedStyle(secondary);return {height:rect.height,borderStyle:style.borderTopStyle,background:style.backgroundImage,actionsWidth:actions.getBoundingClientRect().width,primaryBackground:primaryStyle.backgroundColor,secondaryBackground:secondaryStyle.backgroundColor}});
+  expect(emptyHierarchy.height).toBeGreaterThanOrEqual(280);
+  expect(emptyHierarchy.borderStyle).toBe('solid');
+  expect(emptyHierarchy.background).not.toBe('none');
+  expect(emptyHierarchy.actionsWidth).toBeLessThanOrEqual(321);
+  expect(emptyHierarchy.primaryBackground).not.toBe(emptyHierarchy.secondaryBackground);
   await page.getByRole('button',{name:'조건 넓히기'}).click();
   await expect(page.getByRole('heading',{name:'조건에 맞는 경기가 없어요.'})).toHaveCount(0);
   await expect(page.locator('.fm-next-match-card')).toHaveCount(5);
