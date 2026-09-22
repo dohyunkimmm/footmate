@@ -59,7 +59,7 @@ for(const token of ['qrImageSource','data:image/svg+xml;charset=utf-8','encodeUR
   assert.ok(mfa.includes(token),`missing safe MFA QR/fallback contract: ${token}`);
 assert.ok(!mfa.includes('src="${esc(enrollment?.totp?.qr_code'), 'raw TOTP QR response must never be rendered directly as an image URL');
 
-for(const token of ['cancelCutoffAt','checkInOpensAt','autoPolicy','-2*60*60*1000','-60*60*1000','cancel.max=max','checkIn.max=max'])
+for(const token of ['cancelCutoffAt','checkInOpensAt','autoPolicy','-2*60*60*1000','-60*60*1000','cancel.max=offsetValue(max,-60*1000)','checkIn.max=max'])
   assert.ok(operatorPolish.includes(token),`missing operator policy polish contract: ${token}`);
 assert.ok(betaCss.includes('.fm-beta-field small{'),'operator helper text must use the shared secondary-text style');
 assert.ok(betaCss.includes('.fm-beta-button:focus-visible,.fm-beta-link:focus-visible'),'button/link focus visibility must be explicit');
