@@ -12,7 +12,7 @@ if(root){
   let busy=false;
   let error='';
 
-  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char]||char));
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
   const qrImageSource=value=>{
     const raw=String(value||'').trim();if(!raw)return '';
     if(/^data:image\/(?:svg\+xml|png|jpeg|webp)[;,]/i.test(raw))return raw;
