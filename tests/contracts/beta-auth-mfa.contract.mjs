@@ -10,6 +10,8 @@ const mfa=fs.readFileSync('src/v5/beta-operator-mfa.js','utf8');
 const operatorPolish=fs.readFileSync('src/v5/beta-operator-polish.js','utf8');
 const betaCss=fs.readFileSync('src/v5/beta.css','utf8');
 const authCss=fs.readFileSync('src/v5/beta-auth.css','utf8');
+const operatorCss=fs.readFileSync('src/v5/beta-operator.css','utf8');
+const enhancementCss=fs.readFileSync('src/v5/beta-enhancements.css','utf8');
 
 for(const token of [
   'require_beta_operator_aal2',
@@ -59,7 +61,10 @@ for(const token of ['cancelCutoffAt','checkInOpensAt','autoPolicy','-2*60*60*100
   assert.ok(operatorPolish.includes(token),`missing operator policy polish contract: ${token}`);
 assert.ok(betaCss.includes('.fm-beta-field small{'),'operator helper text must use the shared secondary-text style');
 assert.ok(betaCss.includes('.fm-beta-button:focus-visible,.fm-beta-link:focus-visible'),'button/link focus visibility must be explicit');
+assert.ok(betaCss.includes('.fm-beta-link{display:inline-flex;align-items:center;min-height:44px'),'text-style actions must keep a 44px touch target');
 assert.ok(betaCss.includes('@media(max-width:430px)')&&betaCss.includes('.fm-beta-button{min-height:44px}'),'mobile buttons must retain the 44px touch target');
+assert.ok(operatorCss.includes('.fm-operator-email-state .fm-beta-button{min-height:44px'),'operator email actions must retain the 44px touch target');
+assert.ok(enhancementCss.includes('.fm-beta-media-input{width:100%;min-height:44px'),'media file controls must retain the 44px touch target');
 assert.ok(authCss.includes('user-select:all'),'manual TOTP setup key must be easy to select');
 
 console.log('beta social auth + operator MFA contracts: PASS');
