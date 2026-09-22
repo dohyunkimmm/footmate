@@ -60,6 +60,7 @@
   font-size:16px;
   line-height:1.5;
 }
+/* Preserve the existing structured-content readability floor used by Case Study QA. */
 .fm-next-cs-persona b,
 .fm-next-cs-auth-flow b,
 .fm-next-cs-state-home b,
@@ -70,7 +71,7 @@
 .fm-next-cs-loop b,
 .fm-next-cs-agent b,
 .fm-next-cs-state-chain span{
-  font-size:13px;
+  font-size:14px;
 }
 
 @media(min-width:1181px){
