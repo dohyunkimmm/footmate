@@ -158,6 +158,10 @@
 - Current runtime post-merge QA: FootMate QA #684 · run `35716339959` · Regression 36 PASS · Browser E2E + axe + visual baseline PASS · Production Smoke PASS
 - Current exact Production verification: HTTP PASS · AI inference PASS · Chromium PASS · exact verified Vercel Production SHA `f1c2d19d418e6cbe93cc2fa70209895ed391bd9e`
 - Render backup: 이번 visual regression / interaction QA closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+- Documentation / Case Study sync PR: #191 · README, Release History, Case Study Validation과 관련 Notion QA 문서를 visual regression gate 사실에 맞춰 동기화
+- Documentation / Case Study sync merge SHA: `8189fdf8f07aea9c8d97fd9f15af19b70883cd70` · PR QA #688 / run `35717133196` · Regression 36 PASS · Browser E2E + axe + visual baseline PASS
+- Exact Vercel Production for the Case Study sync: deployment `dpl_FgQUCuBhhMtNDgLRrwK1SLT3Yz6F` · SHA `8189fdf8f07aea9c8d97fd9f15af19b70883cd70` · READY · Production alias 반영 확인 · `/` 및 `/app` HTTP 200 · Production `case-study-connected.js`의 visual regression 문구 반영 확인
+- Product app runtime behavior는 #191에서 변경하지 않았으므로 full exact Production AI inference / Chromium smoke 기준은 #684의 `f1c2d19d418e6cbe93cc2fa70209895ed391bd9e` 검증을 유지; #191에는 해당 두 smoke를 재실행했다고 기록하지 않음
 
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
