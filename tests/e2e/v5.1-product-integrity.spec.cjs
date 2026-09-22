@@ -224,6 +224,59 @@ test('320px context actions and AI micro UI keep readable non-cramped sizing',as
   expect(errs).toEqual([]);
 });
 
+test('Real App interaction feedback is consistent across secondary, navigation, discovery and AI controls',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setup(page);
+
+  async function surface(locator){
+    return locator.evaluate(element=>{
+      const style=getComputedStyle(element);
+      return {background:style.backgroundColor,border:style.borderColor,color:style.color,transform:style.transform};
+    });
+  }
+
+  async function hoverSurface(locator){
+    await locator.hover();
+    await page.waitForTimeout(220);
+    return surface(locator);
+  }
+
+  const secondary=page.locator('.fm-next-context-actions .fm-next-button--secondary').first();
+  await expect(secondary).toBeVisible();
+  const secondaryRest=await surface(secondary);
+  const secondaryHover=await hoverSurface(secondary);
+  expect(secondaryHover.background).not.toBe(secondaryRest.background);
+
+  const navTarget=page.locator('.fm-next-nav button').filter({hasText:'경기 찾기'});
+  const navRest=await surface(navTarget);
+  const navHover=await hoverSurface(navTarget);
+  expect(navHover.background).not.toBe(navRest.background);
+
+  const aiExample=page.locator('.fm-ai-examples button').first();
+  await expect(aiExample).toBeVisible();
+  const aiRest=await surface(aiExample);
+  const aiHover=await hoverSurface(aiExample);
+  expect(aiHover.background).not.toBe(aiRest.background);
+  expect(aiHover.border).not.toBe(aiRest.border);
+
+  await page.getByRole('button',{name:'전체 보기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  const filter=page.locator('.fm-discovery-filter-button');
+  await expect(filter).toBeVisible();
+  const filterRest=await surface(filter);
+  const filterHover=await hoverSurface(filter);
+  expect(filterHover.background).not.toBe(filterRest.background);
+  expect(filterHover.border).not.toBe(filterRest.border);
+
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const transitionDurations=await filter.evaluate(element=>getComputedStyle(element).transitionDuration.split(',').map(value=>{
+    const text=value.trim();
+    return text.endsWith('ms')?parseFloat(text):parseFloat(text)*1000;
+  }));
+  expect(Math.max(...transitionDurations)).toBeLessThanOrEqual(.1);
+  expect(errs).toEqual([]);
+});
+
 test('Case Study desktop companion panels retain reviewable width and structured-cell space',async({page})=>{
   const errs=failures(page);
   await page.setViewportSize({width:1440,height:900});

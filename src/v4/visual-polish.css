@@ -54,3 +54,131 @@
     grid-template-columns:1fr;
   }
 }
+
+/* UX + Design System deep audit · batch 2
+   Normalize interaction feedback without changing behavior, copy, IA, or state models. */
+.fm-next-button--secondary:hover{
+  background:#f4f7f4;
+  border-color:#aebdb2;
+}
+
+.fm-next-button--ghost:hover,
+.fm-next-button--text:hover{
+  background:rgba(11,37,27,.055);
+}
+
+.fm-next-context-actions .fm-next-button--secondary:hover,
+.fm-next-upcoming-actions .fm-next-button--secondary:hover{
+  background:rgba(255,255,255,.16);
+  border-color:rgba(255,255,255,.28);
+}
+
+.fm-next-social,
+.fm-next-nav button,
+.fm-next-menu-item,
+.fm-discovery-filter-button,
+.fm-discovery-close,
+.fm-discovery-reset,
+.fm-discovery-done,
+.fm-discovery-empty-actions button,
+.fm-discovery-chip,
+.fm-discovery-clear,
+.fm-decision-toolbar button,
+.fm-decision-compare-bar button,
+.fm-decision-dialog-head>button,
+.fm-decision-compare-card>button,
+.fm-ai-input-row button,
+.fm-ai-examples button,
+.fm-ai-result{
+  transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s var(--fm-ease);
+}
+
+.fm-next-social:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--fm-shadow-soft);
+}
+
+.fm-next-nav button:hover,
+.fm-next-menu-item:hover{
+  background:#f1f5f1;
+  color:var(--fm-pitch);
+}
+
+.fm-next-nav button:active,
+.fm-next-menu-item:active,
+.fm-next-social:active,
+.fm-discovery-filter-button:active,
+.fm-discovery-close:active,
+.fm-discovery-reset:active,
+.fm-discovery-done:active,
+.fm-discovery-empty-actions button:active,
+.fm-discovery-chip:active,
+.fm-decision-toolbar button:active,
+.fm-decision-compare-bar button:active,
+.fm-decision-dialog-head>button:active,
+.fm-decision-compare-card>button:active,
+.fm-ai-input-row button:not(:disabled):active,
+.fm-ai-examples button:active,
+.fm-ai-result:active{
+  transform:scale(.985);
+}
+
+.fm-discovery-filter-button:hover,
+.fm-discovery-close:hover,
+.fm-discovery-reset:hover,
+.fm-discovery-empty-actions button:not(:first-child):hover{
+  background:#f4f7f4;
+  border-color:#aebdb2;
+}
+
+.fm-discovery-done:hover,
+.fm-discovery-empty-actions button:first-child:hover{
+  background:#123829;
+  border-color:#123829;
+}
+
+.fm-discovery-chip:hover{
+  background:#e4f3b6;
+  border-color:rgba(23,100,69,.28);
+}
+
+.fm-discovery-clear:hover{
+  color:var(--fm-pitch);
+}
+
+.fm-decision-toolbar button:hover:not(.is-active){
+  background:rgba(255,255,255,.16);
+  border-color:rgba(255,255,255,.32);
+}
+
+.fm-decision-compare-bar button:hover{
+  background:#d5f57c;
+}
+
+.fm-decision-compare-bar button.is-ghost:hover{
+  background:rgba(255,255,255,.18);
+}
+
+.fm-decision-dialog-head>button:hover{
+  background:#eef3ef;
+}
+
+.fm-decision-compare-card>button:hover,
+.fm-ai-input-row button:hover:not(:disabled){
+  background:#123829;
+}
+
+.fm-ai-examples button:hover{
+  background:#f6f9f7;
+  border-color:#a8b8af;
+}
+
+.fm-ai-result:hover{
+  background:#f8faf8;
+  border-color:#9db0a6;
+}
+
+.fm-ai-input-row button:disabled{
+  transform:none;
+  box-shadow:none;
+}

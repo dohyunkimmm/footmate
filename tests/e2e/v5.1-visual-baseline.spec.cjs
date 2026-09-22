@@ -26,6 +26,7 @@ async function setup(page){
   await page.getByRole('button',{name:'다음'}).click();
   await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await page.mouse.move(1,1);
 }
 
 test('320px context actions match the approved responsive visual baseline',async({page})=>{
