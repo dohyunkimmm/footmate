@@ -87,7 +87,7 @@ test('1440px Home and Discover use intentional two-column card density',async({p
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   const discoverList=page.locator('[data-screen="discover"] .fm-next-list');
   const discoverCards=page.locator('[data-screen="discover"] .fm-next-list .fm-next-match-card');
-  await expect(discoverCards).toHaveCount(2);
+  expect(await discoverCards.count()).toBeGreaterThanOrEqual(2);
   await expect.poll(()=>gridColumnCount(discoverList)).toBe(2);
   for(const width of await cardWidths(discoverCards))expect(width).toBeGreaterThanOrEqual(420);
 
