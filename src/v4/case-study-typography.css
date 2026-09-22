@@ -1,8 +1,6 @@
-/* FootMate Case Study · typography scale refinement
-   Reduces presentation-like display sizing while preserving the approved 16-section IA,
-   shell geometry, copy, interaction, and readable body text.
-   Kept as a separate override so intentional typography changes remain easy to review.
-   Structured labels retain the existing QA readability floor. */
+/* FootMate Case Study · typography and visual polish
+   Reduces presentation-like display sizing and tightens editorial rhythm while preserving
+   the approved 16-section IA, shell geometry, copy, interaction, and readable body text. */
 
 .fm-next-cover h1{
   max-width:640px;
@@ -102,5 +100,429 @@
   .fm-next-story-lead{
     font-size:13px;
     line-height:1.62;
+  }
+}
+
+/* Editorial polish tokens. */
+html[data-fm-next-case-study="true"]{
+  --fm-cs-ink:#202124;
+  --fm-cs-muted:#5f6368;
+  --fm-cs-subtle:#6b7075;
+  --fm-cs-line:#e3e6e4;
+  --fm-cs-line-soft:#edf0ee;
+  --fm-cs-surface:#fff;
+  --fm-cs-surface-soft:#f7f9f8;
+  --fm-cs-accent:#188038;
+  --fm-cs-accent-strong:#137333;
+  --fm-cs-accent-soft:#f3f9f5;
+  --fm-cs-accent-line:#d7eadc;
+}
+
+html[data-fm-next-case-study="true"] .sb-brand{
+  margin-bottom:5px;
+  padding-bottom:22px;
+  border-bottom:1px solid var(--fm-cs-line-soft);
+}
+html[data-fm-next-case-study="true"] .sb-sub{
+  margin-top:6px;
+  color:var(--fm-cs-subtle);
+  line-height:1.45;
+}
+html[data-fm-next-case-study="true"] .toc{
+  gap:1px;
+}
+html[data-fm-next-case-study="true"] .toc-item{
+  padding-top:10px;
+  padding-bottom:10px;
+  border-left-width:2px;
+}
+html[data-fm-next-case-study="true"] .toc-item.on{
+  background:#f1f7f3;
+  border-left-color:var(--fm-cs-accent);
+}
+html[data-fm-next-case-study="true"] .toc-item:hover:not(.on){
+  background:#fafbfa;
+}
+html[data-fm-next-case-study="true"] .toc-s{
+  margin-top:1px;
+  color:var(--fm-cs-subtle);
+  line-height:1.45;
+}
+
+html[data-fm-next-case-study="true"] .topbar{
+  height:56px;
+  padding-inline:30px;
+}
+html[data-fm-next-case-study="true"] .topbar-title{
+  color:#6b7075;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+html[data-fm-next-case-study="true"] .label{
+  top:64px;
+  right:30px;
+  padding:7px 11px;
+  border-color:var(--fm-cs-line);
+  background:rgba(255,255,255,.96);
+  color:#70757a;
+  box-shadow:0 1px 3px rgba(60,64,67,.08);
+  letter-spacing:.07em;
+}
+html[data-fm-next-case-study="true"] .cs-controls{
+  left:30px;
+  right:30px;
+  bottom:17px;
+}
+html[data-fm-next-case-study="true"] .cs-button{
+  min-width:46px;
+  height:42px;
+  border-color:var(--fm-cs-line);
+  border-radius:12px;
+  box-shadow:0 1px 2px rgba(60,64,67,.05);
+}
+html[data-fm-next-case-study="true"] .dot{
+  width:6px;
+  height:6px;
+}
+html[data-fm-next-case-study="true"] .dots{
+  gap:6px;
+}
+
+.fm-next-cover-slide,
+.fm-next-story-slide{
+  padding-left:64px!important;
+  padding-right:64px!important;
+}
+.fm-next-cover{
+  gap:58px;
+}
+.fm-next-cover-kicker,
+.fm-next-story-kicker{
+  margin-bottom:14px;
+  letter-spacing:.07em;
+}
+.fm-next-cover-lead{
+  margin-top:16px;
+}
+.fm-next-cover-actions{
+  margin-top:24px;
+  gap:9px;
+}
+.fm-next-cover-flow{
+  margin-top:22px;
+}
+.fm-next-cover-proof{
+  gap:10px;
+  margin-top:22px;
+}
+.fm-next-cover-proof div{
+  padding:14px 15px;
+  border-color:var(--fm-cs-line);
+  border-radius:14px;
+  background:var(--fm-cs-surface-soft);
+}
+.fm-next-cover-proof b{
+  margin-bottom:5px;
+  color:#3c4043;
+  font-weight:700;
+}
+.fm-next-cover-proof span{
+  color:#5f6368;
+}
+.fm-next-cover-frame{
+  padding:8px;
+  border-color:#dfe3e1;
+  border-radius:30px;
+  box-shadow:0 14px 40px rgba(60,64,67,.14),0 2px 8px rgba(60,64,67,.06);
+}
+.fm-next-cover-frame iframe{
+  border-radius:23px;
+}
+
+@media(min-width:901px){
+  .fm-next-story-slide{
+    align-items:flex-start;
+    padding-top:112px!important;
+    padding-bottom:82px!important;
+  }
+  .fm-next-story{
+    width:min(1120px,100%);
+    height:auto;
+    max-height:calc(100vh - 194px);
+    grid-template-columns:minmax(0,1fr) minmax(330px,350px);
+    gap:44px;
+    align-items:start;
+    padding:0 2px 22px;
+  }
+  .fm-next-story-copy{
+    padding-top:1px;
+  }
+  .fm-next-story h2{
+    margin-bottom:14px;
+    max-width:21ch;
+  }
+  .fm-next-story-lead{
+    max-width:64ch;
+    margin-bottom:26px;
+  }
+  .fm-next-story-aside{
+    gap:14px;
+  }
+}
+
+@media(min-width:901px) and (max-width:1040px){
+  .fm-next-cover-slide,
+  .fm-next-story-slide{
+    padding-left:36px!important;
+    padding-right:36px!important;
+  }
+  .fm-next-story{
+    grid-template-columns:minmax(0,1fr);
+    gap:22px;
+  }
+}
+
+@media(min-width:1041px) and (max-width:1180px){
+  .fm-next-cover-slide,
+  .fm-next-story-slide{
+    padding-left:40px!important;
+    padding-right:40px!important;
+  }
+  .fm-next-story{
+    grid-template-columns:minmax(0,1fr) 280px;
+    gap:24px;
+  }
+}
+
+.fm-next-cs-grid,
+.fm-next-cs-persona,
+.fm-next-cs-journey,
+.fm-next-cs-before-after,
+.fm-next-cs-reco,
+.fm-next-cs-auth-flow,
+.fm-next-cs-state-home,
+.fm-next-cs-modes,
+.fm-next-cs-ia,
+.fm-next-cs-metrics,
+.fm-next-cs-day-states,
+.fm-next-cs-recovery,
+.fm-next-cs-outcomes{
+  gap:12px;
+}
+
+.fm-next-cs-card,
+.fm-next-cs-journey>div,
+.fm-next-cs-before-after>div,
+.fm-next-cs-auth-flow>div,
+.fm-next-cs-state-home div,
+.fm-next-cs-modes>div,
+.fm-next-cs-metric,
+.fm-next-cs-outcome div,
+.fm-next-cs-day-states>div,
+.fm-next-cs-recovery>div,
+.fm-next-cs-outcomes>div{
+  border-color:var(--fm-cs-line);
+  border-radius:15px;
+  background:var(--fm-cs-surface);
+  box-shadow:0 1px 2px rgba(60,64,67,.035);
+}
+.fm-next-cs-card{
+  padding:17px;
+}
+.fm-next-cs-card small,
+.fm-next-cs-journey b,
+.fm-next-cs-modes small,
+.fm-next-cs-outcome small,
+.fm-next-cs-day-states small,
+.fm-next-cs-outcomes b{
+  letter-spacing:.06em;
+}
+.fm-next-cs-card h3,
+.fm-next-cs-journey h3,
+.fm-next-cs-modes h3{
+  margin-top:9px;
+  margin-bottom:7px;
+}
+
+.fm-next-cs-quote,
+.fm-next-cs-jtbd,
+.fm-next-cs-decision,
+.fm-next-cs-scope,
+.fm-next-cs-sticky,
+.fm-next-cs-note,
+.fm-next-cs-final,
+.fm-next-cs-closing{
+  border-color:var(--fm-cs-accent-line);
+  border-radius:17px;
+  background:var(--fm-cs-accent-soft);
+}
+.fm-next-cs-quote span,
+.fm-next-cs-jtbd small,
+.fm-next-cs-decision span,
+.fm-next-cs-scope span,
+.fm-next-cs-sticky small,
+.fm-next-cs-final>span,
+.fm-next-cs-closing>span{
+  margin-bottom:7px;
+  letter-spacing:.06em;
+}
+.fm-next-cs-quote b,
+.fm-next-cs-decision b,
+.fm-next-cs-scope b,
+.fm-next-cs-sticky b,
+.fm-next-cs-final>b,
+.fm-next-cs-closing h3{
+  letter-spacing:-.02em;
+}
+
+.fm-next-cs-persona div,
+.fm-next-cs-reco-card,
+.fm-next-cs-matchday,
+.fm-next-cs-ia b,
+.fm-next-cs-loop,
+.fm-next-cs-agent,
+.fm-next-cs-state-chain{
+  border:1px solid var(--fm-cs-line);
+  background:var(--fm-cs-surface-soft);
+  box-shadow:none;
+}
+.fm-next-cs-persona div,
+.fm-next-cs-reco-card,
+.fm-next-cs-matchday{
+  border-radius:15px;
+}
+.fm-next-cs-loop,
+.fm-next-cs-agent,
+.fm-next-cs-state-chain{
+  border-radius:15px;
+}
+.fm-next-cs-stack p,
+.fm-next-cs-detail-order span{
+  border-color:var(--fm-cs-line);
+  background:var(--fm-cs-surface);
+  box-shadow:none;
+}
+.fm-next-cs-stack p{
+  padding:14px;
+  border-radius:12px;
+}
+.fm-next-cs-detail-order span{
+  border-radius:11px;
+}
+.fm-next-cs-before-after>.is-after,
+.fm-next-cs-auth-flow>.is-focus,
+.fm-next-cs-state-home .is-focus,
+.fm-next-cs-day-states>.is-focus{
+  border-color:var(--fm-cs-accent-line);
+  background:var(--fm-cs-accent-soft);
+}
+.fm-next-cs-quality span{
+  border-color:var(--fm-cs-accent-line);
+  background:var(--fm-cs-accent-soft);
+}
+
+.fm-next-cover-actions a:focus-visible,
+.fm-next-cover-actions button:focus-visible,
+.fm-next-cs-link:focus-visible,
+html[data-fm-next-case-study="true"] .toc-item:focus-visible,
+html[data-fm-next-case-study="true"] .cs-button:focus-visible,
+html[data-fm-next-case-study="true"] .dot:focus-visible,
+html[data-fm-next-case-study="true"] .cs-mobile-head a:focus-visible{
+  outline:3px solid rgba(24,128,56,.22);
+  outline-offset:2px;
+}
+
+@media(min-width:1181px){
+  .fm-next-story-aside>.fm-next-cs-quote,
+  .fm-next-story-aside>.fm-next-cs-jtbd,
+  .fm-next-story-aside>.fm-next-cs-decision,
+  .fm-next-story-aside>.fm-next-cs-scope,
+  .fm-next-story-aside>.fm-next-cs-sticky,
+  .fm-next-story-aside>.fm-next-cs-note,
+  .fm-next-story-aside>.fm-next-cs-final{
+    padding:21px;
+    border-radius:17px;
+  }
+  .fm-next-story-aside .fm-next-cs-card{
+    padding:18px;
+  }
+  .fm-next-story-aside>.fm-next-cs-link{
+    min-height:50px;
+    padding-inline:18px;
+  }
+}
+
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .cs-mobile-head{
+    padding:13px 18px;
+    background:rgba(255,255,255,.98);
+    box-shadow:0 1px 0 var(--fm-cs-line-soft);
+  }
+  .fm-next-cover-slide,
+  .fm-next-story-slide{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+  .fm-next-cover,
+  .fm-next-story{
+    gap:24px!important;
+  }
+  .fm-next-cover-proof,
+  .fm-next-cs-grid,
+  .fm-next-cs-persona,
+  .fm-next-cs-journey,
+  .fm-next-cs-before-after,
+  .fm-next-cs-reco,
+  .fm-next-cs-auth-flow,
+  .fm-next-cs-state-home,
+  .fm-next-cs-modes,
+  .fm-next-cs-ia,
+  .fm-next-cs-metrics,
+  .fm-next-cs-day-states,
+  .fm-next-cs-recovery,
+  .fm-next-cs-outcomes{
+    gap:10px;
+  }
+  .fm-next-cs-card,
+  .fm-next-cs-journey>div,
+  .fm-next-cs-before-after>div,
+  .fm-next-cs-auth-flow>div,
+  .fm-next-cs-state-home div,
+  .fm-next-cs-modes>div,
+  .fm-next-cs-metric,
+  .fm-next-cs-day-states>div,
+  .fm-next-cs-recovery>div,
+  .fm-next-cs-outcomes>div{
+    border-radius:14px;
+  }
+  .fm-next-cs-quote,
+  .fm-next-cs-jtbd,
+  .fm-next-cs-decision,
+  .fm-next-cs-scope,
+  .fm-next-cs-sticky,
+  .fm-next-cs-note,
+  .fm-next-cs-final,
+  .fm-next-cs-closing{
+    border-radius:15px;
+  }
+}
+
+@media(max-width:560px){
+  .fm-next-cover-kicker,
+  .fm-next-story-kicker{
+    margin-bottom:12px;
+  }
+  .fm-next-cover-lead{
+    margin-top:15px;
+  }
+  .fm-next-cover-actions{
+    margin-top:22px;
+  }
+  .fm-next-cover-flow,
+  .fm-next-cover-proof{
+    margin-top:20px;
+  }
+  .fm-next-cs-card{
+    padding:16px;
   }
 }
