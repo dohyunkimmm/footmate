@@ -163,6 +163,25 @@
 - Exact Vercel Production for the Case Study sync: deployment `dpl_FgQUCuBhhMtNDgLRrwK1SLT3Yz6F` · SHA `8189fdf8f07aea9c8d97fd9f15af19b70883cd70` · READY · Production alias 반영 확인 · `/` 및 `/app` HTTP 200 · Production `case-study-connected.js`의 visual regression 문구 반영 확인
 - Product app runtime behavior는 #191에서 변경하지 않았으므로 full exact Production AI inference / Chromium smoke 기준은 #684의 `f1c2d19d418e6cbe93cc2fa70209895ed391bd9e` 검증을 유지; #191에는 해당 두 smoke를 재실행했다고 기록하지 않음
 
+### Real App UI/UX completion · desktop visual baseline closure · 2026-09-22
+
+- State hierarchy runtime PR: #193 · Discovery zero-result, AI loading/fallback/empty, participation pending/failure/canceled의 시각 hierarchy를 정리하면서 기존 state behavior·IA·copy·routes를 유지
+- Decision-flow desktop/mobile polish PR: #194 · 1440px 제품 canvas와 Detail/Checkout desktop 2-column hierarchy, floating/sticky CTA, Success width/CTA 정렬, 430px 이하 recovery CTA stack을 보강
+- Desktop visual baseline PR: #196 · Home/Discover 1440px 2-column density, high-frequency micro label 11px 정규화, 1440px Detail/Checkout/Success exact screenshot baseline을 추가
+- Exact Real App screenshot coverage: 320px context actions · 390px AI card · 1440px Detail · 1440px Checkout · 1440px Success
+- Comparison contract: GitHub Actions Ubuntu/Chromium에서 `toHaveScreenshot()` + `maxDiffPixels: 0`; 신규 desktop baseline은 CI actual을 검토한 뒤 expected로 승인하고 동일 환경에서 실제 0-diff comparison PASS 확인
+- Desktop geometry contract: 1440px Home/Discover 2-column density, card width, horizontal overflow 검증; desktop decision flow는 960px product canvas 기준
+- Mobile preservation: responsive 320/375/390/430px, recovery CTA stacking, 390px decision micro-label readability regression 유지
+- PR #196 QA: FootMate QA #727 · run `35733324000` · Regression 36 PASS · Browser E2E + axe + Product/Case Study visual baseline PASS
+- Post-merge main QA: FootMate QA #728 · run `35733829361` · SUCCESS · Regression 36 PASS · Browser E2E + axe + visual baseline PASS · Production Smoke PASS
+- Exact Production smoke: HTTP PASS · AI inference PASS · Chromium PASS
+- Current product/runtime baseline: `3cd79312244dbdfbcdcea08540f68cea5e7ae375`
+- Exact Vercel Production: `dpl_Ghe1PXNtPUXm7PWVPKxekPfXTaJS` · SHA `3cd79312244dbdfbcdcea08540f68cea5e7ae375` · READY · production aliases 반영 · alias error 없음
+- Case Study visual regression은 별도 approved baseline gate를 유지하며 이번 Real App baseline 확장과 함께 main Browser E2E gate에서 PASS
+- Preservation: Matching/recommendation ownership, auth/payment state behavior, sample data, 16-section Case Study IA, internal release identifier 변경 없음
+- Documentation sync: README / Release History / Case Study Validation과 관련 Notion FootMate 문서를 current visual QA 사실에 맞춰 후속 sync; Closed Beta 운영 절차는 변경되지 않아 `docs/BETA-PILOT-RUNBOOK.md`는 수정하지 않음
+- Render backup: 이번 final UI/UX closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
@@ -327,7 +346,7 @@
 - Journey contract: `Find → Decide → Join → Play → Return`
 - Compatibility boundary: v4.9 product UX, session schema v2, local persistence/event contract, recovery and accessibility behavior retained
 - Domain boundary: recommendation / participation / matchday / return ownership and normalization are explicit
-- Consistency guardrail: selected match → participation success → matchday check-in → Return의 match identity와 상태 순서를 deterministic contract로 검증
+- Consistency guardrail: selected match → participation success → matchday check-in → Return의 match identity/state 순서 검증
 - Provider boundary: auth/payment/capacity/notification은 injectable registry로 분리되었으나 current Production mode는 `mock-only`; connected providers 없음
 - Integration boundary: 실제 OAuth·회원 DB·PG·realtime capacity/participant backend·notification delivery·external AI inference·external analytics 미연동
 - Performance measurement: app HTML `2,422B` · CSS `56,112B` · JS `144,952B` · first-party CSS/JS requests `21` · frozen budget PASS
