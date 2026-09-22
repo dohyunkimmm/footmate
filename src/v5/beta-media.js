@@ -9,7 +9,7 @@ const MIME_EXT={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
 let config=null;
 const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};
 const token=()=>String(readSession()?.accessToken||'').trim();
-const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
+const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char]||char));
 async function ensureConfig(){if(!config)config=await loadBetaBackendConfig();return config}
 async function jsonResponse(response){const payload=await response.json().catch(()=>null);if(!response.ok)throw new Error(payload?.message||payload?.error_description||payload?.error||`요청 실패 (${response.status})`);return payload}
 async function request(path,{method='GET',body,headers={}}={}){
@@ -62,7 +62,7 @@ if(userRoot){
     const form=userRoot.querySelector('form[data-form="profile"]');
     if(!form){panel()?.remove();loadedToken='';userId='';avatarPath='';return}
     const host=form.closest('.fm-beta-panel')||form.parentElement;if(!host)return;
-    const preview=avatarPath?`<img class="fm-beta-media-preview fm-beta-media-preview--avatar" src="${esc(objectUrl(avatarPath))}" alt="현재 프로필 이미지">`:`<div class="fm-beta-media-placeholder">프로필 이미지 없음</div>`;
+    const preview=avatarPath?`<img class="fm-beta-media-preview fm-beta-media-preview--avatar" src="${esc(objectUrl(avatarPath))}" alt="현재 프로필 이미지">`:`<div class="fm-beta-media-placeholder">아직 등록된 이미지가 없습니다.</div>`;
     const html=`<div class="fm-beta-enhancement fm-beta-media" data-beta-avatar-panel><div class="fm-beta-media-copy"><strong>프로필 이미지</strong><span>JPG · PNG · WebP, 최대 5MB</span>${error?`<small data-tone="error">${esc(error)}</small>`:''}</div>${preview}<input class="fm-beta-media-input" type="file" accept="image/jpeg,image/png,image/webp" data-beta-avatar-file><div class="fm-beta-actions"><button class="fm-beta-button" type="button" data-action="upload-beta-avatar" ${busy||!userId?'disabled':''}>${busy?'저장 중':'이미지 저장'}</button>${avatarPath?`<button class="fm-beta-link" type="button" data-action="remove-beta-avatar" ${busy?'disabled':''}>이미지 제거</button>`:''}</div></div>`;
     const existing=panel();if(existing){existing.outerHTML=html}else host.insertAdjacentHTML('beforeend',html);
   }
@@ -70,11 +70,12 @@ if(userRoot){
     const uploadButton=event.target.closest('[data-action="upload-beta-avatar"]');
     const removeButton=event.target.closest('[data-action="remove-beta-avatar"]');
     if(!uploadButton&&!removeButton)return;
+    const selectedFile=uploadButton?panel()?.querySelector('[data-beta-avatar-file]')?.files?.[0]:null;
     busy=true;error='';render();
     try{
       if(uploadButton){
-        const file=panel()?.querySelector('[data-beta-avatar-file]')?.files?.[0];const ext=validateFile(file);
-        const path=`profiles/${userId}/avatar.${ext}`;await upload(path,file);
+        const ext=validateFile(selectedFile);
+        const path=`profiles/${userId}/avatar.${ext}`;await upload(path,selectedFile);
         const query=new URLSearchParams({id:`eq.${userId}`});
         await request(`/rest/v1/profiles?${query}`,{method:'PATCH',headers:{'content-type':'application/json',prefer:'return=minimal'},body:JSON.stringify({avatar_path:path})});
         if(avatarPath&&avatarPath!==path)await removeObject(avatarPath);avatarPath=path;
@@ -110,7 +111,7 @@ if(operatorRoot){
   function renderOperator(){
     const form=operatorRoot.querySelector('form[data-form="match"]');if(!form){panel()?.remove();return}
     const matchId=selectedMatchId();const path=matchId?String(cache.get(matchId)||''):'';
-    const preview=path?`<img class="fm-beta-media-preview" src="${esc(objectUrl(path))}" alt="현재 경기장 이미지">`:`<div class="fm-beta-media-placeholder">${matchId?'경기장 이미지 없음':'경기를 먼저 저장하고 선택해주세요.'}</div>`;
+    const preview=path?`<img class="fm-beta-media-preview" src="${esc(objectUrl(path))}" alt="현재 경기장 이미지">`:`<div class="fm-beta-media-placeholder">${matchId?'아직 등록된 이미지가 없습니다.':'경기를 먼저 저장하고 선택해주세요.'}</div>`;
     const html=`<div class="fm-beta-enhancement fm-beta-media" data-beta-match-media-panel><div class="fm-beta-media-copy"><strong>경기장 이미지</strong><span>공개 경기 카드에 사용할 이미지 · JPG/PNG/WebP · 최대 5MB</span>${error?`<small data-tone="error">${esc(error)}</small>`:''}</div>${preview}<input class="fm-beta-media-input" type="file" accept="image/jpeg,image/png,image/webp" data-beta-match-file ${!matchId?'disabled':''}><div class="fm-beta-actions"><button class="fm-beta-button" type="button" data-action="upload-beta-match-image" ${busy||!matchId?'disabled':''}>${busy?'저장 중':'이미지 저장'}</button>${path?`<button class="fm-beta-link" type="button" data-action="remove-beta-match-image" ${busy?'disabled':''}>이미지 제거</button>`:''}</div></div>`;
     const existing=panel();if(existing){existing.outerHTML=html}else{
       const note=form.querySelector('.fm-beta-note');if(note)note.insertAdjacentHTML('beforebegin',html);else form.insertAdjacentHTML('beforeend',html);
@@ -122,12 +123,13 @@ if(operatorRoot){
     const removeButton=event.target.closest('[data-action="remove-beta-match-image"]');
     if(!uploadButton&&!removeButton)return;
     const matchId=selectedMatchId();if(!matchId)return;
+    const selectedFile=uploadButton?panel()?.querySelector('[data-beta-match-file]')?.files?.[0]:null;
     busy=true;error='';renderOperator();
     try{
       const old=String(cache.get(matchId)||'');
       if(uploadButton){
-        const file=panel()?.querySelector('[data-beta-match-file]')?.files?.[0];const ext=validateFile(file);
-        const path=`matches/${matchId}/cover.${ext}`;await upload(path,file);
+        const ext=validateFile(selectedFile);
+        const path=`matches/${matchId}/cover.${ext}`;await upload(path,selectedFile);
         const query=new URLSearchParams({id:`eq.${matchId}`});
         await request(`/rest/v1/matches?${query}`,{method:'PATCH',headers:{'content-type':'application/json',prefer:'return=minimal'},body:JSON.stringify({image_path:path})});
         cache.set(matchId,path);if(old&&old!==path)await removeObject(old);
