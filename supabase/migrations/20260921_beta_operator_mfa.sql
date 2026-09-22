@@ -19,8 +19,6 @@ end;$$;
 revoke execute on function public.require_beta_operator_aal2() from public,anon;
 grant execute on function public.require_beta_operator_aal2() to authenticated,service_role;
 
--- Keep self-membership readable at aal1 so the client can decide whether MFA is required.
--- All operator-only data access below requires aal2.
 drop policy if exists matches_authenticated_read on public.matches;
 create policy matches_authenticated_read on public.matches
 for select to authenticated using (
@@ -79,13 +77,12 @@ create policy beta_operation_events_operator_read on public.beta_operation_event
   and exists(select 1 from public.operators o where o.user_id=(select auth.uid()))
 );
 
--- Security-definer operator RPCs bypass table RLS, so patch every operator-only RPC
--- to call the same aal2 guard at the start of its body.
 do $$
 declare
   v_name text;
   v_oid oid;
   v_def text;
+  v_patched text;
 begin
   foreach v_name in array array[
     'operator_save_match',
@@ -104,8 +101,14 @@ begin
     loop
       v_def:=pg_get_functiondef(v_oid);
       if position('require_beta_operator_aal2' in v_def)=0 then
-        v_def:=regexp_replace(v_def,E'\\nbegin\\n',E'\\nbegin\\n  perform public.require_beta_operator_aal2();\\n','i');
-        execute v_def;
+        v_patched:=regexp_replace(v_def,E'\nbegin\n',E'\nbegin\n  perform public.require_beta_operator_aal2();\n','i');
+        if v_patched=v_def then
+          raise exception 'MFA_GUARD_PATCH_FAILED:%',v_oid::regprocedure using errcode='P0001';
+        end if;
+        execute v_patched;
+      end if;
+      if position('require_beta_operator_aal2' in pg_get_functiondef(v_oid))=0 then
+        raise exception 'MFA_GUARD_VERIFY_FAILED:%',v_oid::regprocedure using errcode='P0001';
       end if;
     end loop;
   end loop;
