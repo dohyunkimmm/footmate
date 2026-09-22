@@ -113,9 +113,9 @@ test('new operator match pre-fills policy windows and keeps target mobile widths
   });
   await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
   await expect(page.locator('#footmate-beta-operator')).toHaveAttribute('data-operator-state','ready');
-  const starts=page.getByLabel('시작 시간');
-  const cancel=page.getByLabel('사용자 취소 마감');
-  const checkIn=page.getByLabel('체크인 오픈');
+  const starts=page.locator('input[name="startsAt"]');
+  const cancel=page.locator('input[name="cancelCutoffAt"]');
+  const checkIn=page.locator('input[name="checkInOpensAt"]');
   await expect(cancel).not.toHaveValue('');
   await expect(checkIn).not.toHaveValue('');
   const [startsValue,cancelValue,checkValue]=await Promise.all([starts.inputValue(),cancel.inputValue(),checkIn.inputValue()]);
