@@ -37,8 +37,9 @@ async function openFirstDetail(page){
 
 async function reachCheckout(page){
   await page.getByRole('button',{name:'참가하기'}).click();
-  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
-  await page.locator('.fm-auth-primary[data-action="sign-in"][data-provider="account"]').click();
+  await page.getByRole('textbox',{name:'아이디 또는 이메일'}).fill('member@example.com');
+  await page.getByLabel('비밀번호',{exact:true}).fill('password123!');
+  await page.getByRole('button',{name:'로그인'}).click();
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
   await expect(page.locator('[data-participation-submit]')).toBeVisible();
   await page.mouse.move(1,1);
