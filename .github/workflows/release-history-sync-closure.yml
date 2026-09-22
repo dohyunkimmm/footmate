@@ -1,0 +1,38 @@
+name: Release History Sync Closure
+
+on:
+  push:
+    branches:
+      - docs/visual-regression-sync-closure
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: docs/visual-regression-sync-closure
+          fetch-depth: 0
+      - name: Record documentation and Case Study sync closure
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('docs/RELEASE-HISTORY.md')
+          text = p.read_text()
+          marker = '- Render backup: 이번 visual regression / interaction QA closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment\n'
+          addition = '''- Documentation / Case Study sync PR: #191 · README, Release History, Case Study Validation과 관련 Notion QA 문서를 visual regression gate 사실에 맞춰 동기화\n- Documentation / Case Study sync merge SHA: `8189fdf8f07aea9c8d97fd9f15af19b70883cd70` · PR QA #688 / run `35717133196` · Regression 36 PASS · Browser E2E + axe + visual baseline PASS\n- Exact Vercel Production for the Case Study sync: deployment `dpl_FgQUCuBhhMtNDgLRrwK1SLT3Yz6F` · SHA `8189fdf8f07aea9c8d97fd9f15af19b70883cd70` · READY · Production alias 반영 확인 · `/` 및 `/app` HTTP 200 · Production `case-study-connected.js`의 visual regression 문구 반영 확인\n- Product app runtime behavior는 #191에서 변경하지 않았으므로 full exact Production AI inference / Chromium smoke 기준은 #684의 `f1c2d19d418e6cbe93cc2fa70209895ed391bd9e` 검증을 유지; #191에는 해당 두 smoke를 재실행했다고 기록하지 않음\n'''
+          if marker not in text:
+              raise SystemExit('release history marker not found')
+          p.write_text(text.replace(marker, marker + addition, 1))
+      - name: Commit closure record
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/RELEASE-HISTORY.md
+          git diff --cached --check
+          git commit -m "docs: record visual regression documentation closure"
+          git push origin HEAD:docs/visual-regression-sync-closure
