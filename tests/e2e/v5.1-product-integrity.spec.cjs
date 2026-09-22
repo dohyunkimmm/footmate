@@ -235,24 +235,27 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
     });
   }
 
+  async function hoverSurface(locator){
+    await locator.hover();
+    await page.waitForTimeout(220);
+    return surface(locator);
+  }
+
   const secondary=page.locator('.fm-next-context-actions .fm-next-button--secondary').first();
   await expect(secondary).toBeVisible();
   const secondaryRest=await surface(secondary);
-  await secondary.hover();
-  const secondaryHover=await surface(secondary);
+  const secondaryHover=await hoverSurface(secondary);
   expect(secondaryHover.background).not.toBe(secondaryRest.background);
 
   const navTarget=page.locator('.fm-next-nav button').filter({hasText:'경기 찾기'});
   const navRest=await surface(navTarget);
-  await navTarget.hover();
-  const navHover=await surface(navTarget);
+  const navHover=await hoverSurface(navTarget);
   expect(navHover.background).not.toBe(navRest.background);
 
   const aiExample=page.locator('.fm-ai-examples button').first();
   await expect(aiExample).toBeVisible();
   const aiRest=await surface(aiExample);
-  await aiExample.hover();
-  const aiHover=await surface(aiExample);
+  const aiHover=await hoverSurface(aiExample);
   expect(aiHover.background).not.toBe(aiRest.background);
   expect(aiHover.border).not.toBe(aiRest.border);
 
@@ -261,8 +264,7 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
   const filter=page.locator('.fm-discovery-filter-button');
   await expect(filter).toBeVisible();
   const filterRest=await surface(filter);
-  await filter.hover();
-  const filterHover=await surface(filter);
+  const filterHover=await hoverSurface(filter);
   expect(filterHover.background).not.toBe(filterRest.background);
   expect(filterHover.border).not.toBe(filterRest.border);
 
