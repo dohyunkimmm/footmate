@@ -30,6 +30,19 @@ test('beta exposes only configured Google and Kakao OAuth providers',async({page
   expect(authorize.searchParams.get('redirect_to')).toContain('/beta');
 });
 
+test('beta turns technical OAuth callback errors into user-facing copy',async({page})=>{
+  await baseConfig(page);
+  await page.route(`${origin}/**`,async route=>{
+    const url=new URL(route.request().url());
+    if(url.pathname==='/auth/v1/settings')return fulfill(route,{external:{google:true,kakao:true}});
+    if(url.pathname==='/rest/v1/matches')return fulfill(route,[]);
+    return fulfill(route,[]);
+  });
+  await page.goto('/beta#error_description=Unable%2520to%2520exchange%2520external%2520code%253A%2520invalid_client',{waitUntil:'domcontentloaded'});
+  await expect(page.getByText('소셜 로그인 연결을 완료하지 못했습니다. 잠시 후 다시 시도해주세요.')).toBeVisible();
+  expect(page.url()).not.toContain('error_description');
+});
+
 test('operator aal1 session is blocked until verified TOTP upgrades to aal2',async({page})=>{
   let verified=false,challengeCount=0,verifyCount=0,matchReads=0;
   await baseConfig(page);
