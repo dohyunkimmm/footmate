@@ -1,0 +1,36 @@
+name: Refresh approved visual baselines
+on:
+  push:
+    branches: [design/visual-redesign-pass-20260922]
+    paths:
+      - .github/workflows/refresh-approved-visual-baselines.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-redesign-pass-20260922
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh Case Study approved snapshots in CI environment
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Commit generated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/*.png
+          if git diff --cached --quiet; then
+            echo "No snapshot changes"
+            exit 0
+          fi
+          git commit -m "test: approve case study redesign baselines"
+          git push origin HEAD:design/visual-redesign-pass-20260922
