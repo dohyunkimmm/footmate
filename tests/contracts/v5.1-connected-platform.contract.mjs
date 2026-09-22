@@ -62,11 +62,13 @@ for(const [path,repositoryName] of [
 const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
 for(const required of [
   '/app의 auth/payment/capacity/notification provider는 deterministic mock',
-  '/beta는 Supabase Auth·Postgres·RLS·atomic RPC',
-  'Supabase Edge Function + Resend transactional email',
-  '실제 PG·push notification·external analytics는 아직 연결하지 않았습니다.',
-  'account deletion boundary',
-  '물리 기기와 수동 접근성 점검은 manual QA'
+  '/beta는 Supabase Auth·Postgres·RLS·atomic RPC와 Realtime',
+  'Google/Kakao OAuth',
+  'Resend transactional email',
+  'browser Web Push',
+  'Supabase Storage media',
+  '실제 PG와 external analytics는 아직 연결하지 않았습니다.',
+  'Web Push 브라우저/OS 표시는 Production 수동 QA'
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
 
 console.log('PASS v5.1.1 connected platform contracts');
