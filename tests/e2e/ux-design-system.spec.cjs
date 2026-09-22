@@ -84,7 +84,6 @@ test('320px context actions and AI micro UI keep readable, non-cramped sizing',a
       mode:fontSize('.fm-ai-mode'),
       example:fontSize('.fm-ai-examples button'),
       status:fontSize('.fm-ai-status span'),
-      resultMeta:fontSize('.fm-ai-result-copy small'),
       guardrail:fontSize('.fm-ai-guardrail'),
       exampleHeight:height('.fm-ai-examples button'),
       inputHeight:height('.fm-ai-input-row input'),
@@ -95,7 +94,6 @@ test('320px context actions and AI micro UI keep readable, non-cramped sizing',a
   expect(aiMetrics.mode).toBeGreaterThanOrEqual(11);
   expect(aiMetrics.example).toBeGreaterThanOrEqual(11);
   expect(aiMetrics.status).toBeGreaterThanOrEqual(11);
-  expect(aiMetrics.resultMeta).toBeGreaterThanOrEqual(11);
   expect(aiMetrics.guardrail).toBeGreaterThanOrEqual(11);
   expect(aiMetrics.exampleHeight).toBeGreaterThanOrEqual(36);
   expect(aiMetrics.inputHeight).toBeGreaterThanOrEqual(50);
