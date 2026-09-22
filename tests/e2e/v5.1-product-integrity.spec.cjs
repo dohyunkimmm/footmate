@@ -150,6 +150,80 @@ test('Real App setup and checkout keep one clear full-width primary action on mo
   expect(errs).toEqual([]);
 });
 
+test('Real App responsive design baseline stays overflow-free across target widths',async({page})=>{
+  const errorSets=[];
+  const viewports=[
+    {width:320,height:844},
+    {width:375,height:844},
+    {width:390,height:844},
+    {width:430,height:900},
+    {width:1440,height:900}
+  ];
+
+  for(const viewport of viewports){
+    const errs=await openCleanApp(page,viewport);
+    errorSets.push(errs);
+    await setup(page);
+    await expect(page.locator('.fm-ai-card')).toBeVisible();
+
+    const homeMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+    expect(homeMetrics.documentWidth,`${viewport.width}px home document overflow`).toBeLessThanOrEqual(homeMetrics.viewport);
+    expect(homeMetrics.bodyWidth,`${viewport.width}px home body overflow`).toBeLessThanOrEqual(homeMetrics.viewport);
+
+    await page.getByRole('button',{name:'전체 보기'}).click();
+    await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+    const discoveryMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+    expect(discoveryMetrics.documentWidth,`${viewport.width}px discover document overflow`).toBeLessThanOrEqual(discoveryMetrics.viewport);
+    expect(discoveryMetrics.bodyWidth,`${viewport.width}px discover body overflow`).toBeLessThanOrEqual(discoveryMetrics.viewport);
+
+    await page.locator('.fm-next-match-card').first().click();
+    await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+    const detailMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+    expect(detailMetrics.documentWidth,`${viewport.width}px detail document overflow`).toBeLessThanOrEqual(detailMetrics.viewport);
+    expect(detailMetrics.bodyWidth,`${viewport.width}px detail body overflow`).toBeLessThanOrEqual(detailMetrics.viewport);
+  }
+
+  expect(errorSets.flat()).toEqual([]);
+});
+
+test('320px context actions and AI micro UI keep readable non-cramped sizing',async({page})=>{
+  const errs=await openCleanApp(page,{width:320,height:844});
+  await setup(page);
+  await expect(page.locator('.fm-ai-card')).toBeVisible();
+
+  const contextActions=await page.locator('.fm-next-context-actions .fm-next-button').evaluateAll(buttons=>buttons.map(button=>{
+    const rect=button.getBoundingClientRect();
+    return {top:rect.top,bottom:rect.bottom,width:rect.width};
+  }));
+  expect(contextActions).toHaveLength(2);
+  expect(contextActions[1].top).toBeGreaterThanOrEqual(contextActions[0].bottom);
+  expect(contextActions[0].width).toBeGreaterThanOrEqual(230);
+  expect(contextActions[1].width).toBeGreaterThanOrEqual(230);
+
+  const aiMetrics=await page.locator('.fm-ai-card').evaluate(card=>{
+    const fontSize=selector=>parseFloat(getComputedStyle(card.querySelector(selector)).fontSize);
+    const height=selector=>card.querySelector(selector).getBoundingClientRect().height;
+    return {
+      mode:fontSize('.fm-ai-mode'),
+      example:fontSize('.fm-ai-examples button'),
+      status:fontSize('.fm-ai-status span'),
+      guardrail:fontSize('.fm-ai-guardrail'),
+      exampleHeight:height('.fm-ai-examples button'),
+      inputHeight:height('.fm-ai-input-row input'),
+      submitHeight:height('.fm-ai-input-row button')
+    };
+  });
+
+  expect(aiMetrics.mode).toBeGreaterThanOrEqual(11);
+  expect(aiMetrics.example).toBeGreaterThanOrEqual(11);
+  expect(aiMetrics.status).toBeGreaterThanOrEqual(11);
+  expect(aiMetrics.guardrail).toBeGreaterThanOrEqual(11);
+  expect(aiMetrics.exampleHeight).toBeGreaterThanOrEqual(36);
+  expect(aiMetrics.inputHeight).toBeGreaterThanOrEqual(50);
+  expect(aiMetrics.submitHeight).toBeGreaterThanOrEqual(50);
+  expect(errs).toEqual([]);
+});
+
 test('Case Study desktop companion panels retain reviewable width and structured-cell space',async({page})=>{
   const errs=failures(page);
   await page.setViewportSize({width:1440,height:900});
