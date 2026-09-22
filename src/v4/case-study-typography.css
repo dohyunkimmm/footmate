@@ -1,6 +1,7 @@
 /* FootMate Case Study · typography scale refinement
    Reduces presentation-like display sizing while preserving the approved 16-section IA,
-   shell geometry, copy, interaction, and readable body text. */
+   shell geometry, copy, interaction, and readable body text.
+   Kept as a separate override so intentional typography changes remain easy to review. */
 
 .fm-next-cover h1{
   max-width:640px;
