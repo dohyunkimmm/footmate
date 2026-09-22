@@ -58,7 +58,7 @@ test('operator aal1 session is blocked until verified TOTP upgrades to aal2',asy
   expect(await serious(page,'.fm-operator')).toEqual([]);
 });
 
-test('operator without TOTP can enroll before entering console',async({page})=>{
+test('operator without TOTP can enroll from a raw Supabase SVG QR response',async({page})=>{
   let enrolled=false;
   await baseConfig(page);
   await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:'footmate:beta:auth:v1',value:{accessToken:jwt(operatorId,'aal1'),refreshToken:'refresh-token',expiresAt:4102444800}});
@@ -67,11 +67,46 @@ test('operator without TOTP can enroll before entering console',async({page})=>{
     if(url.pathname==='/auth/v1/token')return fulfill(route,{access_token:jwt(operatorId,'aal1'),refresh_token:'refresh-token-2',expires_in:3600,user:{id:operatorId,email:'operator@example.com'}});
     if(url.pathname==='/rest/v1/operators')return fulfill(route,[{user_id:operatorId}]);
     if(url.pathname==='/auth/v1/user')return fulfill(route,{id:operatorId,email:'operator@example.com',factors:enrolled?[{id:'factor-new',factor_type:'totp',status:'unverified'}]:[]});
-    if(url.pathname==='/auth/v1/factors'&&request.method()==='POST'){enrolled=true;return fulfill(route,{id:'factor-new',factor_type:'totp',status:'unverified',totp:{qr_code:'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"/%3E',secret:'TESTSECRET'}})}
+    if(url.pathname==='/auth/v1/factors'&&request.method()==='POST'){
+      enrolled=true;
+      return fulfill(route,{id:'factor-new',factor_type:'totp',status:'unverified',totp:{qr_code:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><rect width="2" height="2"/></svg>',secret:'TESTSECRET'}})
+    }
     return fulfill(route,{message:`Unhandled ${request.method()} ${url.pathname}`},500);
   });
   await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:'Authenticator 설정 시작'}).click();
   await expect(page.getByText('Authenticator 앱에 등록')).toBeVisible();
   await expect(page.getByText('TESTSECRET')).toBeVisible();
+  const qr=page.getByRole('img',{name:'FootMate Operator TOTP QR 코드'});
+  await expect(qr).toBeVisible();
+  await expect(qr).toHaveAttribute('src',/^data:image\/svg\+xml;charset=utf-8,/);
+  expect(await serious(page,'.fm-operator')).toEqual([]);
+});
+
+test('new operator match pre-fills policy windows and keeps mobile action targets usable',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await baseConfig(page);
+  await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:'footmate:beta:auth:v1',value:{accessToken:jwt(operatorId,'aal2'),refreshToken:'refresh-token',expiresAt:4102444800}});
+  await page.route(`${origin}/**`,async route=>{
+    const request=route.request(),url=new URL(request.url());
+    if(url.pathname==='/auth/v1/token')return fulfill(route,{access_token:jwt(operatorId,'aal2'),refresh_token:'refresh-token-2',expires_in:3600,user:{id:operatorId,email:'operator@example.com'}});
+    if(url.pathname==='/rest/v1/operators')return fulfill(route,[{user_id:operatorId}]);
+    if(url.pathname==='/rest/v1/matches')return fulfill(route,[]);
+    if(url.pathname==='/rest/v1/rpc/operator_beta_email_health')return fulfill(route,[]);
+    if(url.pathname==='/rest/v1/rpc/operator_beta_funnel_metrics')return fulfill(route,[{}]);
+    return fulfill(route,{message:`Unhandled ${request.method()} ${url.pathname}`},500);
+  });
+  await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#footmate-beta-operator')).toHaveAttribute('data-operator-state','ready');
+  const starts=page.getByLabel('시작 시간');
+  const cancel=page.getByLabel('사용자 취소 마감');
+  const checkIn=page.getByLabel('체크인 오픈');
+  await expect(cancel).not.toHaveValue('');
+  await expect(checkIn).not.toHaveValue('');
+  const [startsValue,cancelValue,checkValue]=await Promise.all([starts.inputValue(),cancel.inputValue(),checkIn.inputValue()]);
+  expect(new Date(startsValue).getTime()-new Date(cancelValue).getTime()).toBe(2*60*60*1000);
+  expect(new Date(startsValue).getTime()-new Date(checkValue).getTime()).toBe(60*60*1000);
+  const save=page.getByRole('button',{name:'경기 저장'});
+  expect(await save.evaluate(node=>Math.round(node.getBoundingClientRect().height))).toBeGreaterThanOrEqual(44);
+  expect(await serious(page,'.fm-operator')).toEqual([]);
 });
