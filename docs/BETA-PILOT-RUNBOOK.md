@@ -146,8 +146,11 @@
 
 ## 13. Release gate
 
-Pilot 변경은 기본적으로 다음 순서를 따른다.
+Pilot 변경은 변경 영향에 맞춰 다음 순서를 따른다.
 
-`branch → PR → Regression 36 / Browser E2E + axe → merge → 필요한 Supabase migration/Edge Function 적용 → Vercel Production verification → 실제 Beta path verification → 문서 sync`
+- runtime / UI / domain / deployment 영향 변경: `branch → PR → Regression 36 / Browser E2E + axe → merge → 필요한 Supabase migration/Edge Function 적용 → Vercel Production verification → 실제 Beta path verification → 문서 sync`
+- docs / workflow-only non-runtime 변경: `branch → PR → Change Impact → Docs-only QA (git diff --check + connected-platform contract) → merge → 문서 consistency 확인`; runtime Regression / Browser E2E / Production Smoke는 영향이 없으면 skip한다.
+
+최종 runtime 또는 수동 Production QA가 확정된 뒤에는 README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 순으로 동기화하고, 서로 상충하는 `pending` / `미검증` / `별도 확인 대상` 문구가 남지 않았는지 검색한 뒤 완료 처리한다.
 
 Render는 backup/alternate deployment이며 모든 변경의 완료 조건이 아니다.
