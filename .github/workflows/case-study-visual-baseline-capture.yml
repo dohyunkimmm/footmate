@@ -1,0 +1,42 @@
+name: Case Study Visual Baseline Capture
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/e2e/v5.1-case-study-visual.spec.cjs'
+      - '.github/workflows/case-study-visual-baseline-capture.yml'
+permissions:
+  contents: read
+jobs:
+  capture:
+    name: Production baseline capture
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install Playwright
+        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture current Production baseline candidates
+        env:
+          BASE_URL: https://footmate-black.vercel.app
+        run: |
+          set +e
+          npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs
+          code=$?
+          echo "$code" > .case-study-visual-exit-code
+          exit 0
+      - name: Upload Production baseline candidates
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: case-study-production-baseline-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Require committed baseline comparison
+        run: exit "$(cat .case-study-visual-exit-code)"
