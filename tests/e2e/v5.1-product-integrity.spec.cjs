@@ -119,6 +119,37 @@ test('detail back navigation returns to the surface that opened the match',async
   expect(errs).toEqual([]);
 });
 
+test('Real App setup and checkout keep one clear full-width primary action on mobile',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  const setupPrimary=page.locator('[data-screen="setup"] .fm-next-setup-footer .fm-next-button');
+  await expect(setupPrimary).toBeVisible();
+  const setupRect=await setupPrimary.boundingBox();
+  expect(setupRect.width).toBeGreaterThanOrEqual(340);
+  expect(setupRect.y+setupRect.height).toBeGreaterThanOrEqual(800);
+
+  await page.getByRole('button',{name:'다음'}).click();
+  await page.getByRole('button',{name:'다음'}).click();
+  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await page.locator('.fm-next-match-card').first().click();
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await page.getByRole('textbox',{name:'아이디 또는 이메일'}).fill('member@example.com');
+  await page.getByLabel('비밀번호',{exact:true}).fill('password123!');
+  await page.getByRole('button',{name:'로그인'}).click();
+  await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
+  const submit=page.locator('[data-participation-submit]');
+  await expect(submit).toBeVisible();
+  const submitRect=await submit.boundingBox();
+  expect(submitRect.width).toBeGreaterThanOrEqual(340);
+
+  await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__.setNextOutcome('failure'));
+  await submit.click();
+  await expect(page.locator('[data-participation-panel="failure"]')).toBeVisible();
+  await expect(page.getByRole('button',{name:'다시 결제하기'})).toBeVisible();
+  await expect(submit).toBeHidden();
+  expect(errs).toEqual([]);
+});
+
 test('Case Study desktop companion panels retain reviewable width and structured-cell space',async({page})=>{
   const errs=failures(page);
   await page.setViewportSize({width:1440,height:900});
