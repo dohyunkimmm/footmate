@@ -1,0 +1,106 @@
+/* FootMate Case Study · typography scale refinement
+   Reduces presentation-like display sizing while preserving the approved 16-section IA,
+   shell geometry, copy, interaction, and readable body text.
+   Kept as a separate override so intentional typography changes remain easy to review.
+   Structured labels retain the existing QA readability floor. */
+
+.fm-next-cover h1{
+  max-width:640px;
+  font-size:clamp(36px,4.5vw,54px);
+  line-height:1.1;
+  letter-spacing:-.045em;
+}
+.fm-next-cover-lead{
+  max-width:630px;
+  font-size:15px;
+  line-height:1.66;
+}
+.fm-next-cover-actions a,
+.fm-next-cover-actions button,
+.fm-next-cs-link{
+  min-height:44px;
+  font-size:12px;
+}
+.fm-next-cover-flow{
+  font-size:9.5px;
+}
+.fm-next-cover-flow b{
+  font-size:10.5px;
+}
+
+.fm-next-story h2{
+  max-width:22ch;
+  font-size:clamp(26px,2.8vw,36px);
+  line-height:1.18;
+  letter-spacing:-.04em;
+}
+.fm-next-story-lead{
+  max-width:68ch;
+  font-size:14px;
+  line-height:1.65;
+}
+
+.fm-next-cs-card h3,
+.fm-next-cs-journey h3,
+.fm-next-cs-modes h3{
+  font-size:15px;
+  line-height:1.4;
+}
+.fm-next-cs-reco-card h3{
+  font-size:19px;
+}
+.fm-next-cs-reco-card strong{
+  font-size:18px;
+}
+.fm-next-cs-quote b,
+.fm-next-cs-decision b,
+.fm-next-cs-scope b,
+.fm-next-cs-sticky b,
+.fm-next-cs-final>b,
+.fm-next-cs-closing h3{
+  font-size:16px;
+  line-height:1.5;
+}
+/* Preserve the existing structured-content readability floor used by Case Study QA. */
+.fm-next-cs-persona b,
+.fm-next-cs-auth-flow b,
+.fm-next-cs-state-home b,
+.fm-next-cs-day-states b,
+.fm-next-cs-recovery b,
+.fm-next-cs-detail-order span,
+.fm-next-cs-ia b,
+.fm-next-cs-loop b,
+.fm-next-cs-agent b,
+.fm-next-cs-state-chain span{
+  font-size:14px;
+}
+
+@media(min-width:1181px){
+  .fm-next-story-aside .fm-next-cs-quote b,
+  .fm-next-story-aside .fm-next-cs-decision b,
+  .fm-next-story-aside .fm-next-cs-scope b,
+  .fm-next-story-aside .fm-next-cs-sticky b{
+    font-size:16px;
+  }
+}
+
+@media(max-width:560px){
+  .fm-next-cover h1{
+    font-size:clamp(30px,9vw,38px)!important;
+    line-height:1.14;
+    letter-spacing:-.04em;
+  }
+  .fm-next-cover-lead{
+    font-size:14px;
+    line-height:1.66;
+  }
+  .fm-next-story h2{
+    font-size:clamp(25px,7.6vw,30px)!important;
+    line-height:1.22;
+    letter-spacing:-.035em;
+  }
+  .fm-next-story-lead{
+    font-size:13px;
+    line-height:1.62;
+  }
+}
