@@ -68,11 +68,13 @@ for(const required of [
   'Resend',
   'Web Push',
   'Storage',
-  '실제 PG와 외부 analytics는 미연동입니다.',
+  '실제 PG와 외부 분석 도구(analytics)는 미연동입니다.',
   'Google/Kakao 실제 로그인',
   'transactional email 최종 전달',
-  'AI-assisted QA',
-  "['Domain Architecture','recommendation · participation · matchday · return']",
+  '사람 검수(Human QA)',
+  'AI 보조 검수(AI-assisted QA)',
+  "['도메인 구조','recommendation · participation · matchday · return']",
+  "['외부 연동 · AI 경계','실연동 · 시뮬레이션 · HITL 경계']",
   "['Production 범위','실제 연결·검증된 기능만 표기']"
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
 
@@ -82,7 +84,10 @@ for(const stale of [
   'sample records',
   'connected data path',
   'external analytics는 미연동입니다.',
-  "['Production Boundary','연결·검증한 것만 Production 기능']"
+  "['Domain Architecture','recommendation · participation · matchday · return']",
+  "['Provider · AI 경계','실연동 · 시뮬레이션 · HITL 경계']",
+  "['Production Boundary','연결·검증한 것만 Production 기능']",
+  "['검증','자동 QA · Human QA · AI-assisted QA']"
 ])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
 
 console.log('PASS v5.1.1 connected platform contracts');
