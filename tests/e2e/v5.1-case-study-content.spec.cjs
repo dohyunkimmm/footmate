@@ -172,3 +172,23 @@ test('reader-facing body copy is Korean-first while preserving necessary technic
   expect(validation).toContain('AI 보조 검수');
   expect(validation).toContain('PASS 판정을 대신하지 않습니다');
 });
+
+test('merged source slides can never render as extra pages after P13',async({page})=>{
+  await openCaseStudy(page,{width:390,height:844});
+  const hidden=page.locator('.slide[data-cs-hidden="true"]');
+  await expect(hidden).toHaveCount(3);
+  const states=await hidden.evaluateAll(nodes=>nodes.map(node=>({
+    display:getComputedStyle(node).display,
+    hidden:node.hidden,
+    ariaHidden:node.getAttribute('aria-hidden')
+  })));
+  for(const state of states){
+    expect(state.display).toBe('none');
+    expect(state.hidden).toBe(true);
+    expect(state.ariaHidden).toBe('true');
+  }
+  await page.evaluate(()=>window.goTo(99));
+  await expect(page.locator('.topbar-count')).toHaveText('13 / 13');
+  await expect(page.locator('.slide.on')).toHaveCount(1);
+  await expect(page.locator('.slide.on')).toHaveAttribute('data-v5-content-role','production-boundary');
+});
