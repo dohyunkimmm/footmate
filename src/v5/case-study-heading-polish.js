@@ -1,4 +1,4 @@
-/* FootMate Case Study · English section labels only.
+/* FootMate Case Study · reader-facing English section labels only.
    Legacy filename retained for compatibility. Story headings and supporting body copy stay Korean-first. */
 (function(){
   let applied=false;
