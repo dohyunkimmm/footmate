@@ -4,7 +4,9 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource')){
+      items.push(`console.error: ${message.text()}`);
+    }
   });
   return items;
 }
