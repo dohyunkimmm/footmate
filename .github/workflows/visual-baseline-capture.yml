@@ -1,4 +1,4 @@
-name: Visual Baseline Capture
+name: Visual Baseline Approve
 
 on:
   push:
@@ -8,21 +8,24 @@ on:
       - .github/workflows/visual-baseline-capture.yml
 
 permissions:
-  contents: read
+  contents: write
+  actions: read
 
 jobs:
-  capture:
+  approve:
     runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
         with:
-          node-version: 24
-          package-manager-cache: false
-      - name: Patch mobile discovery empty clearance in worktree
+          ref: design/visual-system-completion-20260923
+          fetch-depth: 0
+      - name: Apply reviewed mobile discovery clearance
         shell: bash
         run: |
-          cat >> src/v4/visual-polish.css <<'CSS'
+          if ! grep -q 'Visual QA follow-up · keep mobile recovery CTAs above the floating nav.' src/v4/visual-polish.css; then
+            cat >> src/v4/visual-polish.css <<'CSS'
 
           /* Visual QA follow-up · keep mobile recovery CTAs above the floating nav. */
           @media(max-width:430px){
@@ -31,18 +34,23 @@ jobs:
             }
           }
           CSS
-      - name: Install browser QA dependencies
-        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
-      - name: Generate Ubuntu Chromium baseline candidates
-        run: npx playwright test tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --update-snapshots --reporter=line
-      - name: Upload baseline candidates
-        uses: actions/upload-artifact@v6
-        with:
-          name: visual-baseline-candidates-${{ github.run_id }}
-          path: |
-            tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots
-            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots
-          if-no-files-found: error
-          retention-days: 7
+          fi
+      - name: Download reviewed Ubuntu Chromium candidates
+        run: gh run download 35806075523 --repo dohyunkimmm/footmate --name visual-baseline-candidates-35806075523 --dir /tmp/visual-baselines
+      - name: Install approved snapshots
+        shell: bash
+        run: |
+          rm -rf tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots
+          rm -rf tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots
+          cp -a /tmp/visual-baselines/v5.1-visual-baseline.spec.cjs-snapshots tests/e2e/
+          cp -a /tmp/visual-baselines/v5.1-visual-system-completion.spec.cjs-snapshots tests/e2e/
+      - name: Remove temporary approval workflow
+        run: rm -f .github/workflows/visual-baseline-capture.yml
+      - name: Commit approved visual contract
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/v4/visual-polish.css tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots .github/workflows/visual-baseline-capture.yml
+          git commit -m 'test: approve visual system baselines'
+          git push origin HEAD:design/visual-system-completion-20260923
