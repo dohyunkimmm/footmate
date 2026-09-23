@@ -127,26 +127,31 @@ async function loadProviders(){
 function ensureAuthStatus(auth){
   let status=auth.querySelector('[data-release-auth-status]');if(status)return status;
   status=document.createElement('p');status.className='fm-release-auth-status';status.dataset.releaseAuthStatus='';
-  const terms=auth.querySelector('.fm-next-auth-terms');if(terms)terms.before(status);else auth.append(status);return status;
+  const anchor=auth.querySelector('.fm-auth-context,.fm-auth-terms,.fm-next-auth-terms');if(anchor)anchor.before(status);else auth.append(status);return status;
+}
+function authProviderButton(auth,provider){
+  return auth.querySelector(`.fm-auth-provider--${provider},.fm-next-social--${provider}`);
 }
 function ensureProviderButton(auth,provider){
-  const list=auth.querySelector('.fm-next-social-list');if(!list)return null;
-  let button=list.querySelector(`.fm-next-social--${provider}`);
-  if(button)return button;
-  button=document.createElement('button');
-  button.className=`fm-next-social fm-next-social--${provider}`;
-  button.type='button';
-  button.textContent=`${provider==='google'?'Google':'카카오'}로 계속하기`;
-  list.append(button);
-  return button;
+  let button=authProviderButton(auth,provider);if(button)return button;
+  const list=auth.querySelector('.fm-auth-sso,.fm-next-social-list');if(!list)return null;
+  button=document.createElement('button');button.type='button';
+  if(list.classList.contains('fm-auth-sso')){
+    button.className=`fm-auth-provider fm-auth-provider--${provider}`;
+    button.setAttribute('aria-label',`${provider==='google'?'Google':'카카오'}로 계속하기`);
+    button.textContent=provider==='google'?'G':'K';
+  }else{
+    button.className=`fm-next-social fm-next-social--${provider}`;
+    button.textContent=`${provider==='google'?'Google':'카카오'}로 계속하기`;
+  }
+  list.append(button);return button;
 }
 function decorateAuth(){
   if(!root||entryMode!=='real')return;const auth=root.querySelector('[data-screen="auth"]');if(!auth)return;
-  auth.querySelector('.fm-next-social--apple')?.remove();
-  auth.querySelectorAll('.fm-next-social').forEach(button=>{if(/naver|네이버/i.test(button.textContent||''))button.remove()});
+  auth.querySelectorAll('.fm-next-social--apple,.fm-auth-provider--apple,.fm-auth-provider--naver,[data-provider="apple"],[data-provider="naver"]').forEach(button=>button.remove());
   ['kakao','google'].forEach(provider=>{
     const button=ensureProviderButton(auth,provider);if(!button)return;
-    button.removeAttribute('data-action');button.dataset.oauthProvider=provider;button.type='button';
+    button.removeAttribute('data-action');button.removeAttribute('data-provider');button.dataset.oauthProvider=provider;button.type='button';
     if(!providerState.loaded){button.disabled=true;button.hidden=false;button.setAttribute('aria-busy','true')}
     else if(providerState.enabled[provider]){button.disabled=false;button.removeAttribute('aria-busy');button.hidden=false}
     else{button.disabled=true;button.removeAttribute('aria-busy');button.hidden=true}
@@ -208,9 +213,10 @@ document.addEventListener('submit',event=>{
 },true);
 document.addEventListener('click',event=>{
   const target=event.target.closest?.('button,[data-action],[data-release-action]');if(!target)return;
-  const provider=target.dataset.oauthProvider||(target.classList.contains('fm-next-social--google')?'google':target.classList.contains('fm-next-social--kakao')?'kakao':null);
+  const declaredProvider=target.dataset.oauthProvider||target.dataset.provider;
+  const provider=['google','kakao'].includes(declaredProvider)?declaredProvider:target.classList.contains('fm-next-social--google')||target.classList.contains('fm-auth-provider--google')?'google':target.classList.contains('fm-next-social--kakao')||target.classList.contains('fm-auth-provider--kakao')?'kakao':null;
   if(provider){event.preventDefault();event.stopPropagation();void authorize(provider);return}
-  if(target.classList.contains('fm-next-social--apple')){event.preventDefault();event.stopPropagation();return}
+  if(['apple','naver'].includes(declaredProvider)||target.classList.contains('fm-next-social--apple')||target.classList.contains('fm-auth-provider--apple')||target.classList.contains('fm-auth-provider--naver')){event.preventDefault();event.stopPropagation();return}
   const action=target.dataset.action;
   if(entryMode==='real'&&action==='auth-back'){event.preventDefault();event.stopPropagation();goBack('detail');return}
   if(entryMode==='real'&&action==='checkout-back'){event.preventDefault();event.stopPropagation();goBack('detail');return}
