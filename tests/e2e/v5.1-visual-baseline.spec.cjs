@@ -139,7 +139,3 @@ test('1440px Success matches the approved desktop visual baseline',async({page})
   await expect(page).toHaveScreenshot('real-app-success-1440.png',stableScreenshot);
   expect(errs).toEqual([]);
 });
-
-// Keep the changed-surface visual system contract inside the long-lived baseline suite so
-// main's Browser E2E command can evolve independently without dropping redesign coverage.
-require('./v5.1-visual-system-completion.spec.cjs');
