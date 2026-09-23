@@ -17,37 +17,20 @@ jobs:
           fetch-depth: 0
       - name: Sync release history and remove temporary workflow
         shell: bash
+        env:
+          SECTION_B64: IyMjIFJlYWwgQXBwIHJlbGVhc2UtZmxvdyAvIERlc2lnbiBTeXN0ZW0gdjIgY29ycmVjdGlvbiBjbG9zdXJlIMK3IDIwMjYtMDktMjMKCi0gU2NvcGU6IFByb2R1Y3QgRmxvdyByZXZpZXfsl5DshJwg7ZmV7J2465CcIDjqsJwgUUEg7ZWt66qp6rO8IERlc2lnbiBTeXN0ZW0gdjIgY29oZXJlbmNl66W8IOygleumrO2VmOuptOyEnCwg7JqU7LKt65CY7KeAIOyViuyVmOuNmCAxMDQwcHggZGVza3RvcCDtmZXsnqXqs7wgMi1jb2x1bW4gY29tcG9zaXRpb27snYQg7KCc6rGw7ZWY6rOgIFJlYWwgQXBw7J2YIHN0YWJsZSBtYXggNTYwcHggc2hlbGzsnYQg67O16rWsCi0gRGlzcGxheSB0ZXJtaW5vbG9neTogc2V0dXAgVUnripQgYOqzteqyqeyImGAgLyBg7LSI6riJYCAvIGDqs6DquIlg7J2EIO2RnOyLnO2VmOqzoCBjYW5vbmljYWwgY29tcGF0aWJpbGl0eSDqsJLsnYAg64K067aA7JeQIOycoOyngAotIEF1dGggLyBjb250aW51aXR5OiBhY3RpdmUgQXV0aCB2M+uKlCBHb29nbGUvS2FrYW/rp4wg64W47Lac7ZWY6rOgIE5hdmVyL0FwcGxl7J2AIOygnOqxsDsg7Iuk7KCcIHByZXZpb3VzLXJvdXRlIGJhY2ssIHJlYWRhYmxlIHRlYW0tbWVzc2FnZSBzaW11bGF0aW9uIGJvdW5kYXJ5LCBjaGVja2VkLWluIOKGkiBwb3N0Z2FtZSDihpIgbmV4dC1tYXRjaCBjb250aW51YXRpb27snYQgcmVsZWFzZS1mbG93IGNvbnRyYWN066GcIOycoOyngAotIEVudHJ5IC8gcmVjb3Zlcnk6IGZyZXNoIGV4dGVybmFsIGAvYXBwYCBlbnRyeeuKlCDssqgg7ZmU66m07JeQ7IScIOyLnOyeke2VmOqzoCwgYWN0aXZlIHNhbWUtdGFiIHJlbG9hZCByZWNvdmVyeeuKlCBleHBsaWNpdCBgP3Jlc3VtZT0xYCDqsr3qs4TroZwg7Jyg7KeACi0gVmlzdWFsIGNvcnJlY3Rpb246IGludHJvIGRhcmsgdG9wYmFy66W8IOuzteq1rO2VtCB1bmludGVuZGVkIHdoaXRlIGJhbmTrpbwg7KCc6rGw7ZWY6rOgLCAxNDQwcHggZGVza3RvcOyXkOyEnCBIb21lL0Rpc2NvdmVyL0RldGFpbC9DaGVja291dC9BdXRoL1NjaGVkdWxlL1Byb2ZpbGXsnYQgc3RhYmxlIG5hcnJvdyAxLWNvbHVtbiBjb21wb3NpdGlvbuycvOuhnCDsnKDsp4AKLSBSdW50aW1lIFBSOiAjMjE4Ci0gUFIgUUE6IEZvb3RNYXRlIFFBICM5MjUgwrcgcnVuIGAzNTg0MDI4ODU2MmAgwrcgQ2hhbmdlIEltcGFjdCBQQVNTIMK3IFJlZ3Jlc3Npb24gMzYgUEFTUyDCtyBCcm93c2VyIEUyRSArIGF4ZSBQQVNTIMK3IGNoYW5nZWQgUHJvZHVjdCAvIGFmZmVjdGVkIENhc2UgU3R1ZHkgVmlzdWFsIFJlZ3Jlc3Npb24gUEFTUwotIFByb2R1Y3QvcnVudGltZSBiYXNlbGluZTogYDY3NjVhNmE4ODQ4MDZjNDRiNTk3ZDBlOWZmNWIyMjAyNWExMjA5NmVgCi0gUG9zdC1tZXJnZSBtYWluIFFBOiBGb290TWF0ZSBRQSAjOTI2IMK3IHJ1biBgMzU4NDMwMjAyNDVgIMK3IFNVQ0NFU1MgwrcgUmVncmVzc2lvbiAzNiBQQVNTIMK3IEJyb3dzZXIgRTJFICsgYXhlIFBBU1MgwrcgVmlzdWFsIFJlZ3Jlc3Npb24gUEFTUyDCtyBQcm9kdWN0aW9uIFNtb2tlIFBBU1MKLSBFeGFjdCBWZXJjZWwgUHJvZHVjdGlvbjogYGRwbF81cDN6QkRwVGZKYUhGNUZlOWVLNEVwa2lGWlNSYCDCtyBTSEEgYDY3NjVhNmE4ODQ4MDZjNDRiNTk3ZDBlOWZmNWIyMjAyNWExMjA5NmVgIMK3IFJFQURZIMK3IHByb2R1Y3Rpb24gYWxpYXNlcyDrsJjsmIEKLSBFeGFjdCBQcm9kdWN0aW9uIHZlcmlmaWNhdGlvbjogYC9hcHBgIEhUVFAgMjAwIMK3IHNlcnZlZCBkZXNrdG9wIGNvbnRyYWN07JeQ7IScIG1heCA1NjBweCBzaGVsbOqzvCBpbnRybyBkYXJrIHRvcGJhciDrsJjsmIEg7ZmV7J24IMK3IFByb2R1Y3Rpb24gU21va2UgUEFTUwotIENhc2UgU3R1ZHkgYm91bmRhcnk6IGN1cnJlbnQgMTMtc2VjdGlvbiBJQSAvIG5hcnJhdGl2ZeulvCDsnKDsp4DtlZjqs6AgYWZmZWN0ZWQgQ2FzZSBTdHVkeSBzY3JlZW5zaG90IGJhc2VsaW5lIGNvbXBhcmlzb24gUEFTUzsg7J2067KIIGNvcnJlY3Rpb27sl5DshJwg67OE64+EIENhc2UgU3R1ZHkgY29weSDsnqzsnpHshLHsnYAg7ZWE7JqU7ZWY7KeAIOyViuydjAotIERvY3VtZW50YXRpb24gc3luYzogUkVBRE1F7JmAIERlc2lnbiBTeXN0ZW0gdjIgUUEvY2hhbmdlbG9n64qUIHN0YWJsZSBtYXggNTYwcHggc2hlbGzqs7wgY3VycmVudCByZWxlYXNlLWZsb3cgY29udHJhY3TroZwg64+Z6riw7ZmUOyDqtIDroKggTm90aW9uIEZvb3RNYXRlIOusuOyEnOydmCBzdGFsZSAyLWNvbHVtbiAvIE5hdmVywrdBcHBsZSDtkZztmITrj4QgY3VycmVudCBjb250cmFjdOuhnCDsoJXrpqwKLSBSdW5ib29rIGJvdW5kYXJ5OiBDbG9zZWQgQmV0YSDsmrTsmIEg7KCI7LCoIOuzgOqyveydtCDsl4bslrQgYGRvY3MvQkVUQS1QSUxPVC1SVU5CT09LLm1kYOuKlCDsiJjsoJXtlZjsp4Ag7JWK7J2MCi0gUmVuZGVyIGJhY2t1cDog7J2067KIIFJlYWwgQXBwIGNvcnJlY3Rpb27sl5DshJzripQg7J6s6rKA7KadwrfsnqzrsLDtj6ztlZjsp4Ag7JWK7J2MOyBWZXJjZWzsnbQg6rO17IudIFByb2R1Y3Rpb27snbTrqbAgUmVuZGVy64qUIGJhY2t1cC9hbHRlcm5hdGUgZGVwbG95bWVudAoK
         run: |
           python - <<'PY'
+          import base64
           from pathlib import Path
-
           path = Path('docs/RELEASE-HISTORY.md')
           text = path.read_text(encoding='utf-8')
           marker = '## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20'
-          section = '''### Real App release-flow / Design System v2 correction closure · 2026-09-23
-
-- Scope: Product Flow review에서 확인된 8개 QA 항목과 Design System v2 coherence를 정리하면서, 요청되지 않았던 1040px desktop 확장과 2-column composition을 제거하고 Real App의 stable max 560px shell을 복구
-- Display terminology: setup UI는 `공격수` / `초급` / `고급`을 표시하고 canonical compatibility 값은 내부에 유지
-- Auth / continuity: active Auth v3는 Google/Kakao만 노출하고 Naver/Apple은 제거; 실제 previous-route back, readable team-message simulation boundary, checked-in → postgame → next-match continuation을 release-flow contract로 유지
-- Entry / recovery: fresh external `/app` entry는 첫 화면에서 시작하고, active same-tab reload recovery는 explicit `?resume=1` 경계로 유지
-- Visual correction: intro dark topbar를 복구해 unintended white band를 제거하고, 1440px desktop에서 Home/Discover/Detail/Checkout/Auth/Schedule/Profile을 stable narrow 1-column composition으로 유지
-- Runtime PR: #218
-- PR QA: FootMate QA #925 · run `35840288562` · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · changed Product / affected Case Study Visual Regression PASS
-- Product/runtime baseline: `6765a6a884806c44b597d0e9ff5b22025a12096e`
-- Post-merge main QA: FootMate QA #926 · run `35843020245` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Visual Regression PASS · Production Smoke PASS
-- Exact Vercel Production: `dpl_5p3zBDpTfJaHF5Fe9eK4EpkiFZSR` · SHA `6765a6a884806c44b597d0e9ff5b22025a12096e` · READY · production aliases 반영
-- Exact Production verification: `/app` HTTP 200 · served desktop contract에서 max 560px shell과 intro dark topbar 반영 확인 · Production Smoke PASS
-- Case Study boundary: current 13-section IA / narrative를 유지하고 affected Case Study screenshot baseline comparison PASS; 이번 correction에서 별도 Case Study copy 재작성은 필요하지 않음
-- Documentation sync: README와 Design System v2 QA/changelog는 stable max 560px shell과 current release-flow contract로 동기화; 관련 Notion FootMate 문서의 stale 2-column / Naver·Apple 표현도 current contract로 정리
-- Runbook boundary: Closed Beta 운영 절차 변경이 없어 `docs/BETA-PILOT-RUNBOOK.md`는 수정하지 않음
-- Render backup: 이번 Real App correction에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
-
-'''
+          section = base64.b64decode(__import__('os').environ['SECTION_B64']).decode('utf-8')
           if 'Runtime PR: #218' not in text:
               if marker not in text:
                   raise SystemExit('release history insertion marker not found')
-              text = text.replace(marker, section + marker, 1)
-              path.write_text(text, encoding='utf-8')
+              path.write_text(text.replace(marker, section + marker, 1), encoding='utf-8')
           PY
           rm -f .github/workflows/pr218-sync-release-history.yml
           git config user.name "github-actions[bot]"
