@@ -9,7 +9,7 @@ async function get(path){const response=await fetch(base+path,{redirect:'follow'
   // Verify the changed Case Study assets themselves, not only the product release marker.
   const {readFileSync}=require('node:fs');
   const {resolve}=require('node:path');
-  for(const asset of ['index.html','src/v5/case-study-connected.js','src/v5/case-study-heading-polish.js']){
+  for(const asset of ['index.html','src/v5/case-study-connected.js','src/v5/case-study-heading-polish.js','src/v4/case-study-layout-refinement.css']){
     const actual=asset==='index.html'?cs:await(await get('/'+asset)).text();
     a(actual===readFileSync(resolve(__dirname,'..',asset),'utf8'),`Case Study asset matches checked-out SHA: ${asset}`);
   }

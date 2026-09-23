@@ -144,3 +144,87 @@ html[data-fm-next-case-study="true"] .fm-next-cs-note a{
   color:#137333;
   text-underline-offset:3px;
 }
+
+/* Editorial rhythm: semantic sentences, labelled decisions and readable metric definitions. */
+html[data-fm-next-case-study="true"] .fm-cs-line{
+  display:block;
+  margin:0;
+  color:inherit;
+  font:inherit;
+  letter-spacing:inherit;
+  text-transform:none;
+  text-wrap:pretty;
+}
+html[data-fm-next-case-study="true"] .fm-next-story h2 .fm-cs-line{
+  text-wrap:balance;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-lead{
+  max-width:100%;
+}
+html[data-fm-next-case-study="true"] :is(.fm-next-story-lead,.fm-next-cover-lead,.fm-next-cs-card p,.fm-next-cs-outcomes p)>.fm-cs-line+.fm-cs-line{
+  margin-top:4px;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons{
+  display:grid;
+  gap:10px;
+  margin:0;
+  color:var(--fm-cs-text,#17261d);
+  font-size:13px;
+  line-height:1.65;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons>div{
+  display:grid;
+  grid-template-columns:90px minmax(0,1fr);
+  column-gap:16px;
+  align-items:start;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons dt{
+  margin:0;
+  font-weight:700;
+  color:#137333;
+  word-break:keep-all;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons dd{
+  margin:0;
+  word-break:keep-all;
+  overflow-wrap:normal;
+  text-wrap:pretty;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-metric b{
+  font-size:16px;
+  line-height:1.5;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+html[data-fm-next-case-study="true"] .fm-cs-ratio,
+html[data-fm-next-case-study="true"] .fm-cs-ratio>span{
+  display:block;
+  font-size:12px;
+  line-height:1.6;
+  text-wrap:pretty;
+}
+html[data-fm-next-case-study="true"] .fm-cs-ratio>span+span{
+  margin-top:4px;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-note>.fm-cs-line{
+  font-size:13px;
+  line-height:1.65;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-note>a{
+  display:inline-block;
+  margin-top:8px;
+}
+html[data-fm-next-case-study="true"] :is(.fm-next-cs-day-states,.fm-next-cs-recovery) p,
+html[data-fm-next-case-study="true"] .fm-next-cs-recovery>div>span{
+  margin-top:6px;
+  font-size:13px;
+  line-height:1.65;
+}
+@media(max-width:560px){
+  html[data-fm-next-case-study="true"] .fm-cs-reasons>div{
+    grid-template-columns:1fr;
+    row-gap:4px;
+  }
+  html[data-fm-next-case-study="true"] .fm-cs-reasons{gap:14px}
+  html[data-fm-next-case-study="true"] .fm-next-story h2{margin-bottom:16px}
+}
