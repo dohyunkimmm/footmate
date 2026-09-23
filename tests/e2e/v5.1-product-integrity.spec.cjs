@@ -243,6 +243,7 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
 
   const secondary=page.locator('.fm-next-context-actions .fm-next-button--secondary').first();
   await expect(secondary).toBeVisible();
+  await page.mouse.move(1,1);
   const secondaryRest=await surface(secondary);
   const secondaryHover=await hoverSurface(secondary);
   expect(secondaryHover.background).not.toBe(secondaryRest.background);
@@ -264,6 +265,8 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   const filter=page.locator('.fm-discovery-filter-button');
   await expect(filter).toBeVisible();
+  await page.mouse.move(1,1);
+  await page.waitForTimeout(220);
   const filterRest=await surface(filter);
   const filterHover=await hoverSurface(filter);
   expect(filterHover.background).not.toBe(filterRest.background);
@@ -308,3 +311,4 @@ test('Case Study desktop companion panels retain reviewable width and structured
   }
   expect(errs).toEqual([]);
 });
+

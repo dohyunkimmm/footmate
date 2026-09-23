@@ -315,12 +315,19 @@ function currentView(){
   return (views[state.route]||welcomeView)();
 }
 
+let renderedRoute=null;
 function render(){
+  const routeChanged=renderedRoute!==state.route;
+  renderedRoute=state.route;
   root.innerHTML=`<div class="fm-next-page" data-mode="${mode}">${guide()}<div class="fm-next-stage"><div class="fm-next-app" data-embed="${embed}">${currentView()}</div></div><span class="fm-next-mode-pill">${mode==='evidence'?'Evidence mode':'Guided mode'}</span></div><div class="fm-next-toast" role="status" aria-live="polite"></div>`;
   const activeScreen=root.querySelector('[data-screen]');
   if(activeScreen){
     activeScreen.setAttribute('tabindex','-1');
     activeScreen.focus({preventScroll:true});
+  }
+  if(routeChanged){
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    root.querySelector('.fm-next-app')?.scrollTo({top:0,left:0,behavior:'instant'});
   }
   document.documentElement.dataset.footmateNext=mode;
 }
@@ -402,3 +409,4 @@ root.addEventListener('click',event=>{
 
 window.addEventListener('popstate',()=>render());
 render();
+

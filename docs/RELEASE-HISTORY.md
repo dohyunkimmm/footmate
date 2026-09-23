@@ -2,6 +2,13 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Case Study section label correction · 2026-09-23
+
+- #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
+- #226 merged at `c03a8fccd1802fc9d8c28d9d6e033687b98651bc`: English applies to section labels/kickers; story H2 restored to Korean. This supersedes #225's heading-language change.
+- The 13-section IA, Korean body copy and TOC wrapping remain the reference for subsequent Product fixes.
+- These entries record confirmed merges; they do not establish a newly verified Vercel Production SHA or a Product visual QA pass.
+
 ## v5.2.0 — Real Beta Readiness · 2026-09-21
 
 **Status:** Verified minor release · real-user Closed Beta operations ready for pilot activation.
@@ -553,3 +560,4 @@
 v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 Closed Beta는 account recovery·취소 마감·connected check-in·operator completion·DB-backed in-app notification·Resend transactional email에 더해 Realtime refresh, reminder, waitlist, actual Beta match ranking/feedback, provider-aware Google/Kakao OAuth UI, Operator TOTP MFA, opt-in Web Push, Supabase Storage media까지 연결되어 있다. transactional email과 Web Push outbox는 server worker/Cron이 처리하고, email은 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며 `/beta`는 별도의 connected data path다. 실제 PG와 external analytics는 연결하지 않았고, Google/Kakao 실제 로그인과 device-level Web Push 브라우저/OS 표시는 2026-09-22 Production 수동 QA를 완료했다. OAuth provider credential/config와 사용자의 브라우저/OS 권한은 해당 기능이 동작하기 위한 운영 의존성으로 유지된다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
+

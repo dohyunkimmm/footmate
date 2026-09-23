@@ -204,3 +204,85 @@ test('320/375/390/430 keep Setup and Auth single-column and overflow-safe',async
     await expectNoHorizontalOverflow(page);
   }
 });
+
+test('390px Home keeps the decision flow compact before the match list',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await expect(page.locator('.fm-ai-card--core')).toBeVisible();
+  await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0);
+  const metrics=await page.evaluate(()=>{
+    const first=document.querySelector('[data-screen="home"] .fm-next-match-card');
+    const ai=document.querySelector('[data-screen="home"] .fm-ai-card--core');
+    return {
+      scrollHeight:document.documentElement.scrollHeight,
+      firstMatchTop:first?.getBoundingClientRect().top??9999,
+      aiHeight:ai?.getBoundingClientRect().height??9999
+    };
+  });
+  console.log('HOME_DENSITY_METRICS',JSON.stringify(metrics));
+  expect(metrics.firstMatchTop).toBeLessThanOrEqual(760);
+  expect(metrics.aiHeight).toBeLessThanOrEqual(300);
+  await expectNoHorizontalOverflow(page);
+  await page.mouse.move(1,1);
+  const dynamicDates=page.locator('[data-screen="home"] .fm-next-match-date > span:first-child');
+  await expect(page).toHaveScreenshot('visual-system-home-390-full.png',{animations:'disabled',caret:'hide',fullPage:true,maxDiffPixels:24,mask:[dynamicDates]});
+  expect(errs).toEqual([]);
+});
+
+test('390px Discover does not claim personalization before memory exists',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await page.getByRole('button',{name:'전체 보기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+  await page.mouse.move(1,1);
+  const dynamicDates=page.locator('[data-screen="discover"] .fm-next-match-date > span:first-child');
+  await expect(page).toHaveScreenshot('visual-system-discover-390.png',{animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:24,mask:[dynamicDates]});
+  expect(errs).toEqual([]);
+});
+
+for(const width of [320,375,390,430]){
+  test(`${width}px Home and Discover expose matches above navigation and retain readable controls`,async({page})=>{
+    const errs=await openCleanApp(page,{width,height:844});
+    await setupToHome(page);
+    for(const route of ['home','discover']){
+      if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
+      const screen=page.locator(`[data-screen="${route}"]`);
+      await expect(screen.locator('.fm-ai-card[data-ai-state="idle"]')).toBeVisible();
+      await expect(screen.locator('[data-personalization-explanation]')).toHaveCount(0);
+      await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+      const metrics=await screen.evaluate(element=>{
+        const first=element.querySelector('.fm-next-match-card').getBoundingClientRect();
+        const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
+        const smallText=[...element.querySelectorAll('.fm-ai-card *')].filter(node=>node.getClientRects().length&&[...node.childNodes].some(child=>child.nodeType===3&&child.textContent.trim())).map(node=>parseFloat(getComputedStyle(node).fontSize));
+        return {firstTop:first.top,navTop:nav.top,minText:Math.min(...smallText)};
+      });
+      expect(metrics.firstTop).toBeLessThanOrEqual(metrics.navTop-80);
+      expect(metrics.minText).toBeGreaterThanOrEqual(11);
+      await expectNoHorizontalOverflow(page);
+      await page.mouse.move(1,1);
+      await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
+      await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+      const last=screen.locator('.fm-next-match-card').last();
+      await last.scrollIntoViewIfNeeded();
+      const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
+      expect(end.bottom).toBeLessThanOrEqual(end.navTop);
+      await page.evaluate(()=>window.scrollTo(0,0));
+    }
+    expect(errs).toEqual([]);
+  });
+}
+
+test('opening Detail after scrolling a match list starts at the top',async({page})=>{
+  await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  const last=page.locator('.fm-next-match-card').last();
+  await last.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(()=>window.scrollY)).toBeGreaterThan(0);
+  await last.click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+  const title=page.locator('[data-screen="detail"] h1');
+  expect((await title.boundingBox()).y).toBeLessThan(300);
+});

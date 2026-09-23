@@ -14,7 +14,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Compatibility aliases: `/demo`, `/next` → current Real App
-- Case Study IA: **13 sections**
+- Case Study IA: **13 sections** — #226 기준 영문 section label · 한국어 story H2, #225 TOC 줄바꿈 유지
 
 ## Product decisions
 
@@ -172,3 +172,4 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - QA scope: runtime-impacting 변경은 full Regression / Browser E2E + axe / 필요한 Production verification을 유지하고, docs/workflow-only non-runtime 변경은 lightweight Docs-only QA를 사용
 - Release flow: `branch → PR → impact-aware GitHub Actions QA → merge → runtime 영향 시 exact Vercel Production verification → durable release history sync`
 - Final sync-up: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 상충하는 pending/미검증 문구 검색 → QA/merge`
+
