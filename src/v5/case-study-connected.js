@@ -308,7 +308,7 @@
       '<article class="fm-next-cs-card"><h3>우선 · 핵심 참가와 안전성</h3><p>판단 기준을 한곳에 모으고 선택 맥락을 보존합니다. 인증·정원·참가/취소·체크인·복구를 무료 Beta에서 검증합니다.</p></article>'+
       '<article class="fm-next-cs-card"><h3>확장 · 운영과 반복 이용</h3><p>대기열·알림·경기 후 피드백은 자리 회복과 재탐색을 지원합니다. 전환 효과는 실제 이용 데이터로 별도 확인해야 합니다.</p></article>'+
       '<article class="fm-next-cs-card"><h3>제외 · 실제 PG와 자동 참가</h3><p>실제 PG를 미뤄 수익화 검증을 유보했습니다. AI 자동 참가는 제외하고 사용자의 최종 확인인 HITL을 유지합니다.</p></article>');
-    setText(slides[5],'.fm-next-cs-decision b','Decision: 가입 전 추천 공개 · Reason: 참가 전에 가치를 판단 · Trade-off: 계정 기반 개인화와 기기 간 연속성은 인증 뒤에 제공합니다.');
+    setText(slides[5],'.fm-next-cs-decision b','Decision: 가입 전 추천 공개 · Reason: 참가 전에 가치를 판단 · Trade-off: 로그인 전에는 계정 기반 개인화와 기기 간 연속성을 제공하지 않습니다.');
     setText(slides[6],'.fm-next-cs-note','Decision: 최근 선호는 추천 보조 입력으로만 사용 · Reason: 추천 이유와 순위를 추적 가능하게 유지 · Trade-off: 과거 선호가 현재 의도와 다를 수 있어 사용자가 조건을 수정할 수 있게 합니다.');
     setText(slides[7],'.fm-next-cs-sticky p','Decision: 참가하기를 핵심 CTA로 유지 · Reason: 상세에서 다음 행동을 명확하게 제시 · Trade-off: 저장·최대 2경기 비교는 보조 행동으로 제한합니다.');
 

@@ -265,3 +265,15 @@ test('service planning evidence distinguishes ownership, hypotheses, metrics and
   for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구는 미연동'])expect(metrics).toContain(value);
   expect(await slideText(page,12)).toContain('기준값을 확보한 뒤');
 });
+
+test('mobile role cards leave room for the app preview label',async({page})=>{
+  for(const width of [320,375,390,430]){
+    await openCaseStudy(page,{width,height:844});
+    const gap=await page.evaluate(()=>{
+      const cards=document.querySelector('.fm-next-cover-proof').getBoundingClientRect();
+      const label=document.querySelector('.fm-next-cover-frame-meta').getBoundingClientRect();
+      return label.top-cards.bottom;
+    });
+    expect(gap,`preview label clearance at ${width}px`).toBeGreaterThanOrEqual(12);
+  }
+});
