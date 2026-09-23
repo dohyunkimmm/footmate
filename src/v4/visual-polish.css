@@ -1040,6 +1040,13 @@
 .fm-next-page[data-mode="real"] [data-screen="detail"]{--fm-type-title:19px}
 
 /* Auth v3 is the active runtime auth surface. Keep mobile focused, use a deliberate split composition on desktop. */
+.fm-next-page[data-mode="real"] .fm-next-auth-wrap.fm-next-auth-v3[data-screen="auth"]{
+  display:block;
+  grid-template-columns:none;
+  align-content:initial;
+  gap:0;
+  padding:0;
+}
 .fm-next-page[data-mode="real"] .fm-next-auth-v3{
   display:block;
   min-height:100dvh;
