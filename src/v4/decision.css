@@ -70,6 +70,9 @@
   .fm-decision-dialog{width:100%;max-height:90dvh;border-radius:24px 24px 0 0;padding:18px}
   .fm-decision-compare-grid{grid-template-columns:1fr}
 }
+@media(min-width:421px) and (max-width:430px){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"][data-product-detail="prioritized"]>.fm-next-detail-section.fm-decision-section[data-decision-section]{width:390px;max-width:calc(100% - 40px);margin-inline:auto}
+}
 @media(min-width:700px){
   .fm-decision-dialog-backdrop{place-items:center}
 }
