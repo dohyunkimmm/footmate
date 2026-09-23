@@ -192,19 +192,25 @@ test('story sections stay vertically centered and fit the 1440x900 review surfac
   }
 });
 
-test('arrow keys work immediately on first load and while the embedded app has focus',async({page})=>{
+test('Case Study cover uses a static preview and one Product CTA',async({page})=>{
+  await openCaseStudy(page);
+  await expect(page.locator('.fm-next-cover-frame iframe')).toHaveCount(0);
+  await expect(page.locator('.fm-next-cover-frame-meta')).toHaveCount(0);
+  await expect(page.locator('.fm-cs-static-preview')).toBeVisible();
+  await expect(page.locator('.fm-next-cover-visual')).not.toContainText('Live interaction');
+  const cta=page.locator('.fm-next-cover-actions a');
+  await expect(cta).toHaveCount(1);
+  await expect(cta).toContainText('제품 직접 체험하기');
+  await expect(cta).toHaveAttribute('href','/demo');
+});
+
+test('arrow keys work immediately on first load without an embedded product frame',async({page})=>{
   await openCaseStudy(page);
   await expect(page.locator('.topbar-count')).toHaveText('01 / 13');
-
   await page.keyboard.press('ArrowRight');
   await expect(page.locator('.topbar-count')).toHaveText('02 / 13');
   await page.keyboard.press('ArrowLeft');
   await expect(page.locator('.topbar-count')).toHaveText('01 / 13');
-
-  const frame=page.locator('.fm-next-cover-frame iframe');
-  await frame.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.topbar-count')).toHaveText('02 / 13');
 });
 
 test('reader-facing body copy is Korean-first while preserving necessary technical terms',async({page})=>{
@@ -266,14 +272,18 @@ test('service planning evidence distinguishes ownership, hypotheses, metrics and
   expect(await slideText(page,12)).toContain('기준값을 확보한 뒤');
 });
 
-test('mobile role cards leave room for the app preview label',async({page})=>{
+test('mobile static preview caption stays below the frame without clipping',async({page})=>{
   for(const width of [320,375,390,430]){
     await openCaseStudy(page,{width,height:844});
-    const gap=await page.evaluate(()=>{
-      const cards=document.querySelector('.fm-next-cover-proof').getBoundingClientRect();
-      const label=document.querySelector('.fm-next-cover-frame-meta').getBoundingClientRect();
-      return label.top-cards.bottom;
+    const geometry=await page.evaluate(()=>{
+      const frame=document.querySelector('.fm-next-cover-frame').getBoundingClientRect();
+      const note=document.querySelector('.fm-next-cover-note');
+      const caption=note.getBoundingClientRect();
+      return {gap:caption.top-frame.bottom,clippedX:note.scrollWidth-note.clientWidth,clippedY:note.scrollHeight-note.clientHeight,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
     });
-    expect(gap,`preview label clearance at ${width}px`).toBeGreaterThanOrEqual(12);
+    expect(geometry.gap,`preview caption gap at ${width}px`).toBeGreaterThanOrEqual(12);
+    expect(geometry.clippedX,`preview caption horizontal clip at ${width}px`).toBeLessThanOrEqual(1);
+    expect(geometry.clippedY,`preview caption vertical clip at ${width}px`).toBeLessThanOrEqual(1);
+    expect(geometry.overflow,`page overflow at ${width}px`).toBeLessThanOrEqual(1);
   }
 });
