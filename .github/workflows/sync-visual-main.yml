@@ -1,0 +1,60 @@
+name: Sync Visual Branch With Main
+
+on:
+  push:
+    branches:
+      - design/visual-system-completion-20260923
+    paths:
+      - .github/workflows/sync-visual-main.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-system-completion-20260923
+          fetch-depth: 0
+      - name: Merge current main and resolve QA command additively
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          set +e
+          git merge --no-ff --no-commit origin/main
+          merge_status=$?
+          set -e
+          conflicts="$(git diff --name-only --diff-filter=U)"
+          if [ -n "$conflicts" ]; then
+            unexpected="$(printf '%s\n' "$conflicts" | grep -v '^.github/workflows/qa.yml$' || true)"
+            if [ -n "$unexpected" ]; then
+              echo "Unexpected merge conflicts:"
+              echo "$unexpected"
+              exit 1
+            fi
+            git checkout --theirs .github/workflows/qa.yml
+            python - <<'PY'
+          from pathlib import Path
+          path=Path('.github/workflows/qa.yml')
+          text=path.read_text()
+          needle='tests/e2e/v5.1-visual-baseline.spec.cjs'
+          addition='tests/e2e/v5.1-visual-system-completion.spec.cjs'
+          if addition not in text:
+              text=text.replace(needle, needle+' '+addition, 1)
+          path.write_text(text)
+          PY
+            git add .github/workflows/qa.yml
+          fi
+          if [ "$merge_status" -ne 0 ] && [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+            echo 'Merge still has unresolved conflicts.'
+            exit 1
+          fi
+          rm -f .github/workflows/sync-visual-main.yml
+          git add -A
+          git commit -m 'chore: sync latest main into visual system branch'
+          git push origin HEAD:design/visual-system-completion-20260923
