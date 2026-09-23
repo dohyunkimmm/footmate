@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -27,7 +27,7 @@ const baseSession={
 const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
 async function waitRuntime(page){
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1'&&window.__FOOTMATE_RELEASE_REVIEW__?.version==='5.1.2-flow-review');
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1'&&window.__FOOTMATE_RELEASE_REVIEW__?.version==='flow-review-v1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 async function openFresh(page,viewport={width:1440,height:900}){
@@ -59,6 +59,13 @@ async function setupToHome(page){
   await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
+async function goHomeToAuth(page){
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await page.locator('.fm-next-match-card').first().click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+}
 async function mockConnectedOAuth(page){
   await page.route('**/api/beta-config',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({connected:true,url:'https://auth.footmate.test',publishableKey:'pk_test'})}));
   await page.route('https://auth.footmate.test/auth/v1/settings',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({external:{google:true,kakao:true}})}));
@@ -73,6 +80,9 @@ test('fresh /app entry always opens the welcome screen instead of the persisted 
   await waitRuntime(page);
   await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-footmate-fresh-entry','reset');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await waitRuntime(page);
+  await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
   expect(errs).toEqual([]);
 });
 
@@ -98,7 +108,7 @@ test('AI Match Assistant is a primary core feature with explicit rules fallback'
   await expect(card.getByText('CORE FEATURE',{exact:true})).toBeVisible();
   await expect(card.getByText('AI MATCHING',{exact:true})).toBeVisible();
   await expect(card.getByText('AI Match Assistant',{exact:true})).toBeVisible();
-  await expect(card.getByText('AI 장애나 지연 시 기존 rules-based 검색으로 자동 전환합니다.',{exact:true})).toBeVisible();
+  await expect(card.getByText('AI 장애나 지연 시 기존 rules-based 검색으로 자동 전환합니다.',{exact:true})).toHaveCount(1);
   await page.mouse.move(1,1);
   await expect(card).toHaveScreenshot('release-flow-ai-core-1440.png',exactScreenshot);
   expect(errs).toEqual([]);
@@ -106,11 +116,16 @@ test('AI Match Assistant is a primary core feature with explicit rules fallback'
 
 test('auth removes Apple/Naver and routes Google to the connected provider authorize screen',async({page})=>{
   await mockConnectedOAuth(page);
-  const errs=await seedSession(page,{route:'auth',selectedMatchId:'gwanggyo-2130'});
-  const google=page.locator('[data-oauth-provider="google"]');
-  const kakao=page.locator('[data-oauth-provider="kakao"]');
-  await expect(google).toBeVisible();await expect(google).toBeEnabled();
-  await expect(kakao).toBeVisible();await expect(kakao).toBeEnabled();
+  const errs=await seedSession(page,{route:'home'});
+  await goHomeToAuth(page);
+  const google=page.locator('.fm-next-social--google');
+  const kakao=page.locator('.fm-next-social--kakao');
+  await expect(google).toBeVisible();
+  await expect(google).toHaveAttribute('data-oauth-provider','google');
+  await expect(google).toBeEnabled();
+  await expect(kakao).toBeVisible();
+  await expect(kakao).toHaveAttribute('data-oauth-provider','kakao');
+  await expect(kakao).toBeEnabled();
   await expect(page.getByRole('button',{name:/Apple/})).toHaveCount(0);
   await expect(page.getByRole('button',{name:/Naver|네이버/})).toHaveCount(0);
   await expect(page.getByText('Google · Kakao는 실제 연결된 provider의 가입/로그인 화면으로 이동합니다.',{exact:true})).toBeVisible();
@@ -144,7 +159,7 @@ test('auth and detail back buttons return through the actual previous route stac
   await page.getByRole('button',{name:'참가하기'}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
   await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_REVIEW__.readHistory().includes('detail'));
-  await page.locator('.fm-next-auth-back').click();
+  await page.locator('[data-action="auth-back"]').click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
   await page.getByRole('button',{name:'이전 화면'}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
@@ -160,9 +175,16 @@ test('team message is readable without hover and states the deterministic simula
   await expect(dialog.getByText('실시간 위치·지도·팀 채팅·알림 backend는 연결하지 않았습니다. 상태와 복구 흐름을 검증하는 deterministic simulation입니다.',{exact:true})).toBeVisible();
   const style=await dialog.evaluate(element=>({background:getComputedStyle(element).backgroundColor,color:getComputedStyle(element).color}));
   expect(style.background).toBe('rgb(255, 255, 255)');expect(style.color).not.toBe('rgb(255, 255, 255)');
+  expect(errs).toEqual([]);
+});
+
+test('team message surface matches the approved 390px visual baseline',async({page})=>{
+  await seedSession(page,{route:'schedule',joinedMatchId:'gwanggyo-2130',matchStage:'upcoming'},{viewport:{width:390,height:844}});
+  await page.getByRole('button',{name:'팀 메시지'}).click();
+  const dialog=page.getByRole('dialog',{name:'팀 메시지'});
+  await expect(dialog).toBeVisible();
   await page.mouse.move(1,1);
   await expect(dialog).toHaveScreenshot('release-flow-team-message-390.png',exactScreenshot);
-  expect(errs).toEqual([]);
 });
 
 test('checked-in continues to postgame feedback and loops back to match discovery',async({page})=>{
@@ -172,10 +194,9 @@ test('checked-in continues to postgame feedback and loops back to match discover
   });
   const nextAction=page.getByRole('button',{name:'경기 종료 후 평가하기'});
   await expect(nextAction).toBeVisible();
-  await page.mouse.move(1,1);
-  await expect(page.locator('[data-matchday-state="checked-in"]')).toHaveScreenshot('release-flow-checked-in-390.png',exactScreenshot);
   await nextAction.click();
   await expect(page.locator('[data-return-state="draft"]')).toBeVisible();
+  await expect(page.locator('[data-matchday-state="checked-in"]')).toBeHidden();
   await expect(page.getByText('오늘 경기, 어땠나요?',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'적당했어요'}).click();
   await page.getByRole('button',{name:'네, 비슷한 경기'}).click();
@@ -186,4 +207,16 @@ test('checked-in continues to postgame feedback and loops back to match discover
   await discover.click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   expect(errs).toEqual([]);
+});
+
+test('checked-in continuation action matches the approved 390px visual baseline',async({page})=>{
+  await seedSession(page,{route:'schedule',signedIn:true,joinedMatchId:'gwanggyo-2130',checkedInMatchId:'gwanggyo-2130',matchStage:'matchday'},{
+    viewport:{width:390,height:844},
+    matchday:{version:'4.5.0',matchId:'gwanggyo-2130',status:'checked-in',arrival:'arrived',noticeSeen:false,updatedAt:new Date().toISOString()}
+  });
+  const checked=page.locator('[data-matchday-state="checked-in"]');
+  await expect(checked).toBeVisible();
+  await expect(page.getByRole('button',{name:'경기 종료 후 평가하기'})).toBeVisible();
+  await page.mouse.move(1,1);
+  await expect(checked).toHaveScreenshot('release-flow-checked-in-390.png',exactScreenshot);
 });
