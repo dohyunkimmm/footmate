@@ -255,7 +255,7 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
       const metrics=await screen.evaluate(element=>{
         const card=element.querySelector('.fm-next-match-card');
         const first=card.getBoundingClientRect();
-        const title=card.querySelector('h3').getBoundingClientRect();
+        const title=card.querySelector('.fm-next-match-place').getBoundingClientRect();
         const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
         const smallText=[...element.querySelectorAll('.fm-ai-card *')].filter(node=>node.getClientRects().length&&[...node.childNodes].some(child=>child.nodeType===3&&child.textContent.trim())).map(node=>parseFloat(getComputedStyle(node).fontSize));
         return {firstTop:first.top,titleBottom:title.bottom,navTop:nav.top,minText:Math.min(...smallText)};
