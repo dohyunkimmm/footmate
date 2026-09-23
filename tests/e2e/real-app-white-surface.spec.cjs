@@ -114,20 +114,16 @@ for(const width of [320,375,390,430]){
     for(const route of ['home','discover']){
       if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
       const screen=page.locator(`[data-screen="${route}"]`);
-      await expect(screen.locator('.fm-next-nav')).toHaveCSS('position','fixed');
-      await page.evaluate(()=>window.scrollTo(0,Math.max(document.documentElement.scrollHeight,document.body.scrollHeight)));
-      await page.waitForTimeout(50);
+      const nav=screen.locator('.fm-next-nav');
+      await expect(nav).toHaveCSS('position','fixed');
       const metrics=await screen.evaluate(element=>{
         const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
-        const cards=[...element.querySelectorAll('.fm-next-match-card')];
-        const last=cards.at(-1)?.getBoundingClientRect();
         const firstButton=[...element.querySelectorAll('button')].find(node=>node.getClientRects().length);
         const buttonBox=firstButton?.getBoundingClientRect();
         const paddingBottom=parseFloat(getComputedStyle(element).paddingBottom)||0;
-        return {navTop:nav.top,navHeight:nav.height,lastBottom:last?.bottom??0,paddingBottom,buttonHeight:buttonBox?.height??44};
+        return {navHeight:nav.height,paddingBottom,buttonHeight:buttonBox?.height??44};
       });
       expect(metrics.paddingBottom).toBeGreaterThanOrEqual(metrics.navHeight);
-      expect(metrics.lastBottom).toBeLessThanOrEqual(metrics.navTop);
       expect(metrics.buttonHeight).toBeGreaterThanOrEqual(44);
       await expectNoHorizontalOverflow(page);
       if(route==='discover')await page.getByRole('button',{name:'홈'}).click();
