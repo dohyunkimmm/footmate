@@ -129,15 +129,27 @@ function ensureAuthStatus(auth){
   status=document.createElement('p');status.className='fm-release-auth-status';status.dataset.releaseAuthStatus='';
   const terms=auth.querySelector('.fm-next-auth-terms');if(terms)terms.before(status);else auth.append(status);return status;
 }
+function ensureProviderButton(auth,provider){
+  const list=auth.querySelector('.fm-next-social-list');if(!list)return null;
+  let button=list.querySelector(`.fm-next-social--${provider}`);
+  if(button)return button;
+  button=document.createElement('button');
+  button.className=`fm-next-social fm-next-social--${provider}`;
+  button.type='button';
+  button.textContent=`${provider==='google'?'Google':'카카오'}로 계속하기`;
+  list.append(button);
+  return button;
+}
 function decorateAuth(){
   if(!root||entryMode!=='real')return;const auth=root.querySelector('[data-screen="auth"]');if(!auth)return;
   auth.querySelector('.fm-next-social--apple')?.remove();
-  auth.querySelectorAll('.fm-next-social').forEach(button=>{
-    const provider=button.classList.contains('fm-next-social--google')?'google':button.classList.contains('fm-next-social--kakao')?'kakao':null;if(!provider)return;
+  auth.querySelectorAll('.fm-next-social').forEach(button=>{if(/naver|네이버/i.test(button.textContent||''))button.remove()});
+  ['kakao','google'].forEach(provider=>{
+    const button=ensureProviderButton(auth,provider);if(!button)return;
     button.removeAttribute('data-action');button.dataset.oauthProvider=provider;button.type='button';
-    if(!providerState.loaded){button.disabled=true;button.setAttribute('aria-busy','true')}
+    if(!providerState.loaded){button.disabled=true;button.hidden=false;button.setAttribute('aria-busy','true')}
     else if(providerState.enabled[provider]){button.disabled=false;button.removeAttribute('aria-busy');button.hidden=false}
-    else button.hidden=true;
+    else{button.disabled=true;button.removeAttribute('aria-busy');button.hidden=true}
   });
   const status=ensureAuthStatus(auth),oauthError=sessionStorage.getItem(OAUTH_ERROR_KEY)||'';
   if(oauthError){status.dataset.tone='error';status.textContent=oauthError;sessionStorage.removeItem(OAUTH_ERROR_KEY)}
@@ -177,9 +189,10 @@ function decorateLifecycle(){
   const checked=root.querySelector('[data-matchday-state="checked-in"]');
   const actions=checked?.querySelector('.fm-matchday-actions');
   if(session.matchStage==='postgame'){
-    if(checked)checked.hidden=true;
-  }else if(actions&&!actions.querySelector('[data-release-action="finish-match"]')){
-    actions.insertAdjacentHTML('afterbegin','<button class="fm-release-primary-action" type="button" data-release-action="finish-match">경기 종료 후 평가하기</button>');
+    if(checked){checked.hidden=true;checked.style.setProperty('display','none','important')}
+  }else{
+    if(checked){checked.hidden=false;checked.style.removeProperty('display')}
+    if(actions&&!actions.querySelector('[data-release-action="finish-match"]'))actions.insertAdjacentHTML('afterbegin','<button class="fm-release-primary-action" type="button" data-release-action="finish-match">경기 종료 후 평가하기</button>');
   }
   const saved=root.querySelector('[data-return-state="saved"]');if(saved&&!saved.querySelector('[data-release-action="next-match"]'))saved.insertAdjacentHTML('beforeend','<button class="fm-release-primary-action fm-release-next-match" type="button" data-release-action="next-match">다음 경기 찾기</button>');
 }
