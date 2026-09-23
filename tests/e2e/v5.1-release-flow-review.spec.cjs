@@ -120,13 +120,11 @@ test('auth removes Apple/Naver and routes Google to the connected provider autho
   await mockConnectedOAuth(page);
   const errs=await seedSession(page,{route:'home'});
   await goHomeToAuth(page);
-  const google=page.locator('.fm-next-social--google');
-  const kakao=page.locator('.fm-next-social--kakao');
+  const google=page.locator('[data-oauth-provider="google"]');
+  const kakao=page.locator('[data-oauth-provider="kakao"]');
   await expect(google).toBeVisible();
-  await expect(google).toHaveAttribute('data-oauth-provider','google');
   await expect(google).toBeEnabled();
   await expect(kakao).toBeVisible();
-  await expect(kakao).toHaveAttribute('data-oauth-provider','kakao');
   await expect(kakao).toBeEnabled();
   await expect(page.getByRole('button',{name:/Apple/})).toHaveCount(0);
   await expect(page.getByRole('button',{name:/Naver|네이버/})).toHaveCount(0);
