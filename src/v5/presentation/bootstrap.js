@@ -6,10 +6,8 @@ const entryParams=new URLSearchParams(location.search);
 const entryMode=['guided','evidence'].includes(entryParams.get('mode'))?entryParams.get('mode'):'real';
 const entryEmbed=entryParams.get('embed')==='1';
 const internalResume=entryParams.get('resume')==='1'||entryParams.get('oauth_return')==='1';
-const navigation=performance.getEntriesByType('navigation')[0];
-const navigationType=navigation?.type||'navigate';
-const isFreshEntry=entryMode==='real'&&!entryEmbed&&!internalResume&&navigationType==='navigate';
-const FLOW_REVIEW_VERSION='5.1.2-flow-review';
+const isFreshEntry=entryMode==='real'&&!entryEmbed&&!internalResume;
+const FLOW_REVIEW_VERSION='flow-review-v1';
 const HISTORY_KEY='footmate:release-flow:history:v1';
 const LAST_ROUTE_KEY='footmate:release-flow:last-route:v1';
 const SUPPRESS_HISTORY_KEY='footmate:release-flow:suppress-history:v1';
@@ -102,10 +100,8 @@ function decorateAi(){
   root.querySelectorAll('[data-ai-assistant]').forEach(card=>{
     card.classList.add('fm-ai-card--core');
     if(!card.querySelector('[data-ai-core-label]'))card.insertAdjacentHTML('afterbegin','<div class="fm-ai-core-label" data-ai-core-label><span>CORE FEATURE</span><b>AI MATCHING</b></div>');
-    if(!card.querySelector('[data-ai-fallback-note]')){
-      const status=card.querySelector('[data-ai-status]');
-      if(status)status.insertAdjacentHTML('afterend',`<p class="fm-ai-fallback-note" data-ai-fallback-note>${AI_FALLBACK_COPY}</p>`);
-    }
+    const fallbackCopy=card.querySelector('[data-ai-status] span');
+    if(fallbackCopy)fallbackCopy.textContent=AI_FALLBACK_COPY;
   });
 }
 async function loadBackendConfig(){
@@ -176,8 +172,15 @@ function openTeamMessage(){
   document.body.append(dialog);document.documentElement.classList.add('fm-release-dialog-open');dialog.querySelector('[data-release-action="close-team"]')?.focus();
 }
 function decorateLifecycle(){
-  if(!root)return;const checked=root.querySelector('[data-matchday-state="checked-in"]'),actions=checked?.querySelector('.fm-matchday-actions');
-  if(actions&&!actions.querySelector('[data-release-action="finish-match"]'))actions.insertAdjacentHTML('afterbegin','<button class="fm-release-primary-action" type="button" data-release-action="finish-match">경기 종료 후 평가하기</button>');
+  if(!root)return;
+  const session=readSession();
+  const checked=root.querySelector('[data-matchday-state="checked-in"]');
+  const actions=checked?.querySelector('.fm-matchday-actions');
+  if(session.matchStage==='postgame'){
+    if(checked)checked.hidden=true;
+  }else if(actions&&!actions.querySelector('[data-release-action="finish-match"]')){
+    actions.insertAdjacentHTML('afterbegin','<button class="fm-release-primary-action" type="button" data-release-action="finish-match">경기 종료 후 평가하기</button>');
+  }
   const saved=root.querySelector('[data-return-state="saved"]');if(saved&&!saved.querySelector('[data-release-action="next-match"]'))saved.insertAdjacentHTML('beforeend','<button class="fm-release-primary-action fm-release-next-match" type="button" data-release-action="next-match">다음 경기 찾기</button>');
 }
 function finishMatch(){const current=readSession();writeSession({matchStage:'postgame',route:'schedule',checkedInMatchId:current.joinedMatchId||current.checkedInMatchId||null});location.replace(resumeUrl({flow:'postgame'}))}
@@ -191,8 +194,10 @@ document.addEventListener('submit',event=>{
   if(canonical!==display){input.value=canonical;queueMicrotask(()=>{input.value=displayAlias(display)})}
 },true);
 document.addEventListener('click',event=>{
-  const target=event.target.closest?.('button,[data-action],[data-release-action]');if(!target)return;const provider=target.dataset.oauthProvider;
+  const target=event.target.closest?.('button,[data-action],[data-release-action]');if(!target)return;
+  const provider=target.dataset.oauthProvider||(target.classList.contains('fm-next-social--google')?'google':target.classList.contains('fm-next-social--kakao')?'kakao':null);
   if(provider){event.preventDefault();event.stopPropagation();void authorize(provider);return}
+  if(target.classList.contains('fm-next-social--apple')){event.preventDefault();event.stopPropagation();return}
   const action=target.dataset.action;
   if(entryMode==='real'&&action==='auth-back'){event.preventDefault();event.stopPropagation();goBack('detail');return}
   if(entryMode==='real'&&action==='checkout-back'){event.preventDefault();event.stopPropagation();goBack('detail');return}
@@ -210,4 +215,7 @@ window.__FOOTMATE_RELEASE_REVIEW__=Object.freeze({
   version:FLOW_REVIEW_VERSION,simulationBoundary:SIMULATION_BOUNDARY,aiFallbackCopy:AI_FALLBACK_COPY,readHistory:readStack,
   get providers(){return {...providerState.enabled}},get route(){return currentRoute()},openTeamMessage,finishMatch,nextMatch
 });
-enhanceReleaseFlow();void finishOAuthReturn();
+enhanceReleaseFlow();
+queueMicrotask(scheduleEnhance);
+window.addEventListener('load',scheduleEnhance,{once:true});
+void finishOAuthReturn();
