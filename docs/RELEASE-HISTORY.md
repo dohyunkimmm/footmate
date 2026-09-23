@@ -2,6 +2,30 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Case Study 서비스 기획 서사 보강 · 2026-09-23
+
+- Scope: 기존 13개 섹션 안에 Role / Scope / Responsibility, 문제→서비스 목표, 우선순위, Decision / Reason / Trade-off, 대안 가설, 운영 정책, 협의 기준, KPI, 회고 보강
+- TOC: main/sub title 정리, 13개 부제목 한 줄 및 잘림 없음 검증
+- Content boundary: Persona·대안 비교는 설계 가설; 8개 KPI는 Validation Metric이며 실제 사용자 성과·기준값·목표 달성으로 표현하지 않음
+- Detailed evidence: [서비스 기획 근거](SERVICE-PLANNING-EVIDENCE.md) — 분모·관찰 기간·제외 기준·의사결정 근거
+- Preserved: Product/Beta 기능, 추천·참가·운영 정책, 실제 연동과 시뮬레이션 경계
+- Necessary layout adjustment: 모바일 역할 카드와 앱 미리보기 라벨 간격; 320/375/390/430px에서 겹침 방지 geometry contract
+- Runtime PR: #228
+- Case Study 전용 QA: run `35858360019` · 43 PASS
+- Visual Regression: Ubuntu/Chromium에서 baseline 생성 후 별도 `toHaveScreenshot()` 실제 비교 PASS · `maxDiffPixels: 0`
+- Visual scope: 1440×900 전체 13개 섹션, 1728×900 cover, 390×844 전체 13개 섹션; screenshot 직접 검토 및 320/375/390/430px 포함 wrap·overflow·spacing·TOC·키보드·axe 검증
+- Baseline 저장: `tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/`; 일회성 baseline workflow는 제거하고 기존 PR QA gate 유지
+- Final PR QA: run `35858717623` · Regression 36 PASS · Browser E2E + axe 142 PASS
+- Product/runtime baseline SHA: `20f3eef4845a9787fe64dfefb88f5b6748146016`
+- Post-merge QA: run `35859386720` · Regression 36 / Browser E2E + axe / Production Smoke PASS
+- Exact verified Vercel Production: `dpl_eMzzjfTZTUaeESYSnHH3EyceVtUu` · SHA `20f3eef4845a9787fe64dfefb88f5b6748146016` · READY · official alias `footmate-black.vercel.app`
+- Production HTTP: PASS; Case Study HTML·현재 narrative·section label 파일이 checkout SHA의 파일 내용과 정확히 일치하는 검사 추가
+- Production AI inference / Chromium smoke: PASS
+- Documentation: README·문서 인덱스·서비스 기획 근거 및 Notion 프로젝트/PRD 동기화; Notion의 과거 16-section·OAuth 미연동 일반화 표기는 현재 13-section과 Real App/Beta 경계로 수정
+- Runbook: 운영 절차 변경 없음
+- Render backup: 이번 Case Study 변경은 재검증하지 않음
+- Remaining validation: 실제 사용자 조사, 전환·체크인·재탐색 기준값과 사업 성과는 별도 Beta 관찰 대상이며 이번 QA PASS로 대체하지 않음
+
 ## v5.2.0 — Real Beta Readiness · 2026-09-21
 
 **Status:** Verified minor release · real-user Closed Beta operations ready for pilot activation.
