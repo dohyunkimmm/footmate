@@ -6,7 +6,7 @@ on:
       - app.html
       - src/v5/product-completion.css
       - src/v5/product-completion.js
-      - src/v5/ai-match-assistant.css
+      - src/v4/design-system-v2.css
       - src/v5/ai-match-assistant.js
       - tests/e2e/product-completion.spec.cjs
       - .github/workflows/product-completion-baseline-refresh.yml
@@ -23,18 +23,19 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Integrate completion into existing v5 requests
+      - name: Integrate completion into existing Product requests
         run: |
           node - <<'NODE'
           const fs=require('fs');
           const cssSource='src/v5/product-completion.css';
           const jsSource='src/v5/product-completion.js';
-          const cssTarget='src/v5/ai-match-assistant.css';
+          const cssTarget='src/v4/design-system-v2.css';
           const jsTarget='src/v5/ai-match-assistant.js';
           const cssMarker='FootMate Real App · product completion layer';
           const jsMarker='Product completion orchestration';
           if(fs.existsSync(cssSource)){
-            const css=fs.readFileSync(cssSource,'utf8');
+            let css=fs.readFileSync(cssSource,'utf8');
+            css+=`\n/* Completion readability floor */\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="home"] .fm-ai-kicker{font-size:11px}\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="home"] .fm-ai-examples button{min-height:44px;font-size:11px}\n`;
             let target=fs.readFileSync(cssTarget,'utf8');
             if(!target.includes(cssMarker))target+=`\n\n${css}`;
             fs.writeFileSync(cssTarget,target);
@@ -54,9 +55,9 @@ jobs:
 
           const qaPath='.github/workflows/real-app-white-surface-qa.yml';
           let qa=fs.readFileSync(qaPath,'utf8');
-          qa=qa.replaceAll('      - src/v5/product-completion.css\n','      - src/v5/ai-match-assistant.css\n');
+          qa=qa.replaceAll('      - src/v5/product-completion.css\n','      - src/v4/design-system-v2.css\n');
           qa=qa.replaceAll('      - src/v5/product-completion.js\n','      - src/v5/ai-match-assistant.js\n');
-          qa=qa.replace("          csstree.parse(fs.readFileSync('src/v5/product-completion.css','utf8'));","          csstree.parse(fs.readFileSync('src/v5/ai-match-assistant.css','utf8'));" );
+          qa=qa.replace("          csstree.parse(fs.readFileSync('src/v5/product-completion.css','utf8'));","          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));" );
           qa=qa.replace('        run: node --check src/v5/product-completion.js','        run: node --check src/v5/ai-match-assistant.js');
           fs.writeFileSync(qaPath,qa);
 
@@ -71,7 +72,7 @@ jobs:
           node - <<'NODE'
           const fs=require('fs');
           const csstree=require('css-tree');
-          csstree.parse(fs.readFileSync('src/v5/ai-match-assistant.css','utf8'));
+          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));
           console.log('PASS integrated product completion CSS syntax');
           NODE
       - name: Install Chromium
