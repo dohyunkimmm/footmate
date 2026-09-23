@@ -10,27 +10,25 @@ if(root){
     const variant=isHome?'home':'discover';
     if(card.dataset.productAi!==variant)card.dataset.productAi=variant;
 
-    const kicker=card.querySelector('.fm-ai-kicker');
     const title=card.querySelector('.fm-ai-head strong');
     const copy=card.querySelector('.fm-ai-head p');
-    const label=card.querySelector('.fm-ai-label');
     const input=card.querySelector('[data-ai-input]');
     const submit=card.querySelector('[data-ai-submit]');
     const examples=[...card.querySelectorAll('[data-ai-example]')];
 
+    /* Keep the existing accessible identity/label contracts intact:
+       AI Match Assistant · 찾고 싶은 경기 조건 · AI로 찾기. */
+    if(submit)submit.setAttribute('aria-label','AI로 찾기');
+
     if(isHome){
-      setText(kicker,'QUICK REFINE');
       setText(title,'조건만 빠르게 바꿔볼까요?');
       setText(copy,'추천 흐름은 유지하고 필요한 조건만 한 줄로 조정합니다.');
-      setText(label,'추천 조건 빠르게 수정');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'조건 수정');
       examples.forEach((button,index)=>{button.hidden=index>0;button.style.minHeight='44px'});
     }else{
-      setText(kicker,'AI SEARCH');
       setText(title,'원하는 경기를 문장으로 검색하세요.');
       setText(copy,'필터와 함께 사용해 시간·거리·가격·포지션 조건을 빠르게 좁힐 수 있어요.');
-      setText(label,'검색할 경기 조건');
       if(input&&input.placeholder!=='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기')input.placeholder='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기';
       setText(submit,'AI 검색');
       examples.forEach(button=>{button.hidden=false;button.style.minHeight=''});
