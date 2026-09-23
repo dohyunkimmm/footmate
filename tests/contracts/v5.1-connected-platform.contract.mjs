@@ -61,14 +61,28 @@ for(const [path,repositoryName] of [
 
 const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
 for(const required of [
-  '/app의 auth/payment/capacity/notification provider는 deterministic mock',
-  '/beta는 Supabase Auth·Postgres·RLS·atomic RPC와 Realtime',
+  '/app은 Vercel AI Gateway',
+  'deterministic recommendation engine',
+  '/beta는 Supabase 기반 실제 참가 데이터를 사용합니다.',
   'Google/Kakao OAuth',
-  'Resend transactional email',
-  'browser Web Push',
-  'Supabase Storage media',
-  '실제 PG와 external analytics는 아직 연결하지 않았습니다.',
-  'Google/Kakao 실제 로그인, transactional email delivery와 Web Push 브라우저/OS 표시는 2026-09-22 Production 수동 QA를 완료'
+  'Resend',
+  'Web Push',
+  'Storage',
+  '실제 PG와 외부 analytics는 미연동입니다.',
+  'Google/Kakao 실제 로그인',
+  'transactional email 최종 전달',
+  'AI-assisted QA',
+  "['Domain Architecture','recommendation · participation · matchday · return']",
+  "['Production 범위','실제 연결·검증된 기능만 표기']"
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
+
+for(const stale of [
+  '외부 AI 모델, 회원 DB, 실시간 정원, 실제 결제, 알림 backend는 연결하지 않았습니다.',
+  'OAuth · 회원 DB · PG · 실시간 정원 · 알림 backend',
+  'sample records',
+  'connected data path',
+  'external analytics는 미연동입니다.',
+  "['Production Boundary','연결·검증한 것만 Production 기능']"
+])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
 
 console.log('PASS v5.1.1 connected platform contracts');

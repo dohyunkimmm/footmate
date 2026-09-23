@@ -143,12 +143,17 @@ test('Case Study 1440 desktop cover matches approved visual baseline',async({pag
 
 const desktopSections=[
   {index:2,name:'case-study-section-03-1440.png',label:'Persona / JTBD'},
+  {index:3,name:'case-study-section-04-1440.png',label:'Product Thesis'},
   {index:4,name:'case-study-section-05-1440.png',label:'Core Journey'},
   {index:7,name:'case-study-section-08-1440.png',label:'Decision 03'},
+  {index:8,name:'case-study-section-09-1440.png',label:'Sign in'},
   {index:9,name:'case-study-section-10-1440.png',label:'Join / Payment'},
-  {index:12,name:'case-study-section-13-1440.png',label:'IA / Modes'},
+  {index:10,name:'case-study-section-11-1440.png',label:'Matchday / Return'},
+  {index:11,name:'case-study-section-12-1440.png',label:'Recovery'},
+  {index:12,name:'case-study-section-13-1440.png',label:'Domain Architecture'},
+  {index:13,name:'case-study-section-14-1440.png',label:'Provider / AI Boundary'},
   {index:14,name:'case-study-section-15-1440.png',label:'Validation'},
-  {index:15,name:'case-study-section-16-1440.png',label:'Outcome / Limits'}
+  {index:15,name:'case-study-section-16-1440.png',label:'Production Boundary'}
 ];
 
 for(const section of desktopSections){
@@ -183,7 +188,11 @@ test('Case Study 390 mobile cover matches approved visual baseline',async({page}
 
 for(const section of [
   {index:7,name:'case-study-section-08-390.png',label:'Decision 03'},
-  {index:14,name:'case-study-section-15-390.png',label:'Validation'}
+  {index:8,name:'case-study-section-09-390.png',label:'Sign in'},
+  {index:11,name:'case-study-section-12-390.png',label:'Recovery'},
+  {index:12,name:'case-study-section-13-390.png',label:'Domain Architecture'},
+  {index:14,name:'case-study-section-15-390.png',label:'Validation'},
+  {index:15,name:'case-study-section-16-390.png',label:'Production Boundary'}
 ]){
   test(`Case Study 390 ${section.label} matches approved visual baseline`,async({page})=>{
     const errs=await openCaseStudy(page,{width:390,height:844},section.index);
