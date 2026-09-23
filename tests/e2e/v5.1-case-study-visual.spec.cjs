@@ -121,10 +121,14 @@ async function expectMobileGeometry(page,index=0){
   }
 }
 
-async function expectCoverWelcomeContrast(page){
-  const headline=page.frameLocator('.fm-next-cover-frame iframe').locator('[data-screen="welcome"] .fm-next-intro h1');
-  await expect(headline).toBeVisible();
-  await expect(headline).toHaveCSS('color','rgb(255, 255, 255)');
+async function expectStaticCoverPreview(page){
+  await expect(page.locator('.fm-next-cover-frame iframe')).toHaveCount(0);
+  await expect(page.locator('.fm-next-cover-frame')).not.toContainText('Live interaction');
+  await expect(page.locator('.fm-cs-static-preview')).toBeVisible();
+  const cta=page.locator('.fm-next-cover-actions a');
+  await expect(cta).toHaveCount(1);
+  await expect(cta).toContainText('제품 직접 체험하기');
+  await expect(cta).toHaveAttribute('href','/demo');
 }
 
 async function expectViewportScreenshot(page,name){
@@ -134,7 +138,7 @@ async function expectViewportScreenshot(page,name){
 test('Case Study 1728 desktop cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:1728,height:900});
   await expectDesktopGeometry(page,1728);
-  await expectCoverWelcomeContrast(page);
+  await expectStaticCoverPreview(page);
   await expectViewportScreenshot(page,'case-study-13-cover-1728.png');
   expect(errs).toEqual([]);
 });
@@ -142,7 +146,7 @@ test('Case Study 1728 desktop cover matches approved 13-section baseline',async(
 test('Case Study 1440 desktop cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:1440,height:900});
   await expectDesktopGeometry(page,1440);
-  await expectCoverWelcomeContrast(page);
+  await expectStaticCoverPreview(page);
   await expectViewportScreenshot(page,'case-study-13-cover-1440.png');
   expect(errs).toEqual([]);
 });
@@ -175,7 +179,7 @@ for(const section of desktopSections){
 test('Case Study 390 mobile cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:390,height:844});
   await expectMobileGeometry(page,0);
-  await expectCoverWelcomeContrast(page);
+  await expectStaticCoverPreview(page);
   await expectViewportScreenshot(page,'case-study-13-cover-390.png');
   expect(errs).toEqual([]);
 });
@@ -204,3 +208,30 @@ for(const section of mobileSections){
   });
 }
 
+
+// Viewport-only mobile captures miss lower cards. Review every section's complete copy.
+for(const width of [320,390]){
+  for(let index=0;index<13;index+=1){
+    test(`Case Study ${width} full body section ${index+1} matches reviewed baseline`,async({page})=>{
+      const errs=await openCaseStudy(page,{width,height:844},index);
+      const body=page.locator('.slide:not([hidden])').nth(index).locator(index===0?'.fm-next-cover-copy':'.fm-next-story');
+      // Element captures scroll under the fixed header; remove only that overlay.
+      await page.addStyleTag({content:'.cs-mobile-head{display:none!important}'});
+      await expect(body).toHaveScreenshot(`case-study-full-body-${index+1}-${width}.png`,{
+        animations:'disabled',caret:'hide',maxDiffPixels:0
+      });
+      expect(errs).toEqual([]);
+    });
+  }
+}
+
+for(const width of [320,390]){
+  test(`Case Study ${width} cover preview caption is clear and complete`,async({page})=>{
+    await openCaseStudy(page,{width,height:844});
+    const visual=page.locator('.fm-next-cover-visual');
+    const gap=await visual.evaluate(node=>node.querySelector('.fm-next-cover-note').getBoundingClientRect().top-node.querySelector('.fm-next-cover-frame').getBoundingClientRect().bottom);
+    expect(gap).toBeGreaterThanOrEqual(12);
+    await page.addStyleTag({content:'.cs-mobile-head{display:none!important}'});
+    await expect(visual).toHaveScreenshot(`case-study-cover-caption-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0});
+  });
+}
