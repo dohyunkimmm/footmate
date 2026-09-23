@@ -97,7 +97,7 @@ test('reader-facing copy is Korean-first while preserving necessary technical te
 
   const cover=await slideText(page,0);
   expect(cover).not.toContain('deterministic ranking');
-  expect(cover).toContain('규칙 기반 추천 순위');
+  expect(cover).toContain('추천 순위 계산');
 
   const thesis=await slideText(page,3);
   expect(thesis).not.toContain('Thesis는');
