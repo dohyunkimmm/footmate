@@ -1,4 +1,6 @@
 const {test,expect}=require('@playwright/test');
+const fs=require('node:fs');
+const path=require('node:path');
 
 async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.setViewportSize(viewport);
@@ -13,6 +15,23 @@ async function visibleSlides(page){
 async function slideText(page,index){
   return (await visibleSlides(page)).nth(index).innerText();
 }
+
+test('static Case Study shell exposes 13 navigation items before runtime patching',()=>{
+  const html=fs.readFileSync(path.resolve(__dirname,'../../index.html'),'utf8');
+  const tocItems=html.match(/class="toc-item(?: [^"]*)?"/g)||[];
+  const dots=html.match(/class="dot(?: [^"]*)?"/g)||[];
+  const hiddenSourceSlides=html.match(/<section class="slide" hidden data-cs-hidden="true" aria-hidden="true"><\/section>/g)||[];
+
+  expect(tocItems).toHaveLength(13);
+  expect(dots).toHaveLength(13);
+  expect(hiddenSourceSlides).toHaveLength(3);
+  expect(html).toContain('AI-assisted discovery · 13 sections');
+  expect(html).toContain('<span class="topbar-count">01 / 13</span>');
+  expect(html).not.toContain('<span class="topbar-count">01 / 16</span>');
+  expect(html).not.toContain('<span class="toc-n">14</span>');
+  expect(html).not.toContain('<span class="toc-n">15</span>');
+  expect(html).not.toContain('<span class="toc-n">16</span>');
+});
 
 test('Case Study exposes 13 concise sections with English navigation and English subcopy',async({page})=>{
   await openCaseStudy(page);
@@ -65,6 +84,31 @@ test('merged sections keep one clear job without exposing route strings as reade
   const readerText=await page.locator('.fm-cs-shell').innerText();
   expect(readerText).not.toMatch(/(^|\s)\/app\b/);
   expect(readerText).not.toMatch(/(^|\s)\/beta\b/);
+});
+
+test('System Evidence, Validation, and Outcome Limits remain represented after the 13-section merge',async({page})=>{
+  await openCaseStudy(page);
+
+  const systemEvidence=await slideText(page,10);
+  expect(systemEvidence).toContain('추천 소유권');
+  expect(systemEvidence).toContain('PARTICIPATION · MATCHDAY · RETURN');
+  expect(systemEvidence).toContain('AI · PROVIDERS · HITL');
+  expect(systemEvidence).toContain('Vercel AI Gateway');
+  expect(systemEvidence).toContain('Supabase');
+
+  const validation=await slideText(page,11);
+  expect(validation).toContain('자동 QA');
+  expect(validation).toContain('사람 검수');
+  expect(validation).toContain('AI 보조 검수');
+  expect(validation).toContain('Visual Regression');
+  expect(validation).toContain('Production Smoke');
+
+  const outcomeLimits=await slideText(page,12);
+  expect(outcomeLimits).toContain('Real App');
+  expect(outcomeLimits).toContain('Closed Beta');
+  expect(outcomeLimits).toContain('미연동 범위');
+  expect(outcomeLimits).toContain('실제 PG · 외부 분석 도구');
+  expect(outcomeLimits).toContain('Production 기준');
 });
 
 test('story sections use one top-aligned layout and fit the 1440x900 review surface',async({page})=>{
