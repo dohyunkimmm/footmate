@@ -1,0 +1,54 @@
+name: Real App White Surface QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - app.html
+      - tests/e2e/real-app-white-surface.spec.cjs
+      - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
+      - .github/workflows/real-app-white-surface-qa.yml
+  push:
+    branches: [main]
+    paths:
+      - app.html
+      - tests/e2e/real-app-white-surface.spec.cjs
+      - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
+      - .github/workflows/real-app-white-surface-qa.yml
+permissions:
+  contents: read
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0
+      - name: Check white-tone CSS syntax
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const csstree=require('css-tree');
+          const html=fs.readFileSync('app.html','utf8');
+          const match=html.match(/<style id="fm-real-app-white-tone">([\s\S]*?)<\/style>/);
+          if(!match)throw new Error('fm-real-app-white-tone style not found');
+          csstree.parse(match[1]);
+          console.log('PASS fm-real-app-white-tone CSS syntax');
+          NODE
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Compare Welcome Home Discover visual baselines
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: real-app-white-surface-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
