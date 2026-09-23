@@ -1,0 +1,41 @@
+name: Temporary Current Main Cover Refresh
+
+on:
+  push:
+    branches:
+      - fix/product-flow-design-system-v2-20260923
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh latest-main Case Study cover baselines only
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --grep "13-section cover" --update-snapshots
+      - name: Commit cover baselines only
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-cover-1728-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-cover-1440-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-cover-390-chromium-linux.png
+          if git diff --cached --quiet; then
+            echo "No cover baseline changes to commit."
+            exit 0
+          fi
+          git commit -m "test: refresh latest-main Case Study cover baselines"
+          git push origin HEAD:${{ github.ref_name }}
