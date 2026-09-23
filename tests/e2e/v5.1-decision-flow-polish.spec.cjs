@@ -55,7 +55,7 @@ test('1440px Real App keeps the stable narrow shell through Detail and Checkout'
   const app=await rect(page.locator('.fm-next-app'));
   expect(app.width).toBeGreaterThanOrEqual(558);
   expect(app.width).toBeLessThanOrEqual(562);
-  const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
+  const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section:not([hidden])').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
   expect(detailSections.length).toBeGreaterThanOrEqual(4);
   for(let i=1;i<detailSections.length;i+=1){expect(detailSections[i].y).toBeGreaterThan(detailSections[i-1].y);expect(Math.abs(detailSections[i].x-detailSections[0].x)).toBeLessThanOrEqual(2);}
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
