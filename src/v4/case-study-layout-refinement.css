@@ -253,3 +253,11 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="matchday-return"] .f
     transform:rotate(90deg);
   }
 }
+html[data-fm-next-case-study="true"] .fm-next-cs-decision>b,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-line>span{
+  text-wrap:balance;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-state-line>span{
+  font-size:13px;
+  line-height:1.65;
+}

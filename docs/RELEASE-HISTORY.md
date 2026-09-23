@@ -13,7 +13,8 @@
 - Runtime PR: #228
 - Case Study 전용 QA: run `35858360019` · 43 PASS
 - Visual Regression: Ubuntu/Chromium에서 baseline 생성 후 별도 `toHaveScreenshot()` 실제 비교 PASS · `maxDiffPixels: 0`
-- Visual scope: 1440×900 전체 13개 섹션, 1728×900 cover, 390×844 전체 13개 섹션; screenshot 직접 검토 및 320/375/390/430px 포함 wrap·overflow·spacing·TOC·키보드·axe 검증
+- Automated visual scope: 1440×900 전체 13개 섹션, 1728×900 cover, 390×844 전체 13개 섹션의 viewport 비교; 320/375/390/430px 포함 wrap·overflow·spacing·TOC·키보드·axe 검증
+- 검수 범위 정정: 당시 직접 이미지 검토는 일부 화면에 한정되었으며, 모든 페이지의 본문 줄바꿈과 모바일 하단까지 편집 검수한 것은 아니었다. 이 자동 검사 결과를 전체 본문 편집 검수 완료로 해석하지 않는다.
 - Baseline 저장: `tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/`; 일회성 baseline workflow는 제거하고 기존 PR QA gate 유지
 - Final PR QA: run `35858717623` · Regression 36 PASS · Browser E2E + axe 142 PASS
 - Product/runtime baseline SHA: `20f3eef4845a9787fe64dfefb88f5b6748146016`

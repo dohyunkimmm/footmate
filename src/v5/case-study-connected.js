@@ -197,7 +197,7 @@
     if(frame)frame.title='FootMate 실제 앱 흐름 미리보기';
     setHTML(slides[0],'.fm-next-cover-lead',lines(
       '나에게 맞는 이유를 확인하고, 안심하고 참가하는 풋살 서비스입니다.',
-      '탐색부터 경기 당일·재탐색까지 단독으로 기획하고 구현·검증했습니다.'
+      '탐색부터 경기 당일과 재탐색까지, 단독으로 기획하고 구현과 검증을 진행했습니다.'
     ));
     setHTML(slides[0],'.fm-next-cover-proof',
       '<div><b>Role · IT Service Planner</b><span>'+lines('문제 정의 · Persona/JTBD','IA · 기능·정책 설계')+'</span></div>'+
@@ -211,7 +211,7 @@
     setHTML(slides[1],'.fm-next-cs-grid.three',
       card('탐색 부담 줄이기','시간·거리·레벨을 한곳에서 비교합니다.','확인 지표 · 상세 진입률, 결과 없음 비율')+
       card('참가 판단 돕기','추천 이유·정원·취소 규칙을 먼저 보여줍니다.','확인 지표 · 참가 전환율, 참가 실패율')+
-      card('다시 찾을 이유 만들기','체크인·경기 후 피드백을 다음 탐색에 잇습니다.','확인 지표 · 체크인 완료율, 7일 내 재탐색률'));
+      card('다시 찾을 이유 만들기','체크인·경기 후 피드백을 다음 탐색에 잇습니다.','확인 지표 · 체크인 완료율, 재탐색률'));
     setHTML(slides[1],'.fm-next-cs-quote','<span>대안 검토 · 설계 가설</span>'+rows([
       ['대안','목록·필터로 조건 비교 · 지도로 위치 확인 · 커뮤니티로 경기 맥락 확인'],
       ['선택','조건 해석 → 추천 이유 → 참가 → 경기 당일을 하나의 흐름으로 연결'],
@@ -236,7 +236,7 @@
     setHTML(slides[3],'.fm-next-cs-loop',[['탐색','Find'],['결정','Decide'],['참가','Join'],['경기','Play'],['재탐색','Return']].map(([ko,en],index)=>`<div><b>${index+1}. ${ko}</b><span>${en}</span></div>`).join('<i>→</i>'));
     setHTML(slides[3],'.fm-next-cs-principles',
       card('우선 · 참가와 복구','판단 기준을 한곳에 모으고 선택 맥락을 보존합니다.',
-        '무료 Beta에서 인증·정원·참가/취소·체크인·복구를 검증합니다.')+
+        '무료 Beta에서 인증과 정원, 참가·취소, 체크인과 복구를 검증합니다.')+
       card('확장 · 운영과 반복 이용','대기열·알림·경기 후 피드백으로 자리 회복과 재탐색을 지원합니다.',
         '참가 전환과 반복 이용에 미치는 효과는 실제 이용 데이터로 확인할 과제입니다.')+
       card('제외 · 실제 PG와 자동 참가','실제 PG를 미뤄 수익화 검증을 유보했습니다.',
@@ -278,7 +278,7 @@
       '참가 요청 결과는 완료·실패·취소로 구분하고, 상태에 맞는 다음 행동을 제공합니다.');
     setHTML(slides[8],'.fm-next-cs-auth-flow','<div><small>둘러보기</small><b>추천·상세 확인</b></div><i>→</i><div><small>참가 의도</small><b>참가하기</b></div><i>→</i><div class="is-focus"><small>인증</small><b>로그인</b></div><i>→</i><div><small>참가 상태</small><b>완료 | 실패 | 취소</b></div>');
     const authFlow=slides[8].querySelector('.fm-next-cs-auth-flow');
-    if(authFlow&&!slides[8].querySelector('.fm-next-cs-state-line'))authFlow.insertAdjacentHTML('afterend','<div class="fm-next-cs-state-line"><span>보존할 맥락 · 선택 경기와 인증 후 돌아갈 목적지</span></div>');
+    if(authFlow&&!slides[8].querySelector('.fm-next-cs-state-line'))authFlow.insertAdjacentHTML('afterend','<div class="fm-next-cs-state-line"><span>보존 · 선택 경기와 로그인 후 복귀 위치</span></div>');
     decision(8,'.fm-next-cs-scope',[
       ['Real App','Real App의 인증·결제는 시뮬레이션입니다.'],
       ['Closed Beta','Closed Beta의 인증·참가 경로는 Supabase에 실제 연결됩니다.'],
@@ -321,7 +321,7 @@
     setHTML(slides[12],'.fm-next-cs-note',rows([
       ['실연동',lines('Vercel AI Gateway · Supabase','Resend · Web Push · Storage')],
       ['미연동','실제 PG와 외부 분석 도구는 미연동입니다.'],
-      ['협의 기준',lines('개발 · API·데이터 계약, 권한, 오류·재시도','디자인 · IA, 상태별 화면, CTA','운영 · 취소, 정원, 복구 정책')],
+      ['협의 기준',lines('개발 · API·데이터, 권한, 오류와 재시도','디자인 · IA, 상태별 화면, CTA','운영 · 취소, 정원, 복구 정책')],
       ['개인 프로젝트','위 항목은 협의 가능한 수준의 설계 범위이며, 실제 다인 협업 성과는 아닙니다.']]));
     slides[12].setAttribute('data-v5-domain-evidence','separated');
     slides[12].setAttribute('data-v5-ai-evidence','guardrailed');
