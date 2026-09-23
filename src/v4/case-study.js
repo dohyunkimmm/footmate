@@ -35,11 +35,11 @@
         <div class="fm-next-cover-kicker">FootMate · Matchday Companion</div>
         <h1><span class="fm-next-cover-title-line">내 수준에 맞는 경기부터,</span><span class="fm-next-cover-title-line">경기 당일까지.</span></h1>
         <p class="fm-next-cover-lead">경기를 찾는 데서 끝나지 않고, <strong>나에게 맞는 이유를 이해한 뒤 안심하고 참가하고 경기 당일까지 이어지는</strong> 풋살 경험을 설계했습니다.</p>
-        <div class="fm-next-cover-actions"><a href="/app" target="_blank" rel="noopener">실제 앱 보기 <span aria-hidden="true">↗</span></a><button type="button" data-fm-next-cover-next>문제부터 보기 <span aria-hidden="true">→</span></button></div>
+        <div class="fm-next-cover-actions"><a href="/demo">제품 직접 체험하기 <span aria-hidden="true">↗</span></a></div>
         <div class="fm-next-cover-flow" aria-label="핵심 사용자 흐름"><b>Find</b><i>→</i><b>Decide</b><i>→</i><b>Join</b><i>→</i><b>Play</b><i>→</i><b>Return</b></div>
         <div class="fm-next-cover-proof"><div><b>가입 전에 추천부터</b><span>계정을 만들기 전에 경기 추천을 확인합니다.</span></div><div><b>추천 이유를 바로 이해</b><span>점수보다 레벨·거리·남은 자리를 먼저 봅니다.</span></div><div><b>참가 뒤 일정까지 연결</b><span>결제에서 끝내지 않고 체크인과 경기 후까지 이어집니다.</span></div></div>
       </div>
-      <div class="fm-next-cover-visual" aria-label="FootMate v4.0 앱 미리보기"><div class="fm-next-cover-glow" aria-hidden="true"></div><div class="fm-next-cover-frame"><div class="fm-next-cover-frame-meta">Live interaction</div><iframe src="/app?embed=1" title="FootMate v4.0 실제 앱 흐름 미리보기" loading="eager"></iframe></div><div class="fm-next-cover-note">v4.0.1 · Official Major Release<br>Matchday Companion</div></div>
+      <div class="fm-next-cover-visual" aria-label="FootMate 핵심 화면 정적 미리보기"><div class="fm-next-cover-glow" aria-hidden="true"></div><div class="fm-next-cover-frame"><div class="fm-cs-static-preview" role="img" aria-label="FootMate 추천 상세 핵심 화면 정적 프리뷰"><div class="fm-cs-static-top"><span>FootMate</span><b>추천 상세</b></div><div class="fm-cs-static-hero"><small>오늘 저녁 · 수원</small><h3>조건과 잘 맞는 경기</h3><p>레벨 · 거리 · 포지션을 한 화면에서 확인</p></div><div class="fm-cs-static-reasons"><span>생활권 일치</span><span>평일 저녁</span><span>MF 자리 있음</span></div><div class="fm-cs-static-summary"><div><small>남은 자리</small><b>2명</b></div><div><small>이동</small><b>18분</b></div></div><div class="fm-cs-static-cta">참가 정보 확인</div></div></div><div class="fm-next-cover-note"><strong>핵심 화면 프리뷰</strong><span>추천 이유와 참가 판단 정보를 정적 화면으로 보여줍니다.</span></div></div>
     </div>`,
 
     shell('01 · PROBLEM','경기는 많아도, 나에게 맞는 한 경기를 고르기는 어렵습니다.','시간, 거리, 레벨, 포지션, 남은 자리와 가격을 따로 확인해야 했습니다. 참가한 뒤에는 일정과 경기 당일 정보가 다시 흩어져 흐름이 끊겼습니다.',
