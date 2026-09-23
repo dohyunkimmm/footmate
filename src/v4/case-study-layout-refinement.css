@@ -275,3 +275,6 @@ html[data-fm-next-case-study="true"] .fm-next-cover-note{
   line-height:1.5;
   flex-shrink:0;
 }
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-cover-frame-meta{top:-22px}
+}

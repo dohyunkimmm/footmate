@@ -20,7 +20,7 @@ jobs:
       - name: Capture review candidates
         id: capture
         continue-on-error: true
-        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots --grep "desktop cover"
       - name: Publish candidate renders for editorial inspection
         run: |
           git config user.name 'github-actions[bot]'
