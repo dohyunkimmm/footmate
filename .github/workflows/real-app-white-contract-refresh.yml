@@ -33,7 +33,18 @@ jobs:
         run: npx playwright test tests/e2e/v5.1-release-flow-review.spec.cjs --update-snapshots
       - name: Verify Case Study remains on its approved embedded visual
         run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs
+      - name: Upload Case Study evidence
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: case-study-regression-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 7
       - name: Commit contract and snapshot updates
+        if: success()
         run: |
           git status --short
           git add tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/*.png
