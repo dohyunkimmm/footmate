@@ -1,0 +1,51 @@
+name: Design System v2 Baseline Capture
+
+on:
+  push:
+    branches:
+      - design/design-system-v2-20260923
+    paths:
+      - .github/workflows/design-system-v2-baseline.yml
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Generate Design System v2 Ubuntu Chromium baselines
+        run: npx playwright test tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs --update-snapshots --reporter=line
+      - name: Commit generated baselines
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots
+          if git diff --cached --quiet; then
+            echo "No baseline changes generated"
+            exit 0
+          fi
+          git commit -m "test: approve Design System v2 visual baselines"
+          git push
+      - name: Upload baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: design-system-v2-baselines-${{ github.run_id }}
+          path: |
+            tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots
+            tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots
+            test-results/
+          if-no-files-found: error
+          retention-days: 7
