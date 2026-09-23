@@ -1,0 +1,54 @@
+name: Refresh Korean Case Study Baselines
+on:
+  push:
+    branches: [fix/restore-korean-case-study]
+    paths: [.github/workflows/refresh-korean-case-study-baselines.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download verified Browser QA evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: '10740230026'
+        run: |
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/evidence.zip
+          mkdir -p /tmp/evidence
+          unzip -q /tmp/evidence.zip -d /tmp/evidence
+      - name: Verify deterministic retries and refresh 27 baselines
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil
+          root=Path('/tmp/evidence/test-results/playwright')
+          groups={}
+          for image in root.rglob('*-actual.png'):
+              groups.setdefault(image.name,[]).append(image)
+          if len(groups)!=27:
+              raise SystemExit(f'expected 27 actual screenshot groups, got {len(groups)}')
+          target_dir=Path('tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots')
+          for name,images in sorted(groups.items()):
+              if len(images)!=2:
+                  raise SystemExit(f'{name}: expected original + retry, got {len(images)}')
+              hashes={hashlib.sha256(p.read_bytes()).hexdigest() for p in images}
+              if len(hashes)!=1:
+                  raise SystemExit(f'{name}: retry screenshots are not deterministic')
+              target_name=name.replace('-actual.png','-chromium-linux.png')
+              target=target_dir/target_name
+              if not target.exists():
+                  raise SystemExit(f'missing baseline target: {target}')
+              shutil.copy2(images[0],target)
+              print(f'{target_name}: {next(iter(hashes))}')
+          PY
+      - name: Commit approved Korean baselines
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots
+          git diff --cached --quiet && { echo 'No baseline changes'; exit 1; }
+          git commit -m 'test: restore Korean Case Study visual baselines'
+          git push origin HEAD:fix/restore-korean-case-study
