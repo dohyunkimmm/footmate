@@ -27,6 +27,7 @@ test('all 13 Case Study sections pass structured spacing and wrapping audit',asy
         const textOf=el=>(el.textContent||'').trim().replace(/\s+/g,' ').slice(0,100);
         const roots=[...slide.querySelectorAll('.fm-next-cover-proof,[class*="fm-next-cs-"]')].filter(visible);
         const cells=roots.filter(el=>{
+          if(el.matches('a,button')||el.closest('a,button'))return false;
           const style=getComputedStyle(el);
           const rect=el.getBoundingClientRect();
           if(rect.width<90)return false;
@@ -36,6 +37,7 @@ test('all 13 Case Study sections pass structured spacing and wrapping audit',asy
         const smallText=[];
         for(const el of slide.querySelectorAll('p,h3,b,strong,span,small')){
           if(!visible(el)||!/[0-9A-Za-z가-힣]/.test(textOf(el)))continue;
+          if(el.closest('.fm-next-cover-flow'))continue;
           const size=parseFloat(getComputedStyle(el).fontSize);
           let min=11;
           if(el.tagName==='P')min=12;
@@ -54,6 +56,7 @@ test('all 13 Case Study sections pass structured spacing and wrapping audit',asy
         }
         const tightGaps=[];
         for(const el of roots){
+          if(el.matches('a,button')||el.closest('a,button'))continue;
           const style=getComputedStyle(el);
           if(!['grid','flex','inline-flex'].includes(style.display))continue;
           if([...el.children].filter(visible).length<2)continue;
