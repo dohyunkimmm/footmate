@@ -15,129 +15,18 @@ jobs:
           ref: codex/case-study-editorial-review
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
-      - name: Apply final static cover contract
-        run: |
-          node <<'NODE'
-          const fs=require('node:fs');
-          function edit(path,from,to){
-            let value=fs.readFileSync(path,'utf8');
-            if(value.includes(to))return;
-            if(!value.includes(from))throw new Error(`Expected source not found: ${path}`);
-            value=value.replace(from,to);
-            fs.writeFileSync(path,value);
-          }
-          function append(path,marker,block){
-            let value=fs.readFileSync(path,'utf8');
-            if(value.includes(marker))return;
-            fs.writeFileSync(path,value.trimEnd()+`\n\n${block.trim()}\n`);
-          }
-
-          edit('src/v4/case-study.js',
-            '<div class="fm-next-cover-actions"><a href="/app" target="_blank" rel="noopener">실제 앱 보기 <span aria-hidden="true">↗</span></a><button type="button" data-fm-next-cover-next>문제부터 보기 <span aria-hidden="true">→</span></button></div>',
-            '<div class="fm-next-cover-actions"><a href="/demo">제품 직접 체험하기 <span aria-hidden="true">↗</span></a></div>');
-
-          edit('src/v4/case-study.js',
-            '<div class="fm-next-cover-visual" aria-label="FootMate v4.0 앱 미리보기"><div class="fm-next-cover-glow" aria-hidden="true"></div><div class="fm-next-cover-frame"><div class="fm-next-cover-frame-meta">Live interaction</div><iframe src="/app?embed=1" title="FootMate v4.0 실제 앱 흐름 미리보기" loading="eager"></iframe></div><div class="fm-next-cover-note">v4.0.1 · Official Major Release<br>Matchday Companion</div></div>',
-            '<div class="fm-next-cover-visual" aria-label="FootMate 핵심 화면 정적 미리보기"><div class="fm-next-cover-glow" aria-hidden="true"></div><div class="fm-next-cover-frame"><div class="fm-cs-static-preview" role="img" aria-label="FootMate 추천 상세 핵심 화면 정적 프리뷰"><div class="fm-cs-static-top"><span>FootMate</span><b>추천 상세</b></div><div class="fm-cs-static-hero"><small>오늘 저녁 · 수원</small><h3>조건과 잘 맞는 경기</h3><p>레벨 · 거리 · 포지션을 한 화면에서 확인</p></div><div class="fm-cs-static-reasons"><span>생활권 일치</span><span>평일 저녁</span><span>MF 자리 있음</span></div><div class="fm-cs-static-summary"><div><small>남은 자리</small><b>2명</b></div><div><small>이동</small><b>18분</b></div></div><div class="fm-cs-static-cta">참가 정보 확인</div></div></div><div class="fm-next-cover-note"><strong>핵심 화면 프리뷰</strong><span>추천 이유와 참가 판단 정보를 정적 화면으로 보여줍니다.</span></div></div>');
-
-          edit('src/v5/case-study-connected.js',
-            "    note.innerHTML='AI Match Assistant<br>자연어 조건 해석 → 추천 순위 계산';",
-            "    note.innerHTML='<strong>핵심 화면 프리뷰</strong><span>추천 이유와 참가 판단 정보를 정적 화면으로 보여줍니다.</span>';" );
-          edit('src/v5/case-study-connected.js',
-            "    document.querySelector('.fm-next-cover-visual')?.setAttribute('aria-label','FootMate 앱 미리보기');\n    const frame=document.querySelector('.fm-next-cover-frame iframe');\n    if(frame)frame.title='FootMate 실제 앱 흐름 미리보기';",
-            "    document.querySelector('.fm-next-cover-visual')?.setAttribute('aria-label','FootMate 핵심 화면 정적 미리보기');");
-
-          append('src/v4/case-study-layout-refinement.css','Static cover preview replaces the embedded product iframe',String.raw`
-          /* Static cover preview replaces the embedded product iframe. */
-          html[data-fm-next-case-study="true"] .fm-cs-static-preview{
-            display:flex;
-            flex-direction:column;
-            width:100%;
-            height:min(630px,calc(100vh - 150px));
-            min-height:520px;
-            padding:20px;
-            border-radius:27px;
-            background:#f7f8f7;
-            color:#102018;
-            overflow:hidden;
-          }
-          html[data-fm-next-case-study="true"] .fm-cs-static-top{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:2px 2px 14px;
-            color:#496054;
-            font-size:11px;
-          }
-          html[data-fm-next-case-study="true"] .fm-cs-static-top span{font:900 16px/1 Inter,sans-serif;color:#173d2d}
-          html[data-fm-next-case-study="true"] .fm-cs-static-top b{font-size:11px}
-          html[data-fm-next-case-study="true"] .fm-cs-static-hero{
-            padding:24px 20px;
-            border-radius:22px;
-            background:linear-gradient(145deg,#123a2a,#1f5b42);
-            color:#fff;
-          }
-          html[data-fm-next-case-study="true"] .fm-cs-static-hero small{color:#d7eba2;font-size:10px;font-weight:800}
-          html[data-fm-next-case-study="true"] .fm-cs-static-hero h3{margin:8px 0 7px;font-size:23px;line-height:1.18;letter-spacing:-.04em}
-          html[data-fm-next-case-study="true"] .fm-cs-static-hero p{margin:0;color:rgba(255,255,255,.72);font-size:11px;line-height:1.55}
-          html[data-fm-next-case-study="true"] .fm-cs-static-reasons{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
-          html[data-fm-next-case-study="true"] .fm-cs-static-reasons span{padding:7px 9px;border-radius:999px;background:#eef5dc;color:#214a38;font-size:9px;font-weight:800}
-          html[data-fm-next-case-study="true"] .fm-cs-static-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
-          html[data-fm-next-case-study="true"] .fm-cs-static-summary div{padding:14px;border:1px solid #dfe8df;border-radius:16px;background:#fff}
-          html[data-fm-next-case-study="true"] .fm-cs-static-summary small{display:block;color:#728078;font-size:9px}
-          html[data-fm-next-case-study="true"] .fm-cs-static-summary b{display:block;margin-top:5px;font-size:17px}
-          html[data-fm-next-case-study="true"] .fm-cs-static-cta{margin-top:auto;padding:14px 16px;border-radius:14px;background:#c9ef62;color:#173d2d;text-align:center;font-size:12px;font-weight:900}
-          html[data-fm-next-case-study="true"] .fm-next-cover-note strong,
-          html[data-fm-next-case-study="true"] .fm-next-cover-note span{display:block}
-          html[data-fm-next-case-study="true"] .fm-next-cover-note strong{color:rgba(255,255,255,.64);font-size:11px}
-          html[data-fm-next-case-study="true"] .fm-next-cover-note span{margin-top:3px;color:rgba(255,255,255,.38);font-size:10px;word-break:keep-all;overflow-wrap:normal}
-          @media(max-width:900px){
-            html[data-fm-next-case-study="true"] .fm-next-cover{row-gap:28px!important}
-            html[data-fm-next-case-study="true"] .fm-cs-static-preview{height:520px;min-height:520px;padding:18px}
-          }`);
-
-          edit('tests/e2e/v5.1-case-study-visual.spec.cjs',
-            `async function expectCoverWelcomeContrast(page){\n  const headline=page.frameLocator('.fm-next-cover-frame iframe').locator('[data-screen="welcome"] .fm-next-intro h1');\n  await expect(headline).toBeVisible();\n  await expect(headline).toHaveCSS('color','rgb(255, 255, 255)');\n}`,
-            `async function expectStaticCoverPreview(page){\n  await expect(page.locator('.fm-next-cover-frame iframe')).toHaveCount(0);\n  await expect(page.locator('.fm-next-cover-frame')).not.toContainText('Live interaction');\n  await expect(page.locator('.fm-cs-static-preview')).toBeVisible();\n  const cta=page.locator('.fm-next-cover-actions a');\n  await expect(cta).toHaveCount(1);\n  await expect(cta).toContainText('제품 직접 체험하기');\n  await expect(cta).toHaveAttribute('href','/demo');\n}`);
-          {
-            const path='tests/e2e/v5.1-case-study-visual.spec.cjs';
-            let value=fs.readFileSync(path,'utf8');
-            value=value.replaceAll('await expectCoverWelcomeContrast(page);','await expectStaticCoverPreview(page);');
-            fs.writeFileSync(path,value);
-          }
-
-          edit('tests/e2e/v5.1-case-study-content.spec.cjs',
-            `test('arrow keys work immediately on first load and while the embedded app has focus',async({page})=>{\n  await openCaseStudy(page);\n  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');\n\n  await page.keyboard.press('ArrowRight');\n  await expect(page.locator('.topbar-count')).toHaveText('02 / 13');\n  await page.keyboard.press('ArrowLeft');\n  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');\n\n  const frame=page.locator('.fm-next-cover-frame iframe');\n  await frame.focus();\n  await page.keyboard.press('ArrowRight');\n  await expect(page.locator('.topbar-count')).toHaveText('02 / 13');\n});`,
-            `test('Case Study cover uses a static preview and one Product CTA',async({page})=>{\n  await openCaseStudy(page);\n  await expect(page.locator('.fm-next-cover-frame iframe')).toHaveCount(0);\n  await expect(page.locator('.fm-next-cover-frame-meta')).toHaveCount(0);\n  await expect(page.locator('.fm-cs-static-preview')).toBeVisible();\n  await expect(page.locator('.fm-next-cover-visual')).not.toContainText('Live interaction');\n  const cta=page.locator('.fm-next-cover-actions a');\n  await expect(cta).toHaveCount(1);\n  await expect(cta).toContainText('제품 직접 체험하기');\n  await expect(cta).toHaveAttribute('href','/demo');\n});\n\ntest('arrow keys work immediately on first load without an embedded product frame',async({page})=>{\n  await openCaseStudy(page);\n  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');\n  await page.keyboard.press('ArrowRight');\n  await expect(page.locator('.topbar-count')).toHaveText('02 / 13');\n  await page.keyboard.press('ArrowLeft');\n  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');\n});`);
-
-          edit('tests/e2e/v5.1-case-study-content.spec.cjs',
-            `test('mobile role cards leave room for the app preview label',async({page})=>{\n  for(const width of [320,375,390,430]){\n    await openCaseStudy(page,{width,height:844});\n    const gap=await page.evaluate(()=>{\n      const cards=document.querySelector('.fm-next-cover-proof').getBoundingClientRect();\n      const label=document.querySelector('.fm-next-cover-frame-meta').getBoundingClientRect();\n      return label.top-cards.bottom;\n    });\n    expect(gap,\`preview label clearance at \${width}px\`).toBeGreaterThanOrEqual(12);\n  }\n});`,
-            `test('mobile static preview caption stays below the frame without clipping',async({page})=>{\n  for(const width of [320,375,390,430]){\n    await openCaseStudy(page,{width,height:844});\n    const geometry=await page.evaluate(()=>{\n      const frame=document.querySelector('.fm-next-cover-frame').getBoundingClientRect();\n      const note=document.querySelector('.fm-next-cover-note');\n      const caption=note.getBoundingClientRect();\n      return {gap:caption.top-frame.bottom,clippedX:note.scrollWidth-note.clientWidth,clippedY:note.scrollHeight-note.clientHeight,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};\n    });\n    expect(geometry.gap,\`preview caption gap at \${width}px\`).toBeGreaterThanOrEqual(12);\n    expect(geometry.clippedX,\`preview caption horizontal clip at \${width}px\`).toBeLessThanOrEqual(1);\n    expect(geometry.clippedY,\`preview caption vertical clip at \${width}px\`).toBeLessThanOrEqual(1);\n    expect(geometry.overflow,\`page overflow at \${width}px\`).toBeLessThanOrEqual(1);\n  }\n});`);
-
-          {
-            const path='tests/production-v5.1-smoke.cjs';
-            let value=fs.readFileSync(path,'utf8');
-            if(!value.includes('static Case Study cover contract')){
-              value=value.replace('  // Verify the changed Case Study assets themselves, not only the product release marker.',
-                `  // Verify the static Case Study cover contract on the deployed source.\n  const caseScript=await(await get('/src/v4/case-study.js')).text();\n  a(!caseScript.includes('Live interaction'),'Case Study Live interaction removed');\n  a(!caseScript.includes('/app?embed=1'),'Case Study embedded app removed');\n  a(caseScript.includes('href="/demo"'),'Case Study Product CTA route');\n  a(caseScript.includes('제품 직접 체험하기'),'Case Study Product CTA copy');\n  // Verify the changed Case Study assets themselves, not only the product release marker.`);
-              value=value.replace("['index.html','src/v5/case-study-connected.js','src/v5/case-study-heading-polish.js','src/v4/case-study-layout-refinement.css']",
-                "['index.html','src/v4/case-study.js','src/v5/case-study-connected.js','src/v5/case-study-heading-polish.js','src/v4/case-study-layout-refinement.css']");
-              fs.writeFileSync(path,value);
-            }
-          }
-          NODE
       - run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
       - run: npx playwright install --with-deps chromium
       - name: Capture review candidates
         id: capture
         continue-on-error: true
         run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots --grep "cover"
-      - name: Publish final Case Study cover and candidate renders
+      - name: Publish candidate renders for editorial inspection
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/v4/case-study.js src/v5/case-study-connected.js src/v4/case-study-layout-refinement.css tests/e2e/v5.1-case-study-visual.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/production-v5.1-smoke.cjs tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
-          git diff --cached --quiet || git commit -m 'fix: replace Case Study live embed with static preview'
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
+          git diff --cached --quiet || git commit -m 'test: capture candidate Case Study editorial renders'
           git push origin HEAD:codex/case-study-editorial-review
       - name: Compare renders and verify contracts
         run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --grep cover
