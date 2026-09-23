@@ -187,7 +187,7 @@
 - Scope: Product Flow review에서 확인된 8개 QA 항목과 Design System v2 coherence를 정리하면서, 요청되지 않았던 1040px desktop 확장과 2-column composition을 제거하고 Real App의 stable max 560px shell을 복구
 - Display terminology: setup UI는 `공격수` / `초급` / `고급`을 표시하고 canonical compatibility 값은 내부에 유지
 - Auth / continuity: active Auth v3는 Google/Kakao만 노출하고 Naver/Apple은 제거; 실제 previous-route back, readable team-message simulation boundary, checked-in → postgame → next-match continuation을 release-flow contract로 유지
-- Entry / recovery: fresh external `/app` entry는 첨 화면에서 시작하고, active same-tab reload recovery는 explicit `?resume=1` 경계로 유지
+- Entry / recovery: fresh external `/app` entry는 첫 화면에서 시작하고, active same-tab reload recovery는 explicit `?resume=1` 경계로 유지
 - Visual correction: intro dark topbar를 복구해 unintended white band를 제거하고, 1440px desktop에서 Home/Discover/Detail/Checkout/Auth/Schedule/Profile을 stable narrow 1-column composition으로 유지
 - Runtime PR: #218
 - PR QA: FootMate QA #925 · run `35840288562` · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · changed Product / affected Case Study Visual Regression PASS
