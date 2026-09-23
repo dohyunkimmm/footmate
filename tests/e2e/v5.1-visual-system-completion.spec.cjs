@@ -266,12 +266,11 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
       expect(metrics.minText).toBeGreaterThanOrEqual(11);
       await expectNoHorizontalOverflow(page);
       await page.mouse.move(1,1);
-      await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+      await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"}));
       const last=screen.locator('.fm-next-match-card').last();
-      await last.scrollIntoViewIfNeeded();
       const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
       expect(end.bottom).toBeLessThanOrEqual(end.navTop);
-      await page.evaluate(()=>window.scrollTo(0,0));
+      await page.evaluate(()=>window.scrollTo({top:0,behavior:"instant"}));
       await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
     }
     expect(errs).toEqual([]);
