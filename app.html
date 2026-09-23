@@ -13,5 +13,43 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="/src/v4/app.css?v=490"><link rel="stylesheet" href="/src/v4/experience.css?v=490"><link rel="stylesheet" href="/src/v4/discovery.css?v=490"><link rel="stylesheet" href="/src/v4/decision.css?v=490"><link rel="stylesheet" href="/src/v4/participation.css?v=490"><link rel="stylesheet" href="/src/v4/matchday.css?v=490"><link rel="stylesheet" href="/src/v4/return.css?v=490"><link rel="stylesheet" href="/src/v4/personalization.css?v=490"><link rel="stylesheet" href="/src/v4/release-candidate.css?v=490"><link rel="stylesheet" href="/src/v5/ai-match-assistant.css?v=511"><link rel="stylesheet" href="/src/v4/visual-polish.css?v=4">
 </head><body><main id="footmate-next" aria-live="polite"></main><noscript>FootMate를 이용하려면 JavaScript를 켜주세요.</noscript>
-<script type="module" src="/src/v4/platform/presentation/bootstrap.js?v=490"></script><script type="module" src="/src/v4/platform/presentation/release-candidate.js?v=490"></script><script type="module" src="/src/v5/presentation/bootstrap.js?v=511"></script><script type="module" src="/src/v4/app.js?v=490"></script><script type="module" src="/src/v4/experience.js?v=490"></script><script type="module" src="/src/v4/recommendation.js?v=490"></script><script type="module" src="/src/v5/ai-match-assistant.js?v=511"></script><script type="module" src="/src/v4/discovery.js?v=490"></script><script type="module" src="/src/v4/decision.js?v=490"></script><script type="module" src="/src/v4/participation.js?v=490"></script><script type="module" src="/src/v4/matchday.js?v=490"></script><script type="module" src="/src/v4/return.js?v=490"></script><script type="module" src="/src/v4/personalization.js?v=490"></script>
+<script>
+(()=>{
+  const CANONICAL_SESSION='footmate:session';
+  const LEGACY_SESSION='footmate:v4:session';
+  const CONNECTED_AUTH='footmate:beta:auth:v1';
+  const AUTH_ERROR='footmate:app:social-auth-error:v1';
+  const query=new URLSearchParams(location.search);
+  if(['guided','evidence'].includes(query.get('mode')))return;
+  const parse=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}};
+  const readSession=()=>parse(CANONICAL_SESSION)||parse(LEGACY_SESSION)||{};
+  const writeSession=(value)=>{const raw=JSON.stringify(value);try{localStorage.setItem(CANONICAL_SESSION,raw)}catch{}try{localStorage.setItem(LEGACY_SESSION,raw)}catch{}};
+  const hash=new URLSearchParams(String(location.hash||'').replace(/^#/,''));
+  const error=String(hash.get('error_description')||hash.get('error')||'').trim();
+  const accessToken=String(hash.get('access_token')||'').trim();
+  const refreshToken=String(hash.get('refresh_token')||'').trim();
+  const oauthReturn=query.get('oauth')==='1'||Boolean(error||accessToken||refreshToken);
+  if(error){
+    const message=/access_denied|user denied|cancel/i.test(error)?'소셜 로그인이 취소되었습니다.':'소셜 로그인 연결을 완료하지 못했습니다. 다시 시도해주세요.';
+    try{sessionStorage.setItem(AUTH_ERROR,message)}catch{}
+    writeSession({...readSession(),route:'auth'});
+    history.replaceState(null,'','/app');
+    return;
+  }
+  if(accessToken&&refreshToken){
+    const expiresIn=Number(hash.get('expires_in')||3600)||3600;
+    try{localStorage.setItem(CONNECTED_AUTH,JSON.stringify({accessToken,refreshToken,expiresAt:Math.floor(Date.now()/1000)+expiresIn}))}catch{}
+    try{sessionStorage.removeItem(AUTH_ERROR)}catch{}
+    writeSession({...readSession(),signedIn:true,route:'checkout'});
+    history.replaceState(null,'','/app');
+    return;
+  }
+  const navigation=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
+  if(!oauthReturn&&(navigation==='navigate'||navigation==='back_forward')){
+    const session=readSession();
+    if(Object.keys(session).length)writeSession({...session,route:'welcome',setupStep:0});
+  }
+})();
+</script>
+<script type="module" src="/src/v4/platform/presentation/bootstrap.js?v=490"></script><script type="module" src="/src/v4/platform/presentation/release-candidate.js?v=490"></script><script type="module" src="/src/v5/presentation/bootstrap.js?v=511"></script><script type="module" src="/src/v4/app.js?v=490"></script><script type="module" src="/src/v4/experience.js?v=491-flowqa"></script><script type="module" src="/src/v4/recommendation.js?v=490"></script><script type="module" src="/src/v5/ai-match-assistant.js?v=511"></script><script type="module" src="/src/v4/discovery.js?v=490"></script><script type="module" src="/src/v4/decision.js?v=490"></script><script type="module" src="/src/v4/participation.js?v=490"></script><script type="module" src="/src/v4/matchday.js?v=451-flowqa"></script><script type="module" src="/src/v4/return.js?v=490"></script><script type="module" src="/src/v4/personalization.js?v=490"></script>
 </body></html>
