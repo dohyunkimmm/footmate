@@ -1,0 +1,38 @@
+name: Case Study Baseline Refresh
+
+on:
+  push:
+    branches:
+      - fix/case-study-static-13-sections
+    paths:
+      - .github/workflows/case-study-baseline-refresh.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/case-study-static-13-sections
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Install Playwright test dependency
+        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Generate Case Study snapshots from current intended render
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Commit refreshed baselines and remove temporary workflow
+        run: |
+          rm .github/workflows/case-study-baseline-refresh.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots .github/workflows/case-study-baseline-refresh.yml
+          git diff --cached --check
+          git commit -m "test: approve static 13-section desktop baselines"
+          git push origin HEAD:fix/case-study-static-13-sections
