@@ -4,19 +4,19 @@
 
   const visibleSourceIndexes=[0,1,2,3,5,6,7,8,10,11,12,14,15];
   const sectionMeta=[
-    ['Overview','AI Match Assistant'],
-    ['Problem','Slow Match Decisions'],
-    ['Persona · JTBD','Confidence After Work'],
-    ['Product Thesis','One Continuous Decision Flow'],
-    ['Decision 01','Value Before Account'],
-    ['Decision 02','Memory-Assisted Discovery'],
-    ['Decision 03','Decision-Centered Detail'],
-    ['Sign in · Join','Preserve Context Through Participation'],
-    ['Matchday · Return','From Check-in to Next Match'],
-    ['Recovery','Preserve Context, Offer Next Action'],
-    ['Domain · AI Boundary','Ownership, Providers, and Guardrails'],
-    ['Validation','Automated, Human, and AI-Assisted QA'],
-    ['Production Boundary','Only Connected and Verified Capabilities']
+    ['Overview','Role & Scope'],
+    ['Problem & Goal','Why This Problem'],
+    ['Persona · JTBD','Who & When'],
+    ['Scope & Priority','Value Before Scale'],
+    ['Guest First','Value Before Account'],
+    ['Recommendation','Reasons & Memory'],
+    ['Decision Detail','From Detail to Join'],
+    ['Sign in · Join','Context & Confirmation'],
+    ['Operations','Matchday & Return'],
+    ['Recovery','Preserve & Retry'],
+    ['Domain & AI','Contracts & Guardrails'],
+    ['KPI & Validation','Metrics & Evidence'],
+    ['Release & Learnings','Limits & Next Steps']
   ];
   const bodyKickers=[
     '',
@@ -286,6 +286,54 @@
       if(link)link.innerHTML='FootMate 앱 보기 ↗';
     }
 
+    // Service-planning narrative: hypotheses and validation metrics are not measured outcomes.
+    const coverProof=slides[0].querySelector('.fm-next-cover-proof');
+    if(coverProof)coverProof.innerHTML=
+      '<div><b>Role · IT Service Planner</b><span>문제 정의 · Persona/JTBD · IA · 기능·정책 설계</span></div>'+
+      '<div><b>Scope · 설계부터 구현·검증까지</b><span>Interactive Prototype · API/Data contract · QA · Release verification</span></div>'+
+      '<div><b>Responsibility · 판단 근거와 실행 경계</b><span>요구사항 우선순위 · 예외 처리 · 실제 연동과 시뮬레이션 구분</span></div>';
+
+    setText(slides[1],'.fm-next-story h2','경기 선택의 불확실성을 줄여, 참가와 다음 탐색으로 이어지게 합니다.');
+    setText(slides[1],'.fm-next-story-lead','출발점은 “경기 정보를 찾는 것만으로 참가를 결정할 수 있는가”라는 문제 가설입니다. 자연어 탐색을 도입하는 지금, 검색 편의뿐 아니라 추천 근거·참가 안전성·운영 복구를 함께 검증해야 한다고 판단했습니다. 사용자 조사나 시장 성장 수치로 확인된 결론은 아닙니다.');
+    setHTML(slides[1],'.fm-next-cs-grid.three',
+      '<article class="fm-next-cs-card"><h3>탐색 부담 → 이탈 가능성</h3><p>조건을 한곳에 모아 비교 부담을 줄입니다. 상세 진입률과 검색 결과 없음 비율로 검증합니다.</p></article>'+
+      '<article class="fm-next-cs-card"><h3>판단 불안 → 참가 망설임</h3><p>추천 이유·정원·취소 규칙을 먼저 제공합니다. 상세→참가 전환과 참가 실패율을 함께 봅니다.</p></article>'+
+      '<article class="fm-next-cs-card"><h3>참가 후 단절 → 재참가 기회 손실</h3><p>체크인·경기 후 피드백을 다음 탐색에 연결합니다. 체크인 완료와 7일 내 재탐색으로 검증합니다.</p></article>');
+    setHTML(slides[1],'.fm-next-cs-quote','<span>대안 검토 · 설계 가설</span><b>목록·필터는 비교, 지도는 위치, 커뮤니티는 맥락 확인에 활용할 수 있습니다. FootMate는 조건 해석→추천 이유→참가→경기 당일을 연결하는 방향을 선택했습니다.</b><p>특정 경쟁사의 기능 부족이나 우위를 입증한 시장조사 결과는 아닙니다.</p>');
+    setText(slides[2],'.fm-next-story-lead','설계용 Persona는 평일 저녁에 주 1~2회 풋살을 즐기는 직장인 플레이어입니다. 30분 안쪽 이동과 실력 차이를 판단 기준으로 가정했습니다. 실제 인터뷰로 검증한 대표 집단이나 통계가 아니며, Beta 관찰에서 이 가정부터 확인합니다.');
+
+    setText(slides[3],'.fm-next-story h2','참가 흐름의 검증과 운영 안전성을 먼저, 수익화는 다음 범위로 정했습니다.');
+    setText(slides[3],'.fm-next-story-lead','우선순위 기준은 사용자 판단에 주는 가치, 참가 실패의 영향, 검증 가능성입니다. 아래 구분은 현재 구현 범위를 설명하기 위한 정리이며, 당시 정량 점수나 팀 합의 기록을 재구성한 것은 아닙니다.');
+    setHTML(slides[3],'.fm-next-cs-principles',
+      '<article class="fm-next-cs-card"><h3>우선 · 핵심 참가와 안전성</h3><p>판단 기준을 한곳에 모으고 선택 맥락을 보존합니다. 인증·정원·참가/취소·체크인·복구를 무료 Beta에서 검증합니다.</p></article>'+
+      '<article class="fm-next-cs-card"><h3>확장 · 운영과 반복 이용</h3><p>대기열·알림·경기 후 피드백은 자리 회복과 재탐색을 지원합니다. 전환 효과는 실제 이용 데이터로 별도 확인해야 합니다.</p></article>'+
+      '<article class="fm-next-cs-card"><h3>제외 · 실제 PG와 자동 참가</h3><p>실제 PG를 미뤄 수익화 검증을 유보했습니다. AI 자동 참가는 제외하고 사용자의 최종 확인인 HITL을 유지합니다.</p></article>');
+    setText(slides[5],'.fm-next-cs-decision b','Decision: 가입 전 추천 공개 · Reason: 참가 전에 가치를 판단 · Trade-off: 계정 기반 개인화와 기기 간 연속성은 인증 뒤에 제공합니다.');
+    setText(slides[6],'.fm-next-cs-note','Decision: 최근 선호는 추천 보조 입력으로만 사용 · Reason: 추천 이유와 순위를 추적 가능하게 유지 · Trade-off: 과거 선호가 현재 의도와 다를 수 있어 사용자가 조건을 수정할 수 있게 합니다.');
+    setText(slides[7],'.fm-next-cs-sticky p','Decision: 참가하기를 핵심 CTA로 유지 · Reason: 상세에서 다음 행동을 명확하게 제시 · Trade-off: 저장·최대 2경기 비교는 보조 행동으로 제한합니다.');
+
+    const operations=slides[10].querySelector('.fm-next-story-aside');
+    if(operations)operations.insertAdjacentHTML('afterbegin','<div class="fm-next-cs-note"><b>운영 정책</b><p>운영자는 경기·정원·취소 마감·체크인·종료를 관리합니다. 포지션별 대기열은 취소 시 FIFO로 승급하고, 변경 이력은 audit trail로 추적합니다. 알림 실패와 참가 상태는 분리해 복구합니다.</p></div>');
+    const domainNote=slides[12].querySelector('.fm-next-cs-note');
+    if(domainNote)domainNote.insertAdjacentHTML('beforeend','<p><b>협의 기준</b> · 개발에는 API/Data contract·권한·오류·재시도 기준, 디자인에는 IA·상태별 화면·CTA, 운영에는 취소·정원·복구 정책을 전달할 수 있게 정의했습니다. 실제 다인 협업 성과를 주장하는 항목은 아닙니다.</p>');
+    setText(slides[12],'.fm-next-story-lead','AI는 조건만 해석하고 추천 엔진이 후보·순위·이유를 소유합니다. 참가·체크인·경기 후 상태도 책임을 분리했습니다. Realtime은 변경 신호로만 사용하고 서버 상태를 다시 읽어 일관성을 확보하며, 추가 조회 지연을 감수합니다.');
+
+    setText(slides[14],'.fm-next-story h2','서비스 성공 지표와, 제품이 동작하는지 확인하는 QA를 구분합니다.');
+    setText(slides[14],'.fm-next-story-lead','아래는 Validation Metric이며 Measured Result가 아닙니다. 실제 사용자 표본·관찰 기간·기준값이 확보되기 전에는 전환율 개선이나 목표 달성을 주장하지 않습니다. 무료 Beta의 핵심은 상세→참가 전환이며, 참가 실패와 복구를 함께 확인합니다.');
+    setHTML(slides[14],'.fm-next-cs-metrics',
+      '<div class="fm-next-cs-metric"><b>탐색 → 상세</b><span>상세 진입 세션 / 결과 노출 세션</span></div>'+
+      '<div class="fm-next-cs-metric"><b>상세 → 참가</b><span>참가 완료 사용자 / 상세 조회 사용자</span></div>'+
+      '<div class="fm-next-cs-metric"><b>실패 → 복구</b><span>복구 완료 흐름 / 복구 가능 실패 흐름</span></div>'+
+      '<div class="fm-next-cs-metric"><b>7일 내 재탐색</b><span>재탐색 사용자 / 관찰 완료 참가 사용자</span></div>');
+    setHTML(slides[14],'.fm-next-cs-grid.three',
+      '<article class="fm-next-cs-card"><h3>자동 QA</h3><p>Regression · Browser E2E · axe · 상태·복구 · 반응형 · Visual Regression · Production Smoke를 검증합니다.</p></article>'+
+      '<article class="fm-next-cs-card"><h3>사람 검수</h3><p>실제 OAuth 로그인, 이메일 최종 전달, Web Push 표시를 확인합니다. 사용자 만족도나 전환 성과와는 별개입니다.</p></article>'+
+      '<article class="fm-next-cs-card"><h3>AI 보조 검수</h3><p>중복·용어·현재 구현과 설명의 불일치를 찾습니다. 자동 QA와 사람 검수의 PASS 판정을 대신하지 않습니다.</p></article>');
+    setHTML(slides[14],'.fm-next-cs-note','결과 없음·참가 실패·체크인 완료·AI 검색 사용률도 함께 정의했습니다. 외부 분석 도구는 미연동이며, 운영·테스트 계정과 시뮬레이션을 제외한 측정이 필요합니다. <a href="https://github.com/dohyunkimmm/footmate/blob/main/docs/SERVICE-PLANNING-EVIDENCE.md" target="_blank" rel="noopener">8개 지표의 분모·관찰 기준 보기 ↗</a>');
+    setText(slides[15],'.fm-next-story h2','연동과 복구는 구현했고, 사용자 가치와 수익성은 다음 검증으로 남겼습니다.');
+    setText(slides[15],'.fm-next-cs-final span','Production 기준 · 회고와 다음 단계');
+    setText(slides[15],'.fm-next-cs-final b','설계에서 얻은 교훈은 연결 성공만으로 충분하지 않다는 점입니다. 실패·중복·상태 갱신을 함께 정의해야 운영 흐름이 이어집니다. 다음 단계는 Beta 관찰로 Persona와 이탈 구간을 확인하고, 기준값을 확보한 뒤 목표치를 정하는 것입니다.');
+
     cleanVersionCopy(document.querySelector('.fm-cs-shell'));
     cleanReaderRouteLabels(document.querySelector('.fm-cs-shell'));
     document.documentElement.dataset.footmateCaseStudyRelease='5.1.1';
@@ -302,3 +350,4 @@
   let attempts=0;
   (function retry(){attempts+=1;if(patch()){observer.disconnect();return}if(attempts<40)requestAnimationFrame(retry)})();
 })();
+

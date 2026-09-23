@@ -16,6 +16,10 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Compatibility aliases: `/demo`, `/next` → current Real App
 - Case Study IA: **13 sections**
 
+## 서비스 기획 관점
+
+Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·KPI·회고를 현재 13개 섹션 안에서 연결합니다. Persona와 대안 비교는 설계 가설이며, KPI는 실제 성과가 아닌 Validation Metric입니다. 분모·관찰 기간·제외 기준은 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)에서 확인할 수 있습니다.
+
 ## Product decisions
 
 - **Value before account** — 추천과 경기 상세을 먼저 확인하고 참가 의도가 생겼을 때 로그인합니다.
@@ -172,3 +176,4 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - QA scope: runtime-impacting 변경은 full Regression / Browser E2E + axe / 필요한 Production verification을 유지하고, docs/workflow-only non-runtime 변경은 lightweight Docs-only QA를 사용
 - Release flow: `branch → PR → impact-aware GitHub Actions QA → merge → runtime 영향 시 exact Vercel Production verification → durable release history sync`
 - Final sync-up: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 상충하는 pending/미검증 문구 검색 → QA/merge`
+

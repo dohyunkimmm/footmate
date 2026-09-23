@@ -47,16 +47,15 @@ test('Case Study exposes 13 concise sections with the approved navigation copy',
 
   const navTitles=await page.locator('.toc-item:not([hidden]) .toc-t').allTextContents();
   expect(navTitles).toEqual([
-    'Overview','Problem','Persona · JTBD','Product Thesis','Decision 01','Decision 02','Decision 03',
-    'Sign in · Join','Matchday · Return','Recovery','Domain · AI Boundary','Validation','Production Boundary'
+    'Overview','Problem & Goal','Persona · JTBD','Scope & Priority','Guest First','Recommendation','Decision Detail',
+    'Sign in · Join','Operations','Recovery','Domain & AI','KPI & Validation','Release & Learnings'
   ]);
 
   const navSubcopy=await page.locator('.toc-item:not([hidden]) .toc-s').allTextContents();
   expect(navSubcopy).toEqual([
-    'AI Match Assistant','Slow Match Decisions','Confidence After Work','One Continuous Decision Flow',
-    'Value Before Account','Memory-Assisted Discovery','Decision-Centered Detail','Preserve Context Through Participation',
-    'From Check-in to Next Match','Preserve Context, Offer Next Action','Ownership, Providers, and Guardrails',
-    'Automated, Human, and AI-Assisted QA','Only Connected and Verified Capabilities'
+    'Role & Scope','Why This Problem','Who & When','Value Before Scale',
+    'Value Before Account','Reasons & Memory','From Detail to Join','Context & Confirmation',
+    'Matchday & Return','Preserve & Retry','Contracts & Guardrails','Metrics & Evidence','Limits & Next Steps'
   ]);
 
   const subcopyLayout=await page.locator('.toc-item:not([hidden]) .toc-s').evaluateAll(items=>items.map(item=>{
@@ -70,9 +69,9 @@ test('Case Study exposes 13 concise sections with the approved navigation copy',
       whiteSpace:style.whiteSpace
     };
   }));
-  expect(subcopyLayout.every(item=>item.lines>=1&&item.lines<=2)).toBe(true);
+  expect(subcopyLayout.every(item=>item.lines===1)).toBe(true);
   expect(subcopyLayout.every(item=>item.clippedX<=1&&item.clippedY<=1)).toBe(true);
-  expect(subcopyLayout.every(item=>item.whiteSpace==='normal')).toBe(true);
+  expect(subcopyLayout.every(item=>item.whiteSpace==='nowrap')).toBe(true);
 
   const sidebarStyle=await page.locator('.sidebar').evaluate(node=>({
     overflowY:getComputedStyle(node).overflowY,
@@ -89,18 +88,18 @@ test('section labels are English while story headings and supporting body copy r
 
   const labels=await page.locator('.slide:not([hidden]) .fm-next-story-kicker').allTextContents();
   expect(labels).toEqual([
-    '02 · Problem',
+    '02 · Problem & Goal',
     '03 · Persona · JTBD',
-    '04 · Product Principle · Core Journey',
-    '05 · Design Decision 01',
-    '06 · Design Decision 02',
-    '07 · Design Decision 03',
+    '04 · Scope & Priority',
+    '05 · Guest First',
+    '06 · Recommendation',
+    '07 · Decision Detail',
     '08 · Sign in · Join',
-    '09 · Matchday · Return',
+    '09 · Operations',
     '10 · Recovery',
-    '11 · Domain · AI Boundary',
-    '12 · Validation',
-    '13 · Production Boundary'
+    '11 · Domain & AI',
+    '12 · KPI & Validation',
+    '13 · Release & Learnings'
   ]);
 
   const headings=await page.locator('.slide:not([hidden]) .fm-next-story h2').allTextContents();
@@ -248,4 +247,21 @@ test('merged source slides can never render as extra pages after P13',async({pag
   await expect(page.locator('.topbar-count')).toHaveText('13 / 13');
   await expect(page.locator('.slide.on')).toHaveCount(1);
   await expect(page.locator('.slide.on')).toHaveAttribute('data-v5-content-role','production-boundary');
+});
+
+// Portfolio claims must distinguish planning hypotheses from observed outcomes.
+test('service planning evidence distinguishes ownership, hypotheses, metrics and outcomes',async({page})=>{
+  await openCaseStudy(page);
+  const cover=await slideText(page,0);
+  for(const value of ['Role','Scope','Responsibility','IT Service Planner'])expect(cover).toContain(value);
+  expect(await slideText(page,1)).toContain('문제 가설');
+  expect(await slideText(page,2)).toContain('설계용 Persona');
+  const priority=await slideText(page,3);
+  for(const value of ['우선순위 기준','무료 Beta','수익화 검증','HITL'])expect(priority).toContain(value);
+  expect(await slideText(page,4)).toContain('Trade-off');
+  expect(await slideText(page,8)).toContain('audit trail');
+  expect(await slideText(page,10)).toContain('실제 다인 협업 성과');
+  const metrics=await slideText(page,11);
+  for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구는 미연동'])expect(metrics).toContain(value);
+  expect(await slideText(page,12)).toContain('기준값을 확보한 뒤');
 });
