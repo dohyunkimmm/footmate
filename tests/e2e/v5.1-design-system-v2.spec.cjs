@@ -52,7 +52,7 @@ async function expectNoHorizontalOverflow(page){
 
 const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
-test('1440px Design System v2 keeps the app shell centered and component metrics coherent',async({page})=>{
+test('1440px Design System v2 keeps the stable app shell centered and component metrics coherent',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
 
@@ -60,10 +60,10 @@ test('1440px Design System v2 keeps the app shell centered and component metrics
     const box=element.getBoundingClientRect();
     return {left:box.left,right:innerWidth-box.right,width:box.width,borderRadius:getComputedStyle(element).borderRadius};
   });
-  expect(geometry.width).toBeGreaterThanOrEqual(1038);
-  expect(geometry.width).toBeLessThanOrEqual(1042);
+  expect(geometry.width).toBeGreaterThanOrEqual(558);
+  expect(geometry.width).toBeLessThanOrEqual(562);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
-  expect(parseFloat(geometry.borderRadius)).toBeGreaterThanOrEqual(34);
+  expect(parseFloat(geometry.borderRadius)).toBeLessThanOrEqual(1);
 
   const card=page.locator('.fm-next-match-card').first();
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));
@@ -77,7 +77,8 @@ test('1440px Design System v2 keeps the app shell centered and component metrics
     return {left:box.left,right:innerWidth-box.right,width:box.width};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThan(700);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(558);
+  expect(navGeometry.width).toBeLessThanOrEqual(562);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
