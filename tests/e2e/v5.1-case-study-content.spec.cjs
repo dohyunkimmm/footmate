@@ -7,7 +7,8 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
-    document.documentElement.dataset.footmateCaseStudySections==='13'
+    document.documentElement.dataset.footmateCaseStudySections==='13'&&
+    document.documentElement.dataset.footmateCaseStudyHeadingLanguage==='en'
   );
 }
 
@@ -30,6 +31,7 @@ test('static Case Study shell exposes 13 navigation items before runtime patchin
   expect(hiddenSourceSlides).toHaveLength(3);
   expect(html).toContain('AI-assisted discovery · 13 sections');
   expect(html).toContain('<span class="topbar-count">01 / 13</span>');
+  expect(html).toContain('/src/v5/case-study-heading-polish.js?v=517');
   expect(html).not.toContain('<span class="topbar-count">01 / 16</span>');
   expect(html).not.toContain('<span class="toc-n">14</span>');
   expect(html).not.toContain('<span class="toc-n">15</span>');
@@ -57,12 +59,20 @@ test('Case Study exposes 13 concise sections with the approved navigation copy',
     'Automated, Human, and AI-Assisted QA','Only Connected and Verified Capabilities'
   ]);
 
-  const lineCounts=await page.locator('.toc-item:not([hidden]) .toc-s').evaluateAll(items=>items.map(item=>{
-    const range=document.createRange();
-    range.selectNodeContents(item);
-    return range.getClientRects().length;
+  const subcopyLayout=await page.locator('.toc-item:not([hidden]) .toc-s').evaluateAll(items=>items.map(item=>{
+    const style=getComputedStyle(item);
+    const lineHeight=parseFloat(style.lineHeight);
+    const height=item.getBoundingClientRect().height;
+    return {
+      lines:Math.round(height/lineHeight),
+      clippedX:item.scrollWidth-item.clientWidth,
+      clippedY:item.scrollHeight-item.clientHeight,
+      whiteSpace:style.whiteSpace
+    };
   }));
-  expect(lineCounts.every(count=>count===1)).toBe(true);
+  expect(subcopyLayout.every(item=>item.lines>=1&&item.lines<=2)).toBe(true);
+  expect(subcopyLayout.every(item=>item.clippedX<=1&&item.clippedY<=1)).toBe(true);
+  expect(subcopyLayout.every(item=>item.whiteSpace==='normal')).toBe(true);
 
   const sidebarStyle=await page.locator('.sidebar').evaluate(node=>({
     overflowY:getComputedStyle(node).overflowY,
@@ -72,28 +82,50 @@ test('Case Study exposes 13 concise sections with the approved navigation copy',
   expect(sidebarStyle.scrollbarWidth).toBe('none');
 });
 
+test('story headings are English while supporting body copy remains Korean-first',async({page})=>{
+  await openCaseStudy(page);
+  await expect(page.locator('html')).toHaveAttribute('data-footmate-case-study-heading-language','en');
+  const headings=await page.locator('.slide:not([hidden]) .fm-next-story h2').allTextContents();
+  expect(headings).toEqual([
+    'Choosing one match still takes too many separate checks.',
+    'After work, choose a nearby match without overthinking it.',
+    'Build one continuous decision flow instead of adding more features.',
+    'Show recommendation value before asking for an account.',
+    'Remember useful preferences without replacing explainable ranking.',
+    'Design match detail around the participation decision.',
+    'Preserve the chosen match through authentication and participation.',
+    'Let the current match state reshape the home priority.',
+    'Preserve context first, then offer the next action.',
+    'Separate state ownership, provider boundaries, and AI authority.',
+    'Keep automated QA, human verification, and AI-assisted review separate.',
+    'Only describe capabilities that are actually connected and verified.'
+  ]);
+  const leads=await page.locator('.slide:not([hidden]) .fm-next-story-lead').allTextContents();
+  expect(leads.join('\n')).toMatch(/[가-힣]/);
+});
+
 test('merged sections keep one clear job without exposing route strings as reader labels',async({page})=>{
   await openCaseStudy(page);
 
   const thesis=await slideText(page,3);
-  expect(thesis).toContain('탐색');
+  expect(thesis).toContain('Build one continuous decision flow instead of adding more features.');
   expect(thesis).toContain('판단 기준을 한곳에');
   expect(thesis).toContain('선택 맥락을 보존');
 
   const signInJoin=await slideText(page,7);
-  expect(signInJoin).toContain('로그인 전 선택을 잃지 않고 참가 상태까지');
+  expect(signInJoin).toContain('Preserve the chosen match through authentication and participation.');
   expect(signInJoin).toContain('Real App');
   expect(signInJoin).toContain('Closed Beta');
   expect(signInJoin).toContain('완료 | 실패 | 취소');
 
   const domain=await slideText(page,10);
-  expect(domain).toContain('상태 소유권과 외부 연동, AI 권한');
+  expect(domain).toContain('Separate state ownership, provider boundaries, and AI authority.');
   expect(domain).toContain('결정론적 추천 엔진');
   expect(domain).toContain('HITL');
   expect(domain).toContain('실제 PG와 외부 분석 도구는 미연동');
 
   const production=await slideText(page,12);
-  expect(production).toContain('Production 범위');
+  expect(production).toContain('Only describe capabilities that are actually connected and verified.');
   expect(production).toContain('Real App');
   expect(production).toContain('Closed Beta');
   expect(production).toContain('실제 PG · 외부 분석 도구');
