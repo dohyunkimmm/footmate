@@ -46,8 +46,8 @@
   }
   const navigation=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
   if(!oauthReturn&&(navigation==='navigate'||navigation==='back_forward')){
-    const session=readSession();
-    if(Object.keys(session).length)writeSession({...session,route:'welcome',setupStep:0});
+    const canonical=parse(CANONICAL_SESSION);
+    if(canonical&&Object.keys(canonical).length)writeSession({...canonical,route:'welcome',setupStep:0});
   }
 })();
 </script>
