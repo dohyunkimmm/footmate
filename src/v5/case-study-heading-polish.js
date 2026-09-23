@@ -1,21 +1,21 @@
-/* FootMate Case Study · English story headings only.
-   Scope: headings only. Body copy, data, routes, IA, and interaction remain unchanged. */
+/* FootMate Case Study · reader-facing English section labels only.
+   Legacy filename retained for compatibility. Story headings and supporting body copy stay Korean-first. */
 (function(){
   let applied=false;
-  const headings=[
+  const labels=[
     null,
-    'Choosing one match still takes too many separate checks.',
-    'After work, choose a nearby match without overthinking it.',
-    'Build one continuous decision flow instead of adding more features.',
-    'Show recommendation value before asking for an account.',
-    'Remember useful preferences without replacing explainable ranking.',
-    'Design match detail around the participation decision.',
-    'Preserve the chosen match through authentication and participation.',
-    'Let the current match state reshape the home priority.',
-    'Preserve context first, then offer the next action.',
-    'Separate state ownership, provider boundaries, and AI authority.',
-    'Keep automated QA, human verification, and AI-assisted review separate.',
-    'Only describe capabilities that are actually connected and verified.'
+    '02 · Problem',
+    '03 · Persona · JTBD',
+    '04 · Product Principle · Core Journey',
+    '05 · Design Decision 01',
+    '06 · Design Decision 02',
+    '07 · Design Decision 03',
+    '08 · Sign in · Join',
+    '09 · Matchday · Return',
+    '10 · Recovery',
+    '11 · Domain · AI Boundary',
+    '12 · Validation',
+    '13 · Production Boundary'
   ];
 
   function patch(){
@@ -24,12 +24,13 @@
        document.documentElement.dataset.footmateCaseStudySections!=='13')return false;
     const slides=[...document.querySelectorAll('.slide:not([hidden])')];
     if(slides.length!==13)return false;
-    headings.forEach((title,index)=>{
-      if(!title)return;
-      const heading=slides[index]?.querySelector('.fm-next-story h2');
-      if(heading)heading.textContent=title;
+    labels.forEach((label,index)=>{
+      if(!label)return;
+      const kicker=slides[index]?.querySelector('.fm-next-story-kicker');
+      if(kicker)kicker.textContent=label;
     });
-    document.documentElement.dataset.footmateCaseStudyHeadingLanguage='en';
+    document.documentElement.dataset.footmateCaseStudySectionLabelLanguage='en';
+    document.documentElement.dataset.footmateCaseStudyHeadingLanguage='ko';
     applied=true;
     return true;
   }

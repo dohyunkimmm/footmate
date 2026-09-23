@@ -8,7 +8,7 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.waitForFunction(()=>
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
-    document.documentElement.dataset.footmateCaseStudyHeadingLanguage==='en'
+    document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'
   );
 }
 
@@ -82,24 +82,30 @@ test('Case Study exposes 13 concise sections with the approved navigation copy',
   expect(sidebarStyle.scrollbarWidth).toBe('none');
 });
 
-test('story headings are English while supporting body copy remains Korean-first',async({page})=>{
+test('section labels are English while story headings and supporting body copy remain Korean-first',async({page})=>{
   await openCaseStudy(page);
-  await expect(page.locator('html')).toHaveAttribute('data-footmate-case-study-heading-language','en');
-  const headings=await page.locator('.slide:not([hidden]) .fm-next-story h2').allTextContents();
-  expect(headings).toEqual([
-    'Choosing one match still takes too many separate checks.',
-    'After work, choose a nearby match without overthinking it.',
-    'Build one continuous decision flow instead of adding more features.',
-    'Show recommendation value before asking for an account.',
-    'Remember useful preferences without replacing explainable ranking.',
-    'Design match detail around the participation decision.',
-    'Preserve the chosen match through authentication and participation.',
-    'Let the current match state reshape the home priority.',
-    'Preserve context first, then offer the next action.',
-    'Separate state ownership, provider boundaries, and AI authority.',
-    'Keep automated QA, human verification, and AI-assisted review separate.',
-    'Only describe capabilities that are actually connected and verified.'
+  await expect(page.locator('html')).toHaveAttribute('data-footmate-case-study-section-label-language','en');
+  await expect(page.locator('html')).toHaveAttribute('data-footmate-case-study-heading-language','ko');
+
+  const labels=await page.locator('.slide:not([hidden]) .fm-next-story-kicker').allTextContents();
+  expect(labels).toEqual([
+    '02 · Problem',
+    '03 · Persona · JTBD',
+    '04 · Product Principle · Core Journey',
+    '05 · Design Decision 01',
+    '06 · Design Decision 02',
+    '07 · Design Decision 03',
+    '08 · Sign in · Join',
+    '09 · Matchday · Return',
+    '10 · Recovery',
+    '11 · Domain · AI Boundary',
+    '12 · Validation',
+    '13 · Production Boundary'
   ]);
+
+  const headings=await page.locator('.slide:not([hidden]) .fm-next-story h2').allTextContents();
+  expect(headings).toHaveLength(12);
+  expect(headings.every(title=>/[가-힣]/.test(title))).toBe(true);
   const leads=await page.locator('.slide:not([hidden]) .fm-next-story-lead').allTextContents();
   expect(leads.join('\n')).toMatch(/[가-힣]/);
 });
@@ -108,24 +114,20 @@ test('merged sections keep one clear job without exposing route strings as reade
   await openCaseStudy(page);
 
   const thesis=await slideText(page,3);
-  expect(thesis).toContain('Build one continuous decision flow instead of adding more features.');
   expect(thesis).toContain('판단 기준을 한곳에');
   expect(thesis).toContain('선택 맥락을 보존');
 
   const signInJoin=await slideText(page,7);
-  expect(signInJoin).toContain('Preserve the chosen match through authentication and participation.');
   expect(signInJoin).toContain('Real App');
   expect(signInJoin).toContain('Closed Beta');
   expect(signInJoin).toContain('완료 | 실패 | 취소');
 
   const domain=await slideText(page,10);
-  expect(domain).toContain('Separate state ownership, provider boundaries, and AI authority.');
   expect(domain).toContain('결정론적 추천 엔진');
   expect(domain).toContain('HITL');
   expect(domain).toContain('실제 PG와 외부 분석 도구는 미연동');
 
   const production=await slideText(page,12);
-  expect(production).toContain('Only describe capabilities that are actually connected and verified.');
   expect(production).toContain('Real App');
   expect(production).toContain('Closed Beta');
   expect(production).toContain('실제 PG · 외부 분석 도구');
