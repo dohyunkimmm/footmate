@@ -25,7 +25,7 @@ if(root){
       setText(label,'추천 조건 빠르게 수정');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'조건 수정');
-      examples.forEach((button,index)=>{button.hidden=index>0});
+      examples.forEach((button,index)=>{button.hidden=index>0;button.style.minHeight='44px'});
     }else{
       setText(kicker,'AI SEARCH');
       setText(title,'원하는 경기를 문장으로 검색하세요.');
@@ -33,7 +33,7 @@ if(root){
       setText(label,'검색할 경기 조건');
       if(input&&input.placeholder!=='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기')input.placeholder='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기';
       setText(submit,'AI 검색');
-      examples.forEach(button=>{button.hidden=false});
+      examples.forEach(button=>{button.hidden=false;button.style.minHeight=''});
     }
 
     const mode=card.querySelector('[data-ai-mode]');
