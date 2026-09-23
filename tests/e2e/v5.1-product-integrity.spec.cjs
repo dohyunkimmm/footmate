@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
   });
   return items;
 }
@@ -287,7 +287,7 @@ test('Case Study desktop companion panels retain reviewable width and structured
     await expect(page.locator('.slide.on')).toHaveCount(1);
     const panel=await page.locator('.slide.on').evaluate(slide=>{
       const story=slide.querySelector('.fm-next-story');
-      const aside=story?.querySelector('.fm-next-story-aside');
+      const aside=slide.querySelector('.fm-next-story-aside');
       if(!story||!aside)return null;
       const storyRect=story.getBoundingClientRect();
       const asideRect=aside.getBoundingClientRect();
