@@ -1,0 +1,31 @@
+name: Release Flow Functional Review
+
+on:
+  push:
+    branches:
+      - design/design-system-v2-20260923
+
+permissions:
+  contents: read
+
+jobs:
+  functional:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run release flow behavior without visual baseline gates
+        run: >-
+          npx playwright test tests/e2e/v5.1-release-flow-review.spec.cjs
+          --grep "fresh /app entry|setup uses|auth removes|connected OAuth callback|auth and detail back|team message is readable|checked-in continues"
+      - name: Run AI behavior and accessibility
+        run: npx playwright test tests/e2e/v5.1-ai-assistant.spec.cjs
+      - name: Run migration restore contract
+        run: npx playwright test tests/e2e/v5.1-product-integrity.spec.cjs --grep "legacy v4 browser state"
