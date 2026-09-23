@@ -6,6 +6,8 @@ on:
       - app.html
       - src/v5/product-completion.css
       - src/v5/product-completion.js
+      - src/v5/ai-match-assistant.css
+      - src/v5/ai-match-assistant.js
       - tests/e2e/product-completion.spec.cjs
       - .github/workflows/product-completion-baseline-refresh.yml
 permissions:
@@ -21,30 +23,70 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Integrate completion into existing v5 requests
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const cssSource='src/v5/product-completion.css';
+          const jsSource='src/v5/product-completion.js';
+          const cssTarget='src/v5/ai-match-assistant.css';
+          const jsTarget='src/v5/ai-match-assistant.js';
+          const cssMarker='FootMate Real App · product completion layer';
+          const jsMarker='Product completion orchestration';
+          if(fs.existsSync(cssSource)){
+            const css=fs.readFileSync(cssSource,'utf8');
+            let target=fs.readFileSync(cssTarget,'utf8');
+            if(!target.includes(cssMarker))target+=`\n\n${css}`;
+            fs.writeFileSync(cssTarget,target);
+            fs.rmSync(cssSource);
+          }
+          if(fs.existsSync(jsSource)){
+            const js=fs.readFileSync(jsSource,'utf8');
+            let target=fs.readFileSync(jsTarget,'utf8');
+            if(!target.includes(jsMarker))target+=`\n\n/* ${jsMarker} */\n(()=>{\n${js}\n})();\n`;
+            fs.writeFileSync(jsTarget,target);
+            fs.rmSync(jsSource);
+          }
+          let html=fs.readFileSync('app.html','utf8');
+          html=html.replace('<link rel="stylesheet" href="/src/v5/product-completion.css?v=1">','');
+          html=html.replace('<script type="module" src="/src/v5/product-completion.js?v=1"></script>','');
+          fs.writeFileSync('app.html',html);
+
+          const qaPath='.github/workflows/real-app-white-surface-qa.yml';
+          let qa=fs.readFileSync(qaPath,'utf8');
+          qa=qa.replaceAll('      - src/v5/product-completion.css\n','      - src/v5/ai-match-assistant.css\n');
+          qa=qa.replaceAll('      - src/v5/product-completion.js\n','      - src/v5/ai-match-assistant.js\n');
+          qa=qa.replace("          csstree.parse(fs.readFileSync('src/v5/product-completion.css','utf8'));","          csstree.parse(fs.readFileSync('src/v5/ai-match-assistant.css','utf8'));" );
+          qa=qa.replace('        run: node --check src/v5/product-completion.js','        run: node --check src/v5/ai-match-assistant.js');
+          fs.writeFileSync(qaPath,qa);
+
+          if(fs.existsSync('.github/workflows/product-completion-integrate.yml'))fs.rmSync('.github/workflows/product-completion-integrate.yml');
+          NODE
       - name: Install QA dependencies
         run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0
-      - name: Validate completion source syntax
+      - name: Validate integrated source and performance budget
         run: |
-          node --check src/v5/product-completion.js
+          node --check src/v5/ai-match-assistant.js
+          node scripts/check-v4.9-performance-budget.cjs
           node - <<'NODE'
           const fs=require('fs');
           const csstree=require('css-tree');
-          csstree.parse(fs.readFileSync('src/v5/product-completion.css','utf8'));
-          console.log('PASS product completion CSS syntax');
+          csstree.parse(fs.readFileSync('src/v5/ai-match-assistant.css','utf8'));
+          console.log('PASS integrated product completion CSS syntax');
           NODE
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Refresh affected Product visual baselines
         run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs --update-snapshots
-      - name: Commit refreshed baselines
+      - name: Commit integrated assets and refreshed baselines
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add tests/e2e/*-snapshots
+          git add -A
           if git diff --cached --quiet; then
-            echo 'No baseline changes to commit.'
+            echo 'No integration or baseline changes to commit.'
           else
-            git commit -m 'test: refresh product completion visual baselines'
+            git commit -m 'test: integrate product completion and refresh baselines'
             git push origin HEAD:ui/product-polish-100
           fi
       - name: Upload evidence
