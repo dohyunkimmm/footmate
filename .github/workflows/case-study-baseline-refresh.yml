@@ -1,0 +1,31 @@
+name: Case Study Baseline Refresh
+
+on:
+  push:
+    branches:
+      - content/case-study-final-copy-qa-v2
+    paths:
+      - 'src/v5/case-study-connected.js'
+      - 'tests/e2e/v5.1-case-study-visual.spec.cjs'
+      - '.github/workflows/case-study-baseline-refresh.yml'
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install Playwright
+        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Generate Case Study screenshot baselines
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Upload generated baselines
+        uses: actions/upload-artifact@v6
+        with:
+          name: case-study-baselines-${{ github.run_id }}
+          path: tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
+          if-no-files-found: error
+          retention-days: 7
