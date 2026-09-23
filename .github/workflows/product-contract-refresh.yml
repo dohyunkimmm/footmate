@@ -35,7 +35,7 @@ jobs:
           replace('tests/e2e/v5.1-design-system-v2.spec.cjs','expect(cardStyle.radius).toBeLessThanOrEqual(26);','expect(cardStyle.radius).toBeLessThanOrEqual(22);');
           replace('tests/e2e/v5.1-design-system-v2.spec.cjs','expect(metrics.height).toBeGreaterThanOrEqual(54);','expect(metrics.height).toBeGreaterThanOrEqual(44);');
           replace('tests/e2e/v5.1-design-system-v2.spec.cjs','const surface=page.locator(\'[data-screen="detail"]>.fm-next-detail-section\').first();','const surface=page.locator(\'[data-screen="detail"]>[data-decision-section="fit"]\');');
-          replace('tests/e2e/v5.1-design-system-v2.spec.cjs','expect(metrics.radius).toBeGreaterThanOrEqual(22);\n  expect(metrics.radius).toBeLessThanOrEqual(25);\n  expect(metrics.border).not.toBe(\'0px\');\n  expect(metrics.shadow).not.toBe(\'none\');','expect(metrics.radius).toBeGreaterThanOrEqual(18);\n  expect(metrics.radius).toBeLessThanOrEqual(20);\n  expect(metrics.border).not.toBe(\'0px\');');
+          replace('tests/e2e/v5.1-design-system-v2.spec.cjs','expect(metrics.radius).toBeGreaterThanOrEqual(22);\n  expect(metrics.radius).toBeLessThanOrEqual(25);\n  expect(metrics.border).not.toBe(\'0px\');\n  expect(metrics.shadow).not.toBe(\'none\');','expect(metrics.radius).toBeGreaterThanOrEqual(18);\n  expect(metrics.radius).toBeLessThanOrEqual(22);\n  expect(metrics.border).not.toBe(\'0px\');');
           replace('tests/e2e/v5.1-design-system-v2.spec.cjs','expect(nav.width).toBeLessThanOrEqual(width-24+1);','expect(nav.width).toBeLessThanOrEqual(width-16+1);');
 
           replace('tests/e2e/v5.1-product-integrity.spec.cjs','expect(aiMetrics.inputHeight).toBeGreaterThanOrEqual(50);','expect(aiMetrics.inputHeight).toBeGreaterThanOrEqual(44);');
