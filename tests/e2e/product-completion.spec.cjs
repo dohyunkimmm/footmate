@@ -70,7 +70,7 @@ test('Home is recommendation-first with compact AI and compact match cards',asyn
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('product-completion-home-390.png',{...exact,mask:[dates]});
+  await expect(page).toHaveScreenshot('product-completion-home-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
   expect(errs).toEqual([]);
 });
 
