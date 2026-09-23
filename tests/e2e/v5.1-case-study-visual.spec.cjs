@@ -29,7 +29,7 @@ async function openCaseStudy(page,viewport,index=0){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();scrollTo(0,0)});
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.querySelectorAll('.slide:not([hidden])').length===13);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyLanguage==='en'&&document.querySelectorAll('.slide:not([hidden])').length===13);
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto!important}'});
   if(index>0){
@@ -161,13 +161,22 @@ test('Case Study 390 mobile cover matches approved 13-section baseline',async({p
   expect(errs).toEqual([]);
 });
 
-for(const section of [
+const mobileSections=[
+  {index:1,name:'case-study-13-problem-390.png'},
+  {index:2,name:'case-study-13-persona-390.png'},
   {index:3,name:'case-study-13-thesis-390.png'},
+  {index:4,name:'case-study-13-decision-01-390.png'},
+  {index:5,name:'case-study-13-decision-02-390.png'},
+  {index:6,name:'case-study-13-decision-03-390.png'},
   {index:7,name:'case-study-13-signin-join-390.png'},
+  {index:8,name:'case-study-13-matchday-return-390.png'},
+  {index:9,name:'case-study-13-recovery-390.png'},
   {index:10,name:'case-study-13-domain-ai-390.png'},
   {index:11,name:'case-study-13-validation-390.png'},
   {index:12,name:'case-study-13-production-390.png'}
-]){
+];
+
+for(const section of mobileSections){
   test(`Case Study 390 visible section ${section.index+1} matches approved baseline`,async({page})=>{
     const errs=await openCaseStudy(page,{width:390,height:844},section.index);
     await expectMobileGeometry(page,section.index);
