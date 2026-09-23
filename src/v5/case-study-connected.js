@@ -77,7 +77,7 @@
 
     syncSectionNavigation();
 
-    note.innerHTML='AI Match Assistant<br>자연어 조건 해석 → 규칙 기반 추천 순위';
+    note.innerHTML='AI Match Assistant<br>자연어 조건 해석 → 추천 순위 계산';
     const visual=document.querySelector('.fm-next-cover-visual');
     if(visual)visual.setAttribute('aria-label','FootMate 앱 미리보기');
     const frame=document.querySelector('.fm-next-cover-frame iframe');
