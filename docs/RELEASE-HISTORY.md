@@ -182,6 +182,24 @@
 - Documentation sync: README / Release History / Case Study Validation과 관련 Notion FootMate 문서를 current visual QA 사실에 맞춰 후속 sync; Closed Beta 운영 절차는 변경되지 않아 `docs/BETA-PILOT-RUNBOOK.md`는 수정하지 않음
 - Render backup: 이번 final UI/UX closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
+### Real App release-flow / Design System v2 correction closure · 2026-09-23
+
+- Scope: Product Flow review에서 확인된 8개 QA 항목과 Design System v2 coherence를 정리하면서, 요청되지 않았던 1040px desktop 확장과 2-column composition을 제거하고 Real App의 stable max 560px shell을 복구
+- Display terminology: setup UI는 `공격수` / `초급` / `고급`을 표시하고 canonical compatibility 값은 내부에 유지
+- Auth / continuity: active Auth v3는 Google/Kakao만 노출하고 Naver/Apple은 제거; 실제 previous-route back, readable team-message simulation boundary, checked-in → postgame → next-match continuation을 release-flow contract로 유지
+- Entry / recovery: fresh external `/app` entry는 첫 화면에서 시작하고, active same-tab reload recovery는 explicit `?resume=1` 경계로 유지
+- Visual correction: intro dark topbar를 복구해 unintended white band를 제거하고, 1440px desktop에서 Home/Discover/Detail/Checkout/Auth/Schedule/Profile을 stable narrow 1-column composition으로 유지
+- Runtime PR: #218
+- PR QA: FootMate QA #925 · run `35840288562` · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · changed Product / affected Case Study Visual Regression PASS
+- Product/runtime baseline: `6765a6a884806c44b597d0e9ff5b22025a12096e`
+- Post-merge main QA: FootMate QA #926 · run `35843020245` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Visual Regression PASS · Production Smoke PASS
+- Exact Vercel Production: `dpl_5p3zBDpTfJaHF5Fe9eK4EpkiFZSR` · SHA `6765a6a884806c44b597d0e9ff5b22025a12096e` · READY · production aliases 반영
+- Exact Production verification: `/app` HTTP 200 · served desktop contract에서 max 560px shell과 intro dark topbar 반영 확인 · Production Smoke PASS
+- Case Study boundary: current 13-section IA / narrative를 유지하고 affected Case Study screenshot baseline comparison PASS; 이번 correction에서 별도 Case Study copy 재작성은 필요하지 않음
+- Documentation sync: README와 Design System v2 QA/changelog는 stable max 560px shell과 current release-flow contract로 동기화; 관련 Notion FootMate 문서의 stale 2-column / Naver·Apple 표현도 current contract로 정리
+- Runbook boundary: Closed Beta 운영 절차 변경이 없어 `docs/BETA-PILOT-RUNBOOK.md`는 수정하지 않음
+- Render backup: 이번 Real App correction에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
 **Status:** Verified patch release · release-readiness surface freeze complete.
