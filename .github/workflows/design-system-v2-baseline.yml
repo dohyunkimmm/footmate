@@ -1,4 +1,5 @@
 name: Design System v2 Baseline Capture
+# Rerun after role-aware geometry contract correction.
 
 on:
   push:
