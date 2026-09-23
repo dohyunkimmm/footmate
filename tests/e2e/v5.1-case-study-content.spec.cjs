@@ -1,134 +1,130 @@
 const {test,expect}=require('@playwright/test');
 
-async function openCaseStudy(page){
-  await page.setViewportSize({width:1440,height:900});
+async function openCaseStudy(page,viewport={width:1440,height:900}){
+  await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===16);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13');
+}
+
+async function visibleSlides(page){
+  return page.locator('.slide:not([hidden])');
 }
 
 async function slideText(page,index){
-  return page.locator('.slide').nth(index).innerText();
+  return (await visibleSlides(page)).nth(index).innerText();
 }
 
-test('Case Study assigns one distinct responsibility to each product-story section',async({page})=>{
+test('Case Study exposes 13 concise sections with English navigation and English subcopy',async({page})=>{
   await openCaseStudy(page);
 
-  const navTitles=await page.locator('.toc-t').allTextContents();
+  await expect(page.locator('.toc-item:not([hidden])')).toHaveCount(13);
+  await expect(await visibleSlides(page)).toHaveCount(13);
+  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');
+
+  const navTitles=await page.locator('.toc-item:not([hidden]) .toc-t').allTextContents();
   expect(navTitles).toEqual([
-    '개요','문제','Persona · JTBD','제품 원칙','핵심 여정','설계 결정 01','설계 결정 02','설계 결정 03',
-    '로그인','참가 · 결제','경기 당일 · 재탐색','복구','도메인 구조','외부 연동 · AI 경계','검증','Production 범위'
+    'Overview','Problem','Persona · JTBD','Product Thesis','Decision 01','Decision 02','Decision 03',
+    'Sign in · Join','Matchday · Return','Recovery','Domain · AI Boundary','Validation','Production Boundary'
   ]);
 
-  const roles=await page.locator('.slide[data-v5-content-role]').evaluateAll(slides=>slides.map(slide=>slide.getAttribute('data-v5-content-role')));
-  expect(roles).toEqual([
-    'product-thesis','core-journey','guest-first-decision','recommendation-decision','detail-decision','auth-context',
-    'participation-state','matchday-return','recovery-principle','domain-architecture','provider-ai-boundary','validation-evidence','production-boundary'
+  const navSubcopy=await page.locator('.toc-item:not([hidden]) .toc-s').allTextContents();
+  expect(navSubcopy).toEqual([
+    'AI Match Assistant','Slow Match Decisions','Confidence After Work','One Continuous Decision Flow',
+    'Value Before Account','Memory-Assisted Discovery','Decision-Centered Detail','Preserve Context Through Participation',
+    'From Check-in to Next Match','Preserve Context, Offer Next Action','Ownership, Providers, and Guardrails',
+    'Automated, Human, and AI-Assisted QA','Only Connected and Verified Capabilities'
   ]);
-  expect(new Set(roles).size).toBe(roles.length);
-
-  const leads=await page.locator('.slide .fm-next-story-lead').allTextContents();
-  const normalized=leads.map(text=>text.replace(/\s+/g,' ').trim());
-  expect(new Set(normalized).size).toBe(normalized.length);
-  for(const lead of normalized)expect(lead.length).toBeLessThanOrEqual(520);
 });
 
-test('Case Study removes repeated decisions and gives each later section one clear job',async({page})=>{
+test('merged sections keep one clear job without exposing route strings as reader labels',async({page})=>{
   await openCaseStudy(page);
 
   const thesis=await slideText(page,3);
+  expect(thesis).toContain('탐색');
   expect(thesis).toContain('판단 기준을 한곳에');
   expect(thesis).toContain('선택 맥락을 보존');
-  expect(thesis).not.toContain('추천을 먼저 보여주기');
-  expect(thesis).not.toContain('점수보다 이유를 보여주기');
 
-  const personalization=await slideText(page,6);
-  expect(personalization).toContain('같은 조건을 다시 설정하지 않고');
-  expect(personalization).toContain('추천 엔진');
-  expect(personalization).toContain('근거 없는 AI 점수로 대체하지 않습니다');
+  const signInJoin=await slideText(page,7);
+  expect(signInJoin).toContain('로그인 전 선택을 잃지 않고 참가 상태까지');
+  expect(signInJoin).toContain('Real App');
+  expect(signInJoin).toContain('Closed Beta');
+  expect(signInJoin).toContain('완료 | 실패 | 취소');
 
-  const signIn=await slideText(page,8);
-  expect(signIn).toContain('로그인 전의 선택을 잃지 않는 것');
-  expect(signIn).toContain('/app: 시뮬레이션 인증 · /beta: Supabase Auth');
+  const domain=await slideText(page,10);
+  expect(domain).toContain('상태 소유권과 외부 연동, AI 권한');
+  expect(domain).toContain('결정론적 추천 엔진');
+  expect(domain).toContain('HITL');
+  expect(domain).toContain('실제 PG와 외부 분석 도구는 미연동');
 
-  const payment=await slideText(page,9);
-  expect(payment).toContain('checkout → pending → success | failure | canceled');
-  expect(payment).toContain('스냅샷 고정');
-  expect(payment).toContain('실패 후 복구');
-
-  const recovery=await slideText(page,11);
-  expect(recovery).toContain('맥락을 보존하고 다음 행동을 여는 공통 원칙');
-  expect(recovery).not.toContain('checkout → pending → success | failure | canceled');
-
-  const architecture=await slideText(page,12);
-  expect(architecture).toContain('추천·참가·경기 당일·경기 후 상태의 소유권');
-  expect(architecture).toContain('외부 연동 여부와 AI 권한은 다음 섹션');
-  expect(architecture).not.toMatch(/Supabase|Resend|Web Push|Vercel AI Gateway/);
-
-  const provider=await slideText(page,13);
-  expect(provider).toContain('/app');
-  expect(provider).toContain('/beta');
-  expect(provider).toContain('HITL · 사람 확인');
-  expect(provider).toContain('실제 PG와 외부 분석 도구(analytics)는 미연동');
-
-  const validation=await slideText(page,14);
-  expect(validation).toContain('0 px');
-  expect(validation).toContain('최대 50 pixels');
-  expect(validation).toContain('사람 검수 (Human QA)');
-  expect(validation).toContain('AI 보조 검수 (AI-assisted QA)');
-  expect(validation).toContain('PASS 판정을 대신하지 않습니다');
-
-  const production=await slideText(page,15);
+  const production=await slideText(page,12);
   expect(production).toContain('Production 범위');
-  expect(production).toContain('미연동 범위');
+  expect(production).toContain('Real App');
+  expect(production).toContain('Closed Beta');
   expect(production).toContain('실제 PG · 외부 분석 도구');
 
-  const fullText=await page.locator('.fm-cs-shell').innerText();
-  expect(fullText).not.toContain('외부 AI 모델, 회원 DB, 실시간 정원, 실제 결제, 알림 backend는 연결하지 않았습니다.');
-  expect(fullText).not.toContain('OAuth · 회원 DB · PG · 실시간 정원 · 알림 backend');
+  const readerText=await page.locator('.fm-cs-shell').innerText();
+  expect(readerText).not.toMatch(/(^|\s)\/app\b/);
+  expect(readerText).not.toMatch(/(^|\s)\/beta\b/);
 });
 
-test('reader-facing copy is Korean-first while preserving necessary technical terms',async({page})=>{
-  await openCaseStudy(page);
+test('story sections use one top-aligned layout and fit the 1440x900 review surface',async({page})=>{
+  await openCaseStudy(page,{width:1440,height:900});
 
-  const navigation=await page.locator('.toc').innerText();
-  for(const unnecessary of ['Overview','Problem','Product Thesis','Core Journey','Decision 01','Sign in','Join · Payment','Recovery','Validation','Production Boundary','Domain Architecture','Provider · AI 경계']){
-    expect(navigation).not.toContain(unnecessary);
+  for(let index=1;index<13;index+=1){
+    await page.evaluate(i=>window.goTo(i),index);
+    const geometry=await page.locator('.slide.on .fm-next-story').evaluate(story=>{
+      const rect=story.getBoundingClientRect();
+      const copy=story.querySelector('.fm-next-story-copy')?.getBoundingClientRect();
+      const aside=story.querySelector('.fm-next-story-aside')?.getBoundingClientRect();
+      return {
+        top:rect.top,
+        bottom:rect.bottom,
+        width:rect.width,
+        copyLeft:copy?.left||0,
+        copyWidth:copy?.width||0,
+        asideLeft:aside?.left||0,
+        overflow:story.scrollHeight-story.clientHeight
+      };
+    });
+    expect(geometry.top).toBeGreaterThanOrEqual(90);
+    expect(geometry.top).toBeLessThanOrEqual(125);
+    expect(geometry.bottom).toBeLessThanOrEqual(850);
+    expect(geometry.width).toBeGreaterThan(900);
+    expect(geometry.copyWidth).toBeGreaterThan(900);
+    if(geometry.asideLeft)expect(Math.abs(geometry.asideLeft-geometry.copyLeft)).toBeLessThanOrEqual(1);
+    expect(geometry.overflow).toBeLessThanOrEqual(2);
   }
+});
+
+test('arrow keys work immediately on first load and while the embedded app has focus',async({page})=>{
+  await openCaseStudy(page);
+  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');
+
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.topbar-count')).toHaveText('02 / 13');
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');
+
+  const frame=page.locator('.fm-next-cover-frame iframe');
+  await frame.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.topbar-count')).toHaveText('02 / 13');
+});
+
+test('reader-facing body copy is Korean-first while preserving necessary technical terms',async({page})=>{
+  await openCaseStudy(page);
 
   const cover=await slideText(page,0);
   expect(cover).not.toContain('deterministic ranking');
   expect(cover).toContain('추천 순위 계산');
 
-  const thesis=await slideText(page,3);
-  expect(thesis).not.toContain('Thesis는');
-  expect(thesis).not.toContain('reload');
-  expect(thesis).toContain('탐색(Find)');
-
-  const signIn=await slideText(page,8);
-  expect(signIn).not.toContain('deterministic mock');
-  expect(signIn).not.toContain('/app: mock 인증');
-  expect(signIn).not.toContain('provider 연결 경로');
-
-  const provider=await slideText(page,13);
+  const provider=await slideText(page,10);
   expect(provider).not.toContain('sample records');
   expect(provider).not.toContain('connected data path');
-  expect(provider).not.toContain('external analytics');
-  expect(provider).not.toContain('mock 인증');
-  expect(provider).toContain('결정론적 추천 엔진(deterministic recommendation engine)');
+  expect(provider).toContain('결정론적 추천 엔진');
 
-  const validation=await slideText(page,14);
-  expect(validation).not.toContain('responsive widths');
-  expect(validation).not.toContain('Case Study sections');
-  expect(validation).not.toContain('수동 evidence');
-  expect(validation).not.toContain('changed-surface');
-  expect(validation).not.toContain('runner raster');
+  const validation=await slideText(page,11);
   expect(validation).toContain('사람 검수');
   expect(validation).toContain('AI 보조 검수');
-
-  const production=await slideText(page,15);
-  expect(production).not.toContain('Out of scope');
-  expect(production).not.toContain('sample catalog');
-  expect(production).not.toContain('mock transactional providers');
-  expect(production).not.toContain('외부 analytics');
-  expect(production).toContain('결정론적 런타임 로직');
+  expect(validation).toContain('PASS 판정을 대신하지 않습니다');
 });

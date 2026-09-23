@@ -15,14 +15,11 @@ function captureFailures(page){
 async function openCaseStudy(page,width,height){
   await page.setViewportSize({width,height});
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===16);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.querySelectorAll('.slide:not([hidden])').length===13);
 }
 
 async function goToSlide(page,index){
-  await page.evaluate(i=>{
-    if(typeof window.goTo==='function')window.goTo(i);
-    else document.querySelectorAll('.toc-item')[i]?.click();
-  },index);
+  await page.evaluate(i=>window.goTo?.(i),index);
   await expect(page.locator('.slide.on')).toHaveCount(1);
 }
 
@@ -31,13 +28,12 @@ async function seriousOrCritical(page){
   return result.violations.filter(item=>['serious','critical'].includes(item.impact));
 }
 
-test('all 16 Case Study sections have no serious or critical axe violations at mobile and desktop',async({page})=>{
+test('all 13 Case Study sections have no serious or critical axe violations at mobile and desktop',async({page})=>{
   const failures=captureFailures(page);
   for(const viewport of [{width:390,height:844},{width:1440,height:900}]){
     await openCaseStudy(page,viewport.width,viewport.height);
-    for(let index=0;index<16;index+=1){
+    for(let index=0;index<13;index+=1){
       await goToSlide(page,index);
-      if(index===14)await expect(page.locator('.slide.on .fm-next-story')).toHaveAttribute('tabindex','0');
       expect(await seriousOrCritical(page),`${viewport.width}px P${index+1} axe violations`).toEqual([]);
     }
   }

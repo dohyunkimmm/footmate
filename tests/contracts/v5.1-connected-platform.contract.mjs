@@ -61,33 +61,34 @@ for(const [path,repositoryName] of [
 
 const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
 for(const required of [
-  '/app은 Vercel AI Gateway',
-  'deterministic recommendation engine',
-  '/beta는 Supabase 기반 실제 참가 데이터를 사용합니다.',
+  "['Overview','AI Match Assistant']",
+  "['Product Thesis','One Continuous Decision Flow']",
+  "['Sign in · Join','Preserve Context Through Participation']",
+  "['Domain · AI Boundary','Ownership, Providers, and Guardrails']",
+  "['Production Boundary','Only Connected and Verified Capabilities']",
+  'visibleSourceIndexes=[0,1,2,3,5,6,7,8,10,11,12,14,15]',
+  'Real App의 인증·결제는 시뮬레이션',
+  'Closed Beta의 인증·참가 경로는 Supabase에 실제 연결됩니다.',
+  '결정론적 추천 엔진',
   'Google/Kakao OAuth',
   'Resend',
   'Web Push',
   'Storage',
-  '실제 PG와 외부 분석 도구(analytics)는 미연동입니다.',
-  'Google/Kakao 실제 로그인',
-  'transactional email 최종 전달',
-  '사람 검수(Human QA)',
-  'AI 보조 검수(AI-assisted QA)',
-  "['도메인 구조','recommendation · participation · matchday · return']",
-  "['외부 연동 · AI 경계','실연동 · 시뮬레이션 · HITL 경계']",
-  "['Production 범위','실제 연결·검증된 기능만 표기']"
+  '실제 PG와 외부 분석 도구는 미연동입니다.',
+  '사람 검수 (Human QA)',
+  'AI 보조 검수 (AI-assisted QA)'
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
 
 for(const stale of [
+  "['개요','AI Match Assistant']",
+  "['도메인 구조','recommendation · participation · matchday · return']",
+  "['외부 연동 · AI 경계','실연동 · 시뮬레이션 · HITL 경계']",
+  "['Production 범위','실제 연결·검증된 기능만 표기']",
   '외부 AI 모델, 회원 DB, 실시간 정원, 실제 결제, 알림 backend는 연결하지 않았습니다.',
   'OAuth · 회원 DB · PG · 실시간 정원 · 알림 backend',
   'sample records',
   'connected data path',
-  'external analytics는 미연동입니다.',
-  "['Domain Architecture','recommendation · participation · matchday · return']",
-  "['Provider · AI 경계','실연동 · 시뮬레이션 · HITL 경계']",
-  "['Production Boundary','연결·검증한 것만 Production 기능']",
-  "['검증','자동 QA · Human QA · AI-assisted QA']"
+  'external analytics는 미연동입니다.'
 ])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
 
 console.log('PASS v5.1.1 connected platform contracts');
