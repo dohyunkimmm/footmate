@@ -1,0 +1,41 @@
+name: Case Study Baseline Update
+on:
+  push:
+    branches: [fix/case-study-language-and-sidebar-polish]
+permissions:
+  contents: write
+jobs:
+  update-baseline:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/case-study-language-and-sidebar-polish
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Generate Case Study baseline from intentional English UI
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Re-run actual screenshot comparison
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs
+      - name: Commit approved baseline and remove temporary workflow
+        env:
+          BRANCH: fix/case-study-language-and-sidebar-polish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/case-study-baseline-update.yml
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots .github/workflows/case-study-baseline-update.yml
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit"
+            exit 1
+          fi
+          git commit -m "test: approve English Case Study visual baseline"
+          git push origin HEAD:"$BRANCH"
