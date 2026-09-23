@@ -56,3 +56,13 @@ If the current Case Study embeds an affected live Product preview, its current-m
 ## Completion gate
 
 Baseline generation alone is not a PASS. This change is visually verified only after normal PR Browser E2E + axe runs the committed Product and any affected current-main Case Study baselines in comparison mode successfully. Production verification is a separate post-merge gate.
+
+
+## Product audit contracts
+
+- Welcome headline color is asserted directly in the Product full surface and the Case Study cover iframe; image equality alone cannot validate readability.
+- Home and Discover share compact idle AI geometry. Loading/result status remains visible, examples retain at least 11px text, and fresh users do not see a memory-personalization claim.
+- At 320/375/390/430, first-match exposure is measured against the actual nav top; the final card must scroll fully above navigation.
+- A scrolled match-list click must open Detail at scroll position zero. Same-route updates do not reset document scroll.
+- Design System CSS owns the 560px single-column Product shell with zero shell radius. `app.html` no longer carries the late desktop geometry override.
+- Changed Product surfaces and Case Study covers require reviewed baselines plus a separate normal screenshot comparison. These contracts describe required QA, not a release PASS.

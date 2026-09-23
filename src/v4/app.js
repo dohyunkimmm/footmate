@@ -201,7 +201,7 @@ function matchCard(match,index=0){
 function adaptiveContext(){
   const match=joinedMatch(state);
   if(!match){
-    return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('spark')} FOR YOU</div><h2>${state.region}에서<br>잘 맞는 경기를 찾았어요.</h2><p>${state.level} · ${state.position} 기준으로 가까운 경기부터 정리했습니다.</p><div class="fm-next-context-actions">${button('추천 경기 보기','nav-discover','lime')}${button('조건 바꾸기','edit-setup','secondary')}</div></div>`;
+    return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('spark')} FOR YOU</div><h2>${state.region} 추천 경기</h2><p>${state.level} · ${state.position} 기준으로 가까운 경기부터 정리했습니다.</p><div class="fm-next-context-actions">${button('추천 경기 보기','nav-discover','lime')}${button('조건 바꾸기','edit-setup','secondary')}</div></div>`;
   }
   if(state.matchStage==='matchday'){
     return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('clock')} TODAY · KICKOFF 20:00</div><h2>경기까지 1시간 20분</h2><p>${match.place} · 현재 도착 7/10</p><div class="fm-next-context-actions">${button('체크인하기','check-in','lime')}${button('길찾기','show-route','secondary')}</div></div>`;

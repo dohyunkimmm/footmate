@@ -283,7 +283,7 @@
 
 /* Product visual audit: keep Home decision density compact without removing AI capability. */
 .fm-next-page[data-mode="real"] [data-screen="home"] .fm-next-greeting{
-  padding:20px 0 6px;
+  padding:12px 0 6px;
 }
 .fm-next-page[data-mode="real"] [data-screen="home"] .fm-next-greeting h1{
   font-size:29px;
@@ -385,7 +385,7 @@
 }
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-ai-card--core .fm-ai-examples button{
   flex:0 0 auto;
-  min-height:30px;
+  min-height:44px;
   padding:5px 9px;
   font-size:11px;
 }
@@ -568,3 +568,14 @@
 .fm-next-page[data-mode="real"] .fm-ai-card--core .fm-ai-guardrail{font-size:11px}
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]){padding-bottom:120px;scroll-padding-bottom:120px}
 .fm-next-page[data-mode="real"] :is(.fm-next-match-card,.fm-next-section-head){scroll-margin-block:16px 110px}
+
+.fm-next-page[data-mode="real"] [data-screen="home"] .fm-next-greeting small{display:none}
+
+.fm-next-page[data-mode="real"] .fm-ai-card[data-ai-state="idle"] .fm-ai-head strong{display:none}
+@media(min-width:1100px){
+  .fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-section,
+  .fm-next-page[data-mode="real"] [data-screen="checkout"]>.fm-next-detail-section{
+    border:1px solid var(--fm-ds-border);
+    box-shadow:var(--fm-ds-shadow-2);
+  }
+}

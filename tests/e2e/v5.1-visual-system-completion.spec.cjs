@@ -242,11 +242,11 @@ test('390px Discover does not claim personalization before memory exists',async(
   expect(errs).toEqual([]);
 });
 
-for(const width of [320,375,390,430]){
-  test(`${width}px Home and Discover expose matches above navigation and retain readable controls`,async({page})=>{
+for(const width of [320,375,390,430])for(const route of ['home','discover']){
+  test(`${width}px ${route} exposes matches above navigation and retains readable controls`,async({page})=>{
     const errs=await openCleanApp(page,{width,height:844});
     await setupToHome(page);
-    for(const route of ['home','discover']){
+    {
       if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
       const screen=page.locator(`[data-screen="${route}"]`);
       await expect(screen.locator('.fm-ai-card[data-ai-state="idle"]')).toBeVisible();
@@ -258,17 +258,18 @@ for(const width of [320,375,390,430]){
         const smallText=[...element.querySelectorAll('.fm-ai-card *')].filter(node=>node.getClientRects().length&&[...node.childNodes].some(child=>child.nodeType===3&&child.textContent.trim())).map(node=>parseFloat(getComputedStyle(node).fontSize));
         return {firstTop:first.top,navTop:nav.top,minText:Math.min(...smallText)};
       });
+      console.log('DENSITY',JSON.stringify({width,route,...metrics}));
       expect(metrics.firstTop).toBeLessThanOrEqual(metrics.navTop-80);
       expect(metrics.minText).toBeGreaterThanOrEqual(11);
       await expectNoHorizontalOverflow(page);
       await page.mouse.move(1,1);
-      await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
       await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
       const last=screen.locator('.fm-next-match-card').last();
       await last.scrollIntoViewIfNeeded();
       const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
       expect(end.bottom).toBeLessThanOrEqual(end.navTop);
       await page.evaluate(()=>window.scrollTo(0,0));
+      await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
     }
     expect(errs).toEqual([]);
   });
