@@ -74,13 +74,23 @@ async function expectDesktopGeometry(page,viewportWidth){
 async function expectStoryGeometry(page){
   const geometry=await page.locator('.slide.on .fm-next-story').evaluate(story=>{
     const rect=story.getBoundingClientRect();
+    const slide=story.closest('.slide')?.getBoundingClientRect();
     const copy=story.querySelector('.fm-next-story-copy')?.getBoundingClientRect();
     const aside=story.querySelector('.fm-next-story-aside')?.getBoundingClientRect();
-    return {top:rect.top,bottom:rect.bottom,width:rect.width,copyLeft:copy?.left||0,copyWidth:copy?.width||0,asideLeft:aside?.left||0,overflow:story.scrollHeight-story.clientHeight};
+    return {
+      top:rect.top,
+      bottom:rect.bottom,
+      width:rect.width,
+      copyLeft:copy?.left||0,
+      copyWidth:copy?.width||0,
+      asideLeft:aside?.left||0,
+      centerDelta:slide?Math.abs((rect.top+rect.bottom)/2-(slide.top+slide.bottom)/2):999,
+      overflow:story.scrollHeight-story.clientHeight
+    };
   });
-  expect(geometry.top).toBeGreaterThanOrEqual(90);
-  expect(geometry.top).toBeLessThanOrEqual(125);
-  expect(geometry.bottom).toBeLessThanOrEqual(850);
+  expect(geometry.top).toBeGreaterThanOrEqual(140);
+  expect(geometry.bottom).toBeLessThanOrEqual(760);
+  expect(geometry.centerDelta).toBeLessThanOrEqual(1);
   expect(geometry.width).toBeGreaterThan(900);
   expect(geometry.copyWidth).toBeGreaterThan(900);
   if(geometry.asideLeft)expect(Math.abs(geometry.asideLeft-geometry.copyLeft)).toBeLessThanOrEqual(1);
