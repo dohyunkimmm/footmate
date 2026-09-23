@@ -1,6 +1,7 @@
 const root=document.getElementById('footmate-next');
 if(root){
   let scheduled=false;
+  const setText=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value};
 
   function configureAssistant(screen){
     const card=screen.querySelector('.fm-ai-card');
@@ -18,20 +19,20 @@ if(root){
     const examples=[...card.querySelectorAll('[data-ai-example]')];
 
     if(isHome){
-      if(kicker)kicker.textContent='QUICK REFINE';
-      if(title)title.textContent='조건만 빠르게 바꿔볼까요?';
-      if(copy)copy.textContent='추천 흐름은 유지하고 필요한 조건만 한 줄로 조정합니다.';
-      if(label)label.textContent='추천 조건 빠르게 수정';
-      if(input)input.placeholder='예: 8시 이후, 가까운 중급 MF';
-      if(submit)submit.textContent='조건 수정';
+      setText(kicker,'QUICK REFINE');
+      setText(title,'조건만 빠르게 바꿔볼까요?');
+      setText(copy,'추천 흐름은 유지하고 필요한 조건만 한 줄로 조정합니다.');
+      setText(label,'추천 조건 빠르게 수정');
+      if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
+      setText(submit,'조건 수정');
       examples.forEach((button,index)=>{button.hidden=index>0});
     }else{
-      if(kicker)kicker.textContent='AI SEARCH';
-      if(title)title.textContent='원하는 경기를 문장으로 검색하세요.';
-      if(copy)copy.textContent='필터와 함께 사용해 시간·거리·가격·포지션 조건을 빠르게 좁힐 수 있어요.';
-      if(label)label.textContent='검색할 경기 조건';
-      if(input)input.placeholder='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기';
-      if(submit)submit.textContent='AI 검색';
+      setText(kicker,'AI SEARCH');
+      setText(title,'원하는 경기를 문장으로 검색하세요.');
+      setText(copy,'필터와 함께 사용해 시간·거리·가격·포지션 조건을 빠르게 좁힐 수 있어요.');
+      setText(label,'검색할 경기 조건');
+      if(input&&input.placeholder!=='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기')input.placeholder='예: 8시 이후, 2만원 이하, 가까운 중급 MF 경기';
+      setText(submit,'AI 검색');
       examples.forEach(button=>{button.hidden=false});
     }
 
@@ -68,7 +69,7 @@ if(root){
     [...screen.querySelectorAll('.fm-next-detail-section')].forEach(section=>{
       if(section.dataset.decisionSection)return;
       const heading=section.querySelector('h2')?.textContent?.trim();
-      if(heading&&redundant.has(heading))section.hidden=true;
+      if(heading&&redundant.has(heading)&&!section.hidden)section.hidden=true;
     });
   }
 
