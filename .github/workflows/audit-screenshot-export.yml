@@ -1,0 +1,21 @@
+name: Audit Screenshot Export
+
+on:
+  push:
+    branches:
+      - fix/product-visual-audit-20260923
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/upload-artifact@v4
+        with:
+          name: product-visual-audit-screenshots
+          path: |
+            tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png
+            tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-home-390-full-chromium-linux.png
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-discover-390-chromium-linux.png
+          if-no-files-found: error
