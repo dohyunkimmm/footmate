@@ -580,3 +580,5 @@
     box-shadow:var(--fm-ds-shadow-2);
   }
 }
+
+.fm-next-page[data-mode="real"] .fm-ai-card[data-ai-state="idle"] :is(.fm-ai-conditions,.fm-ai-results):empty{display:none}

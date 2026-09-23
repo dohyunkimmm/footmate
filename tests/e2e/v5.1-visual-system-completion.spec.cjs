@@ -253,13 +253,16 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
       await expect(screen.locator('[data-personalization-explanation]')).toHaveCount(0);
       await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
       const metrics=await screen.evaluate(element=>{
-        const first=element.querySelector('.fm-next-match-card').getBoundingClientRect();
+        const card=element.querySelector('.fm-next-match-card');
+        const first=card.getBoundingClientRect();
+        const title=card.querySelector('h3').getBoundingClientRect();
         const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
         const smallText=[...element.querySelectorAll('.fm-ai-card *')].filter(node=>node.getClientRects().length&&[...node.childNodes].some(child=>child.nodeType===3&&child.textContent.trim())).map(node=>parseFloat(getComputedStyle(node).fontSize));
-        return {firstTop:first.top,navTop:nav.top,minText:Math.min(...smallText)};
+        return {firstTop:first.top,titleBottom:title.bottom,navTop:nav.top,minText:Math.min(...smallText)};
       });
       console.log('DENSITY',JSON.stringify({width,route,...metrics}));
       expect(metrics.firstTop).toBeLessThanOrEqual(metrics.navTop-80);
+      expect(metrics.titleBottom).toBeLessThanOrEqual(metrics.navTop-8);
       expect(metrics.minText).toBeGreaterThanOrEqual(11);
       await expectNoHorizontalOverflow(page);
       await page.mouse.move(1,1);
