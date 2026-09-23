@@ -4,18 +4,18 @@
   let applied=false;
   const labels=[
     null,
-    '02 · Problem',
+    '02 · Problem & Goal',
     '03 · Persona · JTBD',
-    '04 · Product Principle · Core Journey',
-    '05 · Design Decision 01',
-    '06 · Design Decision 02',
-    '07 · Design Decision 03',
+    '04 · Scope & Priority',
+    '05 · Guest First',
+    '06 · Recommendation',
+    '07 · Decision Detail',
     '08 · Sign in · Join',
-    '09 · Matchday · Return',
+    '09 · Operations',
     '10 · Recovery',
-    '11 · Domain · AI Boundary',
-    '12 · Validation',
-    '13 · Production Boundary'
+    '11 · Domain & AI',
+    '12 · KPI & Validation',
+    '13 · Release & Learnings'
   ];
 
   function patch(){
@@ -41,3 +41,4 @@
   let attempts=0;
   (function retry(){attempts+=1;if(patch()){observer.disconnect();return}if(attempts<80)requestAnimationFrame(retry)})();
 })();
+
