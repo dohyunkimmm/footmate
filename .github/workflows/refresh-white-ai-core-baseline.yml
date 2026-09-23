@@ -1,0 +1,31 @@
+name: Refresh White AI Core Baseline
+on:
+  push:
+    branches: [ui/real-app-white-surface-completion]
+    paths:
+      - .github/workflows/refresh-white-ai-core-baseline.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install Playwright
+        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh AI core snapshot only
+        run: npx playwright test tests/e2e/v5.1-release-flow-review.spec.cjs --grep "AI Match Assistant is a primary core feature" --update-snapshots
+      - name: Commit Product baseline
+        run: |
+          git status --short
+          git add tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-ai-core-1440-chromium-linux.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test: align AI core visual baseline with white-first app"
+          git push
