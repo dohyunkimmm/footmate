@@ -52,16 +52,6 @@ jobs:
           html=html.replace('<link rel="stylesheet" href="/src/v5/product-completion.css?v=1">','');
           html=html.replace('<script type="module" src="/src/v5/product-completion.js?v=1"></script>','');
           fs.writeFileSync('app.html',html);
-
-          const qaPath='.github/workflows/real-app-white-surface-qa.yml';
-          let qa=fs.readFileSync(qaPath,'utf8');
-          qa=qa.replaceAll('      - src/v5/product-completion.css\n','      - src/v4/design-system-v2.css\n');
-          qa=qa.replaceAll('      - src/v5/product-completion.js\n','      - src/v5/ai-match-assistant.js\n');
-          qa=qa.replace("          csstree.parse(fs.readFileSync('src/v5/product-completion.css','utf8'));","          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));" );
-          qa=qa.replace('        run: node --check src/v5/product-completion.js','        run: node --check src/v5/ai-match-assistant.js');
-          fs.writeFileSync(qaPath,qa);
-
-          if(fs.existsSync('.github/workflows/product-completion-integrate.yml'))fs.rmSync('.github/workflows/product-completion-integrate.yml');
           NODE
       - name: Install QA dependencies
         run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0
@@ -79,13 +69,13 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Refresh affected Product visual baselines
         run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs --update-snapshots
-      - name: Commit integrated assets and refreshed baselines
+      - name: Commit integrated code and refreshed baselines
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A
+          git add -A app.html src/v4/design-system-v2.css src/v5/ai-match-assistant.js src/v5/product-completion.css src/v5/product-completion.js tests/e2e
           if git diff --cached --quiet; then
-            echo 'No integration or baseline changes to commit.'
+            echo 'No code or baseline changes to commit.'
           else
             git commit -m 'test: integrate product completion and refresh baselines'
             git push origin HEAD:ui/product-polish-100
