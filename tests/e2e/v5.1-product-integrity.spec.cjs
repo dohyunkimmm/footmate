@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -35,7 +35,7 @@ test('legacy v4 browser state migrates to version-neutral keys and stays rollbac
     localStorage.setItem('footmate:v4:discovery',JSON.stringify({date:'all',time:'20',distance:'all',price:'all',position:'MF',sort:'fit'}));
     localStorage.setItem('footmate:v4:interaction',JSON.stringify({detailReturnRoute:'discover'}));
   });
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_PLATFORM__?.storageKeys?.session==='footmate:session');
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-namespace','version-neutral');
@@ -287,7 +287,7 @@ test('Case Study desktop companion panels retain reviewable width and structured
     await expect(page.locator('.slide.on')).toHaveCount(1);
     const panel=await page.locator('.slide.on').evaluate(slide=>{
       const story=slide.querySelector('.fm-next-story');
-      const aside=slide.querySelector('.fm-next-story-aside');
+      const aside=story?.querySelector('.fm-next-story-aside');
       if(!story||!aside)return null;
       const storyRect=story.getBoundingClientRect();
       const asideRect=aside.getBoundingClientRect();
