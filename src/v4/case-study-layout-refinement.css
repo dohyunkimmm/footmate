@@ -1,0 +1,136 @@
+/* FootMate Case Study · layout refinement
+   Scope: visual layout only. Copy, IA, links, data, and interaction remain unchanged. */
+
+/* Desktop: place each story block at the visual center of the review surface. */
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide{
+    align-items:center;
+    padding-top:76px!important;
+    padding-bottom:76px!important;
+  }
+
+  html[data-fm-next-case-study="true"] .fm-next-story{
+    max-height:calc(100vh - 152px);
+    padding-bottom:0;
+  }
+
+  html[data-fm-next-case-study="true"] .fm-next-story-aside{
+    gap:10px;
+  }
+}
+
+/* Keep structured cards/tables white. Green remains semantic emphasis via border/label/text. */
+html[data-fm-next-case-study="true"] .fm-next-cs-quote,
+html[data-fm-next-case-study="true"] .fm-next-cs-jtbd,
+html[data-fm-next-case-study="true"] .fm-next-cs-decision,
+html[data-fm-next-case-study="true"] .fm-next-cs-scope,
+html[data-fm-next-case-study="true"] .fm-next-cs-sticky,
+html[data-fm-next-case-study="true"] .fm-next-cs-note,
+html[data-fm-next-case-study="true"] .fm-next-cs-final,
+html[data-fm-next-case-study="true"] .fm-next-cs-closing,
+html[data-fm-next-case-study="true"] .fm-next-cs-before-after>.is-after,
+html[data-fm-next-case-study="true"] .fm-next-cs-auth-flow>.is-focus,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-home .is-focus,
+html[data-fm-next-case-study="true"] .fm-next-cs-day-states>.is-focus,
+html[data-fm-next-case-study="true"] .fm-next-cs-quality span,
+html[data-fm-next-case-study="true"] .fm-next-cs-reco-card>div b,
+html[data-fm-next-case-study="true"] .fm-next-cs-matchday>div b{
+  background:#fff!important;
+  border-color:var(--fm-cs-accent-line)!important;
+}
+
+/* Tighten intra-page whitespace without dropping below the existing layout QA floor. */
+html[data-fm-next-case-study="true"] .fm-next-cs-grid,
+html[data-fm-next-case-study="true"] .fm-next-cs-persona,
+html[data-fm-next-case-study="true"] .fm-next-cs-journey,
+html[data-fm-next-case-study="true"] .fm-next-cs-before-after,
+html[data-fm-next-case-study="true"] .fm-next-cs-reco,
+html[data-fm-next-case-study="true"] .fm-next-cs-auth-flow,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-home,
+html[data-fm-next-case-study="true"] .fm-next-cs-modes,
+html[data-fm-next-case-study="true"] .fm-next-cs-ia,
+html[data-fm-next-case-study="true"] .fm-next-cs-metrics,
+html[data-fm-next-case-study="true"] .fm-next-cs-day-states,
+html[data-fm-next-case-study="true"] .fm-next-cs-recovery,
+html[data-fm-next-case-study="true"] .fm-next-cs-outcomes,
+html[data-fm-next-case-study="true"] .fm-next-cs-stack,
+html[data-fm-next-case-study="true"] .fm-next-cs-outcome,
+html[data-fm-next-case-study="true"] .fm-next-cs-loop,
+html[data-fm-next-case-study="true"] .fm-next-cs-agent,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-chain,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-line{
+  gap:10px;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-story-lead{
+  margin-bottom:20px;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-cs-card{
+  padding:13px 14px;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-card h3,
+html[data-fm-next-case-study="true"] .fm-next-cs-journey h3,
+html[data-fm-next-case-study="true"] .fm-next-cs-modes h3{
+  margin-top:6px;
+  margin-bottom:5px;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-cs-journey>div,
+html[data-fm-next-case-study="true"] .fm-next-cs-before-after>div,
+html[data-fm-next-case-study="true"] .fm-next-cs-auth-flow>div,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-home div,
+html[data-fm-next-case-study="true"] .fm-next-cs-modes>div,
+html[data-fm-next-case-study="true"] .fm-next-cs-metric,
+html[data-fm-next-case-study="true"] .fm-next-cs-day-states>div,
+html[data-fm-next-case-study="true"] .fm-next-cs-recovery>div,
+html[data-fm-next-case-study="true"] .fm-next-cs-outcomes>div{
+  padding:12px 13px;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-cs-stack p{
+  padding:10px 12px;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-detail-order span{
+  padding:9px 11px;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-quality{
+  gap:7px;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-quality span{
+  padding:6px 8px;
+}
+
+@media(min-width:1181px){
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-quote,
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-jtbd,
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-decision,
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-scope,
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-sticky,
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-note,
+  html[data-fm-next-case-study="true"] .fm-next-story-aside>.fm-next-cs-final{
+    padding:16px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-aside .fm-next-cs-card{
+    padding:14px;
+  }
+}
+
+/* Mobile keeps the existing top-flow behavior; only card density is tightened. */
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-story-lead{
+    margin-bottom:18px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-cs-card,
+  html[data-fm-next-case-study="true"] .fm-next-cs-journey>div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-before-after>div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-auth-flow>div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-state-home div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-modes>div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-metric,
+  html[data-fm-next-case-study="true"] .fm-next-cs-day-states>div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-recovery>div,
+  html[data-fm-next-case-study="true"] .fm-next-cs-outcomes>div{
+    padding:12px;
+  }
+}
