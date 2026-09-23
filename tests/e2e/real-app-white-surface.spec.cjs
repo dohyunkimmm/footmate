@@ -102,7 +102,6 @@ test('390px Discover uses the same neutral match surface system',async({page})=>
 for(const width of [320,375,390,430]){
   test(`${width}px keeps Welcome/Home/Discover readable and clear of fixed navigation`,async({page})=>{
     const errs=await openCleanApp(page,{width,height:844});
-    const cta=page.getByRole('button',{name:/내 경기 찾아보기/});
     const welcomeMetrics=await page.locator('.fm-next-intro').evaluate(element=>{
       const headline=element.querySelector('h1').getBoundingClientRect();
       const button=element.querySelector('button').getBoundingClientRect();
@@ -115,14 +114,20 @@ for(const width of [320,375,390,430]){
     for(const route of ['home','discover']){
       if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
       const screen=page.locator(`[data-screen="${route}"]`);
+      await expect(screen.locator('.fm-next-nav')).toHaveCSS('position','fixed');
+      await page.evaluate(()=>window.scrollTo(0,Math.max(document.documentElement.scrollHeight,document.body.scrollHeight)));
+      await page.waitForTimeout(50);
       const metrics=await screen.evaluate(element=>{
         const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
-        const first=element.querySelector('.fm-next-match-card').getBoundingClientRect();
+        const cards=[...element.querySelectorAll('.fm-next-match-card')];
+        const last=cards.at(-1)?.getBoundingClientRect();
         const firstButton=[...element.querySelectorAll('button')].find(node=>node.getClientRects().length);
         const buttonBox=firstButton?.getBoundingClientRect();
-        return {navTop:nav.top,firstTop:first.top,buttonHeight:buttonBox?.height??44};
+        const paddingBottom=parseFloat(getComputedStyle(element).paddingBottom)||0;
+        return {navTop:nav.top,navHeight:nav.height,lastBottom:last?.bottom??0,paddingBottom,buttonHeight:buttonBox?.height??44};
       });
-      expect(metrics.firstTop).toBeLessThan(metrics.navTop);
+      expect(metrics.paddingBottom).toBeGreaterThanOrEqual(metrics.navHeight);
+      expect(metrics.lastBottom).toBeLessThanOrEqual(metrics.navTop);
       expect(metrics.buttonHeight).toBeGreaterThanOrEqual(44);
       await expectNoHorizontalOverflow(page);
       if(route==='discover')await page.getByRole('button',{name:'홈'}).click();
