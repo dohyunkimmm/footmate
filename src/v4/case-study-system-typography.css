@@ -1,0 +1,87 @@
+/* FootMate Case Study · system typography override
+   Scope: typography only. Copy, IA, colors, layout structure, links, and interaction remain unchanged. */
+
+html[data-fm-next-case-study="true"]{
+  --fm-system-font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",Helvetica,Arial,sans-serif;
+}
+
+html[data-fm-next-case-study="true"] *,
+html[data-fm-next-case-study="true"] *::before,
+html[data-fm-next-case-study="true"] *::after{
+  font-family:var(--fm-system-font)!important;
+}
+
+html[data-fm-next-case-study="true"] .sb-logo{font-size:20px}
+html[data-fm-next-case-study="true"] .sb-sub{font-size:11px}
+html[data-fm-next-case-study="true"] .toc-n{font-size:10px}
+html[data-fm-next-case-study="true"] .toc-t{font-size:12px}
+html[data-fm-next-case-study="true"] .toc-s{font-size:10.5px}
+html[data-fm-next-case-study="true"] .topbar-title{font-size:12px}
+html[data-fm-next-case-study="true"] .topbar-count{font-size:11px}
+html[data-fm-next-case-study="true"] .label{font-size:10px}
+
+html[data-fm-next-case-study="true"] .fm-next-cover h1{
+  font-size:clamp(34px,4vw,48px);
+  line-height:1.12;
+}
+html[data-fm-next-case-study="true"] .fm-next-cover-lead{
+  font-size:14px;
+  line-height:1.65;
+}
+html[data-fm-next-case-study="true"] .fm-next-cover-actions a,
+html[data-fm-next-case-study="true"] .fm-next-cover-actions button,
+html[data-fm-next-case-study="true"] .fm-next-cs-link{font-size:13px}
+html[data-fm-next-case-study="true"] .fm-next-cover-flow{font-size:10.5px}
+html[data-fm-next-case-study="true"] .fm-next-cover-flow b{font-size:11.5px}
+html[data-fm-next-case-study="true"] .fm-next-cover-proof b{font-size:12px}
+html[data-fm-next-case-study="true"] .fm-next-cover-proof span{font-size:11px}
+
+html[data-fm-next-case-study="true"] .fm-next-story h2{
+  font-size:clamp(24px,2.5vw,30px);
+  line-height:1.24;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-lead{
+  font-size:14px;
+  line-height:1.65;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-card h3,
+html[data-fm-next-case-study="true"] .fm-next-cs-journey h3,
+html[data-fm-next-case-study="true"] .fm-next-cs-modes h3{font-size:15px}
+html[data-fm-next-case-study="true"] .fm-next-cs-card p,
+html[data-fm-next-case-study="true"] .fm-next-cs-journey p,
+html[data-fm-next-case-study="true"] .fm-next-cs-before-after p,
+html[data-fm-next-case-study="true"] .fm-next-cs-stack p,
+html[data-fm-next-case-study="true"] .fm-next-cs-jtbd p,
+html[data-fm-next-case-study="true"] .fm-next-cs-scope p,
+html[data-fm-next-case-study="true"] .fm-next-cs-sticky p,
+html[data-fm-next-case-study="true"] .fm-next-cs-note{font-size:13px}
+html[data-fm-next-case-study="true"] .fm-next-cs-quote b,
+html[data-fm-next-case-study="true"] .fm-next-cs-decision b,
+html[data-fm-next-case-study="true"] .fm-next-cs-scope b,
+html[data-fm-next-case-study="true"] .fm-next-cs-sticky b,
+html[data-fm-next-case-study="true"] .fm-next-cs-final>b,
+html[data-fm-next-case-study="true"] .fm-next-cs-closing h3{font-size:15px}
+html[data-fm-next-case-study="true"] .fm-next-cs-persona b,
+html[data-fm-next-case-study="true"] .fm-next-cs-auth-flow b,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-home b,
+html[data-fm-next-case-study="true"] .fm-next-cs-day-states b,
+html[data-fm-next-case-study="true"] .fm-next-cs-recovery b,
+html[data-fm-next-case-study="true"] .fm-next-cs-detail-order span,
+html[data-fm-next-case-study="true"] .fm-next-cs-ia b,
+html[data-fm-next-case-study="true"] .fm-next-cs-loop b,
+html[data-fm-next-case-study="true"] .fm-next-cs-agent b,
+html[data-fm-next-case-study="true"] .fm-next-cs-state-chain span{font-size:13px}
+html[data-fm-next-case-study="true"] .fm-next-cs-reco-card h3{font-size:18px}
+html[data-fm-next-case-study="true"] .fm-next-cs-reco-card strong{font-size:17px}
+
+@media(max-width:560px){
+  html[data-fm-next-case-study="true"] .fm-next-cover h1{
+    font-size:clamp(30px,8.5vw,36px)!important;
+    line-height:1.16;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story h2{
+    font-size:clamp(23px,7vw,28px)!important;
+    line-height:1.28;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-lead{font-size:13px}
+}
