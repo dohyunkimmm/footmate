@@ -226,10 +226,10 @@ test('welcome hero keeps readable contrast and an approved full-surface baseline
     const headline=page.locator('[data-screen="welcome"] .fm-next-intro h1');
     await expect(headline).toBeVisible();
     const color=await headline.evaluate(element=>getComputedStyle(element).color);
-    expect(color,`welcome headline color at ${viewport.name}px`).toBe('rgb(255, 255, 255)');
+    expect(color,`welcome headline color at ${viewport.name}px`).toBe('rgb(19, 32, 25)');
     const topbar=page.locator('[data-screen="welcome"] .fm-next-topbar--dark');
-    const background=await topbar.evaluate(element=>getComputedStyle(element).backgroundImage);
-    expect(background).toContain('linear-gradient');
+    const background=await topbar.evaluate(element=>getComputedStyle(element).backgroundColor);
+    expect(background).toBe('rgba(255, 255, 255, 0.86)');
     await page.mouse.move(1,1);
     await expect(page).toHaveScreenshot(`release-flow-welcome-${viewport.name}.png`,{animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:24});
     expect(errs).toEqual([]);
