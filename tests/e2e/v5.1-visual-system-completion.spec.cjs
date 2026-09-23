@@ -204,3 +204,40 @@ test('320/375/390/430 keep Setup and Auth single-column and overflow-safe',async
     await expectNoHorizontalOverflow(page);
   }
 });
+
+test('390px Home keeps the decision flow compact before the match list',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await expect(page.locator('.fm-ai-card--core')).toBeVisible();
+  await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0);
+  const metrics=await page.evaluate(()=>{
+    const first=document.querySelector('[data-screen="home"] .fm-next-match-card');
+    const ai=document.querySelector('[data-screen="home"] .fm-ai-card--core');
+    return {
+      scrollHeight:document.documentElement.scrollHeight,
+      firstMatchTop:first?.getBoundingClientRect().top??9999,
+      aiHeight:ai?.getBoundingClientRect().height??9999
+    };
+  });
+  console.log('HOME_DENSITY_METRICS',JSON.stringify(metrics));
+  expect(metrics.firstMatchTop).toBeLessThanOrEqual(760);
+  expect(metrics.aiHeight).toBeLessThanOrEqual(300);
+  await expectNoHorizontalOverflow(page);
+  await page.mouse.move(1,1);
+  const dynamicDates=page.locator('[data-screen="home"] .fm-next-match-date > span:first-child');
+  await expect(page).toHaveScreenshot('visual-system-home-390-full.png',{animations:'disabled',caret:'hide',fullPage:true,maxDiffPixels:24,mask:[dynamicDates]});
+  expect(errs).toEqual([]);
+});
+
+test('390px Discover does not claim personalization before memory exists',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await page.getByRole('button',{name:'전체 보기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+  await page.mouse.move(1,1);
+  const dynamicDates=page.locator('[data-screen="discover"] .fm-next-match-date > span:first-child');
+  await expect(page).toHaveScreenshot('visual-system-discover-390.png',{animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:24,mask:[dynamicDates]});
+  expect(errs).toEqual([]);
+});
