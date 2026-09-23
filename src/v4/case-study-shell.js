@@ -106,7 +106,13 @@
     document.head.appendChild(style);
   }
 
+  function pruneMergedNodes(){
+    if(document.documentElement.dataset.footmateCaseStudySections!=='13')return;
+    document.querySelectorAll('.track .slide[data-cs-hidden="true"],.toc-item[data-cs-hidden="true"],.dot[data-cs-hidden="true"]').forEach(node=>node.remove());
+  }
+
   function refresh(){
+    pruneMergedNodes();
     current=clamp(current);
     goTo(current);
     bindFrameKeyboard();
