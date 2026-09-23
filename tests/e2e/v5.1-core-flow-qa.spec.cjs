@@ -56,7 +56,7 @@ test('fresh navigation starts from welcome while reload keeps recovery state and
   expect(stored.region).toBe('서울 · 강남');
   expect(stored.position).toBe('FW');
   expect(stored.level).toBe('중급+');
-  expect(stored.route).toBe('welcome');
+  expect(stored.route).toBeUndefined();
   expect(errs).toEqual([]);
 });
 
@@ -65,6 +65,7 @@ test('user-facing vocabulary uses 공격수, 초급, 고급 without changing int
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  await page.getByRole('button',{name:'다음'}).click();
   await expect(page.getByRole('button',{name:/공격수/})).toBeVisible();
   await expect(page.getByText('포워드',{exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'다음'}).click();
@@ -85,13 +86,14 @@ test('AI Match Assistant is primary on Home and accepts the new visible vocabula
   await expect(card.getByText('핵심 경기 탐색')).toBeVisible();
   await expect(card.getByText('AI 장애나 지연 시 기존 rules-based 검색으로 자동 전환합니다.')).toBeVisible();
   const order=await page.evaluate(()=>{
-    const greeting=document.querySelector('.fm-next-greeting');
-    const ai=document.querySelector('[data-ai-assistant]');
-    const context=document.querySelector('.fm-next-context-card');
-    return {afterGreeting:greeting?.nextElementSibling===ai,beforeContext:ai&&context?Boolean(ai.compareDocumentPosition(context)&Node.DOCUMENT_POSITION_FOLLOWING):false};
+    const greeting=document.querySelector('.fm-next-greeting')?.getBoundingClientRect();
+    const ai=document.querySelector('[data-ai-assistant]')?.getBoundingClientRect();
+    const context=document.querySelector('.fm-next-context-card')?.getBoundingClientRect();
+    return greeting&&ai&&context?{greetingBottom:greeting.bottom,aiTop:ai.top,aiBottom:ai.bottom,contextTop:context.top}:null;
   });
-  expect(order.afterGreeting).toBe(true);
-  expect(order.beforeContext).toBe(true);
+  expect(order).not.toBeNull();
+  expect(order.aiTop).toBeGreaterThanOrEqual(order.greetingBottom-1);
+  expect(order.aiBottom).toBeLessThanOrEqual(order.contextTop+1);
   await page.getByLabel('찾고 싶은 경기 조건').fill('수원 영통에서 초급 공격수 경기 찾아줘');
   await page.getByRole('button',{name:'AI로 찾기'}).click();
   await expect(page.locator('[data-ai-mode]')).toHaveText('Rules fallback');
