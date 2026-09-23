@@ -71,7 +71,7 @@
   .fm-decision-compare-grid{grid-template-columns:1fr}
 }
 @media(min-width:421px) and (max-width:430px){
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"][data-product-detail="prioritized"]>.fm-next-detail-section.fm-decision-section[data-decision-section]{width:390px;max-width:calc(100% - 40px);margin-inline:auto}
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"][data-product-detail="prioritized"]>.fm-next-detail-section.fm-decision-section[data-decision-section]{width:390px;max-width:none;margin-inline:auto}
 }
 @media(min-width:700px){
   .fm-decision-dialog-backdrop{place-items:center}
