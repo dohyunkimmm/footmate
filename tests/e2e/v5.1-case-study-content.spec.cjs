@@ -222,7 +222,7 @@ test('reader-facing body copy is Korean-first while preserving necessary technic
 
   const cover=await slideText(page,0);
   expect(cover).not.toContain('deterministic ranking');
-  expect(cover).toContain('추천 순위 계산');
+  expect(cover).toContain('실제 연동과 시뮬레이션 구분');
 
   const provider=await slideText(page,10);
   expect(provider).not.toContain('sample records');
