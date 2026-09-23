@@ -91,6 +91,21 @@
     });
   }
 
+  function injectStoryAlignment(){
+    if(document.getElementById('fm-case-study-shell-alignment'))return;
+    const style=document.createElement('style');
+    style.id='fm-case-study-shell-alignment';
+    style.textContent=`
+      @media(min-width:901px){
+        html[data-fm-next-case-study="true"] .fm-next-story-slide{padding-top:92px!important;padding-bottom:58px!important}
+      }
+      @media(min-width:901px) and (max-height:820px){
+        html[data-fm-next-case-study="true"] .fm-next-story-slide{padding-top:76px!important;padding-bottom:48px!important}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function refresh(){
     current=clamp(current);
     goTo(current);
@@ -100,6 +115,7 @@
   window.goTo=goTo;
   window.refreshCaseStudyNavigation=refresh;
   document.documentElement.dataset.fmNextCaseStudy='true';
+  injectStoryAlignment();
 
   document.addEventListener('click',event=>{
     const tocItem=event.target.closest?.('.toc-item');
