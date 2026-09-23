@@ -27,7 +27,7 @@ async function setup(page){
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 
-test('legacy v4 browser state migrates to version-neutral keys and stays rollback-mirrored',async({page})=>{
+test('legacy v4 browser state migrates durable data while fresh entry resets navigation state',async({page})=>{
   const errs=failures(page);
   await page.addInitScript(()=>{
     localStorage.clear();
@@ -37,7 +37,7 @@ test('legacy v4 browser state migrates to version-neutral keys and stays rollbac
   });
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_PLATFORM__?.storageKeys?.session==='footmate:session');
-  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
   await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-namespace','version-neutral');
   await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-compatibility','legacy-mirror');
 
@@ -53,13 +53,18 @@ test('legacy v4 browser state migrates to version-neutral keys and stays rollbac
   expect(migrated.canonicalSession.schemaVersion).toBe(2);
   expect(migrated.canonicalSession).toEqual(migrated.legacySession);
   expect(migrated.canonicalSession.selectedMatchId).toBe('gwanggyo-2130');
+  expect(migrated.canonicalSession.route).toBeUndefined();
+  expect(migrated.canonicalSession.setupComplete).toBe(true);
   expect(migrated.canonicalDiscovery).toEqual(migrated.legacyDiscovery);
   expect(migrated.canonicalDiscovery.time).toBe('20');
   expect(migrated.canonicalInteraction).toEqual(migrated.legacyInteraction);
+  expect(migrated.canonicalInteraction.detailReturnRoute).toBeUndefined();
   expect(migrated.migration.session.source).toBe('legacy');
   expect(migrated.migration.discovery.source).toBe('legacy');
   expect(migrated.migration.interaction.source).toBe('legacy');
 
+  await page.getByRole('button',{name:'이전 설정으로 계속하기'}).click();
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await page.getByRole('button',{name:'전체 보기'}).click();
   const mirroredAfterLegacyWrite=await page.evaluate(()=>({
     canonical:localStorage.getItem('footmate:session'),
@@ -281,8 +286,8 @@ test('Case Study desktop companion panels retain reviewable width and structured
   const errs=failures(page);
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===16);
-  for(let index=1;index<16;index+=1){
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===13);
+  for(let index=1;index<13;index+=1){
     await page.evaluate(i=>window.goTo(i),index);
     await expect(page.locator('.slide.on')).toHaveCount(1);
     const panel=await page.locator('.slide.on').evaluate(slide=>{
