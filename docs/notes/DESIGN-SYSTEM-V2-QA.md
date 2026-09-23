@@ -62,7 +62,19 @@ Baseline generation alone is not a PASS. This change is visually verified only a
 
 - Welcome headline color is asserted directly in the Product full surface and the Case Study cover iframe; image equality alone cannot validate readability.
 - Home and Discover share compact idle AI geometry. Loading/result status remains visible, examples retain at least 11px text, and fresh users do not see a memory-personalization claim.
-- At 320/375/390/430, first-match exposure is measured against the actual nav top; the final card must scroll fully above navigation.
+- At 320/375/390/430, the first match name must finish at least 8px above the actual nav top; the final card must scroll fully above navigation.
 - A scrolled match-list click must open Detail at scroll position zero. Same-route updates do not reset document scroll.
 - Design System CSS owns the 560px single-column Product shell with zero shell radius. `app.html` no longer carries the late desktop geometry override.
+- Detail save/compare controls retain readable dark text on their light surface, including hover.
 - Changed Product surfaces and Case Study covers require reviewed baselines plus a separate normal screenshot comparison. These contracts describe required QA, not a release PASS.
+
+## Audit baseline review · 2026-09-23
+
+- Integration base: main `d0688bd70bd2022cd1919bc47c8f84ca0b541dc1`, including #228.
+- Runtime/test candidate: `319510ea3fd573c3de63d04ed5636368f99bccfe` (#229).
+- Candidate workflow `35862321102`: generation 70 PASS; separate ordinary comparison 70 PASS, zero retries/failures.
+- 25 changed PNGs reviewed: Welcome 390/1440; Case Study cover 1440/1728; Home/Discover mobile compositions and 1440; AI idle/loading/fallback; context actions; Detail/Checkout/Success/Auth.
+- The old Case Study cover diff isolates the unreadable headline. Detail's large diff is a corrected route starting position; a separate scrolled-list navigation contract verifies scroll zero.
+- At 320×844, first match name bottom: Home 751.95px / Discover 739.47px; nav top 760px. All four widths preserve >=11px AI text and last-card clearance.
+- Test measurement uses instant scroll to avoid reading an intermediate smooth-scroll frame; the application retains ordinary user scrolling.
+- These candidate results do not replace the required full normal PR Browser E2E + axe comparison of the committed baselines. See #229 checks for the final exact-head result. Production is not verified by this PR run.
