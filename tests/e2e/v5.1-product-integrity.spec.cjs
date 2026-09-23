@@ -35,7 +35,7 @@ test('legacy v4 browser state migrates to version-neutral keys and stays rollbac
     localStorage.setItem('footmate:v4:discovery',JSON.stringify({date:'all',time:'20',distance:'all',price:'all',position:'MF',sort:'fit'}));
     localStorage.setItem('footmate:v4:interaction',JSON.stringify({detailReturnRoute:'discover'}));
   });
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_PLATFORM__?.storageKeys?.session==='footmate:session');
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-namespace','version-neutral');
