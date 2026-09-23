@@ -2,6 +2,21 @@ import {connectedMatchdayPlatform} from '../application/connected-platform.js';
 import {footmatePlatform} from '../../v4/platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
+const entryParams=new URLSearchParams(location.search);
+const entryMode=['guided','evidence'].includes(entryParams.get('mode'))?entryParams.get('mode'):'real';
+const entryEmbed=entryParams.get('embed')==='1';
+const internalResume=entryParams.get('resume')==='1'||entryParams.get('oauth_return')==='1';
+const navigation=performance.getEntriesByType('navigation')[0];
+const navigationType=navigation?.type||'navigate';
+const isFreshEntry=entryMode==='real'&&!entryEmbed&&!internalResume&&navigationType==='navigate';
+if(isFreshEntry){
+  const current=footmatePlatform.session.read()||{};
+  footmatePlatform.session.write({...current,route:'welcome',setupStep:0});
+  sessionStorage.removeItem('footmate:release-flow:history:v1');
+  sessionStorage.removeItem('footmate:release-flow:last-route:v1');
+}
+document.documentElement.dataset.footmateFreshEntry=isFreshEntry?'reset':'preserved';
+
 document.documentElement.dataset.footmateV5Version=connectedMatchdayPlatform.version;
 if(root){
   root.dataset.connectedPlatformVersion=connectedMatchdayPlatform.version;
