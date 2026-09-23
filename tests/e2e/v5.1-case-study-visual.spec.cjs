@@ -67,7 +67,7 @@ async function expectDesktopGeometry(page,viewportWidth){
   const shellCenter=geometry.shell.left+geometry.shell.width/2;
   expect(Math.abs(shellCenter-viewportWidth/2)).toBeLessThanOrEqual(1);
   expect(Math.abs(geometry.sidebarWidth-232)).toBeLessThanOrEqual(1);
-  expect(Math.abs(geometry.viewerWidth-(geometry.shell.width-geometry.sidebarWidth)).toBeLessThanOrEqual(1);
+  expect(Math.abs(geometry.viewerWidth-(geometry.shell.width-geometry.sidebarWidth))).toBeLessThanOrEqual(1);
   expect(geometry.overflow).toBeLessThanOrEqual(1);
 }
 
