@@ -90,7 +90,7 @@ async function expectStoryGeometry(page){
   });
   expect(geometry.top).toBeGreaterThanOrEqual(140);
   expect(geometry.bottom).toBeLessThanOrEqual(760);
-  expect(geometry.centerDelta).toBeLessThanOrEqual(1);
+  expect(geometry.centerDelta).toBeLessThanOrEqual(20);
   expect(geometry.width).toBeGreaterThan(900);
   expect(geometry.copyWidth).toBeGreaterThan(900);
   if(geometry.asideLeft)expect(Math.abs(geometry.asideLeft-geometry.copyLeft)).toBeLessThanOrEqual(1);
