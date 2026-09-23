@@ -68,8 +68,11 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Closed Beta minimal operation audit trail without email/name payloads, extended through check-in and match completion
 - Real / Guided / Evidence mode 분리
 - responsive 320 / 375 / 390 / 430px
+- `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
+- `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
+- desktop Real App shell: stable max 560px composition; unrequested 1040px expansion is not part of the Product contract
 - Browser E2E + axe accessibility regression
-- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 320px context actions · 390px AI card · 1440px Detail / Checkout / Success를 `toHaveScreenshot()` + `maxDiffPixels: 0` exact comparison으로 유지하고, 1440px Home / Discover의 2-column density와 horizontal overflow를 geometry regression으로 검증
+- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product / Case Study surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
 
 ## Production / integration boundary
 
@@ -103,8 +106,11 @@ runtime-impacting 변경의 자동 release gate는 다음을 포함합니다. do
 
 - Regression suite
 - Browser E2E + axe
-- Playwright screenshot visual regression — approved Ubuntu/Chromium baseline과 actual render를 비교하고 mismatch 시 expected / actual / diff evidence를 남김; current Real App exact coverage는 320px context actions · 390px AI card · 1440px Detail / Checkout / Success이며 Home / Discover desktop density와 overflow는 별도 geometry contract로 검증
+- Playwright screenshot visual regression — approved Ubuntu/Chromium baseline과 actual render를 비교하고 mismatch 시 expected / actual / diff evidence를 남김; changed Real App / Case Study surfaces와 1440px max 560px shell·center·overflow geometry를 함께 검증
 - responsive 320 / 375 / 390 / 430px
+- `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
+- `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
+- desktop Real App shell: stable max 560px composition; unrequested 1040px expansion is not part of the Product contract
 - Deep Link / State Consistency / persistence restoration
 - Closed Beta backend config / Auth / join / cancel / reload recovery
 - Closed Beta password recovery / signup verification resend / recovery-link password update

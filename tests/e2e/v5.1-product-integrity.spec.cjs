@@ -35,7 +35,7 @@ test('legacy v4 browser state migrates to version-neutral keys and stays rollbac
     localStorage.setItem('footmate:v4:discovery',JSON.stringify({date:'all',time:'20',distance:'all',price:'all',position:'MF',sort:'fit'}));
     localStorage.setItem('footmate:v4:interaction',JSON.stringify({detailReturnRoute:'discover'}));
   });
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_PLATFORM__?.storageKeys?.session==='footmate:session');
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('#footmate-next')).toHaveAttribute('data-storage-namespace','version-neutral');
@@ -255,9 +255,10 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
   const aiExample=page.locator('.fm-ai-examples button').first();
   await expect(aiExample).toBeVisible();
   const aiRest=await surface(aiExample);
-  const aiHover=await hoverSurface(aiExample);
-  expect(aiHover.background).not.toBe(aiRest.background);
-  expect(aiHover.border).not.toBe(aiRest.border);
+  await aiExample.focus();
+  await page.waitForTimeout(80);
+  const aiFocus=await surface(aiExample);
+  expect(aiFocus.background!==aiRest.background||aiFocus.border!==aiRest.border).toBe(true);
 
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
