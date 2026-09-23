@@ -144,7 +144,10 @@ for(const width of [320,375,390,430]){
     const errs=await openCleanApp(page,{width,height:844});
     await setupToHome(page);
     for(const route of ['home','discover']){
-      if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
+      if(route==='discover'){
+        await page.getByRole('button',{name:'경기 찾기'}).click();
+        await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+      }
       const screen=page.locator(`[data-screen="${route}"]`);
       const nav=screen.locator('.fm-next-nav');
       await expect(nav).toHaveCSS('position','fixed');
@@ -159,25 +162,26 @@ for(const width of [320,375,390,430]){
       const geometry=await first.evaluate(card=>{
         const title=card.querySelector('.fm-next-match-place').getBoundingClientRect();
         const box=card.getBoundingClientRect();
-        const nav=document.querySelector('.fm-next-nav').getBoundingClientRect();
         const buttonHeights=[...document.querySelectorAll('button')].filter(node=>node.getClientRects().length).map(node=>node.getBoundingClientRect().height);
-        return {titleLeft:title.left,titleRight:title.right,boxLeft:box.left,boxRight:box.right,navTop:nav.top,minButton:Math.min(...buttonHeights)};
+        return {titleLeft:title.left,titleRight:title.right,boxLeft:box.left,boxRight:box.right,minButton:Math.min(...buttonHeights)};
       });
       expect(geometry.titleLeft).toBeGreaterThanOrEqual(geometry.boxLeft);
       expect(geometry.titleRight).toBeLessThanOrEqual(geometry.boxRight+1);
-      expect(geometry.minButton).toBeGreaterThanOrEqual(34);
+      expect(geometry.minButton).toBeGreaterThanOrEqual(44);
       await expectNoOverflow(page);
 
       await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
       if(route==='home'){
         await page.getByRole('button',{name:'경기 찾기'}).click();
         await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+        await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+        await page.getByRole('button',{name:'홈'}).click();
+        await expect(page.locator('[data-screen="home"]')).toBeVisible();
       }else{
         await page.getByRole('button',{name:'홈'}).click();
         await expect(page.locator('[data-screen="home"]')).toBeVisible();
+        await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
       }
-      await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
-      if(route==='discover')await page.getByRole('button',{name:'경기 찾기'}).click();
     }
     expect(errs).toEqual([]);
   });
