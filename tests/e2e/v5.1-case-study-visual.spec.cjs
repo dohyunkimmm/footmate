@@ -12,13 +12,15 @@ function failures(page){
 }
 
 async function positionMobileSlide(page,index){
-  for(let attempt=0;attempt<5;attempt+=1){
-    const top=await page.locator('.slide').nth(index).evaluate(slide=>slide.getBoundingClientRect().top);
-    if(top>=40&&top<=48)return;
-    await page.evaluate(delta=>window.scrollBy({top:delta,behavior:'auto'}),top-44);
-    await page.waitForTimeout(80);
+  const target=page.locator('.slide').nth(index);
+  for(let attempt=0;attempt<8;attempt+=1){
+    const targetY=await target.evaluate(slide=>window.scrollY+slide.getBoundingClientRect().top-44);
+    await page.evaluate(y=>window.scrollTo({top:y,behavior:'auto'}),targetY);
+    await page.waitForTimeout(100);
+    const settledTop=await target.evaluate(slide=>slide.getBoundingClientRect().top);
+    if(settledTop>=40&&settledTop<=48)return;
   }
-  const finalTop=await page.locator('.slide').nth(index).evaluate(slide=>slide.getBoundingClientRect().top);
+  const finalTop=await target.evaluate(slide=>slide.getBoundingClientRect().top);
   expect(finalTop,`mobile slide ${index+1} top after deterministic scroll positioning`).toBeGreaterThanOrEqual(40);
   expect(finalTop,`mobile slide ${index+1} top after deterministic scroll positioning`).toBeLessThanOrEqual(48);
 }
