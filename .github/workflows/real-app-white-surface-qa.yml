@@ -4,8 +4,8 @@ on:
     branches: [main]
     paths:
       - app.html
-      - src/v5/product-completion.css
-      - src/v5/product-completion.js
+      - src/v4/design-system-v2.css
+      - src/v5/ai-match-assistant.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs
@@ -15,8 +15,8 @@ on:
     branches: [main]
     paths:
       - app.html
-      - src/v5/product-completion.css
-      - src/v5/product-completion.js
+      - src/v4/design-system-v2.css
+      - src/v5/ai-match-assistant.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs
@@ -35,8 +35,9 @@ jobs:
           package-manager-cache: false
       - name: Install QA dependencies
         run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0
-      - name: Check Real App CSS syntax
+      - name: Check Real App CSS syntax and performance budget
         run: |
+          node scripts/check-v4.9-performance-budget.cjs
           node - <<'NODE'
           const fs=require('fs');
           const csstree=require('css-tree');
@@ -44,11 +45,11 @@ jobs:
           const match=html.match(/<style id="fm-real-app-white-tone">([\s\S]*?)<\/style>/);
           if(!match)throw new Error('fm-real-app-white-tone style not found');
           csstree.parse(match[1]);
-          csstree.parse(fs.readFileSync('src/v5/product-completion.css','utf8'));
+          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));
           console.log('PASS Real App CSS syntax');
           NODE
       - name: Check product completion JS syntax
-        run: node --check src/v5/product-completion.js
+        run: node --check src/v5/ai-match-assistant.js
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Compare Real App visual baselines and completion contracts
