@@ -1,5 +1,7 @@
 const {test,expect}=require('@playwright/test');
 
+// Changed-surface contract: approved Case Study polish must stay pixel-exact at wide, compact desktop, and mobile review surfaces.
+// The same gate also locks the post-contrast-fix sidebar and deterministic deep-scroll mobile framing.
 function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
@@ -7,6 +9,18 @@ function failures(page){
     if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
   });
   return items;
+}
+
+async function positionMobileSlide(page,index){
+  for(let attempt=0;attempt<5;attempt+=1){
+    const top=await page.locator('.slide').nth(index).evaluate(slide=>slide.getBoundingClientRect().top);
+    if(top>=40&&top<=48)return;
+    await page.evaluate(delta=>window.scrollBy({top:delta,behavior:'auto'}),top-44);
+    await page.waitForTimeout(80);
+  }
+  const finalTop=await page.locator('.slide').nth(index).evaluate(slide=>slide.getBoundingClientRect().top);
+  expect(finalTop,`mobile slide ${index+1} top after deterministic scroll positioning`).toBeGreaterThanOrEqual(40);
+  expect(finalTop,`mobile slide ${index+1} top after deterministic scroll positioning`).toBeLessThanOrEqual(48);
 }
 
 async function openCaseStudy(page,viewport,index=0){
@@ -25,8 +39,9 @@ async function openCaseStudy(page,viewport,index=0){
   if(index>0){
     await page.evaluate(i=>window.goTo(i),index);
     await expect(page.locator('.slide.on')).toHaveCount(1);
+    if(viewport.width<=900)await positionMobileSlide(page,index);
   }
-  await page.evaluate(()=>scrollTo(0,0));
+  if(index===0||viewport.width>900)await page.evaluate(()=>scrollTo(0,0));
   await page.mouse.move(1,1);
   return errs;
 }
@@ -60,6 +75,49 @@ async function expectDesktopGeometry(page,viewportWidth){
   expect(geometry.overflow).toBeLessThanOrEqual(1);
 }
 
+async function expectStoryEditorialGeometry(page,{minWidth=900,minCopyWidth=520,minAsideWidth=329}={}){
+  const geometry=await page.locator('.slide.on .fm-next-story').evaluate(story=>{
+    const rect=story.getBoundingClientRect();
+    const copy=story.querySelector('.fm-next-story-copy');
+    const aside=story.querySelector('.fm-next-story-aside');
+    return {
+      top:rect.top,
+      width:rect.width,
+      copyWidth:copy?.getBoundingClientRect().width||0,
+      asideWidth:aside?.getBoundingClientRect().width||0
+    };
+  });
+  expect(geometry.top).toBeGreaterThanOrEqual(108);
+  expect(geometry.top).toBeLessThanOrEqual(116);
+  expect(geometry.width).toBeGreaterThan(minWidth);
+  expect(geometry.copyWidth).toBeGreaterThan(minCopyWidth);
+  expect(geometry.asideWidth).toBeGreaterThanOrEqual(minAsideWidth);
+}
+
+async function expectMobileGeometry(page,index=0){
+  const geometry=await page.evaluate(i=>{
+    const slide=document.querySelectorAll('.slide')[i];
+    const header=document.querySelector('.cs-mobile-head');
+    const headerRect=header?.getBoundingClientRect();
+    return {
+      overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+      headerHeight:headerRect?.height||0,
+      headerTop:headerRect?.top??999,
+      headerText:(header?.innerText||'').replace(/\s+/g,' ').trim(),
+      targetTop:slide?.getBoundingClientRect().top??999
+    };
+  },index);
+  expect(geometry.overflow).toBeLessThanOrEqual(1);
+  expect(geometry.headerHeight).toBeGreaterThanOrEqual(40);
+  expect(geometry.headerHeight).toBeLessThanOrEqual(48);
+  expect(Math.abs(geometry.headerTop)).toBeLessThanOrEqual(1);
+  expect(geometry.headerText).toContain('FootMate');
+  if(index>0){
+    expect(geometry.targetTop).toBeGreaterThanOrEqual(40);
+    expect(geometry.targetTop).toBeLessThanOrEqual(48);
+  }
+}
+
 async function expectViewportScreenshot(page,name){
   await expect(page).toHaveScreenshot(name,{
     animations:'disabled',
@@ -83,17 +141,54 @@ test('Case Study 1440 desktop cover matches approved visual baseline',async({pag
   expect(errs).toEqual([]);
 });
 
-test('Case Study 1440 representative section matches approved visual baseline',async({page})=>{
-  const errs=await openCaseStudy(page,{width:1440,height:900},7);
-  await expectDesktopGeometry(page,1440);
-  await expectViewportScreenshot(page,'case-study-section-08-1440.png');
-  expect(errs).toEqual([]);
-});
+const desktopSections=[
+  {index:2,name:'case-study-section-03-1440.png',label:'Persona / JTBD'},
+  {index:4,name:'case-study-section-05-1440.png',label:'Core Journey'},
+  {index:7,name:'case-study-section-08-1440.png',label:'Decision 03'},
+  {index:9,name:'case-study-section-10-1440.png',label:'Join / Payment'},
+  {index:12,name:'case-study-section-13-1440.png',label:'IA / Modes'},
+  {index:14,name:'case-study-section-15-1440.png',label:'Validation'},
+  {index:15,name:'case-study-section-16-1440.png',label:'Outcome / Limits'}
+];
+
+for(const section of desktopSections){
+  test(`Case Study 1440 ${section.label} matches approved visual baseline`,async({page})=>{
+    const errs=await openCaseStudy(page,{width:1440,height:900},section.index);
+    await expectDesktopGeometry(page,1440);
+    await expectStoryEditorialGeometry(page);
+    await expectViewportScreenshot(page,section.name);
+    expect(errs).toEqual([]);
+  });
+}
+
+for(const section of [
+  {index:6,name:'case-study-section-07-1180.png',label:'Recommendation stack'},
+  {index:8,name:'case-study-section-09-1180.png',label:'Sign in auth flow'}
+]){
+  test(`Case Study 1180 ${section.label} keeps compact editorial density`,async({page})=>{
+    const errs=await openCaseStudy(page,{width:1180,height:900},section.index);
+    await expectDesktopGeometry(page,1180);
+    await expectStoryEditorialGeometry(page,{minWidth:800,minCopyWidth:520,minAsideWidth:279});
+    await expectViewportScreenshot(page,section.name);
+    expect(errs).toEqual([]);
+  });
+}
 
 test('Case Study 390 mobile cover matches approved visual baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:390,height:844});
-  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
-  expect(overflow).toBeLessThanOrEqual(1);
+  await expectMobileGeometry(page,0);
   await expectViewportScreenshot(page,'case-study-cover-390.png');
   expect(errs).toEqual([]);
 });
+
+for(const section of [
+  {index:7,name:'case-study-section-08-390.png',label:'Decision 03'},
+  {index:14,name:'case-study-section-15-390.png',label:'Validation'}
+]){
+  test(`Case Study 390 ${section.label} matches approved visual baseline`,async({page})=>{
+    const errs=await openCaseStudy(page,{width:390,height:844},section.index);
+    await expectMobileGeometry(page,section.index);
+    await expectViewportScreenshot(page,section.name);
+    expect(errs).toEqual([]);
+  });
+}
