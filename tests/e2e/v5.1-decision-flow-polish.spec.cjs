@@ -48,70 +48,28 @@ function rect(locator){
   });
 }
 
-test('1440px Real App uses intentional desktop density through Detail, Checkout, and Success',async({page})=>{
+test('1440px Real App keeps the stable narrow shell through Detail and Checkout',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
   await openFirstDetail(page);
-
   const app=await rect(page.locator('.fm-next-app'));
-  expect(app.width).toBeGreaterThanOrEqual(1038);
-  expect(app.width).toBeLessThanOrEqual(1042);
-
-  const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{
-    const box=node.getBoundingClientRect();
-    return {x:box.x,y:box.y,width:box.width,height:box.height};
-  }));
+  expect(app.width).toBeGreaterThanOrEqual(558);
+  expect(app.width).toBeLessThanOrEqual(562);
+  const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
   expect(detailSections.length).toBeGreaterThanOrEqual(4);
-  expect(detailSections.length%2).toBe(0);
-  for(let index=0;index<detailSections.length;index+=2){
-    const left=detailSections[index];
-    const right=detailSections[index+1];
-    expect(Math.abs(left.y-right.y),`detail row ${index/2+1} is not aligned`).toBeLessThanOrEqual(2);
-    expect(right.x,`detail row ${index/2+1} did not form a second column`).toBeGreaterThan(left.x+left.width);
-    expect(left.width).toBeGreaterThanOrEqual(430);
-    expect(right.width).toBeGreaterThanOrEqual(430);
-  }
-
+  for(let i=1;i<detailSections.length;i+=1){expect(detailSections[i].y).toBeGreaterThan(detailSections[i-1].y);expect(Math.abs(detailSections[i].x-detailSections[0].x)).toBeLessThanOrEqual(2);}
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
-  expect(sticky.width).toBeGreaterThanOrEqual(798);
-  expect(sticky.width).toBeLessThanOrEqual(802);
-  expect(Math.abs(900-sticky.bottom)).toBeLessThanOrEqual(34);
-
+  expect(sticky.width).toBeGreaterThanOrEqual(534);
+  expect(sticky.width).toBeLessThanOrEqual(538);
   await reachCheckout(page);
-  const checkoutSections=await page.locator('[data-screen="checkout"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{
-    const box=node.getBoundingClientRect();
-    return {x:box.x,y:box.y,width:box.width,height:box.height};
-  }));
+  const checkoutSections=await page.locator('[data-screen="checkout"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
   expect(checkoutSections.length).toBeGreaterThanOrEqual(2);
-  expect(checkoutSections.length%2).toBe(0);
-  for(let index=0;index<checkoutSections.length;index+=2){
-    const left=checkoutSections[index];
-    const right=checkoutSections[index+1];
-    expect(Math.abs(left.y-right.y),`checkout row ${index/2+1} is not aligned`).toBeLessThanOrEqual(2);
-    expect(right.x,`checkout row ${index/2+1} did not form a second column`).toBeGreaterThan(left.x+left.width);
-    expect(left.width).toBeGreaterThanOrEqual(430);
-    expect(right.width).toBeGreaterThanOrEqual(430);
-  }
-
+  for(let i=1;i<checkoutSections.length;i+=1){expect(checkoutSections[i].y).toBeGreaterThan(checkoutSections[i-1].y);expect(Math.abs(checkoutSections[i].x-checkoutSections[0].x)).toBeLessThanOrEqual(2);}
   const submit=await rect(page.locator('[data-participation-submit]'));
-  expect(submit.width).toBeGreaterThanOrEqual(378);
-  expect(submit.width).toBeLessThanOrEqual(382);
-  expect(submit.height).toBeGreaterThanOrEqual(50);
-
+  expect(submit.width).toBeGreaterThanOrEqual(500);
+  expect(submit.width).toBeLessThanOrEqual(522);
   await page.locator('[data-participation-submit]').click();
   await expect(page.locator('[data-screen="success"]')).toBeVisible({timeout:5000});
-  const ticket=await rect(page.locator('.fm-next-ticket'));
-  expect(ticket.width).toBeGreaterThanOrEqual(678);
-  expect(ticket.width).toBeLessThanOrEqual(682);
-
-  const successActions=await page.locator('[data-screen="success"] .fm-next-actions .fm-next-button').evaluateAll(nodes=>nodes.map(node=>{
-    const box=node.getBoundingClientRect();
-    return {x:box.x,y:box.y,width:box.width,height:box.height};
-  }));
-  expect(successActions).toHaveLength(2);
-  expect(Math.abs(successActions[0].y-successActions[1].y)).toBeLessThanOrEqual(2);
-  expect(successActions[0].width).toBeGreaterThanOrEqual(300);
-  expect(successActions[1].width).toBeGreaterThanOrEqual(300);
   expect(errs).toEqual([]);
 });
 

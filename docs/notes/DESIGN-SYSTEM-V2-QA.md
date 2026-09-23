@@ -28,7 +28,7 @@
 
 Changed Product surfaces are covered by the existing Product screenshot suites plus `tests/e2e/v5.1-design-system-v2.spec.cjs` and `tests/e2e/v5.1-release-flow-review.spec.cjs`.
 
-Baselines are generated on Ubuntu 24.04 / Chromium, reviewed, committed, and then must be compared again in normal PR QA with `toHaveScreenshot()` and `maxDiffPixels: 0`.
+Baselines are generated on Ubuntu 24.04 / Chromium, reviewed, committed, and then compared again in normal PR QA with `toHaveScreenshot()`. Geometry contracts stay exact; known runner anti-alias noise is bounded to a small pixel allowance instead of accepting layout drift.
 
 Representative Product surfaces include:
 
@@ -45,7 +45,8 @@ Representative Product surfaces include:
 
 Geometry contracts additionally cover:
 
-- desktop app-shell width and center alignment
+- desktop app-shell max 560px width and center alignment
+- wide-viewport Detail / Checkout / Auth / Schedule / Profile remain narrow-stack rather than switching to the rejected 1040px desktop composition
 - persistent navigation center alignment
 - component-role radius families and control height
 - 320 / 375 / 390 / 430 horizontal overflow safety

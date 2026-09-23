@@ -76,24 +76,17 @@ test('390px AI card matches the approved visual baseline',async({page})=>{
   expect(errs).toEqual([]);
 });
 
-test('1440px Home and Discover use intentional two-column card density',async({page})=>{
+test('1440px Home and Discover preserve the stable narrow card density',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setup(page);
-
   const homeList=page.locator('[data-screen="home"]>.fm-next-list');
   const homeCards=page.locator('[data-screen="home"]>.fm-next-list .fm-next-match-card');
   await expect(homeCards).toHaveCount(2);
-  await expect.poll(()=>gridColumnCount(homeList)).toBe(2);
-  for(const width of await cardWidths(homeCards))expect(width).toBeGreaterThanOrEqual(420);
-
+  await expect.poll(()=>gridColumnCount(homeList)).toBe(1);
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   const discoverList=page.locator('[data-screen="discover"] .fm-next-list');
-  const discoverCards=page.locator('[data-screen="discover"] .fm-next-list .fm-next-match-card');
-  expect(await discoverCards.count()).toBeGreaterThanOrEqual(2);
-  await expect.poll(()=>gridColumnCount(discoverList)).toBe(2);
-  for(const width of await cardWidths(discoverCards))expect(width).toBeGreaterThanOrEqual(420);
-
+  await expect.poll(()=>gridColumnCount(discoverList)).toBe(1);
   const overflow=await page.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth}));
   expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
   expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);

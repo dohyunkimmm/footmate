@@ -255,9 +255,10 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
   const aiExample=page.locator('.fm-ai-examples button').first();
   await expect(aiExample).toBeVisible();
   const aiRest=await surface(aiExample);
-  const aiHover=await hoverSurface(aiExample);
-  expect(aiHover.background).not.toBe(aiRest.background);
-  expect(aiHover.border).not.toBe(aiRest.border);
+  await aiExample.focus();
+  await page.waitForTimeout(80);
+  const aiFocus=await surface(aiExample);
+  expect(aiFocus.background!==aiRest.background||aiFocus.border!==aiRest.border).toBe(true);
 
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();

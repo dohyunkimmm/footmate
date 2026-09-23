@@ -12,3 +12,7 @@ html.fm-release-dialog-open{overflow:hidden}.fm-release-dialog-layer{position:fi
 @media(min-width:1100px){.fm-next-page[data-mode="real"] [data-screen="home"]>.fm-ai-card--core,.fm-next-page[data-mode="real"] [data-screen="discover"] .fm-ai-card--core{width:min(100%,var(--fm-ds-content-max,976px));margin-left:auto;margin-right:auto}}
 @media(max-width:430px){.fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core{margin:16px 0 20px;padding:18px;border-radius:20px}.fm-next-page[data-mode="real"] .fm-ai-card--core .fm-ai-head strong{font-size:21px}.fm-ai-core-label{margin-bottom:13px}.fm-release-dialog-layer{align-items:end;padding:12px}.fm-release-team-dialog{width:100%;max-height:82dvh;padding:19px;border-radius:22px 22px 18px 18px}}
 @media(max-width:340px){.fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core{padding:15px}.fm-next-page[data-mode="real"] .fm-ai-card--core .fm-ai-input-row{grid-template-columns:1fr}.fm-next-page[data-mode="real"] .fm-ai-card--core .fm-ai-input-row button{width:100%}}
+
+
+/* PR 218 interaction feedback final */
+.fm-next-page[data-mode="real"] .fm-ai-examples button:hover,.fm-next-page[data-mode="real"] .fm-ai-examples button:focus{background:#eef4ea!important;border-color:#8fa69a!important}

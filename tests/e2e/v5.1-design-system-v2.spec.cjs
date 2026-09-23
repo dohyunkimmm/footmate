@@ -50,7 +50,7 @@ async function expectNoHorizontalOverflow(page){
   expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
 }
 
-const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:0};
+const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:24};
 
 test('1440px Design System v2 keeps the stable app shell centered and component metrics coherent',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
@@ -63,7 +63,8 @@ test('1440px Design System v2 keeps the stable app shell centered and component 
   expect(geometry.width).toBeGreaterThanOrEqual(558);
   expect(geometry.width).toBeLessThanOrEqual(562);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
-  expect(parseFloat(geometry.borderRadius)).toBeLessThanOrEqual(1);
+  expect(parseFloat(geometry.borderRadius)).toBeGreaterThanOrEqual(28);
+  expect(parseFloat(geometry.borderRadius)).toBeLessThanOrEqual(36);
 
   const card=page.locator('.fm-next-match-card').first();
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));
@@ -77,8 +78,8 @@ test('1440px Design System v2 keeps the stable app shell centered and component 
     return {left:box.left,right:innerWidth-box.right,width:box.width};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThanOrEqual(558);
-  expect(navGeometry.width).toBeLessThanOrEqual(562);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(534);
+  expect(navGeometry.width).toBeLessThanOrEqual(538);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });

@@ -154,7 +154,7 @@ const setupSteps=[
     key:'position',
     title:'어떤 포지션이 편한가요?',
     copy:'추천 경기의 남은 자리와 함께 볼게요.',
-    options:[['MF','미드필더'],['FW','포워드'],['DF','수비'],['GK','골키퍼']]
+    options:[['MF','미드필더'],['FW','공격수'],['DF','수비'],['GK','골키퍼']]
   },
   {
     key:'level',
@@ -163,6 +163,11 @@ const setupSteps=[
     options:[['입문','천천히 배우는 중'],['초중급','기본 플레이에 익숙해요'],['중급','정기적으로 경기해요'],['중급+','빠른 템포도 괜찮아요']]
   }
 ];
+
+function setupDisplayValue(key,value){
+  if(key==='level')return {'초중급':'초급','중급+':'고급'}[value]||value;
+  return value;
+}
 
 function setupView(){
   const step=Math.max(0,Math.min(setupSteps.length-1,state.setupStep||0));
@@ -174,7 +179,7 @@ function setupView(){
     <h1 class="fm-next-question">${data.title}</h1>
     <p class="fm-next-question-copy">${data.copy}</p>
     <div class="fm-next-choice-grid">
-      ${data.options.map(([value,desc])=>`<button type="button" class="fm-next-choice" data-action="choose-setup" data-field="${data.key}" data-value="${value}" aria-pressed="${current===value}"><b>${value}</b><span>${desc}</span></button>`).join('')}
+      ${data.options.map(([value,desc])=>`<button type="button" class="fm-next-choice" data-action="choose-setup" data-field="${data.key}" data-value="${value}" aria-pressed="${current===value}"><b>${setupDisplayValue(data.key,value)}</b><span>${desc}</span></button>`).join('')}
     </div>
     <div class="fm-next-setup-footer">${button(step===setupSteps.length-1?`추천 경기 보기 ${icon('arrow')}`:'다음','setup-next','primary')}</div>
   </section>`;

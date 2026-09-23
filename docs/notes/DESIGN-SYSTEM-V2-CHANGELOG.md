@@ -29,7 +29,7 @@ Changed by Design System v2:
 - card / panel elevation and border grammar
 - status / recovery visual language
 - persistent navigation and sticky action consistency
-- desktop shell / content composition
+- desktop shell remains at the stable max 560px composition; the unrequested 1040px expansion is removed, and Detail / Checkout / Auth / Schedule / Profile keep the narrow-stack contract on wide viewports
 - 320 / 375 / 390 / 430 responsive geometry contracts
 - Product Visual Regression baselines for changed surfaces
 
