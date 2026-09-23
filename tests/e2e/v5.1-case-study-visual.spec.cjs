@@ -211,3 +211,14 @@ for(const width of [320,390]){
     });
   }
 }
+
+for(const width of [320,390]){
+  test(`Case Study ${width} cover preview caption is clear and complete`,async({page})=>{
+    await openCaseStudy(page,{width,height:844});
+    const visual=page.locator('.fm-next-cover-visual');
+    const gap=await visual.evaluate(node=>node.querySelector('.fm-next-cover-note').getBoundingClientRect().top-node.querySelector('.fm-next-cover-frame').getBoundingClientRect().bottom);
+    expect(gap).toBeGreaterThanOrEqual(12);
+    await page.addStyleTag({content:'.cs-mobile-head{display:none!important}'});
+    await expect(visual).toHaveScreenshot(`case-study-cover-caption-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0});
+  });
+}

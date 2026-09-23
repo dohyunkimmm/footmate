@@ -261,3 +261,17 @@ html[data-fm-next-case-study="true"] .fm-next-cs-state-line>span{
   font-size:13px;
   line-height:1.65;
 }
+/* The preview caption belongs below the frame, not underneath its absolute layer. */
+html[data-fm-next-case-study="true"] .fm-next-cover-visual{
+  flex-direction:column;
+  gap:14px;
+}
+html[data-fm-next-case-study="true"] .fm-next-cover-frame{flex-shrink:0}
+html[data-fm-next-case-study="true"] .fm-next-cover-note{
+  position:static;
+  margin:0;
+  text-align:center;
+  font-size:11px;
+  line-height:1.5;
+  flex-shrink:0;
+}
