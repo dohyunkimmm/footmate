@@ -1228,3 +1228,10 @@
   .fm-next-page[data-mode="real"] .fm-next-nav button[aria-current="page"] .fm-next-nav-icon,
   .fm-next-page[data-mode="real"] .fm-next-success-icon{animation:none!important}
 }
+
+/* Visual QA follow-up · keep mobile recovery CTAs above the floating nav. */
+@media(max-width:430px){
+  .fm-next-page[data-mode="real"] .fm-discovery-empty{
+    padding-bottom:104px;
+  }
+}
