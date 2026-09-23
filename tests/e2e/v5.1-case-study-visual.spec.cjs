@@ -121,6 +121,12 @@ async function expectMobileGeometry(page,index=0){
   }
 }
 
+async function expectCoverWelcomeContrast(page){
+  const headline=page.frameLocator('.fm-next-cover-frame iframe').locator('[data-screen="welcome"] .fm-next-intro h1');
+  await expect(headline).toBeVisible();
+  await expect(headline).toHaveCSS('color','rgb(255, 255, 255)');
+}
+
 async function expectViewportScreenshot(page,name){
   await expect(page).toHaveScreenshot(name,{animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:0});
 }
@@ -128,6 +134,7 @@ async function expectViewportScreenshot(page,name){
 test('Case Study 1728 desktop cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:1728,height:900});
   await expectDesktopGeometry(page,1728);
+  await expectCoverWelcomeContrast(page);
   await expectViewportScreenshot(page,'case-study-13-cover-1728.png');
   expect(errs).toEqual([]);
 });
@@ -135,6 +142,7 @@ test('Case Study 1728 desktop cover matches approved 13-section baseline',async(
 test('Case Study 1440 desktop cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:1440,height:900});
   await expectDesktopGeometry(page,1440);
+  await expectCoverWelcomeContrast(page);
   await expectViewportScreenshot(page,'case-study-13-cover-1440.png');
   expect(errs).toEqual([]);
 });
@@ -167,6 +175,7 @@ for(const section of desktopSections){
 test('Case Study 390 mobile cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:390,height:844});
   await expectMobileGeometry(page,0);
+  await expectCoverWelcomeContrast(page);
   await expectViewportScreenshot(page,'case-study-13-cover-390.png');
   expect(errs).toEqual([]);
 });
@@ -194,3 +203,4 @@ for(const section of mobileSections){
     expect(errs).toEqual([]);
   });
 }
+
