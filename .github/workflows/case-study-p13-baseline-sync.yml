@@ -1,0 +1,69 @@
+name: Case Study P13 Baseline Sync
+
+on:
+  push:
+    branches:
+      - fix/case-study-p13-hard-stop
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: ${{ !contains(github.event.head_commit.message, '[skip p13-sync]') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/case-study-p13-hard-stop
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Add P13 hard-stop browser contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('tests/e2e/v5.1-case-study-content.spec.cjs')
+          text=path.read_text()
+          marker="test('merged source slides can never render as extra pages after P13'"
+          if marker not in text:
+              text += r'''
+
+test('merged source slides can never render as extra pages after P13',async({page})=>{
+  await openCaseStudy(page,{width:390,height:844});
+  const hidden=page.locator('.slide[data-cs-hidden="true"]');
+  await expect(hidden).toHaveCount(3);
+  const states=await hidden.evaluateAll(nodes=>nodes.map(node=>({
+    display:getComputedStyle(node).display,
+    hidden:node.hidden,
+    ariaHidden:node.getAttribute('aria-hidden')
+  })));
+  for(const state of states){
+    expect(state.display).toBe('none');
+    expect(state.hidden).toBe(true);
+    expect(state.ariaHidden).toBe('true');
+  }
+  await page.evaluate(()=>window.goTo(99));
+  await expect(page.locator('.topbar-count')).toHaveText('13 / 13');
+  await expect(page.locator('.slide.on')).toHaveCount(1);
+  await expect(page.locator('.slide.on')).toHaveAttribute('data-v5-content-role','production-boundary');
+});
+'''
+              path.write_text(text)
+          PY
+      - name: Generate corrected Ubuntu Chromium Case Study baselines
+        run: |
+          npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+          npx playwright install --with-deps chromium
+          npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Commit generated contract and baselines
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "test: lock P13 hard stop and visual baseline [skip p13-sync]"
+          git push origin HEAD:fix/case-study-p13-hard-stop
