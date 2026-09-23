@@ -148,7 +148,7 @@ if(root){
       const context=screen.querySelector('.fm-next-context-card');
       const heading=context?.querySelector('h2');
       const copy=context?.querySelector('p');
-      if(heading)heading.innerHTML=`${state.region}에서<br>조건에 맞는 경기를 찾았어요.`;
+      if(heading)heading.textContent=`${state.region} 추천 경기`;
       if(copy)copy.textContent=`${state.level} · ${state.position} 기준으로 지역·포지션·레벨 적합도를 실제 추천 순위에 반영했습니다.`;
     }
   }
@@ -228,3 +228,4 @@ if(root){
   observer.observe(root,{childList:true,subtree:true});
   apply();
 }
+

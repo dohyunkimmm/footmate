@@ -108,6 +108,11 @@ test('1440px Detail matches the approved desktop visual baseline',async({page})=
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setup(page);
   await openFirstDetail(page);
+  const save=page.locator('[data-decision-action="toggle-save"]');
+  await expect(save).toHaveCSS('color','rgb(19, 32, 25)');
+  await save.hover();
+  await expect(save).toHaveCSS('color','rgb(19, 32, 25)');
+  await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('real-app-detail-1440.png',stableScreenshot);
   expect(errs).toEqual([]);
 });
@@ -132,3 +137,4 @@ test('1440px Success matches the approved desktop visual baseline',async({page})
   await expect(page).toHaveScreenshot('real-app-success-1440.png',stableScreenshot);
   expect(errs).toEqual([]);
 });
+

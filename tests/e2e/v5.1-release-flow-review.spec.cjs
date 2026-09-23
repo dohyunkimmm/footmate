@@ -107,8 +107,8 @@ test('AI Match Assistant is a primary core feature with explicit rules fallback'
   await setupToHome(page);
   const card=page.locator('.fm-ai-card--core');
   await expect(card).toBeVisible();
-  await expect(card.getByText('CORE FEATURE',{exact:true})).toBeVisible();
-  await expect(card.getByText('AI MATCHING',{exact:true})).toBeVisible();
+  await expect(card).toHaveAttribute('data-ai-state','idle');
+  await expect(card.locator('.fm-ai-core-label')).toBeHidden();
   await expect(card.getByText('AI Match Assistant',{exact:true})).toBeVisible();
   await expect(card.getByText('AI 장애나 지연 시 기존 rules-based 검색으로 자동 전환합니다.',{exact:true})).toHaveCount(1);
   await page.mouse.move(1,1);
@@ -219,4 +219,19 @@ test('checked-in continuation action matches the approved 390px visual baseline'
   await expect(page.getByRole('button',{name:'경기 종료 후 평가하기'})).toBeVisible();
   await page.mouse.move(1,1);
   await expect(checked).toHaveScreenshot('release-flow-checked-in-390.png',exactScreenshot);
+});
+test('welcome hero keeps readable contrast and an approved full-surface baseline',async({page})=>{
+  for(const viewport of [{width:390,height:844,name:'390'},{width:1440,height:900,name:'1440'}]){
+    const errs=await openFresh(page,{width:viewport.width,height:viewport.height});
+    const headline=page.locator('[data-screen="welcome"] .fm-next-intro h1');
+    await expect(headline).toBeVisible();
+    const color=await headline.evaluate(element=>getComputedStyle(element).color);
+    expect(color,`welcome headline color at ${viewport.name}px`).toBe('rgb(255, 255, 255)');
+    const topbar=page.locator('[data-screen="welcome"] .fm-next-topbar--dark');
+    const background=await topbar.evaluate(element=>getComputedStyle(element).backgroundImage);
+    expect(background).toContain('linear-gradient');
+    await page.mouse.move(1,1);
+    await expect(page).toHaveScreenshot(`release-flow-welcome-${viewport.name}.png`,{animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:24});
+    expect(errs).toEqual([]);
+  }
 });

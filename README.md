@@ -14,7 +14,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Compatibility aliases: `/demo`, `/next` → current Real App
-- Case Study IA: **13 sections**
+- Case Study IA: **13 sections** — #228 기준 서비스 기획 서사 · 영문 section label · 한국어 story H2 · TOC 부제목 한 줄
 
 ## 서비스 기획 관점
 

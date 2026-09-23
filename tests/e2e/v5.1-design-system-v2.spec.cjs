@@ -63,8 +63,7 @@ test('1440px Design System v2 keeps the stable app shell centered and component 
   expect(geometry.width).toBeGreaterThanOrEqual(558);
   expect(geometry.width).toBeLessThanOrEqual(562);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
-  expect(parseFloat(geometry.borderRadius)).toBeGreaterThanOrEqual(28);
-  expect(parseFloat(geometry.borderRadius)).toBeLessThanOrEqual(36);
+  expect(parseFloat(geometry.borderRadius)).toBe(0);
 
   const card=page.locator('.fm-next-match-card').first();
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));

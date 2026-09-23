@@ -193,12 +193,16 @@ test('320px context actions and AI micro UI keep readable non-cramped sizing',as
 
   const contextActions=await page.locator('.fm-next-context-actions .fm-next-button').evaluateAll(buttons=>buttons.map(button=>{
     const rect=button.getBoundingClientRect();
-    return {top:rect.top,bottom:rect.bottom,width:rect.width};
+    return {top:rect.top,bottom:rect.bottom,width:rect.width,left:rect.left,right:rect.right,height:rect.height,overflow:button.scrollWidth-button.clientWidth};
   }));
   expect(contextActions).toHaveLength(2);
-  expect(contextActions[1].top).toBeGreaterThanOrEqual(contextActions[0].bottom);
-  expect(contextActions[0].width).toBeGreaterThanOrEqual(230);
-  expect(contextActions[1].width).toBeGreaterThanOrEqual(230);
+  expect(Math.abs(contextActions[1].top-contextActions[0].top)).toBeLessThanOrEqual(1);
+  expect(contextActions[1].left-contextActions[0].right).toBeGreaterThanOrEqual(8);
+  for(const action of contextActions){
+    expect(action.width).toBeGreaterThanOrEqual(96);
+    expect(action.height).toBeGreaterThanOrEqual(44);
+    expect(action.overflow).toBeLessThanOrEqual(1);
+  }
 
   const aiMetrics=await page.locator('.fm-ai-card').evaluate(card=>{
     const fontSize=selector=>parseFloat(getComputedStyle(card.querySelector(selector)).fontSize);
@@ -243,6 +247,7 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
 
   const secondary=page.locator('.fm-next-context-actions .fm-next-button--secondary').first();
   await expect(secondary).toBeVisible();
+  await page.mouse.move(1,1);
   const secondaryRest=await surface(secondary);
   const secondaryHover=await hoverSurface(secondary);
   expect(secondaryHover.background).not.toBe(secondaryRest.background);
@@ -264,6 +269,8 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   const filter=page.locator('.fm-discovery-filter-button');
   await expect(filter).toBeVisible();
+  await page.mouse.move(1,1);
+  await page.waitForTimeout(220);
   const filterRest=await surface(filter);
   const filterHover=await hoverSurface(filter);
   expect(filterHover.background).not.toBe(filterRest.background);
@@ -308,3 +315,4 @@ test('Case Study desktop companion panels retain reviewable width and structured
   }
   expect(errs).toEqual([]);
 });
+

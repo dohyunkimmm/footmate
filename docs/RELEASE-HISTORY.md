@@ -2,6 +2,13 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Case Study section label correction · 2026-09-23
+
+- #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
+- #226 merged at `c03a8fccd1802fc9d8c28d9d6e033687b98651bc`: English applies to section labels/kickers; story H2 restored to Korean. This supersedes #225's heading-language change.
+- The later #228 keeps 13 sections and Korean body copy while revising the planning narrative and returning TOC subtitles to a single line.
+- These entries record confirmed merges; they do not establish a newly verified Vercel Production SHA or a Product visual QA pass.
+
 ## Case Study 서비스 기획 서사 보강 · 2026-09-23
 
 - Scope: 기존 13개 섹션 안에 Role / Scope / Responsibility, 문제→서비스 목표, 우선순위, Decision / Reason / Trade-off, 대안 가설, 운영 정책, 협의 기준, KPI, 회고 보강
@@ -16,6 +23,7 @@
 - Automated visual scope: 1440×900 전체 13개 섹션, 1728×900 cover, 390×844 전체 13개 섹션의 viewport 비교; 320/375/390/430px 포함 wrap·overflow·spacing·TOC·키보드·axe 검증
 - 검수 범위 정정: 당시 직접 이미지 검토는 일부 화면에 한정되었으며, 모든 페이지의 본문 줄바꿈과 모바일 하단까지 편집 검수한 것은 아니었다. 이 자동 검사 결과를 전체 본문 편집 검수 완료로 해석하지 않는다.
 - Baseline 저장: `tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/`; 일회성 baseline workflow는 제거하고 기존 PR QA gate 유지
+- 후속 Product audit (#229): 이 과거 screenshot PASS에는 Welcome 대비 결함이 포함돼 있었다. 당시 실행 사실은 보존하되 headline 가독성의 승인 근거로 사용하지 않는다. 수정 후 직접 color 검사와 새 이미지 검토·정상 비교가 필요하다.
 - Final PR QA: run `35858717623` · Regression 36 PASS · Browser E2E + axe 142 PASS
 - Product/runtime baseline SHA: `20f3eef4845a9787fe64dfefb88f5b6748146016`
 - Post-merge QA: run `35859386720` · Regression 36 / Browser E2E + axe / Production Smoke PASS
