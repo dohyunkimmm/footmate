@@ -78,6 +78,8 @@
     syncSectionNavigation();
 
     note.innerHTML='AI Match Assistant<br>자연어 조건 해석 → 추천 순위 계산';
+    note.style.wordBreak='keep-all';
+    note.style.overflowWrap='normal';
     const visual=document.querySelector('.fm-next-cover-visual');
     if(visual)visual.setAttribute('aria-label','FootMate 앱 미리보기');
     const frame=document.querySelector('.fm-next-cover-frame iframe');
