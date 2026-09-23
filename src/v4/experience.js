@@ -1,24 +1,92 @@
 import {footmatePlatform} from './platform/application/platform.js';
 
-/* FootMate v4 account experience.
-   External authentication remains simulated; the UI models the official sign-in / sign-up interaction. */
+/* FootMate account experience.
+   Google / Kakao use the connected Supabase OAuth entrypoint.
+   The local account form remains a deterministic prototype interaction. */
 (function(){
   const root=document.getElementById('footmate-next');
   if(!root)return;
   const requestedMode=new URLSearchParams(location.search).get('mode');
   const isRealMode=!['guided','evidence'].includes(requestedMode);
+  const SOCIAL_AUTH_ERROR_KEY='footmate:app:social-auth-error:v1';
+  const SOCIAL_AUTH_PENDING_KEY='footmate:app:social-auth-pending:v1';
+  let socialAuthConfig=null;
+  let socialAuthLoading=null;
 
   const backIcon='<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
   const eyeIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-5.2 9.2-5.2S21.2 12 21.2 12 17.8 17.2 12 17.2 2.8 12 2.8 12Z"/><circle cx="12" cy="12" r="2.4"/></svg>';
   const mark='<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5c3.3-5.2 10.7-5.2 14 0"/><path d="M7.5 11.1 10 7.5h4l2.5 3.6"/><path d="M9.2 16.4h5.6"/><circle cx="12" cy="12" r="9"/></svg>';
   const kakao='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4C6.9 4 3 7.1 3 10.9c0 2.4 1.6 4.5 4 5.7l-1 3.4 3.9-2.3c.7.1 1.4.2 2.1.2 5.1 0 9-3.1 9-7S17.1 4 12 4Z"/></svg>';
-  const apple='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.8 12.7c0-2.8 2.3-4.1 2.4-4.2-1.3-2-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.3-1-3.8-.9-1.9 0-3.7 1.1-4.7 2.8-2 3.5-.5 8.7 1.4 11.5 1 1.4 2.1 2.9 3.6 2.8 1.4-.1 2-1 3.7-1s2.2 1 3.7 1c1.5 0 2.5-1.4 3.4-2.8 1.1-1.6 1.5-3.1 1.6-3.2-.1 0-2.9-1.1-2.9-4.8ZM14 4.5c.8-1 1.3-2.3 1.2-3.5-1.2.1-2.6.8-3.4 1.7-.7.8-1.4 2.2-1.2 3.4 1.3.1 2.6-.6 3.4-1.6Z"/></svg>';
   const google='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.2H3v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.9A6 6 0 0 1 6.1 12c0-.7.1-1.3.3-1.9V7.5H3A10 10 0 0 0 2 12c0 1.6.4 3.1 1 4.5l3.4-2.6Z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.9 1.5l2.9-2.9A9.8 9.8 0 0 0 3 7.5l3.4 2.6C7.2 7.7 9.4 5.9 12 5.9Z"/></svg>';
 
-  function shell(title,subtitle,body,screen){
+  function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char))}
+  function socialError(){try{return sessionStorage.getItem(SOCIAL_AUTH_ERROR_KEY)||''}catch{return ''}}
+  function setSocialError(message){try{if(message)sessionStorage.setItem(SOCIAL_AUTH_ERROR_KEY,String(message).slice(0,240));else sessionStorage.removeItem(SOCIAL_AUTH_ERROR_KEY)}catch{}}
+  function showSocialError(screen,message){
+    setSocialError(message);
+    let error=screen.querySelector('.fm-auth-social-error');
+    if(!error){
+      error=document.createElement('p');
+      error.className='fm-auth-social-error';
+      error.setAttribute('role','alert');
+      screen.querySelector('.fm-auth-sso')?.insertAdjacentElement('afterend',error);
+    }
+    if(error)error.textContent=message;
+  }
+
+  async function loadSocialAuthConfig(){
+    if(socialAuthConfig)return socialAuthConfig;
+    if(socialAuthLoading)return socialAuthLoading;
+    socialAuthLoading=(async()=>{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),5000);
+      try{
+        const configResponse=await fetch('/api/beta-config',{headers:{accept:'application/json'},cache:'no-store',signal:controller.signal});
+        const configPayload=await configResponse.json().catch(()=>({}));
+        if(!configResponse.ok||!configPayload?.connected||!configPayload.url||!configPayload.publishableKey)throw new Error('backend-unavailable');
+        const origin=String(configPayload.url).replace(/\/$/,'');
+        const settingsResponse=await fetch(`${origin}/auth/v1/settings`,{headers:{apikey:configPayload.publishableKey,accept:'application/json'},cache:'no-store',signal:controller.signal});
+        const settings=await settingsResponse.json().catch(()=>({}));
+        if(!settingsResponse.ok)throw new Error('provider-settings-unavailable');
+        socialAuthConfig={url:origin,publishableKey:configPayload.publishableKey,providers:{google:Boolean(settings?.external?.google),kakao:Boolean(settings?.external?.kakao)}};
+        return socialAuthConfig;
+      }finally{
+        clearTimeout(timer);
+        socialAuthLoading=null;
+      }
+    })();
+    return socialAuthLoading;
+  }
+
+  async function authorizeProvider(screen,provider){
+    const button=screen.querySelector(`[data-social-provider="${provider}"]`);
+    const buttons=[...screen.querySelectorAll('[data-social-provider]')];
+    buttons.forEach(item=>{item.disabled=true;item.setAttribute('aria-busy','true')});
+    setSocialError('');
+    try{
+      const config=await loadSocialAuthConfig();
+      if(!config.providers?.[provider])throw new Error('provider-disabled');
+      const interaction=footmatePlatform.repositories.interaction.read({})||{};
+      footmatePlatform.repositories.interaction.write({...interaction,checkoutReturnRoute:'auth'});
+      try{sessionStorage.setItem(SOCIAL_AUTH_PENDING_KEY,JSON.stringify({provider,returnRoute:'checkout',startedAt:Date.now()}))}catch{}
+      const url=new URL(`${config.url}/auth/v1/authorize`);
+      url.searchParams.set('provider',provider);
+      url.searchParams.set('redirect_to',`${location.origin}/app?oauth=1`);
+      location.assign(url.toString());
+    }catch(error){
+      const message=error?.message==='provider-disabled'?'현재 이 소셜 로그인 연결을 사용할 수 없습니다.':'소셜 로그인 연결 상태를 확인하지 못했습니다. 잠시 후 다시 시도해주세요.';
+      showSocialError(screen,message);
+      buttons.forEach(item=>{item.disabled=false;item.removeAttribute('aria-busy')});
+      button?.focus();
+    }
+  }
+
+  function shell(title,subtitle,body,screen,panel='login'){
+    const back=panel==='login'?`data-action="auth-back" aria-label="경기 상세로 돌아가기"`:`data-auth-panel="login" aria-label="로그인 화면으로 돌아가기"`;
+    screen.dataset.authPanel=panel;
     screen.innerHTML=`
       <div class="fm-auth-head">
-        <button class="fm-next-icon-button" type="button" data-action="auth-back" aria-label="경기 상세로 돌아가기">${backIcon}</button>
+        <button class="fm-next-icon-button" type="button" ${back}>${backIcon}</button>
       </div>
       <div class="fm-auth-card">
         <div class="fm-auth-brand"><span class="fm-next-brand-mark">${mark}</span><strong>FootMate</strong></div>
@@ -28,6 +96,7 @@ import {footmatePlatform} from './platform/application/platform.js';
   }
 
   function loginBody(place){
+    const authError=socialError();
     return `
       <form class="fm-auth-form" data-auth-form="login">
         <label class="fm-auth-field"><span>아이디</span><input name="identifier" autocomplete="username" placeholder="아이디 또는 이메일" aria-label="아이디 또는 이메일"></label>
@@ -44,14 +113,13 @@ import {footmatePlatform} from './platform/application/platform.js';
         <button type="button" data-auth-panel="signup">회원가입</button>
       </div>
       <div class="fm-auth-divider"><span>또는</span></div>
-      <div class="fm-auth-sso" aria-label="소셜 로그인">
-        <button class="fm-auth-provider fm-auth-provider--kakao" type="button" data-action="sign-in" data-provider="kakao" aria-label="카카오로 계속하기">${kakao}</button>
-        <button class="fm-auth-provider fm-auth-provider--naver" type="button" data-action="sign-in" data-provider="naver" aria-label="네이버로 계속하기"><span>N</span></button>
-        <button class="fm-auth-provider fm-auth-provider--apple" type="button" data-action="sign-in" data-provider="apple" aria-label="Apple로 계속하기">${apple}</button>
-        <button class="fm-auth-provider fm-auth-provider--google" type="button" data-action="sign-in" data-provider="google" aria-label="Google로 계속하기">${google}</button>
+      <div class="fm-auth-sso" aria-label="연결된 소셜 로그인">
+        <button class="fm-auth-provider fm-auth-provider--kakao" type="button" data-social-provider="kakao" aria-label="카카오로 계속하기">${kakao}</button>
+        <button class="fm-auth-provider fm-auth-provider--google" type="button" data-social-provider="google" aria-label="Google로 계속하기">${google}</button>
       </div>
+      ${authError?`<p class="fm-auth-social-error" role="alert">${escapeHtml(authError)}</p>`:''}
       <p class="fm-auth-context">${place} 경기 선택과 플레이 설정은 로그인 후에도 그대로 유지됩니다.</p>
-      <p class="fm-auth-terms">로그인 또는 회원가입을 진행하면 FootMate 이용약관과 개인정보 처리방침에 동의하게 됩니다.</p>`;
+      <p class="fm-auth-terms">Google·Kakao는 연결된 OAuth로 이동합니다. 로그인 또는 회원가입을 진행하면 FootMate 이용약관과 개인정보 처리방침에 동의하게 됩니다.</p>`;
   }
 
   function signupBody(){
@@ -85,22 +153,29 @@ import {footmatePlatform} from './platform/application/platform.js';
   function renderPanel(screen,panel){
     const place=screen.dataset.matchPlace||'선택한';
     if(panel==='signup'){
-      shell('회원가입','경기 참가에 필요한 계정을 간단히 만들어요.',signupBody(),screen);
+      shell('회원가입','경기 참가에 필요한 계정을 간단히 만들어요.',signupBody(),screen,panel);
       return;
     }
     if(panel==='find-id'){
-      shell('아이디 찾기','가입할 때 사용한 이메일 주소를 입력해주세요.',helperBody('find-id'),screen);
+      shell('아이디 찾기','가입할 때 사용한 이메일 주소를 입력해주세요.',helperBody('find-id'),screen,panel);
       return;
     }
     if(panel==='find-password'){
-      shell('비밀번호 찾기','가입한 아이디 또는 이메일을 입력해주세요.',helperBody('find-password'),screen);
+      shell('비밀번호 찾기','가입한 아이디 또는 이메일을 입력해주세요.',helperBody('find-password'),screen,panel);
       return;
     }
-    shell('로그인 후 더 많은 경기를 즐겨보세요.','참가를 확정하면 결제 단계로 바로 이어집니다.',loginBody(place),screen);
+    shell('로그인 후 더 많은 경기를 즐겨보세요.','참가를 확정하면 결제 단계로 바로 이어집니다.',loginBody(place),screen,'login');
   }
 
   function wire(screen){
     screen.addEventListener('click',event=>{
+      const social=event.target.closest('[data-social-provider]');
+      if(social){
+        event.preventDefault();
+        event.stopPropagation();
+        void authorizeProvider(screen,social.dataset.socialProvider);
+        return;
+      }
       const panelButton=event.target.closest('[data-auth-panel]');
       if(panelButton){
         event.preventDefault();
@@ -146,10 +221,10 @@ import {footmatePlatform} from './platform/application/platform.js';
 
   function enhanceAuth(){
     const screen=root.querySelector('[data-screen="auth"]');
-    if(!screen||screen.dataset.fmAuthExperience==='3')return;
+    if(!screen||screen.dataset.fmAuthExperience==='4')return;
     const original=screen.querySelector('.fm-next-auth-copy p')?.textContent||'';
     const place=(original.split(' 참가를 확정하려면')[0]||'선택한').trim();
-    screen.dataset.fmAuthExperience='3';
+    screen.dataset.fmAuthExperience='4';
     screen.dataset.matchPlace=place;
     screen.classList.add('fm-next-auth-v3');
     renderPanel(screen,'login');
@@ -165,20 +240,23 @@ import {footmatePlatform} from './platform/application/platform.js';
   enhanceAuth();
 })();
 
-/* FootMate v4 interaction safeguards.
-   Owns validation, return navigation, guest identity and match-specific check-in persistence. */
+/* FootMate interaction safeguards.
+   Owns validation, previous-screen return navigation, display terminology,
+   check-in continuity and deterministic team-message simulation. */
 (function(){
   const root=document.getElementById('footmate-next');
   if(!root)return;
   const params=new URLSearchParams(location.search);
   const mode=['guided','evidence'].includes(params.get('mode'))?params.get('mode'):'real';
   const interactionRepository=footmatePlatform.repositories.interaction;
+  const BOUNDARY_COPY='실시간 위치·지도·팀 채팅·알림 backend는 연결하지 않았습니다. 상태와 복구 흐름을 검증하는 deterministic simulation입니다.';
 
   function interaction(){return interactionRepository.read({})||{}}
   function updateInteraction(patch){interactionRepository.write({...interaction(),...patch})}
   function clearInteraction(){interactionRepository.clear()}
   function setText(el,value){if(el&&el.textContent!==value)el.textContent=value}
   function setHtml(el,value){if(el&&el.innerHTML!==value)el.innerHTML=value}
+  function displayText(value){return String(value||'').replaceAll('초중급','초급').replaceAll('중급+','고급').replaceAll('포워드','공격수')}
 
   function installStyles(){
     if(document.getElementById('fm-v4-release-hardening-style'))return;
@@ -186,10 +264,28 @@ import {footmatePlatform} from './platform/application/platform.js';
     style.id='fm-v4-release-hardening-style';
     style.textContent=`
       .fm-auth-field input[aria-invalid="true"]{border-color:#A32727!important;box-shadow:0 0 0 1px #A32727!important}
-      .fm-auth-error{display:block;margin-top:6px;color:#8B1F1F;font-size:12px;line-height:1.45;font-weight:700}
+      .fm-auth-error,.fm-auth-social-error{display:block;margin-top:8px;color:#8B1F1F;font-size:12px;line-height:1.5;font-weight:700}
+      .fm-auth-social-error{text-align:center}
       .fm-auth-form-error{margin:8px 0 0;color:#8B1F1F;font-size:12px;line-height:1.45;font-weight:700}
       .fm-next-checkin-complete{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:0;border-radius:14px;padding:0 18px;background:#DCE6DF;color:#315044;font-weight:800;cursor:default}
       .fm-next-checkin-note{margin-top:8px;color:#315044;font-size:13px;font-weight:700}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core{margin:8px 0 28px;padding:23px;border:1px solid rgba(216,255,115,.18);background:radial-gradient(circle at 94% 0%,rgba(216,255,115,.25),transparent 28%),linear-gradient(145deg,#082a1e 0%,#0e3d2d 62%,#16573f 100%);box-shadow:0 24px 54px rgba(9,46,33,.20)}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-kicker,.fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-head strong{color:#fff}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-head strong{font-size:22px;letter-spacing:-.035em}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-head p{color:rgba(255,255,255,.72);font-size:13px}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-label{color:rgba(255,255,255,.86)}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-mode{background:rgba(255,255,255,.12);color:#fff}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-examples button{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18);color:#fff}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-status{background:#fff;color:#20372d}
+      .fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core .fm-ai-guardrail{border-top-color:rgba(255,255,255,.16);color:rgba(255,255,255,.66)}
+      .fm-next-page[data-mode="real"] .fm-next-upcoming-actions .fm-next-button--secondary{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.24)!important;color:#fff!important}
+      .fm-next-page[data-mode="real"] .fm-next-upcoming-actions .fm-next-button--secondary:hover{background:rgba(255,255,255,.20)!important;border-color:rgba(255,255,255,.36)!important;color:#fff!important}
+      .fm-team-message-overlay{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;background:rgba(5,20,14,.52);backdrop-filter:blur(8px)}
+      .fm-team-message-dialog{width:min(100%,520px);max-height:min(720px,calc(100dvh - 40px));overflow:auto;border:1px solid rgba(20,55,40,.12);border-radius:24px;padding:20px;background:#fff;color:#132019;box-shadow:0 28px 90px rgba(5,20,14,.30)}
+      .fm-team-message-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.fm-team-message-head small{display:block;margin-bottom:5px;color:#1d684a;font-size:11px;font-weight:800;letter-spacing:.08em}.fm-team-message-head h2{margin:0;font-size:22px;letter-spacing:-.035em}.fm-team-message-close{width:42px;height:42px;border-radius:13px;background:#f1f5f1;color:#132019;font-size:20px;cursor:pointer}
+      .fm-team-message-list{display:grid;gap:10px;margin:18px 0}.fm-team-message{display:grid;gap:4px;padding:14px 15px;border:1px solid #e4e9e1;border-radius:16px;background:#f7f9f5;color:#132019}.fm-team-message b{font-size:13px}.fm-team-message span{font-size:12px;line-height:1.55;color:#4d5f55}
+      .fm-team-message-boundary{margin:0;padding-top:14px;border-top:1px dashed #d1dad3;color:#52645b;font-size:12px;line-height:1.6}.fm-team-message-done{width:100%;min-height:48px;margin-top:16px;border-radius:14px;background:#092e21;color:#fff;font-weight:800;cursor:pointer}
+      @media(max-width:430px){.fm-next-page[data-mode="real"] .fm-ai-card.fm-ai-card--core{padding:19px}.fm-team-message-overlay{padding:12px}.fm-team-message-dialog{border-radius:20px;padding:17px}}
     `;
     document.head.appendChild(style);
   }
@@ -272,13 +368,41 @@ import {footmatePlatform} from './platform/application/platform.js';
     }
   }
 
+  function patchTerminology(){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[];
+    while(walker.nextNode())nodes.push(walker.currentNode);
+    nodes.forEach(node=>{
+      const next=displayText(node.nodeValue);
+      if(next!==node.nodeValue)node.nodeValue=next;
+    });
+    root.querySelectorAll('input[placeholder]').forEach(input=>{
+      const next=displayText(input.placeholder);
+      if(next!==input.placeholder)input.placeholder=next;
+    });
+  }
+
+  function patchAiProminence(){
+    if(mode!=='real')return;
+    const home=root.querySelector('[data-screen="home"]');
+    const card=home?.querySelector('[data-ai-assistant]');
+    if(!home||!card)return;
+    card.classList.add('fm-ai-card--core');
+    card.dataset.coreFeature='true';
+    const kicker=card.querySelector('.fm-ai-kicker');
+    if(kicker&&kicker.textContent!=='핵심 기능 · AI Match Assistant')kicker.textContent='핵심 기능 · AI Match Assistant';
+    const greeting=home.querySelector('.fm-next-greeting');
+    if(greeting&&greeting.nextElementSibling!==card)greeting.after(card);
+  }
+
   function patchCheckin(){
     const buttons=[...root.querySelectorAll('[data-action="check-in"]')];
     if(!buttons.length)return;
     const state=interaction();
     const session=footmatePlatform.session.read()||{};
     const currentMatchId=session.joinedMatchId||session.selectedMatchId||(mode==='evidence'?'evidence-match':null);
-    if(!state.checkedInMatchId||state.checkedInMatchId!==currentMatchId)return;
+    const checkedInMatchId=state.checkedInMatchId||session.checkedInMatchId;
+    if(!checkedInMatchId||checkedInMatchId!==currentMatchId)return;
     buttons.forEach(button=>{
       const complete=document.createElement('button');
       complete.type='button';
@@ -304,9 +428,34 @@ import {footmatePlatform} from './platform/application/platform.js';
     }
   }
 
+  function openTeamMessages(){
+    root.querySelector('.fm-team-message-overlay')?.remove();
+    const overlay=document.createElement('div');
+    overlay.className='fm-team-message-overlay';
+    overlay.dataset.teamMessages='simulation';
+    overlay.innerHTML=`<section class="fm-team-message-dialog" role="dialog" aria-modal="true" aria-labelledby="fm-team-message-title"><div class="fm-team-message-head"><div><small>TEAM MESSAGE · SIMULATION</small><h2 id="fm-team-message-title">팀 메시지</h2></div><button class="fm-team-message-close" type="button" data-action="close-team-messages" aria-label="팀 메시지 닫기">×</button></div><div class="fm-team-message-list"><article class="fm-team-message"><b>운영 안내</b><span>조끼는 현장에서 제공합니다.</span></article><article class="fm-team-message"><b>체크인</b><span>경기 시작 20분 전부터 체크인할 수 있습니다.</span></article><article class="fm-team-message"><b>집결 위치</b><span>메인 출입구를 지나 3층 코트 앞에서 모여주세요.</span></article></div><p class="fm-team-message-boundary">${BOUNDARY_COPY}</p><button class="fm-team-message-done" type="button" data-action="close-team-messages">확인</button></section>`;
+    root.appendChild(overlay);
+    overlay.querySelector('.fm-team-message-close')?.focus();
+  }
+
+  function closeTeamMessages(){
+    const overlay=root.querySelector('.fm-team-message-overlay');
+    if(!overlay)return;
+    overlay.remove();
+    root.querySelector('[data-action="team-chat"]')?.focus();
+  }
+
+  function navigateRoute(route){
+    const session=footmatePlatform.session.read()||{};
+    footmatePlatform.session.write({...session,route});
+    location.reload();
+  }
+
   function apply(){
     installStyles();
     patchIdentity();
+    patchTerminology();
+    patchAiProminence();
     patchCheckin();
   }
 
@@ -348,12 +497,42 @@ import {footmatePlatform} from './platform/application/platform.js';
       return;
     }
 
+    if(action==='join-match'){
+      const session=footmatePlatform.session.read()||{};
+      updateInteraction({authReturnRoute:'detail',checkoutReturnRoute:session.signedIn?'detail':'auth'});
+      return;
+    }
+
+    if(action==='checkout-back'){
+      event.preventDefault();
+      event.stopPropagation();
+      navigateRoute(interaction().checkoutReturnRoute||'detail');
+      return;
+    }
+
     if(action==='check-in'){
       event.preventDefault();
       event.stopPropagation();
       const session=footmatePlatform.session.read()||{};
-      updateInteraction({checkedInMatchId:session.joinedMatchId||session.selectedMatchId||'evidence-match',checkedInAt:Date.now()});
+      const checkedInMatchId=session.joinedMatchId||session.selectedMatchId||'evidence-match';
+      updateInteraction({checkedInMatchId,checkedInAt:Date.now()});
+      footmatePlatform.session.write({...session,checkedInMatchId,matchStage:'matchday'});
+      window.__FOOTMATE_MATCHDAY__?.setStatus?.('checked-in',{arrival:'arrived'});
       patchCheckin();
+      return;
+    }
+
+    if(action==='team-chat'){
+      event.preventDefault();
+      event.stopPropagation();
+      openTeamMessages();
+      return;
+    }
+
+    if(action==='close-team-messages'){
+      event.preventDefault();
+      event.stopPropagation();
+      closeTeamMessages();
       return;
     }
 
@@ -368,9 +547,20 @@ import {footmatePlatform} from './platform/application/platform.js';
       if(provider==='signup'&&!validateSignup(screen)){
         event.preventDefault();
         event.stopPropagation();
+        return;
       }
+      if(provider==='account'||provider==='signup')updateInteraction({checkoutReturnRoute:'auth'});
     }
   },true);
+
+  root.addEventListener('click',event=>{
+    const overlay=event.target.closest('.fm-team-message-overlay');
+    if(overlay&&event.target===overlay)closeTeamMessages();
+  });
+
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&root.querySelector('.fm-team-message-overlay'))closeTeamMessages();
+  });
 
   let scheduled=false;
   const observer=new MutationObserver(()=>{
@@ -378,6 +568,6 @@ import {footmatePlatform} from './platform/application/platform.js';
     scheduled=true;
     requestAnimationFrame(()=>{scheduled=false;apply()});
   });
-  observer.observe(root,{childList:true,subtree:true});
+  observer.observe(root,{childList:true,subtree:true,characterData:true});
   apply();
 })();
