@@ -1,0 +1,48 @@
+name: Visual Baseline Capture
+
+on:
+  push:
+    branches:
+      - design/visual-system-completion-20260923
+    paths:
+      - .github/workflows/visual-baseline-capture.yml
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Patch mobile discovery empty clearance in worktree
+        shell: bash
+        run: |
+          cat >> src/v4/visual-polish.css <<'CSS'
+
+          /* Visual QA follow-up · keep mobile recovery CTAs above the floating nav. */
+          @media(max-width:430px){
+            .fm-next-page[data-mode="real"] .fm-discovery-empty{
+              padding-bottom:104px;
+            }
+          }
+          CSS
+      - name: Install browser QA dependencies
+        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Generate Ubuntu Chromium baseline candidates
+        run: npx playwright test tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --update-snapshots --reporter=line
+      - name: Upload baseline candidates
+        uses: actions/upload-artifact@v6
+        with:
+          name: visual-baseline-candidates-${{ github.run_id }}
+          path: |
+            tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots
+          if-no-files-found: error
+          retention-days: 7
