@@ -15,9 +15,9 @@
     ['참가 · 결제','복구 가능한 참가 상태 전이'],
     ['경기 당일 · 재탐색','경기 당일에서 다음 탐색까지'],
     ['복구','맥락 보존 + 다음 행동'],
-    ['Domain Architecture','recommendation · participation · matchday · return'],
-    ['Provider · AI 경계','실연동 · 시뮬레이션 · HITL 경계'],
-    ['검증','자동 QA · Human QA · AI-assisted QA'],
+    ['도메인 구조','recommendation · participation · matchday · return'],
+    ['외부 연동 · AI 경계','실연동 · 시뮬레이션 · HITL 경계'],
+    ['검증','자동 QA · 사람 검수 · AI 보조 검수'],
     ['Production 범위','실제 연결·검증된 기능만 표기']
   ];
 
@@ -77,7 +77,7 @@
 
     syncSectionNavigation();
 
-    note.innerHTML='AI Match Assistant<br>자연어 조건 해석 → deterministic ranking';
+    note.innerHTML='AI Match Assistant<br>자연어 조건 해석 → 규칙 기반 추천 순위';
     const visual=document.querySelector('.fm-next-cover-visual');
     if(visual)visual.setAttribute('aria-label','FootMate 앱 미리보기');
     const frame=document.querySelector('.fm-next-cover-frame iframe');
@@ -90,7 +90,7 @@
 
     setRole(slides[3],'product-thesis');
     setText(slides[3],'.fm-next-story h2','기능을 늘리기보다, 판단 맥락이 끊기지 않는 하나의 흐름을 만들었습니다.');
-    setText(slides[3],'.fm-next-story-lead','제품 원칙은 Find → Decide → Join → Play → Return을 다시 나열하는 데 있지 않습니다. 조건·선택·상태를 단계 사이에 보존해 사용자가 같은 판단을 반복하지 않도록 하는 것이 핵심입니다.');
+    setText(slides[3],'.fm-next-story-lead','제품 원칙은 탐색(Find) → 결정(Decide) → 참가(Join) → 경기(Play) → 재탐색(Return)을 다시 나열하는 데 있지 않습니다. 조건·선택·상태를 단계 사이에 보존해 사용자가 같은 판단을 반복하지 않도록 하는 것이 핵심입니다.');
     setHTML(slides[3],'.fm-next-cs-principles',
       '<article class="fm-next-cs-card"><h3>판단 기준을 한곳에</h3><p>시간·거리·레벨·포지션·자리·가격을 여러 화면에서 다시 조합하지 않게 합니다.</p></article>'+
       '<article class="fm-next-cs-card"><h3>선택 맥락을 보존</h3><p>필터, 선택 경기와 참가 상태를 단계 전환과 새로고침 이후에도 이어갑니다.</p></article>'+
@@ -98,7 +98,7 @@
 
     setRole(slides[4],'core-journey');
     setText(slides[4],'.fm-next-story h2','사용자 행동과 각 단계의 완료 조건을 기준으로 여정을 나눴습니다.');
-    setText(slides[4],'.fm-next-story-lead','Find는 탐색 범위를 정하고, Decide는 근거를 비교하고, Join은 선택을 참가 상태로 바꾸며, Play는 경기 당일 행동을 안내하고, Return은 다음 탐색의 입력을 남깁니다. 각 단계의 결과가 다음 단계의 입력이 됩니다.');
+    setText(slides[4],'.fm-next-story-lead','탐색(Find)은 범위를 정하고, 결정(Decide)은 근거를 비교하고, 참가(Join)는 선택을 참가 상태로 바꾸며, 경기(Play)는 당일 행동을 안내하고, 재탐색(Return)은 다음 탐색의 입력을 남깁니다. 각 단계의 결과가 다음 단계의 입력이 됩니다.');
 
     setRole(slides[5],'guest-first-decision');
     const afterBadge=slides[5]?.querySelector('.fm-next-cs-before-after .is-after small');
@@ -119,11 +119,11 @@
 
     setRole(slides[8],'auth-context');
     setText(slides[8],'.fm-next-story h2','로그인보다 중요한 것은, 로그인 전의 선택을 잃지 않는 것입니다.');
-    setText(slides[8],'.fm-next-story-lead','`참가하기`에서 인증으로 이동해도 선택한 경기와 돌아갈 목적지를 유지합니다. /app의 인증은 실제 계정 연동이 아닌 mock 흐름이지만, 인증 전후에 같은 경기·참가 맥락이 이어지는 UX 계약을 검증합니다.');
+    setText(slides[8],'.fm-next-story-lead','`참가하기`에서 인증으로 이동해도 선택한 경기와 돌아갈 목적지를 유지합니다. /app의 인증은 실제 계정 연동이 아닌 시뮬레이션(mock) 흐름이지만, 인증 전후에 같은 경기·참가 맥락이 이어지는 UX 계약을 검증합니다.');
     const authScope=slides[8]?.querySelector('.fm-next-cs-scope');
     if(authScope){
       setText(authScope,'span','연동 경계');
-      setText(authScope,'b','/app: mock 인증 · /beta: Supabase Auth');
+      setText(authScope,'b','/app: 시뮬레이션 인증 · /beta: Supabase Auth');
       setText(authScope,'p','Closed Beta의 Google/Kakao OAuth는 실제 연동 경로에서 검증하며, 이 섹션은 /app의 선택 맥락 보존에 집중합니다.');
     }
 
@@ -151,7 +151,7 @@
     if(architecture){
       setRole(architecture,'domain-architecture');
       setText(architecture,'.fm-next-story h2','추천·참가·경기 당일·경기 후 상태의 소유권을 분리했습니다.');
-      setText(architecture,'.fm-next-story-lead','recommendation은 후보·순위·추천 이유, participation은 선택·checkout·참가 확정, matchday는 체크인·운영 상태, return은 경기 후 신호를 소유합니다. 화면은 이 상태를 읽어 표현하고 서로의 책임을 다시 구현하지 않습니다.');
+      setText(architecture,'.fm-next-story-lead','`recommendation`은 후보·순위·추천 이유, `participation`은 선택·checkout·참가 확정, `matchday`는 체크인·운영 상태, `return`은 경기 후 신호를 소유합니다. 화면은 이 상태를 읽어 표현하고 서로의 책임을 다시 구현하지 않습니다.');
       setHTML(architecture,'.fm-next-cs-modes',
         '<div class="is-focus"><small>RECOMMENDATION</small><h3>순위 · 추천 근거</h3><p>후보·순위·추천 이유와 fallback 경로를 소유합니다.</p></div>'+
         '<div><small>PARTICIPATION</small><h3>참가 상태</h3><p>선택·checkout·참가 확정과 복구 상태를 소유합니다.</p></div>'+
@@ -164,16 +164,16 @@
     if(providers){
       setRole(providers,'provider-ai-boundary');
       setText(providers,'.fm-next-story h2','실제 연동과 시뮬레이션을 구분하고, AI의 권한도 제한했습니다.');
-      setText(providers,'.fm-next-story-lead','/app은 Vercel AI Gateway로 자연어 조건을 해석하지만 경기 후보·순위·추천 이유는 deterministic recommendation engine과 샘플 경기 데이터가 결정합니다. /beta는 Supabase 기반 실제 참가 데이터를 사용합니다. AI는 경기 ID·가격·정원·순위를 생성하거나 참가·결제를 자동 실행하지 않습니다.');
+      setText(providers,'.fm-next-story-lead','/app은 Vercel AI Gateway로 자연어 조건을 해석하지만 경기 후보·순위·추천 이유는 결정론적 추천 엔진(deterministic recommendation engine)과 샘플 경기 데이터가 결정합니다. /beta는 Supabase 기반 실제 참가 데이터를 사용합니다. AI는 경기 ID·가격·정원·순위를 생성하거나 참가·결제를 자동 실행하지 않습니다.');
       setHTML(providers,'.fm-next-cs-grid.three',
-        '<article class="fm-next-cs-card"><small>/APP</small><h3>AI 해석 + deterministic ranking</h3><p>AI 조건 해석, 샘플 경기 데이터, deterministic ranking, mock 인증·결제·정원·알림.</p></article>'+
-        '<article class="fm-next-cs-card"><small>/BETA</small><h3>Supabase 실연동</h3><p>Auth·Postgres·RLS·RPC·Realtime과 OAuth·email·Web Push·Storage를 실제 연동 경로로 사용합니다.</p></article>'+
+        '<article class="fm-next-cs-card"><small>/APP</small><h3>AI 해석 + 결정론적 추천 순위</h3><p>AI 조건 해석, 샘플 경기 데이터, 결정론적 추천 순위, 시뮬레이션 인증·결제·정원·알림.</p></article>'+
+        '<article class="fm-next-cs-card"><small>/BETA</small><h3>Supabase 실연동</h3><p>Auth·Postgres·RLS·RPC·Realtime과 OAuth·이메일·Web Push·Storage를 실제 연동 경로로 사용합니다.</p></article>'+
         '<article class="fm-next-cs-card"><small>HITL · 사람 확인</small><h3>사람이 최종 확정</h3><p>AI가 탐색을 도와도 참가와 결제처럼 되돌리기 어려운 행동은 사용자가 직접 확인합니다.</p></article>');
       const providerScope=providers.querySelector('.fm-next-cs-scope');
       if(providerScope){
         setText(providerScope,'span','현재 연동 경계');
         setText(providerScope,'b','실연동: AI Gateway · Supabase · Resend · Web Push · Storage');
-        setText(providerScope,'p','실제 PG와 외부 analytics는 미연동입니다. OAuth와 Web Push는 외부 서비스 설정 및 사용자의 브라우저/OS 권한에 의존합니다.');
+        setText(providerScope,'p','실제 PG와 외부 분석 도구(analytics)는 미연동입니다. OAuth와 Web Push는 외부 서비스 설정 및 사용자의 브라우저/OS 권한에 의존합니다.');
       }
       providers.setAttribute('data-v5-provider-evidence','mock-only');
       providers.setAttribute('data-v5-ai-evidence','guardrailed');
@@ -182,8 +182,8 @@
     const validation=slides[14];
     if(validation){
       setRole(validation,'validation-evidence');
-      setText(validation,'.fm-next-story h2','자동 QA, Human QA, AI-assisted QA의 역할을 분리해 검증 근거를 명확히 했습니다.');
-      setText(validation,'.fm-next-story-lead','자동 QA는 Regression, Browser E2E, axe, 상태·복구 contract, 반응형, changed-surface Visual Regression과 exact Production HTTP·AI·Chromium smoke를 확인합니다. Case Study는 Ubuntu/Chromium에서 maxDiffPixels: 0으로 비교하고, Real App screenshot은 runner raster 편차만 최대 50 pixels로 제한합니다. 실제 로그인·email 전달·Web Push 표시는 Human QA로 별도 확인하며, AI-assisted QA는 중복·용어 혼용·섹션 역할 충돌·현재 구현과 서술의 불일치를 교차 검수합니다.');
+      setText(validation,'.fm-next-story h2','자동 QA, 사람 검수(Human QA), AI 보조 검수(AI-assisted QA)의 역할을 분리했습니다.');
+      setText(validation,'.fm-next-story-lead','자동 QA는 Regression, Browser E2E, axe, 상태·복구 계약 테스트, 반응형, 변경 화면 Visual Regression과 Production SHA 기준 HTTP·AI·Chromium smoke를 확인합니다. Case Study는 Ubuntu/Chromium에서 maxDiffPixels: 0으로 비교하고, Real App 스크린샷은 CI 실행 환경의 렌더링 편차만 최대 50 pixels로 제한합니다. 실제 로그인·이메일 전달·Web Push 표시는 사람 검수로 별도 확인하며, AI 보조 검수는 중복·용어 혼용·섹션 역할 충돌·현재 구현과 서술의 불일치를 교차 검수합니다.');
       setHTML(validation,'.fm-next-cs-metrics',
         '<div class="fm-next-cs-metric"><b>16</b><span>Case Study 섹션</span></div>'+
         '<div class="fm-next-cs-metric"><b>320–430</b><span>반응형 너비</span></div>'+
@@ -191,9 +191,9 @@
         '<div class="fm-next-cs-metric"><b>HTTP + AI + Chromium</b><span>Production Smoke</span></div>');
       setHTML(validation,'.fm-next-cs-grid.three',
         '<article class="fm-next-cs-card"><h3>자동 QA</h3><p>추천 순위 소유권, 새로고침 복원, fallback, Beta 참가·복구, 접근성, 반응형과 Visual Regression을 반복 검증합니다.</p></article>'+
-        '<article class="fm-next-cs-card"><h3>Human QA</h3><p>Google/Kakao 실제 로그인, transactional email 최종 전달, Web Push 브라우저/OS 표시처럼 사람이 실제 결과를 확인해야 하는 항목을 검증합니다.</p></article>'+
-        '<article class="fm-next-cs-card"><h3>AI-assisted QA</h3><p>중복 문장, 불필요한 영문 혼용, 섹션 역할 충돌, Source of Truth와 카피 불일치를 교차 검수하되 PASS 판정을 대신하지 않습니다.</p></article>');
-      setText(validation,'.fm-next-cs-note','자동 QA · Human QA · AI-assisted QA는 서로 대체하지 않고, 각 검증 결과와 한계를 구분해 기록합니다.');
+        '<article class="fm-next-cs-card"><h3>사람 검수 (Human QA)</h3><p>Google/Kakao 실제 로그인, transactional email 최종 전달, Web Push 브라우저/OS 표시처럼 사람이 실제 결과를 확인해야 하는 항목을 검증합니다.</p></article>'+
+        '<article class="fm-next-cs-card"><h3>AI 보조 검수 (AI-assisted QA)</h3><p>중복 문장, 불필요한 영문 혼용, 섹션 역할 충돌, Source of Truth와 카피 불일치를 교차 검수하되 PASS 판정을 대신하지 않습니다.</p></article>');
+      setText(validation,'.fm-next-cs-note','자동 QA · 사람 검수 · AI 보조 검수는 서로 대체하지 않고, 각 검증 결과와 한계를 구분해 기록합니다.');
       const story=validation.querySelector('.fm-next-story');
       if(story){
         if(validation.getAttribute('aria-hidden')==='false')story.setAttribute('tabindex','0');
@@ -206,11 +206,11 @@
     if(outcome){
       setRole(outcome,'production-boundary');
       setText(outcome,'.fm-next-story h2','Production 범위는 실제 연결과 검증이 끝난 기능으로만 표시합니다.');
-      setText(outcome,'.fm-next-story-lead','/app은 AI inference가 연결되어 있지만 추천 순위는 deterministic runtime이 소유하고 경기 목록과 거래성 provider는 샘플·mock 경계를 유지합니다. /beta는 Supabase 기반 Auth·경기·정원·참가/취소·체크인과 OAuth·email·Web Push·media를 실제 연결했습니다. 실제 PG와 외부 analytics는 Production 범위에 포함하지 않습니다.');
+      setText(outcome,'.fm-next-story-lead','/app은 AI inference가 연결되어 있지만 추천 순위는 결정론적 런타임 로직이 소유하고 경기 목록과 거래성 provider는 샘플·시뮬레이션 경계를 유지합니다. /beta는 Supabase 기반 Auth·경기·정원·참가/취소·체크인과 OAuth·이메일·Web Push·미디어를 실제 연결했습니다. 실제 PG와 외부 분석 도구는 Production 범위에 포함하지 않습니다.');
       setHTML(outcome,'.fm-next-cs-outcomes',
-        '<div><b>Real App · /app</b><p>AI Gateway 실연동 · deterministic ranking · 샘플 경기 데이터 · mock 인증/결제/정원/알림</p></div>'+
-        '<div><b>Closed Beta · /beta</b><p>Supabase Auth/경기/정원/참가 · OAuth · email · Web Push · media 실연동</p></div>'+
-        '<div><b>미연동 범위</b><p>실제 PG · 외부 analytics</p></div>');
+        '<div><b>Real App · /app</b><p>AI Gateway 실연동 · 결정론적 추천 순위 · 샘플 경기 데이터 · 시뮬레이션 인증/결제/정원/알림</p></div>'+
+        '<div><b>Closed Beta · /beta</b><p>Supabase Auth/경기/정원/참가 · OAuth · 이메일 · Web Push · 미디어 실연동</p></div>'+
+        '<div><b>미연동 범위</b><p>실제 PG · 외부 분석 도구</p></div>');
       const finalBox=outcome.querySelector('.fm-next-cs-final');
       if(finalBox){
         setText(finalBox,'span','Production 기준');
