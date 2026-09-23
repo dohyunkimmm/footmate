@@ -57,6 +57,20 @@ test('Case Study exposes 13 concise sections with English navigation and one-lin
     'Check-in to Next Match','Preserve, Then Recover','Ownership & Guardrails',
     'Automated · Human · AI QA','Connected & Verified'
   ]);
+
+  const lineCounts=await page.locator('.toc-item:not([hidden]) .toc-s').evaluateAll(items=>items.map(item=>{
+    const range=document.createRange();
+    range.selectNodeContents(item);
+    return range.getClientRects().length;
+  }));
+  expect(lineCounts.every(count=>count===1)).toBe(true);
+
+  const sidebarStyle=await page.locator('.sidebar').evaluate(node=>({
+    overflowY:getComputedStyle(node).overflowY,
+    scrollbarWidth:getComputedStyle(node).scrollbarWidth
+  }));
+  expect(['auto','scroll']).toContain(sidebarStyle.overflowY);
+  expect(sidebarStyle.scrollbarWidth).toBe('none');
 });
 
 test('merged sections keep one clear job without exposing route strings as reader labels',async({page})=>{
@@ -164,13 +178,19 @@ test('reader-facing body copy uses one English display language while preserving
 
   const bodyText=(await page.locator('.slide:not([hidden])').allInnerTexts()).join('\n');
   expect(bodyText).not.toMatch(/[가-힣]/);
+  await expect(page.locator('html')).toHaveAttribute('lang','en');
 
   const cover=await slideText(page,0);
   expect(cover).toContain('deterministic ranking');
+  await expect(page.locator('.fm-next-cover-frame-meta')).toHaveText('Live Interaction');
+  const liveInteractionColor=await page.locator('.fm-next-cover-frame-meta').evaluate(node=>getComputedStyle(node).color);
+  expect(liveInteractionColor).toBe('rgb(60, 64, 67)');
 
   const provider=await slideText(page,10);
   expect(provider).toContain('deterministic recommendation engine');
   expect(provider).toContain('Vercel AI Gateway');
+  const p11Labels=await page.locator('.slide:not([hidden])').nth(10).locator('.fm-next-cs-modes small').allTextContents();
+  expect(p11Labels).toEqual(['Recommendation','Participation · Matchday · Return','AI · Providers · HITL']);
 
   const validation=await slideText(page,11);
   expect(validation).toContain('Human QA');
