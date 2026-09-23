@@ -35,7 +35,7 @@ jobs:
           const jsMarker='Product completion orchestration';
           if(fs.existsSync(cssSource)){
             let css=fs.readFileSync(cssSource,'utf8');
-            css+=`\n/* Completion readability floor */\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="home"] .fm-ai-kicker{font-size:11px}\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="home"] .fm-ai-examples button{min-height:44px;font-size:11px}\n`;
+            css+=`\n/* Completion readability floor */\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="home"] .fm-ai-kicker{font-size:11px}\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="home"] .fm-ai-examples button{min-height:44px;font-size:11px}\n.fm-next-page[data-mode="real"] .fm-ai-card[data-product-ai="discover"] :is(.fm-ai-kicker,.fm-ai-mode,.fm-ai-examples button,.fm-ai-status span,.fm-ai-conditions span,.fm-ai-result-copy small,.fm-ai-result-copy em,.fm-ai-guardrail){font-size:11px}\n`;
             let target=fs.readFileSync(cssTarget,'utf8');
             if(!target.includes(cssMarker))target+=`\n\n${css}`;
             fs.writeFileSync(cssTarget,target);
