@@ -18,6 +18,9 @@
 <body>
 <main id="footmate-beta" class="fm-beta" data-beta-state="booting" aria-live="polite"></main>
 <noscript>FootMate Closed Beta를 이용하려면 JavaScript를 켜주세요.</noscript>
+<script>
+(()=>{const key='footmate:app:oauth-pending:v1';if(!sessionStorage.getItem(key))return;const query=new URLSearchParams(location.search),hash=new URLSearchParams(location.hash.replace(/^#/,''));const callback=Boolean(hash.get('access_token')||hash.get('error')||hash.get('error_description')||query.get('code')||query.get('error')||query.get('error_description'));if(!callback)return;const target=new URL('/app',location.origin);target.searchParams.set('oauth_return','1');target.searchParams.set('resume','1');for(const name of ['code','error','error_description']){const value=query.get(name);if(value)target.searchParams.set(name,value)}target.hash=location.hash;location.replace(`${target.pathname}${target.search}${target.hash}`)})();
+</script>
 <script src="/src/v5/beta-recovery-bootstrap.js?v=1"></script>
 <script src="/src/v5/beta-social-auth-bootstrap.js?v=1"></script>
 <script type="module" src="/src/v5/beta.js?v=1"></script>
