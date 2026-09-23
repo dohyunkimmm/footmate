@@ -101,7 +101,7 @@ function decorateAi(){
     card.classList.add('fm-ai-card--core');
     if(!card.querySelector('[data-ai-core-label]'))card.insertAdjacentHTML('afterbegin','<div class="fm-ai-core-label" data-ai-core-label><span>CORE FEATURE</span><b>AI MATCHING</b></div>');
     const fallbackCopy=card.querySelector('[data-ai-status] span');
-    if(fallbackCopy)fallbackCopy.textContent=AI_FALLBACK_COPY;
+    if(fallbackCopy&&/AI 장애나 지연/.test(fallbackCopy.textContent||''))fallbackCopy.textContent=AI_FALLBACK_COPY;
   });
 }
 async function loadBackendConfig(){
