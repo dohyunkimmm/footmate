@@ -158,6 +158,7 @@
   .fm-decision-toolbar button,
   .fm-decision-compare-bar button
 ):hover{background:#f5f8f4;border-color:rgba(20,55,40,.22)}
+.fm-next-page[data-mode="real"] .fm-decision-toolbar button{color:var(--fm-ds-text-strong)}
 .fm-next-page[data-mode="real"] :where(button,[role="button"]):active{transform:scale(.985)}
 .fm-next-page[data-mode="real"] :where(button,[role="button"]):disabled{transform:none;box-shadow:none;cursor:not-allowed}
 
