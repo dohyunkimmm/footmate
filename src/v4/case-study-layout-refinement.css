@@ -228,3 +228,28 @@ html[data-fm-next-case-study="true"] .fm-next-cs-recovery>div>span{
   html[data-fm-next-case-study="true"] .fm-cs-reasons{gap:14px}
   html[data-fm-next-case-study="true"] .fm-next-story h2{margin-bottom:16px}
 }
+html[data-fm-next-case-study="true"] .fm-next-cs-loop>div{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="matchday-return"] .fm-next-story-aside{
+  grid-template-columns:minmax(0,1fr);
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="matchday-return"] .fm-next-cs-link{
+  justify-self:start;
+  width:auto;
+  gap:32px;
+}
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-cs-metrics{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+}
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-cs-loop>i{display:none}
+  html[data-fm-next-case-study="true"] .fm-next-cs-detail-order>i{
+    align-self:center;
+    transform:rotate(90deg);
+  }
+}

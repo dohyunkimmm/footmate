@@ -202,9 +202,10 @@ for(const width of [320,390]){
     test(`Case Study ${width} full body section ${index+1} matches reviewed baseline`,async({page})=>{
       const errs=await openCaseStudy(page,{width,height:844},index);
       const body=page.locator('.slide:not([hidden])').nth(index).locator(index===0?'.fm-next-cover-copy':'.fm-next-story');
+      // Element captures scroll under the fixed header; remove only that overlay.
+      await page.addStyleTag({content:'.cs-mobile-head{display:none!important}'});
       await expect(body).toHaveScreenshot(`case-study-full-body-${index+1}-${width}.png`,{
-        animations:'disabled',caret:'hide',maxDiffPixels:0,
-        style:'.cs-mobile-head{visibility:hidden!important}'
+        animations:'disabled',caret:'hide',maxDiffPixels:0
       });
       expect(errs).toEqual([]);
     });
