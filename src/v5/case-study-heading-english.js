@@ -18,15 +18,21 @@
 
   let attempts=0;
   function apply(){
+    const root=document.documentElement;
     const slides=[...document.querySelectorAll('.slide:not([hidden])')];
-    if(slides.length!==13){
-      if(attempts++<80)setTimeout(apply,50);
+    const ready=
+      root.dataset.footmateCaseStudyRelease==='5.1.1'&&
+      root.dataset.footmateCaseStudySections==='13'&&
+      slides.length===13;
+    if(!ready){
+      if(attempts++<120)requestAnimationFrame(apply);
       return;
     }
     headings.forEach((heading,index)=>{
       const title=slides[index+1]?.querySelector('.fm-next-story h2');
       if(title)title.textContent=heading;
     });
+    root.dataset.footmateCaseStudyHeadingLanguage='en';
   }
 
   apply();
