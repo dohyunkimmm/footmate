@@ -2,6 +2,24 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Product visual audit 수정 및 Production 반영 · 2026-09-23
+
+- Runtime PR: #229; #227은 대체 완료로 merge 없이 닫음
+- Product/runtime SHA: `b330dcc4b6a726417ccbd0a5d95e3891de0285f7`
+- Scope: Welcome 대비, Home/Discover idle AI 밀도, fresh-user 개인화 오표시, 최소 11px/44px, 320/375/390/430 첫 경기명 및 nav clearance, route scroll reset, 560px/0px shell 원본 규칙 정리
+- 추가 이미지 검토 수정: Detail 저장·비교 버튼의 흰 배경/흰 글자 대비
+- Preserved: #228 Case Study 서비스 기획 서사·한국어 본문·13-section·한 줄 TOC, 추천/참가/결제 domain 및 외부 provider 경계
+- Visual QA: 변경 PNG 25개 직접 검토; 후보 run `35862321102` 생성 70 PASS → 별도 정상 비교 70 PASS
+- PR QA: run `35863352326` · Regression 36 PASS · Browser 155 first-attempt PASS + 1 retry PASS (AI fallback 제목 가장자리 17픽셀, diff 검토)
+- Post-merge QA: run `35864589080` · Regression 36 PASS · Browser E2E + axe 156 PASS, 재시도 없음
+- Exact Vercel Production: `dpl_AdYWx2WGbimhsAkpdTiGAi8Xf7Kt` · runtime SHA 일치 · READY
+- Official alias: `footmate-black.vercel.app`; /app HTTP 200 및 배포된 Design System CSS가 검토한 수정본과 내용 일치
+- Production HTTP smoke: PASS. 첫 Production AI inference는 provider timeout(502)으로 실패했으며 실패 job만 한 번 재실행
+- Production Smoke 재실행: HTTP PASS · AI inference PASS(`inclusionai/ling-3.0-flash-vl-free`, fallbackUsed=false) · 실제 Production Chromium 6 PASS
+- 직접 대화형 브라우저는 이 작업 환경의 ERR_BLOCKED_BY_CLIENT로 접근하지 못함. 위 브라우저 검증은 GitHub Actions의 실제 Production Chromium 실행 결과
+- PR 정리: #216/#223/#227 superseded closed, merge하지 않음
+- Render backup: 이번 수정 배포·재검증 대상 아님
+
 ## Case Study section label correction · 2026-09-23
 
 - #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
