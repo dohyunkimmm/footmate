@@ -14,7 +14,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Guided Case Study: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Compatibility aliases: `/demo`, `/next` → current Real App
-- Case Study IA: **16 sections**
+- Case Study IA: **13 sections**
 
 ## Product decisions
 
@@ -81,7 +81,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - `/app` auth / payment / capacity / notification providers: **deterministic mock**
 - `/app` persistence: **browser local state** — `footmate:*` canonical keys를 primary로 사용하고 기존 `footmate:v4:*` 9개 key는 migration/rollback compatibility mirror로 유지
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
-- `/beta` Realtime / waitlist / reminder / feedback / real-match recommendation loop: **Supabase connected**; Realtime event는 change signal로만 사용하고 authoritative row는 REST로 다시 읽음
+- `/beta` Realtime / waitlist / reminder / feedback / real-match recommendation loop: **Supabase connected**; Realtime event는 change signal로만 사용하고 authoritative row는 REST에서 다시 읽음
 - `/beta` account recovery / signup verification resend: **Supabase Auth connected**
 - `/beta` Google/Kakao OAuth: **provider-aware Supabase OAuth connected**; 활성화된 provider만 버튼을 노출하며 Google/Kakao Production 실로그인을 2026-09-22 수동 검증
 - `/beta` join / cancel / check-in: **database transaction + row lock/RLS**, free-participation only; 경기별 취소 마감·체크인 오픈 정책을 DB에서 강제
