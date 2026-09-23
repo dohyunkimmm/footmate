@@ -193,12 +193,16 @@ test('320px context actions and AI micro UI keep readable non-cramped sizing',as
 
   const contextActions=await page.locator('.fm-next-context-actions .fm-next-button').evaluateAll(buttons=>buttons.map(button=>{
     const rect=button.getBoundingClientRect();
-    return {top:rect.top,bottom:rect.bottom,width:rect.width};
+    return {top:rect.top,bottom:rect.bottom,width:rect.width,left:rect.left,right:rect.right,height:rect.height,overflow:button.scrollWidth-button.clientWidth};
   }));
   expect(contextActions).toHaveLength(2);
-  expect(contextActions[1].top).toBeGreaterThanOrEqual(contextActions[0].bottom);
-  expect(contextActions[0].width).toBeGreaterThanOrEqual(230);
-  expect(contextActions[1].width).toBeGreaterThanOrEqual(230);
+  expect(Math.abs(contextActions[1].top-contextActions[0].top)).toBeLessThanOrEqual(1);
+  expect(contextActions[1].left-contextActions[0].right).toBeGreaterThanOrEqual(8);
+  for(const action of contextActions){
+    expect(action.width).toBeGreaterThanOrEqual(96);
+    expect(action.height).toBeGreaterThanOrEqual(44);
+    expect(action.overflow).toBeLessThanOrEqual(1);
+  }
 
   const aiMetrics=await page.locator('.fm-ai-card').evaluate(card=>{
     const fontSize=selector=>parseFloat(getComputedStyle(card.querySelector(selector)).fontSize);

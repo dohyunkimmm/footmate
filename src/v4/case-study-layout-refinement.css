@@ -134,3 +134,13 @@ html[data-fm-next-case-study="true"] .fm-next-cs-quality span{
     padding:12px;
   }
 }
+
+
+/* Role cards precede an absolutely positioned preview label on mobile. */
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-cover{row-gap:48px!important}
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-note a{
+  color:#137333;
+  text-underline-offset:3px;
+}

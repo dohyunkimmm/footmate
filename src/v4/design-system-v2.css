@@ -305,7 +305,8 @@
 }
 .fm-next-page[data-mode="real"] [data-screen="home"] .fm-next-context-actions .fm-next-button{
   min-height:44px;
-  padding-inline:14px;
+  padding-inline:10px;
+  font-size:13px;
 }
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-ai-card.fm-ai-card--core{
   margin:12px 0 16px;

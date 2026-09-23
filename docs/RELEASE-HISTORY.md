@@ -6,8 +6,31 @@
 
 - #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
 - #226 merged at `c03a8fccd1802fc9d8c28d9d6e033687b98651bc`: English applies to section labels/kickers; story H2 restored to Korean. This supersedes #225's heading-language change.
-- The 13-section IA, Korean body copy and TOC wrapping remain the reference for subsequent Product fixes.
+- The later #228 keeps 13 sections and Korean body copy while revising the planning narrative and returning TOC subtitles to a single line.
 - These entries record confirmed merges; they do not establish a newly verified Vercel Production SHA or a Product visual QA pass.
+## Case Study 서비스 기획 서사 보강 · 2026-09-23
+
+- Scope: 기존 13개 섹션 안에 Role / Scope / Responsibility, 문제→서비스 목표, 우선순위, Decision / Reason / Trade-off, 대안 가설, 운영 정책, 협의 기준, KPI, 회고 보강
+- TOC: main/sub title 정리, 13개 부제목 한 줄 및 잘림 없음 검증
+- Content boundary: Persona·대안 비교는 설계 가설; 8개 KPI는 Validation Metric이며 실제 사용자 성과·기준값·목표 달성으로 표현하지 않음
+- Detailed evidence: [서비스 기획 근거](SERVICE-PLANNING-EVIDENCE.md) — 분모·관찰 기간·제외 기준·의사결정 근거
+- Preserved: Product/Beta 기능, 추천·참가·운영 정책, 실제 연동과 시뮬레이션 경계
+- Necessary layout adjustment: 모바일 역할 카드와 앱 미리보기 라벨 간격; 320/375/390/430px에서 겹침 방지 geometry contract
+- Runtime PR: #228
+- Case Study 전용 QA: run `35858360019` · 43 PASS
+- Visual Regression: Ubuntu/Chromium에서 baseline 생성 후 별도 `toHaveScreenshot()` 실제 비교 PASS · `maxDiffPixels: 0`
+- Visual scope: 1440×900 전체 13개 섹션, 1728×900 cover, 390×844 전체 13개 섹션; screenshot 직접 검토 및 320/375/390/430px 포함 wrap·overflow·spacing·TOC·키보드·axe 검증
+- Baseline 저장: `tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/`; 일회성 baseline workflow는 제거하고 기존 PR QA gate 유지
+- Final PR QA: run `35858717623` · Regression 36 PASS · Browser E2E + axe 142 PASS
+- Product/runtime baseline SHA: `20f3eef4845a9787fe64dfefb88f5b6748146016`
+- Post-merge QA: run `35859386720` · Regression 36 / Browser E2E + axe / Production Smoke PASS
+- Exact verified Vercel Production: `dpl_eMzzjfTZTUaeESYSnHH3EyceVtUu` · SHA `20f3eef4845a9787fe64dfefb88f5b6748146016` · READY · official alias `footmate-black.vercel.app`
+- Production HTTP: PASS; Case Study HTML·현재 narrative·section label 파일이 checkout SHA의 파일 내용과 정확히 일치하는 검사 추가
+- Production AI inference / Chromium smoke: PASS
+- Documentation: README·문서 인덱스·서비스 기획 근거 및 Notion 프로젝트/PRD 동기화; Notion의 과거 16-section·OAuth 미연동 일반화 표기는 현재 13-section과 Real App/Beta 경계로 수정
+- Runbook: 운영 절차 변경 없음
+- Render backup: 이번 Case Study 변경은 재검증하지 않음
+- Remaining validation: 실제 사용자 조사, 전환·체크인·재탐색 기준값과 사업 성과는 별도 Beta 관찰 대상이며 이번 QA PASS로 대체하지 않음
 
 ## v5.2.0 — Real Beta Readiness · 2026-09-21
 
@@ -560,4 +583,3 @@
 v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 Closed Beta는 account recovery·취소 마감·connected check-in·operator completion·DB-backed in-app notification·Resend transactional email에 더해 Realtime refresh, reminder, waitlist, actual Beta match ranking/feedback, provider-aware Google/Kakao OAuth UI, Operator TOTP MFA, opt-in Web Push, Supabase Storage media까지 연결되어 있다. transactional email과 Web Push outbox는 server worker/Cron이 처리하고, email은 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며 `/beta`는 별도의 connected data path다. 실제 PG와 external analytics는 연결하지 않았고, Google/Kakao 실제 로그인과 device-level Web Push 브라우저/OS 표시는 2026-09-22 Production 수동 QA를 완료했다. OAuth provider credential/config와 사용자의 브라우저/OS 권한은 해당 기능이 동작하기 위한 운영 의존성으로 유지된다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.
-

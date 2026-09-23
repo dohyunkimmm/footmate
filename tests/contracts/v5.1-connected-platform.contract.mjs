@@ -61,11 +61,11 @@ for(const [path,repositoryName] of [
 
 const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
 for(const required of [
-  "['Overview','AI Match Assistant']",
-  "['Product Thesis','One Continuous Decision Flow']",
-  "['Sign in · Join','Preserve Context Through Participation']",
-  "['Domain · AI Boundary','Ownership, Providers, and Guardrails']",
-  "['Production Boundary','Only Connected and Verified Capabilities']",
+  "['Overview','Role & Scope']",
+  "['Scope & Priority','Value Before Scale']",
+  "['Sign in · Join','Context & Confirmation']",
+  "['Domain & AI','Contracts & Guardrails']",
+  "['Release & Learnings','Limits & Next Steps']",
   'visibleSourceIndexes=[0,1,2,3,5,6,7,8,10,11,12,14,15]',
   'Real App의 인증·결제는 시뮬레이션',
   'Closed Beta의 인증·참가 경로는 Supabase에 실제 연결됩니다.',
@@ -92,3 +92,4 @@ for(const stale of [
 ])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
 
 console.log('PASS v5.1.1 connected platform contracts');
+

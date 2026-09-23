@@ -596,7 +596,7 @@
 }
 
 @media(max-width:340px){
-  .fm-next-context-actions{grid-template-columns:1fr}
+  .fm-next-page:not([data-mode="real"]) .fm-next-context-actions{grid-template-columns:1fr}
   .fm-discovery-empty-actions,
   .fm-participation-state>div{grid-template-columns:1fr}
   .fm-discovery-empty-actions{display:grid;width:100%}
