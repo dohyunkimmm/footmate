@@ -64,27 +64,16 @@
       ['Trade-off','과거 선호와 오늘의 의도가 다를 수 있어 조건 수정과 재탐색을 허용']
     ]));
 
-    // 11 · Domain & AI — service ownership first, technical evidence second.
+    // 11 · Domain & AI — keep the proven evidence contracts, improve only the service-planning framing.
     const domain=slides[10];
     setHTML(domain,'.fm-next-story h2',lines(
-      '화면마다 상태를 따로 판단하지 않도록,',
-      '서비스 책임과 AI 실행 경계를 나눴습니다.'
+      '서비스 상태의 책임을 나누고,',
+      'AI 실행 경계를 분리했습니다.'
     ));
     setHTML(domain,'.fm-next-story-lead',lines(
-      '추천·참가·체크인·경기 후 상태의 책임을 분리하고, AI는 자연어 조건 해석 범위에 둡니다.',
-      '상태 일관성이 필요한 변경은 Realtime 신호만 믿지 않고 서버 상태를 다시 읽는 방식으로 검증합니다.'
+      '추천·참가·체크인·경기 후 상태의 소유권을 구분해 화면마다 같은 상태를 따로 판단하지 않게 했습니다.',
+      'AI는 조건 해석, 결정론적 추천 엔진은 후보·순위·이유를 맡고 참가·결제는 HITL을 유지합니다.'
     ));
-    setHTML(domain,'.fm-next-cs-modes',
-      '<div class="is-focus"><small>SERVICE STATE</small><h3>상태 소유권</h3><p>'+lines('추천·참가·체크인·경기 후 상태의 책임을 분리합니다.','화면마다 같은 상태를 별도로 판단하지 않게 합니다.')+'</p></div>'+
-      '<div><small>AI · RECOMMENDATION · HITL</small><h3>AI 실행 경계</h3><p>'+lines('AI는 자연어 조건을 해석하고, 추천 엔진이 후보·순위·이유를 결정합니다.','참가·결제는 사용자가 최종 확인합니다.')+'</p></div>'+
-      '<div><small>STATE CONSISTENCY</small><h3>정합성 기준</h3><p>'+lines('Realtime은 변경 신호로 사용하고 서버 상태를 다시 읽습니다.','추가 조회 지연보다 최신 상태와 복구 가능성을 우선합니다.')+'</p></div>');
-    setHTML(domain,'.fm-next-cs-note',rows([
-      ['정책 경계',lines('AI가 경기 사실·가격·정원·순위를 만들지 않음','AI 해석 실패 시 fallback · 참가/결제 HITL')],
-      ['실연동',lines('Vercel AI Gateway · Supabase','Resend · Web Push · Storage')],
-      ['미연동','실제 PG와 외부 분석 도구는 미연동입니다.'],
-      ['협의 기준',lines('개발 · API·데이터, 권한, 오류와 재시도','디자인 · IA, 상태별 화면, CTA','운영 · 취소, 정원, 복구 정책')],
-      ['개인 프로젝트','위 항목은 협의 가능한 수준의 설계 범위이며, 실제 다인 협업 성과는 아닙니다.']
-    ]));
 
     document.documentElement.dataset.footmateCaseStudyPlannerPolish='95';
     applied=true;
