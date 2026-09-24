@@ -309,7 +309,9 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
 test('opening Detail after scrolling a match list starts at the top',async({page})=>{
   await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
-  const last=page.locator('.fm-next-match-card').last();
+  await page.getByRole('button',{name:'전체 보기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  const last=page.locator('[data-screen="discover"] .fm-next-match-card').last();
   await last.scrollIntoViewIfNeeded();
   expect(await page.evaluate(()=>window.scrollY)).toBeGreaterThan(0);
   await last.click();
