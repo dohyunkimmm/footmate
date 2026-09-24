@@ -37,14 +37,14 @@ async function expectNoOverflow(page){
 
 const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
-test('Home is recommendation-first with compact AI and compact match cards',async({page})=>{
+test('Home keeps the core AI assistant prominent with compact match cards',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const screen=page.locator('[data-screen="home"]');
   const ai=screen.locator('.fm-ai-card[data-product-ai="home"]');
-  await expect(ai.locator('.fm-ai-head strong')).toHaveText('조건만 빠르게 바꿔볼까요?');
+  await expect(ai.locator('.fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 말해보세요.');
   await expect(ai.locator('[data-ai-example]:visible')).toHaveCount(1);
-  await expect(ai.locator('[data-ai-submit]')).toHaveText('조건 수정');
+  await expect(ai.locator('[data-ai-submit]')).toHaveText('AI로 찾기');
 
   const metrics=await screen.evaluate(element=>{
     const card=element.querySelector('.fm-next-match-card');
