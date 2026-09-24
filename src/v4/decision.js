@@ -167,11 +167,8 @@ function patchDetail(){
   const address=screen.querySelector('.fm-next-detail-address');
   if(address)address.insertAdjacentHTML('afterend',toolbar(match));
 
-  const sections=[...screen.querySelectorAll('.fm-next-detail-section')];
-  const first=sections[0];
-  const second=sections[1];
-  if(first)first.insertAdjacentHTML('afterend',decisionSections(match,session));
-  if(second)second.dataset.decisionLegacyInfo='true';
+  const hero=screen.querySelector('.fm-next-detail-hero');
+  if(hero)hero.insertAdjacentHTML('afterend',decisionSections(match,session));
 
   const sticky=screen.querySelector('.fm-next-sticky-cta');
   if(sticky&&state.compareMatchIds.length)sticky.insertAdjacentHTML('beforebegin',compareBar());
