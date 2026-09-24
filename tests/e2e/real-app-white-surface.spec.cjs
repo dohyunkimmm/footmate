@@ -77,6 +77,14 @@ test('390px Home uses neutral match media while raising the core AI surface',asy
   expect(styles[3].shadow).not.toBe('none');
   const nav=screen.locator('.fm-next-nav');
   await expect(nav).toHaveCSS('position','fixed');
+  const density=await screen.evaluate(element=>{
+    const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
+    const firstCard=element.querySelector('.fm-next-match-card').getBoundingClientRect();
+    const visibleCards=[...element.querySelectorAll('.fm-next-match-card')].filter(node=>getComputedStyle(node).display!=='none').length;
+    return {navTop:nav.top,firstCardBottom:firstCard.bottom,visibleCards};
+  });
+  expect(density.visibleCards).toBe(1);
+  expect(density.firstCardBottom).toBeLessThanOrEqual(density.navTop-8);
   await expectNoHorizontalOverflow(page);
   const dynamicDates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
