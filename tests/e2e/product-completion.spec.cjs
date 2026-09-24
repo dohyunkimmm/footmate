@@ -83,7 +83,7 @@ test('Home is the AI Match Assistant entry with one compact For You list',async(
 });
 
 test('Home AI example executes search and hands result state to Discover',async({page})=>{
-  await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await page.route('**/api/ai-match-assistant',async route=>{await new Promise(resolve=>setTimeout(resolve,300));await route.fulfill({status:503,contentType:'application/json',body:'{}'});});
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const home=page.locator('[data-screen="home"]');
@@ -149,7 +149,7 @@ test('Discover owns filters, sorting and whole-match exploration without a dupli
   await expect(screen.locator('.fm-next-section-head h1')).toHaveText('경기 찾기');
   await expect(screen.getByRole('button',{name:/필터/})).toBeVisible();
   await expect(screen.locator('.fm-discovery-sort')).toBeVisible();
-  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(3);
+  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(4);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
