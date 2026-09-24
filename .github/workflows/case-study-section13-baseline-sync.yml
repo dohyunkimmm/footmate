@@ -1,0 +1,63 @@
+name: Case Study Section 13 Baseline Sync
+
+on:
+  push:
+    branches:
+      - portfolio/case-study-evidence-progression
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: ${{ !contains(github.event.head_commit.message, '[baseline-sync]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Regenerate Case Study visual snapshots
+        run: npx playwright test --project=chromium tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Verify only Section 13 baselines changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          allowed='^(tests/e2e/v5\.1-case-study-visual\.spec\.cjs-snapshots/(case-study-13-production-1440-chromium-linux\.png|case-study-13-production-390-chromium-linux\.png|case-study-full-body-13-320-chromium-linux\.png|case-study-full-body-13-390-chromium-linux\.png))$'
+          unexpected="$(git diff --name-only | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected baseline changes:"
+            echo "$unexpected"
+            exit 1
+          fi
+          for file in \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-production-1440-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-production-390-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-full-body-13-320-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-full-body-13-390-chromium-linux.png; do
+            if git diff --quiet -- "$file"; then
+              echo "Expected baseline was not changed: $file"
+              exit 1
+            fi
+          done
+      - name: Commit reviewed Section 13 baselines
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-production-1440-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-production-390-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-full-body-13-320-chromium-linux.png \
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-full-body-13-390-chromium-linux.png
+          git commit -m 'test: approve Section 13 visual baselines [baseline-sync]'
+          git push origin HEAD:${{ github.ref_name }}
