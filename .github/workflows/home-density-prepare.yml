@@ -1,0 +1,58 @@
+name: Prepare Home Density Fix
+on:
+  push:
+    branches: [fix/home-initial-viewport-density]
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/home-initial-viewport-density
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply compact Home first-viewport density
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          css=Path('src/v4/design-system-v2.css')
+          s=css.read_text()
+          marker='/* Real App Home first-viewport density */'
+          if marker not in s:
+              s += '''\n\n/* Real App Home first-viewport density\n   Compact the fixed 560px shell at every viewport width so Home does not behave\n   like a roomy desktop card stack when the viewport itself is wider than the shell. */\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-greeting{padding:8px 0 2px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-greeting h1{font-size:27px;line-height:1.22}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card{margin:8px 0 10px;padding:13px 14px;border-radius:20px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card h2{margin-bottom:3px;font-size:20px;line-height:1.3}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card p{display:none}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-actions{margin-top:9px;gap:8px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-actions .fm-next-button{min-height:44px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"]{margin:8px 0 10px;padding:12px 14px;border-radius:20px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"] .fm-ai-core-label{margin-bottom:6px;padding:4px 7px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"] .fm-ai-head>div{margin-bottom:3px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"][data-ai-state="idle"] .fm-ai-head strong{margin:0 0 6px;font-size:18px;line-height:1.3}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"] .fm-ai-form{margin-top:8px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"] .fm-ai-input-row :is(input,button){height:46px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"] .fm-ai-examples{margin-top:6px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-section{padding-top:18px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-section-head{margin-bottom:8px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-section-head p{display:none}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-section-head h2{font-size:23px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-personalization-explanation{grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;margin:0 0 10px;padding:10px 12px;border-radius:16px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-personalization-explanation>div{gap:1px}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-personalization-explanation small{margin-bottom:1px;font-size:10px;line-height:1.2}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-personalization-explanation b{font-size:14px;line-height:1.3}\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-personalization-explanation button{width:auto;min-height:44px;padding:8px 10px;white-space:nowrap}\n'''
+              css.write_text(s)
+
+          spec=Path('tests/e2e/product-completion.spec.cjs')
+          t=spec.read_text()
+          old="""      secondaryBackground:getComputedStyle(secondary).backgroundColor\n    };\n  });\n  expect(metrics.cardHeight).toBeLessThanOrEqual(190);"""
+          new="""      secondaryBackground:getComputedStyle(secondary).backgroundColor,\n      firstCardTop:card.getBoundingClientRect().top,\n      navTop:element.querySelector('.fm-next-nav').getBoundingClientRect().top\n    };\n  });\n  expect(metrics.cardHeight).toBeLessThanOrEqual(190);"""
+          if old in t:
+              t=t.replace(old,new,1)
+              needle="""  expect(metrics.secondaryBackground).toBe('rgb(255, 255, 255)');\n  await expectNoOverflow(page);"""
+              repl="""  expect(metrics.secondaryBackground).toBe('rgb(255, 255, 255)');\n  expect(metrics.firstCardTop).toBeLessThanOrEqual(690);\n  expect(metrics.navTop-metrics.firstCardTop).toBeGreaterThanOrEqual(56);\n  await expectNoOverflow(page);"""
+              if needle not in t: raise SystemExit('Home density assertion anchor missing')
+              t=t.replace(needle,repl,1)
+              spec.write_text(t)
+          elif 'firstCardTop:card.getBoundingClientRect().top' not in t:
+              raise SystemExit('Home metrics anchor missing')
+          PY
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" css-tree@3.1.0
+          npx playwright install --with-deps chromium
+      - name: Refresh only affected Home baseline
+        run: npx playwright test tests/e2e/product-completion.spec.cjs -g "Home keeps the core AI assistant prominent with compact match cards" --update-snapshots
+      - name: Commit prepared change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/v4/design-system-v2.css tests/e2e/product-completion.spec.cjs tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-390-chromium-linux.png
+          if git diff --cached --quiet; then exit 0; fi
+          git diff --cached --check
+          git commit -m "fix: compact Home initial viewport density"
+          git push origin HEAD:fix/home-initial-viewport-density
