@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   refresh:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, 'chore: refresh Case Study reader baselines')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -42,6 +42,18 @@ jobs:
           content=content.replace(
             "  expect(await slideText(page,10)).toContain('실제 다인 협업 성과');",
             "  expect(await slideText(page,10)).toContain('실제 연결');\n  expect(await slideText(page,10)).toContain('정의한 기준');"
+          );
+          content=content.replace(
+            "  expect(domain).toContain('실제 PG와 외부 분석 도구는 미연동');",
+            "  expect(domain).toContain('실제 PG와 외부 분석 도구는 연결하지 않았습니다.');"
+          );
+          content=content.replace(
+            "  expect(production).toContain('실제 PG · 외부 분석 도구');",
+            "  expect(production).toContain('실제 PG와 외부 분석 도구는 연결하지 않았습니다.');"
+          );
+          content=content.replace(
+            "  expect(outcomeLimits).toContain('실제 PG · 외부 분석 도구');",
+            "  expect(outcomeLimits).toContain('실제 PG와 외부 분석 도구는 연결하지 않았습니다.');"
           );
           const insertBefore="test('mobile static preview caption stays below the frame without clipping'";
           if(!content.includes('reader-facing cleanup removes internal jargon')){
