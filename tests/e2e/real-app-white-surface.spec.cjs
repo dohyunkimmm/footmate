@@ -56,7 +56,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   expect(errs).toEqual([]);
 });
 
-test('390px Home uses neutral match media while keeping green accents',async({page})=>{
+test('390px Home uses neutral match media while raising the core AI surface',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
   const screen=page.locator('[data-screen="home"]');
@@ -67,14 +67,14 @@ test('390px Home uses neutral match media while keeping green accents',async({pa
     card.evaluate(node=>({background:getComputedStyle(node).backgroundColor,border:getComputedStyle(node).borderTopColor})),
     media.evaluate(node=>({color:getComputedStyle(node).color,image:getComputedStyle(node).backgroundImage})),
     badge.evaluate(node=>getComputedStyle(node).backgroundColor),
-    screen.locator('.fm-ai-card--core').evaluate(node=>({background:getComputedStyle(node).backgroundColor,shadow:getComputedStyle(node).boxShadow,border:getComputedStyle(node).borderTopColor}))
+    screen.locator('.fm-ai-card--core').evaluate(node=>({background:getComputedStyle(node).backgroundColor,image:getComputedStyle(node).backgroundImage,shadow:getComputedStyle(node).boxShadow,border:getComputedStyle(node).borderTopColor}))
   ]);
   expect(styles[0].background).toBe('rgb(255, 255, 255)');
   expect(styles[1].color).toBe('rgb(19, 32, 25)');
   expect(styles[1].image).toContain('linear-gradient');
   expect(styles[2]).not.toBe('rgb(255, 255, 255)');
-  expect(styles[3].background).toBe('rgb(255, 255, 255)');
-  expect(styles[3].shadow).toBe('none');
+  expect(styles[3].image).toContain('linear-gradient');
+  expect(styles[3].shadow).not.toBe('none');
   const nav=screen.locator('.fm-next-nav');
   await expect(nav).toHaveCSS('position','fixed');
   await expectNoHorizontalOverflow(page);
