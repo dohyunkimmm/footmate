@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='1');
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2');
 }
 
 async function visibleSlides(page){
@@ -54,25 +54,41 @@ test('KPI cards explain calculation basis without numerator denominator jargon',
   expect(text).toContain('8개 지표의 계산·관찰 기준 보기');
 });
 
-test('02 through 13 use tighter desktop reading density without overflow',async({page})=>{
+test('02 through 13 preserve centered desktop page rhythm without overflow',async({page})=>{
   await openCaseStudy(page,{width:1440,height:900});
   const slides=await visibleSlides(page);
   for(let index=1;index<13;index+=1){
     await page.evaluate(i=>window.goTo(i),index);
-    const geometry=await slides.nth(index).locator('.fm-next-story').evaluate(story=>{
-      const rect=story.getBoundingClientRect();
-      const slide=story.closest('.slide').getBoundingClientRect();
+    const geometry=await slides.nth(index).evaluate(slide=>{
+      const story=slide.querySelector('.fm-next-story');
+      const storyRect=story.getBoundingClientRect();
+      const slideRect=slide.getBoundingClientRect();
       return {
-        top:rect.top,
-        bottom:rect.bottom,
-        slideTop:slide.top,
+        alignItems:getComputedStyle(slide).alignItems,
+        topGap:storyRect.top-slideRect.top,
+        bottomGap:slideRect.bottom-storyRect.bottom,
         overflow:story.scrollHeight-story.clientHeight
       };
     });
-    expect(geometry.top-geometry.slideTop).toBeLessThanOrEqual(90);
-    expect(geometry.bottom).toBeLessThanOrEqual(835);
+    expect(geometry.alignItems).toBe('center');
+    expect(geometry.topGap).toBeGreaterThan(0);
+    expect(geometry.bottomGap).toBeGreaterThan(0);
     expect(geometry.overflow).toBeLessThanOrEqual(2);
   }
+});
+
+test('title lead and structured values use natural wrapping instead of forced sentence lines',async({page})=>{
+  await openCaseStudy(page,{width:1440,height:900});
+  const slides=await visibleSlides(page);
+  for(const index of [1,2,3,4,5,6,7,8,9,10,11,12]){
+    const line=slides.nth(index).locator('.fm-next-story .fm-cs-line').first();
+    if(await line.count())expect(await line.evaluate(node=>getComputedStyle(node).display)).toBe('inline');
+  }
+  const guest=slides.nth(4);
+  const compared=guest.locator('.fm-next-cs-before-after>div').first().locator('b .fm-cs-line');
+  await expect(compared).toHaveCount(2);
+  expect(await compared.nth(0).evaluate(node=>getComputedStyle(node).display)).toBe('inline');
+  expect(await compared.nth(1).evaluate(node=>getComputedStyle(node).display)).toBe('inline');
 });
 
 test('environment implementation and validation copy uses complete polite sentences',async({page})=>{
