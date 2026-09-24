@@ -58,7 +58,9 @@ test('Home keeps the core AI assistant prominent with compact match cards',async
       visibleTags:tags.length,
       paddingLeft:parseFloat(getComputedStyle(element).paddingLeft),
       primaryBackground:getComputedStyle(primary).backgroundColor,
-      secondaryBackground:getComputedStyle(secondary).backgroundColor
+      secondaryBackground:getComputedStyle(secondary).backgroundColor,
+      firstCardTop:card.getBoundingClientRect().top,
+      navTop:element.querySelector('.fm-next-nav').getBoundingClientRect().top
     };
   });
   expect(metrics.cardHeight).toBeLessThanOrEqual(190);
@@ -67,6 +69,8 @@ test('Home keeps the core AI assistant prominent with compact match cards',async
   expect(metrics.paddingLeft).toBe(16);
   expect(metrics.primaryBackground).not.toBe('rgb(255, 255, 255)');
   expect(metrics.secondaryBackground).toBe('rgb(255, 255, 255)');
+  expect(metrics.firstCardTop).toBeLessThanOrEqual(690);
+  expect(metrics.navTop-metrics.firstCardTop).toBeGreaterThanOrEqual(56);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
