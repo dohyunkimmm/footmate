@@ -9,14 +9,29 @@ permissions:
   contents: read
 
 jobs:
-  export-baselines:
+  render-review:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Package all current 13-section baselines
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Install visual QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Render changed Case Study against current baselines
+        continue-on-error: true
+        run: npx playwright test --project=chromium tests/e2e/v5.1-case-study-visual.spec.cjs
+      - name: Upload visual review evidence
         uses: actions/upload-artifact@v6
         with:
-          name: case-study-visual-review-baselines
+          name: case-study-visual-review-rendered
           path: |
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-*-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-*-390-chromium-linux.png
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
