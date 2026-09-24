@@ -59,7 +59,7 @@
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-result-copy b{font-size:13px}
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-status b{font-size:13px}
 
-/* P1 · surface hierarchy. Most utility surfaces are border-led; only focal/overlay surfaces rise. */
+/* P1 · surface hierarchy. Most utility surfaces are border-led; focal and first-class surfaces retain measured elevation. */
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card{
   border-color:var(--fm-finish-border);
   background:linear-gradient(145deg,#fbfcfb,#fff);
@@ -100,12 +100,15 @@
   .fm-next-profile-card,
   .fm-next-menu-list,
   .fm-discovery-empty,
-  .fm-personalization-panel,
   .fm-personalization-explanation,
   .fm-matchday-panel
 ){
   border-color:var(--fm-finish-border);
   box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-personalization-panel{
+  border-color:var(--fm-finish-border);
+  box-shadow:var(--fm-finish-shadow-rest);
 }
 
 /* P1 · accent discipline. Lime communicates fit/selection/current state, not decoration. */
@@ -122,7 +125,7 @@
 
 /* P2 · normal/loading/empty/fallback/recovery states share one semantic language. */
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-loading{
-  border:1px solid var(--fm-finish-border-strong);
+  border:1px dashed var(--fm-finish-border-strong);
   background:var(--fm-finish-surface-subtle);
   box-shadow:none;
 }
