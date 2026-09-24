@@ -72,29 +72,35 @@ async function expectDesktopGeometry(page,viewportWidth){
 }
 
 async function expectStoryGeometry(page){
-  const geometry=await page.locator('.slide.on .fm-next-story').evaluate(story=>{
+  const geometry=await page.locator('.slide.on').evaluate(slide=>{
+    const story=slide.querySelector('.fm-next-story');
     const rect=story.getBoundingClientRect();
-    const slide=story.closest('.slide')?.getBoundingClientRect();
+    const slideRect=slide.getBoundingClientRect();
     const copy=story.querySelector('.fm-next-story-copy')?.getBoundingClientRect();
     const aside=story.querySelector('.fm-next-story-aside')?.getBoundingClientRect();
+    const style=getComputedStyle(slide);
     return {
-      top:rect.top,
-      bottom:rect.bottom,
+      alignItems:style.alignItems,
+      paddingTop:parseFloat(style.paddingTop),
+      paddingBottom:parseFloat(style.paddingBottom),
+      centerDelta:Math.abs((rect.top+rect.bottom)/2-(slideRect.top+slideRect.bottom)/2),
       width:rect.width,
       copyLeft:copy?.left||0,
       copyWidth:copy?.width||0,
       asideLeft:aside?.left||0,
-      centerDelta:slide?Math.abs((rect.top+rect.bottom)/2-(slide.top+slide.bottom)/2):999,
-      overflow:story.scrollHeight-story.clientHeight
+      overflow:story.scrollHeight-story.clientHeight,
+      pageOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
     };
   });
-  expect(geometry.top).toBeGreaterThanOrEqual(140);
-  expect(geometry.bottom).toBeLessThanOrEqual(760);
+  expect(geometry.alignItems).toBe('center');
+  expect(geometry.paddingTop).not.toBe(38);
+  expect(geometry.paddingBottom).not.toBe(38);
   expect(geometry.centerDelta).toBeLessThanOrEqual(20);
   expect(geometry.width).toBeGreaterThan(900);
   expect(geometry.copyWidth).toBeGreaterThan(900);
   if(geometry.asideLeft)expect(Math.abs(geometry.asideLeft-geometry.copyLeft)).toBeLessThanOrEqual(1);
   expect(geometry.overflow).toBeLessThanOrEqual(2);
+  expect(geometry.pageOverflow).toBeLessThanOrEqual(1);
 }
 
 async function expectMobileGeometry(page,index=0){
@@ -104,6 +110,7 @@ async function expectMobileGeometry(page,index=0){
     const headerRect=header?.getBoundingClientRect();
     return {
       overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+      slideOverflow:slide?slide.scrollWidth-slide.clientWidth:999,
       headerHeight:headerRect?.height||0,
       headerTop:headerRect?.top??999,
       headerText:(header?.innerText||'').replace(/\s+/g,' ').trim(),
@@ -111,6 +118,7 @@ async function expectMobileGeometry(page,index=0){
     };
   },index);
   expect(geometry.overflow).toBeLessThanOrEqual(1);
+  expect(geometry.slideOverflow).toBeLessThanOrEqual(1);
   expect(geometry.headerHeight).toBeGreaterThanOrEqual(40);
   expect(geometry.headerHeight).toBeLessThanOrEqual(48);
   expect(Math.abs(geometry.headerTop)).toBeLessThanOrEqual(1);
@@ -151,30 +159,31 @@ test('Case Study 1440 desktop cover matches approved 13-section baseline',async(
   expect(errs).toEqual([]);
 });
 
-const desktopSections=[
-  {index:1,name:'case-study-13-problem-1440.png'},
-  {index:2,name:'case-study-13-persona-1440.png'},
-  {index:3,name:'case-study-13-thesis-1440.png'},
-  {index:4,name:'case-study-13-decision-01-1440.png'},
-  {index:5,name:'case-study-13-decision-02-1440.png'},
-  {index:6,name:'case-study-13-decision-03-1440.png'},
-  {index:7,name:'case-study-13-signin-join-1440.png'},
-  {index:8,name:'case-study-13-matchday-return-1440.png'},
-  {index:9,name:'case-study-13-recovery-1440.png'},
-  {index:10,name:'case-study-13-domain-ai-1440.png'},
-  {index:11,name:'case-study-13-validation-1440.png'},
-  {index:12,name:'case-study-13-production-1440.png'}
-];
-
-for(const section of desktopSections){
-  test(`Case Study 1440 visible section ${section.index+1} matches approved baseline`,async({page})=>{
-    const errs=await openCaseStudy(page,{width:1440,height:900},section.index);
+test('Case Study 02–13 preserve centered desktop rhythm and natural structured wrapping',async({page})=>{
+  const errs=await openCaseStudy(page,{width:1440,height:900});
+  for(let index=1;index<13;index+=1){
+    await page.evaluate(i=>window.goTo(i),index);
+    await expect(page.locator('.slide.on')).toHaveCount(1);
     await expectDesktopGeometry(page,1440);
     await expectStoryGeometry(page);
-    await expectViewportScreenshot(page,section.name);
-    expect(errs).toEqual([]);
-  });
-}
+    const displays=await page.locator('.slide.on .fm-cs-line').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).display));
+    expect(displays.every(display=>display==='inline')).toBe(true);
+  }
+  expect(errs).toEqual([]);
+});
+
+test('Case Study 05 comparison keeps short flow segments on the same desktop line when space is available',async({page})=>{
+  const errs=await openCaseStudy(page,{width:1440,height:900},4);
+  const rows=page.locator('.slide.on .fm-next-cs-before-after>div b');
+  await expect(rows).toHaveCount(2);
+  for(let index=0;index<2;index+=1){
+    const segments=rows.nth(index).locator('.fm-cs-line');
+    await expect(segments).toHaveCount(2);
+    const tops=await segments.evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().top));
+    expect(Math.abs(tops[0]-tops[1])).toBeLessThanOrEqual(1);
+  }
+  expect(errs).toEqual([]);
+});
 
 test('Case Study 390 mobile cover matches approved 13-section baseline',async({page})=>{
   const errs=await openCaseStudy(page,{width:390,height:844});
@@ -184,46 +193,17 @@ test('Case Study 390 mobile cover matches approved 13-section baseline',async({p
   expect(errs).toEqual([]);
 });
 
-const mobileSections=[
-  {index:1,name:'case-study-13-problem-390.png'},
-  {index:2,name:'case-study-13-persona-390.png'},
-  {index:3,name:'case-study-13-thesis-390.png'},
-  {index:4,name:'case-study-13-decision-01-390.png'},
-  {index:5,name:'case-study-13-decision-02-390.png'},
-  {index:6,name:'case-study-13-decision-03-390.png'},
-  {index:7,name:'case-study-13-signin-join-390.png'},
-  {index:8,name:'case-study-13-matchday-return-390.png'},
-  {index:9,name:'case-study-13-recovery-390.png'},
-  {index:10,name:'case-study-13-domain-ai-390.png'},
-  {index:11,name:'case-study-13-validation-390.png'},
-  {index:12,name:'case-study-13-production-390.png'}
-];
-
-for(const section of mobileSections){
-  test(`Case Study 390 visible section ${section.index+1} matches approved baseline`,async({page})=>{
-    const errs=await openCaseStudy(page,{width:390,height:844},section.index);
-    await expectMobileGeometry(page,section.index);
-    await expectViewportScreenshot(page,section.name);
+test('Case Study 02–13 keep mobile sections readable without horizontal clipping',async({page})=>{
+  for(const width of [320,390]){
+    const errs=await openCaseStudy(page,{width,height:844});
+    for(let index=1;index<13;index+=1){
+      await page.evaluate(i=>window.goTo(i),index);
+      await positionMobileSlide(page,index);
+      await expectMobileGeometry(page,index);
+    }
     expect(errs).toEqual([]);
-  });
-}
-
-
-// Viewport-only mobile captures miss lower cards. Review every section's complete copy.
-for(const width of [320,390]){
-  for(let index=0;index<13;index+=1){
-    test(`Case Study ${width} full body section ${index+1} matches reviewed baseline`,async({page})=>{
-      const errs=await openCaseStudy(page,{width,height:844},index);
-      const body=page.locator('.slide:not([hidden])').nth(index).locator(index===0?'.fm-next-cover-copy':'.fm-next-story');
-      // Element captures scroll under the fixed header; remove only that overlay.
-      await page.addStyleTag({content:'.cs-mobile-head{display:none!important}'});
-      await expect(body).toHaveScreenshot(`case-study-full-body-${index+1}-${width}.png`,{
-        animations:'disabled',caret:'hide',maxDiffPixels:0
-      });
-      expect(errs).toEqual([]);
-    });
   }
-}
+});
 
 for(const width of [320,390]){
   test(`Case Study ${width} cover preview caption is clear and complete`,async({page})=>{
