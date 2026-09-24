@@ -1,0 +1,51 @@
+name: Temporary AI recovery documentation sync
+on:
+  push:
+    branches: [docs/ai-gateway-recovery-sync]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: docs/ai-gateway-recovery-sync
+      - name: Sync durable AI recovery facts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          release = Path('docs/RELEASE-HISTORY.md')
+          text = release.read_text()
+          heading = '## AI Gateway model availability recovery · 2026-09-24'
+          if heading not in text:
+              marker = '\n\n## Case Study section label correction · 2026-09-23'
+              entry = '''\n\n## AI Gateway model availability recovery · 2026-09-24\n\n- Root cause: Production AI inference에서 기존 기본 모델 `inclusionai/ling-3.0-flash-vl-free`가 Vercel AI Gateway `404 model_not_found`를 반환해 `/api/ai-match-assistant`가 502로 실패\n- Runtime recovery PR: #242 · primary model을 `openai/gpt-5.4-mini`, bounded provider fallback을 `openai/gpt-5.4-nano`로 갱신하고 `model_not_found`도 fallback retry 조건에 포함\n- Runtime boundary preserved: AI는 자연어 검색 조건만 구조화하며 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유; join/payment HITL 및 `/app` Product UI 변경 없음\n- Runtime Production SHA: `344296c6db7d01571493d340ab41816bd1bfcbdd`\n- Exact Vercel Production: `dpl_14DvqZ2TxB9WKXdknFjsDDyHEa2T` · SHA `344296c6db7d01571493d340ab41816bd1bfcbdd` · READY · official alias `footmate-black.vercel.app`\n- Runtime Production verification: exact HTTP smoke PASS · exact AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`)\n- Test alignment PR: #244 · stale Production Chromium assertion의 과거 InclusionAI model 기대값만 현재 primary model로 동기화; runtime behavior 변경 없음\n- Main after test-only sync: `25c135c411def8d90e8333cdf2d676f96880f7b9`; moving `main`과 runtime Production SHA가 다른 것은 #244가 test-only이기 때문\n- Final post-merge QA: FootMate QA #1083 · run `35949609753` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS\n- Exact Production Chromium smoke: 6/6 PASS; AI Match Assistant resilience boundary와 Production aliases 포함\n- Visual Regression: UI/UX surface 변경 없음; baseline refresh 불필요. 기존 Browser E2E visual baseline gate는 PASS\n- Documentation boundary: README의 provider-independent connected/fallback 설명은 그대로 정확해 변경하지 않음; Case Study와 Closed Beta runbook의 사용자/운영 계약도 변경 없음\n- Notion boundary: 관련 FootMate PRD/AI Agent Workflow는 provider-independent contract와 GitHub Release History ownership을 이미 사용해 model/deployment 식별자 추가 sync 불필요\n- Render backup: 이번 AI Gateway recovery closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment\n'''
+              if marker not in text:
+                  raise SystemExit('release history insertion marker not found')
+              text = text.replace(marker, entry + marker, 1)
+              release.write_text(text)
+
+          ai = Path('docs/V5.1-AI-MATCH-ASSISTANT.md')
+          text = ai.read_text()
+          subheading = '### 2026-09-24 AI Gateway recovery closure'
+          if subheading not in text:
+              marker = '\n\n## Production claim policy'
+              entry = '''\n\n### 2026-09-24 AI Gateway recovery closure\n\n- Runtime recovery PR: #242\n- Root cause: retired/unavailable default model returned `404 model_not_found` in exact Production inference\n- Current primary model: `openai/gpt-5.4-mini`\n- Current provider fallback model: `openai/gpt-5.4-nano`\n- Recovery contract: `model_not_found` / provider rejection / 429 / 5xx에서 bounded fallback 1회 재시도\n- Runtime Production SHA: `344296c6db7d01571493d340ab41816bd1bfcbdd`\n- Exact Vercel Production: `dpl_14DvqZ2TxB9WKXdknFjsDDyHEa2T` · SHA `344296c6db7d01571493d340ab41816bd1bfcbdd` · READY\n- Exact Production HTTP smoke: PASS\n- Exact Production AI inference: PASS · `openai/gpt-5.4-nano` · `fallbackUsed=true`\n- Test-only alignment PR: #244 · Production Chromium model assertion을 현재 primary model로 동기화; runtime behavior 변경 없음\n- Final post-merge QA: FootMate QA #1083 · run `35949609753` · SUCCESS · Regression 36 / Browser E2E + axe / Production Smoke PASS\n- Exact Production Chromium smoke: PASS · 6/6\n- Moving `main` after #244: `25c135c411def8d90e8333cdf2d676f96880f7b9`; runtime Production SHA와 구분해 관리\n- Render backup: 이번 recovery에서는 재검증·재배포하지 않음\n'''
+              if marker not in text:
+                  raise SystemExit('AI doc insertion marker not found')
+              text = text.replace(marker, entry + marker, 1)
+              ai.write_text(text)
+          PY
+      - name: Remove temporary workflow and commit docs
+        run: |
+          rm .github/workflows/temp-ai-recovery-doc-sync.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git diff --cached --quiet && exit 0
+          git commit -m "docs: sync AI Gateway recovery closure"
+          git push origin HEAD:docs/ai-gateway-recovery-sync
