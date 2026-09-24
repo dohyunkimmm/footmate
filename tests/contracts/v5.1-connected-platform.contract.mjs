@@ -4,7 +4,8 @@ import {CONNECTED_PLATFORM_VERSION,DOMAIN_OWNERSHIP,JOURNEY_CONTRACT,evaluateJou
 import {createProviderRegistry} from '../../src/v5/infrastructure/providers.js';
 import {createConnectedMatchdayPlatform} from '../../src/v5/application/connected-platform.js';
 
-assert.equal(CONNECTED_PLATFORM_VERSION,'5.1.1');
+const release=JSON.parse(await readFile(new URL('../../release.json',import.meta.url),'utf8'));
+assert.equal(CONNECTED_PLATFORM_VERSION,release.version);
 assert.deepEqual(JOURNEY_CONTRACT,['Find','Decide','Join','Play','Return']);
 assert.deepEqual(Object.keys(DOMAIN_OWNERSHIP),['recommendation','participation','matchday','return']);
 const good=evaluateJourneyConsistency({recommendation:{selectedMatchId:'match-1'},participation:{status:'success',matchId:'match-1'},matchday:{status:'checked-in',matchId:'match-1'},returnState:{completed:true,matchId:'match-1',repeatIntent:true}});
@@ -23,7 +24,7 @@ const simulated=await registry.execute('payment','authorize',{matchId:'match-1',
 assert.equal(simulated.status,'simulated');
 assert.equal(simulated.external,false);
 const platform=createConnectedMatchdayPlatform();
-assert.equal(platform.version,'5.1.1');
+assert.equal(platform.version,release.version);
 assert.equal(platform.architecture,'connected-capable');
 assert.equal(platform.connectionMode,'mock-only');
 assert.equal(platform.externalProductionFeatures,false);
@@ -91,5 +92,4 @@ for(const stale of [
   'external analytics는 미연동입니다.'
 ])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
 
-console.log('PASS v5.1.1 connected platform contracts');
-
+console.log(`PASS ${release.version} connected platform contracts`);
