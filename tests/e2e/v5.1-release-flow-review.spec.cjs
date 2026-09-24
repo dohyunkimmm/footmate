@@ -29,7 +29,7 @@ const baseSession={
 const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
 async function waitRuntime(page){
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1'&&window.__FOOTMATE_RELEASE_REVIEW__?.version==='flow-review-v1');
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.2.0'&&window.__FOOTMATE_RELEASE_REVIEW__?.version==='flow-review-v1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 async function openFresh(page,viewport={width:1440,height:900}){

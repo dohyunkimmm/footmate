@@ -15,7 +15,7 @@ async function openCleanApp(page,viewport){
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.2.0');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   return errs;
 }
@@ -38,7 +38,7 @@ async function seedProfile(page,viewport={width:1440,height:900}){
     localStorage.setItem('footmate:v4:session',JSON.stringify({route:'profile',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:true,joinedMatchId:null,selectedMatchId:'gwanggyo-2130',matchStage:'discover',userName:'도현'}));
   });
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.2.0');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   return errs;

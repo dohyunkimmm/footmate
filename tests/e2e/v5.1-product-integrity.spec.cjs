@@ -15,7 +15,7 @@ async function openCleanApp(page,viewport={width:390,height:844}){
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.2.0');
   return errs;
 }
 
@@ -289,7 +289,7 @@ test('Case Study desktop companion panels retain reviewable width and structured
   const errs=failures(page);
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===16);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.2.0'&&document.querySelectorAll('.slide').length===16);
   for(let index=1;index<16;index+=1){
     await page.evaluate(i=>window.goTo(i),index);
     await expect(page.locator('.slide.on')).toHaveCount(1);
