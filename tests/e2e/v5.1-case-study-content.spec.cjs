@@ -197,7 +197,12 @@ test('Case Study cover uses a static preview and one Product CTA',async({page})=
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveCount(0);
   await expect(page.locator('.fm-next-cover-frame-meta')).toHaveCount(0);
   await expect(page.locator('.fm-cs-static-preview')).toBeVisible();
+  await expect(page.locator('.fm-cs-ai-preview')).toContainText('AI Match Assistant');
+  await expect(page.locator('.fm-cs-ai-preview')).toContainText('원하는 경기를 문장으로 검색하세요.');
+  await expect(page.locator('.fm-cs-ai-preview')).toContainText('AI 검색');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('정적 AI 검색 프리뷰');
   await expect(page.locator('.fm-next-cover-visual')).not.toContainText('Live interaction');
+  await expect(page.locator('.fm-next-cover-visual')).not.toContainText('추천 상세');
   const cta=page.locator('.fm-next-cover-actions a');
   await expect(cta).toHaveCount(1);
   await expect(cta).toContainText('제품 직접 체험하기');
