@@ -20,12 +20,16 @@
 - Render backup: 이번 AI Gateway recovery closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
 
-## Case Study section label correction · 2026-09-23
+## Case Study section label / preview title correction · 2026-09-23–24
 
 - #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
 - #226 merged at `c03a8fccd1802fc9d8c28d9d6e033687b98651bc`: English applies to section labels/kickers; story H2 restored to Korean. This supersedes #225's heading-language change.
-- The later #228 keeps 13 sections and Korean body copy while revising the planning narrative and returning TOC subtitles to a single line.
-- These entries record confirmed merges; they do not establish a newly verified Vercel Production SHA or a Product visual QA pass.
+- #228 keeps 13 sections and Korean body copy while revising the planning narrative and returning TOC subtitles to a single line.
+- #243 merged at `9dc82b93ee59fd877ecada0f64b1de5ef670370c`: #1 cover label을 `Overview`로 정리하고 desktop topbar·browser title을 `FootMate · Case Study`로 통일; 13개 섹션·한국어 본문·Product/Real App runtime은 변경하지 않음.
+- PR final required checks: Regression 36 PASS · Browser E2E + axe PASS · approved Case Study screenshot baseline actual comparison PASS.
+- Post-merge QA: FootMate QA run `35951414230` · Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS; exact HTTP · AI inference · Chromium smoke 모두 PASS.
+- Exact verified Vercel Production: `dpl_ERrv77AntHrxkEwK9Xx866SNsaSZ` · SHA `9dc82b93ee59fd877ecada0f64b1de5ef670370c` · READY · official alias `footmate-black.vercel.app`; served Case Study asset에서 `Overview` / `FootMate · Case Study` 반영 확인.
+- Documentation boundary: 이 표시명 정정의 durable evidence는 Release History가 소유한다. README의 13-section 현재 제품 설명, 서비스 기획 근거, AI/Closed Beta 문서·runbook, 관련 Notion PRD/Workflow는 내용 계약이 바뀌지 않아 동일 사실을 중복 추가하지 않음.
 
 ## Case Study 서비스 기획 서사 보강 · 2026-09-23
 
