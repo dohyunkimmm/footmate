@@ -13,18 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Package reviewed Case Study baselines
+      - name: Package all current 13-section baselines
         uses: actions/upload-artifact@v6
         with:
           name: case-study-visual-review-baselines
           path: |
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-section-03-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-decision-02-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-section-09-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-domain-ai-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-validation-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-production-1440-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-persona-390-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-section-09-390-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-domain-ai-390-chromium-linux.png
-            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-validation-390-chromium-linux.png
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-*-1440-chromium-linux.png
+            tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/case-study-13-*-390-chromium-linux.png
