@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  render-review:
+  case-study-regression:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -17,21 +17,25 @@ jobs:
         with:
           node-version: 24
           package-manager-cache: false
-      - name: Install visual QA dependencies
+      - name: Install Case Study QA dependencies
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
           AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Render changed Case Study against current baselines
-        continue-on-error: true
-        run: npx playwright test --project=chromium tests/e2e/v5.1-case-study-visual.spec.cjs
-      - name: Upload visual review evidence
+      - name: Run Case Study content, wrap and accessibility regression
+        run: npx playwright test --project=chromium tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
+      - name: Capture current Case Study renders
+        run: npx playwright test --project=chromium tests/e2e/case-study-visual-review.spec.cjs
+      - name: Upload current render evidence
+        if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: case-study-visual-review-rendered
+          name: case-study-current-render
           path: |
-            test-results/
+            visual-review-output/
             playwright-report/
+            test-results/
           if-no-files-found: warn
+          retention-days: 14
