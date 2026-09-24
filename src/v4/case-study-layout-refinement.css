@@ -353,3 +353,41 @@ html[data-fm-next-case-study="true"] .fm-next-cover-note span{margin-top:3px;col
   html[data-fm-next-case-study="true"] .fm-next-cover{row-gap:28px!important}
   html[data-fm-next-case-study="true"] .fm-cs-static-preview{height:520px;min-height:520px;padding:18px}
 }
+
+/* Current AI preview: remove forced vertical stretch and make the new capability obvious to external reviewers. */
+html[data-fm-next-case-study="true"] .fm-next-cover-visual{
+  min-height:0!important;
+}
+html[data-fm-next-case-study="true"] .fm-cs-static-preview.fm-cs-ai-preview{
+  height:auto!important;
+  min-height:0!important;
+  overflow:visible;
+}
+html[data-fm-next-case-study="true"] .fm-cs-ai-preview .fm-cs-ai-guardrail{
+  margin-top:14px;
+}
+html[data-fm-next-case-study="true"] .fm-cs-ai-head>div>span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
+html[data-fm-next-case-study="true"] .fm-cs-ai-head>div>span:before{
+  content:"NEW";
+  display:inline-flex;
+  align-items:center;
+  min-height:20px;
+  padding:0 7px;
+  border-radius:999px;
+  background:#173d2d;
+  color:#fff;
+  font:900 8px/1 Inter,sans-serif;
+  letter-spacing:.08em;
+}
+html[data-fm-next-case-study="true"] .fm-next-cover-note strong{
+  color:#137333;
+  font-size:12px;
+  font-weight:800;
+}
+html[data-fm-next-case-study="true"] .fm-next-cover-note strong:before{
+  content:"AI 기능 추가 · ";
+}
