@@ -17,7 +17,7 @@ async function activeVisibleIndex(page){
 
 test('Case Study keeps a concise 13-section narrative without release labels',async({page})=>{
   await openCaseStudy(page);
-  await expect(page).toHaveTitle('FootMate | AI-assisted Futsal Match Discovery Case Study');
+  await expect(page).toHaveTitle('FootMate · Case Study');
   await expect(page.locator('.slide:not([hidden])')).toHaveCount(13);
   await expect(page.locator('.toc-item:not([hidden])')).toHaveCount(13);
   await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.1.1');
