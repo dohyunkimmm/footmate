@@ -5,7 +5,6 @@ on:
     paths:
       - app.html
       - src/v4/design-system-v2.css
-      - src/v4/real-app-visual-finish.css
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
       - src/v4/decision.js
@@ -22,7 +21,6 @@ on:
     paths:
       - app.html
       - src/v4/design-system-v2.css
-      - src/v4/real-app-visual-finish.css
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
       - src/v4/decision.js
@@ -57,14 +55,12 @@ jobs:
           const csstree=require('css-tree');
           const html=fs.readFileSync('app.html','utf8');
           const design=fs.readFileSync('src/v4/design-system-v2.css','utf8');
-          const finish=fs.readFileSync('src/v4/real-app-visual-finish.css','utf8');
           if(html.includes('id="fm-real-app-white-tone"'))throw new Error('white-first CSS must not return to inline HTML ownership');
           if(!design.includes('White-first Real App surface ownership'))throw new Error('white-first design-system ownership marker missing');
-          if(!finish.includes('Final effective visual ownership'))throw new Error('Real App finish ownership marker missing');
-          if(!html.includes('/src/v4/real-app-visual-finish.css?v=1'))throw new Error('Real App finish stylesheet must be loaded by app.html');
+          if(!design.includes('FootMate Real App Visual Finish · P0–P2'))throw new Error('Real App finish ownership marker missing');
+          if(html.includes('/src/v4/real-app-visual-finish.css'))throw new Error('Real App finish must not add a standalone stylesheet request');
           csstree.parse(design);
-          csstree.parse(finish);
-          console.log('PASS Real App CSS syntax and ownership');
+          console.log('PASS Real App CSS syntax and consolidated ownership');
           NODE
       - name: Check product completion JS syntax
         run: node --check src/v5/ai-match-assistant.js
