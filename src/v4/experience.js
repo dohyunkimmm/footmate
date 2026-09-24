@@ -15,10 +15,10 @@ import {footmatePlatform} from './platform/application/platform.js';
   const apple='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.8 12.7c0-2.8 2.3-4.1 2.4-4.2-1.3-2-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.3-1-3.8-.9-1.9 0-3.7 1.1-4.7 2.8-2 3.5-.5 8.7 1.4 11.5 1 1.4 2.1 2.9 3.6 2.8 1.4-.1 2-1 3.7-1s2.2 1 3.7 1c1.5 0 2.5-1.4 3.4-2.8 1.1-1.6 1.5-3.1 1.6-3.2-.1 0-2.9-1.1-2.9-4.8ZM14 4.5c.8-1 1.3-2.3 1.2-3.5-1.2.1-2.6.8-3.4 1.7-.7.8-1.4 2.2-1.2 3.4 1.3.1 2.6-.6 3.4-1.6Z"/></svg>';
   const google='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.2H3v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.9A6 6 0 0 1 6.1 12c0-.7.1-1.3.3-1.9V7.5H3A10 10 0 0 0 2 12c0 1.6.4 3.1 1 4.5l3.4-2.6Z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.9 1.5l2.9-2.9A9.8 9.8 0 0 0 3 7.5l3.4 2.6C7.2 7.7 9.4 5.9 12 5.9Z"/></svg>';
 
-  function shell(title,subtitle,body,screen){
+  function shell(title,subtitle,body,screen,{backToLogin=false}={}){
     screen.innerHTML=`
       <div class="fm-auth-head">
-        <button class="fm-next-icon-button" type="button" data-action="auth-back" aria-label="경기 상세로 돌아가기">${backIcon}</button>
+        <button class="fm-next-icon-button" type="button" ${backToLogin?'data-auth-panel="login" aria-label="로그인 화면으로 돌아가기"':'data-action="auth-back" aria-label="이전 화면으로 돌아가기"'}>${backIcon}</button>
       </div>
       <div class="fm-auth-card">
         <div class="fm-auth-brand"><span class="fm-next-brand-mark">${mark}</span><strong>FootMate</strong></div>
@@ -30,7 +30,7 @@ import {footmatePlatform} from './platform/application/platform.js';
   function loginBody(place){
     return `
       <form class="fm-auth-form" data-auth-form="login">
-        <label class="fm-auth-field"><span>아이디</span><input name="identifier" autocomplete="username" placeholder="아이디 또는 이메일" aria-label="아이디 또는 이메일"></label>
+        <label class="fm-auth-field"><span>아이디</span><input name="identifier" autocomplete="username" placeholder="아이디" aria-label="아이디"></label>
         <label class="fm-auth-field"><span>비밀번호</span><span class="fm-auth-password"><input name="password" type="password" autocomplete="current-password" placeholder="비밀번호" aria-label="비밀번호"><button type="button" data-auth-toggle-password aria-label="비밀번호 보기">${eyeIcon}</button></span></label>
         <div class="fm-auth-options">
           <label><input type="checkbox" name="keepSignedIn"><span>로그인 상태 유지</span></label>
@@ -85,15 +85,15 @@ import {footmatePlatform} from './platform/application/platform.js';
   function renderPanel(screen,panel){
     const place=screen.dataset.matchPlace||'선택한';
     if(panel==='signup'){
-      shell('회원가입','경기 참가에 필요한 계정을 간단히 만들어요.',signupBody(),screen);
+      shell('회원가입','경기 참가에 필요한 계정을 간단히 만들어요.',signupBody(),screen,{backToLogin:true});
       return;
     }
     if(panel==='find-id'){
-      shell('아이디 찾기','가입할 때 사용한 이메일 주소를 입력해주세요.',helperBody('find-id'),screen);
+      shell('아이디 찾기','가입할 때 사용한 이메일 주소를 입력해주세요.',helperBody('find-id'),screen,{backToLogin:true});
       return;
     }
     if(panel==='find-password'){
-      shell('비밀번호 찾기','가입한 아이디 또는 이메일을 입력해주세요.',helperBody('find-password'),screen);
+      shell('비밀번호 찾기','가입한 아이디 또는 이메일을 입력해주세요.',helperBody('find-password'),screen,{backToLogin:true});
       return;
     }
     shell('로그인 후 더 많은 경기를 즐겨보세요.','참가를 확정하면 결제 단계로 바로 이어집니다.',loginBody(place),screen);
@@ -223,7 +223,7 @@ import {footmatePlatform} from './platform/application/platform.js';
     const password=form.elements.password;
     const value=identifier?.value.trim()||'';
     let valid=true;
-    if(!value){fieldError(identifier,'아이디 또는 이메일을 입력해주세요.');valid=false}
+    if(!value){fieldError(identifier,'아이디를 입력해주세요.');valid=false}
     else if(value.includes('@')&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)){fieldError(identifier,'이메일 형식을 확인해주세요.');valid=false}
     if(!password?.value){fieldError(password,'비밀번호를 입력해주세요.');valid=false}
     else if(password.value.length<8){fieldError(password,'비밀번호는 8자 이상 입력해주세요.');valid=false}
