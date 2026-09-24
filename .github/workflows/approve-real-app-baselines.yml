@@ -1,0 +1,49 @@
+name: Temporary Real App Baseline Approval
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .qa/approve-real-app-ia-baselines
+      - .github/workflows/approve-real-app-baselines.yml
+permissions:
+  contents: write
+jobs:
+  approve:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Regenerate only affected Real App baselines after functional assertions
+        run: |
+          npx playwright test --project=chromium --update-snapshots \
+            tests/e2e/product-completion.spec.cjs \
+            tests/e2e/real-app-white-surface.spec.cjs \
+            tests/e2e/v5.1-visual-baseline.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/v5.1-release-flow-review.spec.cjs \
+            tests/e2e/v5.1-ai-assistant.spec.cjs
+      - name: Commit approved Ubuntu Chromium baselines
+        run: |
+          git add tests/e2e/*-snapshots/*.png
+          if git diff --cached --quiet; then
+            echo 'No baseline changes to commit.'
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -m 'test: approve Real App IA visual baselines'
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
