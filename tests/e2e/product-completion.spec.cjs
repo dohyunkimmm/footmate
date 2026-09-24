@@ -58,7 +58,9 @@ test('Home keeps the core AI assistant prominent with compact match cards',async
       visibleTags:tags.length,
       paddingLeft:parseFloat(getComputedStyle(element).paddingLeft),
       primaryBackground:getComputedStyle(primary).backgroundColor,
-      secondaryBackground:getComputedStyle(secondary).backgroundColor
+      secondaryBackground:getComputedStyle(secondary).backgroundColor,
+      firstCardTop:card.getBoundingClientRect().top,
+      navTop:element.querySelector('.fm-next-nav').getBoundingClientRect().top
     };
   });
   expect(metrics.cardHeight).toBeLessThanOrEqual(190);
@@ -67,10 +69,38 @@ test('Home keeps the core AI assistant prominent with compact match cards',async
   expect(metrics.paddingLeft).toBe(16);
   expect(metrics.primaryBackground).not.toBe('rgb(255, 255, 255)');
   expect(metrics.secondaryBackground).toBe('rgb(255, 255, 255)');
+  expect(metrics.firstCardTop).toBeLessThanOrEqual(600);
+  expect(metrics.navTop-metrics.firstCardTop).toBeGreaterThanOrEqual(120);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('product-completion-home-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
+  expect(errs).toEqual([]);
+});
+
+test('601px viewport keeps the fixed 560px Home shell compact instead of re-expanding desktop spacing',async({page})=>{
+  const errs=await openCleanApp(page,{width:601,height:984});
+  await setupToHome(page);
+  const density=await page.locator('[data-screen="home"]').evaluate(element=>{
+    const app=element.closest('.fm-next-app');
+    const contextCopy=element.querySelector('.fm-next-context-card p');
+    const sectionCopy=element.querySelector(':scope > .fm-next-section-head p');
+    const first=element.querySelector('.fm-next-match-card').getBoundingClientRect();
+    const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
+    return {
+      appWidth:app.getBoundingClientRect().width,
+      contextCopyDisplay:getComputedStyle(contextCopy).display,
+      sectionCopyDisplay:getComputedStyle(sectionCopy).display,
+      firstCardTop:first.top,
+      navTop:nav.top
+    };
+  });
+  expect(density.appWidth).toBeLessThanOrEqual(560);
+  expect(density.contextCopyDisplay).toBe('none');
+  expect(density.sectionCopyDisplay).toBe('none');
+  expect(density.firstCardTop).toBeLessThanOrEqual(620);
+  expect(density.navTop-density.firstCardTop).toBeGreaterThanOrEqual(180);
+  await expectNoOverflow(page);
   expect(errs).toEqual([]);
 });
 
