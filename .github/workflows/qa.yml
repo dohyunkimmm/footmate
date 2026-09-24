@@ -139,7 +139,10 @@ jobs:
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Install browser QA dependencies
-        run: npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
       - name: Install Chromium
         run: npx playwright install --with-deps chromium webkit
       - name: Verify installed QA toolchain
@@ -185,7 +188,9 @@ jobs:
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: node tests/production-v5.1-ai.cjs
       - name: Install Production browser dependency
-        run: npm install --no-save @playwright/test@1.55.1
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run exact Production Chromium smoke
