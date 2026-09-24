@@ -83,7 +83,7 @@
     ));
     setHTML(release,'.fm-next-story-lead',lines(
       'PBL 교육 이후 6명에게 실제 탐색·가입 동선의 구체 행동 과업을 요청해 iOS와 Android에서 사용성을 확인했습니다.',
-      '이후 제품·운영 상태 고도화와 Production QA를 거쳐 KPI 측정 준비까지 검증 범위를 확장하되, 각 단계의 근거는 구분해 기록합니다.'
+      '이후 제품·운영 상태 고도화와 Production QA까지 검증 범위를 확장했고, KPI는 실제 이용자 cohort를 구분해 기준값을 확보한 뒤 Baseline부터 측정합니다.'
     ));
     setHTML(release,'.fm-next-cs-final','<span hidden>Production 기준</span><span>사용성 검증 · 근거와 다음 단계</span>'+rows([
       ['검증 표본','6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2'],
