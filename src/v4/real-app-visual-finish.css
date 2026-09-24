@@ -1,0 +1,214 @@
+/* FootMate Real App Visual Finish · P0–P2
+   Final effective visual ownership for the standalone Product surface.
+   Loaded after visual-polish.css and design-system-v2.css.
+   Preserve IA, copy, routes, state machines, recommendation behavior and the 560px shell. */
+
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){
+  /* P0 · one final vocabulary for the active standalone surface. */
+  --fm-finish-type-support:12px;
+  --fm-finish-type-caption:11px;
+  --fm-finish-border:rgba(20,55,40,.10);
+  --fm-finish-border-strong:rgba(20,55,40,.16);
+  --fm-finish-surface-subtle:#f7f9f7;
+  --fm-finish-surface-selected:#f2f7e7;
+  --fm-finish-shadow-rest:0 1px 0 rgba(17,43,31,.025),0 7px 20px rgba(17,43,31,.04);
+  --fm-finish-shadow-raised:0 12px 30px rgba(17,43,31,.075);
+  --fm-finish-duration:160ms;
+  --fm-finish-ease:cubic-bezier(.2,.8,.2,1);
+}
+
+/* P1 · readability floor. Decision-supporting text should not read like legal microcopy. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(
+  .fm-next-section-head p,
+  .fm-next-context-card p,
+  .fm-ai-head p,
+  .fm-ai-status span,
+  .fm-ai-empty span,
+  .fm-next-detail-summary small,
+  .fm-next-profile-stats span,
+  .fm-discovery-sheet-head small,
+  .fm-decision-policy-grid small,
+  .fm-decision-compare-bar small,
+  .fm-decision-dialog-head small,
+  .fm-decision-compare-card>small,
+  .fm-matchday-home small
+){font-size:var(--fm-finish-type-support)}
+
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(
+  .fm-next-context-kicker,
+  .fm-ai-kicker,
+  .fm-ai-mode,
+  .fm-ai-conditions span,
+  .fm-ai-result-copy small,
+  .fm-ai-result-copy em,
+  .fm-ai-guardrail,
+  .fm-next-upcoming-count
+){font-size:var(--fm-finish-type-caption)}
+
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-tag{
+  min-height:27px;
+  padding:4px 9px;
+  font-size:var(--fm-finish-type-caption);
+  line-height:1.25;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-footer b{
+  color:var(--fm-product-muted);
+  font-size:var(--fm-finish-type-support);
+  font-weight:650;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-result-copy b{font-size:13px}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-status b{font-size:13px}
+
+/* P1 · surface hierarchy. Most utility surfaces are border-led; only focal/overlay surfaces rise. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card{
+  border-color:var(--fm-finish-border);
+  background:linear-gradient(145deg,#fbfcfb,#fff);
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-card{
+  border-color:var(--fm-finish-border);
+  box-shadow:var(--fm-finish-shadow-rest);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-card-media{
+  background:linear-gradient(145deg,#fbfcfb 0%,#f3f6f3 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-card-media:before{
+  opacity:.36;
+  background-image:linear-gradient(rgba(29,104,74,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(29,104,74,.04) 1px,transparent 1px);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"]{
+  border-color:var(--fm-finish-border);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="discover"]{
+  border-color:var(--fm-finish-border);
+  background:linear-gradient(145deg,#fbfcfb,#fff);
+  box-shadow:var(--fm-finish-shadow-rest);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"][data-product-detail="prioritized"]>.fm-next-detail-section.fm-decision-section[data-decision-section]{
+  border-color:var(--fm-finish-border);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"][data-product-detail="prioritized"] .fm-decision-section[data-decision-section="fit"]{
+  border-color:var(--fm-finish-border-strong);
+  background:linear-gradient(145deg,#f8faf7,#fff);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(
+  .fm-next-status-card,
+  .fm-next-profile-card,
+  .fm-next-menu-list,
+  .fm-discovery-empty,
+  .fm-personalization-panel,
+  .fm-personalization-explanation,
+  .fm-matchday-panel
+){
+  border-color:var(--fm-finish-border);
+  box-shadow:none;
+}
+
+/* P1 · accent discipline. Lime communicates fit/selection/current state, not decoration. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(
+  .fm-next-fit-badge,
+  .fm-ai-result-rank,
+  .fm-next-status-card.is-current .fm-next-status-icon
+){background:var(--fm-product-accent);color:var(--fm-product-brand)}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(
+  .fm-next-tag--strong,
+  .fm-next-choice[aria-pressed="true"],
+  .fm-next-nav button[aria-current="page"] .fm-next-nav-icon
+){background:var(--fm-product-accent-soft)}
+
+/* P2 · normal/loading/empty/fallback/recovery states share one semantic language. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-loading{
+  border:1px solid var(--fm-finish-border-strong);
+  background:var(--fm-finish-surface-subtle);
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-loading:after{
+  background:linear-gradient(90deg,transparent,rgba(11,56,40,.08),transparent);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-empty{
+  border:1px solid var(--fm-finish-border);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card:has(.fm-ai-mode[data-mode="connected-ai"]) .fm-ai-status{
+  border:1px solid rgba(23,100,69,.18);
+  background:var(--fm-product-success-soft);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card:has(.fm-ai-mode[data-mode="rules-fallback"]) .fm-ai-status{
+  border:1px solid rgba(118,84,11,.20);
+  background:var(--fm-product-warning-soft);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-product-ai-retry{
+  border-color:var(--fm-finish-border-strong);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-discovery-empty{
+  background:linear-gradient(180deg,#fff,var(--fm-finish-surface-subtle));
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-participation-state[data-participation-panel="pending"]{
+  border-color:rgba(23,100,69,.18);
+  border-left-color:var(--fm-product-success);
+  background:var(--fm-product-success-soft);
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-participation-state.is-failure{
+  border-color:rgba(142,56,51,.22);
+  border-left-color:var(--fm-product-danger);
+  background:var(--fm-product-danger-soft);
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-participation-state[data-participation-panel="canceled"]{
+  border-color:var(--fm-finish-border-strong);
+  background:var(--fm-finish-surface-subtle);
+  box-shadow:none;
+}
+
+/* P2 · restrained interaction language. Persistent geometry never depends on motion. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(
+  .fm-next-match-card,
+  .fm-ai-result,
+  .fm-next-nav button,
+  .fm-next-nav-icon,
+  .fm-discovery-chip,
+  .fm-next-menu-item,
+  .fm-next-status-card,
+  .fm-product-ai-retry
+){
+  transition-property:background-color,border-color,color,box-shadow,transform;
+  transition-duration:var(--fm-finish-duration);
+  transition-timing-function:var(--fm-finish-ease);
+}
+@media(hover:hover){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-card:hover{
+    transform:translateY(-1px);
+    border-color:var(--fm-finish-border-strong);
+    box-shadow:var(--fm-finish-shadow-raised);
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-result:hover{
+    transform:translateY(-1px);
+    box-shadow:var(--fm-finish-shadow-rest);
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-product-ai-retry:hover{
+    background:var(--fm-finish-surface-subtle);
+  }
+}
+
+/* Keep the current mobile geometry and 560px desktop product shell unchanged. */
+@media(max-width:430px){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-section-head p{font-size:12px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) *,
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) *::before,
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) *::after{
+    animation:none!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
