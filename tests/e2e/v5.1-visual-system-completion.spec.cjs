@@ -44,7 +44,7 @@ async function openFirstDetail(page){
 async function reachCheckout(page){
   await openFirstDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
-  await page.getByRole('textbox',{name:'아이디 또는 이메일'}).fill('member@example.com');
+  await page.getByRole('textbox',{name:'아이디'}).fill('member01');
   await page.getByLabel('비밀번호',{exact:true}).fill('password123!');
   await page.getByRole('button',{name:'로그인'}).click();
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
@@ -181,6 +181,32 @@ test('1440px Matchday panel matches the completed operational surface',async({pa
   await expect(panel).toBeVisible();
   await page.mouse.move(1,1);
   await expect(panel).toHaveScreenshot('visual-system-matchday-1440.png',{animations:'disabled',caret:'hide',maxDiffPixels:24});
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
+test('1440px joined Schedule keeps the operational summary inside the first desktop viewport',async({page})=>{
+  const errs=await seedJoinedSchedule(page);
+  const geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('[data-screen="schedule"] .fm-matchday-panel');
+    const upcoming=document.querySelector('[data-screen="schedule"] .fm-next-upcoming');
+    const statuses=document.querySelector('[data-screen="schedule"] .fm-next-status-list');
+    const nav=document.querySelector('[data-screen="schedule"] .fm-next-nav');
+    const columns=statuses?getComputedStyle(statuses).gridTemplateColumns.split(' ').filter(Boolean).length:0;
+    return {
+      viewport:innerHeight,
+      panelHeight:panel?.getBoundingClientRect().height??9999,
+      upcomingHeight:upcoming?.getBoundingClientRect().height??9999,
+      statusBottom:statuses?.getBoundingClientRect().bottom??9999,
+      navTop:nav?.getBoundingClientRect().top??0,
+      columns
+    };
+  });
+  expect(geometry.columns).toBe(3);
+  expect(geometry.panelHeight).toBeLessThanOrEqual(290);
+  expect(geometry.upcomingHeight).toBeLessThanOrEqual(180);
+  expect(geometry.statusBottom).toBeLessThanOrEqual(geometry.navTop-8);
+  expect(geometry.statusBottom).toBeLessThan(geometry.viewport);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });

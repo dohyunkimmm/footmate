@@ -159,7 +159,7 @@ function decorateAuth(){
   const status=ensureAuthStatus(auth),oauthError=sessionStorage.getItem(OAUTH_ERROR_KEY)||'';
   if(oauthError){status.dataset.tone='error';status.textContent=oauthError;sessionStorage.removeItem(OAUTH_ERROR_KEY)}
   else if(!providerState.loaded){status.dataset.tone='loading';status.textContent='Google · Kakao 연결 상태를 확인하고 있습니다.'}
-  else if(providerState.enabled.google||providerState.enabled.kakao){status.dataset.tone='connected';status.textContent='Google · Kakao는 실제 연결된 provider의 가입/로그인 화면으로 이동합니다.'}
+  else if(providerState.enabled.google||providerState.enabled.kakao){status.dataset.tone='connected';status.textContent='Google 또는 Kakao로 계속하면 해당 서비스의 로그인 화면으로 이동합니다.'}
   else{status.dataset.tone='unavailable';status.textContent='현재 활성화된 소셜 로그인 provider가 없습니다.'}
   if(!providerState.loaded&&!providerState.loading)void loadProviders();
 }

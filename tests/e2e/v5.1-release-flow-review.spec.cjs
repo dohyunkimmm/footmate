@@ -88,11 +88,13 @@ test('fresh /app entry always opens the welcome screen instead of the persisted 
   expect(errs).toEqual([]);
 });
 
-test('setup uses 공격수 / 초급 / 고급 display language without changing canonical domain values',async({page})=>{
+test('setup uses 공격수 / 수비수 / 초급 / 고급 display language without changing canonical domain values',async({page})=>{
   const errs=await openFresh(page,{width:390,height:844});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
   await page.getByRole('button',{name:'다음'}).click();
   await expect(page.getByText('공격수',{exact:true})).toBeVisible();
+  await expect(page.getByText('수비수',{exact:true})).toBeVisible();
+  await expect(page.getByText('수비',{exact:true})).toHaveCount(0);
   await expect(page.getByText('포워드',{exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'다음'}).click();
   await expect(page.getByText('초급',{exact:true})).toBeVisible();
@@ -108,8 +110,10 @@ test('AI Match Assistant is a primary core feature with explicit rules fallback'
   const card=page.locator('.fm-ai-card--core');
   await expect(card).toBeVisible();
   await expect(card).toHaveAttribute('data-ai-state','idle');
-  await expect(card.locator('.fm-ai-core-label')).toBeHidden();
+  await expect(card.locator('.fm-ai-core-label')).toBeVisible();
   await expect(card.getByText('AI Match Assistant',{exact:true})).toBeVisible();
+  await expect(card.getByText('AI에게 원하는 경기를 말해보세요.',{exact:true})).toBeVisible();
+  await expect(card.getByRole('button',{name:'AI로 찾기'})).toBeVisible();
   await expect(card.getByText('AI 장애나 지연 시 기존 rules-based 검색으로 자동 전환합니다.',{exact:true})).toHaveCount(1);
   await page.mouse.move(1,1);
   await expect(card).toHaveScreenshot('release-flow-ai-core-1440.png',exactScreenshot);
@@ -128,12 +132,32 @@ test('auth removes Apple/Naver and routes Google to the connected provider autho
   await expect(kakao).toBeEnabled();
   await expect(page.getByRole('button',{name:/Apple/})).toHaveCount(0);
   await expect(page.getByRole('button',{name:/Naver|네이버/})).toHaveCount(0);
-  await expect(page.getByText('Google · Kakao는 실제 연결된 provider의 가입/로그인 화면으로 이동합니다.',{exact:true})).toBeVisible();
+  await expect(page.getByText('Google 또는 Kakao로 계속하면 해당 서비스의 로그인 화면으로 이동합니다.',{exact:true})).toBeVisible();
   const navigation=page.waitForURL(url=>url.hostname==='auth.footmate.test'&&url.pathname==='/auth/v1/authorize');
   await google.click();await navigation;
   const target=new URL(page.url());
   expect(target.searchParams.get('provider')).toBe('google');
   expect(target.searchParams.get('redirect_to')).toMatch(/\/beta$/);
+  expect(errs).toEqual([]);
+});
+
+test('auth subpanels return to login before leaving the join flow',async({page})=>{
+  const errs=await seedSession(page,{route:'home'});
+  await goHomeToAuth(page);
+  await expect(page.getByRole('textbox',{name:'아이디'})).toBeVisible();
+  await expect(page.getByRole('textbox',{name:'아이디 또는 이메일'})).toHaveCount(0);
+
+  for(const panel of ['회원가입','아이디 찾기','비밀번호 찾기']){
+    await page.getByRole('button',{name:panel,exact:true}).click();
+    await expect(page.getByRole('heading',{name:panel,exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'로그인 화면으로 돌아가기'}).first().click();
+    await expect(page.getByRole('heading',{name:/로그인 후 더 많은 경기를 즐겨보세요/})).toBeVisible();
+  }
+
+  await page.getByRole('button',{name:'이전 화면으로 돌아가기'}).click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await page.getByRole('button',{name:'이전 화면'}).click();
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
   expect(errs).toEqual([]);
 });
 
