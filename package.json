@@ -9,8 +9,9 @@
     "qa:release": "node scripts/check-release-version.cjs",
     "qa:toolchain": "node scripts/check-qa-toolchain.cjs"
   },
-  "devDependencies": {
-    "@axe-core/playwright": "4.10.2",
-    "@playwright/test": "1.55.1"
+  "qaToolchain": {
+    "node": "24",
+    "playwright": "1.55.1",
+    "axeCorePlaywright": "4.10.2"
   }
 }
