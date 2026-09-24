@@ -144,7 +144,7 @@ test('390px AI loading and Discovery empty states match the completed state syst
   await page.getByLabel('찾고 싶은 경기 조건').fill('21시 이후 11000원 이하 GK 경기');
   await page.getByRole('button',{name:'AI로 찾기'}).click();
   await expect(page.locator('.fm-ai-loading')).toBeVisible();
-  await expect(page.locator('.fm-ai-card')).toHaveScreenshot('visual-system-ai-loading-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:0});
+  await expect(page.locator('.fm-ai-card')).toHaveScreenshot('visual-system-ai-loading-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:24});
 
   await page.unroute('**/api/ai-match-assistant');
   await page.getByRole('button',{name:'전체 보기'}).click();

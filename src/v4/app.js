@@ -246,10 +246,6 @@ function detailView(){
       <div class="fm-next-detail-address">${icon('pin')}<span>${match.address}</span></div>
       <div class="fm-next-detail-summary"><div><small>경기 레벨</small><b>${match.level}</b></div><div><small>남은 자리</small><b>${match.spot}</b></div><div><small>참가비</small><b>${money(match.price)}</b></div></div>
     </div>
-    <section class="fm-next-detail-section"><div class="fm-next-section-head"><div><h2>나와 잘 맞는 이유</h2><p>결정에 필요한 이유만 먼저 보여드려요.</p></div></div><div class="fm-next-fit-list">${match.reasons.map(reason=>`<div class="fm-next-fit-row"><span class="fm-next-fit-icon">${icon(reason.icon)}</span><div><b>${reason.title}</b><span>${reason.detail}</span></div></div>`).join('')}</div></section>
-    <section class="fm-next-detail-section"><h2>경기 정보</h2><div class="fm-next-fit-list"><div class="fm-next-fit-row"><span class="fm-next-fit-icon">${icon('users')}</span><div><b>${match.format} · ${match.duration}</b><span>${match.surface} · ${match.joined}/${match.capacity}명 참가 확정</span></div></div><div class="fm-next-fit-row"><span class="fm-next-fit-icon">${icon('clock')}</span><div><b>경기 20분 전부터 체크인</b><span>경기 당일 홈에서 바로 체크인할 수 있어요.</span></div></div></div></section>
-    <section class="fm-next-detail-section"><h2>함께 뛰는 사람</h2><div class="fm-next-people"><div class="fm-next-avatar-stack">${match.participants.map(person=>`<span class="fm-next-avatar">${person}</span>`).join('')}</div><div class="fm-next-people-copy"><b>${match.joined}명 참가 중</b><span>최근 완료율 96%</span></div></div></section>
-    <section class="fm-next-detail-section"><h2>취소·환불</h2><ul class="fm-next-policy"><li>경기 24시간 전까지 전액 환불됩니다.</li><li>경기 3시간 전까지는 참가비의 50%가 환불됩니다.</li><li>운영 취소 시 참가비는 전액 반환됩니다.</li></ul></section>
     <div class="fm-next-sticky-cta"><div class="fm-next-sticky-cta-row"><div class="fm-next-sticky-price"><small>참가비</small><b>${money(match.price)}</b></div>${button(state.joinedMatchId===match.id?'내 경기 보기':'참가하기',state.joinedMatchId===match.id?'nav-schedule':'join-match','primary')}</div></div>
   </section>`;
 }

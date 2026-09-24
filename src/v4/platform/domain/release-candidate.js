@@ -38,6 +38,12 @@ export const PERFORMANCE_BUDGET=Object.freeze({
   firstPartyAssetRequests:24
 });
 
+export const RUNTIME_PERFORMANCE_BUDGET=Object.freeze({
+  shellMaxWidthPx:560,
+  maxHorizontalOverflowPx:1,
+  screenReadyMs:4000
+});
+
 export const ACCESSIBILITY_CONTRACT=Object.freeze({
   widths:Object.freeze([320,375,390,430]),
   seriousOrCriticalViolations:0,

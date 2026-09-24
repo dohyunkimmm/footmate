@@ -8,7 +8,7 @@ module.exports = defineConfig({
   expect: { timeout: 7_000 },
   fullyParallel: false,
   workers: 1,
-  retries: process.env.CI ? 1 : 0,
+  retries: 0,
   outputDir: 'test-results/playwright',
   reporter: [
     ['list'],
@@ -28,7 +28,13 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /v5\.2-webkit-mobile\.spec\.cjs/,
       use: { ...devices['Desktop Chrome'] }
+    },
+    {
+      name: 'webkit-mobile',
+      testMatch: /v5\.2-webkit-mobile\.spec\.cjs/,
+      use: { ...devices['iPhone 13'] }
     }
   ]
 });

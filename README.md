@@ -76,7 +76,8 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
 - desktop Real App shell: stable max 560px composition; unrequested 1040px expansion is not part of the Product contract
 - Browser E2E + axe accessibility regression
-- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product / Case Study surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
+- Mobile Safari/WebKit 자동 gate — 320 / 375 / 390 / 430px에서 overflow, fixed navigation, Detail/focus contract 검증
+- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
 
 ## Production / integration boundary
 
@@ -110,7 +111,7 @@ runtime-impacting 변경의 자동 release gate는 다음을 포함합니다. do
 
 - Regression suite
 - Browser E2E + axe
-- Playwright screenshot visual regression — approved Ubuntu/Chromium baseline과 actual render를 비교하고 mismatch 시 expected / actual / diff evidence를 남김; changed Real App / Case Study surfaces와 1440px max 560px shell·center·overflow geometry를 함께 검증
+- Playwright screenshot visual regression — approved Ubuntu/Chromium baseline과 actual render를 비교하고 mismatch 시 expected / actual / diff evidence를 남김; changed Real App surfaces와 1440px max 560px shell·center·overflow geometry를 함께 검증
 - responsive 320 / 375 / 390 / 430px
 - `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
 - `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
@@ -161,19 +162,23 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - `src/v5/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
 - `src/v4/platform/domain/contracts.js` — version-neutral `footmate:*` canonical storage keys + `footmate:v4:*` legacy compatibility key contract
 - `src/v4/platform/infrastructure/storage.js` — legacy promotion, canonical-first reconciliation, dual-write rollback mirror, JSON repository ownership
-- `src/v4/recommendation.js` — deterministic ranking Source of Truth for the current `/app` runtime
+- `src/v4/platform/domain/recommendation.js` — deterministic recommendation score/reason/sort의 순수 domain Source of Truth
+- `src/v4/recommendation.js` — domain 결과를 Home / Discover / Detail UI와 연결하는 presentation bridge
 - `src/v4/data.js` — current `/app` sample match records and user-visible recommendation reasons
 
 ## Release engineering
 
 버전 번호는 제품의 외부 이름이 아니라 개발·QA·배포 추적용 식별자로만 사용합니다.
 
-- Current internal release identifier: **v5.2.0**
+- Current Product release identifier: **v5.2.0** — root `package.json.version`이 public `/app` 및 `/demo`, `/next` compatibility alias의 release meta 기준이며 CI가 drift를 차단
+- Case Study release identifier는 별도 surface 계약으로 현재 **v5.1.1**을 유지하며 Product package version과 강제로 동기화하지 않습니다.
+- Component compatibility identifiers such as connected-platform / AI Assistant `v5.1.1` are preserved independently from the Product release
 - Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
 - Closed Beta pilot operations: `docs/BETA-PILOT-RUNBOOK.md`
 - Documentation index: `docs/README.md`
-- Browser QA ownership: current `v5.1` suites + `v5.2` Beta readiness + `v5.3` Beta growth/auth/push-media suites + 필요한 granular `v4` compatibility suites
+- Browser QA ownership: current `v5.1` component suites + `v5.2` Product/WebKit/Beta readiness + `v5.3` Beta growth/auth/push-media suites + 필요한 granular `v4` compatibility suites
+- QA determinism: Playwright retry 0; Chromium visual/accessibility gate와 Mobile WebKit gate를 분리해 flaky retry가 critical failure를 숨기지 않음
+- Performance budgets: first-party request/CSS/JS/HTML byte budget + max 560px shell / horizontal overflow / screen-ready runtime budget
 - QA scope: runtime-impacting 변경은 full Regression / Browser E2E + axe / 필요한 Production verification을 유지하고, docs/workflow-only non-runtime 변경은 lightweight Docs-only QA를 사용
 - Release flow: `branch → PR → impact-aware GitHub Actions QA → merge → runtime 영향 시 exact Vercel Production verification → durable release history sync`
-- Final sync-up: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 상충하는 pending/미검증 문구 검색 → QA/merge`
-
+- Final sync-up: `최종 runtime/수동 QA 확정 → README → Release History → Runbook(절차 변경 시) → Notion 관련 페이지 → 상충하는 pending/미검증 문구 검색 → QA/merge`

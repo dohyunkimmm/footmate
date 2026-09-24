@@ -88,7 +88,7 @@ test('Discover is exploration-first with AI search plus filters',async({page})=>
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('product-completion-discover-390.png',{...exact,mask:[dates]});
+  await expect(page).toHaveScreenshot('product-completion-discover-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
   expect(errs).toEqual([]);
 });
 

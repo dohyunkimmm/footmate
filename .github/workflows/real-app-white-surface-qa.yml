@@ -6,6 +6,10 @@ on:
       - app.html
       - src/v4/design-system-v2.css
       - src/v5/ai-match-assistant.js
+      - src/v4/app.js
+      - src/v4/decision.js
+      - src/v4/recommendation.js
+      - src/v4/platform/domain/recommendation.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs
@@ -17,6 +21,10 @@ on:
       - app.html
       - src/v4/design-system-v2.css
       - src/v5/ai-match-assistant.js
+      - src/v4/app.js
+      - src/v4/decision.js
+      - src/v4/recommendation.js
+      - src/v4/platform/domain/recommendation.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs
@@ -34,7 +42,9 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - name: Install QA dependencies
-        run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" css-tree@3.1.0
       - name: Check Real App CSS syntax and performance budget
         run: |
           node scripts/check-v4.9-performance-budget.cjs
@@ -42,11 +52,11 @@ jobs:
           const fs=require('fs');
           const csstree=require('css-tree');
           const html=fs.readFileSync('app.html','utf8');
-          const match=html.match(/<style id="fm-real-app-white-tone">([\s\S]*?)<\/style>/);
-          if(!match)throw new Error('fm-real-app-white-tone style not found');
-          csstree.parse(match[1]);
-          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));
-          console.log('PASS Real App CSS syntax');
+          const css=fs.readFileSync('src/v4/design-system-v2.css','utf8');
+          if(html.includes('id="fm-real-app-white-tone"'))throw new Error('white-first CSS must not return to inline HTML ownership');
+          if(!css.includes('White-first Real App surface ownership'))throw new Error('white-first design-system ownership marker missing');
+          csstree.parse(css);
+          console.log('PASS Real App CSS syntax and ownership');
           NODE
       - name: Check product completion JS syntax
         run: node --check src/v5/ai-match-assistant.js
