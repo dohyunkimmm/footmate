@@ -2,6 +2,24 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## AI Gateway model availability recovery · 2026-09-24
+
+- Root cause: Production AI inference에서 기존 기본 모델 `inclusionai/ling-3.0-flash-vl-free`가 Vercel AI Gateway `404 model_not_found`를 반환해 `/api/ai-match-assistant`가 502로 실패
+- Runtime recovery PR: #242 · primary model을 `openai/gpt-5.4-mini`, bounded provider fallback을 `openai/gpt-5.4-nano`로 갱신하고 `model_not_found`도 fallback retry 조건에 포함
+- Runtime boundary preserved: AI는 자연어 검색 조건만 구조화하며 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유; join/payment HITL 및 `/app` Product UI 변경 없음
+- Runtime Production SHA: `344296c6db7d01571493d340ab41816bd1bfcbdd`
+- Exact Vercel Production: `dpl_14DvqZ2TxB9WKXdknFjsDDyHEa2T` · SHA `344296c6db7d01571493d340ab41816bd1bfcbdd` · READY · official alias `footmate-black.vercel.app`
+- Runtime Production verification: exact HTTP smoke PASS · exact AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`)
+- Test alignment PR: #244 · stale Production Chromium assertion의 과거 InclusionAI model 기대값만 현재 primary model로 동기화; runtime behavior 변경 없음
+- Main after test-only sync: `25c135c411def8d90e8333cdf2d676f96880f7b9`; moving `main`과 runtime Production SHA가 다른 것은 #244가 test-only이기 때문
+- Final post-merge QA: FootMate QA #1083 · run `35949609753` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS
+- Exact Production Chromium smoke: 6/6 PASS; AI Match Assistant resilience boundary와 Production aliases 포함
+- Visual Regression: UI/UX surface 변경 없음; baseline refresh 불필요. 기존 Browser E2E visual baseline gate는 PASS
+- Documentation boundary: README의 provider-independent connected/fallback 설명은 그대로 정확해 변경하지 않음; Case Study와 Closed Beta runbook의 사용자/운영 계약도 변경 없음
+- Notion boundary: 관련 FootMate PRD/AI Agent Workflow는 provider-independent contract와 GitHub Release History ownership을 이미 사용해 model/deployment 식별자 추가 sync 불필요
+- Render backup: 이번 AI Gateway recovery closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+
+
 ## Case Study section label correction · 2026-09-23
 
 - #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
