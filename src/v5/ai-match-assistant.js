@@ -257,13 +257,16 @@ function configureHome(screen){
 function ensureSummary(screen,saved,active){
   let summary=screen.querySelector('[data-ia-ai-summary]');
   if(!saved?.result){summary?.remove();return}
+  const anchor=screen.querySelector('.fm-discovery-chrome')||screen.querySelector('.fm-next-list');
   if(!summary){
     summary=document.createElement('section');summary.className='fm-discovery-ai-summary';summary.dataset.iaAiSummary='true';
-    const anchor=screen.querySelector('.fm-next-match-tags');if(anchor)anchor.before(summary);else screen.querySelector('.fm-next-section-head')?.insertAdjacentElement('afterend',summary);
   }
+  if(anchor&&summary.nextElementSibling!==anchor)anchor.before(summary);else if(!anchor&&!summary.isConnected)screen.querySelector('.fm-next-section-head')?.insertAdjacentElement('afterend',summary);
   const labels=conditionLabels(saved.result),message=displayMessage(saved.message);
-  const sig=JSON.stringify([active,message,labels]);if(summary.dataset.iaSignature===sig)return;summary.dataset.iaSignature=sig;
-  summary.innerHTML=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div></div><div class="fm-discovery-ai-summary__actions"><button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'전체 경기 보기':'AI 결과 다시 보기'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
+  const sig=JSON.stringify([active,message,labels]);
+  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div></div><div class="fm-discovery-ai-summary__actions"><button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'전체 경기 보기':'AI 결과 다시 보기'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
+  if(summary.dataset.iaSignature===sig&&summary.innerHTML===markup)return;
+  summary.dataset.iaSignature=sig;summary.innerHTML=markup;
 }
 function ensureEmpty(screen){
   let empty=screen.querySelector('[data-ia-ai-empty]');
