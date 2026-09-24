@@ -55,19 +55,11 @@ test('Home is the AI Match Assistant entry with one compact For You list',async(
   await expect(screen.locator(':scope > .fm-next-section-head h2')).toHaveText('For You');
   await expect(screen.locator(':scope > .fm-next-list')).toHaveCount(1);
   await expect(screen.locator(':scope > .fm-next-list .fm-next-match-card:visible')).toHaveCount(2);
-
   const metrics=await screen.evaluate(element=>{
     const card=element.querySelector('.fm-next-match-card');
     const media=card.querySelector('.fm-next-match-card-media');
     const tags=[...card.querySelectorAll('.fm-next-tag')].filter(node=>getComputedStyle(node).display!=='none');
-    return {
-      cardHeight:card.getBoundingClientRect().height,
-      mediaHeight:media.getBoundingClientRect().height,
-      visibleTags:tags.length,
-      paddingLeft:parseFloat(getComputedStyle(element).paddingLeft),
-      firstCardTop:card.getBoundingClientRect().top,
-      navTop:element.querySelector('.fm-next-nav').getBoundingClientRect().top
-    };
+    return {cardHeight:card.getBoundingClientRect().height,mediaHeight:media.getBoundingClientRect().height,visibleTags:tags.length,paddingLeft:parseFloat(getComputedStyle(element).paddingLeft),firstCardTop:card.getBoundingClientRect().top,navTop:element.querySelector('.fm-next-nav').getBoundingClientRect().top};
   });
   expect(metrics.cardHeight).toBeLessThanOrEqual(180);
   expect(metrics.mediaHeight).toBeLessThanOrEqual(90);
@@ -93,7 +85,6 @@ test('Home AI example executes search and hands result state to Discover',async(
   await example.click();
   await expect(home.locator('.fm-ai-card')).toHaveAttribute('data-ai-state','loading');
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
-
   const discover=page.locator('[data-screen="discover"]');
   await expect(discover).toHaveAttribute('data-ia-role','result-exploration');
   await expect(discover.locator('.fm-ai-card')).toBeHidden();
@@ -104,7 +95,6 @@ test('Home AI example executes search and hands result state to Discover',async(
   await expect(discover.getByRole('button',{name:/필터/})).toBeVisible();
   await expect(discover.locator('.fm-discovery-sort')).toBeVisible();
   await expectNoOverflow(page);
-
   const summaryMessage='8시 이후 · 2만원 이하';
   await discover.locator('[data-action="nav-home"]').click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
@@ -121,13 +111,7 @@ test('601px viewport keeps the fixed 560px Home shell compact instead of re-expa
     const sectionCopy=element.querySelector(':scope > .fm-next-section-head p');
     const first=element.querySelector('.fm-next-match-card').getBoundingClientRect();
     const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
-    return {
-      appWidth:app.getBoundingClientRect().width,
-      contextCompact:element.querySelector('.fm-next-context-card').classList.contains('fm-ia-action-strip'),
-      sectionCopyDisplay:getComputedStyle(sectionCopy).display,
-      firstCardTop:first.top,
-      navTop:nav.top
-    };
+    return {appWidth:app.getBoundingClientRect().width,contextCompact:element.querySelector('.fm-next-context-card').classList.contains('fm-ia-action-strip'),sectionCopyDisplay:getComputedStyle(sectionCopy).display,firstCardTop:first.top,navTop:nav.top};
   });
   expect(density.appWidth).toBeLessThanOrEqual(560);
   expect(density.contextCompact).toBe(true);
@@ -149,7 +133,8 @@ test('Discover owns filters, sorting and whole-match exploration without a dupli
   await expect(screen.locator('.fm-next-section-head h1')).toHaveText('경기 찾기');
   await expect(screen.getByRole('button',{name:/필터/})).toBeVisible();
   await expect(screen.locator('.fm-discovery-sort')).toBeVisible();
-  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(8);
+  const expectedMatches=await page.evaluate(()=>window.__FOOTMATE_RECOMMENDATION__.rank().length);
+  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(expectedMatches);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
@@ -183,21 +168,9 @@ test('Detail keeps one dark focal hero and removes duplicated legacy information
   await expect(detail).toHaveAttribute('data-product-detail','prioritized');
   await expect(detail.locator('[data-decision-section="fit"]')).toBeVisible();
   await expect(detail.locator('[data-decision-section="capacity"]')).toBeVisible();
-  const duplicateVisible=await detail.locator('.fm-next-detail-section:not([data-decision-section])').evaluateAll(nodes=>nodes.filter(node=>{
-    const title=node.querySelector('h2')?.textContent?.trim();
-    return ['나와 잘 맞는 이유','경기 정보','함께 뛰는 사람','취소·환불'].includes(title)&&!node.hidden;
-  }).length);
+  const duplicateVisible=await detail.locator('.fm-next-detail-section:not([data-decision-section])').evaluateAll(nodes=>nodes.filter(node=>{const title=node.querySelector('h2')?.textContent?.trim();return ['나와 잘 맞는 이유','경기 정보','함께 뛰는 사람','취소·환불'].includes(title)&&!node.hidden;}).length);
   expect(duplicateVisible).toBe(0);
-  const visual=await detail.evaluate(element=>{
-    const hero=element.querySelector('.fm-next-detail-hero');
-    const toolbarButton=element.querySelector('[data-decision-toolbar] button');
-    const primary=element.querySelector('.fm-next-sticky-cta .fm-next-button--primary');
-    return {
-      heroImage:getComputedStyle(hero).backgroundImage,
-      toolbarBackground:getComputedStyle(toolbarButton).backgroundColor,
-      primaryBackground:getComputedStyle(primary).backgroundColor
-    };
-  });
+  const visual=await detail.evaluate(element=>{const hero=element.querySelector('.fm-next-detail-hero');const toolbarButton=element.querySelector('[data-decision-toolbar] button');const primary=element.querySelector('.fm-next-sticky-cta .fm-next-button--primary');return {heroImage:getComputedStyle(hero).backgroundImage,toolbarBackground:getComputedStyle(toolbarButton).backgroundColor,primaryBackground:getComputedStyle(primary).backgroundColor};});
   expect(visual.heroImage).toContain('linear-gradient');
   expect(visual.toolbarBackground).toBe('rgb(255, 255, 255)');
   expect(visual.primaryBackground).not.toBe('rgb(255, 255, 255)');
@@ -223,20 +196,13 @@ for(const width of [320,375,390,430]){
       const navState=await current.evaluate(node=>({weight:getComputedStyle(node).fontWeight,iconBg:getComputedStyle(node.querySelector('.fm-next-nav-icon')).backgroundColor}));
       expect(Number(navState.weight)).toBeGreaterThanOrEqual(700);
       expect(navState.iconBg).not.toBe('rgba(0, 0, 0, 0)');
-
       const first=screen.locator('.fm-next-match-card').first();
       await first.locator('.fm-next-match-place').evaluate(node=>{node.textContent='수원 아주대학교 스포츠센터 프리미엄 야간 풋살 경기';});
-      const geometry=await first.evaluate(card=>{
-        const title=card.querySelector('.fm-next-match-place').getBoundingClientRect();
-        const box=card.getBoundingClientRect();
-        const buttonHeights=[...document.querySelectorAll('button')].filter(node=>node.getClientRects().length).map(node=>node.getBoundingClientRect().height);
-        return {titleLeft:title.left,titleRight:title.right,boxLeft:box.left,boxRight:box.right,minButton:Math.min(...buttonHeights)};
-      });
+      const geometry=await first.evaluate(card=>{const title=card.querySelector('.fm-next-match-place').getBoundingClientRect();const box=card.getBoundingClientRect();const buttonHeights=[...document.querySelectorAll('button')].filter(node=>node.getClientRects().length).map(node=>node.getBoundingClientRect().height);return {titleLeft:title.left,titleRight:title.right,boxLeft:box.left,boxRight:box.right,minButton:Math.min(...buttonHeights)};});
       expect(geometry.titleLeft).toBeGreaterThanOrEqual(geometry.boxLeft);
       expect(geometry.titleRight).toBeLessThanOrEqual(geometry.boxRight+1);
       expect(geometry.minButton).toBeGreaterThanOrEqual(44);
       await expectNoOverflow(page);
-
       await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
       if(route==='home'){
         await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
