@@ -9,7 +9,7 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'&&
-    document.documentElement.dataset.footmateCaseStudyReaderPolish==='1'
+    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'
   );
 }
 
@@ -162,29 +162,32 @@ test('System Evidence, Validation, and Outcome Limits remain represented after t
   expect(outcomeLimits).toContain('Production 기준');
 });
 
-test('story sections use compact top-aligned density and fit the 1440x900 review surface',async({page})=>{
+test('story sections preserve centered desktop rhythm and fit the 1440x900 review surface',async({page})=>{
   await openCaseStudy(page,{width:1440,height:900});
 
   for(let index=1;index<13;index+=1){
     await page.evaluate(i=>window.goTo(i),index);
-    const geometry=await page.locator('.slide.on .fm-next-story').evaluate(story=>{
+    const geometry=await page.locator('.slide.on').evaluate(slide=>{
+      const story=slide.querySelector('.fm-next-story');
       const rect=story.getBoundingClientRect();
-      const slide=story.closest('.slide')?.getBoundingClientRect();
       const copy=story.querySelector('.fm-next-story-copy')?.getBoundingClientRect();
       const aside=story.querySelector('.fm-next-story-aside')?.getBoundingClientRect();
+      const style=getComputedStyle(slide);
       return {
-        top:rect.top,
+        alignItems:style.alignItems,
+        paddingTop:parseFloat(style.paddingTop),
+        paddingBottom:parseFloat(style.paddingBottom),
         bottom:rect.bottom,
         width:rect.width,
         copyLeft:copy?.left||0,
         copyWidth:copy?.width||0,
         asideLeft:aside?.left||0,
-        slideTop:slide?.top||0,
         overflow:story.scrollHeight-story.clientHeight
       };
     });
-    expect(geometry.top-geometry.slideTop).toBeGreaterThanOrEqual(34);
-    expect(geometry.top-geometry.slideTop).toBeLessThanOrEqual(50);
+    expect(geometry.alignItems).toBe('center');
+    expect(geometry.paddingTop).not.toBe(38);
+    expect(geometry.paddingBottom).not.toBe(38);
     expect(geometry.bottom).toBeLessThanOrEqual(835);
     expect(geometry.width).toBeGreaterThan(900);
     expect(geometry.copyWidth).toBeGreaterThan(900);
