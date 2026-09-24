@@ -1,0 +1,40 @@
+name: Restore Release History Lines
+on:
+  push:
+    branches: [docs/restore-release-history-unrelated-lines]
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: docs/restore-release-history-unrelated-lines
+      - name: Restore unrelated historical lines
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('docs/RELEASE-HISTORY.md')
+          s=p.read_text()
+          anchor='- Supabase migration: `v5_2_real_beta_readiness` · version `20260921051924` · Production DB 적용 및 schema/RLS/RPC contract 확인\n'
+          missing='- Supabase connected boundary: `matches.cancel_cutoff_at`, `matches.check_in_opens_at`, `participations.checked_in_at`, `beta_notifications`, self/operator check-in, match completion, notification read, policy-aware operator save\n'
+          if missing not in s:
+              if anchor not in s: raise SystemExit('Supabase anchor missing')
+              s=s.replace(anchor,anchor+missing,1)
+          old='- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics 미연동'
+          new='- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동'
+          if old not in s: raise SystemExit('Integration line missing')
+          s=s.replace(old,new,1)
+          old='- Render backup: 이번 migration 범위에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리'
+          new='- Render backup: 이번 migration 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리'
+          if old not in s: raise SystemExit('Migration Render line missing')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/RELEASE-HISTORY.md
+          git diff --cached --check
+          git commit -m "docs: restore unrelated release history lines"
+          git push origin HEAD:docs/restore-release-history-unrelated-lines
