@@ -119,6 +119,7 @@
 - Regression 36: PASS · 기존 required check 이름을 유지하면서 v5.2 contract를 추가 실행
 - Browser E2E + axe: PASS · account recovery / resend / cancellation policy / check-in / notification / operator Matchday 포함
 - Supabase migration: `v5_2_real_beta_readiness` · version `20260921051924` · Production DB 적용 및 schema/RLS/RPC contract 확인
+- Supabase connected boundary: `matches.cancel_cutoff_at`, `matches.check_in_opens_at`, `participations.checked_in_at`, `beta_notifications`, self/operator check-in, match completion, notification read, policy-aware operator save
 - Security boundary: readiness RPC는 `SECURITY DEFINER` transaction entrypoint를 유지하되 `anon EXECUTE=false`, `authenticated EXECUTE=true`; operator RPC는 함수 내부에서 `auth.uid()`와 `public.operators` allowlist를 재검증
 - Product/runtime baseline: `30edb2a956b9be1371021f2d28e76d2021111c6e`
 - Post-merge QA: FootMate QA #563 · run `35564784647` · PASS
@@ -354,7 +355,7 @@
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup at blocker closure: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
-- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics 미연동
+- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동
 
 ### Closed Beta Must hardening · 2026-09-21
 
@@ -413,7 +414,7 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
-- Render backup: 이번 migration 범위에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+- Render backup: 이번 migration 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 - Follow-up closure: PR #155 · #156 · #157에서 direct module `localStorage` ownership을 platform session/repositories로 전환했으며 상세 검증은 아래 Repository storage ownership closure에 기록
 
 ### Repository storage ownership closure · 2026-09-21
