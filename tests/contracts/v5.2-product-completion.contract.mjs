@@ -16,6 +16,7 @@ const workflow=await read('.github/workflows/qa.yml');
 const production=await read('tests/e2e/v5.1-production.spec.cjs');
 
 assert.equal(pkg.version,'5.2.0');
+assert.deepEqual(pkg.qaToolchain,{node:'24',playwright:'1.55.1',axeCorePlaywright:'4.10.2'});
 assert.ok(app.includes(`footmate-release" content="${pkg.version}"`));
 assert.ok(caseStudy.includes(`footmate-case-study-release" content="${pkg.version}"`));
 assert.ok(app.includes('theme-color" content="#f7f8f7"'));
