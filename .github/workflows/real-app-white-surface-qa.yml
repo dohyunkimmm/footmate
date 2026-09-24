@@ -12,6 +12,7 @@ on:
       - src/v4/platform/domain/recommendation.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
+      - tests/e2e/real-app-visual-finish.spec.cjs
       - tests/e2e/product-completion.spec.cjs
       - tests/e2e/product-completion.spec.cjs-snapshots/**
       - .github/workflows/real-app-white-surface-qa.yml
@@ -27,6 +28,7 @@ on:
       - src/v4/platform/domain/recommendation.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
+      - tests/e2e/real-app-visual-finish.spec.cjs
       - tests/e2e/product-completion.spec.cjs
       - tests/e2e/product-completion.spec.cjs-snapshots/**
       - .github/workflows/real-app-white-surface-qa.yml
@@ -52,18 +54,20 @@ jobs:
           const fs=require('fs');
           const csstree=require('css-tree');
           const html=fs.readFileSync('app.html','utf8');
-          const css=fs.readFileSync('src/v4/design-system-v2.css','utf8');
+          const design=fs.readFileSync('src/v4/design-system-v2.css','utf8');
           if(html.includes('id="fm-real-app-white-tone"'))throw new Error('white-first CSS must not return to inline HTML ownership');
-          if(!css.includes('White-first Real App surface ownership'))throw new Error('white-first design-system ownership marker missing');
-          csstree.parse(css);
-          console.log('PASS Real App CSS syntax and ownership');
+          if(!design.includes('White-first Real App surface ownership'))throw new Error('white-first design-system ownership marker missing');
+          if(!design.includes('FootMate Real App Visual Finish · P0–P2'))throw new Error('Real App finish ownership marker missing');
+          if(html.includes('/src/v4/real-app-visual-finish.css'))throw new Error('Real App finish must not add a standalone stylesheet request');
+          csstree.parse(design);
+          console.log('PASS Real App CSS syntax and consolidated ownership');
           NODE
       - name: Check product completion JS syntax
         run: node --check src/v5/ai-match-assistant.js
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Compare Real App visual baselines and completion contracts
-        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
       - name: Upload visual evidence
         if: always()
         uses: actions/upload-artifact@v6

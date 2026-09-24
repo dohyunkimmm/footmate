@@ -131,7 +131,7 @@ test('390px AI fallback matches the completed state hierarchy',async({page})=>{
   await expect(page.locator('[data-ai-mode]')).toHaveText('Rules fallback');
   await expect(page.locator('.fm-ai-result').first()).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page.locator('.fm-ai-card')).toHaveScreenshot('visual-system-ai-fallback-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:0});
+  await expect(page.locator('.fm-ai-card')).toHaveScreenshot('visual-system-ai-fallback-390.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
