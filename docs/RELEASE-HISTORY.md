@@ -2,6 +2,21 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Real App Home initial viewport density closure · 2026-09-24
+
+- Scope: Real App Home 진입 직후의 과도한 vertical scroll을 줄이기 위해 standalone max 560px shell의 greeting·추천 context·AI Match Assistant·section heading·personalization explanation density를 압축
+- Root cause: Product shell은 max 560px로 고정되어 있지만 일부 Home density 규칙이 browser viewport breakpoint에 묶여 있어 shell보다 넓은 viewport에서 상단 카드 stack이 불필요하게 다시 확장됨
+- Runtime PR: #265 · merged SHA `f18da024038ef0260b1e3a8af25221b0d5f21be7`
+- Product/runtime baseline: `f18da024038ef0260b1e3a8af25221b0d5f21be7`
+- Geometry contract: 390×844에서 첫 추천 match가 persistent bottom navigation 위에 의미 있게 노출되도록 `firstCardTop <= 600` 및 `navTop - firstCardTop >= 120`; 601px viewport에서도 fixed 560px shell compactness와 no-horizontal-overflow를 별도 regression으로 고정
+- Preserved boundary: IA·copy·AI core emphasis·44px touch target·bottom navigation·routes·state machines·deterministic recommendation·Matching/ELO ownership·Product `/demo`·Portfolio `/demo?mode=portfolio`·39-screen baseline·v5.2.0 release identity 유지
+- Performance boundary: first-party asset request budget 24/24 유지
+- Final PR QA: Real App White Surface QA #120 · run `36005724651` · SUCCESS · actual Ubuntu/Chromium `toHaveScreenshot()` comparison 20/20 PASS; FootMate QA #1217 · run `36005724905` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Final post-merge QA: Real App White Surface QA #121 · run `36006648149` · SUCCESS; FootMate QA #1219 · run `36006647616` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
+- Exact Vercel Production: `dpl_2QZVYSvd2WvtGn2fwRMSsYtBjw5L` · SHA `f18da024038ef0260b1e3a8af25221b0d5f21be7` · READY · official alias `footmate-black.vercel.app`
+- Documentation boundary: README·Closed Beta runbook·AI architecture는 기능/운영 계약이 바뀌지 않아 중복 수정하지 않음; Case Study는 별도 프로젝트 경계를 유지하며 이번 FootMate 변경에서 직접 수정하지 않음
+
 ## Real App core AI / auth flow / desktop Schedule polish closure · 2026-09-24
 
 - Scope: setup의 visible `수비`를 `수비수`로 정리하고, Home `AI Match Assistant`를 Real App의 핵심 focal feature로 강화하며, Google/Kakao connected login 안내를 사용자 언어로 정리하고, 로그인 입력 표기를 `아이디`로 통일
