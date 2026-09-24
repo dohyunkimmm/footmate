@@ -852,3 +852,122 @@
 @media(hover:hover){.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-card:hover{transform:translateY(-1px);border-color:var(--fm-finish-border-strong);box-shadow:var(--fm-finish-shadow-raised)}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-result:hover{transform:translateY(-1px);box-shadow:var(--fm-finish-shadow-rest)}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-product-ai-retry:hover{background:var(--fm-finish-surface-subtle)}}
 @media(max-width:430px){.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-section-head p{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) *,.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) *::before,.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) *::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* Real App core AI + desktop schedule refinement */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"]{
+  padding:16px;
+  border-color:rgba(29,104,74,.22);
+  background:linear-gradient(145deg,#f8fbf5 0%,#fff 74%);
+  box-shadow:var(--fm-finish-shadow-raised);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"] .fm-ai-core-label{
+  display:inline-flex;
+  width:auto;
+  margin:0 0 10px;
+  padding:5px 8px;
+  border:1px solid rgba(29,104,74,.16);
+  border-radius:999px;
+  background:var(--fm-product-accent-soft);
+  color:var(--fm-product-brand);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"] .fm-ai-kicker{
+  color:var(--fm-product-brand);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.01em;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"][data-ai-state="idle"] .fm-ai-head strong{
+  display:block;
+  margin:2px 0 10px;
+  font-size:19px;
+  line-height:1.32;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"] .fm-ai-input-row input{
+  border-color:rgba(29,104,74,.18);
+  background:#fff;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"] .fm-ai-input-row button{
+  background:var(--fm-product-brand);
+  color:#fff;
+}
+
+@media(min-width:1100px){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-section{
+    padding-bottom:92px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-panel{
+    margin:10px 0 12px;
+    padding:13px 15px;
+    gap:9px;
+    border-radius:18px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-status{
+    grid-template-columns:auto minmax(0,1fr);
+    align-items:baseline;
+    column-gap:10px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-status b{
+    font-size:16px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-status span{
+    font-size:12px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-grid{
+    gap:7px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-grid article{
+    gap:3px;
+    padding:9px;
+    border-radius:12px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-grid article>span{
+    display:none;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-actions{
+    flex-wrap:nowrap;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-actions button{
+    flex:1 1 0;
+    min-width:0;
+    padding-inline:10px;
+    font-size:12px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-matchday-boundary{
+    padding-top:7px;
+    font-size:11px;
+    line-height:1.35;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-section-head{
+    margin-bottom:10px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming{
+    margin:8px 0 11px;
+    padding:14px 16px;
+    border-radius:18px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming-top{
+    margin-bottom:10px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming h2{
+    font-size:19px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming-actions{
+    margin-top:10px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-status-list{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-status-card{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    gap:8px;
+    padding:10px;
+    border-radius:14px;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-status-card p{
+    font-size:10px;
+    line-height:1.4;
+  }
+}
