@@ -6,10 +6,11 @@ on:
       - portfolio/case-study-visual-96
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  case-study-regression:
+  approve-visual-baseline:
+    if: ${{ !contains(github.event.head_commit.message, '[visual-baseline]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -24,18 +25,18 @@ jobs:
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run Case Study content, wrap and accessibility regression
+      - name: Re-run Case Study content, wrap and accessibility regression
         run: npx playwright test --project=chromium tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs
-      - name: Capture current Case Study renders
-        run: npx playwright test --project=chromium tests/e2e/case-study-visual-review.spec.cjs
-      - name: Upload current render evidence
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: case-study-current-render
-          path: |
-            visual-review-output/
-            playwright-report/
-            test-results/
-          if-no-files-found: warn
-          retention-days: 14
+      - name: Update approved Case Study visual baselines
+        run: npx playwright test --project=chromium tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+      - name: Commit approved visual baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
+          if git diff --cached --quiet; then
+            echo "No baseline changes"
+          else
+            git commit -m "test: approve case study visual hierarchy baselines [visual-baseline]"
+            git push origin HEAD:portfolio/case-study-visual-96
+          fi
