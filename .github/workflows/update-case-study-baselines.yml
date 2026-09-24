@@ -1,0 +1,51 @@
+name: Update Case Study Visual Baselines
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/v5/case-study-heading-polish.js
+      - tests/e2e/v5.1-case-study.spec.cjs
+      - .github/workflows/update-case-study-baselines.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-baselines:
+    if: github.head_ref == 'fix/case-study-overview-preview-title' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Regenerate Case Study baselines
+        run: npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --project=chromium --update-snapshots
+
+      - name: Commit reviewed baseline changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots/
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit."
+            exit 0
+          fi
+          git commit -m "test: update Case Study visual baselines"
+          git push origin HEAD:${{ github.head_ref }}
