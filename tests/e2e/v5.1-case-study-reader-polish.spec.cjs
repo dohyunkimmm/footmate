@@ -81,7 +81,7 @@ test('environment implementation and validation copy uses complete polite senten
   const release=(await visibleSlides(page)).nth(12);
   for(const value of [
     'Vercel AI Gateway·Supabase·Resend·Web Push·Storage를 실제 연결했습니다.',
-    '실제 PG와 외부 분석 도구는 연결하지 않았습니다.'
+    '실제 PG와 외부 분석 도구는 미연동입니다.'
   ])await expect(domain).toContainText(value);
   for(const value of [
     '경기 데이터는 샘플을 사용하며 인증·결제·정원·알림은 시뮬레이션입니다.',
