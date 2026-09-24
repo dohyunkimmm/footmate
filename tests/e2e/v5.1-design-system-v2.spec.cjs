@@ -67,8 +67,8 @@ test('1440px Design System v2 keeps the stable app shell centered and component 
 
   const card=page.locator('.fm-next-match-card').first();
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));
-  expect(cardStyle.radius).toBeGreaterThanOrEqual(22);
-  expect(cardStyle.radius).toBeLessThanOrEqual(26);
+  expect(cardStyle.radius).toBeGreaterThanOrEqual(20);
+  expect(cardStyle.radius).toBeLessThanOrEqual(22);
   expect(cardStyle.shadow).not.toBe('none');
 
   const nav=page.locator('.fm-next-nav');
@@ -94,7 +94,7 @@ test('390px primary controls and navigation share one control grammar',async({pa
     const box=element.getBoundingClientRect();
     return {height:box.height,radius:parseFloat(style.borderRadius),weight:Number(style.fontWeight)};
   });
-  expect(metrics.height).toBeGreaterThanOrEqual(54);
+  expect(metrics.height).toBeGreaterThanOrEqual(44);
   expect(metrics.radius).toBeGreaterThanOrEqual(14);
   expect(metrics.radius).toBeLessThanOrEqual(17);
   expect(metrics.weight).toBeGreaterThanOrEqual(700);
@@ -133,16 +133,15 @@ test('1440px Detail decision content uses the same surface family',async({page})
   await setupToHome(page);
   await page.locator('.fm-next-match-card').first().click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-  const surface=page.locator('[data-screen="detail"]>.fm-next-detail-section').first();
+  const surface=page.locator('[data-screen="detail"]>[data-decision-section="fit"]');
   await expect(surface).toBeVisible();
   const metrics=await surface.evaluate(element=>{
     const style=getComputedStyle(element);
     return {radius:parseFloat(style.borderRadius),border:style.borderTopWidth,shadow:style.boxShadow};
   });
-  expect(metrics.radius).toBeGreaterThanOrEqual(22);
-  expect(metrics.radius).toBeLessThanOrEqual(25);
+  expect(metrics.radius).toBeGreaterThanOrEqual(18);
+  expect(metrics.radius).toBeLessThanOrEqual(22);
   expect(metrics.border).not.toBe('0px');
-  expect(metrics.shadow).not.toBe('none');
   await page.mouse.move(1,1);
   await expect(surface).toHaveScreenshot('design-system-v2-decision-surface-1440.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
@@ -165,7 +164,7 @@ test('320/375/390/430 keep Design System v2 gutters and persistent navigation ov
       return {left:box.left,right:innerWidth-box.right,width:box.width};
     });
     expect(Math.abs(nav.left-nav.right)).toBeLessThanOrEqual(1);
-    expect(nav.width).toBeLessThanOrEqual(width-24+1);
+    expect(nav.width).toBeLessThanOrEqual(width-16+1);
     await expectNoHorizontalOverflow(page);
   }
 });

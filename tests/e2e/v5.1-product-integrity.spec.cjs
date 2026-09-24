@@ -223,8 +223,8 @@ test('320px context actions and AI micro UI keep readable non-cramped sizing',as
   expect(aiMetrics.status).toBeGreaterThanOrEqual(11);
   expect(aiMetrics.guardrail).toBeGreaterThanOrEqual(11);
   expect(aiMetrics.exampleHeight).toBeGreaterThanOrEqual(36);
-  expect(aiMetrics.inputHeight).toBeGreaterThanOrEqual(50);
-  expect(aiMetrics.submitHeight).toBeGreaterThanOrEqual(50);
+  expect(aiMetrics.inputHeight).toBeGreaterThanOrEqual(44);
+  expect(aiMetrics.submitHeight).toBeGreaterThanOrEqual(44);
   expect(errs).toEqual([]);
 });
 
