@@ -1,6 +1,6 @@
 const GATEWAY_URL='https://ai-gateway.vercel.sh/v1/responses';
-const MODEL=process.env.FOOTMATE_AI_MODEL||'inclusionai/ling-3.0-flash-vl-free';
-const FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'inclusionai/ling-3.0-flash-fin-free';
+const MODEL=process.env.FOOTMATE_AI_MODEL||'openai/gpt-5.4-mini';
+const FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'openai/gpt-5.4-nano';
 const VERSION='5.1.1';
 const LIMIT_WINDOW_MS=5*60*1000;
 const LIMIT_MAX=10;
@@ -92,7 +92,8 @@ function shouldTryFallback(attempt){
   if(attempt.requestError)return true;
   if(attempt.gateway?.ok)return false;
   const status=attempt.gateway?.status||0;
-  return status===429||status>=500||(status===403&&['no_providers_available','access_denied'].includes(gatewayErrorType(attempt.payload)));
+  const type=gatewayErrorType(attempt.payload);
+  return status===429||status>=500||(status===404&&type==='model_not_found')||(status===403&&['no_providers_available','access_denied'].includes(type));
 }
 
 module.exports=async function handler(req,res){
