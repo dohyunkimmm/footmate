@@ -1,0 +1,62 @@
+name: Case Study Baseline Sync
+
+on:
+  push:
+    branches:
+      - portfolio/task-usability-evidence-v2
+
+permissions:
+  contents: write
+
+jobs:
+  sync-reviewed-case-study-baselines:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Download reviewed browser evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: '10803987276'
+        run: |
+          set -euo pipefail
+          curl -L --fail \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" \
+            -o /tmp/browser-evidence.zip
+          rm -rf /tmp/browser-evidence
+          mkdir -p /tmp/browser-evidence
+          unzip -q /tmp/browser-evidence.zip -d /tmp/browser-evidence
+
+      - name: Normalize reviewed Case Study snapshots only
+        run: |
+          set -euo pipefail
+          target="tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots"
+          count=0
+          while IFS= read -r -d '' actual; do
+            name="$(basename "${actual}")"
+            case "${name}" in
+              case-study-*-actual.png)
+                baseline="${name%-actual.png}-chromium-linux.png"
+                cp "${actual}" "${target}/${baseline}"
+                count=$((count + 1))
+                ;;
+            esac
+          done < <(find /tmp/browser-evidence/test-results/playwright -type f -name 'case-study-*-actual.png' -print0)
+          echo "normalized=${count}" >> "$GITHUB_OUTPUT"
+          test "${count}" -eq 31
+
+      - name: Remove temporary workflow and commit baselines
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/case-study-baseline-sync.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots
+          git commit -m "test: normalize case study mobile baselines"
+          git push origin HEAD:portfolio/task-usability-evidence-v2
