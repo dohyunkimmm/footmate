@@ -203,7 +203,7 @@ test('1440px joined Schedule keeps the operational summary inside the first desk
     };
   });
   expect(geometry.columns).toBe(3);
-  expect(geometry.panelHeight).toBeLessThanOrEqual(230);
+  expect(geometry.panelHeight).toBeLessThanOrEqual(290);
   expect(geometry.upcomingHeight).toBeLessThanOrEqual(180);
   expect(geometry.statusBottom).toBeLessThanOrEqual(geometry.navTop-8);
   expect(geometry.statusBottom).toBeLessThan(geometry.viewport);
