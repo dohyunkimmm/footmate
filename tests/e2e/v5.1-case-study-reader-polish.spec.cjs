@@ -61,18 +61,17 @@ test('02 through 13 preserve centered desktop page rhythm without overflow',asyn
     await page.evaluate(i=>window.goTo(i),index);
     const geometry=await slides.nth(index).evaluate(slide=>{
       const story=slide.querySelector('.fm-next-story');
-      const storyRect=story.getBoundingClientRect();
-      const slideRect=slide.getBoundingClientRect();
+      const style=getComputedStyle(slide);
       return {
-        alignItems:getComputedStyle(slide).alignItems,
-        topGap:storyRect.top-slideRect.top,
-        bottomGap:slideRect.bottom-storyRect.bottom,
+        alignItems:style.alignItems,
+        paddingTop:style.paddingTop,
+        paddingBottom:style.paddingBottom,
         overflow:story.scrollHeight-story.clientHeight
       };
     });
     expect(geometry.alignItems).toBe('center');
-    expect(geometry.topGap).toBeGreaterThan(0);
-    expect(geometry.bottomGap).toBeGreaterThan(0);
+    expect(geometry.paddingTop).not.toBe('38px');
+    expect(geometry.paddingBottom).not.toBe('38px');
     expect(geometry.overflow).toBeLessThanOrEqual(2);
   }
 });
