@@ -80,12 +80,6 @@ if(root){
     }
   }
 
-  function discoverSet(ranked,state){
-    const regional=ranked.filter(item=>item.match.region===state.region);
-    const expanded=ranked.filter(item=>item.match.region!==state.region).slice(0,2);
-    return [...regional,...expanded];
-  }
-
   function patchDiscover(state,ranked){
     const screen=root.querySelector('[data-screen="discover"]');
     if(!screen)return;
@@ -94,7 +88,7 @@ if(root){
     const sig=signature(state,'discover');
     if(list.dataset.fmRecommendationSignature===sig)return;
     list.dataset.fmRecommendationSignature=sig;
-    list.innerHTML=discoverSet(ranked,state).map(card).join('');
+    list.innerHTML=ranked.map(card).join('');
     const heading=screen.querySelector('.fm-next-section-head h1');
     const copy=screen.querySelector('.fm-next-section-head p');
     if(heading)heading.textContent=`${state.region} 추천 경기`;
@@ -150,4 +144,3 @@ if(root){
   observer.observe(root,{childList:true,subtree:true});
   apply();
 }
-
