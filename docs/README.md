@@ -5,7 +5,7 @@
 ## Current product
 
 - Root `README.md` — 현재 제품 가치, 사용자 여정, AI Agent Workflow, 연동/미연동 경계, release readiness 기준
-- Case Study `/` — 16-section product-first narrative
+- Case Study `/` — 13-section product-first narrative
 - Real App `/app` — 현재 사용자 경험
 - Guided `/app?mode=guided` — 설명이 포함된 리뷰 흐름
 - Evidence `/app?mode=evidence` — 구현·검증 근거 확인용 흐름

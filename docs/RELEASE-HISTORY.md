@@ -2,6 +2,18 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Case Study AI preview emphasis / spacing closure · 2026-09-24
+
+- Scope: Case Study cover의 AI Match Assistant 정적 프리뷰 강제 높이를 해제해 상태 카드 아래 과도한 공백을 제거하고, `NEW` 배지와 `AI 기능 추가` 캡션으로 신규 AI 기능을 즉시 식별 가능하게 함
+- Runtime/Product boundary: Case Study 13-section IA·본문 순서·Real App 동작·AI 추천/가드레일 로직 변경 없음
+- Runtime PR: #247 · merged SHA `fa4a1fd9c023cef647a6d1114ed052b75b36f358`
+- Visual baseline: 의도된 cover 변화에 맞춰 Case Study screenshot baseline 갱신; 임시 baseline 갱신 workflow는 merge 전 제거
+- Final post-merge QA: FootMate QA #1120 · run `35953801099` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Vercel Production: `dpl_E5Qm3WqkySWv7TtPdqH2CAH93GRQ` · SHA `fa4a1fd9c023cef647a6d1114ed052b75b36f358` · READY · official alias `footmate-black.vercel.app`
+- Production verification: exact HTTP smoke PASS · exact AI inference PASS · exact Chromium smoke PASS; served Case Study CSS에서 spacing / `NEW` / `AI 기능 추가` 반영 확인
+- Documentation boundary: durable release evidence는 Release History에만 추가하고 root README·Case Study copy QA·AI docs·Closed Beta runbook은 내용 계약이 바뀌지 않아 중복 추가하지 않음. `docs/README.md`의 stale 16-section 표기만 13-section으로 정정
+- Notion boundary: 공개 FootMate 프로젝트 페이지의 reviewer-facing 결과 문구만 최소 동기화하고 AI PRD/Workflow에는 동일 release 사실을 중복 추가하지 않음
+
 ## AI Gateway model availability recovery · 2026-09-24
 
 - Root cause: Production AI inference에서 기존 기본 모델 `inclusionai/ling-3.0-flash-vl-free`가 Vercel AI Gateway `404 model_not_found`를 반환해 `/api/ai-match-assistant`가 502로 실패
