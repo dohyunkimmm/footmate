@@ -1,0 +1,158 @@
+name: Product Hardening Bootstrap
+on:
+  push:
+    branches: [chore/product-hardening-11-20]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: chore/product-hardening-11-20
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply product hardening changes
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const read=file=>fs.readFileSync(file,'utf8');
+          const write=(file,value)=>fs.writeFileSync(file,value);
+          const mustReplace=(value,search,replacement,label)=>{if(!value.includes(search))throw new Error(`missing ${label}`);return value.replace(search,replacement)};
+          const VERSION='5.2.0';
+
+          const pkg=JSON.parse(read('package.json'));
+          pkg.version=VERSION;
+          pkg.engines={node:'24.x'};
+          pkg.scripts={...(pkg.scripts||{}),'check:release':'node scripts/check-release-manifest.cjs','check:performance':'node scripts/check-v4.9-performance-budget.cjs','test:hardening':'node tests/contracts/v5.2-product-hardening.contract.mjs'};
+          pkg.devDependencies={...(pkg.devDependencies||{}),'@axe-core/playwright':'4.10.2','@playwright/test':'1.55.1','css-tree':'3.1.0'};
+          write('package.json',JSON.stringify(pkg,null,2)+'\n');
+
+          let app=read('app.html');
+          app=app.replace('meta name="footmate-release" content="5.1.1"',`meta name="footmate-release" content="${VERSION}"`);
+          app=app.replace('meta name="footmate-release-name" content="ai-match-assistant"','meta name="footmate-release-name" content="product-hardening"');
+          app=app.replace('meta name="theme-color" content="#092E21"','meta name="theme-color" content="#F7F8F7"');
+          app=app.replaceAll('?v=511','?v=520');
+          const styleIds=['fm-real-app-white-tone','fm-product-polish-compat'];
+          let migrated='';
+          for(const id of styleIds){
+            const pattern=new RegExp(`<style id="${id}">([\\s\\S]*?)<\\/style>\\s*`);
+            const match=app.match(pattern);
+            if(!match)throw new Error(`missing inline style ${id}`);
+            migrated+=`\n/* ${id} */\n${match[1].trim()}\n`;
+            app=app.replace(pattern,'');
+          }
+          app=mustReplace(app,'<main id="footmate-next" aria-live="polite"></main>','<main id="footmate-next"></main><div id="footmate-route-status" class="fm-sr-only" role="status" aria-live="polite" aria-atomic="true"></div>','root live region');
+          const patchMarker="const redundant=new Set(['나와 잘 맞는 이유','경기 정보','함께 뛰는 사람','취소·환불'])";
+          const markerIndex=app.indexOf(patchMarker);
+          if(markerIndex<0)throw new Error('missing Detail MutationObserver patch');
+          const scriptStart=app.lastIndexOf('<script type="module">',markerIndex);
+          const scriptEnd=app.indexOf('</script>',markerIndex);
+          if(scriptStart<0||scriptEnd<0)throw new Error('unable to isolate Detail MutationObserver patch');
+          app=app.slice(0,scriptStart)+app.slice(scriptEnd+'</script>'.length);
+          write('app.html',app);
+
+          let ds=read('src/v4/design-system-v2.css');
+          if(!ds.includes('Product hardening: migrated white-first runtime styles')){
+            ds+=`\n\n/* Product hardening: migrated white-first runtime styles from app.html. */${migrated}\n.fm-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}\n`;
+          }
+          write('src/v4/design-system-v2.css',ds);
+
+          let appJs=read('src/v4/app.js');
+          const focusBlock=`  if(activeScreen){\n    activeScreen.setAttribute('tabindex','-1');\n    activeScreen.focus({preventScroll:true});\n  }`;
+          const focusReplacement=`  if(activeScreen){\n    activeScreen.setAttribute('tabindex','-1');\n    activeScreen.focus({preventScroll:true});\n  }\n  const routeStatus=document.getElementById('footmate-route-status');\n  if(routeChanged&&routeStatus&&activeScreen){\n    const heading=activeScreen.querySelector('h1,h2,[aria-current="page"]');\n    routeStatus.textContent=heading?.textContent?.trim()?\`화면 이동: \${heading.textContent.trim()}\`:\`화면 이동: \${state.route}\`;\n  }`;
+          appJs=mustReplace(appJs,focusBlock,focusReplacement,'route announcement hook');
+          write('src/v4/app.js',appJs);
+
+          let decision=read('src/v4/decision.js');
+          decision=mustReplace(decision,'  screen.dataset.decisionVersion=DECISION_VERSION;','  screen.dataset.decisionVersion=DECISION_VERSION;\n  screen.dataset.productDetail=\'prioritized\';','decision ownership marker');
+          const stickyLine="  const sticky=screen.querySelector('.fm-next-sticky-cta');";
+          const cleanup=`  const redundantLegacySections=new Set(['나와 잘 맞는 이유','경기 정보','함께 뛰는 사람','취소·환불']);\n  screen.querySelectorAll(':scope > .fm-next-detail-section:not([data-decision-section])').forEach(section=>{\n    const heading=section.querySelector('h2')?.textContent?.trim();\n    if(heading&&redundantLegacySections.has(heading))section.remove();\n  });\n\n${stickyLine}`;
+          decision=mustReplace(decision,stickyLine,cleanup,'decision cleanup ownership');
+          write('src/v4/decision.js',decision);
+
+          let recommendation=read('src/v4/recommendation.js');
+          recommendation=mustReplace(recommendation,"import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';","import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';\nimport {rankRecommendations} from '../v5/domain/recommendation-engine.js';",'domain engine import');
+          recommendation=recommendation.replace("  const LEVELS=['입문','초중급','중급','중급+'];\n",'');
+          const helpers=/\n  function levelGap[\s\S]*?\n  exportRecommendations\(\);/;
+          if(!helpers.test(recommendation))throw new Error('missing legacy recommendation helpers');
+          recommendation=recommendation.replace(helpers,'\n\n  exportRecommendations();');
+          const rank=/  function rank\(state\)\{[\s\S]*?\n  \}\n\n  function exportRecommendations/;
+          if(!rank.test(recommendation))throw new Error('missing legacy recommendation rank');
+          recommendation=recommendation.replace(rank,"  function rank(state){return rankRecommendations(MATCHES,state);}\n\n  function exportRecommendations");
+          write('src/v4/recommendation.js',recommendation);
+
+          write('src/v5/domain/recommendation.js',`export const RECOMMENDATION_DOMAIN=Object.freeze({\n  name:'recommendation',\n  version:'${VERSION}',\n  owns:Object.freeze(['preferences','rankedMatches','selectedMatchId','recommendationReason']),\n  events:Object.freeze(['recommendation.selected'])\n});\n\nexport {rankRecommendations,recommendationFor} from './recommendation-engine.js';\n\nexport function normalizeRecommendationState(candidate={}){\n  return Object.freeze({\n    selectedMatchId:typeof candidate.selectedMatchId==='string'&&candidate.selectedMatchId?candidate.selectedMatchId:null,\n    preferenceProfile:candidate.preferenceProfile&&typeof candidate.preferenceProfile==='object'?{...candidate.preferenceProfile}:null\n  });\n}\n`);
+
+          for(const file of ['src/v5/domain/journey.js','src/v5/ai-match-assistant.js','api/ai-match-assistant.js']){
+            let value=read(file);
+            value=value.replace("'5.1.1'",`'${VERSION}'`);
+            write(file,value);
+          }
+
+          let completion=read('tests/e2e/product-completion.spec.cjs');
+          completion=completion.replaceAll("version==='5.1.1'",`version==='${VERSION}'`);
+          write('tests/e2e/product-completion.spec.cjs',completion);
+
+          write('tests/e2e/v5.1-production.spec.cjs',`const {test,expect}=require('@playwright/test');\nconst RELEASE='${VERSION}';\n\nasync function setupToHome(page){\n  await page.goto('/app',{waitUntil:'domcontentloaded'});\n  await page.evaluate(()=>localStorage.clear());\n  await page.reload({waitUntil:'domcontentloaded'});\n  await page.waitForFunction(version=>window.__FOOTMATE_V5__?.version===version,RELEASE);\n  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();\n  await page.getByRole('button',{name:'다음'}).click();\n  await page.getByRole('button',{name:'다음'}).click();\n  await page.getByRole('button',{name:/추천 경기 보기/}).click();\n  await expect(page.locator('[data-screen="home"]')).toBeVisible();\n}\n\ntest('exact Production exposes the canonical release and connected AI boundary',async({page,request})=>{\n  await page.setViewportSize({width:390,height:844});\n  await page.goto('/app',{waitUntil:'domcontentloaded'});\n  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content',RELEASE);\n  await page.waitForFunction(version=>window.__FOOTMATE_V5__?.version===version&&window.__FOOTMATE_AI__?.version===version,RELEASE);\n  await expect(page.locator('#footmate-next')).toHaveAttribute('data-connected-platform-version',RELEASE);\n  await expect(page.locator('#footmate-next')).toHaveAttribute('data-ai-assistant','available');\n  const api=await request.get('/api/ai-match-assistant');expect(api.ok()).toBe(true);\n  const health=await api.json();expect(health.version).toBe(RELEASE);expect(health.provider).toBe('vercel-ai-gateway');\n});\n\ntest('exact Production verifies white-first Home Discover Detail and accessibility geometry',async({page})=>{\n  await page.setViewportSize({width:390,height:844});\n  await setupToHome(page);\n  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content','#F7F8F7');\n  await expect(page.locator('#footmate-next')).not.toHaveAttribute('aria-live',/.+/);\n  await expect(page.locator('#footmate-route-status')).toHaveAttribute('aria-live','polite');\n  const home=page.locator('[data-screen="home"]');\n  await expect(home.locator('.fm-ai-card[data-product-ai="home"]')).toBeVisible();\n  let geometry=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,minButton:Math.min(...[...document.querySelectorAll('button')].filter(n=>n.getClientRects().length).map(n=>n.getBoundingClientRect().height))}));\n  expect(geometry.scroll).toBeLessThanOrEqual(geometry.width);expect(geometry.minButton).toBeGreaterThanOrEqual(44);\n  await page.getByRole('button',{name:'경기 찾기'}).click();\n  const discover=page.locator('[data-screen="discover"]');await expect(discover.locator('.fm-ai-card[data-product-ai="discover"]')).toBeVisible();\n  await discover.locator('.fm-next-match-card').first().click();\n  const detail=page.locator('[data-screen="detail"]');await expect(detail).toHaveAttribute('data-product-detail','prioritized');\n  await expect(detail.locator('[data-decision-section="fit"]')).toBeVisible();\n  await expect(detail.locator('[data-decision-section="capacity"]')).toBeVisible();\n  geometry=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));expect(geometry.scroll).toBeLessThanOrEqual(geometry.width);\n});\n\ntest('exact Production aliases stay current',async({page})=>{for(const route of ['/demo','/next']){await page.goto(route,{waitUntil:'domcontentloaded'});await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content',RELEASE)}});\n`);
+
+          let config=read('playwright.config.cjs');
+          config=config.replace("  retries: process.env.CI ? 1 : 0,","  retries: 0,\n  forbidOnly: Boolean(process.env.CI),");
+          config=config.replace("    {\n      name: 'chromium',\n      use: { ...devices['Desktop Chrome'] }\n    }","    {\n      name: 'chromium',\n      use: { ...devices['Desktop Chrome'] }\n    },\n    {\n      name: 'webkit-mobile',\n      use: { ...devices['iPhone 13'] }\n    }");
+          write('playwright.config.cjs',config);
+
+          let candidate=read('src/v4/platform/domain/release-candidate.js');
+          candidate=candidate.replace('  firstPartyAssetRequests:24\n','  firstPartyAssetRequests:24,\n  totalFirstPartyBytes:500000,\n  maxSingleCssBytes:50000,\n  maxSingleJsBytes:70000,\n  inlineStyleBytes:4000\n');
+          write('src/v4/platform/domain/release-candidate.js',candidate);
+
+          write('scripts/check-v4.9-performance-budget.cjs',`const fs=require('fs');const path=require('path');const {pathToFileURL}=require('url');\nfunction must(value,message){if(!value)throw new Error(message)}\n(async()=>{const {PERFORMANCE_BUDGET}=await import(pathToFileURL(path.resolve('src/v4/platform/domain/release-candidate.js')).href);const app=fs.readFileSync('app.html','utf8');const assets=[...app.matchAll(/(?:href|src)=\"(\\/src\\/(?:v4|v5)\\/[^\"?]+\\.(?:css|js))\\?v=\\d+\"/g)].map(match=>match[1]);const unique=[...new Set(assets)];const css=unique.filter(file=>file.endsWith('.css'));const js=unique.filter(file=>file.endsWith('.js'));const size=file=>fs.statSync('.'+file).size;const sum=files=>files.reduce((total,file)=>total+size(file),0);const styleBytes=[...app.matchAll(/<style(?:\\s[^>]*)?>([\\s\\S]*?)<\\/style>/g)].reduce((total,match)=>total+Buffer.byteLength(match[1]),0);const cssBytes=sum(css),jsBytes=sum(js);const measured={appHtmlBytes:Buffer.byteLength(app),firstPartyCssBytes:cssBytes,firstPartyJsBytes:jsBytes,firstPartyAssetRequests:unique.length,totalFirstPartyBytes:cssBytes+jsBytes,maxSingleCssBytes:Math.max(0,...css.map(size)),maxSingleJsBytes:Math.max(0,...js.map(size)),inlineStyleBytes:styleBytes};for(const [key,budget] of Object.entries(PERFORMANCE_BUDGET))must(measured[key]<=budget,\`${'${key}'} ${'${measured[key]}'} > ${'${budget}'}\`);must(css.length>0&&js.length>0,'first-party assets discovered');must(unique.includes('/src/v5/ai-match-assistant.js'),'AI runtime must be included in performance measurement');must(unique.includes('/src/v5/ai-match-assistant.css'),'AI styles must be included in performance measurement');console.log('PASS current performance budget',JSON.stringify({measured,budget:PERFORMANCE_BUDGET}))})().catch(error=>{console.error(error);process.exitCode=1});\n`);
+
+          let qa=read('.github/workflows/qa.yml');
+          qa=qa.replace("      - name: Check v4.9 compatibility boundary\n        run: node scripts/check-v4.9-boundary.cjs","      - name: Check canonical release manifest\n        run: node scripts/check-release-manifest.cjs\n      - name: Check v4.9 compatibility boundary\n        run: node scripts/check-v4.9-boundary.cjs");
+          qa=qa.replace("      - name: Run v5.2 real beta readiness contracts\n        run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs","      - name: Run v5.2 real beta readiness contracts\n        run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs\n      - name: Run v5.2 product hardening contracts\n        run: node tests/contracts/v5.2-product-hardening.contract.mjs");
+          qa=qa.replace("      - name: Install browser QA dependencies\n        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2\n      - name: Install Chromium\n        run: npx playwright install --with-deps chromium","      - name: Install pinned QA dependencies\n        run: npm ci --ignore-scripts\n      - name: Install Chromium and WebKit\n        run: npx playwright install --with-deps chromium webkit");
+          qa=qa.replace("npx playwright test tests/e2e/v5.1-core.spec.cjs", "npx playwright test --project=chromium tests/e2e/v5.1-core.spec.cjs");
+          qa=qa.replace("      - name: Upload browser QA evidence", "      - name: Run mobile WebKit hardening gate\n        run: npx playwright test --project=webkit-mobile tests/e2e/v5.2-mobile-webkit.spec.cjs\n      - name: Upload browser QA evidence");
+          qa=qa.replace("      - name: Install Production browser dependency\n        run: npm install --no-save @playwright/test@1.55.1","      - name: Install pinned Production browser dependencies\n        run: npm ci --ignore-scripts");
+          qa=qa.replace("npx playwright test tests/e2e/v5.1-production.spec.cjs", "npx playwright test --project=chromium tests/e2e/v5.1-production.spec.cjs");
+          write('.github/workflows/qa.yml',qa);
+
+          let white=read('.github/workflows/real-app-white-surface-qa.yml');
+          white=white.replace("      - src/v5/ai-match-assistant.js\n","      - src/v5/ai-match-assistant.js\n      - src/v4/app.js\n      - src/v4/decision.js\n      - src/v4/recommendation.js\n      - src/v5/domain/recommendation-engine.js\n");
+          white=white.replace("      - name: Install QA dependencies\n        run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0","      - name: Install pinned QA dependencies\n        run: npm ci --ignore-scripts");
+          const oldCss=`          const html=fs.readFileSync('app.html','utf8');\n          const match=html.match(/<style id=\"fm-real-app-white-tone\">([\\s\\S]*?)<\\/style>/);\n          if(!match)throw new Error('fm-real-app-white-tone style not found');\n          csstree.parse(match[1]);\n          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));`;
+          const newCss=`          const html=fs.readFileSync('app.html','utf8');\n          if(html.includes('fm-real-app-white-tone')||html.includes('fm-product-polish-compat'))throw new Error('runtime polish CSS must not remain inline');\n          csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));\n          csstree.parse(fs.readFileSync('src/v5/ai-match-assistant.css','utf8'));`;
+          white=mustReplace(white,oldCss,newCss,'white surface CSS syntax check');
+          white=white.replace("          node scripts/check-v4.9-performance-budget.cjs","          node scripts/check-release-manifest.cjs\n          node scripts/check-v4.9-performance-budget.cjs");
+          white=white.replace("npx playwright test tests/e2e/real-app-white-surface.spec.cjs", "npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs");
+          write('.github/workflows/real-app-white-surface-qa.yml',white);
+
+          let readme=read('README.md');
+          if(!readme.includes('Current runtime release: **5.2.0**'))readme=readme.replace('# FootMate — AI-assisted Futsal Match Discovery\n','# FootMate — AI-assisted Futsal Match Discovery\n\nCurrent runtime release: **5.2.0** · Product hardening baseline.\n');
+          write('README.md',readme);
+          NODE
+      - name: Generate pinned dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Validate generated hardening contracts
+        run: |
+          git diff --check
+          node scripts/check-release-manifest.cjs
+          node scripts/check-v4.9-performance-budget.cjs
+          node tests/contracts/v5.2-product-hardening.contract.mjs
+          node --check src/v4/app.js
+          node --check src/v4/decision.js
+          node --check src/v4/recommendation.js
+          node --check src/v5/ai-match-assistant.js
+          node --check api/ai-match-assistant.js
+      - name: Commit generated hardening changes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "refactor: harden product runtime and QA contracts"
+          git push origin HEAD:chore/product-hardening-11-20
