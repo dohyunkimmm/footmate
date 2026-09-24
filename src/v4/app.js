@@ -154,7 +154,7 @@ const setupSteps=[
     key:'position',
     title:'어떤 포지션이 편한가요?',
     copy:'추천 경기의 남은 자리와 함께 볼게요.',
-    options:[['MF','미드필더'],['FW','공격수'],['DF','수비'],['GK','골키퍼']]
+    options:[['MF','미드필더'],['FW','공격수'],['DF','수비수'],['GK','골키퍼']]
   },
   {
     key:'level',
