@@ -102,7 +102,7 @@
     domain.querySelectorAll('.fm-next-cs-modes>.is-focus').forEach(node=>node.classList.remove('is-focus'));
     setHTML(domain,'.fm-next-cs-note',rows([
       ['실제 연결','Vercel AI Gateway·Supabase·Resend·Web Push·Storage를 실제 연결했습니다.'],
-      ['미연동','실제 PG와 외부 분석 도구는 연결하지 않았습니다.'],
+      ['미연동','실제 PG와 외부 분석 도구는 미연동입니다.'],
       ['정의한 기준','API·데이터·권한·오류·재시도, IA·상태별 화면·CTA, 취소·정원·복구 정책을 문서화했습니다.']
     ]));
 
@@ -130,7 +130,7 @@
     setHTML(release,'.fm-next-cs-outcomes',
       '<div><b>Real App</b><p>'+lines('AI Gateway를 실제 연결했고 추천 엔진이 후보·순위·이유를 결정합니다.','경기 데이터는 샘플을 사용하며 인증·결제·정원·알림은 시뮬레이션입니다.')+'</p></div>'+
       '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소·체크인을 실제 연결했습니다.','Google/Kakao OAuth·이메일·Web Push·미디어도 실제 환경에서 검증했습니다.')+'</p></div>'+
-      '<div><b>미연동 범위</b><p>'+lines('실제 PG와 외부 분석 도구는 연결하지 않았습니다.','수익성과 실제 이용 지표는 아직 검증하지 않았습니다.')+'</p></div>');
+      '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구는 연결하지 않았습니다.','수익성과 실제 이용 지표는 아직 검증하지 않았습니다.')+'</p></div>');
 
     // Guardrail: the public Case Study should not expose the internal acronym.
     const shell=document.querySelector('.fm-cs-shell');
