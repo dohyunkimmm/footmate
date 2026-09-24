@@ -49,5 +49,5 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.
 
-
 - [서비스 기획 근거](SERVICE-PLANNING-EVIDENCE.md): 역할·목표·우선순위·대안·8개 KPI 측정 설계와 검증 한계
+- [과업 기반 사용자 검증 근거](USER-TEST-EVIDENCE.md): PBL V1 이후 약 6명의 iOS·Android 탐색·가입 과업, 반복 검증 방식과 해석 한계

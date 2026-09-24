@@ -1,5 +1,5 @@
 /* FootMate Case Study · AI/IT Service Planner portfolio polish.
-   Scope: reader-facing copy only for 03 Persona/JTBD, 06 Recommendation, 11 Domain & AI. */
+   Scope: reader-facing copy for 03 Persona/JTBD, 06 Recommendation, 11 Domain & AI, 13 Release & Learnings. */
 (function(){
   let applied=false;
 
@@ -25,23 +25,23 @@
     const slides=[...document.querySelectorAll('.slide:not([hidden])')];
     if(slides.length!==13)return false;
 
-    // 03 · Persona · JTBD — connect design assumptions to requirements and Beta observation.
+    // 03 · Persona · JTBD — keep the Persona as a design assumption and add task-based usability evidence separately.
     const persona=slides[2];
     setHTML(persona,'.fm-next-story h2',lines(
       '사용자 가정을 요구사항으로 연결하고,',
-      'Beta에서 실제 판단 순서를 확인합니다.'
+      '과업 기반 검증으로 동선을 확인했습니다.'
     ));
     setHTML(persona,'.fm-next-story-lead',lines(
       '평일 저녁·주 1~2회·30분 안쪽 이동은 설계용 Persona 가정이며, 인터뷰로 검증한 집단은 아닙니다.',
-      '이 가정에서 시간·거리·레벨·포지션·남은 자리를 주요 판단 정보로 두고, 실제 우선순위는 Beta에서 관찰합니다.'
+      'PBL 교육 이후 6명에게 iOS·Android에서 구체 행동 과업을 요청해 탐색·가입 동선의 버그와 막힘을 확인하며 고도화했습니다.'
     ));
     setHTML(persona,'.fm-next-cs-persona',
       '<div><span>설계 가정</span><b>'+lines('평일 저녁 · 주 1~2회','30분 안쪽으로 이동')+'</b></div>'+
       '<div><span>요구사항 반영</span><b>'+lines('시간 · 거리 · 레벨','포지션 · 남은 자리 우선 확인')+'</b></div>'+
-      '<div><span>Beta 관찰</span><b>'+lines('먼저 확인하는 조건','정보 부족·참가 직전 이탈 지점')+'</b></div>');
-    setHTML(persona,'.fm-next-cs-jtbd','<small>JTBD · 가설 → 관찰</small><p>'+lines(
+      '<div><span>Task 검증</span><b>'+lines('6명 · iOS 4 / Android 2','숙련도·포지션을 나눠 과업 수행')+'</b></div>');
+    setHTML(persona,'.fm-next-cs-jtbd','<small>JTBD · 가설 → 과업 → 관찰</small><p>'+lines(
       '“오늘 뛸 수 있는 경기에서, 나와 잘 맞는 이유를 빠르게 이해하고 싶다.”',
-      'Persona를 사실로 확정하지 않고, 실제 판단 순서와 망설임 지점을 확인해 요구사항을 조정합니다.')+'</p>');
+      '회원가입 전·Kakao·Google·이메일 가입처럼 구체 행동을 지정해 동선별 버그·막힘을 확인하고 요구사항을 조정했습니다.')+'</p>');
 
     // 06 · Recommendation — make the product decision explicit before implementation details.
     const recommendation=slides[5];
@@ -75,7 +75,23 @@
       'AI는 조건 해석, 결정론적 추천 엔진은 후보·순위·이유를 맡고 참가·결제는 HITL을 유지합니다.'
     ));
 
-    document.documentElement.dataset.footmateCaseStudyPlannerPolish='95';
+    // 13 · Release & Learnings — surface real task-based usability evidence without turning it into product KPI outcomes.
+    const release=slides[12];
+    setHTML(release,'.fm-next-story h2',lines(
+      '과업 기반 사용자 검증을 반복하며,',
+      '구현 결과와 성과 측정을 구분합니다.'
+    ));
+    setHTML(release,'.fm-next-story-lead',lines(
+      'PBL 교육 이후 6명에게 실제 탐색·가입 동선의 구체 행동 과업을 요청해 iOS와 Android에서 사용성을 확인했습니다.',
+      '이 결과는 버그와 막힘을 찾기 위한 사용성 검증이며, 전환율 개선이나 시장 적합성을 입증한 Measured Result와는 구분합니다.'
+    ));
+    setHTML(release,'.fm-next-cs-final','<span hidden>Production 기준</span><span>사용성 검증 · 근거와 다음 단계</span>'+rows([
+      ['검증 표본','6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2'],
+      ['과업 범위','회원가입 전 2회 · Kakao 2회 · Google 2회 · 이메일 2회. 총 8회이며 일부 참여자가 복수 과업을 수행했습니다.'],
+      ['학습·한계','구체 행동을 지정해야 해당 동선의 버그·막힘을 찾고 재검증할 수 있었습니다. KPI는 실제 이용자 cohort를 구분하고 기준값을 확보한 뒤 Baseline부터 측정합니다.']])+
+      '<a href="/app" target="_blank" rel="noopener">FootMate 앱 보기 ↗</a>');
+
+    document.documentElement.dataset.footmateCaseStudyPlannerPolish='96';
     applied=true;
     return true;
   }
