@@ -2,6 +2,21 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+
+## Real App Visual Finish P0–P2 closure · 2026-09-24
+
+- Scope: standalone Real App의 최종 visual ownership을 `src/v4/design-system-v2.css`로 통합하고, decision-support typography·surface/elevation·accent hierarchy·loading/empty/fallback/recovery state language·절제된 interaction motion을 정제
+- Runtime PR: #252 · merged SHA `784ec086f9d84b16fcbf37abd4a776478827a980`
+- Product/runtime baseline: `784ec086f9d84b16fcbf37abd4a776478827a980`
+- Preserved boundary: Product 560px shell, IA·copy·routes·state machine·deterministic recommendation behavior, Portfolio/embed compatibility, v5.2.0 release identity, AI loading/fallback semantic visual contracts 유지
+- Performance boundary: 별도 finish stylesheet request를 추가하지 않고 기존 first-party request budget 24/24 유지
+- Visual Regression: 검수한 Ubuntu/Chromium CI actual을 Product 승인 baseline으로 반영한 뒤 `toHaveScreenshot()` comparison PASS; Case Study runtime/files/baselines는 최종 PR diff에서 제외
+- Final PR QA: Real App White Surface QA #91 · run `35980404685` · SUCCESS; FootMate QA #1164 · run `35980404652` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS
+- Final post-merge QA: Real App White Surface QA #92 · SUCCESS; FootMate QA #1165 · run `35981204805` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
+- Exact Vercel Production: `dpl_BCHva4gFZz7JgJhsetVU1NJpfNcL` · SHA `784ec086f9d84b16fcbf37abd4a776478827a980` · READY · official alias `footmate-black.vercel.app`
+- Documentation boundary: README·Closed Beta runbook·AI 문서는 기능/운영 계약이 바뀌지 않아 중복 추가하지 않음; Case Study는 별도 프로젝트 경계를 유지하며 이번 FootMate closure에서 직접 수정하지 않음
+
 ## Case Study AI preview emphasis / spacing closure · 2026-09-24
 
 - Scope: Case Study cover의 AI Match Assistant 정적 프리뷰 강제 높이를 해제해 상태 카드 아래 과도한 공백을 제거하고, `NEW` 배지와 `AI 기능 추가` 캡션으로 신규 AI 기능을 즉시 식별 가능하게 함
