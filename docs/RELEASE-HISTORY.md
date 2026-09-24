@@ -2,6 +2,20 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Real App core AI / auth flow / desktop Schedule polish closure · 2026-09-24
+
+- Scope: setup의 visible `수비`를 `수비수`로 정리하고, Home `AI Match Assistant`를 Real App의 핵심 focal feature로 강화하며, Google/Kakao connected login 안내를 사용자 언어로 정리하고, 로그인 입력 표기를 `아이디`로 통일
+- Auth flow: signup / 아이디 찾기 / 비밀번호 찾기 subpanel의 뒤로가기는 먼저 Login으로 복귀하고, Login의 뒤로가기는 참가를 시작한 Detail로 복귀하며 이후 기존 originating surface 복귀 contract를 유지
+- Desktop Schedule: stable max 560px shell을 유지한 채 joined Schedule / Matchday operational summary의 density를 압축하고 1440×900 첫 viewport geometry contract를 추가
+- Runtime PR: #258 · merged SHA `8a58980ae9982f4361d5e755ad10a8ab9d763429`
+- Product/runtime baseline: `8a58980ae9982f4361d5e755ad10a8ab9d763429`
+- Preserved boundary: canonical position 값 `DF`, deterministic recommendation / Matching / ELO ownership, OAuth callback/provider behavior, Product `/demo`, Portfolio `/demo?mode=portfolio`, 39-screen baseline, v5.2.0 release identity 유지
+- Visual Regression: 검수한 Ubuntu/Chromium CI actual만 Product 승인 baseline으로 반영한 뒤 임시 baseline 갱신 workflow를 제거하고 comparison-only `toHaveScreenshot()` gate를 복원해 최종 PASS 확인
+- Final PR QA: Real App White Surface QA #107 · run `35990681270` · SUCCESS; FootMate QA #1188 · run `35990681350` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS
+- Final post-merge QA: Real App White Surface QA #109 · run `35994113694` · SUCCESS; FootMate QA #1193 · run `35994113731` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
+- Exact Vercel Production: `dpl_29vaTcjJnP4MSJWxoxaTmmhJD26X` · SHA `8a58980ae9982f4361d5e755ad10a8ab9d763429` · READY · official alias `footmate-black.vercel.app`
+- Documentation boundary: README·Closed Beta runbook·AI architecture 문서는 기능/운영 계약이 바뀌지 않아 중복 추가하지 않음; Case Study는 별도 프로젝트 경계를 유지하며 이번 FootMate 변경에서 직접 수정하지 않음
 
 ## Real App Visual Finish P0–P2 closure · 2026-09-24
 
@@ -105,7 +119,6 @@
 - Regression 36: PASS · 기존 required check 이름을 유지하면서 v5.2 contract를 추가 실행
 - Browser E2E + axe: PASS · account recovery / resend / cancellation policy / check-in / notification / operator Matchday 포함
 - Supabase migration: `v5_2_real_beta_readiness` · version `20260921051924` · Production DB 적용 및 schema/RLS/RPC contract 확인
-- Supabase connected boundary: `matches.cancel_cutoff_at`, `matches.check_in_opens_at`, `participations.checked_in_at`, `beta_notifications`, self/operator check-in, match completion, notification read, policy-aware operator save
 - Security boundary: readiness RPC는 `SECURITY DEFINER` transaction entrypoint를 유지하되 `anon EXECUTE=false`, `authenticated EXECUTE=true`; operator RPC는 함수 내부에서 `auth.uid()`와 `public.operators` allowlist를 재검증
 - Product/runtime baseline: `30edb2a956b9be1371021f2d28e76d2021111c6e`
 - Post-merge QA: FootMate QA #563 · run `35564784647` · PASS
@@ -341,7 +354,7 @@
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup at blocker closure: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
-- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동
+- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics 미연동
 
 ### Closed Beta Must hardening · 2026-09-21
 
@@ -400,7 +413,7 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
-- Render backup: 이번 migration 범위에서는 재검증하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+- Render backup: 이번 migration 범위에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 - Follow-up closure: PR #155 · #156 · #157에서 direct module `localStorage` ownership을 platform session/repositories로 전환했으며 상세 검증은 아래 Repository storage ownership closure에 기록
 
 ### Repository storage ownership closure · 2026-09-21
