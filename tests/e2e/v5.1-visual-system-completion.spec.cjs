@@ -13,7 +13,7 @@ async function openCleanApp(page,viewport){
   const errs=failures(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>localStorage.clear());
+  await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
@@ -54,7 +54,7 @@ async function seedJoinedSchedule(page,viewport={width:1440,height:900}){
   const errs=failures(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({route:'schedule',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:true,joinedMatchId:'suwon-ingye-2000',selectedMatchId:'suwon-ingye-2000',matchStage:'upcoming',userName:'도현'}))});
+  await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({route:'schedule',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:true,joinedMatchId:'suwon-ingye-2000',selectedMatchId:'suwon-ingye-2000',matchStage:'upcoming',userName:'도현'}))});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
@@ -129,9 +129,10 @@ test('390px AI fallback matches the completed state hierarchy',async({page})=>{
   await page.getByLabel('찾고 싶은 경기 조건').fill('20분 안쪽에서 GK 자리 있는 경기');
   await page.getByRole('button',{name:'AI로 찾기'}).click();
   await expect(page.locator('[data-ai-mode]')).toHaveText('Rules fallback');
-  await expect(page.locator('.fm-ai-result').first()).toBeVisible();
+  await expect(page.locator('[data-screen="home"] .fm-ai-result').first()).toBeHidden();
+  await expect(page.locator('[data-screen="home"] .fm-product-ai-retry')).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page.locator('.fm-ai-card')).toHaveScreenshot('visual-system-ai-fallback-390.png',exactScreenshot);
+  await expect(page.locator('[data-screen="home"] .fm-ai-card')).toHaveScreenshot('visual-system-ai-fallback-390.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
@@ -260,6 +261,7 @@ test('390px Discover does not claim personalization before memory exists',async(
   await setupToHome(page);
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-screen="discover"] .fm-ai-card')).toBeHidden();
   await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
@@ -275,7 +277,8 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
     {
       if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
       const screen=page.locator(`[data-screen="${route}"]`);
-      await expect(screen.locator('.fm-ai-card[data-ai-state="idle"]')).toBeVisible();
+      if(route==='home')await expect(screen.locator('.fm-ai-card[data-ai-state="idle"]')).toBeVisible();
+      else await expect(screen.locator('.fm-ai-card')).toBeHidden();
       await expect(screen.locator('[data-personalization-explanation]')).toHaveCount(0);
       await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
       const metrics=await screen.evaluate(element=>{
@@ -284,7 +287,7 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
         const title=card.querySelector('.fm-next-match-place').getBoundingClientRect();
         const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
         const smallText=[...element.querySelectorAll('.fm-ai-card *')].filter(node=>node.getClientRects().length&&[...node.childNodes].some(child=>child.nodeType===3&&child.textContent.trim())).map(node=>parseFloat(getComputedStyle(node).fontSize));
-        return {firstTop:first.top,titleBottom:title.bottom,navTop:nav.top,minText:Math.min(...smallText)};
+        return {firstTop:first.top,titleBottom:title.bottom,navTop:nav.top,minText:smallText.length?Math.min(...smallText):12};
       });
       console.log('DENSITY',JSON.stringify({width,route,...metrics}));
       expect(metrics.firstTop).toBeLessThanOrEqual(metrics.navTop-80);
