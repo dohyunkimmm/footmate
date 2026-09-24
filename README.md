@@ -18,7 +18,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 
 ## 서비스 기획 관점
 
-Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·KPI·회고를 현재 13개 섹션 안에서 연결합니다. Persona와 대안 비교는 설계 가설이며, KPI는 실제 성과가 아닌 Validation Metric입니다. 분모·관찰 기간·제외 기준은 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)에서 확인할 수 있습니다.
+Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·KPI·회고를 현재 13개 섹션 안에서 연결합니다. Persona와 대안 비교는 설계 가설이며, KPI는 실제 성과가 아닌 Validation Metric입니다. 계산 기준·관찰 기간·제외 기준은 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)에서 확인할 수 있습니다.
 
 ## Product decisions
 
