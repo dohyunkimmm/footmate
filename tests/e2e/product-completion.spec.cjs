@@ -13,9 +13,10 @@ async function openCleanApp(page,viewport={width:390,height:844}){
   const errs=failures(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>localStorage.clear());
+  await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>window.__FOOTMATE_REAL_APP_IA__?.version==='1.0.0');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   return errs;
 }
@@ -37,44 +38,76 @@ async function expectNoOverflow(page){
 
 const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
-test('Home keeps the core AI assistant prominent with compact match cards',async({page})=>{
+test('Home is the AI Match Assistant entry with one compact For You list',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const screen=page.locator('[data-screen="home"]');
   const ai=screen.locator('.fm-ai-card[data-product-ai="home"]');
+  await expect(screen).toHaveAttribute('data-ia-role','assistant-entry');
+  await expect(screen.locator('.fm-next-greeting h1')).toHaveText('오늘, 어떤 경기에서 뛸까요?');
   await expect(ai.locator('.fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 말해보세요.');
-  await expect(ai.locator('[data-ai-example]:visible')).toHaveCount(1);
+  await expect(ai.locator('[data-ai-example]:visible')).toHaveCount(3);
   await expect(ai.locator('[data-ai-submit]')).toHaveText('AI로 찾기');
+  await expect(ai.locator('.fm-ai-results')).toBeHidden();
+  await expect(screen.locator('.fm-next-context-card')).toBeHidden();
+  await expect(screen.locator(':scope > .fm-next-section-head h2')).toHaveText('For You');
+  await expect(screen.locator(':scope > .fm-next-list')).toHaveCount(1);
+  await expect(screen.locator(':scope > .fm-next-list .fm-next-match-card:visible')).toHaveCount(2);
 
   const metrics=await screen.evaluate(element=>{
     const card=element.querySelector('.fm-next-match-card');
     const media=card.querySelector('.fm-next-match-card-media');
     const tags=[...card.querySelectorAll('.fm-next-tag')].filter(node=>getComputedStyle(node).display!=='none');
-    const primary=element.querySelector('.fm-next-context-actions .fm-next-button--lime');
-    const secondary=element.querySelector('.fm-next-context-actions .fm-next-button--secondary');
     return {
       cardHeight:card.getBoundingClientRect().height,
       mediaHeight:media.getBoundingClientRect().height,
       visibleTags:tags.length,
       paddingLeft:parseFloat(getComputedStyle(element).paddingLeft),
-      primaryBackground:getComputedStyle(primary).backgroundColor,
-      secondaryBackground:getComputedStyle(secondary).backgroundColor,
       firstCardTop:card.getBoundingClientRect().top,
       navTop:element.querySelector('.fm-next-nav').getBoundingClientRect().top
     };
   });
-  expect(metrics.cardHeight).toBeLessThanOrEqual(190);
-  expect(metrics.mediaHeight).toBeLessThanOrEqual(100);
+  expect(metrics.cardHeight).toBeLessThanOrEqual(180);
+  expect(metrics.mediaHeight).toBeLessThanOrEqual(90);
   expect(metrics.visibleTags).toBeLessThanOrEqual(2);
   expect(metrics.paddingLeft).toBe(16);
-  expect(metrics.primaryBackground).not.toBe('rgb(255, 255, 255)');
-  expect(metrics.secondaryBackground).toBe('rgb(255, 255, 255)');
-  expect(metrics.firstCardTop).toBeLessThanOrEqual(600);
-  expect(metrics.navTop-metrics.firstCardTop).toBeGreaterThanOrEqual(120);
+  expect(metrics.firstCardTop).toBeLessThanOrEqual(610);
+  expect(metrics.navTop-metrics.firstCardTop).toBeGreaterThanOrEqual(110);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('product-completion-home-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
+  await expect(page).toHaveScreenshot('product-completion-home-ia-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
+  expect(errs).toEqual([]);
+});
+
+test('Home AI example executes search and hands result state to Discover',async({page})=>{
+  await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  const errs=await openCleanApp(page);
+  await setupToHome(page);
+  const home=page.locator('[data-screen="home"]');
+  const example=home.locator('[data-ai-example]').first();
+  await example.dispatchEvent('pointerdown');
+  await expect(example).toHaveAttribute('aria-pressed','true');
+  await example.click();
+  await expect(home.locator('.fm-ai-card')).toHaveAttribute('data-ai-state','loading');
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+
+  const discover=page.locator('[data-screen="discover"]');
+  await expect(discover).toHaveAttribute('data-ia-role','result-exploration');
+  await expect(discover.locator('.fm-ai-card')).toBeHidden();
+  await expect(discover.locator('[data-ia-ai-summary]')).toBeVisible();
+  await expect(discover.locator('[data-ia-ai-summary]')).toContainText('8시 이후 · 2만원 이하');
+  await expect(discover.locator('.fm-next-section-head h1')).toHaveText('AI 조회 결과');
+  await expect(discover.locator('.fm-discovery-count')).toContainText('AI 결과');
+  await expect(discover.getByRole('button',{name:/필터/})).toBeVisible();
+  await expect(discover.locator('.fm-discovery-sort')).toBeVisible();
+  await expectNoOverflow(page);
+
+  const summaryText=await discover.locator('[data-ia-ai-summary]').innerText();
+  await discover.locator('[data-action="nav-home"]').click();
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
+  await expect(page.locator('[data-screen="discover"] [data-ia-ai-summary]')).toHaveText(summaryText);
   expect(errs).toEqual([]);
 });
 
@@ -83,46 +116,46 @@ test('601px viewport keeps the fixed 560px Home shell compact instead of re-expa
   await setupToHome(page);
   const density=await page.locator('[data-screen="home"]').evaluate(element=>{
     const app=element.closest('.fm-next-app');
-    const contextCopy=element.querySelector('.fm-next-context-card p');
     const sectionCopy=element.querySelector(':scope > .fm-next-section-head p');
     const first=element.querySelector('.fm-next-match-card').getBoundingClientRect();
     const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
     return {
       appWidth:app.getBoundingClientRect().width,
-      contextCopyDisplay:getComputedStyle(contextCopy).display,
+      contextHidden:element.querySelector('.fm-next-context-card').hidden,
       sectionCopyDisplay:getComputedStyle(sectionCopy).display,
       firstCardTop:first.top,
       navTop:nav.top
     };
   });
   expect(density.appWidth).toBeLessThanOrEqual(560);
-  expect(density.contextCopyDisplay).toBe('none');
+  expect(density.contextHidden).toBe(true);
   expect(density.sectionCopyDisplay).toBe('none');
-  expect(density.firstCardTop).toBeLessThanOrEqual(620);
-  expect(density.navTop-density.firstCardTop).toBeGreaterThanOrEqual(180);
+  expect(density.firstCardTop).toBeLessThanOrEqual(640);
+  expect(density.navTop-density.firstCardTop).toBeGreaterThanOrEqual(170);
   await expectNoOverflow(page);
   expect(errs).toEqual([]);
 });
 
-test('Discover is exploration-first with AI search plus filters',async({page})=>{
+test('Discover owns filters, sorting and whole-match exploration without a duplicate Assistant card',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);
-  await page.getByRole('button',{name:'전체 보기'}).click();
+  await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
   const screen=page.locator('[data-screen="discover"]');
-  const ai=screen.locator('.fm-ai-card[data-product-ai="discover"]');
-  await expect(ai.locator('.fm-ai-head strong')).toHaveText('원하는 경기를 문장으로 검색하세요.');
-  await expect(ai.locator('[data-ai-example]:visible')).toHaveCount(3);
-  await expect(ai.locator('[data-ai-submit]')).toHaveText('AI 검색');
-  await expect(page.getByRole('button',{name:/필터/})).toBeVisible();
+  await expect(screen).toHaveAttribute('data-ia-role','result-exploration');
+  await expect(screen.locator('.fm-ai-card')).toBeHidden();
+  await expect(screen.locator('[data-ia-ai-summary]')).toHaveCount(0);
+  await expect(screen.locator('.fm-next-section-head h1')).toHaveText('경기 찾기');
+  await expect(screen.getByRole('button',{name:/필터/})).toBeVisible();
   await expect(screen.locator('.fm-discovery-sort')).toBeVisible();
+  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(3);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('product-completion-discover-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
+  await expect(page).toHaveScreenshot('product-completion-discover-ia-390.png',{...exact,maxDiffPixels:24,mask:[dates]});
   expect(errs).toEqual([]);
 });
 
-test('AI fallback exposes an explicit retry action in the same state language',async({page})=>{
+test('AI fallback exposes an explicit retry action on Home without duplicating results there',async({page})=>{
   await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
   const errs=await openCleanApp(page);
   await setupToHome(page);
@@ -130,11 +163,13 @@ test('AI fallback exposes an explicit retry action in the same state language',a
   await ai.locator('[data-ai-input]').fill('20분 이내 중급 MF 경기');
   await ai.locator('[data-ai-submit]').click();
   await expect(ai.locator('[data-ai-mode]')).toHaveAttribute('data-mode','rules-fallback');
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(ai.locator('.fm-product-ai-retry')).toBeVisible();
+  await expect(ai.locator('.fm-ai-results')).toBeHidden();
   const retry=await ai.locator('.fm-product-ai-retry').evaluate(node=>({height:node.getBoundingClientRect().height,background:getComputedStyle(node).backgroundColor}));
   expect(retry.height).toBeGreaterThanOrEqual(44);
   expect(retry.background).toBe('rgb(255, 255, 255)');
-  await expect(ai).toHaveScreenshot('product-completion-ai-fallback-390.png',exact);
+  await expect(ai).toHaveScreenshot('product-completion-ai-fallback-ia-390.png',exact);
   expect(errs).toEqual([]);
 });
 
@@ -175,7 +210,7 @@ for(const width of [320,375,390,430]){
     await setupToHome(page);
     for(const route of ['home','discover']){
       if(route==='discover'){
-        await page.getByRole('button',{name:'경기 찾기'}).click();
+        await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
         await expect(page.locator('[data-screen="discover"]')).toBeVisible();
       }
       const screen=page.locator(`[data-screen="${route}"]`);
@@ -202,7 +237,7 @@ for(const width of [320,375,390,430]){
 
       await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
       if(route==='home'){
-        await page.getByRole('button',{name:'경기 찾기'}).click();
+        await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
         await expect(page.locator('[data-screen="discover"]')).toBeVisible();
         await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
         await page.getByRole('button',{name:'홈'}).click();
