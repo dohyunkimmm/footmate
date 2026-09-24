@@ -1,0 +1,38 @@
+name: Visual System Snapshot Refresh
+on:
+  push:
+    branches: [ui/product-polish-100]
+    paths:
+      - .github/workflows/visual-system-snapshot-refresh.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install Playwright
+        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh visual-system completion snapshots
+        run: npx playwright test tests/e2e/v5.1-visual-system-completion.spec.cjs --update-snapshots
+      - name: Verify visual-system completion snapshots
+        run: npx playwright test tests/e2e/v5.1-visual-system-completion.spec.cjs
+      - name: Commit refreshed snapshots only
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots
+          if git diff --cached --quiet; then
+            echo 'No snapshot changes to commit.'
+          else
+            git commit -m 'test: refresh final visual system baselines'
+            git push origin HEAD:ui/product-polish-100
+          fi
