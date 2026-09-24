@@ -88,7 +88,7 @@
     setHTML(release,'.fm-next-cs-final','<span>사용성 검증 · 근거와 다음 단계</span>'+rows([
       ['검증 표본','6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2'],
       ['과업 범위','회원가입 전 2회 · Kakao 2회 · Google 2회 · 이메일 2회. 총 8회이며 일부 참여자가 복수 과업을 수행했습니다.'],
-      ['학습·한계','구체 행동을 지정해야 해당 동선의 버그·막힘을 찾고 재검증할 수 있었습니다. KPI는 실제 이용자 cohort를 구분한 뒤 Baseline부터 측정합니다.']])+
+      ['학습·한계','구체 행동을 지정해야 해당 동선의 버그·막힘을 찾고 재검증할 수 있었습니다. KPI는 실제 이용자 cohort를 구분하고 기준값을 확보한 뒤 Baseline부터 측정합니다.']])+
       '<a href="/app" target="_blank" rel="noopener">FootMate 앱 보기 ↗</a>');
 
     document.documentElement.dataset.footmateCaseStudyPlannerPolish='96';
