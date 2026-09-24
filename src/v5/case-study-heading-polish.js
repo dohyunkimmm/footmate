@@ -29,6 +29,11 @@
       const kicker=slides[index]?.querySelector('.fm-next-story-kicker');
       if(kicker)kicker.textContent=label;
     });
+    const coverKicker=slides[0]?.querySelector('.fm-next-cover-kicker');
+    if(coverKicker)coverKicker.textContent='Overview';
+    const topTitle=document.querySelector('.topbar-title');
+    if(topTitle)topTitle.textContent='FootMate · Case Study';
+    document.title='FootMate · Case Study';
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage='en';
     document.documentElement.dataset.footmateCaseStudyHeadingLanguage='ko';
     applied=true;
@@ -41,4 +46,3 @@
   let attempts=0;
   (function retry(){attempts+=1;if(patch()){observer.disconnect();return}if(attempts<80)requestAnimationFrame(retry)})();
 })();
-
