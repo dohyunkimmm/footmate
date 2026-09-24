@@ -10,6 +10,7 @@ const data=read('src/v4/data.js');
 const vercel=read('vercel.json');
 const cs=read('index.html');
 const narrative=read('src/v5/case-study-connected.js');
+const release=JSON.parse(read('package.json')).version;
 assert(app.includes('footmate-release" content="5.1.1"'),'app must expose v5.1.1');
 assert(app.includes('/src/v5/ai-match-assistant.js?v=511'),'AI runtime must use v5.1.1 cache key');
 assert(app.includes('/src/v5/ai-match-assistant.css?v=511'),'AI styles must use v5.1.1 cache key');
