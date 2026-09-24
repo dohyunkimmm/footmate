@@ -4,5 +4,13 @@
   "version": "5.2.0",
   "dependencies": {
     "@vercel/oidc": "3.8.8"
+  },
+  "scripts": {
+    "qa:release": "node scripts/check-release-version.cjs",
+    "qa:toolchain": "node scripts/check-qa-toolchain.cjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.55.1"
   }
 }
