@@ -83,12 +83,12 @@
     ));
     setHTML(release,'.fm-next-story-lead',lines(
       'PBL 교육 이후 6명에게 실제 탐색·가입 동선의 구체 행동 과업을 요청해 iOS와 Android에서 사용성을 확인했습니다.',
-      '이 결과는 버그와 막힘을 찾기 위한 사용성 검증이며, 전환율 개선이나 시장 적합성을 입증한 Measured Result와는 구분합니다.'
+      '이후 제품·운영 상태 고도화와 Production QA를 거쳐 KPI 측정 준비까지 검증 범위를 확장하되, 각 단계의 근거는 구분해 기록합니다.'
     ));
     setHTML(release,'.fm-next-cs-final','<span hidden>Production 기준</span><span>사용성 검증 · 근거와 다음 단계</span>'+rows([
       ['검증 표본','6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2'],
       ['과업 범위','회원가입 전 2회 · Kakao 2회 · Google 2회 · 이메일 2회. 총 8회이며 일부 참여자가 복수 과업을 수행했습니다.'],
-      ['학습·한계','구체 행동을 지정해야 해당 동선의 버그·막힘을 찾고 재검증할 수 있었습니다. KPI는 실제 이용자 cohort를 구분하고 기준값을 확보한 뒤 Baseline부터 측정합니다.']])+
+      ['검증 이후','구체 행동을 지정해야 해당 동선의 버그·막힘을 찾고 재검증할 수 있었습니다. 제품·운영 상태 고도화 → Production QA → KPI 측정 준비로 검증 범위를 넓혔으며, 사용자 검증을 모든 후속 기능의 직접 원인으로 해석하지 않습니다.']])+
       '<a href="/app" target="_blank" rel="noopener">FootMate 앱 보기 ↗</a>');
 
     document.documentElement.dataset.footmateCaseStudyPlannerPolish='96';
