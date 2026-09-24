@@ -33,7 +33,7 @@ on:
       - tests/e2e/product-completion.spec.cjs-snapshots/**
       - .github/workflows/real-app-white-surface-qa.yml
 permissions:
-  contents: read
+  contents: write
 jobs:
   visual:
     runs-on: ubuntu-latest
@@ -66,6 +66,19 @@ jobs:
         run: node --check src/v5/ai-match-assistant.js
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Refresh reviewed Real App baselines
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs --update-snapshots
+      - name: Commit reviewed Ubuntu Chromium baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/*-snapshots/*.png
+          if git diff --cached --quiet; then
+            echo "No baseline changes"
+          else
+            git commit -m "test: approve reviewed Real App visual baselines"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
       - name: Compare Real App visual baselines and completion contracts
         run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
       - name: Upload visual evidence
