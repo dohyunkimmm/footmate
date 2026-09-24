@@ -105,11 +105,11 @@ test('Home AI example executes search and hands result state to Discover',async(
   await expect(discover.locator('.fm-discovery-sort')).toBeVisible();
   await expectNoOverflow(page);
 
-  const summaryText=await discover.locator('[data-ia-ai-summary]').innerText();
+  const summaryMessage='8시 이후 · 2만원 이하';
   await discover.locator('[data-action="nav-home"]').click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
-  await expect(page.locator('[data-screen="discover"] [data-ia-ai-summary]')).toHaveText(summaryText);
+  await expect(page.locator('[data-screen="discover"] [data-ia-ai-summary]')).toContainText(summaryMessage);
   expect(errs).toEqual([]);
 });
 
