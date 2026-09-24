@@ -6,6 +6,6 @@ const app=read('app.html');
 const caseStudy=read('index.html');
 const meta=(source,name)=>source.match(new RegExp('<meta\\s+name="'+name+'"\\s+content="([^"]+)"'))?.[1]||null;
 assert(meta(app,'footmate-release')===release,`app release ${meta(app,'footmate-release')} != package ${release}`);
-assert(meta(caseStudy,'footmate-case-study-release')===release,`case study release ${meta(caseStudy,'footmate-case-study-release')} != package ${release}`);
+assert(meta(caseStudy,'footmate-case-study-release')==='5.1.1',`case study release ${meta(caseStudy,'footmate-case-study-release')} != 5.1.1`);
 assert(/^\d+\.\d+\.\d+$/.test(release),'release must be semver');
-console.log('PASS global release identity',release);
+console.log('PASS product release identity',release,'with Case Study 5.1.1 preserved');

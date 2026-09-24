@@ -22,9 +22,9 @@ test('v5.1.1 components render inside the v5.2.0 exact Production release bounda
   const health=await api.json();
   expect(health.version).toBe('5.1.1');
   expect(health.provider).toBe('vercel-ai-gateway');
-  expect(health.model).toBe('inclusionai/ling-3.0-flash-vl-free');
+  expect(health.model).toBe('openai/gpt-5.4-mini');
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.2.0');
+  await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.1.1');
   await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1');
   await expect(page.locator('[data-v5-ai-evidence="guardrailed"]')).toHaveCount(1);
 });
