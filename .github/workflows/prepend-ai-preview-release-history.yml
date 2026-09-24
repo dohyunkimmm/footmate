@@ -1,0 +1,56 @@
+name: Prepend AI Preview Release History
+
+on:
+  push:
+    branches:
+      - docs/final-sync-ai-preview-20260924
+    paths:
+      - .github/workflows/prepend-ai-preview-release-history.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync-release-history:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: docs/final-sync-ai-preview-20260924
+          fetch-depth: 0
+      - name: Prepend verified closure
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('docs/RELEASE-HISTORY.md')
+          text = path.read_text(encoding='utf-8')
+          marker = '## AI Gateway model availability recovery · 2026-09-24'
+          entry = '''## Case Study AI preview emphasis / spacing closure · 2026-09-24
+
+          - Scope: Case Study cover의 AI Match Assistant 정적 프리뷰 강제 높이를 해제해 상태 카드 아래 과도한 공백을 제거하고, `NEW` 배지와 `AI 기능 추가` 캡션으로 신규 AI 기능을 즉시 식별 가능하게 함
+          - Runtime/Product boundary: Case Study 13-section IA·본문 순서·Real App 동작·AI 추천/가드레일 로직 변경 없음
+          - Runtime PR: #247 · merged SHA `fa4a1fd9c023cef647a6d1114ed052b75b36f358`
+          - Visual baseline: 의도된 cover 변화에 맞춰 Case Study screenshot baseline 갱신; 임시 baseline 갱신 workflow는 merge 전 제거
+          - Final post-merge QA: FootMate QA #1120 · run `35953801099` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+          - Exact Vercel Production: `dpl_E5Qm3WqkySWv7TtPdqH2CAH93GRQ` · SHA `fa4a1fd9c023cef647a6d1114ed052b75b36f358` · READY · official alias `footmate-black.vercel.app`
+          - Production verification: exact HTTP smoke PASS · exact AI inference PASS · exact Chromium smoke PASS; served Case Study CSS에서 spacing / `NEW` / `AI 기능 추가` 반영 확인
+          - Documentation boundary: durable release evidence는 Release History에만 추가하고 root README·Case Study copy QA·AI docs·Closed Beta runbook은 내용 계약이 바뀌지 않아 중복 추가하지 않음. `docs/README.md`의 stale 16-section 표기만 13-section으로 정정
+          - Notion boundary: 공개 FootMate 프로젝트 페이지의 reviewer-facing 결과 문구만 최소 동기화하고 AI PRD/Workflow에는 동일 release 사실을 중복 추가하지 않음
+
+          '''
+          if '## Case Study AI preview emphasis / spacing closure · 2026-09-24' in text:
+              raise SystemExit('closure already present')
+          if marker not in text:
+              raise SystemExit('release history marker missing')
+          path.write_text(text.replace(marker, entry + marker, 1), encoding='utf-8')
+          PY
+      - name: Commit release history
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/RELEASE-HISTORY.md
+          git commit -m "docs: record final AI preview closure"
+          git push origin HEAD:docs/final-sync-ai-preview-20260924
