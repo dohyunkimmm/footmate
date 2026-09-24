@@ -196,7 +196,13 @@ test('Case Study cover uses a static preview and one Product CTA',async({page})=
   await openCaseStudy(page);
   await expect(page.locator('.fm-next-cover-frame iframe')).toHaveCount(0);
   await expect(page.locator('.fm-next-cover-frame-meta')).toHaveCount(0);
-  await expect(page.locator('.fm-cs-static-preview')).toBeVisible();
+  const preview=page.locator('.fm-cs-static-preview');
+  await expect(preview).toBeVisible();
+  await expect(preview).toContainText('원하는 경기를 문장으로 검색하세요.');
+  await expect(preview).toContainText('AI 검색');
+  await expect(preview).toContainText('8시 이후 · 2만원 이하');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('정적 AI 검색 프리뷰');
+  await expect(page.locator('.fm-next-cover-note')).toContainText('실제 체험은 Demo에서');
   await expect(page.locator('.fm-next-cover-visual')).not.toContainText('Live interaction');
   const cta=page.locator('.fm-next-cover-actions a');
   await expect(cta).toHaveCount(1);

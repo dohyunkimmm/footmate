@@ -189,10 +189,10 @@
     const rows=(items)=>`<dl class="fm-cs-reasons">${items.map(([label,copy])=>`<div><dt>${label}</dt><dd>${copy}</dd></div>`).join('')}</dl>`;
     const decision=(index,selector,items)=>setHTML(slides[index],selector,rows(items));
 
-    note.innerHTML='<strong>핵심 화면 프리뷰</strong><span>추천 이유와 참가 판단 정보를 정적 화면으로 보여줍니다.</span>';
+    note.innerHTML='<strong>정적 AI 검색 프리뷰</strong><span>실제 체험은 Demo에서</span>';
     note.style.wordBreak='keep-all';
     note.style.overflowWrap='normal';
-    document.querySelector('.fm-next-cover-visual')?.setAttribute('aria-label','FootMate 핵심 화면 정적 미리보기');
+    document.querySelector('.fm-next-cover-visual')?.setAttribute('aria-label','FootMate AI 경기 검색 정적 미리보기');
     setHTML(slides[0],'.fm-next-cover-lead',lines(
       '나에게 맞는 이유를 확인하고, 안심하고 참가하는 풋살 서비스입니다.',
       '탐색부터 경기 당일과 재탐색까지, 단독으로 기획하고 구현과 검증을 진행했습니다.'
