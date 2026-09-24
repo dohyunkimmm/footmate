@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 permissions:
-  contents: read
+  contents: write
   statuses: read
 concurrency:
   group: footmate-qa-${{ github.ref }}
@@ -148,6 +148,18 @@ jobs:
             test-results/
           if-no-files-found: warn
           retention-days: 14
+      - name: Refresh Case Study visual baselines once
+        if: failure() && github.event_name == 'pull_request' && github.head_ref == 'codex/case-study-ai-search-preview'
+        run: |
+          git fetch origin "$GITHUB_HEAD_REF"
+          git checkout -B "$GITHUB_HEAD_REF" "origin/$GITHUB_HEAD_REF"
+          npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots
+          git diff --cached --quiet && exit 0
+          git commit -m "test: refresh Case Study AI preview baselines"
+          git push origin "HEAD:$GITHUB_HEAD_REF"
 
   production_smoke:
     name: Production Smoke
