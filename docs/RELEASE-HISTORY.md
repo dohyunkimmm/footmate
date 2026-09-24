@@ -31,6 +31,17 @@
 - Notion boundary: 관련 FootMate PRD/AI Agent Workflow는 provider-independent contract와 GitHub Release History ownership을 이미 사용해 model/deployment 식별자 추가 sync 불필요
 - Render backup: 이번 AI Gateway recovery closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
+## Product hardening 11–20 closure · 2026-09-24
+
+- Scope: Product release 5.2.0 정합성, pure deterministic recommendation domain, white-first CSS/runtime patch ownership 정리, Playwright retry 0 / `forbidOnly`, exact Production UI contracts, Mobile Safari/WebKit gate, dedicated live-region ownership, pinned QA toolchain, byte/asset/readiness budgets, white-first mobile `theme-color` 정합화
+- Runtime PR: #241 · merged SHA `8f06f5969083b2d014c8b0449ed5befab90a648b`
+- Product/runtime baseline: `8f06f5969083b2d014c8b0449ed5befab90a648b`
+- Final post-merge QA: FootMate QA #1110 · run `35952503452` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
+- Exact Vercel Production: `dpl_EZuMxfoCriRy1FT7W2cs4RX3qhum` · SHA `8f06f5969083b2d014c8b0449ed5befab90a648b` · READY · official alias `footmate-black.vercel.app`
+- Preservation: 기존 Real App 1–10 polish, Case Study 13-section public IA/content/release surface, Closed Beta integrations, AI connected/fallback/HITL boundaries, routes와 compatibility aliases 유지
+- Superseded branch: #239는 #241 완료 후 duplicate implementation을 남기지 않기 위해 merge 없이 closed
+- Documentation boundary: README·Closed Beta runbook·AI 문서는 기존 계약이 그대로 정확해 중복 추가하지 않음. 공개 FootMate Notion 페이지의 reviewer-facing QA 문구는 #241 closure로 동기화했으며 Case Study sync는 불필요
 
 ## Case Study section label / preview title correction · 2026-09-23–24
 
