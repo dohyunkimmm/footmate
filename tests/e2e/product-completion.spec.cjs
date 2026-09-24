@@ -149,7 +149,7 @@ test('Discover owns filters, sorting and whole-match exploration without a dupli
   await expect(screen.locator('.fm-next-section-head h1')).toHaveText('경기 찾기');
   await expect(screen.getByRole('button',{name:/필터/})).toBeVisible();
   await expect(screen.locator('.fm-discovery-sort')).toBeVisible();
-  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(4);
+  await expect(screen.locator('.fm-next-list .fm-next-match-card:visible')).toHaveCount(8);
   await expectNoOverflow(page);
   const dates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
