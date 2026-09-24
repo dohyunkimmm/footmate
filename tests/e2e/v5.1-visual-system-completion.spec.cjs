@@ -137,7 +137,6 @@ test('390px AI fallback matches the completed state hierarchy',async({page})=>{
   expect(errs).toEqual([]);
 });
 
-
 test('390px AI loading and Discovery empty states match the completed state system',async({page})=>{
   await page.route('**/api/ai-match-assistant',async route=>{await new Promise(resolve=>setTimeout(resolve,5000));try{await route.fulfill({status:503,contentType:'application/json',body:'{}'})}catch{}});
   const errs=await openCleanApp(page,{width:390,height:844});
@@ -307,13 +306,13 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
 }
 
 test('opening Detail after scrolling a match list starts at the top',async({page})=>{
-  await openCleanApp(page,{width:390,height:844});
+  await openCleanApp(page,{width:390,height:620});
   await setupToHome(page);
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   const last=page.locator('[data-screen="discover"] .fm-next-match-card').last();
-  await last.scrollIntoViewIfNeeded();
-  expect(await page.evaluate(()=>window.scrollY)).toBeGreaterThan(0);
+  await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBeGreaterThan(0);
   await last.click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
   await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
