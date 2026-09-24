@@ -1,5 +1,5 @@
 /* FootMate Case Study · reader-facing cleanup.
-   Scope: public copy clarity, density, emphasis semantics, and self-contained evidence. */
+   Scope: public copy clarity, component rhythm, emphasis semantics, and self-contained evidence. */
 (function(){
   let applied=false;
 
@@ -17,28 +17,101 @@
     return node;
   }
 
+  function setReasonCopy(root,selector,label,copy){
+    const reason=[...(root?.querySelector(selector)?.querySelectorAll('.fm-cs-reasons>div')||[])].find(row=>row.querySelector('dt')?.textContent.trim()===label);
+    const value=reason?.querySelector('dd');
+    if(value)value.textContent=copy;
+    return value;
+  }
+
   function ensureReaderStyle(){
     if(document.getElementById('fm-case-study-reader-polish'))return;
     const style=document.createElement('style');
     style.id='fm-case-study-reader-polish';
     style.textContent=`
-      /* 02–13: reduce decorative whitespace and keep evidence close to its heading. */
+      /* 02–13: preserve the established page position; tighten structured components only. */
       @media(min-width:901px){
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide){
-          align-items:flex-start!important;
-          padding-top:38px!important;
-          padding-bottom:38px!important;
+        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+          .fm-next-cs-card,
+          .fm-next-cs-persona>div,
+          .fm-next-cs-before-after>div,
+          .fm-next-cs-auth-flow>div,
+          .fm-next-cs-modes>div,
+          .fm-next-cs-day-states>div,
+          .fm-next-cs-recovery>div,
+          .fm-next-cs-outcomes>div,
+          .fm-next-cs-metric,
+          .fm-next-cs-quote,
+          .fm-next-cs-jtbd,
+          .fm-next-cs-decision,
+          .fm-next-cs-scope,
+          .fm-next-cs-sticky,
+          .fm-next-cs-note,
+          .fm-next-cs-final
+        ){
+          padding:12px 14px!important;
+          min-width:0;
         }
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story{
-          gap:10px!important;
-          padding:0 4px 4px!important;
+        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-cs-reasons>div{
+          grid-template-columns:88px minmax(0,1fr);
+          column-gap:14px;
         }
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story-kicker{margin-bottom:6px!important}
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story h2{margin-bottom:8px!important}
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story-lead{margin-bottom:10px!important}
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story-copy>:is(.fm-next-cs-grid,.fm-next-cs-persona,.fm-next-cs-loop,.fm-next-cs-journey,.fm-next-cs-before-after,.fm-next-cs-reco,.fm-next-cs-detail-order,.fm-next-cs-auth-flow,.fm-next-cs-day-states,.fm-next-cs-recovery,.fm-next-cs-modes,.fm-next-cs-metrics,.fm-next-cs-outcomes){margin-top:10px!important}
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story-aside{gap:8px!important}
-        html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(.fm-next-cs-card,.fm-next-cs-persona>div,.fm-next-cs-before-after>div,.fm-next-cs-auth-flow>div,.fm-next-cs-modes>div,.fm-next-cs-day-states>div,.fm-next-cs-recovery>div,.fm-next-cs-outcomes>div,.fm-next-cs-metric,.fm-next-cs-quote,.fm-next-cs-jtbd,.fm-next-cs-decision,.fm-next-cs-scope,.fm-next-cs-sticky,.fm-next-cs-note,.fm-next-cs-final){padding:12px 14px!important}
+      }
+
+      /* Sentence spans must not force a visual line break. Let the available width decide. */
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-cs-line{
+        display:inline!important;
+        margin:0!important;
+        white-space:normal;
+        text-wrap:pretty;
+      }
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story h2{
+        text-wrap:balance;
+      }
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story-lead{
+        text-wrap:pretty;
+      }
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+        .fm-next-cs-card,
+        .fm-next-cs-persona>div,
+        .fm-next-cs-before-after>div,
+        .fm-next-cs-auth-flow>div,
+        .fm-next-cs-detail-order,
+        .fm-next-cs-modes>div,
+        .fm-next-cs-day-states>div,
+        .fm-next-cs-recovery>div,
+        .fm-next-cs-outcomes>div,
+        .fm-next-cs-metric,
+        .fm-cs-reasons>div
+      ){
+        min-width:0;
+      }
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+        .fm-next-cs-card p,
+        .fm-next-cs-persona b,
+        .fm-next-cs-before-after b,
+        .fm-next-cs-before-after p,
+        .fm-next-cs-auth-flow b,
+        .fm-next-cs-detail-order span,
+        .fm-next-cs-modes p,
+        .fm-next-cs-day-states p,
+        .fm-next-cs-recovery span,
+        .fm-next-cs-outcomes p,
+        .fm-cs-reasons dd
+      ){
+        white-space:normal;
+        overflow-wrap:normal;
+        word-break:keep-all;
+        text-wrap:pretty;
+      }
+
+      /* Keep short structured values compact without creating arbitrary new lines. */
+      html[data-fm-next-case-study="true"] .fm-next-cs-persona b .fm-cs-line+.fm-cs-line::before,
+      html[data-fm-next-case-study="true"] .fm-next-cs-recovery .fm-cs-line+.fm-cs-line::before{
+        content:" · ";
+      }
+      html[data-fm-next-case-study="true"] [data-v5-content-role="guest-first-decision"] .fm-next-cs-before-after b .fm-cs-line+.fm-cs-line::before{
+        content:" → ";
       }
 
       /* Green has one reader-facing meaning: the explicitly adopted option in a comparison. */
@@ -70,6 +143,10 @@
 
     ensureReaderStyle();
 
+    // 02 · Problem & Goal — keep row values phrase-like unless they are explanatory sentences.
+    const problem=slides[1];
+    setReasonCopy(problem,'.fm-next-cs-quote','검증 범위','사용자 조사나 경쟁사 우위가 입증된 결론은 아니며, Beta에서 가설을 확인합니다.');
+
     // 03 · Persona/JTBD — describe the actual participant context without internal program jargon or invented timing.
     const persona=slides[2];
     setHTML(persona,'.fm-next-story-lead',lines(
@@ -80,6 +157,21 @@
       '<div><span>설계 가정</span><b>'+lines('평일 저녁 · 주 1~2회','30분 안쪽으로 이동')+'</b></div>'+
       '<div><span>요구사항 반영</span><b>'+lines('시간 · 거리 · 레벨','포지션 · 남은 자리 우선 확인')+'</b></div>'+
       '<div><span>과업 검증</span><b>'+lines('교육생 6명 · iOS 4 / Android 2','숙련도·포지션을 나눠 과업 수행')+'</b></div>');
+
+    // 05 · Guest First — decision values stay compact; reason and trade-off read as full sentences.
+    const guest=slides[4];
+    setReasonCopy(guest,'.fm-next-cs-decision','이유','참가 의도가 생기기 전에 서비스 가치를 판단할 수 있게 했습니다.');
+    setReasonCopy(guest,'.fm-next-cs-decision','Trade-off','로그인 전에는 계정 기반 개인화와 기기 간 연속성이 제한됩니다.');
+
+    // 06 · Recommendation — explanatory rows use complete sentences consistently.
+    const recommendation=slides[5];
+    setReasonCopy(recommendation,'.fm-next-cs-note','결정','개인화 정보는 추천을 돕는 입력으로 사용합니다.');
+    setReasonCopy(recommendation,'.fm-next-cs-note','품질 기준','추천 후보·순위·이유의 소유권은 결정론적 추천 엔진에 유지합니다.');
+    setReasonCopy(recommendation,'.fm-next-cs-note','Trade-off','과거 선호와 오늘의 의도가 다를 수 있어 조건 수정과 재탐색을 허용합니다.');
+
+    // 07 · Decision Detail — action labels stay phrase-like; trade-off is a complete sentence.
+    const detail=slides[6];
+    setReasonCopy(detail,'.fm-next-cs-sticky','Trade-off','비교 대상을 제한해 결정을 돕고, 취소·환불 기준은 참가 전에 확인하게 했습니다.');
 
     // 08 · Sign in / Join — remove the orphan state line and fold preservation into the evidence table.
     const auth=slides[7];
@@ -140,7 +232,7 @@
       nodes.forEach(node=>{node.nodeValue=(node.nodeValue||'').replace(/\bPBL\b\s*/g,'');});
     }
 
-    document.documentElement.dataset.footmateCaseStudyReaderPolish='1';
+    document.documentElement.dataset.footmateCaseStudyReaderPolish='2';
     applied=true;
     return true;
   }
