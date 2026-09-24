@@ -28,10 +28,15 @@ async function setupToHome(page){
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 
-test('standalone Real App loads the visual finish layer last',async({page})=>{
+test('standalone Real App keeps visual finish ownership in Design System v2 without an extra stylesheet request',async({page})=>{
   const errs=await openCleanApp(page);
-  const styles=await page.locator('link[rel="stylesheet"]').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('href')).filter(Boolean));
-  expect(styles.at(-1)).toContain('/src/v4/real-app-visual-finish.css');
+  const state=await page.evaluate(()=>({
+    styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(node=>node.getAttribute('href')).filter(Boolean),
+    support:getComputedStyle(document.querySelector('.fm-next-app')).getPropertyValue('--fm-finish-type-support').trim()
+  }));
+  expect(state.styles.at(-1)).toContain('/src/v4/design-system-v2.css');
+  expect(state.styles.some(href=>href.includes('real-app-visual-finish.css'))).toBe(false);
+  expect(state.support).toBe('12px');
   expect(errs).toEqual([]);
 });
 
