@@ -1,5 +1,6 @@
 /* FootMate Case Study · AI/IT Service Planner portfolio polish.
-   Scope: reader-facing copy for 03 Persona/JTBD, 06 Recommendation, 11 Domain & AI, 13 Release & Learnings. */
+   Scope: reader-facing copy for 03 Persona/JTBD, 06 Recommendation, 11 Domain & AI, 13 Release & Learnings.
+   Evidence progression remains reader-facing only; product behavior is unchanged. */
 (function(){
   let applied=false;
 
