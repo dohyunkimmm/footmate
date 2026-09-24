@@ -57,21 +57,22 @@ html[data-fm-next-case-study="true"] :is(
 
 /* Label/value rows: preserve the existing copy while improving scan speed. */
 html[data-fm-next-case-study="true"] .fm-cs-reasons{
-  gap:0;
+  gap:10px;
 }
 html[data-fm-next-case-study="true"] .fm-cs-reasons>div{
+  position:relative;
   grid-template-columns:96px minmax(0,1fr);
   column-gap:18px;
-  padding:7px 0;
+  padding:0;
 }
-html[data-fm-next-case-study="true"] .fm-cs-reasons>div:first-child{
-  padding-top:0;
-}
-html[data-fm-next-case-study="true"] .fm-cs-reasons>div:last-child{
-  padding-bottom:0;
-}
-html[data-fm-next-case-study="true"] .fm-cs-reasons>div+div{
-  border-top:1px solid var(--fm-cs-ui-separator);
+html[data-fm-next-case-study="true"] .fm-cs-reasons>div+div::before{
+  content:"";
+  position:absolute;
+  top:-5px;
+  left:0;
+  right:0;
+  height:1px;
+  background:var(--fm-cs-ui-separator);
 }
 html[data-fm-next-case-study="true"] .fm-cs-reasons dt{
   font-size:12px;
@@ -132,11 +133,11 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"]
 @media(max-width:560px){
   html[data-fm-next-case-study="true"] .fm-cs-reasons>div{
     grid-template-columns:1fr;
-    row-gap:3px;
-    padding:10px 0;
+    row-gap:4px;
+    padding:0;
   }
   html[data-fm-next-case-study="true"] .fm-cs-reasons dt{
-    font-size:11px;
+    font-size:12px;
   }
   html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric{
     padding:14px;
