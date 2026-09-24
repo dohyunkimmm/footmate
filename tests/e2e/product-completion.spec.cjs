@@ -49,7 +49,9 @@ test('Home is the AI Match Assistant entry with one compact For You list',async(
   await expect(ai.locator('[data-ai-example]:visible')).toHaveCount(3);
   await expect(ai.locator('[data-ai-submit]')).toHaveText('AI로 찾기');
   await expect(ai.locator('.fm-ai-results')).toBeHidden();
-  await expect(screen.locator('.fm-next-context-card')).toBeHidden();
+  await expect(screen.locator('.fm-next-context-card')).toHaveClass(/fm-ia-action-strip/);
+  await expect(screen.locator('.fm-next-context-actions')).toBeVisible();
+  await expect(screen.locator('.fm-next-context-actions [data-action="nav-discover"]')).toBeVisible();
   await expect(screen.locator(':scope > .fm-next-section-head h2')).toHaveText('For You');
   await expect(screen.locator(':scope > .fm-next-list')).toHaveCount(1);
   await expect(screen.locator(':scope > .fm-next-list .fm-next-match-card:visible')).toHaveCount(2);
@@ -121,14 +123,14 @@ test('601px viewport keeps the fixed 560px Home shell compact instead of re-expa
     const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
     return {
       appWidth:app.getBoundingClientRect().width,
-      contextHidden:element.querySelector('.fm-next-context-card').hidden,
+      contextCompact:element.querySelector('.fm-next-context-card').classList.contains('fm-ia-action-strip'),
       sectionCopyDisplay:getComputedStyle(sectionCopy).display,
       firstCardTop:first.top,
       navTop:nav.top
     };
   });
   expect(density.appWidth).toBeLessThanOrEqual(560);
-  expect(density.contextHidden).toBe(true);
+  expect(density.contextCompact).toBe(true);
   expect(density.sectionCopyDisplay).toBe('none');
   expect(density.firstCardTop).toBeLessThanOrEqual(640);
   expect(density.navTop-density.firstCardTop).toBeGreaterThanOrEqual(170);
