@@ -8,7 +8,8 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.waitForFunction(()=>
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
-    document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'
+    document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'&&
+    document.documentElement.dataset.footmateCaseStudyReaderPolish==='1'
   );
 }
 
@@ -161,7 +162,7 @@ test('System Evidence, Validation, and Outcome Limits remain represented after t
   expect(outcomeLimits).toContain('Production 기준');
 });
 
-test('story sections stay vertically centered and fit the 1440x900 review surface',async({page})=>{
+test('story sections use compact top-aligned density and fit the 1440x900 review surface',async({page})=>{
   await openCaseStudy(page,{width:1440,height:900});
 
   for(let index=1;index<13;index+=1){
@@ -178,13 +179,13 @@ test('story sections stay vertically centered and fit the 1440x900 review surfac
         copyLeft:copy?.left||0,
         copyWidth:copy?.width||0,
         asideLeft:aside?.left||0,
-        centerDelta:slide?Math.abs((rect.top+rect.bottom)/2-(slide.top+slide.bottom)/2):999,
+        slideTop:slide?.top||0,
         overflow:story.scrollHeight-story.clientHeight
       };
     });
-    expect(geometry.top).toBeGreaterThanOrEqual(140);
-    expect(geometry.bottom).toBeLessThanOrEqual(760);
-    expect(geometry.centerDelta).toBeLessThanOrEqual(20);
+    expect(geometry.top-geometry.slideTop).toBeGreaterThanOrEqual(34);
+    expect(geometry.top-geometry.slideTop).toBeLessThanOrEqual(50);
+    expect(geometry.bottom).toBeLessThanOrEqual(835);
     expect(geometry.width).toBeGreaterThan(900);
     expect(geometry.copyWidth).toBeGreaterThan(900);
     if(geometry.asideLeft)expect(Math.abs(geometry.asideLeft-geometry.copyLeft)).toBeLessThanOrEqual(1);
@@ -271,10 +272,24 @@ test('service planning evidence distinguishes ownership, hypotheses, metrics and
   for(const value of ['우선순위 기준','무료 Beta','수익화 검증','HITL'])expect(priority).toContain(value);
   expect(await slideText(page,4)).toContain('Trade-off');
   expect(await slideText(page,8)).toContain('audit trail');
-  expect(await slideText(page,10)).toContain('실제 다인 협업 성과');
+  expect(await slideText(page,10)).toContain('실제 연결');
+  expect(await slideText(page,10)).toContain('정의한 기준');
   const metrics=await slideText(page,11);
   for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구는 미연동'])expect(metrics).toContain(value);
   expect(await slideText(page,12)).toContain('기준값을 확보한 뒤');
+});
+
+test('reader-facing cleanup removes internal jargon and legacy review exits',async({page})=>{
+  await openCaseStudy(page);
+  const slides=await visibleSlides(page);
+  const allText=(await slides.allInnerTexts()).join('\n');
+  expect(allText).not.toContain('PBL');
+  expect(allText).toContain('같은 교육과정을 수강한 교육생 6명');
+  await expect(slides.nth(7).locator('.fm-next-cs-state-line')).toHaveCount(0);
+  await expect(slides.nth(7)).toContainText('상태 보존');
+  await expect(slides.nth(8).locator('.fm-next-cs-link')).toHaveCount(0);
+  expect(await slides.nth(11).innerText()).not.toMatch(/분자|분모/);
+  await expect(slides.nth(11)).toContainText('계산 기준 · 상세 진입 세션 ÷ 결과 노출 세션');
 });
 
 test('mobile static preview caption stays below the frame without clipping',async({page})=>{
