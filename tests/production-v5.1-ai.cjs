@@ -1,7 +1,7 @@
 const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate-black.vercel.app').replace(/\/$/,'');
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
-const primaryModel=process.env.FOOTMATE_EXPECTED_AI_MODEL||'inclusionai/ling-3.0-flash-vl-free';
-const fallbackModel=process.env.FOOTMATE_EXPECTED_AI_FALLBACK_MODEL||'inclusionai/ling-3.0-flash-fin-free';
+const primaryModel=process.env.FOOTMATE_EXPECTED_AI_MODEL||'openai/gpt-5.4-mini';
+const fallbackModel=process.env.FOOTMATE_EXPECTED_AI_FALLBACK_MODEL||'openai/gpt-5.4-nano';
 function assert(condition,message){if(!condition)throw new Error(message)}
 (async()=>{
   if(!strict){console.log('SKIP v5.1.1 exact Production AI inference');return}
