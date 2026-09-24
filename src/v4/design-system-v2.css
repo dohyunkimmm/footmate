@@ -973,3 +973,47 @@
 }
 
 @media(max-width:340px){\n  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"]{margin-bottom:12px}\n}\n
+/* Real App Home first-viewport density */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-greeting{
+  padding:12px 0 0;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-greeting h1{
+  font-size:27px;
+  line-height:1.16;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card{
+  margin:6px 0 10px;
+  padding:11px 12px;
+  border-radius:18px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-kicker{
+  margin-bottom:4px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card h2{
+  margin-bottom:3px;
+  font-size:18px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-actions{
+  margin-top:6px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"][data-ai-state="idle"]{
+  margin:7px 0 11px;
+  padding:13px 14px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"][data-ai-state="idle"] .fm-ai-core-label{
+  margin-bottom:6px;
+  padding:4px 7px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"][data-ai-state="idle"] .fm-ai-head strong{
+  margin:1px 0 7px;
+  font-size:18px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-section-head{
+  margin-bottom:8px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-section-head :is(h1,h2){
+  font-size:23px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]>.fm-next-list>.fm-next-match-card:nth-child(n+2){
+  display:none;
+}
