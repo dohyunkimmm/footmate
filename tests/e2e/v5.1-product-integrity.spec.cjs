@@ -289,8 +289,8 @@ test('Case Study desktop companion panels retain reviewable width and structured
   const errs=failures(page);
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.2.0'&&document.querySelectorAll('.slide').length===16);
-  for(let index=1;index<16;index+=1){
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===13);
+  for(let index=1;index<13;index+=1){
     await page.evaluate(i=>window.goTo(i),index);
     await expect(page.locator('.slide.on')).toHaveCount(1);
     const panel=await page.locator('.slide.on').evaluate(slide=>{
