@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 permissions:
-  contents: write
+  contents: read
   statuses: read
 concurrency:
   group: footmate-qa-${{ github.ref }}
@@ -137,7 +137,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run v5.3 browser, beta, AI, recovery, accessibility and visual baseline gates
-        run: npx playwright test tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs tests/e2e/v5.1-case-study-visual.spec.cjs
+        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-decision-flow-polish.spec.cjs tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs tests/e2e/v5.1-case-study-visual.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -148,18 +148,6 @@ jobs:
             test-results/
           if-no-files-found: warn
           retention-days: 14
-      - name: Refresh Case Study visual baselines on this PR branch
-        if: failure() && github.event_name == 'pull_request' && github.head_ref == 'codex/case-study-ai-search-cover'
-        run: |
-          git fetch origin "$GITHUB_HEAD_REF"
-          git checkout -B "$GITHUB_HEAD_REF" "origin/$GITHUB_HEAD_REF"
-          npx playwright test tests/e2e/v5.1-case-study-visual.spec.cjs --update-snapshots
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tests/e2e/v5.1-case-study-visual.spec.cjs-snapshots
-          git diff --cached --quiet && exit 0
-          git commit -m "test: refresh Case Study AI cover visual baselines"
-          git push origin "HEAD:$GITHUB_HEAD_REF"
 
   production_smoke:
     name: Production Smoke
