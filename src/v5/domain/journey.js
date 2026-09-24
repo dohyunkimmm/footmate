@@ -3,7 +3,7 @@ import {PARTICIPATION_DOMAIN,normalizeParticipationState} from './participation.
 import {MATCHDAY_DOMAIN,normalizeMatchdayState} from './matchday.js';
 import {RETURN_DOMAIN,normalizeReturnState} from './return.js';
 
-export const CONNECTED_PLATFORM_VERSION='5.1.1';
+export const CONNECTED_PLATFORM_VERSION='5.2.0';
 export const JOURNEY_CONTRACT=Object.freeze(['Find','Decide','Join','Play','Return']);
 export const DOMAIN_OWNERSHIP=Object.freeze({recommendation:RECOMMENDATION_DOMAIN,participation:PARTICIPATION_DOMAIN,matchday:MATCHDAY_DOMAIN,return:RETURN_DOMAIN});
 

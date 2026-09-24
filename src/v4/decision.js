@@ -159,6 +159,7 @@ function patchDetail(){
   if(screen.dataset.decisionSignature===signature)return;
   screen.dataset.decisionSignature=signature;
   screen.dataset.decisionVersion=DECISION_VERSION;
+  screen.dataset.productDetail='prioritized';
 
   screen.querySelector('[data-decision-toolbar]')?.remove();
   screen.querySelectorAll('[data-decision-section]').forEach(node=>node.remove());
@@ -172,6 +173,12 @@ function patchDetail(){
   const second=sections[1];
   if(first)first.insertAdjacentHTML('afterend',decisionSections(match,session));
   if(second)second.dataset.decisionLegacyInfo='true';
+
+  const redundantLegacySections=new Set(['나와 잘 맞는 이유','경기 정보','함께 뛰는 사람','취소·환불']);
+  screen.querySelectorAll(':scope > .fm-next-detail-section:not([data-decision-section])').forEach(section=>{
+    const heading=section.querySelector('h2')?.textContent?.trim();
+    if(heading&&redundantLegacySections.has(heading))section.remove();
+  });
 
   const sticky=screen.querySelector('.fm-next-sticky-cta');
   if(sticky&&state.compareMatchIds.length)sticky.insertAdjacentHTML('beforebegin',compareBar());

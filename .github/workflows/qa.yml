@@ -84,6 +84,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
+      - name: Check canonical release manifest
+        run: node scripts/check-release-manifest.cjs
       - name: Check v4.9 compatibility boundary
         run: node scripts/check-v4.9-boundary.cjs
       - name: Check v5.1.1 AI Match Assistant boundary
@@ -112,6 +114,8 @@ jobs:
         run: node tests/contracts/v5.1-ai-assistant.contract.cjs
       - name: Run v5.2 real beta readiness contracts
         run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs
+      - name: Run v5.2 product hardening contracts
+        run: node tests/contracts/v5.2-product-hardening.contract.mjs
       - name: Run beta transactional email contracts
         run: node tests/contracts/beta-transactional-email.contract.mjs
       - name: Run beta email reliability contracts
@@ -132,12 +136,14 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
-      - name: Install browser QA dependencies
-        run: npm install --no-save @playwright/test@1.55.1 @axe-core/playwright@4.10.2
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install pinned QA dependencies
+        run: npm ci --ignore-scripts
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
       - name: Run v5.3 browser, beta, AI, recovery, accessibility and visual baseline gates
-        run: npx playwright test tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-decision-flow-polish.spec.cjs tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs tests/e2e/v5.1-case-study-visual.spec.cjs
+        run: npx playwright test --project=chromium tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-decision-flow-polish.spec.cjs tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs tests/e2e/v5.1-case-study-visual.spec.cjs
+      - name: Run mobile WebKit hardening gate
+        run: npx playwright test --project=webkit-mobile tests/e2e/v5.2-mobile-webkit.spec.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -174,10 +180,10 @@ jobs:
       - name: Run exact Production AI inference
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: node tests/production-v5.1-ai.cjs
-      - name: Install Production browser dependency
-        run: npm install --no-save @playwright/test@1.55.1
+      - name: Install pinned Production browser dependencies
+        run: npm ci --ignore-scripts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run exact Production Chromium smoke
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs tests/e2e/v5.2-beta-production.spec.cjs
+        run: npx playwright test --project=chromium tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs tests/e2e/v5.2-beta-production.spec.cjs

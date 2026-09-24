@@ -325,6 +325,11 @@ function render(){
     activeScreen.setAttribute('tabindex','-1');
     activeScreen.focus({preventScroll:true});
   }
+  const routeStatus=document.getElementById('footmate-route-status');
+  if(routeChanged&&routeStatus&&activeScreen){
+    const heading=activeScreen.querySelector('h1,h2,[aria-current="page"]');
+    routeStatus.textContent=heading?.textContent?.trim()?`화면 이동: ${heading.textContent.trim()}`:`화면 이동: ${state.route}`;
+  }
   if(routeChanged){
     window.scrollTo({top:0,left:0,behavior:'instant'});
     root.querySelector('.fm-next-app')?.scrollTo({top:0,left:0,behavior:'instant'});

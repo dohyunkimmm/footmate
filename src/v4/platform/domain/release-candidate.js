@@ -35,7 +35,11 @@ export const PERFORMANCE_BUDGET=Object.freeze({
   appHtmlBytes:16000,
   firstPartyCssBytes:180000,
   firstPartyJsBytes:320000,
-  firstPartyAssetRequests:24
+  firstPartyAssetRequests:24,
+  totalFirstPartyBytes:500000,
+  maxSingleCssBytes:50000,
+  maxSingleJsBytes:70000,
+  inlineStyleBytes:4000
 });
 
 export const ACCESSIBILITY_CONTRACT=Object.freeze({

@@ -15,7 +15,7 @@ async function openCleanApp(page,viewport={width:390,height:844}){
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.2.0');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   return errs;
 }

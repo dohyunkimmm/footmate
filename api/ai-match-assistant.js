@@ -1,7 +1,7 @@
 const GATEWAY_URL='https://ai-gateway.vercel.sh/v1/responses';
 const MODEL=process.env.FOOTMATE_AI_MODEL||'inclusionai/ling-3.0-flash-vl-free';
 const FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'inclusionai/ling-3.0-flash-fin-free';
-const VERSION='5.1.1';
+const VERSION='5.2.0';
 const LIMIT_WINDOW_MS=5*60*1000;
 const LIMIT_MAX=10;
 const GLOBAL_LIMIT_MAX=60;

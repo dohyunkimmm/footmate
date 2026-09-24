@@ -1,5 +1,7 @@
 # FootMate — AI-assisted Futsal Match Discovery
 
+Current runtime release: **5.2.0** · Product hardening baseline.
+
 FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에게 맞는지 이해한 뒤 참가·경기 당일·경기 후까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
 
 현재 제품은 자연어 경기 탐색을 실제 AI inference와 연결하되, 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유하도록 설계했습니다. AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, 참가와 결제는 항상 사용자가 직접 확인합니다.

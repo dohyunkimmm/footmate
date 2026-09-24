@@ -6,6 +6,10 @@ on:
       - app.html
       - src/v4/design-system-v2.css
       - src/v5/ai-match-assistant.js
+      - src/v4/app.js
+      - src/v4/decision.js
+      - src/v4/recommendation.js
+      - src/v5/domain/recommendation-engine.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs
@@ -33,19 +37,19 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Install QA dependencies
-        run: npm install --no-save @playwright/test@1.55.1 css-tree@3.1.0
+      - name: Install pinned QA dependencies
+        run: npm ci --ignore-scripts
       - name: Check Real App CSS syntax and performance budget
         run: |
+          node scripts/check-release-manifest.cjs
           node scripts/check-v4.9-performance-budget.cjs
           node - <<'NODE'
           const fs=require('fs');
           const csstree=require('css-tree');
           const html=fs.readFileSync('app.html','utf8');
-          const match=html.match(/<style id="fm-real-app-white-tone">([\s\S]*?)<\/style>/);
-          if(!match)throw new Error('fm-real-app-white-tone style not found');
-          csstree.parse(match[1]);
+          if(html.includes('fm-real-app-white-tone')||html.includes('fm-product-polish-compat'))throw new Error('runtime polish CSS must not remain inline');
           csstree.parse(fs.readFileSync('src/v4/design-system-v2.css','utf8'));
+          csstree.parse(fs.readFileSync('src/v5/ai-match-assistant.css','utf8'));
           console.log('PASS Real App CSS syntax');
           NODE
       - name: Check product completion JS syntax
@@ -53,7 +57,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Compare Real App visual baselines and completion contracts
-        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs
+        run: npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs
       - name: Upload visual evidence
         if: always()
         uses: actions/upload-artifact@v6

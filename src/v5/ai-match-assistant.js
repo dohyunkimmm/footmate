@@ -1,6 +1,6 @@
 import {MATCHES,NEXT_STORAGE_KEY,createState} from '../v4/data.js';
 
-const VERSION='5.1.1';
+const VERSION='5.2.0';
 const AI_STORAGE_KEY='footmate:v5.1:ai';
 const AI_REQUEST_TIMEOUT_MS=7000;
 const REGIONS=['수원 · 영통','수원 · 인계','용인 · 기흥','서울 · 강남'];
