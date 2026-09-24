@@ -2,6 +2,18 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Case Study reader cleanup closure · 2026-09-25
+
+- Scope: Case Study 02–13의 desktop 여백·밀도와 독자용 문체를 정리하고, 내부 `PBL` 표현 제거, 08 상태 보존 맥락 통합, 09 legacy evidence-mode 외부 링크 제거, 12 KPI `계산 기준 · A ÷ B` 표기, green 강조의 의미 기준을 반영
+- Runtime PR: #268 · merged SHA `6a7150e765309a72affda03380fabf8601d3c978`
+- Preserved boundary: 13-section IA, Real App / Closed Beta 제품 로직, API·데이터·state machine, 실제 사용자 성과·KPI 결과에 대한 미검증 경계 유지
+- Evidence sync: `SERVICE-PLANNING-EVIDENCE.md`와 `USER-TEST-EVIDENCE.md`는 같은 교육과정을 수강한 교육생 6명, 계산 기준 용어, 검증 범위와 해석 한계로 동기화
+- Final post-merge QA: FootMate QA #1250 · run `36042231747` · SUCCESS
+- QA details: Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
+- Documentation sync: root README · `docs/README.md` · `CASE-STUDY-COPY-QA.md`를 #268의 reader-facing 표현 기준에 맞춰 정리; Closed Beta runbook과 AI architecture는 기능·운영 계약 변경이 없어 유지
+- Notion boundary: 공개 FootMate 대표 프로젝트 페이지는 main SHA `6a7150e765309a72affda03380fabf8601d3c978`, #268 범위와 main QA #1250까지 동기화
+
 ## Real App Home initial viewport density closure · 2026-09-24
 
 - Scope: Real App Home 진입 직후의 과도한 vertical scroll을 줄이기 위해 standalone max 560px shell의 greeting·추천 context·AI Match Assistant·section heading·personalization explanation density를 압축
