@@ -29,7 +29,7 @@ async function openCaseStudy(page,viewport,index=0){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();scrollTo(0,0)});
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.querySelectorAll('.slide:not([hidden])').length===13);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyReaderPolish==='1'&&document.querySelectorAll('.slide:not([hidden])').length===13);
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto!important}'});
   if(index>0){
@@ -84,13 +84,13 @@ async function expectStoryGeometry(page){
       copyLeft:copy?.left||0,
       copyWidth:copy?.width||0,
       asideLeft:aside?.left||0,
-      centerDelta:slide?Math.abs((rect.top+rect.bottom)/2-(slide.top+slide.bottom)/2):999,
+      slideTop:slide?.top||0,
       overflow:story.scrollHeight-story.clientHeight
     };
   });
-  expect(geometry.top).toBeGreaterThanOrEqual(140);
-  expect(geometry.bottom).toBeLessThanOrEqual(760);
-  expect(geometry.centerDelta).toBeLessThanOrEqual(20);
+  expect(geometry.top-geometry.slideTop).toBeGreaterThanOrEqual(34);
+  expect(geometry.top-geometry.slideTop).toBeLessThanOrEqual(50);
+  expect(geometry.bottom).toBeLessThanOrEqual(835);
   expect(geometry.width).toBeGreaterThan(900);
   expect(geometry.copyWidth).toBeGreaterThan(900);
   if(geometry.asideLeft)expect(Math.abs(geometry.asideLeft-geometry.copyLeft)).toBeLessThanOrEqual(1);
