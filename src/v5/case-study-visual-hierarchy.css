@@ -1,0 +1,144 @@
+/* FootMate Case Study · visual hierarchy polish
+   Scope: visual hierarchy only. Copy, IA, data, links, state, and interaction remain unchanged. */
+
+html[data-fm-next-case-study="true"]{
+  --fm-cs-ui-border:#dfe6e1;
+  --fm-cs-ui-border-strong:#c7ddce;
+  --fm-cs-ui-soft:#f8fbf9;
+  --fm-cs-ui-soft-strong:#f4faf6;
+  --fm-cs-ui-separator:#e9efeb;
+  --fm-cs-ui-ink:#16251d;
+  --fm-cs-ui-muted:#687a70;
+}
+
+/* Keep the existing minimal visual language, but make structured evidence feel intentional. */
+html[data-fm-next-case-study="true"] :is(
+  .fm-next-cs-card,
+  .fm-next-cs-persona>div,
+  .fm-next-cs-before-after>div,
+  .fm-next-cs-auth-flow>div,
+  .fm-next-cs-modes>div,
+  .fm-next-cs-day-states>div,
+  .fm-next-cs-recovery>div,
+  .fm-next-cs-outcomes>div,
+  .fm-next-cs-metric
+){
+  border-color:var(--fm-cs-ui-border)!important;
+  box-shadow:0 1px 2px rgba(18,42,29,.025);
+}
+
+/* A selected path or authoritative state should be visible before its body copy is read. */
+html[data-fm-next-case-study="true"] :is(
+  .fm-next-cs-before-after>.is-after,
+  .fm-next-cs-auth-flow>.is-focus,
+  .fm-next-cs-state-home .is-focus,
+  .fm-next-cs-day-states>.is-focus,
+  .fm-next-cs-modes>.is-focus
+){
+  background:var(--fm-cs-ui-soft-strong)!important;
+  border-color:var(--fm-cs-ui-border-strong)!important;
+  box-shadow:inset 0 0 0 1px rgba(19,115,51,.035),0 1px 2px rgba(18,42,29,.025);
+}
+
+/* Decision/evidence panels are the reading anchor after each flow or comparison. */
+html[data-fm-next-case-study="true"] :is(
+  .fm-next-cs-quote,
+  .fm-next-cs-jtbd,
+  .fm-next-cs-decision,
+  .fm-next-cs-scope,
+  .fm-next-cs-sticky,
+  .fm-next-cs-note,
+  .fm-next-cs-final
+){
+  background:#fcfefc!important;
+  border-color:var(--fm-cs-ui-border-strong)!important;
+  box-shadow:0 1px 2px rgba(18,42,29,.02);
+}
+
+/* Label/value rows: preserve the existing copy while improving scan speed. */
+html[data-fm-next-case-study="true"] .fm-cs-reasons{
+  gap:0;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons>div{
+  grid-template-columns:96px minmax(0,1fr);
+  column-gap:18px;
+  padding:7px 0;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons>div:first-child{
+  padding-top:0;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons>div:last-child{
+  padding-bottom:0;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons>div+div{
+  border-top:1px solid var(--fm-cs-ui-separator);
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons dt{
+  font-size:12px;
+  line-height:1.6;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+html[data-fm-next-case-study="true"] .fm-cs-reasons dd{
+  color:var(--fm-cs-ui-ink);
+  line-height:1.62;
+}
+
+/* KPI cards: metric first, denominator/numerator second. */
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric{
+  position:relative;
+  overflow:hidden;
+  padding:15px 16px;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:2px;
+  background:#d9eade;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric b{
+  color:var(--fm-cs-ui-ink);
+  font-size:17px;
+  letter-spacing:-.025em;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-cs-ratio{
+  margin-top:7px;
+  color:var(--fm-cs-ui-muted);
+}
+
+/* Dense operational sections benefit from consistent card rhythm rather than smaller text. */
+html[data-fm-next-case-study="true"] [data-v5-content-role="matchday-return"] .fm-next-cs-day-states>div,
+html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"] .fm-next-cs-modes>div,
+html[data-fm-next-case-study="true"] [data-v5-content-role="production-boundary"] .fm-next-cs-outcomes>div{
+  padding:15px 16px;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"] .fm-next-cs-modes h3{
+  margin-top:7px;
+  margin-bottom:5px;
+}
+
+/* Desktop: give the evidence panel a little more separation from the decision surface above. */
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] [data-v5-content-role="guest-first-decision"] .fm-next-cs-decision,
+  html[data-fm-next-case-study="true"] [data-v5-content-role="recommendation-decision"] .fm-next-cs-note,
+  html[data-fm-next-case-study="true"] [data-v5-content-role="detail-decision"] .fm-next-cs-sticky,
+  html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-note{
+    margin-top:16px;
+  }
+}
+
+/* Mobile: keep the established readable density and stack labels without losing separators. */
+@media(max-width:560px){
+  html[data-fm-next-case-study="true"] .fm-cs-reasons>div{
+    grid-template-columns:1fr;
+    row-gap:3px;
+    padding:10px 0;
+  }
+  html[data-fm-next-case-study="true"] .fm-cs-reasons dt{
+    font-size:11px;
+  }
+  html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric{
+    padding:14px;
+  }
+}
