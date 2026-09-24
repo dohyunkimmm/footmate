@@ -1,6 +1,8 @@
 const assert=require('node:assert/strict');
+const fs=require('node:fs');
 const {Readable}=require('node:stream');
 const handler=require('../../api/ai-match-assistant.js');
+const release=JSON.parse(fs.readFileSync('release.json','utf8'));
 
 function request({method='GET',body=null,ip='127.0.0.1',origin='https://footmate-black.vercel.app',contentType='application/json',site='same-origin'}={}){
   const source=body==null?[]:[Buffer.from(JSON.stringify(body))];
@@ -34,7 +36,7 @@ async function invoke(options){const req=request(options);const res=response();a
       return {ok:true,status:200,json:async()=>({output_text:JSON.stringify({intent:'search',region:'수원 · 인계',position:'MF',level:'초중급',maxPrice:18000,maxDistanceMin:20,afterTime:'20:00',reply:'수원 인계에서 20시 이후 조건으로 정리했어요.'})})};
     };
     const connected=await invoke({method:'POST',body:{message:'인계에서 8시 이후 가까운 초중급 MF 경기',preferences:{region:'수원 · 영통',position:'MF',level:'중급'}},ip:'10.0.1.4'});
-    assert.equal(connected.statusCode,200);assert.equal(connected.body.version,'5.1.1');assert.equal(connected.body.mode,'connected-ai');assert.equal(connected.body.provider,'vercel-ai-gateway');assert.equal(connected.body.model,'inclusionai/ling-3.0-flash-vl-free');assert.equal(connected.body.fallbackUsed,false);assert.equal(connected.body.result.region,'수원 · 인계');assert.equal(connected.body.result.position,'MF');assert.equal(connected.body.result.afterTime,'20:00');assert.equal(connected.body.result.maxDistanceMin,20);
+    assert.equal(connected.statusCode,200);assert.equal(connected.body.version,release.version);assert.equal(connected.body.mode,'connected-ai');assert.equal(connected.body.provider,'vercel-ai-gateway');assert.equal(connected.body.model,'inclusionai/ling-3.0-flash-vl-free');assert.equal(connected.body.fallbackUsed,false);assert.equal(connected.body.result.region,'수원 · 인계');assert.equal(connected.body.result.position,'MF');assert.equal(connected.body.result.afterTime,'20:00');assert.equal(connected.body.result.maxDistanceMin,20);
 
     global.fetch=async(_url,options)=>{const payload=JSON.parse(options.body);assert.deepEqual(payload.reasoning,{effort:'none'});return{ok:true,status:200,json:async()=>({output_text:JSON.stringify({intent:'search',region:'존재하지 않는 지역',position:'XX',level:'프로',maxPrice:999999,maxDistanceMin:1,afterTime:'99:99',reply:'guardrail test'})})}};
     const guarded=await invoke({method:'POST',body:{message:'아무 경기',preferences:{}},ip:'10.0.1.5'});
@@ -50,7 +52,7 @@ async function invoke(options){const req=request(options);const res=response();a
     assert.equal(denied.statusCode,502);assert.equal(denied.body.error,'ai_gateway_error');assert.equal(denied.body.gatewayType,'access_denied');assert.equal(denied.body.model,'inclusionai/ling-3.0-flash-fin-free');
 
     const health=await invoke({method:'GET',ip:'10.0.1.8'});
-    assert.equal(health.statusCode,200);assert.equal(health.body.version,'5.1.1');assert.equal(health.body.provider,'vercel-ai-gateway');assert.equal(health.body.model,'inclusionai/ling-3.0-flash-vl-free');assert.equal(health.body.fallbackModel,'inclusionai/ling-3.0-flash-fin-free');assert.equal(health.body.gatewayTimeoutMs,3000);assert.equal(health.body.reasoningEffort,'none');assert.equal(health.body.configured,true);
-    console.log('PASS v5.1.1 AI assistant contract');
+    assert.equal(health.statusCode,200);assert.equal(health.body.version,release.version);assert.equal(health.body.provider,'vercel-ai-gateway');assert.equal(health.body.model,'inclusionai/ling-3.0-flash-vl-free');assert.equal(health.body.fallbackModel,'inclusionai/ling-3.0-flash-fin-free');assert.equal(health.body.gatewayTimeoutMs,3000);assert.equal(health.body.reasoningEffort,'none');assert.equal(health.body.configured,true);
+    console.log(`PASS ${release.version} AI assistant contract`);
   }finally{global.fetch=oldFetch;if(oldKey===undefined)delete process.env.AI_GATEWAY_API_KEY;else process.env.AI_GATEWAY_API_KEY=oldKey;if(oldOidc===undefined)delete process.env.VERCEL_OIDC_TOKEN;else process.env.VERCEL_OIDC_TOKEN=oldOidc}
 })().catch(error=>{console.error(error);process.exitCode=1});
