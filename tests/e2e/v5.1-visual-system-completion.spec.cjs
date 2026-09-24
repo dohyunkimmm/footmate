@@ -185,6 +185,32 @@ test('1440px Matchday panel matches the completed operational surface',async({pa
   expect(errs).toEqual([]);
 });
 
+test('1440px joined Schedule keeps the operational summary inside the first desktop viewport',async({page})=>{
+  const errs=await seedJoinedSchedule(page);
+  const geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('[data-screen="schedule"] .fm-matchday-panel');
+    const upcoming=document.querySelector('[data-screen="schedule"] .fm-next-upcoming');
+    const statuses=document.querySelector('[data-screen="schedule"] .fm-next-status-list');
+    const nav=document.querySelector('[data-screen="schedule"] .fm-next-nav');
+    const columns=statuses?getComputedStyle(statuses).gridTemplateColumns.split(' ').filter(Boolean).length:0;
+    return {
+      viewport:innerHeight,
+      panelHeight:panel?.getBoundingClientRect().height??9999,
+      upcomingHeight:upcoming?.getBoundingClientRect().height??9999,
+      statusBottom:statuses?.getBoundingClientRect().bottom??9999,
+      navTop:nav?.getBoundingClientRect().top??0,
+      columns
+    };
+  });
+  expect(geometry.columns).toBe(3);
+  expect(geometry.panelHeight).toBeLessThanOrEqual(230);
+  expect(geometry.upcomingHeight).toBeLessThanOrEqual(180);
+  expect(geometry.statusBottom).toBeLessThanOrEqual(geometry.navTop-8);
+  expect(geometry.statusBottom).toBeLessThan(geometry.viewport);
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
 test('320/375/390/430 keep Setup and Auth single-column and overflow-safe',async({page})=>{
   for(const width of [320,375,390,430]){
     await openCleanApp(page,{width,height:844});
