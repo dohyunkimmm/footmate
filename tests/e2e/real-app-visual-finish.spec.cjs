@@ -40,7 +40,7 @@ test('standalone Real App keeps visual finish ownership in Design System v2 with
   expect(errs).toEqual([]);
 });
 
-test('decision-support text and recommendation surfaces use the finish hierarchy',async({page})=>{
+test('decision-support surfaces keep the core AI feature visually raised',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const screen=page.locator('[data-screen="home"]');
@@ -63,7 +63,7 @@ test('decision-support text and recommendation surfaces use the finish hierarchy
   expect(result.tagSize).toBeGreaterThanOrEqual(11);
   expect(result.footerSize).toBeGreaterThanOrEqual(12);
   expect(result.contextShadow).toBe('none');
-  expect(result.aiShadow).toBe('none');
+  expect(result.aiShadow).not.toBe('none');
   expect(result.cardShadow).not.toBe('none');
   expect(result.mediaImage).toContain('linear-gradient');
   expect(result.mediaImage).not.toContain('radial-gradient');
