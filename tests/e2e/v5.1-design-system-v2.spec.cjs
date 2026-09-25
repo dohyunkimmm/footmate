@@ -77,8 +77,8 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     return {left:box.left,right:innerWidth-box.right,width:box.width};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThanOrEqual(404);
-  expect(navGeometry.width).toBeLessThanOrEqual(408);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(374);
+  expect(navGeometry.width).toBeLessThanOrEqual(378);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
