@@ -14,16 +14,17 @@
 
 ## Current release engineering docs
 
-FootMate에서 현재 직접 유지하는 release/product 문서는 아래 여섯 개입니다.
+FootMate에서 현재 직접 유지하는 release/product 문서는 아래 일곱 개입니다.
 
 - `RELEASE-HISTORY.md` — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
 - `RELEASE-HISTORY-CORRECTIONS.md` — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
+- `CASE-STUDY-COPY-QA-CORRECTIONS.md` — Case Study reference copy의 이후 승인 변경. `CASE-STUDY-COPY-QA.md`와 충돌하면 더 최신 correction이 현재 기준
 - `BETA-PILOT-RUNBOOK.md` — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - `V5.1.1-AI-RESILIENCE-PATCH.md` — current AI provider/timeout/state/request guard patch contract
 - `V5.1-AI-MATCH-ASSISTANT.md` — current AI Match Assistant architecture and acceptance contract
 - `README.md` — 이 documentation index와 현재/역사 문서 경계
 
-`CASE-STUDY-COPY-QA.md`와 Case Study 관련 baseline/설명 파일은 현재 FootMate 작업의 수정 대상이 아니라 별도 Case Study 프로젝트 상태를 확인할 때만 사용하는 read-only reference로 취급합니다. 과거 Case Study PR·SHA·QA 이력은 Release History/Corrections에 역사적 근거로 보존할 수 있지만 FootMate의 현재 실행 계약으로 사용하지 않습니다.
+`CASE-STUDY-COPY-QA.md`와 Case Study 관련 baseline/설명 파일은 현재 FootMate 작업의 수정 대상이 아니라 별도 Case Study 프로젝트 상태를 확인할 때만 사용하는 read-only reference로 취급합니다. 과거 Case Study PR·SHA·QA 이력은 Release History/Corrections에 역사적 근거로 보존할 수 있지만 FootMate의 현재 실행 계약으로 사용하지 않습니다. Case Study reference copy의 이후 승인 변경은 `CASE-STUDY-COPY-QA-CORRECTIONS.md`에서 supersession을 확인합니다.
 
 ## Impact-aware QA
 
