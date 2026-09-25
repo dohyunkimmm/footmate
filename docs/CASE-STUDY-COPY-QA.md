@@ -8,12 +8,28 @@
 - 도메인 내부 식별자 `recommendation`, `participation`, `matchday`, `return`은 코드 소유권을 설명할 때만 사용하고 독자용 설명을 함께 둔다.
 - Case Study는 13개 section으로 유지하며 각 section은 하나의 역할을 갖는다. 중복된 Core Journey, Join/Payment, Provider/AI 설명은 각각 Scope & Priority, Sign in·Join, Domain & AI에 통합한다.
 - desktop의 story section은 현재 승인된 visual center 배치를 유지하고, 본문과 구조화된 정보 블록의 좌측 기준선을 일관되게 맞춘다.
-- 동일한 유형의 표·카드는 cell padding, gap, line-height, Korean word-break 규칙을 일관되게 사용한다.
+- **페이지 전체 배치와 표·카드 내부 여백은 별도 계약이다.** 특정 표의 여백을 다듬을 때 section 전체 `align-items`, slide 상하 padding, story gap, 제목/lead margin을 함께 바꾸지 않는다.
+- 동일한 유형의 표·카드는 cell padding, gap, line-height, Korean word-break 규칙을 일관되게 사용한다. 단, 요청 범위를 다른 section의 표·카드 전체로 자동 확대하지 않는다.
 - 1440×900 기준 각 section의 핵심 콘텐츠가 한 화면 안에서 읽히도록 구성하고, mobile은 자연스러운 세로 스크롤을 허용한다.
 - 자동 QA는 반복 가능한 contract/E2E/axe/Visual Regression/Production smoke를 담당한다.
 - 사람 검수(Human QA)는 실제 로그인, 실제 전달, OS·브라우저 표시처럼 사람이 결과를 확인해야 하는 항목을 담당한다.
 - AI 보조 검수(AI-assisted QA)는 중복, 용어 혼용, section 역할 충돌, Source of Truth와 카피 불일치를 찾는 보조 수단이며 PASS 판정을 대신하지 않는다.
 
+## 2026-09-25 페이지 리듬 복구 closure
+
+PR #268에서 독자용 카피 정리와 함께 들어간 02–13 page-wide density override는 표 여백 조정 범위를 넘긴 변경이었다. `align-items:flex-start`, 38px 상하 padding, section 전체 story gap·제목/lead margin·광범위 card padding 축소는 PR #271에서 제거했으며, 현재 기준에서는 **02–13 desktop story를 기존 중앙 배치로 유지**한다.
+
+- 현재 runtime baseline: PR #271 · SHA `50fa005edc2e62c288ac49581464bf4942e46148`
+- 데스크톱 기준: 02–13 active slide `align-items:center`, PR #268의 강제 `38px` 상하 padding 비사용, story/slide 중심 오차 `<= 20px`, horizontal overflow 없음
+- 구조화 영역 기준: 필요한 표·카드 내부 padding/gap/wrapping만 조정하며 page-level 위치를 바꾸지 않는다.
+- 08 Sign in · Join: 인증·로그인/참가 범위 표의 행·셀 내부 여백과 문장 wrapping을 다듬는 경우에도 해당 section 전체의 세로 위치는 유지한다.
+- 줄바꿈 기준: `.fm-cs-line`은 가능한 폭을 먼저 사용하도록 inline 흐름을 유지하고, 화면 폭이 부족할 때만 자연스럽게 줄바꿈한다.
+- 05 Guest First: 짧은 비교 흐름은 1440px에서 공간이 있으면 같은 줄을 유지한다.
+- Visual Regression 기준: cover 1728/1440/390 및 cover caption 320/390은 pixel baseline 비교를 유지한다. 02–13 본문은 #268에서 위로 붙은 상태를 저장한 stale screenshot을 정답으로 재사용하지 않고, center alignment·overflow·natural wrapping 같은 layout invariant를 직접 검증한다.
+- 최종 main QA: FootMate QA #1289 · run `36074420880` · SUCCESS
+- QA: Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
+- 보존: #268에서 확정한 내부 `PBL` 제거/교육생 6명 맥락, 08 상태 보존 문구, 09 legacy 외부 링크 제거, 12 `계산 기준 · A ÷ B`, green 강조 의미 규칙과 Real App/Closed Beta 제품 로직은 유지한다.
 
 ## 본문·줄바꿈·표 여백 검수 기준
 
@@ -47,7 +63,8 @@
 
 실제 렌더 검토에서 추가 수정한 항목은 P1 역할 카드 제목, P4 모바일 여정의 과도한 높이, P7 화살표 방향, P8 중복 흐름과 끝줄, P9 좁은 운영 정책 표, P12 비어 있던 다섯 번째 grid 열, 320·390px의 일부 문장/가운데점 줄바꿈이다. 전체 본문 캡처는 고정 헤더가 이미지 안에 겹치지 않도록 해당 캡처에서만 헤더를 숨기며, 기존 viewport·헤더 위치 검사는 그대로 유지한다.
 
-- 자동 시각 비교: 기존 viewport 27개 + 전체 본문 26개(13×2), 미리보기 캡션 2개 추가, 총 55개 `toHaveScreenshot`, `maxDiffPixels: 0`
+- 당시 자동 시각 비교: 기존 viewport 27개 + 전체 본문 26개(13×2), 미리보기 캡션 2개 추가, 총 55개 `toHaveScreenshot`, `maxDiffPixels: 0`. **이 2026-09-23 이력은 당시 검수 사실이며 현재 #271 자동 gate의 승인 기준과 동일하지 않다.**
+- 현재 #271 이후 자동 gate: cover/caption pixel baseline + 02–13 center alignment·overflow·natural wrapping invariant 검증
 - 반응형 구조 검사: 1440/1180/900/430/390/375/320px, P1–P13; 정책 행의 `dt`/`dd` 글자 크기도 포함
 - TOC: 부제 13개 한 줄, 잘림 없음
 - 결과 증빙: 해당 PR의 QA 및 Release History에 최종 run과 Production 결과를 별도 기록
