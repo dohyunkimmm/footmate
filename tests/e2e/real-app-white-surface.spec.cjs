@@ -61,6 +61,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
   await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
   await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
+  await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('position','absolute');
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
   expect(ctaStyle.height).toBe(54);
@@ -77,7 +78,7 @@ test('390px personalized Welcome keeps one primary CTA and one returning-user sh
   await expect(page.getByRole('button',{name:'이전 설정으로 계속하기'})).toHaveCount(0);
   const buttons=page.locator('[data-screen="welcome"] .fm-next-actions button');
   await expect(buttons).toHaveCount(2);
-  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius}});
+  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius,borderTopWidth:style.borderTopWidth,backgroundImage:style.backgroundImage,backgroundColor:style.backgroundColor,color:style.color,fontSize:style.fontSize,fontWeight:style.fontWeight,letterSpacing:style.letterSpacing,boxShadow:style.boxShadow,justifyContent:style.justifyContent}});
   const firstGeometry=await geometry(buttons.nth(0));
   const secondGeometry=await geometry(buttons.nth(1));
   expect(firstGeometry).toEqual(secondGeometry);
