@@ -44,7 +44,9 @@
       html[data-fm-next-case-study="true"] .fm-next-review-summary span{display:block;margin-bottom:3px;color:#5f7067;font-size:11px;line-height:1.35;font-weight:800;letter-spacing:.01em}
       html[data-fm-next-case-study="true"] .fm-next-review-summary b{display:block;color:var(--fm-cs-ui-ink,#16251d);font-size:12px;line-height:1.45;font-weight:750;word-break:keep-all;text-wrap:pretty}
       html[data-fm-next-case-study="true"] .fm-next-story-lead{max-width:82ch}
-      html[data-fm-next-case-study="true"] .fm-next-kpi-open{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin-top:10px;padding:0 12px;border:1px solid var(--fm-cs-ui-border-strong,#c7ddce);border-radius:10px;background:#fff;color:var(--fm-cs-ui-ink,#16251d);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+      html[data-fm-next-case-study="true"] .fm-next-kpi-disclosure{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 0;padding:9px 11px;border:1px solid var(--fm-cs-ui-border,#dfe6e1);border-radius:12px;background:#fbfdfc}
+      html[data-fm-next-case-study="true"] .fm-next-kpi-disclosure>span{color:#5f7067;font-size:11px;line-height:1.4;font-weight:800}
+      html[data-fm-next-case-study="true"] .fm-next-kpi-open{display:inline-flex;align-items:center;justify-content:center;min-height:34px;margin:0;padding:0 12px;border:1px solid var(--fm-cs-ui-border-strong,#c7ddce);border-radius:10px;background:#fff;color:var(--fm-cs-ui-ink,#16251d);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
       html[data-fm-next-case-study="true"] .fm-next-kpi-dialog{width:min(920px,calc(100vw - 32px));max-height:min(760px,calc(100vh - 32px));padding:0;border:1px solid #d8e2dc;border-radius:18px;color:#16251d;background:#fff;box-shadow:0 24px 70px rgba(21,39,28,.18)}
       html[data-fm-next-case-study="true"] .fm-next-kpi-dialog::backdrop{background:rgba(18,32,24,.34);backdrop-filter:blur(2px)}
       html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{display:grid;gap:14px;max-height:inherit;overflow:auto;padding:22px}
@@ -60,7 +62,7 @@
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd::before{display:block;margin-bottom:2px;color:#728279;font-size:9px;font-weight:800}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd:nth-of-type(1)::before{content:"계산 기준"}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd:nth-of-type(2)::before{content:"관찰 · 제외 기준"}
-      @media(max-width:900px){html[data-fm-next-case-study="true"] .fm-next-review-summary{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-review-summary>div{padding:8px 10px}html[data-fm-next-case-study="true"] .fm-next-kpi-table>div{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{padding:18px}}
+      @media(max-width:900px){html[data-fm-next-case-study="true"] .fm-next-review-summary{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-review-summary>div{padding:8px 10px}html[data-fm-next-case-study="true"] .fm-next-kpi-disclosure{align-items:stretch;flex-direction:column;gap:7px}html[data-fm-next-case-study="true"] .fm-next-kpi-open{width:100%}html[data-fm-next-case-study="true"] .fm-next-kpi-table>div{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{padding:18px}}
     `;
     document.head.appendChild(style);
   }
@@ -85,11 +87,14 @@
   }
 
   function patchKpiDisclosure(validation){
-    const note=validation?.querySelector('.fm-next-cs-note');if(!note)return;
+    const note=validation?.querySelector('.fm-next-cs-note');
+    const metrics=validation?.querySelector('.fm-next-cs-metrics');
+    if(!note||!metrics)return;
     note.querySelectorAll('a[href*="github.com"]').forEach(node=>node.remove());
-    if(!note.querySelector('.fm-next-kpi-open'))note.insertAdjacentHTML('beforeend',' <button class="fm-next-kpi-open" type="button">8개 지표의 계산·관찰 기준 보기</button>');
+    validation.querySelector('.fm-next-kpi-disclosure')?.remove();
+    metrics.insertAdjacentHTML('afterend','<div class="fm-next-kpi-disclosure" aria-label="KPI 근거 상세 보기"><span>KPI 근거</span><button class="fm-next-kpi-open" type="button">8개 지표의 계산·관찰 기준 보기</button></div>');
     validation.querySelector('.fm-next-kpi-dialog')?.remove();validation.insertAdjacentHTML('beforeend',kpiDialogHTML());
-    const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=note.querySelector('.fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
+    const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=validation.querySelector('.fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
     open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',()=>dialog?.close());dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
   }
 
