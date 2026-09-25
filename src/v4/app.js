@@ -128,14 +128,13 @@ function welcomeView(){
   if(mode==='real'){
     return `<section class="fm-next-screen fm-next-screen--intro" data-screen="welcome">
       <div class="fm-next-intro">
-        <div class="fm-next-topbar fm-next-topbar--dark">${brand({dark:true})}<span style="width:44px" aria-hidden="true"></span></div>
+        <div class="fm-next-topbar fm-next-topbar--dark" style="transform:translateY(-12px)">${brand({dark:true})}<span style="width:44px" aria-hidden="true"></span></div>
         <div class="fm-next-intro-copy">
-          <h1>내 수준에 맞는 경기를<br>찾아보세요.</h1>
-          <p class="fm-next-intro-lead">지역과 플레이 스타일에 맞는 경기를 먼저 추천해드려요.</p>
+          <h1>내 수준에 맞는 경기부터,<br>경기 당일까지.</h1>
         </div>
         <div class="fm-next-actions">
-          ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary')}
-          ${state.setupComplete?button('저장된 설정으로 바로 추천 보기','continue-home','primary'):''}
+          ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
+          ${state.setupComplete?button('저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):''}
         </div>
       </div>
     </section>`;

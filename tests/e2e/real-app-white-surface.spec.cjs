@@ -56,15 +56,14 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   const errs=await openCleanApp(page,{width:390,height:844});
   const intro=page.locator('.fm-next-intro');
   const headline=page.locator('.fm-next-intro h1');
-  const lead=page.locator('.fm-next-intro-lead');
   const cta=page.getByRole('button',{name:/내 경기 찾아보기/});
   await expect(intro).toBeVisible();
   await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
-  const leadColor=await lead.evaluate(node=>getComputedStyle(node).color);
-  expect(leadColor).not.toBe('rgb(255, 255, 255)');
+  await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
+  await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
-  expect(ctaStyle.height).toBeGreaterThanOrEqual(44);
+  expect(ctaStyle.height).toBe(54);
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',{...exact,maxDiffPixels:2});
@@ -76,10 +75,20 @@ test('390px personalized Welcome keeps one primary CTA and one returning-user sh
   await expect(page.getByRole('button',{name:/내 경기 찾아보기/})).toBeVisible();
   await expect(page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/})).toBeVisible();
   await expect(page.getByRole('button',{name:'이전 설정으로 계속하기'})).toHaveCount(0);
-  await expect(page.locator('[data-screen="welcome"] .fm-next-actions button')).toHaveCount(2);
+  const buttons=page.locator('[data-screen="welcome"] .fm-next-actions button');
+  await expect(buttons).toHaveCount(2);
+  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius}});
+  const firstGeometry=await geometry(buttons.nth(0));
+  const secondGeometry=await geometry(buttons.nth(1));
+  expect(firstGeometry).toEqual(secondGeometry);
+  expect(firstGeometry.height).toBe(54);
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('real-app-white-personalized-welcome-390.png',exact);
+  await buttons.nth(0).click();
+  const setupNext=page.getByRole('button',{name:'다음'});
+  await expect(setupNext).toBeVisible();
+  expect(await geometry(setupNext)).toEqual(firstGeometry);
   expect(errs).toEqual([]);
 });
 
@@ -136,7 +145,7 @@ for(const width of [320,375,390,430]){
       return {headlineWidth:headline.width,buttonHeight:button.height};
     });
     expect(welcomeMetrics.headlineWidth).toBeLessThanOrEqual(width-28);
-    expect(welcomeMetrics.buttonHeight).toBeGreaterThanOrEqual(44);
+    expect(welcomeMetrics.buttonHeight).toBe(54);
     await expectNoHorizontalOverflow(page);
     await setupToHome(page);
     for(const route of ['home','discover']){
