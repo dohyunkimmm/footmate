@@ -103,18 +103,19 @@ test('structured Case Study content keeps readable type, Korean words, aligned c
 test('02–13 structured components use one semantic type scale and 03 persona stays balanced',async({page})=>{
   await openCaseStudy(page,1440,900);
   const labels=page.locator('.slide:not([hidden]) :is(.fm-next-review-summary span,.fm-next-cs-persona>div>span,.fm-next-cs-jtbd small,.fm-next-cs-auth-flow small,.fm-next-cs-day-states small,.fm-next-cs-modes small,.fm-cs-reasons dt)');
-  const values=page.locator('.slide:not([hidden]) :is(.fm-next-review-summary b,.fm-next-cs-card p,.fm-next-cs-persona b,.fm-next-cs-jtbd p,.fm-next-cs-before-after p,.fm-next-cs-stack p,.fm-next-cs-auth-flow b,.fm-next-cs-detail-order span,.fm-next-cs-modes h3,.fm-next-cs-modes p,.fm-next-cs-day-states b,.fm-next-cs-day-states p,.fm-next-cs-recovery b,.fm-next-cs-recovery span,.fm-next-cs-outcomes b,.fm-next-cs-outcomes p,.fm-cs-reasons dd)');
+  const values=page.locator('.slide:not([hidden]) :is(.fm-next-review-summary b,.fm-next-cs-card p,.fm-next-cs-persona b,.fm-next-cs-jtbd p,.fm-next-cs-before-after p,.fm-next-cs-stack p,.fm-next-cs-auth-flow b,.fm-next-cs-detail-order span,.fm-next-cs-modes p,.fm-next-cs-day-states b,.fm-next-cs-day-states p,.fm-next-cs-recovery b,.fm-next-cs-recovery span,.fm-next-cs-outcomes b,.fm-next-cs-outcomes p,.fm-cs-reasons dd)');
   const labelSizes=await labels.evaluateAll(nodes=>[...new Set(nodes.map(node=>getComputedStyle(node).fontSize))]);
   const valueSizes=await values.evaluateAll(nodes=>[...new Set(nodes.map(node=>getComputedStyle(node).fontSize))]);
   expect(labelSizes).toEqual(['12px']);
   expect(valueSizes).toEqual(['13px']);
 
-  const persona=page.locator('.slide:not([hidden])').nth(2).locator('.fm-next-cs-persona>div b');
-  const lineCounts=await persona.evaluateAll(nodes=>nodes.map(node=>{
-    const style=getComputedStyle(node),lineHeight=parseFloat(style.lineHeight),height=node.getBoundingClientRect().height;
-    return Math.round(height/lineHeight);
+  const personaCards=page.locator('.slide:not([hidden])').nth(2).locator('.fm-next-cs-persona>div');
+  const personaLayout=await personaCards.evaluateAll(cards=>cards.map(card=>{
+    const value=card.querySelector('b');
+    return {whiteSpace:getComputedStyle(value).whiteSpace,overflow:card.scrollWidth-card.clientWidth};
   }));
-  expect(lineCounts).toEqual([1,1,1]);
+  expect(personaLayout.map(item=>item.whiteSpace)).toEqual(['nowrap','nowrap','nowrap']);
+  expect(personaLayout.filter(item=>item.overflow>1)).toEqual([]);
 });
 
 test('reviewer scan surfaces service-planning evidence before implementation detail',async({page})=>{
