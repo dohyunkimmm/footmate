@@ -278,7 +278,7 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"
 
 /* 03 Persona peers use one-line desktop values; mobile keeps natural wrapping. */
 @media(min-width:901px){
-  html[data-fm-next-case-study="true"] [data-v5-content-role="persona-jtbd"] .fm-next-cs-persona>div>b{
+  html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-cs-persona>div>b{
     white-space:nowrap!important;
   }
 }
