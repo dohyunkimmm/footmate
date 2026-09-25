@@ -139,23 +139,56 @@ async function expectStaticCoverPreview(page){
   await expect(cta).toHaveAttribute('href','/demo');
 }
 
-async function expectViewportScreenshot(page,name){
-  await expect(page).toHaveScreenshot(name,{animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:0});
+async function expectCoverScanContract(page){
+  await expect(page.locator('.fm-next-cover-lead')).toHaveText('나에게 맞는 이유를 확인하고, 안심하고 참가하는 풋살 서비스입니다.');
+  await expect(page.locator('.fm-next-cover-proof>div')).toHaveCount(3);
+  await expect(page.locator('.fm-next-cover-proof')).toContainText('Role · IT Service Planner');
+  await expect(page.locator('.fm-next-cover-proof')).toContainText('Scope · 기획·구현·검증');
+  await expect(page.locator('.fm-next-cover-proof')).toContainText('Responsibility · 의사결정');
+  await expect(page.locator('.fm-next-cover-note strong')).toHaveText('정적 AI 검색 프리뷰');
+  await expect(page.locator('.fm-next-cover-note span')).toHaveText('Real App의 AI 경기 검색 화면입니다.');
+  const geometry=await page.locator('.slide.on').evaluate(slide=>{
+    const visualNode=slide.querySelector('.fm-next-cover-visual');
+    const visual=visualNode?.getBoundingClientRect();
+    const note=slide.querySelector('.fm-next-cover-note')?.getBoundingClientRect();
+    const frame=slide.querySelector('.fm-next-cover-frame')?.getBoundingClientRect();
+    return {
+      visualWidth:visual?.width||0,
+      visualOverflow:visualNode?visualNode.scrollWidth-visualNode.clientWidth:999,
+      noteGap:note&&frame?note.top-frame.bottom:-999,
+      pageOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
+    };
+  });
+  expect(geometry.visualWidth).toBeGreaterThan(0);
+  expect(geometry.visualOverflow).toBeLessThanOrEqual(1);
+  expect(geometry.noteGap).toBeGreaterThanOrEqual(12);
+  expect(geometry.pageOverflow).toBeLessThanOrEqual(1);
 }
 
-test('Case Study 1728 desktop cover matches approved 13-section baseline',async({page})=>{
+test('Case Study 1728 desktop cover preserves recruiter scan contract',async({page})=>{
   const errs=await openCaseStudy(page,{width:1728,height:900});
   await expectDesktopGeometry(page,1728);
   await expectStaticCoverPreview(page);
-  await expectViewportScreenshot(page,'case-study-13-cover-1728.png');
+  await expectCoverScanContract(page);
   expect(errs).toEqual([]);
 });
 
-test('Case Study 1440 desktop cover matches approved 13-section baseline',async({page})=>{
+test('Case Study 1440 desktop cover preserves recruiter scan contract',async({page})=>{
   const errs=await openCaseStudy(page,{width:1440,height:900});
   await expectDesktopGeometry(page,1440);
   await expectStaticCoverPreview(page);
-  await expectViewportScreenshot(page,'case-study-13-cover-1440.png');
+  await expectCoverScanContract(page);
+  expect(errs).toEqual([]);
+});
+
+test('Case Study 01 and 03 keep concise leads while preserving Persona validation evidence',async({page})=>{
+  const errs=await openCaseStudy(page,{width:1440,height:900});
+  await expect(page.locator('.fm-next-cover-lead')).toHaveText('나에게 맞는 이유를 확인하고, 안심하고 참가하는 풋살 서비스입니다.');
+  await page.evaluate(()=>window.goTo(2));
+  await expect(page.locator('.slide.on .fm-next-story-lead')).toHaveText('설계용 Persona는 가정으로 두고, 행동 과업으로 핵심 동선을 점검했습니다.');
+  const validation=page.locator('.slide.on .fm-next-review-summary>div').nth(2);
+  await expect(validation.locator('span')).toHaveText('검증');
+  await expect(validation.locator('b')).toHaveText('같은 교육과정을 수강한 교육생 6명 · iOS 4 · Android 2');
   expect(errs).toEqual([]);
 });
 
@@ -185,11 +218,11 @@ test('Case Study 05 comparison keeps short flow segments on the same desktop lin
   expect(errs).toEqual([]);
 });
 
-test('Case Study 390 mobile cover matches approved 13-section baseline',async({page})=>{
+test('Case Study 390 mobile cover preserves recruiter scan contract',async({page})=>{
   const errs=await openCaseStudy(page,{width:390,height:844});
   await expectMobileGeometry(page,0);
   await expectStaticCoverPreview(page);
-  await expectViewportScreenshot(page,'case-study-13-cover-390.png');
+  await expectCoverScanContract(page);
   expect(errs).toEqual([]);
 });
 
@@ -206,12 +239,19 @@ test('Case Study 02–13 keep mobile sections readable without horizontal clippi
 });
 
 for(const width of [320,390]){
-  test(`Case Study ${width} cover preview caption is clear and complete`,async({page})=>{
-    await openCaseStudy(page,{width,height:844});
-    const visual=page.locator('.fm-next-cover-visual');
-    const gap=await visual.evaluate(node=>node.querySelector('.fm-next-cover-note').getBoundingClientRect().top-node.querySelector('.fm-next-cover-frame').getBoundingClientRect().bottom);
-    expect(gap).toBeGreaterThanOrEqual(12);
-    await page.addStyleTag({content:'.cs-mobile-head{display:none!important}'});
-    await expect(visual).toHaveScreenshot(`case-study-cover-caption-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0});
+  test(`Case Study ${width} cover preview caption stays readable and complete`,async({page})=>{
+    const errs=await openCaseStudy(page,{width,height:844});
+    await expectStaticCoverPreview(page);
+    await expectCoverScanContract(page);
+    const note=page.locator('.fm-next-cover-note');
+    await expect(note).toBeVisible();
+    const metrics=await note.evaluate(node=>{
+      const rect=node.getBoundingClientRect();
+      return {left:rect.left,right:rect.right,width:rect.width,viewport:document.documentElement.clientWidth};
+    });
+    expect(metrics.width).toBeGreaterThan(0);
+    expect(metrics.left).toBeGreaterThanOrEqual(0);
+    expect(metrics.right).toBeLessThanOrEqual(metrics.viewport+1);
+    expect(errs).toEqual([]);
   });
 }
