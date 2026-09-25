@@ -20,7 +20,7 @@ jobs:
 
           app = Path('app.html')
           text = app.read_text()
-          style = '''<style id="fm-real-app-welcome-visible-fix">html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-topbar--dark{position:absolute;top:0}html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-personalization-quick{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:54px;min-height:54px;padding:0 20px;border:0;border-radius:16px;background:linear-gradient(180deg,#0b3828 0%,var(--fm-pitch) 100%);color:#fff;box-shadow:0 12px 28px rgba(9,46,33,.19);font-size:15px;font-weight:800;letter-spacing:-.015em}</style>'''
+          style = '''<style id="fm-real-app-welcome-visible-fix">html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-topbar--dark{position:absolute!important;top:0!important}html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-personalization-quick{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;height:54px!important;min-height:54px!important;padding:0 20px!important;border:0!important;border-radius:16px!important;background:linear-gradient(180deg,#0b3828 0%,var(--fm-pitch) 100%)!important;color:#fff!important;box-shadow:0 12px 28px rgba(9,46,33,.19)!important;font-size:15px!important;font-weight:800!important;letter-spacing:-.015em!important}</style>'''
           marker = '</style>\n\n</head><body>'
           if 'fm-real-app-welcome-visible-fix' not in text:
               if marker not in text:
