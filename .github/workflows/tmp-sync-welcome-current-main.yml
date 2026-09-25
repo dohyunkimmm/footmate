@@ -1,0 +1,41 @@
+name: Temporary Sync Welcome Fix With Current Main
+on:
+  push:
+    branches: [fix/real-app-welcome-final-correction]
+    paths: [.github/workflows/tmp-sync-welcome-current-main.yml]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: "${{ github.event.head_commit.message == 'ci: sync welcome fix with current main' }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/real-app-welcome-final-correction
+          fetch-depth: 0
+      - name: Merge current main and preserve only welcome shortcut geometry
+        run: |
+          set -e
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git fetch origin main
+          if ! git merge --no-commit --no-ff origin/main; then
+            conflicts="$(git diff --name-only --diff-filter=U)"
+            test "$conflicts" = "src/v4/personalization.js"
+            git checkout --theirs src/v4/personalization.js
+            python - <<'PY'
+          from pathlib import Path
+          p=Path('src/v4/personalization.js')
+          text=p.read_text()
+          target='class="fm-personalization-quick" data-personalization-action="apply-profile"'
+          replacement='class="fm-personalization-quick" style="height:54px;min-height:54px;padding:0 20px;border-radius:16px" data-personalization-action="apply-profile"'
+          if target not in text:
+              raise SystemExit('current-main personalization quick-return target not found')
+          p.write_text(text.replace(target,replacement,1))
+          PY
+            git add src/v4/personalization.js
+          fi
+          git rm .github/workflows/tmp-sync-welcome-current-main.yml
+          git commit -m "merge: sync welcome correction with current main"
+          git push origin HEAD:fix/real-app-welcome-final-correction
