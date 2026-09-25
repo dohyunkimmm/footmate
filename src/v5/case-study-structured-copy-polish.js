@@ -28,7 +28,8 @@
       action=document.createElement('div');
       action.className='fm-next-kpi-disclosure-row';
       action.setAttribute('aria-label','KPI 계산·관찰 기준');
-      metrics.insertAdjacentElement('afterend',action);
+      action.innerHTML='<span class="fm-next-kpi-disclosure-label">KPI · Validation Metric</span>';
+      metrics.insertAdjacentElement('beforebegin',action);
     }
     action.appendChild(button);
   }
@@ -49,11 +50,9 @@
     setRow(slides[1],'선택','조건 해석 → 추천 이유 → 참가 → 경기 당일');
     setRow(slides[1],'검증 범위','설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 검증');
 
-    // 03 · Persona · JTBD — one compact value per peer card; JTBD is a phrase flow.
-    const persona=slides[2].querySelectorAll('.fm-next-cs-persona>div');
-    if(persona[0])setText(persona[0],'b','평일 저녁 · 주 1~2회 · 30분 안쪽 이동');
-    if(persona[1])setText(persona[1],'b','시간 · 거리 · 레벨 · 포지션 · 남은 자리');
-    if(persona[2])setText(persona[2],'b','교육생 6명 · iOS 4 · Android 2');
+    // 03 · Persona · JTBD — summary states the assumption/requirement; the flow shows how it was checked.
+    slides[2].querySelector('.fm-next-cs-persona')?.remove();
+    setText(slides[2],'.fm-next-cs-jtbd small','검증 흐름 · 가설 → 과업 → 관찰');
     setText(slides[2],'.fm-next-cs-jtbd p','가설 · 맞는 이유 빠른 이해 → 과업 · 회원가입 전·Kakao·Google·이메일 가입 → 관찰 · 동선별 버그·막힘');
 
     // 04 · Scope & Priority — card bodies are phrase grammar.
@@ -96,7 +95,7 @@
 
     // 11 · Domain & AI — responsibility cards and evidence rows use the same compact grammar.
     const modes=slides[10].querySelectorAll('.fm-next-cs-modes>div');
-    if(modes[0])setText(modes[0],'p','후보 · 순위 · 이유 → 결정론적 추천 엔진 · AI 해석 실패 → fallback 탐색');
+    if(modes[0])setText(modes[0],'p','후보 · 순위 · 이유 → 결정론적 추천 엔진 · 해석 실패 → fallback 탐색');
     if(modes[1])setText(modes[1],'p','참가 · 체크인 · 경기 후 상태 책임 분리 · 동일 상태 판단 일원화');
     if(modes[2])setText(modes[2],'p','경기 사실 · 가격 · 정원 · 순위 AI 생성 금지 · 참가 · 결제 사용자 최종 확인');
     setRow(slides[10],'실제 연결','Vercel AI Gateway · Supabase · Resend · Web Push · Storage');
@@ -107,7 +106,7 @@
     const qaCards=slides[11].querySelectorAll('.fm-next-cs-grid.three .fm-next-cs-card');
     if(qaCards[0])setText(qaCards[0],'p','Regression · Browser E2E · axe · 상태·복구 · 반응형 · Visual Regression · Production Smoke');
     if(qaCards[1])setText(qaCards[1],'p','실제 OAuth 로그인 · 이메일 최종 전달 · Web Push 브라우저·OS 표시 · 제품 성과와 분리 · 사용자 만족도·전환');
-    if(qaCards[2])setText(qaCards[2],'p','중복·용어·구현-설명 불일치 검토 · 보조 검수 · 자동 QA·사람 검수 PASS 대체 아님');
+    if(qaCards[2])setText(qaCards[2],'p','중복 · 용어 · 구현-설명 불일치 검토 · PASS 판정 제외');
     moveKpiDisclosure(slides[11]);
 
     // 13 · Release & Learnings — implementation boundary and task evidence stay compact.
@@ -140,7 +139,7 @@
     ].join(',');
     slides.forEach(slide=>stripTerminalPunctuation(slide,phraseSelector));
 
-    document.documentElement.dataset.footmateCaseStudyStructuredCopy='2';
+    document.documentElement.dataset.footmateCaseStudyStructuredCopy='3';
     applied=true;
     return true;
   }
