@@ -2,6 +2,21 @@
 
 이 문서는 기존 `RELEASE-HISTORY.md`의 durable 이력을 삭제하지 않고, 이후 검증에서 범위 해석이나 승인 기준이 정정된 경우 **현재 적용되는 supersession**을 기록한다. 이 문서와 기존 Release History가 충돌하면 여기의 더 최신 correction이 현재 기준이다.
 
+## Case Study structured copy grammar closure · 2026-09-25
+
+- Scope: 문서에 정의돼 있던 `상태명·단계명·CTA·짧은 값 = 명사형/짧은 구 + 마침표 없음` 규칙을 실제 01–13 Case Study의 표·flow·card runtime에 적용하고, 이유·Trade-off·검증 설명·회고는 설명 문장으로 유지
+- Runtime PR: #286 · merged SHA `ea8659502b5adc8afca24934591adb73ed399cce`
+- Cover preservation: 01 Cover의 기존 승인 copy/visual은 변경하지 않음
+- Phrase contract: 02 Problem facts, 03 Persona compact values, 04 priority facts, 05 비교·결정, 06 결정, 07 CTA, 08 인증 증빙, 09 운영 상태, 10 recovery, 11 Domain/AI 책임, 12 KPI/QA compact values는 명사형·짧은 구 중심으로 정리하고 terminal punctuation을 제거
+- Sentence contract: 이유·Trade-off·검증 범위·추천 품질 기준·Validation boundary와 13의 `과업 범위`·`학습·다음 단계`는 완전한 문장과 마침표 유지. 13 `검증 표본`은 compact evidence value라 무마침표 유지
+- Regression guard: 전용 structured-copy Playwright gate를 Browser E2E + axe에 포함해 phrase-only component와 설명 문장을 의미별로 직접 검증
+- Preserved: PR #285의 01/03 lead 축약, PR #283 recruiter hierarchy·12 KPI 내부 modal, PR #273 08 auth spacing, PR #271 02–13 center alignment, 승인된 evidence와 상태 보존 의미
+- PR QA: FootMate QA #1377 · run `36113020210` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Final main QA: FootMate QA #1378 · run `36113545309` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: Vercel exact deploy PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
+- Current Case Study runtime/Production baseline: `ea8659502b5adc8afca24934591adb73ed399cce`
+- Notion boundary: 사용자 수동 수정본을 우선한다. 이 closure와 중복되거나 의미가 겹치는 Notion 내용은 자동 덮어쓰지 않는다.
+
 ## Case Study recruiter scan · KPI internal evidence closure · 2026-09-25
 
 - Scope: 02–13 opening을 recruiter/manager scan 중심으로 재구성하고, 상태명·단계명·짧은 값의 phrase 규칙을 통일하며, 12 KPI 상세 근거를 GitHub 외부 이탈 없이 Case Study 내부에서 열람하도록 변경
@@ -17,7 +32,7 @@
 - Final main QA: FootMate QA #1349 · run `36089979474` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: Vercel exact deploy PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
 - Preserved: 08 상태 보존/인증 spacing, 09 legacy 링크 제거, 12 Validation Metric과 실제 성과의 구분, Real App/Closed Beta 제품·API·data/state-machine 경계, 사용자 과업 검증의 해석 한계
-- Current Case Study runtime/Production baseline: `205c1049109be2feadaedbb5937e00b812cd736e`
+- Current Case Study runtime/Production baseline at this closure: `205c1049109be2feadaedbb5937e00b812cd736e`; current baseline is superseded by the #286 closure above.
 - Notion boundary: 사용자 수동 수정본을 우선한다. 이 closure와 중복되거나 의미가 겹치는 Notion 내용은 자동 덮어쓰지 않는다.
 
 ## Case Study 08 auth table spacing closure · 2026-09-25
@@ -34,7 +49,7 @@
 - Final main QA: FootMate QA #1302 · run `36081422283` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
 - Preserved: PR #271 page-rhythm correction, #268에서 승인된 독자용 카피·증거 변경, 08 상태 보존 문구, 09 legacy 링크 제거, 12 KPI 계산 기준, green 강조 의미 규칙, Real App/Closed Beta 제품·API·data/state-machine 경계
-- Current Case Study runtime/Production baseline at this closure: `c51411ed164d50f1366d0f71aa3a220407dd41ff`; current baseline is superseded by the #283 closure above.
+- Current Case Study runtime/Production baseline at this closure: `c51411ed164d50f1366d0f71aa3a220407dd41ff`; current baseline is superseded by the #286 closure above.
 
 ## Case Study page rhythm correction · 2026-09-25
 
@@ -50,4 +65,4 @@
 - Final main QA: FootMate QA #1289 · run `36074420880` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
 - Documentation boundary: root `README.md`는 제품 가치·연동 경계가 바뀌지 않아 수정하지 않는다. `docs/README.md`, `CASE-STUDY-COPY-QA.md`, 이 correction 기록과 공개 FootMate Notion 대표 프로젝트 페이지를 현재 기준으로 동기화한다. Closed Beta runbook과 AI architecture는 기능·운영 계약 변경이 없어 유지한다.
-- Moving-main boundary: #271의 page-rhythm baseline은 `50fa005edc2e62c288ac49581464bf4942e46148`로 보존하고, 이후 08 내부 spacing closure가 반영된 당시 Case Study runtime/Production baseline은 `c51411ed164d50f1366d0f71aa3a220407dd41ff`로 구분해 기록한다. 현재 baseline은 위 #283 closure를 따른다.
+- Moving-main boundary: #271의 page-rhythm baseline은 `50fa005edc2e62c288ac49581464bf4942e46148`로 보존하고, 이후 08 내부 spacing closure가 반영된 당시 Case Study runtime/Production baseline은 `c51411ed164d50f1366d0f71aa3a220407dd41ff`로 구분해 기록한다. 현재 baseline은 위 #286 closure를 따른다.
