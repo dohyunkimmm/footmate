@@ -1,0 +1,31 @@
+name: Temporary Refresh MY Personalization Baseline
+on:
+  push:
+    branches: [fix/real-app-shell-polish-final-20260925]
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh MY personalization baseline
+        run: npx playwright test tests/e2e/v4-personalization.spec.cjs --project=chromium --update-snapshots
+      - name: Commit refreshed baseline
+        run: |
+          git rm .github/workflows/tmp-refresh-my-personalization-baseline.yml
+          git add tests/e2e/v4-personalization.spec.cjs-snapshots/real-app-my-personalization-390-chromium-linux.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test: refresh MY personalization baseline [snapshot-generated]"
+          git push origin HEAD:fix/real-app-shell-polish-final-20260925
