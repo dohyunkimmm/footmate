@@ -103,7 +103,7 @@ test('Home AI example executes search and hands result state to Discover',async(
   expect(errs).toEqual([]);
 });
 
-test('601px viewport keeps the fixed 560px Home shell compact instead of re-expanding desktop spacing',async({page})=>{
+test('601px viewport keeps the mobile-width Home shell compact instead of re-expanding desktop spacing',async({page})=>{
   const errs=await openCleanApp(page,{width:601,height:984});
   await setupToHome(page);
   const density=await page.locator('[data-screen="home"]').evaluate(element=>{
@@ -113,7 +113,7 @@ test('601px viewport keeps the fixed 560px Home shell compact instead of re-expa
     const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
     return {appWidth:app.getBoundingClientRect().width,contextCompact:element.querySelector('.fm-next-context-card').classList.contains('fm-ia-action-strip'),sectionCopyDisplay:getComputedStyle(sectionCopy).display,firstCardTop:first.top,navTop:nav.top};
   });
-  expect(density.appWidth).toBeLessThanOrEqual(560);
+  expect(density.appWidth).toBeLessThanOrEqual(430);
   expect(density.contextCompact).toBe(true);
   expect(density.sectionCopyDisplay).toBe('none');
   expect(density.firstCardTop).toBeLessThanOrEqual(640);
@@ -181,7 +181,7 @@ test('Detail keeps one dark focal hero and removes duplicated legacy information
 });
 
 for(const width of [320,375,390,430]){
-  test(`${width}px keeps density, navigation, long names and route reset safe`,async({page})=>{
+  test(`${width}px keeps density, shell navigation, long names and route reset safe`,async({page})=>{
     const errs=await openCleanApp(page,{width,height:844});
     await setupToHome(page);
     for(const route of ['home','discover']){
@@ -191,7 +191,7 @@ for(const width of [320,375,390,430]){
       }
       const screen=page.locator(`[data-screen="${route}"]`);
       const nav=screen.locator('.fm-next-nav');
-      await expect(nav).toHaveCSS('position','fixed');
+      await expect(nav).toHaveCSS('position','absolute');
       const current=nav.locator('[aria-current="page"]');
       await expect(current).toHaveCount(1);
       const navState=await current.evaluate(node=>({weight:getComputedStyle(node).fontWeight,iconBg:getComputedStyle(node.querySelector('.fm-next-nav-icon')).backgroundColor}));
@@ -204,17 +204,17 @@ for(const width of [320,375,390,430]){
       expect(geometry.titleRight).toBeLessThanOrEqual(geometry.boxRight+1);
       expect(geometry.minButton).toBeGreaterThanOrEqual(44);
       await expectNoOverflow(page);
-      await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
+      await screen.evaluate(node=>node.scrollTo({top:node.scrollHeight,behavior:'instant'}));
       if(route==='home'){
         await page.locator('[data-screen="home"] [data-action="nav-discover"]').first().click();
         await expect(page.locator('[data-screen="discover"]')).toBeVisible();
-        await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+        await expect.poll(()=>page.locator('[data-screen="discover"]').evaluate(node=>node.scrollTop)).toBe(0);
         await page.getByRole('button',{name:'홈'}).click();
         await expect(page.locator('[data-screen="home"]')).toBeVisible();
       }else{
         await page.getByRole('button',{name:'홈'}).click();
         await expect(page.locator('[data-screen="home"]')).toBeVisible();
-        await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+        await expect.poll(()=>page.locator('[data-screen="home"]').evaluate(node=>node.scrollTop)).toBe(0);
       }
     }
     expect(errs).toEqual([]);
