@@ -81,6 +81,7 @@ test('390px Setup matches the completed mobile design system',async({page})=>{
 });
 
 test('1440px Home and Discover match the completed visual hierarchy',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-09-24T12:00:00Z'));
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
   await expect(page).toHaveScreenshot('visual-system-home-1440.png',exactScreenshot);
