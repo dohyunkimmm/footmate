@@ -129,17 +129,18 @@ test('title lead and structured values use natural wrapping instead of forced se
   expect(await compared.nth(1).evaluate(node=>getComputedStyle(node).display)).toBe('inline');
 });
 
-test('environment implementation and validation copy uses complete polite sentences',async({page})=>{
+test('environment implementation and validation cards use compact phrase grammar',async({page})=>{
   await openCaseStudy(page);
   const domain=(await visibleSlides(page)).nth(10);
   const release=(await visibleSlides(page)).nth(12);
   for(const value of [
-    'Vercel AI Gateway·Supabase·Resend·Web Push·Storage를 실제 연결했습니다.',
-    '실제 PG와 외부 분석 도구는 미연동입니다.'
+    'Vercel AI Gateway · Supabase · Resend · Web Push · Storage 실연동',
+    '실제 PG · 외부 분석 도구 미연동',
+    'API·데이터·권한·오류·재시도 · IA·상태별 화면·CTA · 취소·정원·복구 정책'
   ])await expect(domain).toContainText(value);
   for(const value of [
-    '경기 데이터는 샘플을 사용하며 인증·결제·정원·알림은 시뮬레이션입니다.',
-    'Google/Kakao OAuth·이메일·Web Push·미디어도 실제 환경에서 검증했습니다.',
-    '수익성과 실제 이용 지표는 아직 검증하지 않았습니다.'
+    '샘플 경기 데이터 · 인증·결제·정원·알림 시뮬레이션',
+    'Google/Kakao OAuth · 이메일 · Web Push · 미디어 실환경 검증',
+    '수익성 · 실제 이용 지표 미검증'
   ])await expect(release).toContainText(value);
 });
