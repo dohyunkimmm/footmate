@@ -23,7 +23,7 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Refresh approved Real App snapshots
         run: >
-          npx playwright test --project=chromium --update-snapshots
+          npx playwright test --project=chromium --update-snapshots=all
           tests/e2e/real-app-white-surface.spec.cjs
           tests/e2e/product-completion.spec.cjs
           tests/e2e/v5.1-design-system-v2.spec.cjs
