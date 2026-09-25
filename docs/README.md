@@ -38,7 +38,7 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 완료 사실이 새로 확정되면 과거 문서의 `별도 확인 대상`, `미검증`, `pending` 같은 표현과 충돌하지 않는지 반드시 다시 검색한다. 제품/배포 사실과 절차 문서가 모두 일치하기 전에는 최종 sync-up 완료로 표현하지 않는다. 과거 Release History 자체를 보존해야 하는 경우에는 `RELEASE-HISTORY-CORRECTIONS.md`에 supersession을 명시해 현재 해석을 분리한다.
 
-Case Study 레이아웃 변경에서는 **페이지 전체 배치와 구조화된 표/카드 내부 여백을 별도 계약으로 취급한다.** 특정 표의 여백 조정 요청을 section 전체 `align-items`, slide 상하 padding, story gap, 제목/lead margin 변경으로 확대하지 않는다. 현재 runtime 기준은 PR #271의 `50fa005edc2e62c288ac49581464bf4942e46148`이며, 02–13 desktop story는 기존 중앙 배치를 유지하고 필요한 structured block 내부 spacing만 조정한다. 이 runtime 기준은 FootMate QA #1289 · run `36074420880` SUCCESS로 Regression 36, Browser E2E + axe, Mobile Safari/WebKit, Production Smoke까지 검증됐다. 이후 docs-only sync로 moving `main` SHA가 바뀌어도 이 runtime/Production baseline과 구분해 기록한다.
+Case Study 레이아웃 변경에서는 **페이지 전체 배치와 구조화된 표/카드 내부 여백을 별도 계약으로 취급한다.** 특정 표의 여백 조정 요청을 section 전체 `align-items`, slide 상하 padding, story gap, 제목/lead margin 변경으로 확대하지 않는다. PR #271의 page-rhythm baseline `50fa005edc2e62c288ac49581464bf4942e46148`에서 02–13 desktop story의 기존 중앙 배치를 복구했고, 현재 Case Study runtime/Production 기준은 08 Sign in · Join 내부 spacing을 실제 반영한 PR #273의 `c51411ed164d50f1366d0f71aa3a220407dd41ff`이다. 08은 위쪽 인증 flow와 아래 `Real App / Closed Beta / 상태 보존 / 검증 범위` 표 내부 padding/gap/row geometry만 section-specific selector로 조정하며 page-level 위치는 유지한다. FootMate QA #1302 · run `36081422283`에서 Regression 36, Browser E2E + axe, Mobile Safari/WebKit, Production Smoke가 모두 PASS했고 exact Production HTTP · AI inference · Chromium smoke도 PASS했다. 이후 docs-only sync로 moving `main` SHA가 바뀌어도 이 runtime/Production baseline과 구분해 기록한다.
 
 ## Historical archive
 
