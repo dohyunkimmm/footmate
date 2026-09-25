@@ -1,0 +1,35 @@
+name: Refresh Real App welcome baselines
+on:
+  push:
+    branches: [fix/real-app-welcome-alignment-buttons]
+permissions:
+  contents: write
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh approved welcome snapshots
+        run: npx playwright test --project=chromium tests/e2e/v5.1-release-flow-review.spec.cjs --grep="welcome hero keeps readable contrast" --update-snapshots=all
+      - name: Compare refreshed welcome snapshots
+        run: npx playwright test --project=chromium tests/e2e/v5.1-release-flow-review.spec.cjs --grep="welcome hero keeps readable contrast"
+      - name: Commit refreshed welcome snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "test: refresh Real App welcome baselines"
+          git push
