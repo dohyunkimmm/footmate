@@ -100,6 +100,24 @@ test('structured Case Study content keeps readable type, Korean words, aligned c
   }
 });
 
+test('02–13 structured components use one semantic type scale and 03 persona stays balanced',async({page})=>{
+  await openCaseStudy(page,1440,900);
+  const labels=page.locator('.slide:not([hidden]) :is(.fm-next-review-summary span,.fm-next-cs-persona>div>span,.fm-next-cs-jtbd small,.fm-next-cs-auth-flow small,.fm-next-cs-day-states small,.fm-next-cs-modes small,.fm-cs-reasons dt)');
+  const values=page.locator('.slide:not([hidden]) :is(.fm-next-review-summary b,.fm-next-cs-card p,.fm-next-cs-persona b,.fm-next-cs-jtbd p,.fm-next-cs-before-after p,.fm-next-cs-stack p,.fm-next-cs-auth-flow b,.fm-next-cs-detail-order span,.fm-next-cs-modes p,.fm-next-cs-day-states b,.fm-next-cs-day-states p,.fm-next-cs-recovery b,.fm-next-cs-recovery span,.fm-next-cs-outcomes b,.fm-next-cs-outcomes p,.fm-cs-reasons dd)');
+  const labelSizes=await labels.evaluateAll(nodes=>[...new Set(nodes.map(node=>getComputedStyle(node).fontSize))]);
+  const valueSizes=await values.evaluateAll(nodes=>[...new Set(nodes.map(node=>getComputedStyle(node).fontSize))]);
+  expect(labelSizes).toEqual(['12px']);
+  expect(valueSizes).toEqual(['13px']);
+
+  const personaCards=page.locator('.slide:not([hidden])').nth(2).locator('.fm-next-cs-persona>div');
+  const personaLayout=await personaCards.evaluateAll(cards=>cards.map(card=>{
+    const value=card.querySelector('b');
+    return {whiteSpace:getComputedStyle(value).whiteSpace,overflow:card.scrollWidth-card.clientWidth};
+  }));
+  expect(personaLayout.map(item=>item.whiteSpace)).toEqual(['nowrap','nowrap','nowrap']);
+  expect(personaLayout.filter(item=>item.overflow>1)).toEqual([]);
+});
+
 test('reviewer scan surfaces service-planning evidence before implementation detail',async({page})=>{
   await openCaseStudy(page);
   const cover=page.locator('.slide:not([hidden])').nth(0);
@@ -143,7 +161,12 @@ test('KPI calculation and observation evidence stays inside the Case Study',asyn
   await goToSlide(page,11);
   const validation=page.locator('.slide:not([hidden])').nth(11);
   await expect(validation.locator('a[href*="github.com"]')).toHaveCount(0);
-  const open=validation.locator('.fm-next-kpi-open');
+  await expect(validation.locator('.fm-next-cs-note .fm-next-kpi-open')).toHaveCount(0);
+  const disclosure=validation.locator('.fm-next-cs-metrics + .fm-next-kpi-disclosure');
+  await expect(disclosure).toHaveCount(1);
+  await expect(disclosure).toContainText('KPI 상세 기준');
+  await expect(disclosure).toContainText('계산 · 관찰 · 제외 기준');
+  const open=disclosure.locator('.fm-next-kpi-open');
   await expect(open).toHaveText('8개 지표의 계산·관찰 기준 보기');
   await open.click();
   const dialog=validation.locator('.fm-next-kpi-dialog');
@@ -155,4 +178,12 @@ test('KPI calculation and observation evidence stays inside the Case Study',asyn
   await expect(dialog).toContainText('connected-ai와 rules-fallback 분리');
   await dialog.locator('.fm-next-kpi-close').click();
   await expect(dialog).not.toBeVisible();
+
+  await openCaseStudy(page,390,844);
+  await goToSlide(page,11);
+  const mobileDisclosure=page.locator('.slide:not([hidden])').nth(11).locator('.fm-next-kpi-disclosure');
+  const mobileButton=mobileDisclosure.locator('.fm-next-kpi-open');
+  const rowBox=await mobileDisclosure.boundingBox(),buttonBox=await mobileButton.boundingBox();
+  expect(rowBox).not.toBeNull();expect(buttonBox).not.toBeNull();
+  expect(buttonBox.width).toBeGreaterThan(rowBox.width-30);
 });
