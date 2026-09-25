@@ -241,7 +241,7 @@ test('reader-facing body copy is Korean-first while preserving necessary technic
   const validation=await slideText(page,11);
   expect(validation).toContain('사람 검수');
   expect(validation).toContain('AI 보조 검수');
-  expect(validation).toContain('자동 QA·사람 검수 PASS 대체 아님');
+  expect(validation).toContain('중복 · 용어 · 구현-설명 불일치 검토 · PASS 판정 제외');
 });
 
 test('merged source slides can never render as extra pages after P13',async({page})=>{
