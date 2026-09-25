@@ -26,6 +26,45 @@ test('Sign in and Join folds state preservation into the evidence table',async({
   await expect(slide).toContainText('로그인 전 선택한 경기와 복귀 위치를 유지');
 });
 
+test('Sign in and Join applies compact spacing to the auth flow and evidence table only',async({page})=>{
+  await openCaseStudy(page,{width:1440,height:900});
+  const slide=(await visibleSlides(page)).nth(7);
+  await expect(slide).toHaveAttribute('data-v5-content-role','auth-participation');
+  const geometry=await slide.evaluate(node=>{
+    const flow=node.querySelector('.fm-next-cs-auth-flow');
+    const flowCell=flow?.querySelector('div');
+    const scope=node.querySelector('.fm-next-cs-scope');
+    const reasons=scope?.querySelector('.fm-cs-reasons');
+    const firstRow=reasons?.querySelector('div');
+    const slideStyle=getComputedStyle(node);
+    const flowStyle=getComputedStyle(flow);
+    const cellStyle=getComputedStyle(flowCell);
+    const scopeStyle=getComputedStyle(scope);
+    const reasonsStyle=getComputedStyle(reasons);
+    const rowStyle=getComputedStyle(firstRow);
+    return {
+      alignItems:slideStyle.alignItems,
+      flowGap:flowStyle.gap,
+      cellPaddingTop:cellStyle.paddingTop,
+      cellPaddingLeft:cellStyle.paddingLeft,
+      scopePaddingTop:scopeStyle.paddingTop,
+      scopePaddingLeft:scopeStyle.paddingLeft,
+      reasonsRowGap:reasonsStyle.rowGap,
+      rowPaddingTop:rowStyle.paddingTop,
+      rowColumns:rowStyle.gridTemplateColumns
+    };
+  });
+  expect(geometry.alignItems).toBe('center');
+  expect(geometry.flowGap).toBe('6px');
+  expect(geometry.cellPaddingTop).toBe('10px');
+  expect(geometry.cellPaddingLeft).toBe('12px');
+  expect(geometry.scopePaddingTop).toBe('10px');
+  expect(geometry.scopePaddingLeft).toBe('14px');
+  expect(geometry.reasonsRowGap).toBe('0px');
+  expect(geometry.rowPaddingTop).toBe('5px');
+  expect(geometry.rowColumns.startsWith('84px ')).toBe(true);
+});
+
 test('Operations keeps the state scenario inside the Case Study and removes the review-mode exit',async({page})=>{
   await openCaseStudy(page);
   const slide=(await visibleSlides(page)).nth(8);
