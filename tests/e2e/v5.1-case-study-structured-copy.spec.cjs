@@ -103,9 +103,16 @@ test('reason, trade-off, validation and reflection explanations remain complete 
   expect(recommendationQuality).toBe('추천 후보·순위·이유의 소유권은 결정론적 추천 엔진에 유지합니다.');
   expect(hasSentencePunctuation(recommendationQuality)).toBe(true);
 
-  const reflections=await visibleSlide(page,12).locator('.fm-next-cs-final .fm-cs-reasons dd').allTextContents();
-  expect(reflections.length).toBeGreaterThanOrEqual(2);
-  expect(reflections.every(hasSentencePunctuation)).toBe(true);
+  const release=visibleSlide(page,12);
+  const validationSample=await rowValue(release,'검증 표본');
+  expect(validationSample).toBe('교육생 6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2');
+  expect(hasSentencePunctuation(validationSample)).toBe(false);
+
+  const releaseExplanations=[
+    await rowValue(release,'과업 범위'),
+    await rowValue(release,'학습·다음 단계')
+  ];
+  expect(releaseExplanations.every(hasSentencePunctuation)).toBe(true);
 });
 
 test('phrase-only structured components do not regress to sentence punctuation',async({page})=>{
