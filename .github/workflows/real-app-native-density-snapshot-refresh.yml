@@ -1,0 +1,36 @@
+name: Real App Native Density Snapshot Refresh
+
+on:
+  push:
+    branches:
+      - fix/real-app-native-density
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/real-app-native-density
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - name: Install browser QA dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh approved Real App visual baselines
+        run: |
+          npx playwright test tests/e2e --update-snapshots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'tests/e2e/**/*-snapshots/*.png'
+          if ! git diff --cached --quiet; then
+            git commit -m "test: refresh Real App native density baselines"
+            git push origin HEAD:fix/real-app-native-density
+          fi
