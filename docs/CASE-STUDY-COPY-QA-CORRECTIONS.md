@@ -1,6 +1,6 @@
 # FootMate Case Study Copy QA Corrections
 
-이 문서는 `CASE-STUDY-COPY-QA.md`의 이후 Case Study 카피 변경을 기록한다. 기존 기록과 충돌하면 이 문서의 더 최신 항목을 현재 기준으로 사용한다.
+이 문서는 `archive/CASE-STUDY-COPY-QA.md`의 이후 Case Study 카피 변경을 기록한다. 기존 기록과 충돌하면 이 문서의 더 최신 항목을 현재 기준으로 사용한다.
 
 ## 2026-09-25 · 02–13 repetition polish · final clarity closure
 
@@ -61,4 +61,4 @@ PR #285에서 recruiter scan 흐름은 유지하면서 01 Overview와 03 Persona
 
 ### Supersession
 
-`CASE-STUDY-COPY-QA.md`의 `2026-09-25 recruiter scan · KPI 내부 열람 closure` 중 PR #283 / SHA `205c1049109be2feadaedbb5937e00b812cd736e`는 recruiter hierarchy 도입 이력으로 보존한다. 다만 현재 runtime/Production baseline과 01/03 lead 문구는 위 PR #285 기준이 우선한다.
+`archive/CASE-STUDY-COPY-QA.md`의 `2026-09-25 recruiter scan · KPI 내부 열람 closure` 중 PR #283 / SHA `205c1049109be2feadaedbb5937e00b812cd736e`는 recruiter hierarchy 도입 이력으로 보존한다. 다만 현재 runtime/Production baseline과 01/03 lead 문구는 위 PR #285 기준이 우선한다.
