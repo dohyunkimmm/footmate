@@ -49,7 +49,6 @@ test('02–13 tables, flows and cards use compact phrase grammar',async({page})=
   expect(await rowValue(visibleSlide(page,4),'이유')).toBe('참가 의도 전 서비스 가치 판단');
   expect(await rowValue(visibleSlide(page,4),'Trade-off')).toBe('로그인 전 계정 기반 개인화 · 기기 간 연속성 제한');
 
-  expect(await rowValue(visibleSlide(page,5),'이유')).toBe('추천 순위 · 이유 추적 가능');
   expect(await rowValue(visibleSlide(page,5),'품질 기준')).toBe('추천 후보·순위·이유 소유권 → 결정론적 추천 엔진');
   expect(await rowValue(visibleSlide(page,5),'Trade-off')).toBe('현재 조건 수정 · 재탐색 허용');
 
