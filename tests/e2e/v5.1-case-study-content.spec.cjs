@@ -9,7 +9,7 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'&&
-    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'
+    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2'
   );
 }
 
