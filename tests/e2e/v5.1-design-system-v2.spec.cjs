@@ -60,8 +60,8 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     const box=element.getBoundingClientRect();
     return {left:box.left,right:innerWidth-box.right,width:box.width,borderRadius:getComputedStyle(element).borderRadius};
   });
-  expect(geometry.width).toBeGreaterThanOrEqual(428);
-  expect(geometry.width).toBeLessThanOrEqual(432);
+  expect(geometry.width).toBeGreaterThanOrEqual(400);
+  expect(geometry.width).toBeLessThanOrEqual(404);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
   expect(parseFloat(geometry.borderRadius)).toBe(30);
 
@@ -77,8 +77,8 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     return {left:box.left,right:innerWidth-box.right,width:box.width};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThanOrEqual(404);
-  expect(navGeometry.width).toBeLessThanOrEqual(408);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(374);
+  expect(navGeometry.width).toBeLessThanOrEqual(378);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
