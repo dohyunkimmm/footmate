@@ -1,0 +1,46 @@
+name: PR300 Baseline Sync
+on:
+  push:
+    branches: [fix/my-personalization-card]
+    paths: [.github/workflows/pr300-baseline-sync.yml]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: ${{ !contains(github.event.head_commit.message, 'remove temporary baseline sync') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/my-personalization-card
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install visual QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Refresh only approved MY and current Welcome visual contracts
+        run: |
+          npx playwright test --project=chromium \
+            tests/e2e/v4-personalization.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/real-app-white-surface.spec.cjs \
+            --update-snapshots
+      - name: Commit exact approved baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/e2e/v4-personalization.spec.cjs-snapshots/real-app-my-personalization-390-chromium-linux.png \
+            tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots/design-system-v2-personalization-1440-chromium-linux.png \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-profile-1440-chromium-linux.png \
+            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png \
+            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png
+          git diff --cached --quiet && exit 0
+          git commit -m "test: sync approved MY personalization baselines [baseline-bot]"
+          git push origin HEAD:fix/my-personalization-card
