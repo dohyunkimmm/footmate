@@ -286,30 +286,40 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"
   font-size:12px!important;
 }
 
-/* 03 Persona peers use one-line desktop values; mobile keeps natural wrapping. */
-@media(min-width:901px){
-  html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-cs-persona>div>b{
-    white-space:nowrap!important;
-  }
+/* 03: after duplicate Persona cards are removed, keep the validation flow visually separate from the summary. */
+html[data-fm-next-case-study="true"] .fm-next-review-summary + .fm-next-cs-jtbd{
+  margin-top:14px;
 }
 
-/* 12 KPI evidence action belongs to the KPI block, not to the explanatory note. */
+/* 12 KPI evidence action is the KPI block header, before the metric cards. */
 html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row{
   display:flex;
   width:100%;
   align-items:center;
-  justify-content:flex-end;
-  margin-top:8px;
-  padding-top:10px;
-  border-top:1px solid var(--fm-cs-ui-separator,#e9efeb);
+  justify-content:space-between;
+  gap:12px;
+  margin-top:14px;
+  margin-bottom:8px;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-label{
+  color:var(--fm-cs-ui-muted,#687a70);
+  font-size:12px;
+  line-height:1.4;
+  font-weight:800;
+  letter-spacing:-.01em;
 }
 html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row .fm-next-kpi-open{
   margin-top:0!important;
 }
 
 @media(max-width:560px){
+  html[data-fm-next-case-study="true"] .fm-next-review-summary + .fm-next-cs-jtbd{
+    margin-top:10px;
+  }
   html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row{
-    justify-content:stretch;
+    align-items:stretch;
+    flex-direction:column;
+    gap:8px;
   }
   html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row .fm-next-kpi-open{
     width:100%;

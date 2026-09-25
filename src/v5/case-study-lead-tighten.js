@@ -14,12 +14,12 @@
     if(!coverLead||!personaLead||personaSummary?.length!==3)return false;
 
     coverLead.textContent='나에게 맞는 이유를 확인하고, 안심하고 참가하는 풋살 서비스입니다.';
-    personaLead.textContent='설계용 Persona는 가정으로 두고, 행동 과업으로 핵심 동선을 점검했습니다.';
+    personaLead.textContent='설계용 Persona는 가정으로 두고, 행동 과업으로 탐색·가입 동선을 점검했습니다.';
 
     const validationLabel=personaSummary[2].querySelector('span');
     const validationValue=personaSummary[2].querySelector('b');
-    if(validationLabel)validationLabel.textContent='검증';
-    if(validationValue)validationValue.textContent='같은 교육과정을 수강한 교육생 6명 · iOS 4 · Android 2';
+    if(validationLabel)validationLabel.textContent='검증 방식';
+    if(validationValue)validationValue.textContent='행동 과업 · iOS · Android';
 
     document.documentElement.dataset.footmateCaseStudyLeadTighten='1';
     applied=true;
