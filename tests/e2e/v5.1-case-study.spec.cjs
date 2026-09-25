@@ -143,8 +143,12 @@ test('KPI calculation and observation evidence stays inside the Case Study',asyn
   await goToSlide(page,11);
   const validation=page.locator('.slide:not([hidden])').nth(11);
   await expect(validation.locator('a[href*="github.com"]')).toHaveCount(0);
-  const open=validation.locator('.fm-next-kpi-open');
+  const disclosure=validation.locator('.fm-next-kpi-disclosure');
+  const open=disclosure.locator('.fm-next-kpi-open');
+  await expect(disclosure).toHaveCount(1);
   await expect(open).toHaveText('8개 지표의 계산·관찰 기준 보기');
+  await expect(validation.locator('.fm-next-cs-note .fm-next-kpi-open')).toHaveCount(0);
+  expect(await disclosure.evaluate(node=>node.previousElementSibling?.classList.contains('fm-next-cs-metrics'))).toBe(true);
   await open.click();
   const dialog=validation.locator('.fm-next-kpi-dialog');
   await expect(dialog).toBeVisible();
