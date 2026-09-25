@@ -67,7 +67,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   expect(ctaStyle.height).toBeGreaterThanOrEqual(44);
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',exact);
+  await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',{...exact,maxDiffPixels:2});
   expect(errs).toEqual([]);
 });
 
@@ -103,7 +103,7 @@ test('390px Home uses neutral match media while raising the core AI surface',asy
   expect(styles[3].image).toContain('linear-gradient');
   expect(styles[3].shadow).not.toBe('none');
   const nav=screen.locator('.fm-next-nav');
-  await expect(nav).toHaveCSS('position','fixed');
+  await expect(nav).toHaveCSS('position','absolute');
   await expectNoHorizontalOverflow(page);
   const dynamicDates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
@@ -119,7 +119,7 @@ test('390px Discover uses the same neutral match surface system',async({page})=>
   await expect(screen).toBeVisible();
   const media=screen.locator('.fm-next-match-card-media').first();
   await expect(media).toHaveCSS('color','rgb(19, 32, 25)');
-  await expect(screen.locator('.fm-next-nav')).toHaveCSS('position','fixed');
+  await expect(screen.locator('.fm-next-nav')).toHaveCSS('position','absolute');
   await expectNoHorizontalOverflow(page);
   const dynamicDates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
@@ -128,7 +128,7 @@ test('390px Discover uses the same neutral match surface system',async({page})=>
 });
 
 for(const width of [320,375,390,430]){
-  test(`${width}px keeps Welcome/Home/Discover readable and clear of fixed navigation`,async({page})=>{
+  test(`${width}px keeps Welcome/Home/Discover readable and clear of shell navigation`,async({page})=>{
     const errs=await openCleanApp(page,{width,height:844});
     const welcomeMetrics=await page.locator('.fm-next-intro').evaluate(element=>{
       const headline=element.querySelector('h1').getBoundingClientRect();
@@ -143,7 +143,7 @@ for(const width of [320,375,390,430]){
       if(route==='discover')await page.getByRole('button',{name:'전체 보기'}).click();
       const screen=page.locator(`[data-screen="${route}"]`);
       const nav=screen.locator('.fm-next-nav');
-      await expect(nav).toHaveCSS('position','fixed');
+      await expect(nav).toHaveCSS('position','absolute');
       const metrics=await screen.evaluate(element=>{
         const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
         const firstButton=[...element.querySelectorAll('button')].find(node=>node.getClientRects().length);

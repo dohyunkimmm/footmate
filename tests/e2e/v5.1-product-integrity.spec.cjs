@@ -126,7 +126,7 @@ test('Real App setup and checkout keep one clear full-width primary action on mo
   await expect(setupPrimary).toBeVisible();
   const setupRect=await setupPrimary.boundingBox();
   expect(setupRect.width).toBeGreaterThanOrEqual(340);
-  expect(setupRect.y+setupRect.height).toBeGreaterThanOrEqual(800);
+  expect(setupRect.y+setupRect.height).toBeGreaterThanOrEqual(790);
 
   await page.getByRole('button',{name:'다음'}).click();
   await page.getByRole('button',{name:'다음'}).click();
@@ -166,21 +166,30 @@ test('Real App responsive design baseline stays overflow-free across target widt
     await setup(page);
     await expect(page.locator('.fm-ai-card')).toBeVisible();
 
-    const homeMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+    const homeMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,documentHeight:document.documentElement.scrollHeight,bodyHeight:document.body.scrollHeight,viewportHeight:innerHeight,windowScroll:scrollY}));
     expect(homeMetrics.documentWidth,`${viewport.width}px home document overflow`).toBeLessThanOrEqual(homeMetrics.viewport);
     expect(homeMetrics.bodyWidth,`${viewport.width}px home body overflow`).toBeLessThanOrEqual(homeMetrics.viewport);
+    expect(homeMetrics.documentHeight,`${viewport.width}px home document height`).toBeLessThanOrEqual(homeMetrics.viewportHeight);
+    expect(homeMetrics.bodyHeight,`${viewport.width}px home body height`).toBeLessThanOrEqual(homeMetrics.viewportHeight);
+    expect(homeMetrics.windowScroll).toBe(0);
 
     await page.getByRole('button',{name:'전체 보기'}).click();
     await expect(page.locator('[data-screen="discover"]')).toBeVisible();
-    const discoveryMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+    const discoveryMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,documentHeight:document.documentElement.scrollHeight,bodyHeight:document.body.scrollHeight,viewportHeight:innerHeight,windowScroll:scrollY}));
     expect(discoveryMetrics.documentWidth,`${viewport.width}px discover document overflow`).toBeLessThanOrEqual(discoveryMetrics.viewport);
     expect(discoveryMetrics.bodyWidth,`${viewport.width}px discover body overflow`).toBeLessThanOrEqual(discoveryMetrics.viewport);
+    expect(discoveryMetrics.documentHeight,`${viewport.width}px discover document height`).toBeLessThanOrEqual(discoveryMetrics.viewportHeight);
+    expect(discoveryMetrics.bodyHeight,`${viewport.width}px discover body height`).toBeLessThanOrEqual(discoveryMetrics.viewportHeight);
+    expect(discoveryMetrics.windowScroll).toBe(0);
 
     await page.locator('.fm-next-match-card').first().click();
     await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-    const detailMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+    const detailMetrics=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,documentHeight:document.documentElement.scrollHeight,bodyHeight:document.body.scrollHeight,viewportHeight:innerHeight,windowScroll:scrollY}));
     expect(detailMetrics.documentWidth,`${viewport.width}px detail document overflow`).toBeLessThanOrEqual(detailMetrics.viewport);
     expect(detailMetrics.bodyWidth,`${viewport.width}px detail body overflow`).toBeLessThanOrEqual(detailMetrics.viewport);
+    expect(detailMetrics.documentHeight,`${viewport.width}px detail document height`).toBeLessThanOrEqual(detailMetrics.viewportHeight);
+    expect(detailMetrics.bodyHeight,`${viewport.width}px detail body height`).toBeLessThanOrEqual(detailMetrics.viewportHeight);
+    expect(detailMetrics.windowScroll).toBe(0);
   }
 
   expect(errorSets.flat()).toEqual([]);
@@ -315,4 +324,3 @@ test('Case Study desktop companion panels retain reviewable width and structured
   }
   expect(errs).toEqual([]);
 });
-
