@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -52,7 +52,7 @@ async function expectNoHorizontalOverflow(page){
 
 const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:24};
 
-test('1440px Design System v2 keeps the stable app shell centered and component metrics coherent',async({page})=>{
+test('1440px Design System v2 keeps the mobile app shell centered and component metrics coherent',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
 
@@ -60,10 +60,10 @@ test('1440px Design System v2 keeps the stable app shell centered and component 
     const box=element.getBoundingClientRect();
     return {left:box.left,right:innerWidth-box.right,width:box.width,borderRadius:getComputedStyle(element).borderRadius};
   });
-  expect(geometry.width).toBeGreaterThanOrEqual(558);
-  expect(geometry.width).toBeLessThanOrEqual(562);
+  expect(geometry.width).toBeGreaterThanOrEqual(428);
+  expect(geometry.width).toBeLessThanOrEqual(432);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
-  expect(parseFloat(geometry.borderRadius)).toBe(0);
+  expect(parseFloat(geometry.borderRadius)).toBe(30);
 
   const card=page.locator('.fm-next-match-card').first();
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));
@@ -77,8 +77,8 @@ test('1440px Design System v2 keeps the stable app shell centered and component 
     return {left:box.left,right:innerWidth-box.right,width:box.width};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThanOrEqual(534);
-  expect(navGeometry.width).toBeLessThanOrEqual(538);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(404);
+  expect(navGeometry.width).toBeLessThanOrEqual(408);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
