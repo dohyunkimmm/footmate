@@ -12,9 +12,10 @@
 
 ## Current release engineering docs
 
-현재 기준으로 직접 유지하는 문서는 아래 다섯 개입니다.
+현재 기준으로 직접 유지하는 문서는 아래 여섯 개입니다.
 
 - `RELEASE-HISTORY.md` — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
+- `CASE-STUDY-COPY-QA.md` — Case Study 13-section 카피·줄바꿈·페이지 배치와 표/카드 내부 여백 검수 기준
 - `BETA-PILOT-RUNBOOK.md` — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - `V5.1.1-AI-RESILIENCE-PATCH.md` — current AI provider/timeout/state/request guard patch contract
 - `V5.1-AI-MATCH-ASSISTANT.md` — current AI Match Assistant architecture and acceptance contract
@@ -35,6 +36,8 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 서로 상충하는 pending/미검증 문구 검색 → QA/merge`
 
 완료 사실이 새로 확정되면 과거 문서의 `별도 확인 대상`, `미검증`, `pending` 같은 표현과 충돌하지 않는지 반드시 다시 검색한다. 제품/배포 사실과 절차 문서가 모두 일치하기 전에는 최종 sync-up 완료로 표현하지 않는다.
+
+Case Study 레이아웃 변경에서는 **페이지 전체 배치와 구조화된 표/카드 내부 여백을 별도 계약으로 취급한다.** 특정 표의 여백 조정 요청을 section 전체 `align-items`, slide 상하 padding, story gap, 제목/lead margin 변경으로 확대하지 않는다. 현재 runtime 기준은 PR #271의 `50fa005edc2e62c288ac49581464bf4942e46148`이며, 02–13 desktop story는 기존 중앙 배치를 유지하고 필요한 structured block 내부 spacing만 조정한다. 이 runtime 기준은 FootMate QA #1289 · run `36074420880` SUCCESS로 Regression 36, Browser E2E + axe, Mobile Safari/WebKit, Production Smoke까지 검증됐다. 이후 docs-only sync로 moving `main` SHA가 바뀌어도 이 runtime/Production baseline과 구분해 기록한다.
 
 ## Historical archive
 
