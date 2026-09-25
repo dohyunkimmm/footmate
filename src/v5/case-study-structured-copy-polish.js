@@ -68,7 +68,6 @@
 
     // 06 · Recommendation — ownership and trade-off stay scannable.
     setRow(slides[5],'결정','최근 선호는 추천 보조 입력으로만 사용');
-    setRow(slides[5],'이유','추천 순위 · 이유 추적 가능');
     setRow(slides[5],'품질 기준','추천 후보·순위·이유 소유권 → 결정론적 추천 엔진');
     setRow(slides[5],'Trade-off','현재 조건 수정 · 재탐색 허용');
 
