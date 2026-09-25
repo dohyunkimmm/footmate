@@ -6,7 +6,7 @@ async function openCaseStudy(page,width=1440,height=900){
   await page.waitForFunction(()=>
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
-    document.documentElement.dataset.footmateCaseStudyReviewerPolish==='1'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2'&&
+    document.documentElement.dataset.footmateCaseStudyReviewerPolish==='1'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&
     document.querySelectorAll('.slide:not([hidden])').length===13
   );
 }
