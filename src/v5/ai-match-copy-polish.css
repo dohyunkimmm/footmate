@@ -29,7 +29,8 @@
 .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-examples{
   margin-top:6px;
 }
-.fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] :is([data-ai-state="loading"],[data-ai-state="result"]) .fm-ai-examples{
+.fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="loading"] .fm-ai-examples,
+.fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="result"] .fm-ai-examples{
   display:none;
 }
 .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-status{
