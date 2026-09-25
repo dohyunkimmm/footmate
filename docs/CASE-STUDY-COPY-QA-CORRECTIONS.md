@@ -2,6 +2,28 @@
 
 이 문서는 `CASE-STUDY-COPY-QA.md`의 이후 Case Study 카피 변경을 기록한다. 기존 기록과 충돌하면 이 문서의 더 최신 항목을 현재 기준으로 사용한다.
 
+## 2026-09-25 · 02–13 repetition polish · final clarity closure
+
+PR #314에서 Case Study 02–13을 페이지별로 다시 점검해 같은 핵심 단어가 title·lead·summary·card·table에 과도하게 반복되는 문제를 줄였다. 기존 13-section IA, 승인 사실, 제품/운영 경계와 검증 범위는 유지하고 reader-facing copy의 정보 밀도와 반복만 정리했다.
+
+- 현재 Case Study content/runtime baseline: PR #314 · SHA `d12a806d7a9a76987ef1ff08b250f79e91fb187a`
+- Moving main boundary: 이 문서 sync 시점의 repository `main`은 `ae3cfedd5a9d1a4852fc19615dea8ac029768096`이며 Real App mobile shell 변경이다. `index.html`과 `case-study-final-clarity.js` blob은 #314 baseline과 동일해 Case Study 표시 내용은 변경되지 않았다.
+- Runtime copy ownership: `case-study-connected.js` 이후 heading/service-planner/reviewer/lead-tighten/structured-copy가 순차 적용되며, 최종 표시 문구와 반복어 closure는 `case-study-final-clarity.js`가 마지막으로 적용한다.
+- Repetition contract: 페이지별 동일 핵심어 반복을 별도 E2E 계약으로 검사한다. 대표적으로 10 `보존` 0회, 11 `결정론적` 최대 1회, 12 `계산 기준` 최대 1회를 유지하고 02–13의 `참가`·`탐색`·`추천`·`로그인`·`검증` 등도 페이지별 상한을 둔다.
+- 10 Recovery: `보존` 라벨 반복을 제거하고 원인 · 유지 상태 · 재시도/대체 행동 자체를 직접 보여준다.
+- 11 Domain & AI: lead를 `AI는 조건 해석만 맡고, 판단과 참가·결제의 책임을 분리했습니다.`로 축약하고 `결정론적 추천 엔진`은 상세 책임 카드에서 1회만 유지한다.
+- 12 KPI & Validation: KPI/QA/측정 준비 구분과 내부 8개 KPI modal은 유지하고, 추가 지표·측정 준비 문구와 계산 기준 표기를 명사·구 중심으로 정리한다. `connected-ai`와 `rules-fallback`을 분리하며 사용률과 품질 판단을 분리한다.
+- 13 Release & Learnings: `구현 / 검증 / 다음 단계` 3개 compact summary만 남기고 Real App/Closed Beta 반복, 검증 표본·과업 상세, Production QA 반복과 중복 CTA를 제거한다. 상세 사용자 검증 근거는 별도 evidence/Notion 문서에 유지한다.
+- Current phrase contract: 02–13의 structured label/value, table, flow, card는 명사형·짧은 구 + 무마침표를 기본으로 한다. 과거 #286의 `이유·Trade-off는 항상 문장형` 규칙은 현재 structured runtime과 충돌하는 범위에서 supersede된다. lead처럼 설명 역할을 하는 long-form prose는 문장형과 마침표를 유지한다.
+- Preserved: 01 Cover, 13-section IA, 02–13 desktop center alignment, 08 auth spacing, 09 legacy 링크 제거, 12 KPI 내부 modal, Validation Metric과 Measured Result 구분, AI/추천/사용자 책임 경계, 실제 PG·외부 분석 도구 미연동, 사용자 과업 검증의 해석 한계.
+- #314 closure QA: FootMate QA #1558 · run `36148319925` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- #314 exact Production verification: exact Vercel deployment PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
+- Notion boundary: 사용자가 별도로 수정한 Notion 문서를 우선한다. #314는 reader-facing 반복어/clarity closure이므로 동일 사실을 Notion에 자동 덮어쓰거나 release 실행 이력을 중복 sync하지 않는다.
+
+### Supersession
+
+아래 #286 / #285 / #283 기록은 도입 이력과 보존 계약으로 유지한다. 다만 현재 Case Study content/runtime baseline, 실제 표시 문구, structured phrase grammar와 페이지별 반복어 기준은 PR #314 / SHA `d12a806d7a9a76987ef1ff08b250f79e91fb187a`가 우선한다.
+
 ## 2026-09-25 · 01–13 structured copy grammar closure
 
 PR #286에서 문서에만 있던 `상태명·단계명·CTA·짧은 값 = 명사형/짧은 구 + 마침표 없음` 규칙을 실제 Case Study runtime의 표·flow·card에 적용했다. 이유·Trade-off·검증 설명·회고처럼 의미상 완전한 설명은 문장형과 마침표를 유지한다.
