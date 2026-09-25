@@ -2,6 +2,20 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Real App Home → Discover IA closure · 2026-09-25
+
+- Scope: Home을 AI Match Assistant entry + compact personalization으로, Discover를 AI/search result exploration + condition edit/filter/sort/full list로 분리하고 Home example suggestion이 실제 Assistant 실행 후 Discover 결과로 이어지도록 정리
+- Dedup / role boundary: Home For You는 1–2개 compact match만 노출하고 동일 경기의 별도 중복 추천 section을 제거; Detail은 match decision, Join은 joined-match status, MY는 profile/settings 역할을 유지
+- Runtime PR: #269 · merged SHA `30edf47fa69dec7f2d72d68c4ff99096a3f91bee`
+- Product/runtime baseline: `30edf47fa69dec7f2d72d68c4ff99096a3f91bee`
+- State ownership: `src/v5/ai-match-assistant.js`가 AI query/constraints/Home→Discover handoff를 소유하고, `src/v4/discovery.js`는 discovery filter/sort/result-list state를 소유; deterministic recommendation ranking과 기존 domain boundary 유지
+- Final post-merge QA: Real App White Surface QA #166 · run `36077898939` · SUCCESS; actual Ubuntu/Chromium `toHaveScreenshot()` comparison PASS
+- Main QA: FootMate QA #1298 · run `36077898926` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
+- Exact Vercel Production: `dpl_Anb95bVzLPwBAV1t5FzGio4zhvWy` · SHA `30edf47fa69dec7f2d72d68c4ff99096a3f91bee` · READY · official alias `footmate-black.vercel.app`
+- Documentation sync: root README와 `V5.1-AI-MATCH-ASSISTANT.md`를 현재 Home/Discover IA·state ownership으로 동기화하고 관련 FootMate Notion 프로젝트/Flow 문서를 같은 제품 계약으로 갱신; Closed Beta runbook은 운영 절차 변경이 없어 유지
+- Case Study boundary: FootMate 프로젝트에서는 Case Study를 직접 수정하지 않으며, 이번 IA/핵심 flow 변경으로 별도 Case Study 프로젝트의 설명·대표 화면 sync가 필요함
+
 ## Case Study reader cleanup closure · 2026-09-25
 
 - Scope: Case Study 02–13의 desktop 여백·밀도와 독자용 문체를 정리하고, 내부 `PBL` 표현 제거, 08 상태 보존 맥락 통합, 09 legacy evidence-mode 외부 링크 제거, 12 KPI `계산 기준 · A ÷ B` 표기, green 강조의 의미 기준을 반영
@@ -462,7 +476,7 @@
 - Exact Production HTTP smoke: PASS
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
-- Render backup: 이번 ownership closure 범위에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
+- Render backup: 이번 ownership closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment로 관리
 - Next candidate: compatibility bridge / legacy mirror 제거는 기존 사용자 migration·rollback 필요성을 별도 검증한 뒤 별도 변경으로 판단
 
 ## v5.1.0 — AI Match Assistant · 2026-09-20
