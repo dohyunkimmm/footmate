@@ -63,7 +63,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
-  expect(ctaStyle.height).toBeGreaterThanOrEqual(44);
+  expect(ctaStyle.height).toBe(54);
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',{...exact,maxDiffPixels:2});
