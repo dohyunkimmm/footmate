@@ -119,6 +119,39 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"]
   margin-bottom:5px;
 }
 
+/* 08 Sign in · Join: tighten only the auth flow cells and the evidence table inside this section. */
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-copy .fm-next-cs-auth-flow{
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.15fr);
+    gap:6px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-copy .fm-next-cs-auth-flow>div{
+    padding:10px 12px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-copy .fm-next-cs-auth-flow b{
+    margin-top:4px;
+    line-height:1.4;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope{
+    padding:10px 14px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope .fm-cs-reasons{
+    gap:0;
+    line-height:1.5;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope .fm-cs-reasons>div{
+    grid-template-columns:84px minmax(0,1fr);
+    column-gap:14px;
+    padding:5px 0;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope .fm-cs-reasons>div+div::before{
+    top:0;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope :is(dt,dd){
+    line-height:1.5;
+  }
+}
+
 /* Desktop: give the evidence panel a little more separation from the decision surface above. */
 @media(min-width:901px){
   html[data-fm-next-case-study="true"] [data-v5-content-role="guest-first-decision"] .fm-next-cs-decision,
@@ -141,5 +174,25 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"]
   }
   html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric{
     padding:14px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-cs-auth-flow{
+    gap:10px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-cs-auth-flow>div{
+    padding:10px 12px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-cs-scope{
+    padding:10px 12px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-cs-scope .fm-cs-reasons{
+    gap:0;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-cs-scope .fm-cs-reasons>div{
+    grid-template-columns:1fr;
+    row-gap:3px;
+    padding:7px 0;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-cs-scope .fm-cs-reasons>div+div::before{
+    top:0;
   }
 }
