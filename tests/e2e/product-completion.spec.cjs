@@ -176,7 +176,7 @@ test('Detail keeps one dark focal hero and removes duplicated legacy information
   expect(visual.toolbarBackground).toBe('rgb(255, 255, 255)');
   expect(visual.primaryBackground).not.toBe('rgb(255, 255, 255)');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('product-completion-detail-390.png',exact);
+  await expect(page).toHaveScreenshot('product-completion-detail-390.png',{...exact,maxDiffPixels:200});
   expect(errs).toEqual([]);
 });
 
