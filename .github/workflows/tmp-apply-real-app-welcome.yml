@@ -7,7 +7,7 @@ permissions:
   contents: write
 jobs:
   apply:
-    if: "${{ github.event.head_commit.message == 'ci: apply Real App welcome correction v2' }}"
+    if: "${{ github.event.head_commit.message == 'ci: apply Real App welcome correction v3' }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -34,7 +34,7 @@ jobs:
           css=Path('src/v4/discovery.css')
           text=css.read_text()
           old='[data-mode=real] [data-screen=welcome] .fm-next-topbar--dark{position:absolute!important}'
-          new='''[data-mode=real] [data-screen=welcome] .fm-next-topbar--dark{position:absolute!important;transform:translateY(-12px)!important}\n[data-mode=real] [data-screen=welcome] .fm-next-button{height:54px!important;min-height:54px!important;padding:0 20px!important;border-radius:16px!important}'''
+          new='''[data-mode=real] [data-screen=welcome] .fm-next-topbar--dark{position:absolute!important;transform:translateY(-12px)!important}\n[data-mode=real] [data-screen=welcome] :is(.fm-next-button,.fm-personalization-quick){height:54px!important;min-height:54px!important;padding:0 20px!important;border-radius:16px!important}'''
           if text.count(old)!=1:
               raise SystemExit(f'discovery.css target count: {text.count(old)}')
           css.write_text(text.replace(old,new,1))
