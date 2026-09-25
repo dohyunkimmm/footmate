@@ -124,7 +124,7 @@ test('reviewer scan surfaces service-planning evidence before implementation det
   expect(forcedTitleLines).toBe(0);
 });
 
-test('short states and steps stay phrase-like while explanatory copy remains sentence copy',async({page})=>{
+test('short states, steps and comparison values stay phrase-like while explanatory copy remains sentence copy',async({page})=>{
   await openCaseStudy(page);
   const slides=page.locator('.slide:not([hidden])');
   const prioritySteps=await slides.nth(3).locator('.fm-next-cs-loop b').allTextContents();
@@ -133,7 +133,9 @@ test('short states and steps stay phrase-like while explanatory copy remains sen
   expect(recommendationNumbers).toEqual(['1','2','3','4']);
   const shortValues=await page.locator('.fm-next-review-summary b,.fm-next-cs-loop b,.fm-next-cs-auth-flow small,.fm-next-cs-auth-flow b,.fm-next-cs-detail-order span').allTextContents();
   expect(shortValues.every(value=>!/[.!?。]$/.test(value.trim()))).toBe(true);
-  await expect(slides.nth(4).locator('.fm-next-cs-before-after p').first()).toContainText('필요합니다.');
+  const comparisonValues=await slides.nth(4).locator('.fm-next-cs-before-after p').allTextContents();
+  expect(comparisonValues).toEqual(['가치 확인 전 계정 생성 필요','추천 확인 후 가입 여부 결정']);
+  expect(comparisonValues.every(value=>!/[.!?。]$/.test(value.trim()))).toBe(true);
 });
 
 test('KPI calculation and observation evidence stays inside the Case Study',async({page})=>{
