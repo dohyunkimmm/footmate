@@ -41,7 +41,7 @@ test('02–13 tables, flows and cards use compact phrase grammar',async({page})=
 
   const priorityValues=await visibleSlide(page,3).locator('.fm-next-cs-principles .fm-next-cs-card p').allTextContents();
   expect(priorityValues.map(value=>value.trim())).toEqual([
-    '판단 기준 한곳 정리 · 선택 맥락 보존 · Beta 검증 · 인증·정원·참가·취소·체크인·복구',
+    '판단 기준을 한곳에 · 선택 맥락을 보존 · 무료 Beta 검증 · 인증·정원·참가·취소·체크인·복구',
     '대기열·알림·경기 후 피드백 → 자리 회복·재탐색 · 후속 검증 · 참가 전환·반복 이용',
     '실제 PG 유보 · 수익화 검증 제외 · AI 자동 참가 제외 · 사용자 최종 확인(HITL)'
   ]);
