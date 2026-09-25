@@ -115,7 +115,7 @@ test('merged sections keep one clear job without exposing route strings as reade
 
   const thesis=await slideText(page,3);
   expect(thesis).toContain('판단 기준 통합');
-  expect(thesis).toContain('선택 맥락을 보존');
+  expect(thesis).toContain('선택 맥락 보존');
 
   const signInJoin=await slideText(page,7);
   expect(signInJoin).toContain('Real App');
