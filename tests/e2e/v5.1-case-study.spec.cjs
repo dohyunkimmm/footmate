@@ -100,6 +100,25 @@ test('structured Case Study content keeps readable type, Korean words, aligned c
   }
 });
 
+test('02–13 structured typography uses consistent semantic sizes',async({page})=>{
+  await openCaseStudy(page);
+  const result=await page.locator('.slide:not([hidden])').evaluateAll(slides=>{
+    const body=slides.slice(1);
+    const sizes=selector=>[...new Set(body.flatMap(slide=>[...slide.querySelectorAll(selector)].map(node=>parseFloat(getComputedStyle(node).fontSize))).filter(Number.isFinite))].sort((a,b)=>a-b);
+    const personaHeights=[...body[1].querySelectorAll('.fm-next-cs-persona>div b')].map(node=>({height:node.getBoundingClientRect().height,line:parseFloat(getComputedStyle(node).lineHeight)}));
+    return {
+      labels:sizes('.fm-next-review-summary span,.fm-next-cs-persona>div>span,.fm-next-cs-before-after small,.fm-next-cs-auth-flow small,.fm-next-cs-modes small,.fm-next-cs-day-states small,.fm-cs-reasons dt,.fm-next-cs-jtbd small'),
+      values:sizes('.fm-next-review-summary b,.fm-next-cs-card p,.fm-next-cs-persona b,.fm-next-cs-before-after p,.fm-next-cs-auth-flow b,.fm-next-cs-modes p,.fm-next-cs-day-states p,.fm-next-cs-recovery span,.fm-next-cs-outcomes p,.fm-cs-reasons dd,.fm-next-cs-jtbd p'),
+      headings:sizes('.fm-next-cs-card h3,.fm-next-cs-modes h3,.fm-next-cs-reco-card h3'),
+      personaHeights
+    };
+  });
+  expect(result.labels).toEqual([12]);
+  expect(result.values).toEqual([12]);
+  expect(result.headings).toEqual([14]);
+  expect(result.personaHeights.every(item=>item.height<=item.line*1.6)).toBe(true);
+});
+
 test('reviewer scan surfaces service-planning evidence before implementation detail',async({page})=>{
   await openCaseStudy(page);
   const cover=page.locator('.slide:not([hidden])').nth(0);
@@ -124,7 +143,7 @@ test('reviewer scan surfaces service-planning evidence before implementation det
   expect(forcedTitleLines).toBe(0);
 });
 
-test('short states, steps and comparison values stay phrase-like while explanatory copy remains sentence copy',async({page})=>{
+test('structured table, flow and card values stay phrase-like without sentence exceptions',async({page})=>{
   await openCaseStudy(page);
   const slides=page.locator('.slide:not([hidden])');
   const prioritySteps=await slides.nth(3).locator('.fm-next-cs-loop b').allTextContents();
@@ -143,8 +162,14 @@ test('KPI calculation and observation evidence stays inside the Case Study',asyn
   await goToSlide(page,11);
   const validation=page.locator('.slide:not([hidden])').nth(11);
   await expect(validation.locator('a[href*="github.com"]')).toHaveCount(0);
-  const open=validation.locator('.fm-next-kpi-open');
+  const metrics=validation.locator('.fm-next-cs-metrics');
+  const disclosure=validation.locator('.fm-next-kpi-disclosure-row');
+  await expect(disclosure).toHaveCount(1);
+  expect(await metrics.evaluate(node=>node.nextElementSibling?.classList.contains('fm-next-kpi-disclosure-row'))).toBe(true);
+  await expect(validation.locator('.fm-next-cs-note .fm-next-kpi-open')).toHaveCount(0);
+  const open=disclosure.locator('.fm-next-kpi-open');
   await expect(open).toHaveText('8개 지표의 계산·관찰 기준 보기');
+  await expect(open).toHaveAttribute('aria-controls','fm-kpi-dialog');
   await open.click();
   const dialog=validation.locator('.fm-next-kpi-dialog');
   await expect(dialog).toBeVisible();
@@ -153,6 +178,11 @@ test('KPI calculation and observation evidence stays inside the Case Study',asyn
   await expect(dialog).toContainText('AI Search Adoption Rate');
   await expect(dialog).toContainText('운영·테스트 계정, 자동 QA, Real App의 샘플·시뮬레이션은 제외');
   await expect(dialog).toContainText('connected-ai와 rules-fallback 분리');
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(open).toBeFocused();
+  await open.click();
   await dialog.locator('.fm-next-kpi-close').click();
   await expect(dialog).not.toBeVisible();
+  await expect(open).toBeFocused();
 });

@@ -41,10 +41,17 @@
     style.textContent=`
       html[data-fm-next-case-study="true"] .fm-next-review-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0 2px}
       html[data-fm-next-case-study="true"] .fm-next-review-summary>div{min-width:0;padding:9px 11px;border:1px solid var(--fm-cs-ui-border,#dfe6e1);border-radius:12px;background:#fbfdfc}
-      html[data-fm-next-case-study="true"] .fm-next-review-summary span{display:block;margin-bottom:3px;color:#5f7067;font-size:11px;line-height:1.35;font-weight:800;letter-spacing:.01em}
-      html[data-fm-next-case-study="true"] .fm-next-review-summary b{display:block;color:var(--fm-cs-ui-ink,#16251d);font-size:12px;line-height:1.45;font-weight:750;word-break:keep-all;text-wrap:pretty}
+      html[data-fm-next-case-study="true"] .fm-next-review-summary span{display:block;margin-bottom:3px;color:#5f7067;font-size:12px;line-height:1.45;font-weight:800;letter-spacing:.01em}
+      html[data-fm-next-case-study="true"] .fm-next-review-summary b{display:block;color:var(--fm-cs-ui-ink,#16251d);font-size:12px;line-height:1.5;font-weight:750;word-break:keep-all;text-wrap:pretty}
       html[data-fm-next-case-study="true"] .fm-next-story-lead{max-width:82ch}
-      html[data-fm-next-case-study="true"] .fm-next-kpi-open{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin-top:10px;padding:0 12px;border:1px solid var(--fm-cs-ui-border-strong,#c7ddce);border-radius:10px;background:#fff;color:var(--fm-cs-ui-ink,#16251d);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+      /* 02–13 structured typography: one label size, one value size, emphasis by weight; only true headings/metrics step up. */
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(.fm-next-review-summary span,.fm-next-cs-persona>div>span,.fm-next-cs-before-after small,.fm-next-cs-auth-flow small,.fm-next-cs-modes small,.fm-next-cs-day-states small,.fm-cs-reasons dt,.fm-next-cs-jtbd small,.fm-next-cs-reco-card>span,.fm-next-cs-final>span){font-size:12px!important;line-height:1.45!important;font-weight:800}
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(.fm-next-review-summary b,.fm-next-cs-card p,.fm-next-cs-persona b,.fm-next-cs-before-after b,.fm-next-cs-before-after p,.fm-next-cs-loop b,.fm-next-cs-loop span,.fm-next-cs-stack p,.fm-next-cs-detail-order span,.fm-next-cs-auth-flow b,.fm-next-cs-day-states b,.fm-next-cs-day-states p,.fm-next-cs-recovery b,.fm-next-cs-recovery span,.fm-next-cs-modes p,.fm-next-cs-outcomes b,.fm-next-cs-outcomes p,.fm-cs-reasons dd,.fm-next-cs-jtbd p,.fm-next-cs-decision b,.fm-next-cs-state-line span){font-size:12px!important;line-height:1.55!important}
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(.fm-next-cs-card h3,.fm-next-cs-modes h3,.fm-next-cs-reco-card h3){font-size:14px!important;line-height:1.4!important;font-weight:800}
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-cs-metric b{font-size:16px!important;line-height:1.4!important;font-weight:850}
+      html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-cs-metric .fm-cs-ratio{font-size:12px!important;line-height:1.55!important}
+      html[data-fm-next-case-study="true"] .fm-next-kpi-disclosure-row{display:flex;align-items:center;justify-content:flex-end;width:100%;margin-top:10px;padding-top:10px;border-top:1px solid var(--fm-cs-ui-separator,#e9efeb)}
+      html[data-fm-next-case-study="true"] .fm-next-kpi-open{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin:0;padding:0 12px;border:1px solid var(--fm-cs-ui-border-strong,#c7ddce);border-radius:10px;background:#fff;color:var(--fm-cs-ui-ink,#16251d);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
       html[data-fm-next-case-study="true"] .fm-next-kpi-dialog{width:min(920px,calc(100vw - 32px));max-height:min(760px,calc(100vh - 32px));padding:0;border:1px solid #d8e2dc;border-radius:18px;color:#16251d;background:#fff;box-shadow:0 24px 70px rgba(21,39,28,.18)}
       html[data-fm-next-case-study="true"] .fm-next-kpi-dialog::backdrop{background:rgba(18,32,24,.34);backdrop-filter:blur(2px)}
       html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{display:grid;gap:14px;max-height:inherit;overflow:auto;padding:22px}
@@ -60,7 +67,7 @@
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd::before{display:block;margin-bottom:2px;color:#728279;font-size:9px;font-weight:800}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd:nth-of-type(1)::before{content:"계산 기준"}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd:nth-of-type(2)::before{content:"관찰 · 제외 기준"}
-      @media(max-width:900px){html[data-fm-next-case-study="true"] .fm-next-review-summary{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-review-summary>div{padding:8px 10px}html[data-fm-next-case-study="true"] .fm-next-kpi-table>div{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{padding:18px}}
+      @media(max-width:900px){html[data-fm-next-case-study="true"] .fm-next-review-summary{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-review-summary>div{padding:8px 10px}html[data-fm-next-case-study="true"] .fm-next-kpi-table>div{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{padding:18px}html[data-fm-next-case-study="true"] .fm-next-kpi-disclosure-row{justify-content:stretch}html[data-fm-next-case-study="true"] .fm-next-kpi-open{width:100%}}
     `;
     document.head.appendChild(style);
   }
@@ -81,16 +88,18 @@
 
   function kpiDialogHTML(){
     const rows=kpiRows.map(([name,calc,observe])=>`<div><dt>${name}</dt><dd>${calc}</dd><dd>${observe}</dd></div>`).join('');
-    return '<dialog class="fm-next-kpi-dialog" aria-labelledby="fm-kpi-dialog-title"><div class="fm-next-kpi-dialog-inner"><div class="fm-next-kpi-dialog-head"><div><h3 id="fm-kpi-dialog-title">8개 지표의 계산·관찰 기준</h3></div><button class="fm-next-kpi-close" type="button" aria-label="닫기">×</button></div><p class="fm-next-kpi-dialog-intro">Validation Metric이며 Measured Result가 아닙니다. 실제 무료 Beta 이용자를 측정 대상으로 하고 운영·테스트 계정, 자동 QA, Real App의 샘플·시뮬레이션은 제외합니다. 비교 기준이 0건이면 N/A로 기록하고 실패·재시도는 동일 흐름 기준으로 중복 제거합니다.</p><dl class="fm-next-kpi-table">'+rows+'</dl></div></dialog>';
+    return '<dialog id="fm-kpi-dialog" class="fm-next-kpi-dialog" aria-labelledby="fm-kpi-dialog-title"><div class="fm-next-kpi-dialog-inner"><div class="fm-next-kpi-dialog-head"><div><h3 id="fm-kpi-dialog-title">8개 지표의 계산·관찰 기준</h3></div><button class="fm-next-kpi-close" type="button" aria-label="닫기">×</button></div><p class="fm-next-kpi-dialog-intro">Validation Metric이며 Measured Result가 아닙니다. 실제 무료 Beta 이용자를 측정 대상으로 하고 운영·테스트 계정, 자동 QA, Real App의 샘플·시뮬레이션은 제외합니다. 비교 기준이 0건이면 N/A로 기록하고 실패·재시도는 동일 흐름 기준으로 중복 제거합니다.</p><dl class="fm-next-kpi-table">'+rows+'</dl></div></dialog>';
   }
 
   function patchKpiDisclosure(validation){
-    const note=validation?.querySelector('.fm-next-cs-note');if(!note)return;
-    note.querySelectorAll('a[href*="github.com"]').forEach(node=>node.remove());
-    if(!note.querySelector('.fm-next-kpi-open'))note.insertAdjacentHTML('beforeend',' <button class="fm-next-kpi-open" type="button">8개 지표의 계산·관찰 기준 보기</button>');
+    const note=validation?.querySelector('.fm-next-cs-note'),metrics=validation?.querySelector('.fm-next-cs-metrics');if(!note||!metrics)return;
+    note.querySelectorAll('a[href*="github.com"],.fm-next-kpi-open').forEach(node=>node.remove());
+    validation.querySelector('.fm-next-kpi-disclosure-row')?.remove();
+    metrics.insertAdjacentHTML('afterend','<div class="fm-next-kpi-disclosure-row"><button class="fm-next-kpi-open" type="button" aria-haspopup="dialog" aria-controls="fm-kpi-dialog">8개 지표의 계산·관찰 기준 보기</button></div>');
     validation.querySelector('.fm-next-kpi-dialog')?.remove();validation.insertAdjacentHTML('beforeend',kpiDialogHTML());
-    const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=note.querySelector('.fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
-    open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',()=>dialog?.close());dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+    const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=validation.querySelector('.fm-next-kpi-disclosure-row .fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
+    const closeDialog=()=>{dialog?.close();open?.focus();};
+    open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',closeDialog);dialog?.addEventListener('click',event=>{if(event.target===dialog)closeDialog();});dialog?.addEventListener('close',()=>open?.focus());
   }
 
   function patch(){

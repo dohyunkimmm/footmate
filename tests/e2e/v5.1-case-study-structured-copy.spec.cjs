@@ -36,27 +36,36 @@ test('02–13 structured cards, flows and short values use phrase grammar',async
   ]);
   expect(await rowValue(visibleSlide(page,1),'대안')).toBe('목록·필터 조건 비교 · 지도 위치 확인 · 커뮤니티 경기 맥락 확인');
   expect(await rowValue(visibleSlide(page,1),'선택')).toBe('조건 해석 → 추천 이유 → 참가 → 경기 당일');
+  expect(await rowValue(visibleSlide(page,1),'검증 범위')).toBe('사용자 조사·경쟁사 우위 미입증 · Beta 가설 검증');
 
-  const personaLines=await visibleSlide(page,2).locator('.fm-next-cs-persona>div').first().locator('b .fm-cs-line').allTextContents();
-  expect(personaLines).toEqual(['평일 저녁 · 주 1~2회','30분 안쪽 이동']);
+  const personaValues=await visibleSlide(page,2).locator('.fm-next-cs-persona>div b').allTextContents();
+  expect(personaValues.map(value=>value.trim())).toEqual(['평일 저녁 · 주 1~2회 · 30분 안쪽 이동','시간 · 거리 · 레벨 · 포지션 · 남은 자리','교육생 6명 · iOS 4 / Android 2']);
+  await expect(visibleSlide(page,2).locator('.fm-next-cs-jtbd small')).toHaveText('JTBD · 가설 → 과업 → 관찰');
+  await expect(visibleSlide(page,2).locator('.fm-next-cs-jtbd p')).toHaveText('가설 · 오늘 뛸 경기의 적합 이유 확인 · 과업 · 회원가입 전·Kakao·Google·이메일 가입 · 관찰 · 동선별 버그·막힘과 요구사항 조정');
 
   const priorityLines=await visibleSlide(page,3).locator('.fm-next-cs-principles .fm-next-cs-card p .fm-cs-line').allTextContents();
   expect(priorityLines).toEqual([
-    '판단 기준을 한곳에 · 선택 맥락을 보존','무료 Beta에서 인증·정원·참가·취소·체크인·복구를 검증합니다.',
-    '대기열 · 알림 · 경기 후 피드백 → 자리 회복 · 재탐색','참가 전환과 반복 이용 효과는 실제 이용 데이터로 확인할 과제입니다.',
+    '판단 기준 통합 · 선택 맥락 보존','무료 Beta · 인증 · 정원 · 참가·취소 · 체크인 · 복구',
+    '대기열 · 알림 · 경기 후 피드백 → 자리 회복 · 재탐색','실제 이용 데이터 확인 과제 · 참가 전환 · 반복 이용',
     '실제 PG 유보 · 수익화 검증 제외','AI 자동 참가 제외 · 사용자 최종 확인(HITL)'
   ]);
 
   const guestAlternatives=await visibleSlide(page,4).locator('.fm-next-cs-before-after>div p').allTextContents();
   expect(guestAlternatives).toEqual(['가치 확인 전 계정 생성 필요','추천 확인 후 가입 여부 결정']);
   expect(await rowValue(visibleSlide(page,4),'결정')).toBe('가입 전 추천 · 상세 공개');
+  expect(await rowValue(visibleSlide(page,4),'이유')).toBe('참가 의도 전 서비스 가치 확인');
+  expect(await rowValue(visibleSlide(page,4),'Trade-off')).toBe('로그인 전 계정 기반 개인화 · 기기 간 연속성 제한');
 
   expect(await rowValue(visibleSlide(page,5),'결정')).toBe('최근 선호는 추천 보조 입력으로만 사용');
+  expect(await rowValue(visibleSlide(page,5),'품질 기준')).toBe('추천 후보·순위·이유 소유권 · 결정론적 추천 엔진');
+  expect(await rowValue(visibleSlide(page,5),'Trade-off')).toBe('과거 선호 ≠ 오늘 의도 · 조건 수정 · 재탐색 허용');
   expect(await rowValue(visibleSlide(page,6),'핵심 행동')).toBe('참가하기');
   expect(await rowValue(visibleSlide(page,6),'보조 행동')).toBe('저장 · 최대 2경기 비교');
+  expect(await rowValue(visibleSlide(page,6),'Trade-off')).toBe('비교 대상 제한 · 취소·환불 기준 참가 전 확인');
 
   expect(await rowValue(visibleSlide(page,7),'Real App')).toBe('인증 · 결제 시뮬레이션');
   expect(await rowValue(visibleSlide(page,7),'Closed Beta')).toBe('Supabase 인증 · 참가 실연동');
+  expect(await rowValue(visibleSlide(page,7),'상태 보존')).toBe('로그인 전 선택 경기 · 복귀 위치 유지 · 동일 결정 반복 방지');
   expect(await rowValue(visibleSlide(page,7),'검증 범위')).toBe('Google/Kakao OAuth Production 실로그인 검증 · 실제 PG 미연동');
 
   expect(await rowValue(visibleSlide(page,8),'운영 권한')).toBe('경기 · 정원 · 취소 마감 · 체크인 · 종료 관리');
@@ -72,47 +81,35 @@ test('02–13 structured cards, flows and short values use phrase grammar',async
     '참가 · 체크인 · 경기 후 상태 책임 분리','동일 상태 판단 일원화',
     '경기 사실 · 가격 · 정원 · 순위 AI 생성 금지','참가 · 결제 사용자 최종 확인'
   ]);
-  expect(await rowValue(visibleSlide(page,10),'미연동')).toBe('실제 PG와 외부 분석 도구는 미연동');
+  expect(await rowValue(visibleSlide(page,10),'실제 연결')).toBe('Vercel AI Gateway · Supabase · Resend · Web Push · Storage');
+  expect(await rowValue(visibleSlide(page,10),'미연동')).toBe('실제 PG · 외부 분석 도구 미연동');
+  expect(await rowValue(visibleSlide(page,10),'정의한 기준')).toBe('API·데이터·권한·오류·재시도 · IA·상태별 화면·CTA · 취소·정원·복구 정책');
+
+  const qaCopy=await visibleSlide(page,11).locator('.fm-next-cs-grid.three .fm-next-cs-card p .fm-cs-line').allTextContents();
+  expect(qaCopy).toContain('사용자 만족도 · 전환 성과 별도');
+  expect(qaCopy).toContain('자동 QA · 사람 검수 PASS 대체 아님');
 
   const outcomes=await visibleSlide(page,12).locator('.fm-next-cs-outcomes .fm-cs-line').allTextContents();
   expect(outcomes.every(value=>!hasSentencePunctuation(value))).toBe(true);
+  expect(await rowValue(visibleSlide(page,12),'과업 범위')).toBe('회원가입 전 2회 · Kakao 2회 · Google 2회 · 이메일 2회 · 총 8회 · 일부 참여자 복수 과업');
+  expect(await rowValue(visibleSlide(page,12),'학습·다음 단계')).toBe('동선별 버그·막힘 재검증 · 제품·운영 상태 고도화 → Production QA → KPI 측정 준비 · 실제 이용자 KPI Baseline 확보 후 측정');
 });
 
-test('reason, trade-off, validation and reflection explanations remain complete sentences',async({page})=>{
+test('user-flagged structured rows stay phrase grammar without sentence endings',async({page})=>{
   await openCaseStudy(page);
-
-  const expectedSentences=[
-    '사용자 조사나 경쟁사 우위가 입증된 결론은 아니며, Beta에서 가설을 확인합니다.',
-    '무료 Beta에서 인증·정원·참가·취소·체크인·복구를 검증합니다.',
-    '참가 전환과 반복 이용 효과는 실제 이용 데이터로 확인할 과제입니다.',
-    '참가 의도가 생기기 전에 서비스 가치를 판단할 수 있게 했습니다.',
-    '로그인 전에는 계정 기반 개인화와 기기 간 연속성이 제한됩니다.',
-    '과거 선호와 오늘의 의도가 다를 수 있어 조건 수정을 허용합니다.',
-    '비교 대상을 제한해 결정을 돕고, 취소·환불 기준은 참가 전에 확인합니다.',
-    '사용자 만족도 · 전환 성과와는 별개입니다.',
-    '자동 QA와 사람 검수의 PASS 판정을 대신하지 않습니다.'
-  ];
-
-  for(const sentence of expectedSentences){
-    const locator=page.getByText(sentence,{exact:true});
-    await expect(locator).toHaveCount(1);
-    expect(hasSentencePunctuation(await locator.innerText())).toBe(true);
-  }
-
-  const recommendationQuality=await rowValue(visibleSlide(page,5),'품질 기준');
-  expect(recommendationQuality).toBe('추천 후보·순위·이유의 소유권은 결정론적 추천 엔진에 유지합니다.');
-  expect(hasSentencePunctuation(recommendationQuality)).toBe(true);
-
-  const release=visibleSlide(page,12);
-  const validationSample=await rowValue(release,'검증 표본');
-  expect(validationSample).toBe('교육생 6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2');
-  expect(hasSentencePunctuation(validationSample)).toBe(false);
-
-  const releaseExplanations=[
-    await rowValue(release,'과업 범위'),
-    await rowValue(release,'학습·다음 단계')
-  ];
-  expect(releaseExplanations.every(hasSentencePunctuation)).toBe(true);
+  const selectors=[
+    '.fm-next-cs-jtbd p',
+    '.fm-next-cs-principles .fm-next-cs-card p',
+    '.fm-next-cs-before-after p',
+    '.fm-next-cs-modes p',
+    '.fm-next-cs-grid.three .fm-next-cs-card p',
+    '.fm-next-cs-outcomes p',
+    '.fm-cs-reasons dd'
+  ].join(',');
+  const values=await page.locator('.slide:not([hidden])').locator(selectors).allTextContents();
+  expect(values.length).toBeGreaterThan(30);
+  expect(values.filter(hasSentencePunctuation)).toEqual([]);
+  expect(values.filter(value=>/(합니다|됩니다|입니다|했습니다|않습니다)\s*$/.test(value.trim()))).toEqual([]);
 });
 
 test('phrase-only structured components do not regress to sentence punctuation',async({page})=>{
