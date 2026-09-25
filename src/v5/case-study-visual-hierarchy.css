@@ -209,6 +209,15 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-sli
   .fm-next-review-summary span,
   .fm-next-review-summary b,
   .fm-next-cs-card p,
+  .fm-next-cs-stack p,
+  .fm-next-cs-stack p b,
+  .fm-next-cs-reco-card>span,
+  .fm-next-cs-reco-card>div b,
+  .fm-next-cs-reco-card>strong,
+  .fm-next-cs-decision>span,
+  .fm-next-cs-decision>b,
+  .fm-next-cs-final>span,
+  .fm-next-cs-final>a,
   .fm-next-cs-persona>div>span,
   .fm-next-cs-persona>div>b,
   .fm-next-cs-jtbd small,
@@ -236,6 +245,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-sli
 
 html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
   .fm-next-cs-card h3,
+  .fm-next-cs-reco-card h3,
   .fm-next-cs-modes h3,
   .fm-next-cs-recovery>div>b,
   .fm-next-cs-outcomes>div>b
