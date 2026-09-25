@@ -157,6 +157,7 @@ test('Real App responsive design baseline stays overflow-free across target widt
     {width:375,height:844},
     {width:390,height:844},
     {width:430,height:900},
+    {width:504,height:900},
     {width:1440,height:900}
   ];
 
