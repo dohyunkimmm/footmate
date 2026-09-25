@@ -15,11 +15,28 @@
 - 사람 검수(Human QA)는 실제 로그인, 실제 전달, OS·브라우저 표시처럼 사람이 결과를 확인해야 하는 항목을 담당한다.
 - AI 보조 검수(AI-assisted QA)는 중복, 용어 혼용, section 역할 충돌, Source of Truth와 카피 불일치를 찾는 보조 수단이며 PASS 판정을 대신하지 않는다.
 
+## 2026-09-25 recruiter scan · KPI 내부 열람 closure
+
+PR #283에서는 최근 국내 대기업 AI/IT 서비스기획 JD에서 반복되는 요구사항 분석, User Research/Journey/Workflow, AI 적용 경계, 품질·QA·사용성 검증, 개발·QA 연계 관점을 **기존 FootMate 근거의 정보 우선순위에만 반영**했다. 새로운 경력·성과·협업 경험을 추가하지 않는다.
+
+- 현재 Case Study runtime/Production baseline: PR #283 · SHA `205c1049109be2feadaedbb5937e00b812cd736e`
+- 01 Cover: 기존 승인 visual과 `Role / Scope / Responsibility` 정보 구조를 유지한다. recruiter scan 개선을 이유로 cover visual baseline을 새로 만들지 않는다.
+- 02–13 opening: 긴 title + 복수 문장 lead를 반복하지 않고 **title 1문장 + lead 1문장 + compact planning facts 3개** 순서로 핵심 기획 판단을 먼저 스캔할 수 있게 한다.
+- Planning facts: 실제 근거가 있는 `결정 / 이유 / 검증 범위 / 상태 보존 / AI 역할 경계 / 다음 검증` 같은 정보를 해당 section에 맞게 사용하며 모든 section에 같은 라벨을 억지로 채우지 않는다.
+- Phrase consistency: 상태명·단계명·CTA·짧은 값은 명사형 또는 짧은 구 + 마침표 없음. 이유·Trade-off·검증 설명처럼 완전한 문장은 문장형 + 마침표를 유지한다.
+- 12 KPI & Validation: 독자용 `8개 지표의 계산·관찰 기준 보기`는 GitHub 외부 문서로 이탈시키지 않고 **Case Study 내부 modal**에서 8개 KPI의 계산 기준·관찰 기간·제외 기준을 확인하게 한다. GitHub evidence 문서는 Source of Truth로 유지할 수 있으나 reader CTA의 목적지는 아니다.
+- Layout preservation: 02–13 desktop `align-items:center`, page-level spacing, 08 auth table spacing, 05 natural wrapping, green emphasis 의미 규칙을 그대로 유지한다.
+- Regression guard: `tests/e2e/v5.1-case-study.spec.cjs`에서 reviewer hierarchy, phrase consistency, 12 내부 KPI evidence 열람을 직접 검사한다.
+- PR QA: FootMate QA #1346 · run `36089398183` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Final main QA: FootMate QA #1349 · run `36089979474` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: Vercel exact deploy PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
+- 보존: 08 상태 보존/인증 spacing, 09 legacy 링크 제거, 12 Validation Metric과 실제 성과의 구분, Real App/Closed Beta 제품·API·data/state-machine 경계, 사용자 과업 검증의 해석 한계는 변경하지 않는다.
+
 ## 2026-09-25 08 로그인·인증 표 spacing closure
 
 PR #271에서 page-wide density regression은 복구했지만, 08 Sign in · Join의 인증 flow와 증빙 표 자체는 공통 구조화 블록 spacing만 적용돼 사용자 요청이 충분히 드러나지 않았다. PR #273에서는 **08 내부 요소에만 전용 selector를 적용**해 실제 표/flow의 간격을 조정했다.
 
-- 현재 Case Study runtime baseline: PR #273 · SHA `c51411ed164d50f1366d0f71aa3a220407dd41ff`
+- 08 spacing implementation baseline: PR #273 · SHA `c51411ed164d50f1366d0f71aa3a220407dd41ff`
 - Desktop auth flow: `둘러보기 → 참가 의도 → 인증/로그인 → 참가 상태`의 gap `6px`, 각 셀 padding `10px 12px`; 인증 flow 밖 page-level geometry는 변경하지 않는다.
 - Desktop 증빙 표: `.fm-next-cs-scope` padding `10px 14px`, `Real App / Closed Beta / 상태 보존 / 검증 범위` 행 gap `0`, 각 행 상하 padding `5px`, label column `84px`, label-value column gap `14px`.
 - Mobile 08: auth flow gap `10px`, 셀 padding `10px 12px`, scope padding `10px 12px`; 증빙 행은 1-column으로 쌓고 row gap `3px`, 각 행 상하 padding `7px`을 사용한다.
@@ -36,7 +53,8 @@ PR #271에서 page-wide density regression은 복구했지만, 08 Sign in · Joi
 PR #268에서 독자용 카피 정리와 함께 들어간 02–13 page-wide density override는 표 여백 조정 범위를 넘긴 변경이었다. `align-items:flex-start`, 38px 상하 padding, section 전체 story gap·제목/lead margin·광범위 card padding 축소는 PR #271에서 제거했으며, 현재 기준에서는 **02–13 desktop story를 기존 중앙 배치로 유지**한다.
 
 - 페이지 리듬 baseline: PR #271 · SHA `50fa005edc2e62c288ac49581464bf4942e46148`
-- 현재 Case Study runtime/Production baseline: PR #273 · SHA `c51411ed164d50f1366d0f71aa3a220407dd41ff`; #271의 page-level center contract 위에 08 내부 spacing만 추가
+- Page-rhythm + 08 spacing baseline before PR #283: PR #273 · SHA `c51411ed164d50f1366d0f71aa3a220407dd41ff`; #271의 page-level center contract 위에 08 내부 spacing만 추가
+- 현재 Case Study runtime/Production baseline은 위 `recruiter scan · KPI 내부 열람 closure`의 PR #283 · SHA `205c1049109be2feadaedbb5937e00b812cd736e`이다.
 - 데스크톱 기준: 02–13 active slide `align-items:center`, PR #268의 강제 `38px` 상하 padding 비사용, story/slide 중심 오차 `<= 20px`, horizontal overflow 없음
 - 구조화 영역 기준: 필요한 표·카드 내부 padding/gap/wrapping만 조정하며 page-level 위치를 바꾸지 않는다.
 - 08 Sign in · Join: 인증·로그인/참가 flow와 범위 표의 행·셀 내부 여백과 문장 wrapping을 08 전용 selector로 조정하며 해당 section 전체의 세로 위치는 유지한다.
@@ -46,14 +64,15 @@ PR #268에서 독자용 카피 정리와 함께 들어간 02–13 page-wide dens
 - #271 final main QA: FootMate QA #1289 · run `36074420880` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - #273 final main QA: FootMate QA #1302 · run `36081422283` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
-- 보존: #268에서 확정한 내부 `PBL` 제거/교육생 6명 맥락, 08 상태 보존 문구, 09 legacy 외부 링크 제거, 12 `계산 기준 · A ÷ B`, green 강조 의미 규칙과 Real App/Closed Beta 제품 로직은 유지한다.
+- 보존: #268에서 확정한 내부 `PBL` 제거/교육생 6명 맥락, 08 상태 보존 문구, 09 legacy evidence-mode 외부 링크 제거, 12 `계산 기준 · A ÷ B`, green 강조 의미 규칙과 Real App/Closed Beta 제품 로직은 유지한다.
 
 ## 본문·줄바꿈·표 여백 검수 기준
 
 - `word-break: keep-all`과 overflow 통과는 편집 검수 완료를 뜻하지 않는다. 모든 페이지의 실제 렌더를 별도로 확인한다.
-- 제목은 의미가 연결되는 두 구절, 설명은 문장, 정책 판단은 이름이 붙은 행으로 나눈다. 화면 폭에 따른 자연 줄바꿈을 허용하며 글자를 줄이거나 잘라서 맞추지 않는다.
+- 02–13 opening은 **title 1문장 + lead 1문장 + compact planning facts 3개**를 기본으로 하며, 같은 의미를 title/lead에서 반복하지 않는다. 화면 폭에 따른 자연 줄바꿈을 허용하며 글자를 줄이거나 잘라서 맞추지 않는다.
+- 상태명·단계명·CTA·짧은 값은 명사형 또는 짧은 구로 쓰고 마침표를 붙이지 않는다. 이유·Trade-off·검증 설명처럼 완전한 문장은 문장형과 마침표를 유지한다.
 - 표·카드는 안쪽 여백, 행·열 간격, 제목과 설명 간격, 텍스트의 좌측 정렬을 함께 확인한다. 모바일의 결정 근거 행은 라벨 위·본문 아래로 바꾼다.
-- KPI는 `계산 기준 · A ÷ B` 형식으로 표시하고, 계산 기준이나 관찰 기간이 카드 경계에서 잘리지 않는지 확인한다.
+- KPI는 `계산 기준 · A ÷ B` 형식으로 표시하고, 8개 지표의 상세 계산·관찰·제외 기준은 **Case Study 내부 modal**에서 확인한다. 독자용 CTA가 GitHub 외부 문서로 이동하지 않는지 함께 검증한다.
 - 데스크톱 1440×900의 13개 페이지와 모바일 320·390px의 **전체 본문**을 검수한다. 모바일 viewport 캡처만 보고 하단까지 확인했다고 기록하지 않는다.
 - 후보 이미지 생성, 이미지 내용의 시각 검토, 승인한 이미지와의 재비교를 구분한다. 새 이미지를 만들었다는 이유만으로 Visual Regression PASS를 주장하지 않는다.
 - 이 검수는 Case Study 13개 페이지와 표지의 정적 핵심 화면 프리뷰·캡션을 대상으로 한다. `/app`, `/beta`, `/demo`의 제품 기능 자체는 별도 Product QA 범위다.
@@ -75,13 +94,13 @@ PR #268에서 독자용 카피 정리와 함께 들어간 02–13 page-wide dens
 | P9 Operations | 운영 권한·대기열·변경 이력·알림 복구 구분 | 정책 표를 전폭으로 배치하고 CTA를 분리해 좁은 본문 열 해소 |
 | P10 Recovery | 상황마다 보존할 상태와 다음 행동, 결제 시뮬레이션 표시 | 복구 카드의 두 설명 줄과 공통 원칙의 끝줄 균형 확인 |
 | P11 Domain & AI | 추천/상태/실행 책임 및 개인 프로젝트의 협의 기준 설명 | 연동 목록과 개발·디자인·운영 항목 분리, 모바일 정책 표 전체 확인 |
-| P12 KPI & Validation | Validation Metric과 QA 분리, 외부 분석 미연동·측정 전제 명시 | 4개 KPI를 실제 4열로 배치, `계산 기준 · A ÷ B` 표기, QA 카드·각주·링크까지 확인 |
+| P12 KPI & Validation | Validation Metric과 QA 분리, 외부 분석 미연동·측정 전제 명시 | 4개 KPI를 실제 4열로 배치, `계산 기준 · A ÷ B` 표기, QA 카드·각주·내부 KPI 열람 modal까지 확인 |
 | P13 Release & Learnings | 구현 결과·미검증 성과·배운 점·다음 판단 기준 구분 | 결과 카드와 회고 행을 나누고 마지막 CTA까지 확인 |
 
 실제 렌더 검토에서 추가 수정한 항목은 P1 역할 카드 제목, P4 모바일 여정의 과도한 높이, P7 화살표 방향, P8 중복 흐름과 끝줄, P9 좁은 운영 정책 표, P12 비어 있던 다섯 번째 grid 열, 320·390px의 일부 문장/가운데점 줄바꿈이다. 전체 본문 캡처는 고정 헤더가 이미지 안에 겹치지 않도록 해당 캡처에서만 헤더를 숨기며, 기존 viewport·헤더 위치 검사는 그대로 유지한다.
 
 - 당시 자동 시각 비교: 기존 viewport 27개 + 전체 본문 26개(13×2), 미리보기 캡션 2개 추가, 총 55개 `toHaveScreenshot`, `maxDiffPixels: 0`. **이 2026-09-23 이력은 당시 검수 사실이며 현재 자동 gate의 승인 기준과 동일하지 않다.**
-- 현재 자동 gate: cover/caption pixel baseline + 02–13 center alignment·overflow·natural wrapping invariant + 08 auth flow/evidence table spacing contract 검증
+- 현재 자동 gate: cover/caption pixel baseline + 02–13 center alignment·overflow·natural wrapping invariant + 08 auth flow/evidence table spacing + reviewer hierarchy/phrase consistency/내부 KPI evidence contract 검증
 - 반응형 구조 검사: 1440/1180/900/430/390/375/320px, P1–P13; 정책 행의 `dt`/`dd` 글자 크기도 포함
 - TOC: 부제 13개 한 줄, 잘림 없음
 - 결과 증빙: 해당 PR의 QA 및 Release History Correction에 최종 run과 Production 결과를 별도 기록
