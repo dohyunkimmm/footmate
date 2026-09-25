@@ -1,0 +1,35 @@
+name: Temporary Real App White Baseline Sync
+on:
+  push:
+    branches: [fix/real-app-welcome-copy-cta-final]
+    paths: [.github/workflows/tmp-real-app-white-baseline-sync.yml]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/real-app-welcome-copy-cta-final
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh changed Welcome baselines only
+        run: npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Welcome|390px personalized Welcome" --update-snapshots
+      - name: Commit approved Welcome baselines
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png
+          git diff --cached --quiet && exit 0
+          git commit -m "test: refresh Real App welcome white-surface baselines"
+          git push origin HEAD:fix/real-app-welcome-copy-cta-final
