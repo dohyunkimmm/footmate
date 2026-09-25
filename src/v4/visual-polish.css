@@ -1058,3 +1058,44 @@
   }
 }
 
+
+
+/* Real App native-density polish · desktop preview and shared app chrome.
+   Preserve phone-width layouts, routes, copy, state and Portfolio surfaces. */
+@media(min-width:480px){
+  html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){
+    width:min(100%,402px)!important;
+  }
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-topbar>strong{
+  position:absolute;
+  left:50%;
+  max-width:34%;
+  transform:translateX(-50%);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:center;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] :is([data-screen="discover"],[data-screen="schedule"])>.fm-next-section{
+  padding-top:20px;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="profile"]>.fm-next-profile-card{
+  margin-top:20px;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-screen:not(.fm-next-screen--plain):not(.fm-next-screen--intro){
+  padding-bottom:calc(88px + env(safe-area-inset-bottom))!important;
+  scroll-padding-bottom:calc(88px + env(safe-area-inset-bottom));
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-nav{
+  padding:5px 6px!important;
+  border-radius:20px!important;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-nav button{
+  min-height:50px!important;
+  gap:3px;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-nav-icon{
+  width:32px;
+  height:26px;
+}
