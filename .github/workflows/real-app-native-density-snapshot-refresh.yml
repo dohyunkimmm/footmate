@@ -31,7 +31,7 @@ jobs:
           npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --update-snapshots
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add 'tests/e2e/**/*-snapshots/*.png'
+          git add tests/e2e
           if ! git diff --cached --quiet; then
             git commit -m "test: refresh Real App native density baselines"
             git push origin HEAD:fix/real-app-native-density
