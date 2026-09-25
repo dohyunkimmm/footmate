@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -60,10 +60,15 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     const box=element.getBoundingClientRect();
     return {left:box.left,right:innerWidth-box.right,width:box.width,borderRadius:getComputedStyle(element).borderRadius};
   });
-  expect(geometry.width).toBeGreaterThanOrEqual(428);
-  expect(geometry.width).toBeLessThanOrEqual(432);
+  expect(geometry.width).toBeGreaterThanOrEqual(400);
+  expect(geometry.width).toBeLessThanOrEqual(404);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
   expect(parseFloat(geometry.borderRadius)).toBe(30);
+
+  const header=page.locator('[data-screen="home"] .fm-next-topbar');
+  const headerHeight=await header.evaluate(element=>element.getBoundingClientRect().height);
+  expect(headerHeight).toBeGreaterThanOrEqual(62);
+  expect(headerHeight).toBeLessThanOrEqual(66);
 
   const card=page.locator('.fm-next-match-card').first();
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));
@@ -74,11 +79,14 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
   const nav=page.locator('.fm-next-nav');
   const navGeometry=await nav.evaluate(element=>{
     const box=element.getBoundingClientRect();
-    return {left:box.left,right:innerWidth-box.right,width:box.width};
+    const active=element.querySelector('button[aria-current="page"]')?.getBoundingClientRect();
+    return {left:box.left,right:innerWidth-box.right,width:box.width,height:box.height,activeHeight:active?.height??0};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThanOrEqual(404);
-  expect(navGeometry.width).toBeLessThanOrEqual(408);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(380);
+  expect(navGeometry.width).toBeLessThanOrEqual(384);
+  expect(navGeometry.height).toBeLessThanOrEqual(58);
+  expect(navGeometry.activeHeight).toBeGreaterThanOrEqual(44);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
