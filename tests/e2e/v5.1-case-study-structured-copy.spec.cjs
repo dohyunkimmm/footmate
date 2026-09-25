@@ -40,7 +40,13 @@ test('02–13 structured cards, flows and short values use phrase grammar',async
 
   const personaLines=await visibleSlide(page,2).locator('.fm-next-cs-persona>div').first().locator('b .fm-cs-line').allTextContents();
   expect(personaLines).toEqual(['평일 저녁 · 주 1~2회','30분 안쪽 이동']);
-  expect(await visibleSlide(page,2).locator('.fm-next-cs-persona>div').nth(2).locator('b').innerText()).toBe('교육생 6명 · iOS 4 / Android 2');
+  const taskEvidence=visibleSlide(page,2).locator('.fm-next-cs-persona>div').nth(2).locator('b');
+  expect(await taskEvidence.innerText()).toBe('교육생 6명 · iOS 4 / Android 2');
+  const taskEvidenceLines=await taskEvidence.evaluate(node=>{
+    const style=getComputedStyle(node);
+    return node.getBoundingClientRect().height/parseFloat(style.lineHeight);
+  });
+  expect(taskEvidenceLines).toBeLessThan(1.5);
   expect(await visibleSlide(page,2).locator('.fm-next-cs-jtbd p .fm-cs-line').allTextContents()).toEqual([
     '가설 · 적합 이유 빠른 확인',
     '과업 · 회원가입 전 · Kakao · Google · 이메일',
