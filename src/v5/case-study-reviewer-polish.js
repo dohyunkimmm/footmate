@@ -99,7 +99,7 @@
     validation.querySelector('.fm-next-kpi-dialog')?.remove();validation.insertAdjacentHTML('beforeend',kpiDialogHTML());
     const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=validation.querySelector('.fm-next-kpi-disclosure-row .fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
     const closeDialog=()=>{dialog?.close();open?.focus();};
-    open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',closeDialog);dialog?.addEventListener('click',event=>{if(event.target===dialog)closeDialog();});
+    open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',closeDialog);dialog?.addEventListener('click',event=>{if(event.target===dialog)closeDialog();});dialog?.addEventListener('close',()=>open?.focus());
   }
 
   function patch(){
