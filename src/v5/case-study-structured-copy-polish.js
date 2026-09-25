@@ -112,9 +112,9 @@
       '.fm-next-cs-day-states small','.fm-next-cs-day-states b','.fm-next-cs-day-states p',
       '.fm-next-cs-recovery b','.fm-next-cs-recovery .fm-cs-line',
       '.fm-next-cs-outcomes b','.fm-next-cs-outcomes .fm-cs-line',
-      '.fm-next-cs-jtbd p','.fm-next-cs-principles .fm-next-cs-card p',
-      '.fm-next-cs-before-after p','.fm-next-cs-modes p',
-      '.fm-next-cs-grid.three .fm-next-cs-card p','.fm-cs-reasons dd'
+      '.fm-next-cs-jtbd .fm-cs-line','.fm-next-cs-principles .fm-cs-line',
+      '.fm-next-cs-before-after p','.fm-next-cs-modes .fm-cs-line',
+      '.fm-next-cs-grid.three .fm-next-cs-card .fm-cs-line','.fm-cs-reasons dd'
     ].join(',');
     slides.forEach(slide=>stripTerminalPunctuation(slide,phraseSelector));
 
