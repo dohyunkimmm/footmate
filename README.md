@@ -7,6 +7,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 ## Product at a glance
 
 - Primary journey: **Find → Decide → Join → Play → Return**
+- Real App IA: **Home = AI Match Assistant entry + compact personalization → Discover = AI/search result exploration + filter/sort → Detail = match decision → Join = joined-match status → MY = profile/settings**
 - Case Study: `/`
 - Real App: `/app`
 - Closed Beta: `/beta` — Supabase Auth / Postgres / Realtime / capacity / participation / waitlist / reminders / feedback / in-app notification / transactional email / opt-in Web Push / media upload connected
@@ -25,6 +26,7 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - **Value before account** — 추천과 경기 상세을 먼저 확인하고 참가 의도가 생겼을 때 로그인합니다.
 - **Reason before score** — 내부 적합도는 정렬에 사용하되 사용자는 생활권·레벨·포지션·거리처럼 판단 가능한 이유를 먼저 봅니다.
 - **AI interprets, deterministic engine ranks** — AI는 자연어를 검색 조건으로 바꾸고 실제 경기 후보·순위·추천 이유는 recommendation engine이 결정합니다.
+- **Entry and results are separate surfaces** — Home은 AI 조건 입력과 짧은 개인화 추천에 집중하고, 실제 결과 탐색·조건 수정·filter/sort·전체 목록은 Discover가 소유합니다.
 - **Recoverable participation** — checkout → pending → success | failure | canceled를 분리하고 retry·status check·reload recovery를 제공합니다.
 - **State-aware Matchday** — upcoming → matchday → checked-in과 late·update·cancel recovery를 분리합니다.
 - **Return loop** — 경기 후 체감 난이도·완료·반복 의도를 다음 추천의 보조 신호로 사용합니다.
@@ -42,6 +44,10 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 
 ## Implemented experience
 
+- Home AI Match Assistant entry — `오늘, 어떤 경기에서 뛸까요?` 질문과 실행 가능한 example suggestion을 제공하고, 실행 결과를 Discover로 handoff
+- Home personalization — For You를 1–2개 compact match로 제한하고 동일 경기의 중복 추천 section을 만들지 않음
+- Discover result exploration — Home의 자연어/structured constraints를 이어받아 조건 summary/edit, filter/sort, zero-result recovery와 전체 결과 탐색을 제공하며 full Assistant를 중복 mount하지 않음
+- Home → Discover → Detail 선택 동안 AI/discovery state와 selected match identity를 일관되게 유지
 - 자연어 경기 탐색 → structured constraints
 - AI connected path + provider fallback + browser rules fallback
 - deterministic recommendation ranking과 human-readable recommendation reason
@@ -139,7 +145,8 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 
 - `api/ai-match-assistant.js` — AI Gateway, OIDC, provider fallback, request/time/cost guardrails
 - `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
-- `src/v5/ai-match-assistant.js` — AI UI/application bridge, browser timeout/fallback, reload restoration
+- `src/v5/ai-match-assistant.js` — AI UI/application bridge, Home Assistant entry/example execution, Discover handoff, browser timeout/fallback, AI state restoration
+- `src/v4/discovery.js` — Discover filter/sort/result-list ownership and persisted discovery state; AI state ownership은 갖지 않음
 - `src/v5/beta.js` — Closed Beta Auth / profile / match / participation / freshness / account-data UI state
 - `src/v5/beta-recovery-bootstrap.js` — recovery token bootstrap before base Beta Auth connection
 - `src/v5/beta-readiness.js` — account recovery / cancellation policy / self check-in / in-app notification UI extension
