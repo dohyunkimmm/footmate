@@ -21,7 +21,9 @@ jobs:
         with:
           node-version: '24'
       - name: Install browser QA dependencies
-        run: npm ci
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")" css-tree@3.1.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Refresh approved Real App visual baselines
