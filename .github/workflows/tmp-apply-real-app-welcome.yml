@@ -7,7 +7,7 @@ permissions:
   contents: write
 jobs:
   apply:
-    if: github.event.head_commit.message == 'ci: apply Real App welcome correction'
+    if: "${{ github.event.head_commit.message == 'ci: apply Real App welcome correction v2' }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
