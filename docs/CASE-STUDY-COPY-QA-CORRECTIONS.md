@@ -33,7 +33,7 @@ PR #286에서 문서에만 있던 `상태명·단계명·CTA·짧은 값 = 명�
 - Phrase grammar: 02 Problem facts, 03 Persona compact values, 04 priority facts, 05 비교·결정, 06 결정, 07 CTA, 08 인증 증빙, 09 운영 상태, 10 recovery, 11 Domain/AI 책임, 12 KPI/QA compact values를 명사형·짧은 구 중심으로 정리하고 terminal punctuation을 제거한다.
 - Sentence grammar: `이유`, `Trade-off`, `검증 범위`, 추천 `품질 기준`, Validation boundary, 13의 `과업 범위`·`학습·다음 단계`처럼 설명 역할을 하는 값은 완전한 문장과 마침표를 유지한다.
 - 13 Release & Learnings: `검증 표본`은 compact evidence value라 무마침표로 유지하고, `과업 범위`와 `학습·다음 단계`만 설명 문장으로 검증한다.
-- Preserved: PR #285의 01/03 lead 축약, PR #283의 recruiter hierarchy·12 KPI 내부 modal, PR #273의 08 auth spacing, PR #271의 02–13 center alignment, 승인된 evidence와 상태 보존 의미를 유지한다.
+- Preserved: PR #285의 01/03 lead 축약, PR #283의 recruiter hierarchy·12 KPI 내부 modal, PR #273의 08 auth spacing, PR #271의 02–13 desktop center alignment, 승인된 evidence와 상태 보존 의미를 유지한다.
 - Regression guard: `v5.1-case-study-structured-copy.spec.cjs`를 Browser E2E + axe gate에 포함해 phrase-only component의 terminal punctuation과 설명 문장의 문장 종결을 의미별로 검사한다.
 - PR QA: FootMate QA #1377 · run `36113020210` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
 - Final main QA: FootMate QA #1378 · run `36113545309` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
