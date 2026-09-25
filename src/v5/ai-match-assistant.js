@@ -77,8 +77,6 @@ function mount(){if(!root)return;const screen=root.querySelector('[data-screen="
 window.__FOOTMATE_AI__=Object.freeze({version:VERSION,workflow:'Context → Plan → Tools → Guardrail → Observe',role:'natural-language constraint interpretation',rankingOwner:'deterministic recommendation engine',requestTimeoutMs:AI_REQUEST_TIMEOUT_MS,storageKey:AI_STORAGE_KEY,hitl:Object.freeze(['join','payment']),get mode(){return lastMode},query:async message=>{const state=readState();try{const result=await requestAi(message,{region:state.region,position:state.position,level:state.level});lastMode='connected-ai';return Object.freeze({mode:lastMode,result,results:deterministicResults(result,state).map(entry=>entry.match.id)})}catch{const result=fallbackParse(message);lastMode='rules-fallback';return Object.freeze({mode:lastMode,result,results:deterministicResults(result,state).map(entry=>entry.match.id)})}}});
 document.documentElement.dataset.footmateAiVersion=VERSION;if(root)root.dataset.aiAssistant='available';const observer=root?new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount()})}):null;if(observer)observer.observe(root,{childList:true,subtree:true});mount();
 
-
-
 /* Product completion orchestration */
 (()=>{
 const root=document.getElementById('footmate-next');
@@ -108,7 +106,7 @@ if(root){
       setText(copy,'AI가 자연어 조건을 해석하고 기존 추천 엔진이 맞는 경기 순위를 계산합니다.');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'AI로 찾기');
-      examples.forEach((button,index)=>{button.hidden=index>0;button.style.minHeight='44px'});
+      examples.forEach(button=>{button.hidden=false;button.style.minHeight='44px'});
     }else{
       setText(title,'원하는 경기를 문장으로 검색하세요.');
       setText(copy,'필터와 함께 사용해 시간·거리·가격·포지션 조건을 빠르게 좁힐 수 있어요.');
@@ -174,4 +172,132 @@ if(root){
   schedule();
 }
 
+})();
+
+/* Real App IA: Home owns AI entry; Discover owns result exploration. */
+(()=>{
+const root=document.getElementById('footmate-next');
+if(!root)return;
+const SNAPSHOT_KEY='footmate:v5.2:discover-ai-snapshot';
+const SCOPE_KEY='footmate:v5.2:discover-ai-scope';
+const FOCUS_KEY='footmate:v5.2:focus-assistant';
+let homeCard=null,homeObserver=null,searchIntent=null,pressedExample=null,scheduled=false;
+const readSessionJson=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'null')}catch{return null}};
+const writeSessionJson=(key,value)=>{try{sessionStorage.setItem(key,JSON.stringify(value))}catch{}};
+const snapshot=()=>readSessionJson(SNAPSHOT_KEY);
+const scopeActive=()=>Boolean(snapshot()?.result)&&sessionStorage.getItem(SCOPE_KEY)==='1';
+const setScope=active=>sessionStorage.setItem(SCOPE_KEY,active?'1':'0');
+const text=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value};
+const hidden=(node,value)=>{if(node&&node.hidden!==value)node.hidden=value};
+const displayMessage=value=>String(value||'AI 경기 조회').replace(/,\s*/g,' · ');
+
+function setPressed(button){
+  pressedExample=button||null;
+  homeCard?.querySelectorAll('[data-ai-example]').forEach(example=>example.setAttribute('aria-pressed',example===pressedExample?'true':'false'));
+}
+function setLoading(card,loading){
+  card?.classList.toggle('is-ia-loading',loading);
+  card?.querySelectorAll('[data-ai-example]').forEach(example=>example.setAttribute('aria-disabled',loading?'true':'false'));
+}
+function goDiscover(){
+  const screen=root.querySelector('[data-screen="home"]');
+  if(!screen)return;
+  setScope(true);
+  const action=[...screen.querySelectorAll('[data-action="nav-discover"]')].find(node=>!node.hidden&&node.getClientRects().length)||screen.querySelector('[data-action="nav-discover"]');
+  action?.click();
+}
+function observeHome(card){
+  if(homeCard===card)return;
+  homeObserver?.disconnect();
+  homeCard=card;
+  homeObserver=new MutationObserver(()=>{
+    const state=card.dataset.aiState;
+    if(state==='loading'){setLoading(card,true);return;}
+    if(state!=='result')return;
+    setLoading(card,false);
+    const saved=readAssistant();
+    if(saved?.result)writeSessionJson(SNAPSHOT_KEY,saved);
+    const shouldNavigate=searchIntent==='example'||(searchIntent==='submit'&&saved?.mode==='connected-ai');
+    searchIntent=null;setPressed(null);
+    if(shouldNavigate&&saved?.result)requestAnimationFrame(goDiscover);
+  });
+  homeObserver.observe(card,{attributes:true,attributeFilter:['data-ai-state']});
+}
+function configureHome(screen){
+  screen.dataset.iaRole='assistant-entry';
+  const greeting=screen.querySelector('.fm-next-greeting');
+  text(greeting?.querySelector('small'),'AI MATCH ASSISTANT');
+  text(greeting?.querySelector('h1'),'오늘, 어떤 경기에서 뛸까요?');
+  const assistant=screen.querySelector('.fm-ai-card[data-product-ai="home"],.fm-ai-card[data-ai-assistant]');
+  if(assistant){
+    assistant.hidden=false;assistant.dataset.iaRole='primary-assistant';
+    assistant.querySelectorAll('[data-ai-example]').forEach(example=>{example.hidden=false;example.classList.add('fm-ia-suggestion');if(!example.hasAttribute('aria-pressed'))example.setAttribute('aria-pressed','false');example.style.minHeight='44px'});
+    assistant.querySelector('.fm-ai-examples')?.setAttribute('aria-label','바로 실행할 AI 경기 검색 예시');
+    observeHome(assistant);
+  }
+  const context=screen.querySelector('.fm-next-context-card');
+  if(context){
+    const generic=/FOR YOU/i.test(context.querySelector('.fm-next-context-kicker')?.textContent||'');
+    hidden(context,false);
+    context.classList.toggle('fm-ia-action-strip',generic);
+    context.classList.toggle('fm-ia-selection-summary',!generic);
+  }
+  const head=screen.querySelector(':scope > .fm-next-section-head');
+  text(head?.querySelector('h2'),'For You');
+  text(head?.querySelector('p'),'내 설정을 기준으로 고른 추천 경기예요.');
+  const headAction=head?.querySelector('[data-action="nav-discover"]');
+  if(headAction)headAction.hidden=true;
+  const list=screen.querySelector(':scope > .fm-next-list');
+  if(list){list.dataset.iaRole='personalized-recommendations';list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1))}
+  if(sessionStorage.getItem(FOCUS_KEY)==='1'){
+    sessionStorage.removeItem(FOCUS_KEY);
+    requestAnimationFrame(()=>{assistant?.scrollIntoView({block:'start',behavior:'smooth'});assistant?.querySelector('[data-ai-input]')?.focus({preventScroll:true})});
+  }
+}
+function ensureSummary(screen,saved,active){
+  let summary=screen.querySelector('[data-ia-ai-summary]');
+  if(!saved?.result){summary?.remove();return}
+  const anchor=screen.querySelector('.fm-discovery-chrome')||screen.querySelector('.fm-next-list');
+  if(!summary){
+    summary=document.createElement('section');summary.className='fm-discovery-ai-summary';summary.dataset.iaAiSummary='true';
+  }
+  if(anchor&&summary.nextElementSibling!==anchor)anchor.before(summary);else if(!anchor&&!summary.isConnected)screen.querySelector('.fm-next-section-head')?.insertAdjacentElement('afterend',summary);
+  const labels=conditionLabels(saved.result),message=displayMessage(saved.message);
+  const sig=JSON.stringify([active,message,labels]);
+  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div></div><div class="fm-discovery-ai-summary__actions"><button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'전체 경기 보기':'AI 결과 다시 보기'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
+  if(summary.dataset.iaSignature===sig&&summary.innerHTML===markup)return;
+  summary.dataset.iaSignature=sig;summary.innerHTML=markup;
+}
+function ensureEmpty(screen){
+  let empty=screen.querySelector('[data-ia-ai-empty]');
+  if(!empty){empty=document.createElement('div');empty.className='fm-ia-discovery-empty';empty.dataset.iaAiEmpty='true';empty.innerHTML='<b>AI 조건과 현재 필터를 함께 만족하는 경기가 없어요.</b><span>필터를 줄이거나 전체 경기 보기로 탐색 범위를 넓혀보세요.</span>';screen.querySelector('.fm-next-list')?.before(empty)}
+  return empty;
+}
+function configureDiscover(screen){
+  screen.dataset.iaRole='result-exploration';
+  const assistant=screen.querySelector('.fm-ai-card[data-product-ai="discover"],.fm-ai-card[data-ai-assistant]');
+  if(assistant){hidden(assistant,true);assistant.dataset.iaHidden='duplicate-assistant'}
+  const saved=snapshot(),active=scopeActive();ensureSummary(screen,saved,active);
+  const head=screen.querySelector('.fm-next-section-head');text(head?.querySelector('h1'),active&&saved?.result?'AI 조회 결과':'경기 찾기');text(head?.querySelector('p'),active&&saved?.result?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'추천 기준을 유지한 채 전체 경기를 탐색할 수 있어요.');
+  const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState()).map(entry=>entry.match.id)):null;
+  const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
+  cards.forEach(node=>{const matches=!allowed||allowed.has(node.dataset.matchId);hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++});
+  const empty=ensureEmpty(screen);hidden(empty,!(active&&saved?.result&&visible===0));hidden(screen.querySelector('.fm-next-list'),Boolean(active&&saved?.result&&visible===0));
+  text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${cards.length}개 경기`);
+}
+function enhance(){
+  const screen=root.querySelector('[data-screen]');if(!screen)return;
+  if(screen.dataset.screen==='home')configureHome(screen);else if(screen.dataset.screen==='discover')configureDiscover(screen);else if(screen.dataset.screen==='schedule')screen.dataset.iaRole='joined-match-status';else if(screen.dataset.screen==='profile')screen.dataset.iaRole='account-settings';
+}
+function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;enhance()})}
+root.addEventListener('pointerdown',event=>{const example=event.target.closest('[data-screen="home"] [data-ai-example]');if(example){searchIntent='example';setPressed(example)}},true);
+root.addEventListener('submit',event=>{if(event.target.closest('[data-screen="home"] [data-ai-form]')&&searchIntent!=='example')searchIntent='submit'},true);
+root.addEventListener('click',event=>{
+  const action=event.target.closest('[data-ia-action]');
+  if(action){if(action.dataset.iaAction==='show-all'){setScope(false);enhance()}else if(action.dataset.iaAction==='apply-ai'){setScope(true);enhance()}else if(action.dataset.iaAction==='edit-ai'){sessionStorage.setItem(FOCUS_KEY,'1');root.querySelector('[data-screen="discover"] [data-action="nav-home"]')?.click()}}
+  if(event.target.closest('[data-action="reset-flow"]')){sessionStorage.removeItem(SNAPSHOT_KEY);sessionStorage.removeItem(SCOPE_KEY);sessionStorage.removeItem(FOCUS_KEY)}
+},true);
+new MutationObserver(schedule).observe(root,{childList:true,subtree:true});
+enhance();
+window.__FOOTMATE_REAL_APP_IA__=Object.freeze({version:'1.0.0',roles:Object.freeze({home:'assistant-entry',discover:'result-exploration',schedule:'joined-match-status',profile:'account-settings'}),get assistant(){return snapshot()},get aiScope(){return scopeActive()}});
 })();
