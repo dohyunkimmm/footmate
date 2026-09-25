@@ -3,19 +3,23 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2');
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3');
 }
 
 async function visibleSlides(page){
   return page.locator('.slide:not([hidden])');
 }
 
-test('public Case Study uses reader-facing participant wording without internal PBL jargon',async({page})=>{
+test('public Case Study keeps participant count only in the detailed release evidence',async({page})=>{
   await openCaseStudy(page);
-  const text=(await (await visibleSlides(page)).allInnerTexts()).join('\n');
+  const slides=await visibleSlides(page);
+  const text=(await slides.allInnerTexts()).join('\n');
   expect(text).not.toContain('PBL');
-  expect(text).toContain('같은 교육과정을 수강한 교육생 6명');
-  expect(text).toContain('과업 검증');
+  expect((text.match(/교육생 6명/g)||[])).toHaveLength(1);
+  await expect(slides.nth(2)).not.toContainText('교육생 6명');
+  await expect(slides.nth(2)).toContainText('검증 흐름 · 가설 → 과업 → 관찰');
+  await expect(slides.nth(12)).toContainText('검증 표본');
+  await expect(slides.nth(12)).toContainText('교육생 6명 · iOS 4 / Android 2');
 });
 
 test('Sign in and Join folds state preservation into the evidence table',async({page})=>{
