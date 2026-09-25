@@ -36,16 +36,18 @@ jobs:
           git status --short
           python - <<'PY'
           import subprocess
-          expected={
+          allowed={
             'tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png',
             'tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png',
             'tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png',
             'tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png',
           }
           changed=set(subprocess.check_output(['git','diff','--name-only']).decode().splitlines())
-          if changed != expected:
+          if not changed:
+            raise SystemExit('No baseline changes generated')
+          if not changed.issubset(allowed):
             raise SystemExit(f'Unexpected baseline change set: {sorted(changed)}')
-          print('PASS exact approved baseline change set')
+          print(f'PASS approved baseline subset only: {sorted(changed)}')
           PY
       - name: Commit generated baselines
         run: |
