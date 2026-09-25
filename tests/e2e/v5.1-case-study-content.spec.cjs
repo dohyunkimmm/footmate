@@ -9,7 +9,7 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'&&
-    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'
+    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2'
   );
 }
 
@@ -125,7 +125,7 @@ test('merged sections keep one clear job without exposing route strings as reade
   const domain=await slideText(page,10);
   expect(domain).toContain('결정론적 추천 엔진');
   expect(domain).toContain('HITL');
-  expect(domain).toContain('실제 PG와 외부 분석 도구는 미연동');
+  expect(domain).toContain('실제 PG · 외부 분석 도구');
 
   const production=await slideText(page,12);
   expect(production).toContain('Real App');
@@ -241,7 +241,7 @@ test('reader-facing body copy is Korean-first while preserving necessary technic
   const validation=await slideText(page,11);
   expect(validation).toContain('사람 검수');
   expect(validation).toContain('AI 보조 검수');
-  expect(validation).toContain('PASS 판정을 대신하지 않습니다');
+  expect(validation).toContain('자동 QA·사람 검수 PASS 대체 아님');
 });
 
 test('merged source slides can never render as extra pages after P13',async({page})=>{
@@ -279,7 +279,7 @@ test('service planning evidence distinguishes ownership, hypotheses, metrics and
   expect(await slideText(page,10)).toContain('정의한 기준');
   const metrics=await slideText(page,11);
   for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구는 미연동'])expect(metrics).toContain(value);
-  expect(await slideText(page,12)).toContain('기준값을 확보한 뒤');
+  expect(await slideText(page,12)).toContain('실제 이용자 KPI Baseline부터 측정');
 });
 
 test('reader-facing cleanup removes internal jargon and legacy review exits',async({page})=>{
