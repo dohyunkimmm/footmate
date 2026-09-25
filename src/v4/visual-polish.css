@@ -1,6 +1,4 @@
-/* FootMate Real App visual system
-   Consolidates the previous polish batches and applies the visible redesign pass.
-   Preserve IA, copy, routes, state machines, recommendation ownership and sample data. */
+
 
 :root{
   --fm-type-micro:11px;
@@ -8,7 +6,6 @@
   --fm-field-default:50px;
 }
 
-/* Existing hierarchy / behavior-preserving polish */
 .fm-next-screen[data-screen="setup"]{
   display:flex;
   flex-direction:column;
@@ -46,7 +43,6 @@
 .fm-next-sticky-price{min-width:88px}
 .fm-next-success .fm-next-actions .fm-next-button{min-height:52px}
 
-/* Interaction consistency */
 .fm-next-social,
 .fm-next-nav button,
 .fm-next-menu-item,
@@ -84,7 +80,6 @@
 .fm-ai-result:active{transform:scale(.985)}
 .fm-ai-input-row button:disabled{transform:none;box-shadow:none}
 
-/* Existing empty / loading / recovery distinction */
 .fm-discovery-empty{
   min-height:280px;
   align-content:center;
@@ -149,8 +144,6 @@
 .fm-participation-state button.is-ghost{background:transparent;border-color:#aebeb4}
 [data-screen="checkout"][data-participation-status="pending"] [data-participation-submit]{opacity:.45;box-shadow:none}
 
-/* Visual Redesign Pass · premium sport utility
-   Deep-green identity stays. Surfaces, typography, spacing and CTA hierarchy become visibly more editorial and product-like. */
 .fm-next-page[data-mode="real"]{
   --fm-bg:#eef1eb;
   --fm-surface:#f7f9f4;
@@ -556,7 +549,6 @@
 .fm-next-page[data-mode="real"] .fm-next-menu-item{border-color:#edf0ec}
 .fm-next-page[data-mode="real"] .fm-next-menu-item:hover{background:#f5f7f3;color:var(--fm-pitch)}
 
-/* Floating navigation / CTA = stronger app-like composition on both mobile and desktop */
 .fm-next-page[data-mode="real"] .fm-next-nav{
   width:min(calc(100% - 24px),536px);
   bottom:12px;
@@ -605,11 +597,6 @@
   .fm-next-page[data-mode="real"] .fm-next-detail-hero{margin-inline:-14px;padding-inline:14px}
 }
 
-
-
-
-
-/* Visual System Completion · tokenized hierarchy, remaining surfaces, state clarity and responsive composition */
 .fm-next-page[data-mode="real"]{
   --fm-muted:#66736b;
   --fm-type-display:36px;
@@ -660,7 +647,6 @@
   transition-timing-function:var(--fm-ease);
 }
 
-/* Setup · scan first on mobile, compare on larger surfaces */
 .fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-step-indicator,
 .fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-question,
 .fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-question-copy,
@@ -685,7 +671,6 @@
   margin-inline:auto;
 }
 
-/* Auth · decision-to-join surface */
 .fm-next-page[data-mode="real"] .fm-next-auth-wrap[data-screen="auth"]{
   position:relative;
   min-height:100dvh;
@@ -755,7 +740,6 @@
   text-align:center;
 }
 
-/* Discovery · filter and empty states keep one surface language */
 .fm-next-page[data-mode="real"] .fm-discovery-sheet{
   border-radius:28px 28px 0 0;
   box-shadow:0 -18px 54px rgba(17,43,31,.12);
@@ -774,7 +758,6 @@
 .fm-next-page[data-mode="real"] .fm-discovery-empty p{color:var(--fm-muted);line-height:1.7}
 .fm-next-page[data-mode="real"] .fm-discovery-empty-actions{gap:9px}
 
-/* AI · loading, connected, fallback and empty are visibly distinct without becoming noisy */
 .fm-next-page[data-mode="real"] .fm-ai-loading{
   position:relative;
   overflow:hidden;
@@ -807,7 +790,6 @@
 }
 .fm-next-page[data-mode="real"] .fm-ai-empty span{color:var(--fm-muted)}
 
-/* Schedule · next action first, lifecycle second */
 .fm-next-page[data-mode="real"] [data-screen="schedule"] .fm-next-section{
   width:min(100%,900px);
   margin-inline:auto;
@@ -846,7 +828,6 @@
   box-shadow:var(--fm-shadow-soft);
 }
 
-/* Profile · account identity and settings become a deliberate two-level surface */
 .fm-next-page[data-mode="real"] .fm-next-profile-card{
   margin-top:28px;
   background:
@@ -893,8 +874,6 @@
   .fm-next-page[data-mode="real"] .fm-next-profile-card{margin-top:22px}
 }
 
-
-
 @media(prefers-reduced-motion:reduce){
   .fm-next-page[data-mode="real"] *,
   .fm-next-page[data-mode="real"] *::before,
@@ -906,11 +885,8 @@
   }
 }
 
-
-/* Visual System Completion · active Auth/Matchday surfaces and motion language */
 .fm-next-page[data-mode="real"] [data-screen="detail"]{--fm-type-title:19px}
 
-/* Auth v3 is the active runtime auth surface. Keep mobile focused, use a deliberate split composition on desktop. */
 .fm-next-page[data-mode="real"] .fm-next-auth-wrap.fm-next-auth-v3[data-screen="auth"]{
   display:block;
   grid-template-columns:none;
@@ -958,7 +934,6 @@
   color:#355747;
 }
 
-/* Matchday and personalization use the same premium sport utility surfaces. */
 .fm-next-page[data-mode="real"] .fm-matchday-panel{
   margin:18px 0 24px;
   padding:22px;
@@ -1010,7 +985,6 @@
 .fm-next-page[data-mode="real"] .fm-personalization-explanation button,
 .fm-next-page[data-mode="real"] .fm-personalization-quick{border-radius:14px}
 
-/* Motion language: state change should explain hierarchy, not decorate it. */
 .fm-next-page[data-mode="real"] .fm-discovery-sheet-backdrop,
 .fm-next-page[data-mode="real"] .fm-decision-dialog-backdrop{animation:fm-surface-fade var(--fm-duration-base) ease both}
 .fm-next-page[data-mode="real"] .fm-discovery-sheet{animation:fm-sheet-enter .22s var(--fm-ease) both}
@@ -1039,8 +1013,6 @@
   .fm-next-page[data-mode="real"] .fm-matchday-home{margin-inline:0}
 }
 
-
-
 @media(prefers-reduced-motion:reduce){
   .fm-next-page[data-mode="real"] .fm-discovery-sheet-backdrop,
   .fm-next-page[data-mode="real"] .fm-discovery-sheet,
@@ -1051,17 +1023,12 @@
   .fm-next-page[data-mode="real"] .fm-next-success-icon{animation:none!important}
 }
 
-/* Visual QA follow-up · keep mobile recovery CTAs above the floating nav. */
 @media(max-width:430px){
   .fm-next-page[data-mode="real"] .fm-discovery-empty{
     padding-bottom:104px;
   }
 }
 
-
-
-/* Real App native-density polish · desktop preview and shared app chrome.
-   Preserve phone-width layouts, routes, copy, state and Portfolio surfaces. */
 @media(min-width:480px){
   html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){
     width:min(100%,402px)!important;
