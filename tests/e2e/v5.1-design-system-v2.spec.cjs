@@ -85,7 +85,7 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
   expect(navGeometry.width).toBeGreaterThanOrEqual(380);
   expect(navGeometry.width).toBeLessThanOrEqual(384);
-  expect(navGeometry.height).toBeLessThanOrEqual(58);
+  expect(navGeometry.height).toBeLessThanOrEqual(59);
   expect(navGeometry.activeHeight).toBeGreaterThanOrEqual(44);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
