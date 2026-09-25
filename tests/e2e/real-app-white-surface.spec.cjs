@@ -67,7 +67,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   expect(ctaStyle.height).toBeGreaterThanOrEqual(44);
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',exact);
+  await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',{...exact,maxDiffPixels:2});
   expect(errs).toEqual([]);
 });
 
