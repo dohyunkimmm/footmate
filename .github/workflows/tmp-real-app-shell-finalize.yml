@@ -1,0 +1,75 @@
+name: Temporary Real App Shell Finalize
+on:
+  push:
+    branches: [fix/real-app-shell-polish-final-20260925]
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply current-main shell polish and contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin fix/real-app-shell-polish-v2-20260925
+          git checkout origin/fix/real-app-shell-polish-v2-20260925 -- \
+            tests/e2e/v5.1-decision-flow-polish.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs
+          python - <<'PY'
+          from pathlib import Path
+          html_path=Path('app.html')
+          html=html_path.read_text()
+          style='''<style id="fm-real-app-shell-polish-final">@media(min-width:700px){html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){width:min(100%,402px)}}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"],[data-screen="schedule"],[data-screen="profile"]) .fm-next-topbar{min-height:calc(64px + env(safe-area-inset-top));padding-top:calc(8px + env(safe-area-inset-top));padding-bottom:8px}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="discover"],[data-screen="schedule"],[data-screen="profile"])>.fm-next-topbar--titled{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="discover"],[data-screen="schedule"],[data-screen="profile"])>.fm-next-topbar--titled>:first-child{justify-self:start}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="discover"],[data-screen="schedule"],[data-screen="profile"])>.fm-next-topbar--titled>strong{justify-self:center}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="discover"],[data-screen="schedule"],[data-screen="profile"])>.fm-next-topbar--titled>:last-child{justify-self:end}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"]>.fm-next-section{padding-top:20px}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"],[data-screen="schedule"],[data-screen="profile"]){padding-bottom:calc(86px + env(safe-area-inset-bottom));scroll-padding-bottom:calc(86px + env(safe-area-inset-bottom))}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-nav{bottom:max(10px,env(safe-area-inset-bottom));padding:5px 7px;border-radius:20px}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-nav button{min-height:50px;gap:2px;border-radius:14px;font-size:10px}.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-nav-icon{width:32px;height:26px}@media(min-width:700px){.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-nav{bottom:10px}}</style>\n'''
+          if 'id="fm-real-app-shell-polish-final"' not in html:
+              html=html.replace('</head>',style+'</head>',1)
+          html_path.write_text(html)
+
+          app_path=Path('src/v4/app.js')
+          app=app_path.read_text()
+          old='class="fm-next-topbar${dark?\' fm-next-topbar--dark\':\'\'}"'
+          new='class="fm-next-topbar${dark?\' fm-next-topbar--dark\':\'\'}${title?\' fm-next-topbar--titled\':\'\'}"'
+          if old not in app and new not in app:
+              raise SystemExit('topbar class pattern not found')
+          app=app.replace(old,new,1)
+          marker="    root.querySelector('.fm-next-app')?.scrollTo({top:0,left:0,behavior:'instant'});\n"
+          insert=marker+"    activeScreen?.scrollTo({top:0,left:0,behavior:'instant'});\n"
+          if 'activeScreen?.scrollTo' not in app:
+              if marker not in app:
+                  raise SystemExit('route scroll marker not found')
+              app=app.replace(marker,insert,1)
+          app_path.write_text(app)
+          PY
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" css-tree@3.1.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh affected approved baselines
+        run: |
+          npx playwright test \
+            tests/e2e/product-completion.spec.cjs \
+            tests/e2e/real-app-white-surface.spec.cjs \
+            tests/e2e/v5.1-decision-flow-polish.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-release-flow-review.spec.cjs \
+            tests/e2e/v5.1-visual-baseline.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            --update-snapshots
+      - name: Commit finalized shell polish
+        run: |
+          git rm .github/workflows/tmp-real-app-shell-finalize.yml
+          git add app.html src/v4/app.js tests/e2e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix: finalize Real App 402px shell polish [shell-final-generated]"
+          git push origin HEAD:fix/real-app-shell-polish-final-20260925
