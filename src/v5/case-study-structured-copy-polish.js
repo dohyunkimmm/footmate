@@ -12,7 +12,11 @@
   function setRow(root,label,text){const value=row(root,label)?.querySelector('dd');if(value)value.textContent=text;return value;}
   function setCardText(container,index,text){const card=container?.querySelectorAll('.fm-next-cs-card')?.[index];if(card)setText(card,'p',text);return card;}
   function stripTerminalPunctuation(root,selector){
-    root?.querySelectorAll(selector).forEach(node=>{node.textContent=(node.textContent||'').trim().replace(/[.!?。]+$/,'');});
+    root?.querySelectorAll(selector).forEach(node=>{
+      // Do not flatten structured markup such as numbered steps or natural-wrap line spans.
+      if(node.children.length)return;
+      node.textContent=(node.textContent||'').trim().replace(/[.!?。]+$/,'');
+    });
   }
 
   function moveKpiDisclosure(validation){
@@ -54,7 +58,7 @@
 
     // 04 · Scope & Priority — card bodies are phrase grammar.
     const principles=slides[3].querySelector('.fm-next-cs-principles');
-    setCardText(principles,0,'판단 기준 한곳 정리 · 선택 맥락 보존 · Beta 검증 · 인증·정원·참가·취소·체크인·복구');
+    setCardText(principles,0,'판단 기준을 한곳에 · 선택 맥락을 보존 · 무료 Beta 검증 · 인증·정원·참가·취소·체크인·복구');
     setCardText(principles,1,'대기열·알림·경기 후 피드백 → 자리 회복·재탐색 · 후속 검증 · 참가 전환·반복 이용');
     setCardText(principles,2,'실제 PG 유보 · 수익화 검증 제외 · AI 자동 참가 제외 · 사용자 최종 확인(HITL)');
 
