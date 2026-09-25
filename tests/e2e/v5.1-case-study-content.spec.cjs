@@ -9,7 +9,9 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'&&
-    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'
+    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&
+    document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&
+    document.documentElement.dataset.footmateCaseStudyFinalClarity==='1'
   );
 }
 
@@ -33,6 +35,7 @@ test('static Case Study shell exposes 13 navigation items before runtime patchin
   expect(html).toContain('AI-assisted discovery · 13 sections');
   expect(html).toContain('<span class="topbar-count">01 / 13</span>');
   expect(html).toContain('/src/v5/case-study-heading-polish.js?v=517');
+  expect(html).toContain('/src/v5/case-study-final-clarity.js?v=1');
   expect(html).not.toContain('<span class="topbar-count">01 / 16</span>');
   expect(html).not.toContain('<span class="toc-n">14</span>');
   expect(html).not.toContain('<span class="toc-n">15</span>');
@@ -127,17 +130,19 @@ test('merged sections keep one clear job without exposing route strings as reade
   expect(domain).toContain('HITL');
   expect(domain).toContain('실제 PG · 외부 분석 도구');
 
-  const production=await slideText(page,12);
-  expect(production).toContain('Real App');
-  expect(production).toContain('Closed Beta');
-  expect(production).toContain('실제 PG · 외부 분석 도구');
+  const release=await slideText(page,12);
+  expect(release).toContain('구현 AI · Supabase · Resend · Push');
+  expect(release).toContain('검증 행동 과업 · iOS · Android');
+  expect(release).toContain('다음 단계 실제 결제 · 이용자 KPI · 수익성');
+  expect(release).not.toContain('Real App');
+  expect(release).not.toContain('Closed Beta');
 
   const readerText=await page.locator('.fm-cs-shell').innerText();
   expect(readerText).not.toMatch(/(^|\s)\/app\b/);
   expect(readerText).not.toMatch(/(^|\s)\/beta\b/);
 });
 
-test('System Evidence, Validation, and Outcome Limits remain represented after the 13-section merge',async({page})=>{
+test('System Evidence, Validation, and concise release next steps remain represented after the 13-section merge',async({page})=>{
   await openCaseStudy(page);
 
   const systemEvidence=await slideText(page,10);
@@ -153,13 +158,16 @@ test('System Evidence, Validation, and Outcome Limits remain represented after t
   expect(validation).toContain('AI 보조 검수');
   expect(validation).toContain('Visual Regression');
   expect(validation).toContain('Production Smoke');
+  expect(validation).toContain('외부 분석 도구 미연동');
+  expect(validation).toContain('표본·기간·기준값 우선 확보');
 
-  const outcomeLimits=await slideText(page,12);
-  expect(outcomeLimits).toContain('Real App');
-  expect(outcomeLimits).toContain('Closed Beta');
-  expect(outcomeLimits).toContain('미연동 범위');
-  expect(outcomeLimits).toContain('실제 PG · 외부 분석 도구');
-  expect(outcomeLimits).toContain('Production 기준');
+  const release=await slideText(page,12);
+  expect(release).toContain('구현 결과와 다음 과제를 정리했습니다.');
+  expect(release).toContain('AI · Supabase · Resend · Push');
+  expect(release).toContain('행동 과업 · iOS · Android');
+  expect(release).toContain('실제 결제 · 이용자 KPI · 수익성');
+  expect(release).not.toContain('검증 표본');
+  expect(release).not.toContain('Production 기준');
 });
 
 test('story sections preserve centered desktop rhythm and fit the 1440x900 review surface',async({page})=>{
@@ -278,8 +286,10 @@ test('service planning evidence distinguishes ownership, hypotheses, metrics and
   expect(await slideText(page,10)).toContain('실제 연결');
   expect(await slideText(page,10)).toContain('정의한 기준');
   const metrics=await slideText(page,11);
-  for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구는 미연동'])expect(metrics).toContain(value);
-  expect(await slideText(page,12)).toContain('실제 이용자 KPI Baseline부터 측정');
+  for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구 미연동','표본·기간·기준값 우선 확보'])expect(metrics).toContain(value);
+  const release=await slideText(page,12);
+  expect(release).toContain('실제 이용자 KPI');
+  expect(release).toContain('실제 결제');
 });
 
 test('reader-facing cleanup removes internal jargon and legacy review exits',async({page})=>{
@@ -287,7 +297,7 @@ test('reader-facing cleanup removes internal jargon and legacy review exits',asy
   const slides=await visibleSlides(page);
   const allText=(await slides.allInnerTexts()).join('\n');
   expect(allText).not.toContain('PBL');
-  expect((allText.match(/교육생 6명/g)||[])).toHaveLength(1);
+  expect((allText.match(/교육생 6명/g)||[])).toHaveLength(0);
   await expect(slides.nth(7).locator('.fm-next-cs-state-line')).toHaveCount(0);
   await expect(slides.nth(7)).toContainText('상태 보존');
   await expect(slides.nth(8).locator('.fm-next-cs-link')).toHaveCount(0);
