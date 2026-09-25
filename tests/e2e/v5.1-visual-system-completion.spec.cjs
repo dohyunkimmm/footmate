@@ -97,9 +97,26 @@ test('1440px Home and Discover match the completed visual hierarchy',async({page
   await page.clock.setFixedTime(new Date('2026-09-24T12:00:00Z'));
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
+  const homeGeometry=await page.locator('[data-screen="home"]').evaluate(element=>{
+    const app=element.closest('.fm-next-app').getBoundingClientRect();
+    const header=element.querySelector('.fm-next-topbar').getBoundingClientRect();
+    const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
+    const navButton=element.querySelector('.fm-next-nav button').getBoundingClientRect();
+    return {appWidth:app.width,headerHeight:header.height,navHeight:nav.height,navButtonHeight:navButton.height};
+  });
+  expect(homeGeometry.appWidth).toBe(402);
+  expect(homeGeometry.headerHeight).toBeLessThanOrEqual(64);
+  expect(homeGeometry.navHeight).toBeLessThanOrEqual(64);
+  expect(homeGeometry.navButtonHeight).toBeLessThanOrEqual(50);
   await expect(page).toHaveScreenshot('visual-system-home-1440.png',exactScreenshot);
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  const discoverTopGap=await page.locator('[data-screen="discover"]').evaluate(element=>{
+    const header=element.querySelector('.fm-next-topbar').getBoundingClientRect();
+    const heading=element.querySelector('.fm-next-section-head').getBoundingClientRect();
+    return heading.top-header.bottom;
+  });
+  expect(discoverTopGap).toBeGreaterThanOrEqual(18);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('visual-system-discover-1440.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
