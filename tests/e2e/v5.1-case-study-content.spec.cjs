@@ -9,7 +9,7 @@ async function openCaseStudy(page,viewport={width:1440,height:900}){
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage==='en'&&
-    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2'
+    document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'
   );
 }
 
@@ -241,7 +241,7 @@ test('reader-facing body copy is Korean-first while preserving necessary technic
   const validation=await slideText(page,11);
   expect(validation).toContain('사람 검수');
   expect(validation).toContain('AI 보조 검수');
-  expect(validation).toContain('자동 QA·사람 검수 PASS 대체 아님');
+  expect(validation).toContain('중복 · 용어 · 구현-설명 불일치 검토 · PASS 판정 제외');
 });
 
 test('merged source slides can never render as extra pages after P13',async({page})=>{
@@ -287,7 +287,7 @@ test('reader-facing cleanup removes internal jargon and legacy review exits',asy
   const slides=await visibleSlides(page);
   const allText=(await slides.allInnerTexts()).join('\n');
   expect(allText).not.toContain('PBL');
-  expect(allText).toContain('같은 교육과정을 수강한 교육생 6명');
+  expect((allText.match(/교육생 6명/g)||[])).toHaveLength(1);
   await expect(slides.nth(7).locator('.fm-next-cs-state-line')).toHaveCount(0);
   await expect(slides.nth(7)).toContainText('상태 보존');
   await expect(slides.nth(8).locator('.fm-next-cs-link')).toHaveCount(0);

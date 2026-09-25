@@ -29,7 +29,7 @@ async function openCaseStudy(page,viewport,index=0){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();scrollTo(0,0)});
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2'&&document.querySelectorAll('.slide:not([hidden])').length===13);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&document.querySelectorAll('.slide:not([hidden])').length===13);
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto!important}'});
   if(index>0){
@@ -181,14 +181,16 @@ test('Case Study 1440 desktop cover preserves recruiter scan contract',async({pa
   expect(errs).toEqual([]);
 });
 
-test('Case Study 01 and 03 keep concise leads while preserving Persona validation evidence',async({page})=>{
+test('Case Study 01 and 03 keep concise leads with distinct summary and validation flow',async({page})=>{
   const errs=await openCaseStudy(page,{width:1440,height:900});
   await expect(page.locator('.fm-next-cover-lead')).toHaveText('나에게 맞는 이유를 확인하고, 안심하고 참가하는 풋살 서비스입니다.');
   await page.evaluate(()=>window.goTo(2));
-  await expect(page.locator('.slide.on .fm-next-story-lead')).toHaveText('설계용 Persona는 가정으로 두고, 행동 과업으로 핵심 동선을 점검했습니다.');
+  await expect(page.locator('.slide.on .fm-next-story-lead')).toHaveText('설계용 Persona는 가정으로 두고, 행동 과업으로 탐색·가입 동선을 점검했습니다.');
   const validation=page.locator('.slide.on .fm-next-review-summary>div').nth(2);
-  await expect(validation.locator('span')).toHaveText('검증');
-  await expect(validation.locator('b')).toHaveText('같은 교육과정을 수강한 교육생 6명 · iOS 4 · Android 2');
+  await expect(validation.locator('span')).toHaveText('검증 방식');
+  await expect(validation.locator('b')).toHaveText('행동 과업 · iOS · Android');
+  await expect(page.locator('.slide.on .fm-next-cs-persona')).toHaveCount(0);
+  await expect(page.locator('.slide.on .fm-next-cs-jtbd small')).toHaveText('검증 흐름 · 가설 → 과업 → 관찰');
   expect(errs).toEqual([]);
 });
 
