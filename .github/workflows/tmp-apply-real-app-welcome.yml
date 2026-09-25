@@ -1,0 +1,71 @@
+name: Temporary Apply Real App Welcome Correction
+on:
+  push:
+    branches: [fix/real-app-welcome-final-correction]
+    paths: [.github/workflows/tmp-apply-real-app-welcome.yml]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.event.head_commit.message == 'ci: apply Real App welcome correction'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/real-app-welcome-final-correction
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply only the approved welcome correction
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          app=Path('src/v4/app.js')
+          text=app.read_text()
+          old='''        <div class="fm-next-intro-copy">\n          <h1>내 수준에 맞는 경기를<br>찾아보세요.</h1>\n          <p class="fm-next-intro-lead">지역과 플레이 스타일에 맞는 경기를 먼저 추천해드려요.</p>\n        </div>'''
+          new='''        <div class="fm-next-intro-copy">\n          <h1>내 수준에 맞는 경기부터,<br>경기 당일까지.</h1>\n        </div>'''
+          if text.count(old)!=1:
+              raise SystemExit(f'app.js target count: {text.count(old)}')
+          app.write_text(text.replace(old,new,1))
+
+          css=Path('src/v4/discovery.css')
+          text=css.read_text()
+          old='[data-mode=real] [data-screen=welcome] .fm-next-topbar--dark{position:absolute!important}'
+          new='''[data-mode=real] [data-screen=welcome] .fm-next-topbar--dark{position:absolute!important;transform:translateY(-12px)!important}\n[data-mode=real] [data-screen=welcome] .fm-next-button{height:54px!important;min-height:54px!important;padding:0 20px!important;border-radius:16px!important}'''
+          if text.count(old)!=1:
+              raise SystemExit(f'discovery.css target count: {text.count(old)}')
+          css.write_text(text.replace(old,new,1))
+
+          spec=Path('tests/e2e/real-app-white-surface.spec.cjs')
+          text=spec.read_text()
+          old="""  const lead=page.locator('.fm-next-intro-lead');\n  const cta=page.getByRole('button',{name:/내 경기 찾아보기/});\n  await expect(intro).toBeVisible();\n  await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');\n  const leadColor=await lead.evaluate(node=>getComputedStyle(node).color);\n  expect(leadColor).not.toBe('rgb(255, 255, 255)');"""
+          new="""  const cta=page.getByRole('button',{name:/내 경기 찾아보기/});\n  await expect(intro).toBeVisible();\n  await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');\n  await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);\n  await expect(page.locator('[data-screen=\"welcome\"] .fm-next-topbar--dark')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');"""
+          if text.count(old)!=1:
+              raise SystemExit(f'white-surface lead contract count: {text.count(old)}')
+          text=text.replace(old,new,1)
+          anchor="""  await expect(page.locator('[data-screen=\"welcome\"] .fm-next-actions button')).toHaveCount(2);\n  await expectNoHorizontalOverflow(page);\n  await page.mouse.move(1,1);\n  await expect(page).toHaveScreenshot('real-app-white-personalized-welcome-390.png',exact);"""
+          replacement="""  const buttons=page.locator('[data-screen=\"welcome\"] .fm-next-actions button');\n  await expect(buttons).toHaveCount(2);\n  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius}});\n  const firstGeometry=await geometry(buttons.nth(0));\n  const secondGeometry=await geometry(buttons.nth(1));\n  expect(firstGeometry).toEqual(secondGeometry);\n  expect(firstGeometry.height).toBe(54);\n  await expectNoHorizontalOverflow(page);\n  await page.mouse.move(1,1);\n  await expect(page).toHaveScreenshot('real-app-white-personalized-welcome-390.png',exact);\n  await buttons.nth(0).click();\n  const setupNext=page.getByRole('button',{name:'다음'});\n  await expect(setupNext).toBeVisible();\n  expect(await geometry(setupNext)).toEqual(firstGeometry);"""
+          if text.count(anchor)!=1:
+              raise SystemExit(f'white-surface geometry anchor count: {text.count(anchor)}')
+          spec.write_text(text.replace(anchor,replacement,1))
+          PY
+      - name: Install screenshot QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Refresh only changed welcome baselines
+        run: |
+          npx playwright test tests/e2e/real-app-white-surface.spec.cjs --grep "390px Welcome|390px personalized Welcome" --update-snapshots
+          npx playwright test tests/e2e/v5.1-release-flow-review.spec.cjs --grep "welcome hero keeps readable contrast" --update-snapshots
+      - name: Commit correction and remove temporary workflow
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/tmp-apply-real-app-welcome.yml
+          git add src/v4/app.js src/v4/discovery.css tests/e2e/real-app-white-surface.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots
+          git commit -m "fix: correct Real App welcome without redesigning it"
+          git push origin HEAD:fix/real-app-welcome-final-correction
