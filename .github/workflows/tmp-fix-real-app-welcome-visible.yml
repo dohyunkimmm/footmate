@@ -20,7 +20,7 @@ jobs:
 
           app = Path('app.html')
           text = app.read_text()
-          style = '''<style id="fm-real-app-welcome-visible-fix">html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-topbar--dark{position:absolute!important;top:0!important}html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-personalization-quick{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;height:54px!important;min-height:54px!important;padding:0 20px!important;border:0!important;border-radius:16px!important;background:linear-gradient(180deg,#0b3828 0%,var(--fm-pitch) 100%)!important;color:#fff!important;box-shadow:0 12px 28px rgba(9,46,33,.19)!important;font-size:15px!important;font-weight:800!important;letter-spacing:-.015em!important}</style>'''
+          style = '''<style id="fm-real-app-welcome-visible-fix">html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-topbar--dark{position:absolute!important;top:0!important}html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-personalization-quick{justify-content:center!important}</style>'''
           marker = '</style>\n\n</head><body>'
           if 'fm-real-app-welcome-visible-fix' not in text:
               if marker not in text:
@@ -29,6 +29,16 @@ jobs:
           text = text.replace('/src/v4/app.js?v=490', '/src/v4/app.js?v=491')
           text = text.replace('/src/v4/personalization.js?v=490', '/src/v4/personalization.js?v=491')
           app.write_text(text)
+
+          personalization = Path('src/v4/personalization.js')
+          text = personalization.read_text()
+          old = 'class="fm-personalization-quick" style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"'
+          new = 'class="fm-next-button fm-next-button--primary fm-personalization-quick" style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"'
+          if new not in text:
+              if old not in text:
+                  raise SystemExit('personalization quick CTA marker not found')
+              text = text.replace(old, new, 1)
+          personalization.write_text(text)
 
           spec = Path('tests/e2e/real-app-white-surface.spec.cjs')
           text = spec.read_text()
@@ -39,7 +49,7 @@ jobs:
                   raise SystemExit('welcome topbar assertion marker not found')
               text = text.replace(transform_line, transform_line + '\n' + position_line, 1)
           old_geometry = "  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius}});"
-          new_geometry = "  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius,borderTopWidth:style.borderTopWidth,backgroundImage:style.backgroundImage,color:style.color,fontSize:style.fontSize,fontWeight:style.fontWeight,letterSpacing:style.letterSpacing,boxShadow:style.boxShadow,justifyContent:style.justifyContent}});"
+          new_geometry = "  const geometry=async locator=>locator.evaluate(node=>{const style=getComputedStyle(node);const box=node.getBoundingClientRect();return {height:box.height,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderRadius:style.borderRadius,borderTopWidth:style.borderTopWidth,backgroundImage:style.backgroundImage,backgroundColor:style.backgroundColor,color:style.color,fontSize:style.fontSize,fontWeight:style.fontWeight,letterSpacing:style.letterSpacing,boxShadow:style.boxShadow,justifyContent:style.justifyContent}});"
           if new_geometry not in text:
               if old_geometry not in text:
                   raise SystemExit('CTA geometry helper marker not found')
@@ -64,7 +74,7 @@ jobs:
       - name: Commit verified fix and remove temporary workflow
         run: |
           git rm .github/workflows/tmp-fix-real-app-welcome-visible.yml
-          git add app.html tests/e2e/real-app-white-surface.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
+          git add app.html src/v4/personalization.js tests/e2e/real-app-white-surface.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "fix: make Real App welcome changes visibly apply [welcome-visible-generated]"
