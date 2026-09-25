@@ -130,8 +130,7 @@ function welcomeView(){
       <div class="fm-next-intro">
         <div class="fm-next-topbar fm-next-topbar--dark">${brand({dark:true})}<span style="width:44px" aria-hidden="true"></span></div>
         <div class="fm-next-intro-copy">
-          <h1>내 수준에 맞는 경기를<br>찾아보세요.</h1>
-          <p class="fm-next-intro-lead">지역과 플레이 스타일에 맞는 경기를 먼저 추천해드려요.</p>
+          <h1>내 수준에 맞는 경기부터,<br>경기 당일까지.</h1>
         </div>
         <div class="fm-next-actions">
           ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary')}
