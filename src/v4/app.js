@@ -72,7 +72,7 @@ function button(label,action,variant='primary',extra=''){
 }
 
 function topbar({title='',backAction='',dark=false,actionHtml=''}){
-  return `<header class="fm-next-topbar${dark?' fm-next-topbar--dark':''}">
+  return `<header class="fm-next-topbar${dark?' fm-next-topbar--dark':''}${title?' fm-next-topbar--titled':''}">
     ${backAction?`<button class="fm-next-icon-button" type="button" data-action="${backAction}" aria-label="이전 화면">${icon('back')}</button>`:brand({dark})}
     ${title?`<strong>${title}</strong>`:''}
     ${actionHtml||'<span style="width:44px" aria-hidden="true"></span>'}
@@ -337,6 +337,7 @@ function render(){
   if(routeChanged){
     window.scrollTo({top:0,left:0,behavior:'instant'});
     root.querySelector('.fm-next-app')?.scrollTo({top:0,left:0,behavior:'instant'});
+    activeScreen?.scrollTo({top:0,left:0,behavior:'instant'});
   }
   document.documentElement.dataset.footmateNext=mode;
 }
