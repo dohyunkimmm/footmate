@@ -20,6 +20,21 @@ async function openCleanApp(page,viewport){
   return errs;
 }
 
+async function openPersonalizedWelcome(page,viewport){
+  const errs=failures(page);
+  await page.setViewportSize(viewport);
+  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>{
+    localStorage.clear();
+    localStorage.setItem('footmate:v4:session',JSON.stringify({route:'welcome',setupComplete:true,region:'서울 · 강남',position:'GK',level:'입문',signedIn:false,userName:'게스트'}));
+    localStorage.setItem('footmate:v4:personalization',JSON.stringify({version:'4.7.0',profile:{region:'수원 · 영통',position:'MF',level:'중급',savedAt:'2026-09-25T00:00:00.000Z'},recentMatchIds:[],favorites:{areas:[],timeWindows:[],formats:[]}}));
+  });
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+  return errs;
+}
+
 async function setupToHome(page){
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
   await page.getByRole('button',{name:'다음'}).click();
@@ -53,6 +68,18 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',exact);
+  expect(errs).toEqual([]);
+});
+
+test('390px personalized Welcome keeps one primary CTA and one returning-user shortcut',async({page})=>{
+  const errs=await openPersonalizedWelcome(page,{width:390,height:844});
+  await expect(page.getByRole('button',{name:/내 경기 찾아보기/})).toBeVisible();
+  await expect(page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/})).toBeVisible();
+  await expect(page.getByRole('button',{name:'이전 설정으로 계속하기'})).toHaveCount(0);
+  await expect(page.locator('[data-screen="welcome"] .fm-next-actions button')).toHaveCount(2);
+  await expectNoHorizontalOverflow(page);
+  await page.mouse.move(1,1);
+  await expect(page).toHaveScreenshot('real-app-white-personalized-welcome-390.png',exact);
   expect(errs).toEqual([]);
 });
 

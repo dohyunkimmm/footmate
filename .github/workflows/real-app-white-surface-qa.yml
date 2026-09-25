@@ -7,6 +7,7 @@ on:
       - src/v4/design-system-v2.css
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
+      - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js
       - src/v4/platform/domain/recommendation.js
@@ -23,6 +24,7 @@ on:
       - src/v4/design-system-v2.css
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
+      - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js
       - src/v4/platform/domain/recommendation.js
