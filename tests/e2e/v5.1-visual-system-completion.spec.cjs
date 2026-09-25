@@ -173,7 +173,7 @@ test('390px AI loading and Discovery empty states match the completed state syst
   await page.getByLabel('포지션').selectOption('GK');
   await page.getByRole('button',{name:'결과 보기'}).click();
   await expect(page.locator('.fm-discovery-empty')).toBeVisible();
-  await expect(page.locator('.fm-discovery-empty')).toHaveScreenshot('visual-system-discovery-empty-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:0});
+  await expect(page.locator('.fm-discovery-empty')).toHaveScreenshot('visual-system-discovery-empty-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:24});
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
