@@ -53,8 +53,8 @@ test('1440px Real App keeps the mobile app shell through Detail and Checkout',as
   await setupToHome(page);
   await openFirstDetail(page);
   const app=await rect(page.locator('.fm-next-app'));
-  expect(app.width).toBeGreaterThanOrEqual(428);
-  expect(app.width).toBeLessThanOrEqual(432);
+  expect(app.width).toBeGreaterThanOrEqual(400);
+  expect(app.width).toBeLessThanOrEqual(404);
   const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section:not([hidden])').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
   expect(detailSections.length).toBeGreaterThanOrEqual(4);
   for(let i=1;i<detailSections.length;i+=1){expect(detailSections[i].y).toBeGreaterThan(detailSections[i-1].y);expect(Math.abs(detailSections[i].x-detailSections[0].x)).toBeLessThanOrEqual(2);}
