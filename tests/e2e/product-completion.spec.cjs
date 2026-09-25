@@ -161,6 +161,7 @@ test('AI fallback exposes an explicit retry action on Home without duplicating r
 });
 
 test('Detail keeps one dark focal hero and removes duplicated legacy information',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-09-24T12:00:00Z'));
   const errs=await openCleanApp(page);
   await setupToHome(page);
   await page.locator('[data-screen="home"] .fm-next-match-card').first().click();
