@@ -119,6 +119,10 @@
     const phraseSelector=[
       '.fm-next-review-summary b',
       '.fm-next-cs-card p',
+      '.fm-next-cs-stack p',
+      '.fm-next-cs-reco-card span','.fm-next-cs-reco-card h3','.fm-next-cs-reco-card div b','.fm-next-cs-reco-card strong',
+      '.fm-next-cs-decision>span','.fm-next-cs-decision>b',
+      '.fm-next-cs-final>span',
       '.fm-next-cs-persona b',
       '.fm-next-cs-jtbd p',
       '.fm-next-cs-loop b','.fm-next-cs-loop span',
