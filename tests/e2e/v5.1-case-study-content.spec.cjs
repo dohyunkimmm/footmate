@@ -114,7 +114,7 @@ test('merged sections keep one clear job without exposing route strings as reade
   await openCaseStudy(page);
 
   const thesis=await slideText(page,3);
-  expect(thesis).toContain('판단 기준을 한곳에');
+  expect(thesis).toContain('판단 기준 통합');
   expect(thesis).toContain('선택 맥락을 보존');
 
   const signInJoin=await slideText(page,7);
@@ -241,7 +241,7 @@ test('reader-facing body copy is Korean-first while preserving necessary technic
   const validation=await slideText(page,11);
   expect(validation).toContain('사람 검수');
   expect(validation).toContain('AI 보조 검수');
-  expect(validation).toContain('PASS 판정을 대신하지 않습니다');
+  expect(validation).toContain('PASS 판정 대체 아님');
 });
 
 test('merged source slides can never render as extra pages after P13',async({page})=>{
@@ -279,7 +279,7 @@ test('service planning evidence distinguishes ownership, hypotheses, metrics and
   expect(await slideText(page,10)).toContain('정의한 기준');
   const metrics=await slideText(page,11);
   for(const value of ['Validation Metric','Measured Result가 아닙니다','상세 조회 사용자','7일 내 재탐색','외부 분석 도구는 미연동'])expect(metrics).toContain(value);
-  expect(await slideText(page,12)).toContain('기준값을 확보한 뒤');
+  expect(await slideText(page,12)).toContain('실제 이용자 KPI → Baseline부터 측정');
 });
 
 test('reader-facing cleanup removes internal jargon and legacy review exits',async({page})=>{
