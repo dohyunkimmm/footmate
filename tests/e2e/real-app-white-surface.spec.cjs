@@ -145,7 +145,7 @@ for(const width of [320,375,390,430]){
       return {headlineWidth:headline.width,buttonHeight:button.height};
     });
     expect(welcomeMetrics.headlineWidth).toBeLessThanOrEqual(width-28);
-    expect(welcomeMetrics.buttonHeight).toBeGreaterThanOrEqual(44);
+    expect(welcomeMetrics.buttonHeight).toBe(54);
     await expectNoHorizontalOverflow(page);
     await setupToHome(page);
     for(const route of ['home','discover']){
