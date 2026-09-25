@@ -34,11 +34,12 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Refresh affected Ubuntu Chromium baselines
         run: |
-          npx playwright test --project=chromium --update-snapshots \
+          npx playwright test \
             tests/e2e/v5.1-design-system-v2.spec.cjs \
             tests/e2e/v5.1-release-flow-review.spec.cjs \
             tests/e2e/v5.1-visual-baseline.spec.cjs \
-            tests/e2e/v5.1-visual-system-completion.spec.cjs
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            --project=chromium --update-snapshots=all
       - name: Commit changed approved baselines
         run: |
           git config user.name "github-actions[bot]"
