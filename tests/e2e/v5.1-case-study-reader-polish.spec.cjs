@@ -3,23 +3,24 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3');
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&document.documentElement.dataset.footmateCaseStudyFinalClarity==='1');
 }
 
 async function visibleSlides(page){
   return page.locator('.slide:not([hidden])');
 }
 
-test('public Case Study keeps participant count only in the detailed release evidence',async({page})=>{
+test('public Case Study keeps detailed participant evidence out of the concise release summary',async({page})=>{
   await openCaseStudy(page);
   const slides=await visibleSlides(page);
   const text=(await slides.allInnerTexts()).join('\n');
   expect(text).not.toContain('PBL');
-  expect((text.match(/교육생 6명/g)||[])).toHaveLength(1);
+  expect((text.match(/교육생 6명/g)||[])).toHaveLength(0);
   await expect(slides.nth(2)).not.toContainText('교육생 6명');
   await expect(slides.nth(2)).toContainText('검증 흐름 · 가설 → 과업 → 관찰');
-  await expect(slides.nth(12)).toContainText('검증 표본');
-  await expect(slides.nth(12)).toContainText('교육생 6명 · iOS 4 / Android 2');
+  await expect(slides.nth(12)).not.toContainText('검증 표본');
+  await expect(slides.nth(12)).not.toContainText('과업 범위');
+  await expect(slides.nth(12)).toContainText('검증 행동 과업 · iOS · Android');
 });
 
 test('Sign in and Join folds state preservation into the evidence table',async({page})=>{
@@ -95,6 +96,9 @@ test('KPI cards explain calculation basis without numerator denominator jargon',
   expect(text).not.toContain('분모');
   expect(text).toContain('계산 기준 · 상세 진입 세션 ÷ 결과 노출 세션');
   expect(text).toContain('8개 지표의 계산·관찰 기준 보기');
+  expect(text).toContain('결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률 정의');
+  expect(text).toContain('운영·테스트 계정·시뮬레이션 제외 · 표본·기간·기준값 우선 확보');
+  expect(text).not.toContain('실제 측정에서는');
 });
 
 test('02 through 13 preserve centered desktop page rhythm without overflow',async({page})=>{
@@ -143,8 +147,12 @@ test('environment implementation and validation boundaries stay compact inside s
     'API·데이터·권한·오류·재시도 · IA·상태별 화면·CTA · 취소·정원·복구 정책'
   ])await expect(domain).toContainText(value);
   for(const value of [
-    'AI Gateway 실연동 · 결정론적 추천 · 샘플 경기 데이터 · 인증·결제·정원·알림 시뮬레이션',
-    'Supabase 인증·경기·정원·참가/취소 · 체크인 · Google/Kakao OAuth · 이메일 · Web Push · 미디어 실연동',
-    '실제 PG · 외부 분석 도구 · 수익성 · 실제 이용 지표 미검증'
+    '구현 AI · Supabase · Resend · Push',
+    '검증 행동 과업 · iOS · Android',
+    '다음 단계 실제 결제 · 이용자 KPI · 수익성'
   ])await expect(release).toContainText(value);
+  await expect(release.locator('.fm-next-cs-outcomes')).toHaveCount(0);
+  await expect(release.locator('.fm-next-cs-final')).toHaveCount(0);
+  await expect(release).not.toContainText('Real App');
+  await expect(release).not.toContainText('Closed Beta');
 });
