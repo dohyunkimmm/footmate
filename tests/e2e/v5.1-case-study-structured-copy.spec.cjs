@@ -106,7 +106,7 @@ test('user-flagged structured rows stay phrase grammar without sentence endings'
     '.fm-next-cs-outcomes p',
     '.fm-cs-reasons dd'
   ].join(',');
-  const values=await page.locator('.slide:not([hidden])').nth(1).locator('xpath=..').locator(selectors).allTextContents();
+  const values=await page.locator('.slide:not([hidden])').locator(selectors).allTextContents();
   expect(values.length).toBeGreaterThan(30);
   expect(values.filter(hasSentencePunctuation)).toEqual([]);
   expect(values.filter(value=>/(합니다|됩니다|입니다|했습니다|않습니다)\s*$/.test(value.trim()))).toEqual([]);
