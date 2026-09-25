@@ -48,26 +48,26 @@ function rect(locator){
   });
 }
 
-test('1440px Real App keeps the stable narrow shell through Detail and Checkout',async({page})=>{
+test('1440px Real App keeps the mobile app shell through Detail and Checkout',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
   await openFirstDetail(page);
   const app=await rect(page.locator('.fm-next-app'));
-  expect(app.width).toBeGreaterThanOrEqual(558);
-  expect(app.width).toBeLessThanOrEqual(562);
+  expect(app.width).toBeGreaterThanOrEqual(428);
+  expect(app.width).toBeLessThanOrEqual(432);
   const detailSections=await page.locator('[data-screen="detail"]>.fm-next-detail-section:not([hidden])').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
   expect(detailSections.length).toBeGreaterThanOrEqual(4);
   for(let i=1;i<detailSections.length;i+=1){expect(detailSections[i].y).toBeGreaterThan(detailSections[i-1].y);expect(Math.abs(detailSections[i].x-detailSections[0].x)).toBeLessThanOrEqual(2);}
   const sticky=await rect(page.locator('.fm-next-sticky-cta'));
-  expect(sticky.width).toBeGreaterThanOrEqual(534);
-  expect(sticky.width).toBeLessThanOrEqual(538);
+  expect(sticky.width).toBeGreaterThanOrEqual(404);
+  expect(sticky.width).toBeLessThanOrEqual(408);
   await reachCheckout(page);
   const checkoutSections=await page.locator('[data-screen="checkout"]>.fm-next-detail-section').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width}}));
   expect(checkoutSections.length).toBeGreaterThanOrEqual(2);
   for(let i=1;i<checkoutSections.length;i+=1){expect(checkoutSections[i].y).toBeGreaterThan(checkoutSections[i-1].y);expect(Math.abs(checkoutSections[i].x-checkoutSections[0].x)).toBeLessThanOrEqual(2);}
   const submit=await rect(page.locator('[data-participation-submit]'));
-  expect(submit.width).toBeGreaterThanOrEqual(500);
-  expect(submit.width).toBeLessThanOrEqual(522);
+  expect(submit.width).toBeGreaterThanOrEqual(386);
+  expect(submit.width).toBeLessThanOrEqual(390);
   await page.locator('[data-participation-submit]').click();
   await expect(page.locator('[data-screen="success"]')).toBeVisible({timeout:5000});
   expect(errs).toEqual([]);
