@@ -113,7 +113,7 @@ test('601px viewport keeps the mobile-width Home shell compact instead of re-exp
     const nav=element.querySelector('.fm-next-nav').getBoundingClientRect();
     return {appWidth:app.getBoundingClientRect().width,contextCompact:element.querySelector('.fm-next-context-card').classList.contains('fm-ia-action-strip'),sectionCopyDisplay:getComputedStyle(sectionCopy).display,firstCardTop:first.top,navTop:nav.top};
   });
-  expect(density.appWidth).toBeLessThanOrEqual(430);
+  expect(density.appWidth).toBeLessThanOrEqual(404);
   expect(density.contextCompact).toBe(true);
   expect(density.sectionCopyDisplay).toBe('none');
   expect(density.firstCardTop).toBeLessThanOrEqual(640);
