@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,width=1440,height=900){
   await page.setViewportSize({width,height});
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&document.querySelectorAll('.slide:not([hidden])').length===13);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&document.documentElement.dataset.footmateCaseStudyFinalClarity==='1'&&document.querySelectorAll('.slide:not([hidden])').length===13);
 }
 
 async function goToSlide(page,index){
@@ -27,7 +27,7 @@ test('all 13 Case Study sections pass structured spacing and wrapping audit',asy
         const textOf=el=>(el.textContent||'').trim().replace(/\s+/g,' ').slice(0,100);
         const role=slide.dataset.v5ContentRole||'';
         const isAuth=role==='auth-participation';
-        const roots=[...slide.querySelectorAll('.fm-next-cover-proof,.fm-cs-reasons,[class*="fm-next-cs-"]')].filter(visible);
+        const roots=[...slide.querySelectorAll('.fm-next-cover-proof,.fm-cs-reasons,.fm-next-review-summary,[class*="fm-next-cs-"]')].filter(visible);
         const cells=roots.filter(el=>{
           if(el.matches('a,button')||el.closest('a,button'))return false;
           const style=getComputedStyle(el);
@@ -69,6 +69,7 @@ test('all 13 Case Study sections pass structured spacing and wrapping audit',asy
           let min=style.display==='grid'?10:7;
           if(isAuth&&el.classList.contains('fm-next-cs-auth-flow'))min=6;
           if(isAuth&&el.classList.contains('fm-cs-reasons')&&el.closest('.fm-next-cs-scope'))min=0;
+          if(el.classList.contains('fm-next-review-summary'))min=6;
           if(gap+0.01<min)tightGaps.push({className:el.className||el.tagName,gap,min});
         }
         const overflow=[];

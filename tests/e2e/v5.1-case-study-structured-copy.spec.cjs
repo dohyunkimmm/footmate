@@ -7,6 +7,7 @@ async function openCaseStudy(page){
     document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&
     document.documentElement.dataset.footmateCaseStudySections==='13'&&
     document.documentElement.dataset.footmateCaseStudyStructuredCopy==='3'&&
+    document.documentElement.dataset.footmateCaseStudyFinalClarity==='1'&&
     document.querySelectorAll('.slide:not([hidden])').length===13
   );
 }
@@ -75,19 +76,31 @@ test('02–13 tables, flows and cards use compact phrase grammar',async({page})=
   expect(await rowValue(visibleSlide(page,10),'미연동')).toBe('실제 PG · 외부 분석 도구');
   expect(await rowValue(visibleSlide(page,10),'정의한 기준')).toBe('API·데이터·권한·오류·재시도 · IA·상태별 화면·CTA · 취소·정원·복구 정책');
 
-  const qaCards=visibleSlide(page,11).locator('.fm-next-cs-grid.three .fm-next-cs-card');
+  const validation=visibleSlide(page,11);
+  const qaCards=validation.locator('.fm-next-cs-grid.three .fm-next-cs-card');
   await expect(qaCards.nth(1).locator('p')).toHaveText('실제 OAuth 로그인 · 이메일 최종 전달 · Web Push 브라우저·OS 표시 · 제품 성과와 분리 · 사용자 만족도·전환');
   await expect(qaCards.nth(2).locator('p')).toHaveText('중복 · 용어 · 구현-설명 불일치 검토 · PASS 판정 제외');
+  await expect(validation.locator('.fm-next-cs-note')).toContainText('결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률 정의 · 외부 분석 도구 미연동 · 운영·테스트 계정·시뮬레이션 제외 · 표본·기간·기준값 우선 확보');
+  await expect(validation.locator('.fm-next-cs-note')).not.toContainText('실제 측정에서는');
 
-  const outcomes=await visibleSlide(page,12).locator('.fm-next-cs-outcomes>div p').allTextContents();
-  expect(outcomes.map(value=>value.trim())).toEqual([
-    'AI Gateway 실연동 · 결정론적 추천 · 샘플 경기 데이터 · 인증·결제·정원·알림 시뮬레이션',
-    'Supabase 인증·경기·정원·참가/취소 · 체크인 · Google/Kakao OAuth · 이메일 · Web Push · 미디어 실연동',
-    '실제 PG · 외부 분석 도구 · 수익성 · 실제 이용 지표 미검증'
+  const release=visibleSlide(page,12);
+  await expect(release.locator('.fm-next-story h2')).toHaveText('구현 결과와 다음 과제를 정리했습니다.');
+  await expect(release.locator('.fm-next-story-lead')).toHaveText('실제 연결 범위와 사용자 검증을 확인했고, 실제 이용자 KPI와 결제 검증은 다음 단계로 남겼습니다.');
+  const releaseSummary=release.locator('.fm-next-review-summary>div');
+  expect((await releaseSummary.locator('span').allTextContents()).map(value=>value.trim())).toEqual(['구현','검증','다음 단계']);
+  expect((await releaseSummary.locator('b').allTextContents()).map(value=>value.trim())).toEqual([
+    'AI · Supabase · Resend · Push',
+    '행동 과업 · iOS · Android',
+    '실제 결제 · 이용자 KPI · 수익성'
   ]);
-  expect(await rowValue(visibleSlide(page,12),'검증 표본')).toBe('교육생 6명 · iOS 4 / Android 2 · 입문 2 / 초급 2 / 중급 1 / 고급 1 · 수비 2 / 공격 2 / 미드필더 2');
-  expect(await rowValue(visibleSlide(page,12),'과업 범위')).toBe('회원가입 전 2회 · Kakao 2회 · Google 2회 · 이메일 2회 · 총 8회 · 일부 참여자 복수 과업');
-  expect(await rowValue(visibleSlide(page,12),'학습·다음 단계')).toBe('동선별 버그·막힘 재검증 → 제품·운영 상태 고도화 → Production QA → KPI 측정 준비 · 실제 이용자 KPI Baseline부터 측정');
+  await expect(release.locator('.fm-next-cs-outcomes')).toHaveCount(0);
+  await expect(release.locator('.fm-next-cs-final')).toHaveCount(0);
+  await expect(release).not.toContainText('교육생 6명');
+  await expect(release).not.toContainText('검증 표본');
+  await expect(release).not.toContainText('과업 범위');
+  await expect(release).not.toContainText('Production QA');
+  await expect(release).not.toContainText('Real App');
+  await expect(release).not.toContainText('Closed Beta');
 });
 
 test('structured values do not regress to sentence punctuation',async({page})=>{
@@ -112,7 +125,7 @@ test('structured values do not regress to sentence punctuation',async({page})=>{
     '.fm-cs-reasons dt','.fm-cs-reasons dd'
   ].join(',');
   const values=await page.locator(`.slide:not([hidden]) :is(${selector})`).allTextContents();
-  expect(values.length).toBeGreaterThan(70);
+  expect(values.length).toBeGreaterThan(60);
   expect(values.filter(hasSentencePunctuation)).toEqual([]);
 });
 
