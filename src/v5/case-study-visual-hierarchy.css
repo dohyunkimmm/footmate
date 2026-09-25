@@ -196,3 +196,122 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"]
     top:0;
   }
 }
+
+/* 02–13 structured typography contract */
+html[data-fm-next-case-study="true"]{
+  --fm-cs-structured-label-size:12px;
+  --fm-cs-structured-value-size:12px;
+  --fm-cs-structured-heading-size:14px;
+}
+
+/* Same semantic level = same type size. Emphasis comes from weight first. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+  .fm-next-review-summary span,
+  .fm-next-review-summary b,
+  .fm-next-cs-card p,
+  .fm-next-cs-stack p,
+  .fm-next-cs-stack p b,
+  .fm-next-cs-reco-card>span,
+  .fm-next-cs-reco-card>div b,
+  .fm-next-cs-reco-card>strong,
+  .fm-next-cs-decision>span,
+  .fm-next-cs-decision>b,
+  .fm-next-cs-final>span,
+  .fm-next-cs-final>a,
+  .fm-next-cs-persona>div>span,
+  .fm-next-cs-persona>div>b,
+  .fm-next-cs-jtbd small,
+  .fm-next-cs-jtbd p,
+  .fm-next-cs-loop b,
+  .fm-next-cs-loop span,
+  .fm-next-cs-before-after small,
+  .fm-next-cs-before-after b,
+  .fm-next-cs-before-after p,
+  .fm-next-cs-auth-flow small,
+  .fm-next-cs-auth-flow b,
+  .fm-next-cs-detail-order span,
+  .fm-next-cs-modes small,
+  .fm-next-cs-modes p,
+  .fm-next-cs-day-states small,
+  .fm-next-cs-day-states b,
+  .fm-next-cs-day-states p,
+  .fm-next-cs-recovery span,
+  .fm-next-cs-outcomes p,
+  .fm-cs-reasons dt,
+  .fm-cs-reasons dd
+){
+  font-size:var(--fm-cs-structured-value-size)!important;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+  .fm-next-cs-card h3,
+  .fm-next-cs-reco-card h3,
+  .fm-next-cs-modes h3,
+  .fm-next-cs-recovery>div>b,
+  .fm-next-cs-outcomes>div>b
+){
+  font-size:var(--fm-cs-structured-heading-size)!important;
+  font-weight:800;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+  .fm-next-review-summary span,
+  .fm-next-cs-persona>div>span,
+  .fm-next-cs-jtbd small,
+  .fm-next-cs-before-after small,
+  .fm-next-cs-auth-flow small,
+  .fm-next-cs-modes small,
+  .fm-next-cs-day-states small,
+  .fm-cs-reasons dt
+){
+  font-weight:800;
+}
+
+html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+  .fm-next-review-summary b,
+  .fm-next-cs-persona>div>b,
+  .fm-next-cs-auth-flow b,
+  .fm-next-cs-day-states b
+){
+  font-weight:750;
+}
+
+/* KPI names are the one deliberate size step inside the structured evidence area. */
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-cs-metric b{
+  font-size:15px!important;
+  font-weight:850;
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-cs-ratio,
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-cs-ratio span{
+  font-size:12px!important;
+}
+
+/* 03 Persona peers use one-line desktop values; mobile keeps natural wrapping. */
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-cs-persona>div>b{
+    white-space:nowrap!important;
+  }
+}
+
+/* 12 KPI evidence action belongs to the KPI block, not to the explanatory note. */
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row{
+  display:flex;
+  width:100%;
+  align-items:center;
+  justify-content:flex-end;
+  margin-top:8px;
+  padding-top:10px;
+  border-top:1px solid var(--fm-cs-ui-separator,#e9efeb);
+}
+html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row .fm-next-kpi-open{
+  margin-top:0!important;
+}
+
+@media(max-width:560px){
+  html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row{
+    justify-content:stretch;
+  }
+  html[data-fm-next-case-study="true"] [data-v5-content-role="validation-evidence"] .fm-next-kpi-disclosure-row .fm-next-kpi-open{
+    width:100%;
+  }
+}

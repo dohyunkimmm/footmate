@@ -29,7 +29,7 @@ async function openCaseStudy(page,viewport,index=0){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();scrollTo(0,0)});
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.querySelectorAll('.slide:not([hidden])').length===13);
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.documentElement.dataset.footmateCaseStudySections==='13'&&document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2'&&document.querySelectorAll('.slide:not([hidden])').length===13);
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto!important}'});
   if(index>0){

@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport={width:1440,height:900}){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2');
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyReaderPolish==='2'&&document.documentElement.dataset.footmateCaseStudyStructuredCopy==='2');
 }
 
 async function visibleSlides(page){
@@ -23,7 +23,7 @@ test('Sign in and Join folds state preservation into the evidence table',async({
   const slide=(await visibleSlides(page)).nth(7);
   await expect(slide.locator('.fm-next-cs-state-line')).toHaveCount(0);
   await expect(slide).toContainText('상태 보존');
-  await expect(slide).toContainText('로그인 전 선택한 경기와 복귀 위치를 유지');
+  await expect(slide).toContainText('선택 경기 · 로그인 후 복귀 위치 유지');
 });
 
 test('Sign in and Join applies compact spacing to the auth flow and evidence table only',async({page})=>{
@@ -129,17 +129,18 @@ test('title lead and structured values use natural wrapping instead of forced se
   expect(await compared.nth(1).evaluate(node=>getComputedStyle(node).display)).toBe('inline');
 });
 
-test('environment implementation and validation copy uses complete polite sentences',async({page})=>{
+test('environment implementation and validation boundaries stay compact inside structured evidence',async({page})=>{
   await openCaseStudy(page);
   const domain=(await visibleSlides(page)).nth(10);
   const release=(await visibleSlides(page)).nth(12);
   for(const value of [
-    'Vercel AI Gateway·Supabase·Resend·Web Push·Storage를 실제 연결했습니다.',
-    '실제 PG와 외부 분석 도구는 미연동입니다.'
+    'Vercel AI Gateway · Supabase · Resend · Web Push · Storage',
+    '실제 PG · 외부 분석 도구',
+    'API·데이터·권한·오류·재시도 · IA·상태별 화면·CTA · 취소·정원·복구 정책'
   ])await expect(domain).toContainText(value);
   for(const value of [
-    '경기 데이터는 샘플을 사용하며 인증·결제·정원·알림은 시뮬레이션입니다.',
-    'Google/Kakao OAuth·이메일·Web Push·미디어도 실제 환경에서 검증했습니다.',
-    '수익성과 실제 이용 지표는 아직 검증하지 않았습니다.'
+    'AI Gateway 실연동 · 결정론적 추천 · 샘플 경기 데이터 · 인증·결제·정원·알림 시뮬레이션',
+    'Supabase 인증·경기·정원·참가/취소 · 체크인 · Google/Kakao OAuth · 이메일 · Web Push · 미디어 실연동',
+    '실제 PG · 외부 분석 도구 · 수익성 · 실제 이용 지표 미검증'
   ])await expect(release).toContainText(value);
 });
