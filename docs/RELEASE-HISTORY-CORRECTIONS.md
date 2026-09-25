@@ -2,6 +2,24 @@
 
 이 문서는 기존 `RELEASE-HISTORY.md`의 durable 이력을 삭제하지 않고, 이후 검증에서 범위 해석이나 승인 기준이 정정된 경우 **현재 적용되는 supersession**을 기록한다. 이 문서와 기존 Release History가 충돌하면 여기의 더 최신 correction이 현재 기준이다.
 
+## Case Study recruiter scan · KPI internal evidence closure · 2026-09-25
+
+- Scope: 02–13 opening을 recruiter/manager scan 중심으로 재구성하고, 상태명·단계명·짧은 값의 phrase 규칙을 통일하며, 12 KPI 상세 근거를 GitHub 외부 이탈 없이 Case Study 내부에서 열람하도록 변경
+- Runtime PR: #283 · merged SHA `205c1049109be2feadaedbb5937e00b812cd736e`
+- JD framing: 최근 국내 대기업 AI/IT 서비스기획 JD에서 반복되는 요구사항 분석, User Research/Journey/Workflow, AI 적용 경계, 품질·QA·사용성 검증, 개발·QA 연계 관점을 기존 FootMate 근거의 정보 우선순위에만 사용. 새로운 경력·성과·협업 경험은 추가하지 않음
+- Cover preservation: 01 Cover의 기존 승인 visual과 `Role / Scope / Responsibility` 구조는 유지. recruiter scan 개선을 이유로 cover pixel baseline을 변경하지 않음
+- 02–13 opening contract: title 1문장 + lead 1문장 + compact planning facts 3개. 같은 의미를 긴 title과 복수 lead 문장으로 반복하지 않음
+- Phrase contract: 상태명·단계명·CTA·짧은 값은 명사형/짧은 구 + 마침표 없음. 이유·Trade-off·검증 설명 같은 완전한 문장은 문장형 + 마침표 유지
+- KPI internal evidence: `8개 지표의 계산·관찰 기준 보기`는 GitHub 외부 문서 대신 Case Study 내부 modal을 열어 계산 기준·관찰 기간·제외 기준을 확인. GitHub evidence 문서는 Source of Truth로 유지 가능하지만 reader CTA의 목적지는 아님
+- Layout preservation: PR #271의 02–13 center alignment, PR #273의 08 auth table spacing, 05 natural wrapping, green 강조 의미 규칙을 유지
+- Regression guard: `tests/e2e/v5.1-case-study.spec.cjs`에서 reviewer hierarchy, phrase consistency, internal KPI evidence를 직접 검증
+- PR QA: FootMate QA #1346 · run `36089398183` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Final main QA: FootMate QA #1349 · run `36089979474` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Exact Production verification: Vercel exact deploy PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
+- Preserved: 08 상태 보존/인증 spacing, 09 legacy 링크 제거, 12 Validation Metric과 실제 성과의 구분, Real App/Closed Beta 제품·API·data/state-machine 경계, 사용자 과업 검증의 해석 한계
+- Current Case Study runtime/Production baseline: `205c1049109be2feadaedbb5937e00b812cd736e`
+- Notion boundary: 사용자 수동 수정본을 우선한다. 이 closure와 중복되거나 의미가 겹치는 Notion 내용은 자동 덮어쓰지 않는다.
+
 ## Case Study 08 auth table spacing closure · 2026-09-25
 
 - Scope: 08 Sign in · Join 안의 인증 flow와 로그인·참가 증빙 표 내부 여백만 조정하고, section 전체 세로 위치와 02–13 page rhythm은 변경하지 않음
@@ -16,7 +34,7 @@
 - Final main QA: FootMate QA #1302 · run `36081422283` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
 - Preserved: PR #271 page-rhythm correction, #268에서 승인된 독자용 카피·증거 변경, 08 상태 보존 문구, 09 legacy 링크 제거, 12 KPI 계산 기준, green 강조 의미 규칙, Real App/Closed Beta 제품·API·data/state-machine 경계
-- Current Case Study runtime/Production baseline: `c51411ed164d50f1366d0f71aa3a220407dd41ff`
+- Current Case Study runtime/Production baseline at this closure: `c51411ed164d50f1366d0f71aa3a220407dd41ff`; current baseline is superseded by the #283 closure above.
 
 ## Case Study page rhythm correction · 2026-09-25
 
@@ -32,4 +50,4 @@
 - Final main QA: FootMate QA #1289 · run `36074420880` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
 - Documentation boundary: root `README.md`는 제품 가치·연동 경계가 바뀌지 않아 수정하지 않는다. `docs/README.md`, `CASE-STUDY-COPY-QA.md`, 이 correction 기록과 공개 FootMate Notion 대표 프로젝트 페이지를 현재 기준으로 동기화한다. Closed Beta runbook과 AI architecture는 기능·운영 계약 변경이 없어 유지한다.
-- Moving-main boundary: #271의 page-rhythm baseline은 `50fa005edc2e62c288ac49581464bf4942e46148`로 보존하고, 이후 08 내부 spacing closure가 반영된 현재 Case Study runtime/Production baseline은 `c51411ed164d50f1366d0f71aa3a220407dd41ff`로 구분해 기록한다.
+- Moving-main boundary: #271의 page-rhythm baseline은 `50fa005edc2e62c288ac49581464bf4942e46148`로 보존하고, 이후 08 내부 spacing closure가 반영된 당시 Case Study runtime/Production baseline은 `c51411ed164d50f1366d0f71aa3a220407dd41ff`로 구분해 기록한다. 현재 baseline은 위 #283 closure를 따른다.
