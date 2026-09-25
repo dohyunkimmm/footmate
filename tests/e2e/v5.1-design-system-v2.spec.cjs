@@ -60,7 +60,7 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     const box=element.getBoundingClientRect();
     return {left:box.left,right:innerWidth-box.right,width:box.width,borderRadius:getComputedStyle(element).borderRadius};
   });
-  // Standalone Real App uses the compact desktop mobile-frame width; portfolio remains outside this shell contract.
+  // Standalone Real App uses the compact desktop frame; portfolio remains outside this shell contract.
   expect(geometry.width).toBeGreaterThanOrEqual(400);
   expect(geometry.width).toBeLessThanOrEqual(404);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
