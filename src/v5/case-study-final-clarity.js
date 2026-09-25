@@ -36,8 +36,9 @@
     items.forEach(([label,value],index)=>{
       const item=summary[index];
       if(!item)return;
-      setText(item,'span',label);
-      setText(item,'b',value);
+      const labelNode=setText(item,'span',label);
+      const valueNode=setText(item,'b',value);
+      if(labelNode&&valueNode)item.insertBefore(document.createTextNode(' '),valueNode);
     });
 
     release.querySelector('.fm-next-cs-outcomes')?.remove();
