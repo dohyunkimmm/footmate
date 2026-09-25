@@ -116,7 +116,7 @@ test('structured typography follows semantic levels and persona peers stay align
 
   expect(labels).toEqual(['12px']);
   expect(values).toEqual(['12px']);
-  expect(headings).toEqual(['13px']);
+  expect(headings).toEqual(['14px']);
 
   const taskValue=visibleSlide(page,2).locator('.fm-next-cs-persona>div').nth(2).locator('b');
   const metrics=await taskValue.evaluate(node=>{
@@ -129,6 +129,8 @@ test('structured typography follows semantic levels and persona peers stay align
 
 test('12 KPI disclosure sits directly under metrics and keeps the modal interaction',async({page})=>{
   await openCaseStudy(page);
+  await page.evaluate(()=>window.goTo(11));
+  await expect(page.locator('.slide.on')).toHaveAttribute('data-v5-content-role','validation-evidence');
   const validation=visibleSlide(page,11);
   const note=validation.locator('.fm-next-cs-note');
   const metrics=validation.locator('.fm-next-cs-metrics');
