@@ -30,7 +30,7 @@ test('Real App MY aligns the saved profile card and stages preference edits befo
     personalization:element.querySelector('.fm-personalization-panel--profile').getBoundingClientRect().width
   }));
   expect(Math.abs(widths.profile-widths.personalization)).toBeLessThanOrEqual(1);
-  const areaRects=await panel.locator('.fm-personalization-options--areas .fm-personalization-chip').evaluateAll(nodes=>nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left,top:rect.top,width:rect.width}}));
+  const areaRects=await panel.locator('fieldset').first().locator('.fm-personalization-options .fm-next-tag').evaluateAll(nodes=>nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left,top:rect.top,width:rect.width}}));
   expect(areaRects).toHaveLength(4);
   expect(Math.abs(areaRects[0].top-areaRects[1].top)).toBeLessThanOrEqual(1);
   expect(Math.abs(areaRects[2].top-areaRects[3].top)).toBeLessThanOrEqual(1);
