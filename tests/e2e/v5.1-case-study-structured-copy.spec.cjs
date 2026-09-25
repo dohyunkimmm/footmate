@@ -121,24 +121,16 @@ test('targeted structured values stay phrase-style without sentence punctuation'
 
 test('02–13 structured typography follows one semantic size system',async({page})=>{
   await openCaseStudy(page);
-  const slide=visibleSlide(page,11);
-  const sizes=await slide.evaluate(node=>{
-    const px=selector=>getComputedStyle(node.querySelector(selector)).fontSize;
-    return {
-      cardHeading:px('.fm-next-cs-card h3'),
-      metricHeading:px('.fm-next-cs-metric>b'),
-      cardValue:px('.fm-next-cs-card p'),
-      metricValue:px('.fm-cs-ratio'),
-      rowLabel:px('.fm-next-cs-note .fm-cs-reasons dt'),
-      disclosureLabel:px('.fm-next-kpi-disclosure>span')
-    };
-  });
-  expect(sizes.cardHeading).toBe('13px');
-  expect(sizes.metricHeading).toBe('13px');
-  expect(sizes.cardValue).toBe('12px');
-  expect(sizes.metricValue).toBe('12px');
-  expect(sizes.rowLabel).toBe('11px');
-  expect(sizes.disclosureLabel).toBe('11px');
+  const validation=visibleSlide(page,11);
+  const domain=visibleSlide(page,10);
+  const fontSize=locator=>locator.evaluate(node=>getComputedStyle(node).fontSize);
+
+  expect(await fontSize(validation.locator('.fm-next-cs-card h3').first())).toBe('13px');
+  expect(await fontSize(validation.locator('.fm-next-cs-metric>b').first())).toBe('13px');
+  expect(await fontSize(validation.locator('.fm-next-cs-card p').first())).toBe('12px');
+  expect(await fontSize(validation.locator('.fm-cs-ratio').first())).toBe('12px');
+  expect(await fontSize(domain.locator('.fm-next-cs-note .fm-cs-reasons dt').first())).toBe('11px');
+  expect(await fontSize(validation.locator('.fm-next-kpi-disclosure>span'))).toBe('11px');
 });
 
 test('phrase-only structured components do not regress to sentence punctuation',async({page})=>{
