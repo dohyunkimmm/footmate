@@ -60,7 +60,8 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(intro).toBeVisible();
   await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
   await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
-  await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
+  await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('transform','none');
+  await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark .fm-next-brand')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
   await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('position','absolute');
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
