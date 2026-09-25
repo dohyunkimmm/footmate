@@ -201,7 +201,7 @@ html[data-fm-next-case-study="true"] [data-v5-content-role="domain-ai-boundary"]
 html[data-fm-next-case-study="true"]{
   --fm-cs-structured-label-size:12px;
   --fm-cs-structured-value-size:12px;
-  --fm-cs-structured-heading-size:13px;
+  --fm-cs-structured-heading-size:14px;
 }
 
 /* Same semantic level = same type size. Emphasis comes from weight first. */
