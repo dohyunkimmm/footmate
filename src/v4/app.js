@@ -229,7 +229,7 @@ function adaptiveContext(){
 function homeView(){
   const returnUser=state.setupComplete;
   return `<section class="fm-next-screen" data-screen="home">
-    ${topbar({actionHtml:`<button type="button" class="fm-next-icon-button" data-action="nav-profile" aria-label="내 정보">${icon('user')}</button>`})}
+    ${topbar({})}
     <div class="fm-next-greeting"><small>${returnUser?'다시 반가워요':'설정이 완료됐어요'}</small><h1>${state.userName||'도현'}님, <span>오늘 경기 어때요?</span></h1></div>
     ${adaptiveContext()}
     <div class="fm-next-section-head"><div><h2>지금 잘 맞는 경기</h2><p>거리, 레벨, 남은 포지션을 함께 봤어요.</p></div><button class="fm-next-button fm-next-button--text" data-action="nav-discover">전체 보기</button></div>

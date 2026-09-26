@@ -102,7 +102,7 @@ if(root){
     if(submit)submit.setAttribute('aria-label','AI로 찾기');
 
     if(isHome){
-      setText(title,'AI에게 원하는 경기를 말해보세요.');
+      setText(title,'AI에게 원하는 경기를 검색해보세요.');
       setText(copy,'AI가 자연어 조건을 해석하고 기존 추천 엔진이 맞는 경기 순위를 계산합니다.');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'AI로 찾기');
@@ -226,8 +226,7 @@ function observeHome(card){
 function configureHome(screen){
   screen.dataset.iaRole='assistant-entry';
   const greeting=screen.querySelector('.fm-next-greeting');
-  text(greeting?.querySelector('small'),'AI MATCH ASSISTANT');
-  text(greeting?.querySelector('h1'),'오늘, 어떤 경기에서 뛸까요?');
+  greeting?.remove();
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="home"],.fm-ai-card[data-ai-assistant]');
   if(assistant){
     assistant.hidden=false;assistant.dataset.iaRole='primary-assistant';
