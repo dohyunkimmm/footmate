@@ -62,7 +62,6 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
   await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('transform','none');
   await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark .fm-next-brand')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
-  await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark .fm-next-brand>span:last-child')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -12)');
   await expect(page.locator('[data-screen="welcome"] .fm-next-topbar--dark')).toHaveCSS('position','absolute');
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
@@ -70,6 +69,41 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expectNoHorizontalOverflow(page);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('real-app-white-welcome-390.png',{...exact,maxDiffPixels:2});
+  expect(errs).toEqual([]);
+});
+
+
+test('1440px Welcome moves the visible brand 12px upward while preserving lower geometry',async({page})=>{
+  const errs=await openCleanApp(page,{width:1440,height:900});
+  const app=page.locator('.fm-next-app:not([data-embed="true"])');
+  const measure=async()=>app.evaluate(node=>{
+    const box=node.getBoundingClientRect();
+    const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
+    const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
+    const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
+    return {top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
+  });
+  const actual=await measure();
+  const baseline=await app.evaluate(node=>{
+    const original=node.style.cssText;
+    node.style.setProperty('height','calc(100dvh - 32px)','important');
+    node.style.setProperty('max-height','844px','important');
+    node.style.setProperty('transform','none','important');
+    const box=node.getBoundingClientRect();
+    const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
+    const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
+    const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
+    const result={top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
+    node.style.cssText=original;
+    return result;
+  });
+  const delta=baseline.brandTop-actual.brandTop;
+  expect(delta).toBeGreaterThan(11.5);
+  expect(delta).toBeLessThan(12.5);
+  expect(Math.abs(actual.bottom-baseline.bottom)).toBeLessThan(.5);
+  expect(Math.abs(actual.headlineTop-baseline.headlineTop)).toBeLessThan(.5);
+  expect(Math.abs(actual.actionTop-baseline.actionTop)).toBeLessThan(.5);
+  expect(actual.brandTop).toBeGreaterThanOrEqual(0);
   expect(errs).toEqual([]);
 });
 
