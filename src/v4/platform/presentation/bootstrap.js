@@ -1,3 +1,4 @@
+import '../../../v5/home-entry-polish.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
