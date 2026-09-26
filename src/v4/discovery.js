@@ -151,8 +151,8 @@ function card(row,index,state){
       <div class="fm-next-match-place">${match.place}</div>
     </div>
     <div class="fm-next-match-body">
-      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${row.fit||match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${spotLabel(match,state)}</span></div>
-      <div class="fm-next-match-footer"><div><small>${match.region} · ${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>
+      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${row.fit||match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${spotLabel(match,state)}</span><span class="fm-next-tag" style="margin-left:auto">${match.level}</span></div>
+      <div class="fm-next-match-footer" style="justify-content:flex-end"><div class="fm-next-price">${money(match.price)}</div></div>
     </div>
   </button>`;
 }
@@ -162,6 +162,14 @@ function activeFilters(){
 }
 
 function activeLabel(key){return labels[key]?.[filters[key]]||filters[key]}
+
+function compactDiscoveryHeader(screen){
+  const topbar=screen.querySelector('.fm-next-topbar');
+  const title=topbar?.querySelector(':scope > strong');
+  if(title?.textContent.trim()==='경기 찾기')title.remove();
+  topbar?.classList.remove('fm-next-topbar--titled');
+  screen.querySelector('.fm-next-section-head')?.remove();
+}
 
 function ensureChrome(screen){
   let chrome=screen.querySelector('.fm-discovery-chrome');
@@ -202,6 +210,7 @@ function updateChrome(screen,total){
 function renderResults(screen,state){
   const list=screen.querySelector('.fm-next-list');
   if(!list)return;
+  compactDiscoveryHeader(screen);
   const rows=sortedRows(state);
   updateChrome(screen,rows.length);
   if(rows.length){
@@ -209,10 +218,6 @@ function renderResults(screen,state){
   }else{
     list.innerHTML=`<div class="fm-discovery-empty" role="status"><span class="fm-discovery-empty-icon" aria-hidden="true">↗</span><h2>조건에 맞는 경기가 없어요.</h2><p>날짜·시간·거리·가격 범위를 넓히면 다시 비교할 수 있어요.</p><div class="fm-discovery-empty-actions"><button type="button" data-discovery-action="relax-filters">조건 넓히기</button><button type="button" data-discovery-action="clear-filters">전체 조건 해제</button></div></div>`;
   }
-  const heading=screen.querySelector('.fm-next-section-head h1');
-  const copy=screen.querySelector('.fm-next-section-head p');
-  if(heading)heading.textContent='경기 찾기';
-  if(copy)copy.textContent=`${state.region} · ${state.level} · ${state.position} 추천을 기준으로 직접 탐색할 수 있어요.`;
   screen.dataset.discoveryVersion=DISCOVERY_VERSION;
   screen.dataset.discoveryResultCount=String(rows.length);
 }
