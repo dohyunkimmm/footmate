@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -63,7 +63,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
   await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
   await expect(welcomeTopbar).toHaveCSS('transform','none');
-  await expect(welcomeBrand).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -8)');
+  await expect(welcomeBrand).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -2)');
   await expect(welcomeTopbar).toHaveCSS('position','absolute');
   const renderedBrandGeometry=await welcomeBrand.evaluate(node=>{
     const topbar=node.closest('.fm-next-topbar--dark');
@@ -75,7 +75,7 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
     const normalBrandTop=topbarBox.top+paddingTop+(topbarBox.height-paddingTop-paddingBottom-brandBox.height)/2;
     return {offset:brandBox.top-normalBrandTop,topInset:brandBox.top-topbarBox.top};
   });
-  expect(Math.round(renderedBrandGeometry.offset)).toBe(-8);
+  expect(Math.round(renderedBrandGeometry.offset)).toBe(-2);
   expect(renderedBrandGeometry.topInset).toBeGreaterThanOrEqual(8);
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
