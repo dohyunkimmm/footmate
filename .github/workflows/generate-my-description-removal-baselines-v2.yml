@@ -1,0 +1,38 @@
+name: Generate MY Description Removal Baselines v2
+on:
+  push:
+    branches: [fix/my-remove-feature-description-v2]
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Generate MY baseline candidates
+        run: npx playwright test --project=chromium tests/e2e/v4-personalization.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --update-snapshots
+      - name: Commit generated MY baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/e2e/v4-personalization.spec.cjs-snapshots/real-app-my-fresh-profile-390-chromium-linux.png \
+            tests/e2e/my-fresh-profile-containment.spec.cjs-snapshots/my-fresh-profile-390-chromium-linux.png \
+            tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots/design-system-v2-personalization-1440-chromium-linux.png \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-profile-1440-chromium-linux.png
+          if git diff --cached --quiet; then
+            echo "No baseline changes"
+            exit 0
+          fi
+          git commit -m "test: refresh MY description removal baselines"
+          git push
