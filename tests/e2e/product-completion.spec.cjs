@@ -44,8 +44,8 @@ test('Home is the AI Match Assistant entry with one compact For You list',async(
   const screen=page.locator('[data-screen="home"]');
   const ai=screen.locator('.fm-ai-card[data-product-ai="home"]');
   await expect(screen).toHaveAttribute('data-ia-role','assistant-entry');
-  await expect(screen.locator('.fm-next-greeting h1')).toHaveText('오늘, 어떤 경기에서 뛸까요?');
-  await expect(ai.locator('.fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 말해보세요.');
+  await expect(screen.locator('.fm-next-greeting')).toHaveCount(0);
+  await expect(ai.locator('.fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 검색해보세요.');
   await expect(ai.locator('[data-ai-example]:visible')).toHaveCount(3);
   await expect(ai.locator('[data-ai-submit]')).toHaveText('AI로 찾기');
   await expect(ai.locator('.fm-ai-results')).toBeHidden();

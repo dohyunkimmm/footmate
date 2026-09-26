@@ -12,7 +12,7 @@ const cs=read('index.html');
 const narrative=read('src/v5/case-study-connected.js');
 const release=JSON.parse(read('package.json')).version;
 assert(app.includes(`footmate-release\" content=\"${release}\"`),'app must expose the package-owned global release');
-assert(app.includes('/src/v5/ai-match-assistant.js?v=511'),'AI runtime must use v5.1.1 cache key');
+assert(app.includes('/src/v5/ai-match-assistant.js?v=512'),'AI runtime must use v5.1.1 cache key');
 assert(app.includes('/src/v5/ai-match-assistant.css?v=511'),'AI styles must use v5.1.1 cache key');
 assert(journey.includes("CONNECTED_PLATFORM_VERSION='5.1.1'"),'connected platform version must be v5.1.1');
 assert(ai.includes("workflow:'Context → Plan → Tools → Guardrail → Observe'"),'AI workflow must be disclosed');
