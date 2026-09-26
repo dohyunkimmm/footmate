@@ -102,7 +102,7 @@ if(root){
     if(submit)submit.setAttribute('aria-label','AI로 찾기');
 
     if(isHome){
-      setText(title,'AI에게 원하는 경기를 말해보세요.');
+      setText(title,'AI에게 원하는 경기를 검색해보세요.');
       setText(copy,'AI가 자연어 조건을 해석하고 기존 추천 엔진이 맞는 경기 순위를 계산합니다.');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'AI로 찾기');
