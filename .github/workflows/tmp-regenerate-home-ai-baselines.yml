@@ -21,13 +21,16 @@ jobs:
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
           npx playwright install --with-deps chromium
-      - name: Regenerate only intentional Home AI baselines
-        run: |
-          npx playwright test tests/e2e/v5.1-release-flow-review.spec.cjs --project=chromium -g "AI Match Assistant is a primary core feature with explicit rules fallback" --update-snapshots
-          npx playwright test tests/e2e/v5.1-visual-baseline.spec.cjs --project=chromium -g "390px AI card matches the approved visual baseline" --update-snapshots
-          npx playwright test tests/e2e/v5.1-visual-system-completion.spec.cjs --project=chromium -g "1440px Home and Discover match the completed visual hierarchy|390px AI fallback matches the completed state hierarchy|390px AI loading and Discovery empty states match the completed state system|390px Home keeps the decision flow compact before the match list|px home keeps matches scrollable above shell navigation and retains readable controls" --update-snapshots
-          npx playwright test tests/e2e/product-completion.spec.cjs --project=chromium -g "Home is the AI Match Assistant entry with one compact For You list|AI fallback exposes an explicit retry action on Home without duplicating results there" --update-snapshots
-          npx playwright test tests/e2e/real-app-white-surface.spec.cjs --project=chromium -g "390px Home uses neutral match media while raising the core AI surface" --update-snapshots
+      - name: Regenerate release-flow Home AI baseline
+        run: npx playwright test tests/e2e/v5.1-release-flow-review.spec.cjs --project=chromium -g "AI Match Assistant is a primary core feature with explicit rules fallback" --update-snapshots --workers=1
+      - name: Regenerate visual-baseline Home AI baseline
+        run: npx playwright test tests/e2e/v5.1-visual-baseline.spec.cjs --project=chromium -g "390px AI card matches the approved visual baseline" --update-snapshots --workers=1
+      - name: Regenerate visual-system Home AI baselines
+        run: npx playwright test tests/e2e/v5.1-visual-system-completion.spec.cjs --project=chromium -g "1440px Home and Discover match the completed visual hierarchy|390px AI fallback matches the completed state hierarchy|390px AI loading and Discovery empty states match the completed state system|390px Home keeps the decision flow compact before the match list|home keeps matches scrollable above shell navigation and retains readable controls" --update-snapshots --workers=1
+      - name: Regenerate product-completion Home AI baselines
+        run: npx playwright test tests/e2e/product-completion.spec.cjs --project=chromium -g "Home is the AI Match Assistant entry with one compact For You list|AI fallback exposes an explicit retry action on Home without duplicating results there" --update-snapshots --workers=1
+      - name: Regenerate Real App White Home baseline
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs --project=chromium -g "390px Home uses neutral match media while raising the core AI surface" --update-snapshots --workers=1
       - name: Commit regenerated Home AI baselines
         run: |
           git config user.name "github-actions[bot]"
