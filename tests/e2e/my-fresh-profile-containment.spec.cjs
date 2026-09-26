@@ -4,7 +4,7 @@ const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
 const FRESH_PROFILE_COPY='현재 지역·포지션·레벨을 다음 방문의 시작점으로 저장할 수 있어요.';
 const BROWSER_ONLY_COPY='저장 프로필·최근 확인 경기·선호 지역/시간/포맷은 이 브라우저에만 남습니다. 회원 DB, 서버 메모리, 기기 간 동기화는 연결하지 않았습니다.';
 
-// Regression target: the exact unsaved MY guidance state that overflowed before a profile was saved.
+// Regression target: the exact one-line unsaved MY guidance state before a profile is saved.
 async function openFreshProfile(page,width=390){
   await page.setViewportSize({width,height:844});
   await page.goto('/app',{waitUntil:'domcontentloaded'});
