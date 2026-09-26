@@ -143,15 +143,20 @@ test('1440px Auth matches the decision-to-join hierarchy',async({page})=>{
   expect(errs).toEqual([]);
 });
 
-test('1440px Schedule empty and Profile match the completed product surfaces',async({page})=>{
+test('1440px MY owns the empty match state and Profile matches the completed product surface',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
-  await page.getByRole('button',{name:'내 경기'}).click();
-  await expect(page.locator('[data-screen="schedule"]')).toBeVisible();
-  await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('visual-system-schedule-empty-1440.png',exactScreenshot);
+  const homeNav=page.locator('[data-screen="home"] .fm-next-nav');
+  await expect(homeNav.locator('button')).toHaveCount(3);
+  expect(await homeNav.locator('button').evaluateAll(nodes=>nodes.map(node=>node.textContent.trim()))).toEqual(['홈','경기 찾기','MY']);
+  await expect(homeNav.locator('[data-action="nav-schedule"]')).toHaveCount(0);
   await page.getByRole('button',{name:'MY'}).click();
-  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
+  const profile=page.locator('[data-screen="profile"]');
+  await expect(profile).toBeVisible();
+  const hub=profile.locator('[data-my-matchday-hub]');
+  await expect(hub).toBeVisible();
+  await expect(hub.getByText('아직 참가한 경기가 없어요')).toBeVisible();
+  await expect(hub.getByRole('button',{name:'경기 찾기'})).toBeVisible();
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('visual-system-profile-1440.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
