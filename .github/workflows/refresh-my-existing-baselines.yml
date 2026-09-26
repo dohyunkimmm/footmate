@@ -1,0 +1,44 @@
+name: Refresh Existing MY Baselines
+on:
+  push:
+    branches: [fix/my-tab-layout-20260926]
+permissions:
+  contents: write
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/my-tab-layout-20260926
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh only MY affected approved baselines
+        run: |
+          npx playwright test --project=chromium tests/e2e/v4-personalization.spec.cjs -g "Real App MY aligns" --update-snapshots
+          npx playwright test --project=chromium tests/e2e/v5.1-design-system-v2.spec.cjs -g "Profile personalization is a first-class" --update-snapshots
+          npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs -g "Schedule empty and Profile" --update-snapshots
+      - name: Commit only MY affected baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/e2e/v4-personalization.spec.cjs-snapshots/real-app-my-personalization-390-chromium-linux.png \
+            tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots/design-system-v2-personalization-1440-chromium-linux.png \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-profile-1440-chromium-linux.png
+          if git diff --cached --quiet; then
+            echo "No MY baseline changes"
+          else
+            git commit -m "test: refresh MY affected visual baselines"
+            git push origin HEAD:fix/my-tab-layout-20260926
+          fi
