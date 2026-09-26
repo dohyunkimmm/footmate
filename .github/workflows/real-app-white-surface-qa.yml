@@ -57,7 +57,7 @@ on:
       - tests/e2e/v4-personalization.spec.cjs-snapshots/**
       - .github/workflows/real-app-white-surface-qa.yml
 permissions:
-  contents: write
+  contents: read
 jobs:
   visual:
     runs-on: ubuntu-latest
@@ -92,31 +92,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Compare Real App visual baselines and completion contracts
-        id: compare
-        continue-on-error: true
         run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-personalization.spec.cjs
-      - name: Refresh intended MY match hub visual baselines
-        if: steps.compare.outcome == 'failure' && github.event_name == 'pull_request' && github.head_ref == 'feat/my-match-hub-final-20260926'
-        run: |
-          git fetch origin "${GITHUB_HEAD_REF}"
-          git checkout -B "${GITHUB_HEAD_REF}" "origin/${GITHUB_HEAD_REF}"
-          npx playwright test tests/e2e/my-fresh-profile-containment.spec.cjs -g "fresh MY guidance stays inside its card" --update-snapshots
-          npx playwright test tests/e2e/product-completion.spec.cjs -g "Home is the AI Match Assistant entry" --update-snapshots
-          npx playwright test tests/e2e/product-completion.spec.cjs -g "Discover owns filters" --update-snapshots
-          npx playwright test tests/e2e/real-app-white-surface.spec.cjs -g "390px Home uses neutral" --update-snapshots
-          npx playwright test tests/e2e/real-app-white-surface.spec.cjs -g "390px Discover uses the same" --update-snapshots
-          npx playwright test tests/e2e/v4-personalization.spec.cjs -g "Real App MY aligns the saved profile" --update-snapshots
-          npx playwright test tests/e2e/v4-matchday.spec.cjs -g "joined match and matchday operations continue inside MY" --update-snapshots
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tests/e2e/*-snapshots/*.png
-          if ! git diff --cached --quiet; then
-            git commit -m "test: refresh MY match hub visual baselines"
-            git push origin "HEAD:${GITHUB_HEAD_REF}"
-          fi
-      - name: Fail if comparison did not pass
-        if: steps.compare.outcome == 'failure'
-        run: exit 1
       - name: Upload visual evidence
         if: always()
         uses: actions/upload-artifact@v6
