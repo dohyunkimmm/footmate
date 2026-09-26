@@ -52,13 +52,15 @@ function deterministicResults(result,state){
   return ranked.map(item=>({item,match:byId.get(item.id)})).filter(({match})=>{if(!match)return false;if(result.region&&match.region!==result.region)return false;if(result.position&&Number(match.positionSlots?.[result.position]||0)<=0)return false;if(result.maxPrice!=null&&match.price>result.maxPrice)return false;if(result.maxDistanceMin!=null&&match.distanceMin>result.maxDistanceMin)return false;if(threshold!=null){const minutes=matchTimeMinutes(match);if(minutes!=null&&minutes<threshold)return false}return true}).slice(0,3);
 }
 function conditionLabels(result){const labels=[];if(result.region)labels.push(result.region);if(result.position)labels.push(result.position);if(result.level)labels.push(result.level);if(result.maxPrice!=null)labels.push(`${money(result.maxPrice)} 이하`);if(result.maxDistanceMin!=null)labels.push(`${result.maxDistanceMin}분 이내`);if(result.afterTime)labels.push(`${result.afterTime} 이후`);return labels.length?labels:['현재 설정 유지']}
+function homeStatusSummary(result){const region=String(result?.region||'').trim(),role=[result?.level,result?.position].filter(Boolean).join(' ');if(region&&role)return `${region}에서 조건에 맞는 ${role} 경기를 찾습니다.`;if(region)return `${region}에서 조건에 맞는 경기를 찾습니다.`;if(role)return `조건에 맞는 ${role} 경기를 찾습니다.`;return '조건에 맞는 경기를 찾습니다.'}
 function resultMarkup(entries){if(!entries.length)return '<div class="fm-ai-empty"><b>조건에 맞는 샘플 경기가 없어요.</b><span>거리·가격·시간 조건을 조금 넓혀 다시 요청해보세요.</span></div>';return entries.map(({item,match},index)=>`<button type="button" class="fm-ai-result" data-action="open-match" data-match-id="${escapeHtml(match.id)}"><span class="fm-ai-result-rank">${index+1}</span><span class="fm-ai-result-copy"><b>${escapeHtml(match.place)}</b><small>${escapeHtml(match.dateLabel)} · ${escapeHtml(match.level)} · ${escapeHtml(match.distance)} · ${money(match.price)}</small><em>${escapeHtml((item.reasons||[]).slice(0,2).join(' · ')||item.fit||match.fit)}</em></span><span aria-hidden="true">→</span></button>`).join('')}
 function renderSaved(card,saved){
   if(!saved||!saved.result)return;
   card.dataset.aiState='result';
   if(['connected-ai','rules-fallback'].includes(saved.mode))lastMode=saved.mode;
   const state=readState(),result=normalizeResult(saved.result),entries=deterministicResults(result,state),status=card.querySelector('[data-ai-status]'),conditions=card.querySelector('[data-ai-conditions]'),results=card.querySelector('[data-ai-results]'),mode=card.querySelector('[data-ai-mode]');
-  if(status)status.innerHTML=`<b>${escapeHtml(result.reply)}</b><span>${saved.mode==='connected-ai'?'AI가 자연어를 조건으로 해석했고, 순위는 기존 추천 엔진이 계산했습니다.':'AI 연결 실패 후 rules-based fallback으로 같은 추천 엔진을 사용했습니다.'}</span>`;
+  const statusCopy=card.closest('[data-screen="home"]')&&saved.mode==='connected-ai'?homeStatusSummary(result):result.reply;
+  if(status)status.innerHTML=`<b>${escapeHtml(statusCopy)}</b><span>${saved.mode==='connected-ai'?'AI가 자연어를 조건으로 해석했고, 순위는 기존 추천 엔진이 계산했습니다.':'AI 연결 실패 후 rules-based fallback으로 같은 추천 엔진을 사용했습니다.'}</span>`;
   if(conditions)conditions.innerHTML=conditionLabels(result).map(label=>`<span>${escapeHtml(label)}</span>`).join('');if(results)results.innerHTML=resultMarkup(entries);if(mode){mode.textContent=saved.mode==='connected-ai'?'AI connected':'Rules fallback';mode.dataset.mode=saved.mode}
 }
 async function run(card,message){
@@ -102,7 +104,7 @@ if(root){
     if(submit)submit.setAttribute('aria-label','AI로 찾기');
 
     if(isHome){
-      setText(title,'AI에게 원하는 경기를 말해보세요.');
+      setText(title,'AI에게 원하는 경기를 검색해보세요.');
       setText(copy,'AI가 자연어 조건을 해석하고 기존 추천 엔진이 맞는 경기 순위를 계산합니다.');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'AI로 찾기');
@@ -225,14 +227,12 @@ function observeHome(card){
 }
 function configureHome(screen){
   screen.dataset.iaRole='assistant-entry';
-  const greeting=screen.querySelector('.fm-next-greeting');
-  text(greeting?.querySelector('small'),'AI MATCH ASSISTANT');
-  text(greeting?.querySelector('h1'),'오늘, 어떤 경기에서 뛸까요?');
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="home"],.fm-ai-card[data-ai-assistant]');
   if(assistant){
     assistant.hidden=false;assistant.dataset.iaRole='primary-assistant';
     assistant.querySelectorAll('[data-ai-example]').forEach(example=>{example.hidden=false;example.classList.add('fm-ia-suggestion');if(!example.hasAttribute('aria-pressed'))example.setAttribute('aria-pressed','false');example.style.minHeight='44px'});
     assistant.querySelector('.fm-ai-examples')?.setAttribute('aria-label','바로 실행할 AI 경기 검색 예시');
+    const saved=readAssistant();if(saved?.mode==='connected-ai'&&saved.result)setText(assistant.querySelector('[data-ai-status] b'),homeStatusSummary(normalizeResult(saved.result)));
     observeHome(assistant);
   }
   const context=screen.querySelector('.fm-next-context-card');

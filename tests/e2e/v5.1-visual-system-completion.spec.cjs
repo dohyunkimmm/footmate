@@ -345,8 +345,10 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
     expect(metrics.minText).toBeGreaterThanOrEqual(11);
     expect(metrics.scrollHeight).toBeGreaterThanOrEqual(metrics.clientHeight);
     await expectNoHorizontalOverflow(page);
-    await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
-    await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
+    if(metrics.scrollHeight>metrics.clientHeight){
+      await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
+      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
+    }
     const last=screen.locator('.fm-next-match-card').last();
     const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
     expect(end.bottom).toBeLessThanOrEqual(end.navTop);
