@@ -19,7 +19,7 @@ jobs:
       - name: Install QA dependencies
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
-          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axe")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
           npx playwright install --with-deps chromium
       - name: Regenerate only MY affected baselines
