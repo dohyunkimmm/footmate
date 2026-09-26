@@ -52,6 +52,26 @@ jobs:
           discovery=replace_once(discovery,'  compactDiscoveryHeader(screen);\n','', 'runtime header remover call')
           discovery_path.write_text(discovery)
 
+          recommendation_path=Path('src/v4/recommendation.js')
+          recommendation=recommendation_path.read_text()
+          recommendation=replace_once(recommendation,
+              '  function card(item,index){',
+              "  function card(item,index,scope='home'){",
+              'recommendation card signature')
+          recommendation=replace_once(recommendation,
+              '        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${item.spotLabel}</span></div>\n        <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>',
+              '        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${item.spotLabel}</span>${scope===\'discover\'?`<span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span>`:\'\'}</div>\n        <div class="fm-next-match-footer">${scope===\'discover\'?`<div><small>${match.format} · ${match.duration}</small></div>`:`<div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div>`}<div class="fm-next-price">${money(match.price)}</div></div>',
+              'recommendation card body')
+          recommendation=replace_once(recommendation,
+              "    list.innerHTML=ranked.slice(0,2).map(card).join('');",
+              "    list.innerHTML=ranked.slice(0,2).map((item,index)=>card(item,index,'home')).join('');",
+              'home recommendation scope')
+          recommendation=replace_once(recommendation,
+              "    list.innerHTML=ranked.map(card).join('');",
+              "    list.innerHTML=ranked.map((item,index)=>card(item,index,'discover')).join('');",
+              'discover recommendation scope')
+          recommendation_path.write_text(recommendation)
+
           ai_path=Path('src/v5/ai-match-assistant.js')
           ai=ai_path.read_text()
           ai=replace_once(ai,
@@ -80,7 +100,7 @@ jobs:
           white=white_path.read_text()
           white=replace_once(white,
               "  await expect(screen).toBeVisible();\n  const media=screen.locator('.fm-next-match-card-media').first();",
-              "  await expect(screen).toBeVisible();\n  await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);\n  await expect(screen.locator('[data-discovery-heading]')).toBeHidden();\n  const firstCard=screen.locator('.fm-next-match-card').first();\n  await expect(firstCard).not.toContainText('인조잔디');\n  await expect(firstCard.locator('.fm-next-match-tags .fm-next-tag').last()).toContainText(/입문|초중급|중급/);\n  await expect(firstCard.locator('.fm-next-match-footer small')).toContainText(/vs/);\n  const media=screen.locator('.fm-next-match-card-media').first();",
+              "  await expect(screen).toBeVisible();\n  await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);\n  await expect(screen.locator('[data-discovery-heading]')).toBeHidden();\n  const firstCard=screen.locator('.fm-next-match-card').first();\n  await expect(firstCard).not.toContainText('인조잔디');\n  await expect(firstCard.locator('.fm-next-match-tags .fm-next-tag').last()).toContainText(/입문|초중급|중급|고급/);\n  await expect(firstCard.locator('.fm-next-match-footer small')).toContainText(/vs/);\n  const media=screen.locator('.fm-next-match-card-media').first();",
               'Discover surface regression assertions')
           white_path.write_text(white)
           PY
@@ -88,6 +108,7 @@ jobs:
         run: |
           node --check src/v4/app.js
           node --check src/v4/discovery.js
+          node --check src/v4/recommendation.js
           node --check src/v5/ai-match-assistant.js
           node --check tests/e2e/product-completion.spec.cjs
           node --check tests/e2e/v5.1-visual-system-completion.spec.cjs
@@ -112,7 +133,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/fix-discovery-density-pr339.yml
+          git rm .github/workflows/fix-discovery-density-pr339.yml .github/workflows/fix-discovery-density-pr339-v2.yml
           git add -A
-          git commit -m "fix: preserve Discover AI contract and refresh baselines [discover-pr339-repaired]"
+          git commit -m "fix: preserve Discover metadata and refresh baselines [discover-pr339-repaired]"
           git push origin HEAD:polish/discover-card-density-20260926
