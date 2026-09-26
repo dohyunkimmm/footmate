@@ -207,6 +207,24 @@ test('12 KPI disclosure is the metric header and keeps the modal interaction',as
   await open.click();
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('.fm-next-kpi-table>div')).toHaveCount(8);
+  const cells=dialog.locator('.fm-next-kpi-table dd');
+  await expect(cells).toHaveCount(16);
+  expect((await cells.allTextContents()).map(value=>value.trim())).toEqual([
+    '상세 진입 세션 ÷ 결과 노출 세션','동일 탐색 세션 1회 집계',
+    '참가 완료 사용자·경기 ÷ 상세 조회 사용자·경기','24시간 · 사용자·경기 1회 · 종료·마감 별도',
+    '결과 0건 정상 검색 ÷ 정상 검색','네트워크·서버 오류 제외 · 동일 요청 중복 제거',
+    '확정 실패·24시간 미해결 ÷ 참가 확정 요청','사용자 취소 별도 · timeout 후 상태 재조회',
+    '원래 목적 완료 흐름 ÷ 복구 가능한 실패 흐름','24시간 이내 · 대안 선택 별도 기록',
+    '체크인 완료 쌍 ÷ 종료 경기 확정 참가자·경기 쌍','취소 제외 · 노쇼 포함 · 경기 종료 시점',
+    '7일 내 재탐색 사용자 ÷ 7일 관찰 완료 사용자','사용자당 첫 완료 경기 · 탈퇴·관찰 누락 별도',
+    'AI 검색 사용 세션 ÷ AI 검색 진입점 노출 세션','connected-ai와 rules-fallback 분리 · 사용률과 품질 판단 분리'
+  ]);
+  const cellLayout=await cells.evaluateAll(nodes=>nodes.map(node=>({
+    whiteSpace:getComputedStyle(node).whiteSpace,
+    overflow:node.scrollWidth-node.clientWidth
+  })));
+  expect(cellLayout.every(item=>item.whiteSpace==='nowrap')).toBe(true);
+  expect(cellLayout.every(item=>item.overflow<=1)).toBe(true);
   await dialog.locator('.fm-next-kpi-close').click();
   await expect(dialog).not.toBeVisible();
 });
