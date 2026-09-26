@@ -91,7 +91,8 @@ test('02–13 tables, flows and cards use compact phrase grammar',async({page})=
   const qaCards=validation.locator('.fm-next-cs-grid.three .fm-next-cs-card');
   await expect(qaCards.nth(1).locator('p')).toHaveText('실제 OAuth 로그인 · 이메일 최종 전달 · Web Push 브라우저·OS 표시 · 제품 성과와 분리 · 사용자 만족도·전환');
   await expect(qaCards.nth(2).locator('p')).toHaveText('중복 · 용어 · 구현-설명 불일치 검토 · PASS 판정 제외');
-  await expect(validation.locator('.fm-next-cs-note')).toHaveText('추가 지표 · 결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률 · 외부 분석 도구 미연동 · 운영·테스트·시뮬레이션 제외 · 표본·기간·기준값 우선 확보');
+  expect(await rowValue(validation,'추가 지표')).toBe('결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률');
+  expect(await rowValue(validation,'측정 조건')).toBe('외부 분석 도구 미연동 · 운영·테스트·시뮬레이션 제외 · 표본·기간·기준값 우선 확보');
   expect((await validation.locator('.fm-next-cs-metric .fm-cs-ratio').allTextContents()).map(value=>value.trim())).toEqual([
     '계산 기준 · 상세 진입 세션 ÷ 결과 노출 세션',
     '참가 완료 사용자 ÷ 상세 조회 사용자',
