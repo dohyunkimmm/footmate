@@ -560,7 +560,7 @@
   }
 }
 /* Product shell geometry is owned here, not by an inline late override. */
-.fm-next-page[data-mode="real"] .fm-next-topbar--dark{min-height:64px;margin:0;background:linear-gradient(180deg,rgba(6,22,15,.78),rgba(6,22,15,0));border:0;color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}@media(min-width:1100px){.fm-next-page[data-mode="real"] .fm-next-app{width:min(100%,560px)}.fm-next-page[data-mode="real"] .fm-next-screen{padding-inline:20px}.fm-next-page[data-mode="real"] .fm-next-screen--intro{padding-inline:0}.fm-next-page[data-mode="real"] .fm-next-topbar{margin-inline:-20px;padding-inline:20px}.fm-next-page[data-mode="real"] .fm-next-topbar--dark{margin:0;padding:10px 20px}.fm-next-page[data-mode="real"] .fm-next-nav,.fm-next-page[data-mode="real"] .fm-next-sticky-cta{width:min(calc(100% - 24px),536px);bottom:12px}.fm-next-page[data-mode="real"] :where([data-screen="home"],[data-screen="discover"],[data-screen="schedule"])>.fm-next-section{width:auto;margin-inline:0}.fm-next-page[data-mode="real"] [data-screen="home"]>.fm-next-list,.fm-next-page[data-mode="real"] [data-screen="discover"] .fm-next-list{grid-template-columns:minmax(0,1fr);gap:12px}.fm-next-page[data-mode="real"] [data-screen="detail"],.fm-next-page[data-mode="real"] [data-screen="checkout"],.fm-next-page[data-mode="real"] [data-screen="profile"],.fm-next-page[data-mode="real"] [data-screen="schedule"][data-matchday-module-version] .fm-next-section{display:block}.fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-hero{margin-inline:-20px;padding:20px 20px 25px}.fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-hero h1{font-size:33px}.fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-section,.fm-next-page[data-mode="real"] [data-screen="checkout"]>.fm-next-detail-section{min-height:auto;margin-top:14px;padding:19px}.fm-next-page[data-mode="real"] [data-screen="checkout"]>.fm-next-checkout-summary{margin:20px 0 16px;padding:19px}.fm-next-page[data-mode="real"] [data-screen="checkout"]>div:has([data-participation-submit]){display:block;margin-top:20px!important}.fm-next-page[data-mode="real"] [data-screen="checkout"] [data-participation-submit]{max-width:none}.fm-next-page[data-mode="real"] .fm-next-success>.fm-next-ticket,.fm-next-page[data-mode="real"] .fm-next-success>.fm-next-actions{width:auto}.fm-next-page[data-mode="real"] .fm-next-success>.fm-next-actions{grid-template-columns:1fr}.fm-next-page[data-mode="real"] [data-screen="profile"]>.fm-next-profile-card,.fm-next-page[data-mode="real"] [data-screen="profile"]>.fm-next-menu-list{margin-top:14px}.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-step-indicator{margin-top:28px}.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-question{font-size:30px}.fm-next-page[data-mode="real"] .fm-next-auth-v3{padding-bottom:0}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-card{width:calc(100% - 40px);display:block;grid-template-columns:none;grid-template-rows:none;margin:22px auto 0;padding:24px 28px 32px;background:rgba(255,255,255,.94)}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-brand{justify-content:center;margin:0 0 18px;color:var(--fm-ink)}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title{padding-right:0;text-align:center}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title h1{color:var(--fm-ink);font-size:30px}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title p{max-width:none;color:var(--fm-muted)}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-context,.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-terms{text-align:center}}
+.fm-next-page[data-mode="real"] .fm-next-topbar--dark{min-height:64px;margin:0;background:linear-gradient(180deg,rgba(6,22,15,.78),rgba(6,22,15,0));border:0;color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}@media(min-width:1100px){.fm-next-page[data-mode="real"] .fm-next-app{width:min(100%,560px)}.fm-next-page[data-mode="real"] .fm-next-screen{padding-inline:20px}.fm-next-page[data-mode="real"] .fm-next-screen--intro{padding-inline:0}.fm-next-page[data-mode="real"] .fm-next-topbar{margin-inline:-20px;padding-inline:20px}.fm-next-page[data-mode="real"] .fm-next-topbar--dark{margin:0;padding:10px 20px}.fm-next-page[data-mode="real"] .fm-next-nav,.fm-next-page[data-mode="real"] .fm-next-sticky-cta{width:min(calc(100% - 24px),536px);bottom:12px}.fm-next-page[data-mode="real"] :where([data-screen="home"],[data-screen="discover"],[data-screen="schedule"])>.fm-next-section{width:auto;margin-inline:0}.fm-next-page[data-mode="real"] [data-screen="home"]>.fm-next-list,.fm-next-page[data-mode="real"] [data-screen="discover"] .fm-next-list{grid-template-columns:minmax(0,1fr);gap:12px}.fm-next-page[data-mode="real"] [data-screen="detail"],.fm-next-page[data-mode="real"] [data-screen="checkout"],.fm-next-page[data-mode="real"] [data-screen="profile"],.fm-next-page[data-mode="real"] :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version]{display:block}.fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-hero{margin-inline:-20px;padding:20px 20px 25px}.fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-hero h1{font-size:33px}.fm-next-page[data-mode="real"] [data-screen="detail"] .fm-next-detail-section,.fm-next-page[data-mode="real"] [data-screen="checkout"]>.fm-next-detail-section{min-height:auto;margin-top:14px;padding:19px}.fm-next-page[data-mode="real"] [data-screen="checkout"]>.fm-next-checkout-summary{margin:20px 0 16px;padding:19px}.fm-next-page[data-mode="real"] [data-screen="checkout"]>div:has([data-participation-submit]){display:block;margin-top:20px!important}.fm-next-page[data-mode="real"] [data-screen="checkout"] [data-participation-submit]{max-width:none}.fm-next-page[data-mode="real"] .fm-next-success>.fm-next-ticket,.fm-next-page[data-mode="real"] .fm-next-success>.fm-next-actions{width:auto}.fm-next-page[data-mode="real"] .fm-next-success>.fm-next-actions{grid-template-columns:1fr}.fm-next-page[data-mode="real"] [data-screen="profile"]>.fm-next-profile-card,.fm-next-page[data-mode="real"] [data-screen="profile"]>.fm-next-menu-list{margin-top:14px}.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-step-indicator{margin-top:28px}.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-question{font-size:30px}.fm-next-page[data-mode="real"] .fm-next-auth-v3{padding-bottom:0}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-card{width:calc(100% - 40px);display:block;grid-template-columns:none;grid-template-rows:none;margin:22px auto 0;padding:24px 28px 32px;background:rgba(255,255,255,.94)}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-brand{justify-content:center;margin:0 0 18px;color:var(--fm-ink)}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title{padding-right:0;text-align:center}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title h1{color:var(--fm-ink);font-size:30px}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title p{max-width:none;color:var(--fm-muted)}.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-context,.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-terms{text-align:center}}
 
 /* Keep the idle search entry concise on both recommendation surfaces. */
 .fm-next-page[data-mode="real"] .fm-ai-card[data-ai-state="idle"] .fm-ai-core-label{display:none}
@@ -893,80 +893,80 @@
 }
 
 @media(min-width:1100px){
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-section{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version]{
     padding-bottom:92px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-panel{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-panel{
     margin:10px 0 12px;
     padding:13px 15px;
     gap:9px;
     border-radius:18px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-status{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-status{
     grid-template-columns:auto minmax(0,1fr);
     align-items:baseline;
     column-gap:10px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-status b{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-status b{
     font-size:16px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-status span{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-status span{
     font-size:12px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-grid{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-grid{
     gap:7px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-grid article{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-grid article{
     gap:3px;
     padding:9px;
     border-radius:12px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-grid article>span{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-grid article>span{
     display:none;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-actions{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-actions{
     flex-wrap:nowrap;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-actions button{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-actions button{
     flex:1 1 0;
     min-width:0;
     padding-inline:10px;
     font-size:12px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-matchday-boundary{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-matchday-boundary{
     padding-top:7px;
     font-size:11px;
     line-height:1.35;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-section-head{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-section-head{
     margin-bottom:10px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-upcoming{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-upcoming{
     margin:8px 0 11px;
-    padding:14px 16px;
+    padding:11px 16px;
     border-radius:18px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-upcoming-top{
-    margin-bottom:10px;
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-upcoming-top{
+    margin-bottom:8px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-upcoming h2{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-upcoming h2{
     font-size:19px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-upcoming-actions{
-    margin-top:10px;
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-upcoming-actions{
+    margin-top:8px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-status-list{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-status-list{
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:7px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-status-card{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-status-card{
     display:grid;
     grid-template-columns:auto minmax(0,1fr);
     gap:8px;
     padding:10px;
     border-radius:14px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"][data-matchday-module-version] .fm-next-status-card p{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="profile"],[data-screen="schedule"]) [data-my-matches][data-matchday-module-version] .fm-next-status-card p{
     font-size:10px;
     line-height:1.4;
   }
