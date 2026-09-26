@@ -91,7 +91,15 @@ jobs:
           rm .github/workflows/apply-welcome-desktop-headroom-temp.yml
           python - <<'PY'
           import subprocess
-          allowed={'src/v4/personalization.css','tests/e2e/real-app-white-surface.spec.cjs','tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png','.github/workflows/apply-welcome-desktop-headroom-temp.yml'}
+          allowed={
+            'src/v4/personalization.css',
+            'tests/e2e/real-app-white-surface.spec.cjs',
+            'tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png',
+            'tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png',
+            'tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png',
+            'tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png',
+            '.github/workflows/apply-welcome-desktop-headroom-temp.yml'
+          }
           status=subprocess.check_output(['git','status','--short']).decode().splitlines()
           paths={line[3:] for line in status}
           print('\n'.join(status))
