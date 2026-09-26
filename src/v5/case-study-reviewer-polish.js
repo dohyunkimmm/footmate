@@ -21,14 +21,14 @@
   ];
 
   const kpiRows=[
-    ['Match Search → Detail CTR','결과에서 상세로 이동한 세션 ÷ 검색 결과가 1개 이상 노출된 세션','같은 탐색 세션 · 세션당 1회 집계'],
-    ['Detail → Join Conversion','상세 조회 후 같은 경기에 참가 완료한 사용자·경기 쌍 ÷ 상세 조회 사용자·경기 쌍','조회 후 24시간 · 관찰 완료 표본만 비교 · 종료·마감 별도 분류'],
-    ['Zero Result Rate','정상 처리 후 결과 0개인 검색 ÷ 정상 처리된 검색','네트워크·서버 오류 제외 · 동일 요청 중복 제거'],
-    ['Join Failure Rate','확정 실패 또는 미해결 참가 흐름 ÷ 참가 확정을 요청한 흐름','24시간 관찰 완료 · 사용자 취소 별도 · timeout 후 상태 재조회'],
-    ['Recovery Success Rate','같은 목적을 완료한 복구 흐름 ÷ 복구 가능한 실패 흐름','24시간 이내 · 원래 목적이 불가능한 대안 선택은 별도 기록'],
-    ['Check-in Completion Rate','체크인 완료 참가자·경기 쌍 ÷ 취소되지 않은 종료 경기의 확정 참가자·경기 쌍','경기 종료 시점 · 참가 취소 제외 · 노쇼는 비교 기준에 포함'],
-    ['Repeat Match Search Rate','경기 후 7일 내 다시 탐색한 사용자 ÷ 7일 관찰이 완료된 참가 사용자','사용자당 첫 완료 경기 기준 · 탈퇴·관찰 누락 별도 기록'],
-    ['AI Search Adoption Rate','AI 검색을 1회 이상 요청한 탐색 세션 ÷ AI 검색 진입점이 노출된 탐색 세션','connected-ai와 rules-fallback 분리 · 사용률을 품질로 해석하지 않음']
+    ['Match Search → Detail CTR','상세 진입 세션 ÷ 결과 노출 세션','동일 탐색 세션 1회 집계'],
+    ['Detail → Join Conversion','참가 완료 사용자·경기 ÷ 상세 조회 사용자·경기','24시간 · 사용자·경기 1회 · 종료·마감 별도'],
+    ['Zero Result Rate','결과 0건 정상 검색 ÷ 정상 검색','네트워크·서버 오류 제외 · 동일 요청 중복 제거'],
+    ['Join Failure Rate','확정 실패·24시간 미해결 ÷ 참가 확정 요청','사용자 취소 별도 · timeout 후 상태 재조회'],
+    ['Recovery Success Rate','원래 목적 완료 흐름 ÷ 복구 가능한 실패 흐름','24시간 이내 · 대안 선택 별도 기록'],
+    ['Check-in Completion Rate','체크인 완료 쌍 ÷ 종료 경기 확정 참가자·경기 쌍','취소 제외 · 노쇼 포함 · 경기 종료 시점'],
+    ['Repeat Match Search Rate','7일 내 재탐색 사용자 ÷ 7일 관찰 완료 사용자','사용자당 첫 완료 경기 · 탈퇴·관찰 누락 별도'],
+    ['AI Search Adoption Rate','AI 검색 사용 세션 ÷ AI 검색 진입점 노출 세션','connected-ai와 rules-fallback 분리 · 사용률과 품질 판단 분리']
   ];
 
   function setText(root,selector,text){const node=root?.querySelector(selector);if(node)node.textContent=text;return node;}
@@ -56,10 +56,11 @@
       html[data-fm-next-case-study="true"] .fm-next-kpi-table>div{display:grid;grid-template-columns:180px minmax(0,1fr) minmax(0,1fr);gap:12px;padding:11px 12px;border:1px solid #e3eae6;border-radius:12px;background:#fbfdfc}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dt,html[data-fm-next-case-study="true"] .fm-next-kpi-table dd{margin:0}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dt{font-size:12px;line-height:1.45;font-weight:850}
-      html[data-fm-next-case-study="true"] .fm-next-kpi-table dd{font-size:11px;line-height:1.6}
+      html[data-fm-next-case-study="true"] .fm-next-kpi-table dd{min-width:0;font-size:11px;line-height:1.6}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd::before{display:block;margin-bottom:2px;color:#728279;font-size:9px;font-weight:800}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd:nth-of-type(1)::before{content:"계산 기준"}
       html[data-fm-next-case-study="true"] .fm-next-kpi-table dd:nth-of-type(2)::before{content:"관찰 · 제외 기준"}
+      @media(min-width:901px){html[data-fm-next-case-study="true"] .fm-next-kpi-table dd{white-space:nowrap}}
       @media(max-width:900px){html[data-fm-next-case-study="true"] .fm-next-review-summary{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-review-summary>div{padding:8px 10px}html[data-fm-next-case-study="true"] .fm-next-kpi-table>div{grid-template-columns:1fr;gap:6px}html[data-fm-next-case-study="true"] .fm-next-kpi-dialog-inner{padding:18px}}
     `;
     document.head.appendChild(style);
