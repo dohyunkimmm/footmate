@@ -102,7 +102,7 @@ if(root){
     if(submit)submit.setAttribute('aria-label','AI로 찾기');
 
     if(isHome){
-      setText(title,'AI에게 원하는 경기를 말해보세요.');
+      setText(title,'AI에게 원하는 경기를 검색해보세요.');
       setText(copy,'AI가 자연어 조건을 해석하고 기존 추천 엔진이 맞는 경기 순위를 계산합니다.');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'AI로 찾기');
@@ -226,13 +226,30 @@ function observeHome(card){
 function configureHome(screen){
   screen.dataset.iaRole='assistant-entry';
   const greeting=screen.querySelector('.fm-next-greeting');
-  text(greeting?.querySelector('small'),'AI MATCH ASSISTANT');
-  text(greeting?.querySelector('h1'),'오늘, 어떤 경기에서 뛸까요?');
+  if(greeting){greeting.hidden=true;greeting.style.display='none'}
+  const topProfileAction=screen.querySelector('.fm-next-topbar [data-action="nav-profile"]');
+  topProfileAction?.remove();
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="home"],.fm-ai-card[data-ai-assistant]');
   if(assistant){
     assistant.hidden=false;assistant.dataset.iaRole='primary-assistant';
     assistant.querySelectorAll('[data-ai-example]').forEach(example=>{example.hidden=false;example.classList.add('fm-ia-suggestion');if(!example.hasAttribute('aria-pressed'))example.setAttribute('aria-pressed','false');example.style.minHeight='44px'});
     assistant.querySelector('.fm-ai-examples')?.setAttribute('aria-label','바로 실행할 AI 경기 검색 예시');
+    const conditions=assistant.querySelector('[data-ai-conditions]');
+    if(conditions){
+      conditions.style.display='flex';
+      conditions.style.flexWrap='nowrap';
+      conditions.style.gap='4px';
+      conditions.style.alignItems='center';
+      conditions.style.overflow='hidden';
+      conditions.style.whiteSpace='nowrap';
+      conditions.querySelectorAll('span').forEach(chip=>{
+        chip.style.flex='0 0 auto';
+        chip.style.padding='5px 6px';
+        chip.style.fontSize='10px';
+        chip.style.letterSpacing='-.04em';
+        chip.style.whiteSpace='nowrap';
+      });
+    }
     observeHome(assistant);
   }
   const context=screen.querySelector('.fm-next-context-card');
