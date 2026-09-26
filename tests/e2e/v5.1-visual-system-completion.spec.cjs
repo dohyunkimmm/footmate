@@ -144,15 +144,15 @@ test('1440px Auth matches the decision-to-join hierarchy',async({page})=>{
   expect(errs).toEqual([]);
 });
 
-test('1440px Schedule empty and Profile match the completed product surfaces',async({page})=>{
+test('1440px MY owns the empty match state and Profile matches the completed product surface',async({page})=>{
   const errs=await openCleanApp(page,{width:1440,height:900});
   await setupToHome(page);
-  await page.getByRole('button',{name:'내 경기'}).click();
-  await expect(page.locator('[data-screen="schedule"]')).toBeVisible();
-  await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('visual-system-schedule-empty-1440.png',exactScreenshot);
   await page.getByRole('button',{name:'MY'}).click();
-  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
+  const profile=page.locator('[data-screen="profile"]');
+  const hub=profile.locator('[data-my-matches]');
+  await expect(profile).toBeVisible();
+  await expect(hub).toContainText('아직 참가한 경기가 없어요.');
+  await expect(hub.getByRole('button',{name:'경기 찾기'})).toBeVisible();
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('visual-system-profile-1440.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
