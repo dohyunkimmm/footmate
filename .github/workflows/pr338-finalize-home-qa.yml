@@ -44,18 +44,20 @@ jobs:
           AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
           npx playwright install --with-deps chromium
-      - name: Refresh only intended Home white-surface baseline
-        run: npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Home uses neutral match media while raising the core AI surface" --update-snapshots
-      - name: Prove Home baseline and focused contracts
+      - name: Refresh intended Home baselines
+        run: |
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Home uses neutral match media while raising the core AI surface" --update-snapshots
+          npx playwright test --project=chromium tests/e2e/product-completion.spec.cjs -g "Home is the AI Match Assistant entry with one compact For You list" --update-snapshots
+      - name: Prove Home baselines and focused contracts
         run: |
           npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Home uses neutral match media while raising the core AI surface"
           npx playwright test --project=chromium tests/e2e/v5.1-ai-assistant.spec.cjs -g "Home AI search hierarchy keeps connected constraints on one row"
           npx playwright test --project=chromium tests/e2e/product-completion.spec.cjs -g "Home is the AI Match Assistant entry with one compact For You list"
           npx playwright test --project=chromium tests/e2e/welcome-source-layout.spec.cjs -g "Welcome source owns AI support copy"
-      - name: Commit fixes and baseline
+      - name: Commit fixes and baselines
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/v5/ai-match-assistant.js scripts/check-v5.1-boundary.cjs tests/e2e/product-completion.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png
+          git add src/v5/ai-match-assistant.js scripts/check-v5.1-boundary.cjs tests/e2e/product-completion.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-ia-390-chromium-linux.png
           git commit -m 'test: align Home QA with compact search UI'
           git push origin "HEAD:${GITHUB_REF_NAME}"
