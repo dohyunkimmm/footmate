@@ -31,6 +31,7 @@ test('Home AI search hierarchy keeps connected constraints on one row',async({pa
 
   await page.setViewportSize({width:320,height:844});
   await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="home"] [data-ai-conditions] span').filter({hasText:'중급'})).toBeHidden();
   const compact=page.locator('[data-screen="home"] [data-ai-conditions] span:visible');
   await expect(compact).toHaveCount(5);
   const compactGeometry=await compact.evaluateAll(nodes=>({tops:nodes.map(node=>Math.round(node.getBoundingClientRect().top)),last:nodes.at(-1).getBoundingClientRect().right,container:nodes[0].parentElement.getBoundingClientRect().right}));
