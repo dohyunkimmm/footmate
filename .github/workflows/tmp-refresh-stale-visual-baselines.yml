@@ -1,0 +1,42 @@
+name: Temporary stale visual baseline refresh
+on:
+  push:
+    branches: [fix/qa-stale-visual-baselines-20260927]
+permissions:
+  contents: write
+jobs:
+  refresh:
+    if: contains(github.event.head_commit.message, '[refresh-stale-visual-baselines]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/qa-stale-visual-baselines-20260927
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Refresh context actions baseline
+        run: |
+          npx playwright test tests/e2e/v5.1-visual-baseline.spec.cjs --project=chromium -g "320px context actions match the approved responsive visual baseline" --update-snapshots=all
+      - name: Refresh fresh MY baseline
+        run: |
+          npx playwright test tests/e2e/my-fresh-profile-containment.spec.cjs --project=chromium -g "fresh MY keeps its title and CTA without the feature description" --update-snapshots=all
+      - name: Commit refreshed baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots/real-app-context-actions-320-chromium-linux.png \
+            tests/e2e/my-fresh-profile-containment.spec.cjs-snapshots/my-fresh-profile-390-chromium-linux.png
+          if git diff --cached --quiet; then
+            echo "No baseline changes"
+          else
+            git commit -m "test: refresh stale visual baselines"
+            git push origin HEAD:fix/qa-stale-visual-baselines-20260927
+          fi
