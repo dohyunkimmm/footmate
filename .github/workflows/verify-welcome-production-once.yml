@@ -1,0 +1,61 @@
+name: Verify Welcome Production Once
+
+on:
+  push:
+    branches:
+      - qa/verify-welcome-production-20260926
+
+jobs:
+  production-browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Install Chromium
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Verify Production /demo and /app geometry
+        run: |
+          node <<'NODE'
+          const {chromium}=require('@playwright/test');
+          const assert=require('node:assert/strict');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            try{
+              for(const path of ['/demo','/app']){
+                const page=await browser.newPage({viewport:{width:390,height:844}});
+                await page.goto(`https://footmate-black.vercel.app${path}`,{waitUntil:'domcontentloaded'});
+                await page.evaluate(()=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({route:'welcome',setupComplete:true,region:'서울 · 강남',position:'GK',level:'입문',signedIn:false,userName:'게스트'}));});
+                await page.reload({waitUntil:'domcontentloaded'});
+                await page.waitForSelector('[data-screen="welcome"] [data-welcome-ai-copy]');
+                await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+                const m=await page.evaluate(()=>{
+                  const screen=document.querySelector('[data-screen="welcome"]');
+                  const copy=screen.querySelector('.fm-next-intro-copy');
+                  const support=screen.querySelector('[data-welcome-ai-copy]');
+                  const actions=screen.querySelector('.fm-next-actions');
+                  const buttons=[...actions.querySelectorAll('button')];
+                  const moved={headlineTop:copy.querySelector('h1').getBoundingClientRect().top,supportTop:support.getBoundingClientRect().top,actionsTop:actions.getBoundingClientRect().top,buttonTops:buttons.map(b=>b.getBoundingClientRect().top),buttonHeights:buttons.map(b=>b.getBoundingClientRect().height),transform:getComputedStyle(copy).transform,text:support.textContent.trim()};
+                  copy.style.setProperty('transform','none','important');
+                  const natural={headlineTop:copy.querySelector('h1').getBoundingClientRect().top,supportTop:support.getBoundingClientRect().top,actionsTop:actions.getBoundingClientRect().top,buttonTops:buttons.map(b=>b.getBoundingClientRect().top)};
+                  copy.style.removeProperty('transform');
+                  return {moved,natural};
+                });
+                assert.equal(m.moved.transform,'matrix(1, 0, 0, 1, 0, -88)',`${path} transform`);
+                assert.equal(Math.round(m.natural.headlineTop-m.moved.headlineTop),88,`${path} headline shift`);
+                assert.equal(Math.round(m.natural.supportTop-m.moved.supportTop),88,`${path} support shift`);
+                assert.equal(Math.round(m.natural.actionsTop-m.moved.actionsTop),0,`${path} CTA shift`);
+                assert.deepEqual(m.natural.buttonTops.map((top,i)=>Math.round(top-m.moved.buttonTops[i])),[0,0],`${path} button tops`);
+                assert.deepEqual(m.moved.buttonHeights,[54,54],`${path} button heights`);
+                assert.equal(m.moved.text,'AI가 최고의 경기를 골라준다',`${path} support copy`);
+                console.log(path,JSON.stringify(m.moved));
+                await page.close();
+              }
+            } finally { await browser.close(); }
+          })().catch(error=>{console.error(error);process.exit(1)});
+          NODE
