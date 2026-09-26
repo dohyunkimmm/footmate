@@ -22,13 +22,7 @@ jobs:
           from pathlib import Path
           path=Path('src/v4/visual-polish.css')
           css=path.read_text()
-          comments=[
-            '''/* FootMate Real App visual system
-   Consolidates the previous polish batches and applies the visible redesign pass.
-   Preserve IA, copy, routes, state machines, recommendation ownership and sample data. */\n\n''',
-            '''/* Visual Redesign Pass · premium sport utility
-   Deep-green identity stays. Surfaces, typography, spacing and CTA hierarchy become visibly more editorial and product-like. */\n'''
-          ]
+          comments=["/* FootMate Real App visual system\n   Consolidates the previous polish batches and applies the visible redesign pass.\n   Preserve IA, copy, routes, state machines, recommendation ownership and sample data. */\n\n","/* Visual Redesign Pass · premium sport utility\n   Deep-green identity stays. Surfaces, typography, spacing and CTA hierarchy become visibly more editorial and product-like. */\n"]
           removed=0
           for comment in comments:
             if comment not in css:
