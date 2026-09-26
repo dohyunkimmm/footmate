@@ -130,7 +130,8 @@ test('Discover owns filters, sorting and whole-match exploration without a dupli
   await expect(screen).toHaveAttribute('data-ia-role','result-exploration');
   await expect(screen.locator('.fm-ai-card')).toBeHidden();
   await expect(screen.locator('[data-ia-ai-summary]')).toHaveCount(0);
-  await expect(screen.locator('.fm-next-section-head h1')).toHaveText('경기 찾기');
+  await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
+  await expect(screen.locator('[data-discovery-heading]')).toBeHidden();
   await expect(screen.getByRole('button',{name:/필터/})).toBeVisible();
   await expect(screen.locator('.fm-discovery-sort')).toBeVisible();
   const expectedMatches=await page.evaluate(()=>window.__FOOTMATE_RECOMMENDATION__.rank().length);
