@@ -2,6 +2,7 @@ const {test,expect}=require('@playwright/test');
 
 const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
+// Regression target: the exact unsaved MY guidance state that overflowed before a profile was saved.
 async function openFreshProfile(page,width=390){
   await page.setViewportSize({width,height:844});
   await page.goto('/app',{waitUntil:'domcontentloaded'});
