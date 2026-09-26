@@ -1,0 +1,80 @@
+name: Patch Discovery Density
+on:
+  push:
+    branches: [fix/discovery-card-density-20260926]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[discovery-density-done]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/discovery-card-density-20260926
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply requested Discovery UI changes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(text, old, new, label):
+              if old not in text:
+                  raise SystemExit(f'missing expected source: {label}')
+              return text.replace(old, new, 1)
+
+          app_path=Path('src/v4/app.js')
+          app=app_path.read_text()
+          app=replace_once(app,"${topbar({title:'경기 찾기',actionHtml:","${topbar({actionHtml:",'discover topbar title')
+          app=replace_once(app,'      <div class="fm-next-section-head"><div><h1>${state.region} 추천 경기</h1><p>${state.level} · ${state.position} 기준 · 가까운 순</p></div></div>\n','', 'discover section heading')
+          app=replace_once(app,
+              '      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${match.spot}</span></div>\n      <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>',
+              '      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${match.spot}</span><span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span></div>\n      <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small></div><div class="fm-next-price">${money(match.price)}</div></div>',
+              'base match card level/surface')
+          app_path.write_text(app)
+
+          discovery_path=Path('src/v4/discovery.js')
+          discovery=discovery_path.read_text()
+          discovery=replace_once(discovery,
+              '      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${row.fit||match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${spotLabel(match,state)}</span></div>\n      <div class="fm-next-match-footer"><div><small>${match.region} · ${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>',
+              '      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${row.fit||match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${spotLabel(match,state)}</span><span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span></div>\n      <div class="fm-next-match-footer"><div><small>${match.region} · ${match.format} · ${match.duration}</small></div><div class="fm-next-price">${money(match.price)}</div></div>',
+              'discovery match card level/surface')
+          discovery=replace_once(discovery,
+              "  const heading=screen.querySelector('.fm-next-section-head h1');\n  const copy=screen.querySelector('.fm-next-section-head p');\n  if(heading)heading.textContent='경기 찾기';\n  if(copy)copy.textContent=`${state.region} · ${state.level} · ${state.position} 추천을 기준으로 직접 탐색할 수 있어요.`;\n",
+              '',
+              'discovery heading override')
+          discovery_path.write_text(discovery)
+
+          test_path=Path('tests/e2e/real-app-white-surface.spec.cjs')
+          test=test_path.read_text()
+          needle='  await expect(screen).toBeVisible();\n  const media=screen.locator(\'.fm-next-match-card-media\').first();'
+          replacement='  await expect(screen).toBeVisible();\n  await expect(screen.locator(\'.fm-next-topbar > strong\')).toHaveCount(0);\n  await expect(screen.locator(\'.fm-next-section-head\')).toHaveCount(0);\n  await expect(screen.locator(\'.fm-next-match-card\').first()).not.toContainText(\'인조잔디\');\n  await expect(screen.locator(\'.fm-next-match-card\').first().locator(\'.fm-next-match-tags .fm-next-tag\').last()).toContainText(/초급|중급|고급/);\n  const media=screen.locator(\'.fm-next-match-card-media\').first();'
+          test=replace_once(test,needle,replacement,'discover regression assertions')
+          test_path.write_text(test)
+          PY
+      - name: Syntax check changed JavaScript
+        run: |
+          node --check src/v4/app.js
+          node --check src/v4/discovery.js
+          node --check tests/e2e/real-app-white-surface.spec.cjs
+      - name: Install Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" css-tree@3.1.0
+          npx playwright install --with-deps chromium
+      - name: Refresh changed Discover baseline
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs -g "390px Discover uses the same neutral match surface system" --update-snapshots
+      - name: Compare refreshed Discover baseline
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs -g "390px Discover uses the same neutral match surface system"
+      - name: Commit patch and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/patch-discovery-density.yml
+          git add src/v4/app.js src/v4/discovery.js tests/e2e/real-app-white-surface.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots
+          git commit -m "fix: simplify discovery header and cards [discovery-density-done]"
+          git push origin HEAD:fix/discovery-card-density-20260926
