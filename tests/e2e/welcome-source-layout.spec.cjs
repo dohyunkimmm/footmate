@@ -49,10 +49,11 @@ test('Welcome source owns AI support copy and visible render shift stays current
   expect(app).toContain('class="fm-next-intro-copy" style="transform:translateY(-44px)"');
   expect(app).toContain('data-welcome-ai-copy');
   expect(app).toContain('AI가 최고의 경기를 골라준다');
+  expect(app).toContain('font-size:15px;font-weight:700');
   expect(css).toContain('.fm-next-intro-copy{transform:translateY(-88px)!important}');
   expect(personalization).not.toContain("copy.style.transform='translateY(-44px)'");
   expect(personalization).not.toContain("support.textContent='AI가 최고의 경기를 골라준다'");
-  expect(html).toContain('/src/v4/app.js?v=493');
+  expect(html).toContain('/src/v4/app.js?v=494');
   expect(html).toContain('/src/v4/personalization.js?v=493');
 });
 

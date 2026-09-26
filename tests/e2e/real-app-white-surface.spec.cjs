@@ -62,6 +62,9 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(intro).toBeVisible();
   await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
   await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
+  const welcomeAiCopy=page.locator('[data-screen=\"welcome\"] [data-welcome-ai-copy]');
+  await expect(welcomeAiCopy).toHaveCSS('font-size','15px');
+  await expect(welcomeAiCopy).toHaveCSS('font-weight','700');
   await expect(welcomeTopbar).toHaveCSS('transform','none');
   await expect(welcomeBrand).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -2)');
   await expect(welcomeTopbar).toHaveCSS('position','absolute');
