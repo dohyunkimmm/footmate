@@ -7,9 +7,9 @@ if(root){
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
+      .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"]{padding-bottom:164px}
       .fm-next-page[data-mode="real"] [data-screen="home"] > .fm-next-greeting{display:none!important}
       .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-conditions{
-        display:flex!important;
         flex-wrap:nowrap!important;
         gap:4px!important;
         overflow:hidden;
@@ -18,13 +18,12 @@ if(root){
       .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-conditions span{
         flex:0 0 auto;
         white-space:nowrap;
-        padding:4px 6px!important;
+        padding-inline:6px!important;
         font-size:9px!important;
-        line-height:1.25;
       }
       @media(max-width:374px){
         .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-conditions{gap:3px!important}
-        .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-conditions span{padding:4px 5px!important;font-size:8.5px!important}
+        .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-conditions span{padding-inline:5px!important;font-size:8.5px!important}
       }
     `;
     document.head.append(style);
@@ -48,9 +47,8 @@ if(root){
 
     const conditions=screen.querySelector('.fm-ai-card[data-product-ai="home"] [data-ai-conditions], .fm-ai-card[data-ai-assistant] [data-ai-conditions]');
     if(conditions){
-      const chips=[...conditions.children].filter(node=>node instanceof HTMLElement);
-      chips.forEach(node=>node.hidden=false);
-      if(chips.length>=6)chips[0].hidden=true;
+      const visibleChips=[...conditions.children].filter(node=>node instanceof HTMLElement&&!node.hidden);
+      if(visibleChips.length>=6)visibleChips[0].hidden=true;
     }
   }
 
