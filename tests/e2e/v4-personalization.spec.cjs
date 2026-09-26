@@ -1,6 +1,5 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
-const FRESH_PROFILE_COPY='현재 지역·포지션·레벨을 다음 방문의 시작점으로 저장할 수 있어요.';
 const BROWSER_ONLY_COPY='저장한 설정은 이 브라우저에만 저장되며 다른 기기와 동기화되지 않습니다.';
 async function seed(page,route='profile'){await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate((route)=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({route,setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:true,joinedMatchId:null,selectedMatchId:'gwanggyo-2130',matchStage:'discover',userName:'테스터'}))},route);await page.reload({waitUntil:'domcontentloaded'})}
 test('saved preference profile lets a returning user skip setup without duplicate welcome actions',async({page})=>{await seed(page,'profile');const panel=page.locator('.fm-personalization-panel[data-personalization-version="4.7.0"]');await expect(panel).toBeVisible();await panel.getByRole('button',{name:'현재 설정 저장'}).click();const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:personalization')||'{}'));expect(stored.profile).toMatchObject({region:'수원 · 영통',position:'MF',level:'중급'});await page.evaluate(()=>localStorage.setItem('footmate:v4:session',JSON.stringify({route:'welcome',setupComplete:true,region:'서울 · 강남',position:'GK',level:'입문',signedIn:false,userName:'게스트'})));await page.reload({waitUntil:'domcontentloaded'});const quick=page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/});await expect(quick).toBeVisible();await expect(page.getByRole('button',{name:'이전 설정으로 계속하기'})).toHaveCount(0);await expect(page.locator('[data-screen="welcome"] .fm-next-actions button')).toHaveCount(2);await quick.click();await expect(page.locator('[data-screen="home"]')).toBeVisible();expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')||'{}'))).toMatchObject({setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급'})});
@@ -8,17 +7,16 @@ test('favorite and recent signals add explainable recommendation adjustments',as
 test('personalization reset is isolated from participation and Return state',async({page})=>{await seed(page,'profile');await page.evaluate(()=>{localStorage.setItem('footmate:v4:participation',JSON.stringify({state:'success'}));localStorage.setItem('footmate:v4:return',JSON.stringify({history:[{matchId:'gwanggyo-2130'}]}));window.__FOOTMATE_PERSONALIZATION__.saveProfile()});await page.reload({waitUntil:'domcontentloaded'});const panel=page.locator('.fm-personalization-panel');const boundary=panel.locator('.fm-personalization-boundary');await expect(boundary).toHaveText(BROWSER_ONLY_COPY);await panel.getByRole('button',{name:'개인화 기록 초기화'}).click();expect(await page.evaluate(()=>localStorage.getItem('footmate:v4:personalization'))).toBeNull();expect(await page.evaluate(()=>localStorage.getItem('footmate:v4:participation'))).not.toBeNull();expect(await page.evaluate(()=>localStorage.getItem('footmate:v4:return'))).not.toBeNull()});
 test('personalization controls remain mobile-safe and axe-clean',async({page})=>{for(const width of [320,375,390,430]){await page.setViewportSize({width,height:800});await seed(page,'profile');await expect(page.locator('.fm-personalization-panel')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);const heights=await page.locator('.fm-personalization-panel button').evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().height));heights.forEach(height=>expect(height).toBeGreaterThanOrEqual(44))}const result=await new AxeBuilder({page}).include('.fm-personalization-panel').withTags(['wcag2a','wcag2aa']).analyze();expect(result.violations.filter(item=>['serious','critical'].includes(item.impact))).toEqual([])});
 
-test('fresh Real App MY keeps requested guidance on one line without restoring the top title',async({page})=>{
+test('fresh Real App MY omits the feature description without restoring the top title',async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await seed(page,'profile');
   const screen=page.locator('[data-screen="profile"]');
   const panel=screen.locator('.fm-personalization-panel--profile');
-  const summary=panel.locator('.fm-personalization-head span').first();
   const boundary=panel.locator('.fm-personalization-boundary');
   await expect(panel).toBeVisible();
   await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
-  await expect(summary).toHaveText(FRESH_PROFILE_COPY);
-  await expect(summary).toHaveCSS('white-space','nowrap');
+  await expect(panel.locator('.fm-personalization-head b')).toHaveText('추천 프로필을 저장해보세요');
+  await expect(panel.locator('.fm-personalization-head span')).toHaveCount(0);
   await expect(boundary).toHaveText(BROWSER_ONLY_COPY);
   await expect(boundary).toHaveCSS('white-space','nowrap');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
