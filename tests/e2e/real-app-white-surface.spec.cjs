@@ -63,9 +63,9 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
   await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
   await expect(welcomeTopbar).toHaveCSS('transform','none');
-  await expect(welcomeBrand).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -24)');
+  await expect(welcomeBrand).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -2)');
   await expect(welcomeTopbar).toHaveCSS('position','absolute');
-  const renderedBrandOffset=await welcomeBrand.evaluate(node=>{
+  const renderedBrandGeometry=await welcomeBrand.evaluate(node=>{
     const topbar=node.closest('.fm-next-topbar--dark');
     const topbarBox=topbar.getBoundingClientRect();
     const brandBox=node.getBoundingClientRect();
@@ -73,9 +73,10 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
     const paddingTop=parseFloat(topbarStyle.paddingTop)||0;
     const paddingBottom=parseFloat(topbarStyle.paddingBottom)||0;
     const normalBrandTop=topbarBox.top+paddingTop+(topbarBox.height-paddingTop-paddingBottom-brandBox.height)/2;
-    return brandBox.top-normalBrandTop;
+    return {offset:brandBox.top-normalBrandTop,topInset:brandBox.top-topbarBox.top};
   });
-  expect(Math.round(renderedBrandOffset)).toBe(-24);
+  expect(Math.round(renderedBrandGeometry.offset)).toBe(-2);
+  expect(renderedBrandGeometry.topInset).toBeGreaterThanOrEqual(8);
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
   expect(ctaStyle.height).toBe(54);
