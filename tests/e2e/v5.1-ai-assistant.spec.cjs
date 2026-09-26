@@ -13,3 +13,27 @@ test('v5.1.1 AI request timeout recovers to deterministic rules and restores con
 test('v5.1.1 internal resume restores saved AI mode consistently while fresh entry still resets',async({page})=>{await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({version:'5.1.1',mode:'connected-ai',provider:'vercel-ai-gateway',model:'openai/gpt-5.4-mini',fallbackUsed:false,result:{intent:'search',region:'수원 · 인계',position:'MF',level:'중급',maxPrice:null,maxDistanceMin:20,afterTime:null,reply:'수원 인계의 가까운 중급 MF 조건으로 정리했어요.'}})}));await setup(page);await page.getByLabel('찾고 싶은 경기 조건').fill('수원 인계에서 가까운 중급 MF 경기');await page.getByRole('button',{name:'AI로 찾기'}).click();await expect(page.locator('[data-screen="discover"]')).toBeVisible();await expect(page.locator('[data-ai-mode]')).toHaveText('AI connected');await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});await expect(page.locator('[data-ai-assistant="5.1.1"]')).toHaveCount(1);await expect(page.locator('[data-ai-mode]')).toHaveText('AI connected');expect(await page.evaluate(()=>window.__FOOTMATE_AI__.mode)).toBe('connected-ai')});
 
 test('v5.1.1 AI assistant remains accessible and responsive',async({page})=>{for(const width of [320,375,390,430]){await page.setViewportSize({width,height:780});await setup(page);expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()})}const axe=await new AxeBuilder({page}).include('[data-ai-assistant]').withTags(['wcag2a','wcag2aa']).analyze();expect(axe.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([])});
+
+
+test('Home AI search hierarchy keeps connected constraints on one row',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await setup(page);
+  await expect(page.locator('[data-screen="home"] .fm-next-greeting')).toHaveCount(0);
+  await expect(page.locator('[data-screen="home"]>.fm-next-topbar [data-action="nav-profile"]')).toHaveCount(0);
+  await expect(page.locator('[data-screen="home"] .fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 검색해보세요.');
+  await page.evaluate(()=>localStorage.setItem('footmate:v5.1:ai',JSON.stringify({version:'5.1.1',mode:'connected-ai',result:{intent:'search',region:'수원 · 영통',position:'MF',level:'중급',maxPrice:20000,maxDistanceMin:20,afterTime:'08:00',reply:'수원 · 영통에서 조건에 맞는 중급 MF 경기를 찾습니다.'}})));
+  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
+  const chips=page.locator('[data-screen="home"] [data-ai-conditions] span');
+  await expect(chips).toHaveCount(6);
+  const geometry=await chips.evaluateAll(nodes=>({tops:nodes.map(node=>Math.round(node.getBoundingClientRect().top)),last:nodes.at(-1).getBoundingClientRect().right,container:nodes[0].parentElement.getBoundingClientRect().right}));
+  expect(new Set(geometry.tops).size).toBe(1);
+  expect(geometry.last).toBeLessThanOrEqual(geometry.container+1);
+
+  await page.setViewportSize({width:320,height:844});
+  await page.reload({waitUntil:'domcontentloaded'});
+  const compact=page.locator('[data-screen="home"] [data-ai-conditions] span:visible');
+  await expect(compact).toHaveCount(5);
+  const compactGeometry=await compact.evaluateAll(nodes=>({tops:nodes.map(node=>Math.round(node.getBoundingClientRect().top)),last:nodes.at(-1).getBoundingClientRect().right,container:nodes[0].parentElement.getBoundingClientRect().right}));
+  expect(new Set(compactGeometry.tops).size).toBe(1);
+  expect(compactGeometry.last).toBeLessThanOrEqual(compactGeometry.container+1);
+});
