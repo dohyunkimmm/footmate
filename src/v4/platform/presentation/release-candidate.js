@@ -18,9 +18,22 @@ function hardenSetupAccessibility(){
   indicator.setAttribute('aria-valuemin','1');
   if(progress){indicator.setAttribute('aria-valuenow',progress[1]);indicator.setAttribute('aria-valuemax',progress[2]);}
 }
-if(root){
+
+function removeTargetBrandTagline(){
+  const screen=root?.querySelector('[data-screen]');
+  if(!screen||!['home','discover','profile'].includes(screen.dataset.screen))return;
+  const tagline=screen.querySelector('.fm-next-brand small');
+  if(tagline?.textContent.trim()==='내 경기의 시작부터 끝까지')tagline.remove();
+}
+
+function syncPresentation(){
   hardenSetupAccessibility();
-  new MutationObserver(hardenSetupAccessibility).observe(root,{childList:true,subtree:true});
+  removeTargetBrandTagline();
+}
+
+if(root){
+  syncPresentation();
+  new MutationObserver(syncPresentation).observe(root,{childList:true,subtree:true});
 }
 
 window.__FOOTMATE_RELEASE_CANDIDATE__=Object.freeze({
