@@ -1,111 +1,30 @@
 name: Prepare MY match hub
 on:
   push:
-    branches: [feat/my-match-hub-3tab-20260927]
+    branches:
+      - feat/my-match-hub-3tab-20260927
 permissions:
   contents: write
 jobs:
   patch:
-    if: contains(github.event.head_commit.message, '[prepare-my-match-hub]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with: {fetch-depth: 0}
-      - name: Refactor MY match hub ownership
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          app_path=Path('src/v4/app.js')
-          text=app_path.read_text()
-
-          old="    ['schedule','내 경기','calendar','nav-schedule'],\n"
-          assert old in text, 'schedule nav item not found'
-          text=text.replace(old,'',1)
-
-          old='<nav class="fm-next-nav" aria-label="FootMate 주요 메뉴">'
-          assert old in text, 'nav element not found'
-          text=text.replace(old,'<nav class="fm-next-nav" aria-label="FootMate 주요 메뉴" style="grid-template-columns:repeat(3,minmax(0,1fr))">',1)
-
-          assert "?'nav-schedule':'join-match'" in text
-          text=text.replace("?'nav-schedule':'join-match'","?'nav-profile':'join-match'",1)
-          assert text.count("button('내 경기 보기','nav-schedule'") >= 2
-          text=text.replace("button('내 경기 보기','nav-schedule'","button('내 경기 보기','nav-profile'")
-          assert "button('결과 보기','nav-schedule'" in text
-          text=text.replace("button('결과 보기','nav-schedule'","button('결과 보기','nav-profile'",1)
-          text=text.replace("이제 ‘내 경기’에서 이어집니다.","이제 MY에서 이어집니다.",1)
-
-          replacement=r'''function myMatchesSection(){
-            const match=joinedMatch(state);
-            return `<section class="fm-next-section fm-next-my-matches" data-my-matches aria-label="내 경기">
-              <div class="fm-next-section-head"><div><h2>${match?'내 경기':'내 경기'}</h2><p>${match?'경기 전부터 결과 확인까지 MY에서 이어집니다.':'참가한 경기는 MY에서 이어서 확인할 수 있어요.'}</p></div></div>
-              ${match?`<div class="fm-next-upcoming"><div class="fm-next-upcoming-top"><span>${state.matchStage==='matchday'?'TODAY':state.matchStage==='postgame'?'COMPLETED':'UPCOMING'}</span><span class="fm-next-upcoming-count">${match.dateLabel}</span></div><h2>${match.place}</h2><p>${match.address}</p><div class="fm-next-upcoming-actions">${button(state.matchStage==='matchday'?'체크인':'경기 상세',state.matchStage==='matchday'?'check-in':'open-joined-match','lime')}${button('팀 메시지','team-chat','secondary')}</div></div>
-              <div class="fm-next-status-list"><div class="fm-next-status-card is-current"><span class="fm-next-status-icon">${icon(state.matchStage==='postgame'?'check':'calendar')}</span><div><b>${state.matchStage==='postgame'?'경기 완료':'참가 확정'}</b><p>${state.matchStage==='postgame'?'경기 결과와 평가가 저장됐어요.':'경기 정보 변경이 있으면 이 화면에서 바로 알려드려요.'}</p></div></div><div class="fm-next-status-card${state.matchStage==='matchday'?' is-current':''}"><span class="fm-next-status-icon">${icon('pin')}</span><div><b>경기 당일</b><p>경기 20분 전부터 체크인과 길찾기를 바로 사용할 수 있어요.</p></div></div><div class="fm-next-status-card${state.matchStage==='postgame'?' is-current':''}"><span class="fm-next-status-icon">${icon('level')}</span><div><b>경기 후</b><p>간단한 평가와 경기 레벨 변화가 다음 추천에 반영됩니다.</p></div></div></div>`:`<div class="fm-next-empty">아직 참가한 경기가 없어요.<br>마음에 드는 경기를 찾아 참가해보세요.<div style="margin-top:16px">${button('경기 찾기','nav-discover','primary')}</div></div>`}
-            </section>`;
-          }
-
-          function scheduleView(){
-            return `<section class="fm-next-screen" data-screen="schedule">
-              ${topbar({title:'내 경기'})}
-              ${myMatchesSection()}
-              ${nav('profile')}
-            </section>`;
-          }
-
-          function profileView'''
-          text,new_count=re.subn(r"function scheduleView\(\)\{.*?\n\}\n\nfunction profileView",replacement,text,flags=re.S,count=1)
-          assert new_count==1, f'schedule/profile replacement count={new_count}'
-
-          old="    ${topbar({title:'MY',showBrandTagline:false})}\n    <div class=\"fm-next-profile-card\">"
-          assert old in text, 'profile topbar anchor not found'
-          text=text.replace(old,"    ${topbar({title:'MY',showBrandTagline:false})}\n    ${myMatchesSection()}\n    <div class=\"fm-next-profile-card\">",1)
-          app_path.write_text(text)
-
-          matchday=Path('src/v4/matchday.js')
-          matchday.write_text("""import {footmatePlatform} from './platform/application/platform.js';
-
-const MATCHDAY_VERSION='4.5.0';
-const MATCHDAY_STORAGE_KEY=footmatePlatform.storageKeys.matchday;
-const matchdayRepository=footmatePlatform.repositories.matchday;
-const allowed=new Set(['upcoming','matchday','checked-in','late','updated','canceled']);
-const root=document.getElementById('footmate-next');
-function session(){return footmatePlatform.session.read()||{}}
-function currentMatchId(){return session().joinedMatchId||null}
-function initial(){const stored=matchdayRepository.read({})||{},matchId=currentMatchId();if(stored.matchId===matchId&&allowed.has(stored.status))return stored;return {version:MATCHDAY_VERSION,matchId,status:'upcoming',arrival:'unknown',noticeSeen:false,updatedAt:new Date().toISOString()}}
-let state=initial();
-function persist(patch={}){state={...state,...patch,version:MATCHDAY_VERSION,matchId:currentMatchId(),updatedAt:new Date().toISOString()};matchdayRepository.write(state);enhance();return state}
-function syncSession(patch={}){const next={...session(),...patch};footmatePlatform.session.write(next);return next}
-function navigate(route){syncSession({route});location.reload()}
-function statusCopy(status){return {upcoming:['경기 준비','경기 시작 20분 전부터 체크인할 수 있어요.'],matchday:['도착 준비','경기장 도착 상태를 확인하고 체크인을 완료해주세요.'],'checked-in':['체크인 완료','도착 확인이 끝났습니다. 팀 공지와 경기장 안내를 확인하세요.'],late:['늦을 것 같아요','도착 지연 상태를 저장했습니다. 운영자에게 전달되는 UX 계약을 시뮬레이션합니다.'],updated:['운영 변경 확인','변경 공지를 확인했습니다. 최신 안내를 기준으로 이동해주세요.'],canceled:['경기 취소','운영 취소 상태입니다. 참가비 반환과 대체 경기 탐색 흐름을 확인할 수 있습니다.']}[status]||['경기 준비','경기 정보를 확인하세요.']}
-function panel(){const [title,copy]=statusCopy(state.status);const primary=state.status==='upcoming'?'<button type=\"button\" data-matchday-action=\"arrive\">도착 상태 알리기</button>':state.status==='matchday'||state.status==='late'?'<button type=\"button\" data-matchday-action=\"checkin\">체크인 완료</button>':state.status==='canceled'?'<button type=\"button\" data-matchday-action=\"find\">다른 경기 찾기</button>':'<button type=\"button\" data-matchday-action=\"notice\">공지 다시 보기</button>';return `<section class=\"fm-matchday-panel\" data-matchday-version=\"${MATCHDAY_VERSION}\" data-matchday-state=\"${state.status}\" aria-label=\"경기 당일 운영\"><div class=\"fm-matchday-kicker\">MATCHDAY · ${MATCHDAY_VERSION}</div><div class=\"fm-matchday-status\" role=\"status\"><b>${title}</b><span>${copy}</span></div><div class=\"fm-matchday-grid\"><article><small>체크인</small><b>킥오프 20분 전부터</b><span>이 프로토타입은 시간창과 도착 상태 계약만 검증합니다.</span></article><article><small>경기장 안내</small><b>메인 출입구 → 3층 코트</b><span>주소·동선은 샘플 안내이며 실시간 지도 연동이 아닙니다.</span></article><article><small>팀 공지</small><b>조끼는 현장 제공</b><span>메시지 전송 backend 없이 공지 확인 UX만 시뮬레이션합니다.</span></article></div><div class=\"fm-matchday-actions\">${primary}${state.status!=='canceled'&&state.status!=='checked-in'?'<button type=\"button\" data-matchday-action=\"late\">늦을 것 같아요</button>':''}${state.status==='late'?'<button type=\"button\" data-matchday-action=\"recover\">도착 상태 수정</button>':''}${state.status!=='canceled'?'<button type=\"button\" data-matchday-action=\"update\">경기 변경 공지 보기</button>':''}</div><p class=\"fm-matchday-boundary\">실시간 위치·지도·팀 채팅·알림 backend는 연결하지 않았습니다. 상태와 복구 흐름을 검증하는 deterministic simulation입니다.</p></section>`}
-function homeStrip(){const [title,copy]=statusCopy(state.status);return `<div class=\"fm-matchday-home\" data-matchday-home data-matchday-state=\"${state.status}\"><small>MATCHDAY OPERATIONS</small><b>${title}</b><span>${copy}</span><button type=\"button\" data-matchday-action=\"profile\">MY에서 내 경기 보기</button></div>`}
-function enhanceMatchHub(container){if(!container||!currentMatchId())return;container.setAttribute('data-matchday-module-version',MATCHDAY_VERSION);const existing=container.querySelector('[data-matchday-version]');if(!existing)container.insertAdjacentHTML('beforeend',panel());else if(existing.dataset.matchdayState!==state.status)existing.outerHTML=panel()}
-function enhance(){state=initial();enhanceMatchHub(root?.querySelector('[data-screen=\"profile\"] [data-my-matches]'));enhanceMatchHub(root?.querySelector('[data-screen=\"schedule\"] [data-my-matches]'));const home=root?.querySelector('[data-screen=\"home\"]');if(home&&currentMatchId()){const existing=home.querySelector('[data-matchday-home]');if(!existing){const context=home.querySelector('.fm-next-context-card');if(context)context.insertAdjacentHTML('afterend',homeStrip())}else if(existing.dataset.matchdayState!==state.status)existing.outerHTML=homeStrip()}}
-document.addEventListener('click',event=>{const target=event.target.closest('[data-matchday-action]');if(!target)return;event.preventDefault();const action=target.dataset.matchdayAction;if(action==='arrive'){persist({status:'matchday',arrival:'on-the-way'});return}if(action==='checkin'){persist({status:'checked-in',arrival:'arrived'});const id=currentMatchId();syncSession({checkedInMatchId:id,matchStage:'matchday'});enhance();return}if(action==='late'){persist({status:'late',arrival:'late'});return}if(action==='recover'){persist({status:'matchday',arrival:'on-the-way'});return}if(action==='update'){persist({status:'updated',noticeSeen:true});return}if(action==='notice'){persist({noticeSeen:true});return}if(action==='find'){navigate('discover');return}if(action==='profile'){navigate('profile');return}},true);
-const observer=new MutationObserver(enhance);if(root)observer.observe(root,{childList:true,subtree:true});window.__FOOTMATE_MATCHDAY__={version:MATCHDAY_VERSION,storageKey:MATCHDAY_STORAGE_KEY,read:()=>initial(),setStatus:(status,patch={})=>allowed.has(status)?persist({status,...patch}):initial(),reset:()=>{matchdayRepository.clear();state=initial();enhance();return state}};enhance();
-""")
-
-          test_path=Path('tests/e2e/v4-matchday.spec.cjs')
-          tests=test_path.read_text()
-          addition=r'''
-async function my(page,{joinedMatchId=null,matchStage='discover'}={}){await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(({joinedMatchId,matchStage})=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({route:'profile',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:Boolean(joinedMatchId),joinedMatchId,selectedMatchId:joinedMatchId||'gwanggyo-2130',matchStage,userName:joinedMatchId?'도현':'게스트'}))},{joinedMatchId,matchStage});await page.reload({waitUntil:'domcontentloaded'});await expect(page.locator('[data-screen="profile"]')).toBeVisible();await expect(page.getByRole('region',{name:'내 경기'})).toBeVisible()}
-test('MY owns the match hub and shell navigation is reduced to three tabs',async({page})=>{await page.setViewportSize({width:390,height:844});await my(page);const screen=page.locator('[data-screen="profile"]');const nav=screen.locator('.fm-next-nav');await expect(nav.locator('button')).toHaveCount(3);await expect(nav.getByRole('button',{name:'홈'})).toBeVisible();await expect(nav.getByRole('button',{name:'경기 찾기'})).toBeVisible();await expect(nav.getByRole('button',{name:'MY'})).toHaveAttribute('aria-current','page');await expect(nav.getByRole('button',{name:'내 경기'})).toHaveCount(0);const hub=page.getByRole('region',{name:'내 경기'});await expect(hub.getByText('아직 참가한 경기가 없어요.')).toBeVisible();await expect(hub.getByRole('button',{name:'경기 찾기'})).toBeVisible();const order=await screen.evaluate(node=>({hub:node.querySelector('[data-my-matches]').getBoundingClientRect().top,profile:node.querySelector('.fm-next-profile-card').getBoundingClientRect().top}));expect(order.hub).toBeLessThan(order.profile)});
-test('joined match and matchday operations continue inside MY',async({page})=>{await page.setViewportSize({width:390,height:844});await my(page,{joinedMatchId:'suwon-ingye-2000',matchStage:'upcoming'});const hub=page.getByRole('region',{name:'내 경기'});await expect(hub.getByText('UPCOMING')).toBeVisible();await expect(hub.getByRole('heading',{name:/인계/})).toBeVisible();await expect(hub.getByRole('region',{name:'경기 당일 운영'})).toHaveAttribute('data-matchday-version','4.5.0');expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1)});
-test('MY match hub remains responsive and accessible',async({page})=>{for(const width of [320,375,390,430]){await page.setViewportSize({width,height:844});await my(page,{joinedMatchId:'suwon-ingye-2000',matchStage:'matchday'});expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);const navButtons=await page.locator('[data-screen="profile"] .fm-next-nav button').count();expect(navButtons).toBe(3)}const result=await new AxeBuilder({page}).include('[data-my-matches]').withTags(['wcag2a','wcag2aa']).analyze();expect(result.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([])});
-test('MY match hub visual regression',async({page})=>{await page.setViewportSize({width:390,height:844});await my(page,{joinedMatchId:'suwon-ingye-2000',matchStage:'upcoming'});await expect(page.locator('[data-screen="profile"]')).toHaveScreenshot('my-match-hub-390.png',{animations:'disabled'})});
-'''
-          assert 'MY owns the match hub' not in tests, 'MY tests already present'
-          test_path.write_text(tests.rstrip()+"\n"+addition.lstrip())
-          PY
+        with:
+          fetch-depth: 0
+      - name: Apply codemod
+        run: python3 scripts/prepare-my-match-hub.py
       - name: Check patch integrity
-        run: git diff --check && node --check src/v4/app.js && node --check src/v4/matchday.js && node --check tests/e2e/v4-matchday.spec.cjs
+        run: |
+          git diff --check
+          node --check src/v4/app.js
+          node --check src/v4/matchday.js
+          node --check tests/e2e/v4-matchday.spec.cjs
       - name: Commit prepared changes
         run: |
-          rm .github/workflows/prepare-my-match-hub.yml
+          rm .github/workflows/prepare-my-match-hub.yml scripts/prepare-my-match-hub.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/v4/app.js src/v4/matchday.js tests/e2e/v4-matchday.spec.cjs .github/workflows/prepare-my-match-hub.yml
+          git add -A
           git commit -m "feat: move match hub into MY"
           git push
