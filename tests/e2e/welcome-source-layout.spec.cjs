@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 
 async function openCleanWelcome(page,{personalized=false}={}){
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(({personalized})=>{
     localStorage.clear();
     if(personalized){
@@ -41,17 +41,20 @@ async function welcomeGeometry(page){
   });
 }
 
-test('Welcome source owns the -44px hero shift and AI support copy',()=>{
+test('Welcome source owns the -44px hero shift, AI support copy, and fresh runtime assets',()=>{
   const app=fs.readFileSync('src/v4/app.js','utf8');
   const personalization=fs.readFileSync('src/v4/personalization.js','utf8');
+  const html=fs.readFileSync('app.html','utf8');
   expect(app).toContain('class="fm-next-intro-copy" style="transform:translateY(-44px)"');
   expect(app).toContain('data-welcome-ai-copy');
   expect(app).toContain('AI가 최고의 경기를 골라준다');
   expect(personalization).not.toContain("copy.style.transform='translateY(-44px)'");
   expect(personalization).not.toContain("support.textContent='AI가 최고의 경기를 골라준다'");
+  expect(html).toContain('/src/v4/app.js?v=493');
+  expect(html).toContain('/src/v4/personalization.js?v=493');
 });
 
-test('390px Welcome moves only headline/support copy by 44px while CTA stays fixed',async({page})=>{
+test('390px /demo Welcome moves only headline/support copy by 44px while CTA stays fixed',async({page})=>{
   await openCleanWelcome(page);
   const copy=page.locator('[data-screen="welcome"] .fm-next-intro-copy');
   const support=page.locator('[data-screen="welcome"] [data-welcome-ai-copy]');
@@ -69,7 +72,7 @@ test('390px Welcome moves only headline/support copy by 44px while CTA stays fix
   expect(metrics.buttonHeights).toEqual([54]);
 });
 
-test('390px returning-user Welcome keeps both 54px CTA positions unchanged',async({page})=>{
+test('390px returning-user /demo Welcome keeps both 54px CTA positions unchanged',async({page})=>{
   await openCleanWelcome(page,{personalized:true});
   await expect(page.getByRole('button',{name:/내 경기 찾아보기/})).toBeVisible();
   await expect(page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/})).toBeVisible();
