@@ -1,0 +1,61 @@
+name: PR338 Finalize Home QA
+on:
+  push:
+    branches:
+      - fix/home-ai-compact-header-20260926
+permissions:
+  contents: write
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Align source and QA contracts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace(path, old, new, count=1):
+              p=Path(path)
+              text=p.read_text()
+              if old not in text:
+                  raise SystemExit(f'anchor not found: {path}: {old[:80]}')
+              p.write_text(text.replace(old,new,count))
+
+          replace('src/v5/ai-match-assistant.js', "const region=String(result?.region||'').replace(/\\s*·\\s*/g,'·').trim()", "const region=String(result?.region||'').trim()")
+          replace('scripts/check-v5.1-boundary.cjs', "/src/v5/ai-match-assistant.js?v=511", "/src/v5/ai-match-assistant.js?v=512")
+          replace('tests/e2e/product-completion.spec.cjs', "await expect(screen.locator('.fm-next-greeting h1')).toHaveText('오늘, 어떤 경기에서 뛸까요?');", "await expect(screen.locator('.fm-next-greeting')).toHaveCount(0);")
+          replace('tests/e2e/product-completion.spec.cjs', "await expect(ai.locator('.fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 말해보세요.');", "await expect(ai.locator('.fm-ai-head strong')).toHaveText('AI에게 원하는 경기를 검색해보세요.');")
+          replace('tests/e2e/welcome-source-layout.spec.cjs', "/src/v4/app.js?v=494", "/src/v4/app.js?v=495")
+          PY
+          git diff --check
+          node scripts/check-v4.9-performance-budget.cjs
+          node scripts/check-v5.1-boundary.cjs
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
+          npx playwright install --with-deps chromium
+      - name: Refresh only intended Home white-surface baseline
+        run: npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Home uses neutral match media while raising the core AI surface" --update-snapshots
+      - name: Prove Home baseline and focused contracts
+        run: |
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Home uses neutral match media while raising the core AI surface"
+          npx playwright test --project=chromium tests/e2e/v5.1-ai-assistant.spec.cjs -g "Home AI search hierarchy keeps connected constraints on one row"
+          npx playwright test --project=chromium tests/e2e/product-completion.spec.cjs -g "Home is the AI Match Assistant entry with one compact For You list"
+          npx playwright test --project=chromium tests/e2e/welcome-source-layout.spec.cjs -g "Welcome source owns AI support copy"
+      - name: Commit fixes and baseline
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/v5/ai-match-assistant.js scripts/check-v5.1-boundary.cjs tests/e2e/product-completion.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png
+          git commit -m 'test: align Home QA with compact search UI'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
