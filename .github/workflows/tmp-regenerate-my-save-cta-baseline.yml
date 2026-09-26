@@ -36,3 +36,4 @@ jobs:
             git commit -m "test: refresh full-width MY save CTA baseline"
             git push origin HEAD:fix/my-save-cta-width
           fi
+# retry after grid-width fix
