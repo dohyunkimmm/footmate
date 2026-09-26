@@ -60,10 +60,10 @@ function icon(name,className='fm-next-icon'){
   return icons[name]||icons.info;
 }
 
-function brand({dark=false}={}){
+function brand({dark=false,showTagline=true}={}){
   return `<div class="fm-next-brand">
     <span class="fm-next-brand-mark">${icon('logo')}</span>
-    <span>FootMate<small>${dark?'Matchday Companion':'내 경기의 시작부터 끝까지'}</small></span>
+    <span>FootMate${showTagline?`<small>${dark?'Matchday Companion':'내 경기의 시작부터 끝까지'}</small>`:''}</span>
   </div>`;
 }
 
@@ -71,9 +71,9 @@ function button(label,action,variant='primary',extra=''){
   return `<button type="button" class="fm-next-button fm-next-button--${variant}" data-action="${action}" ${extra}>${label}</button>`;
 }
 
-function topbar({title='',backAction='',dark=false,actionHtml=''}){
+function topbar({title='',backAction='',dark=false,actionHtml='',showBrandTagline=true}){
   return `<header class="fm-next-topbar${dark?' fm-next-topbar--dark':''}${title?' fm-next-topbar--titled':''}">
-    ${backAction?`<button class="fm-next-icon-button" type="button" data-action="${backAction}" aria-label="이전 화면">${icon('back')}</button>`:brand({dark})}
+    ${backAction?`<button class="fm-next-icon-button" type="button" data-action="${backAction}" aria-label="이전 화면">${icon('back')}</button>`:brand({dark,showTagline:showBrandTagline})}
     ${title?`<strong>${title}</strong>`:''}
     ${actionHtml||'<span style="width:44px" aria-hidden="true"></span>'}
   </header>`;
@@ -229,7 +229,7 @@ function adaptiveContext(){
 function homeView(){
   const returnUser=state.setupComplete;
   return `<section class="fm-next-screen" data-screen="home">
-    ${topbar({actionHtml:`<button type="button" class="fm-next-icon-button" data-action="nav-profile" aria-label="내 정보">${icon('user')}</button>`})}
+    ${topbar({showBrandTagline:false,actionHtml:`<button type="button" class="fm-next-icon-button" data-action="nav-profile" aria-label="내 정보">${icon('user')}</button>`})}
     <div class="fm-next-greeting"><small>${returnUser?'다시 반가워요':'설정이 완료됐어요'}</small><h1>${state.userName||'도현'}님, <span>오늘 경기 어때요?</span></h1></div>
     ${adaptiveContext()}
     <div class="fm-next-section-head"><div><h2>지금 잘 맞는 경기</h2><p>거리, 레벨, 남은 포지션을 함께 봤어요.</p></div><button class="fm-next-button fm-next-button--text" data-action="nav-discover">전체 보기</button></div>
@@ -240,7 +240,7 @@ function homeView(){
 
 function discoverView(){
   return `<section class="fm-next-screen" data-screen="discover">
-    ${topbar({actionHtml:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
+    ${topbar({showBrandTagline:false,actionHtml:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
     <div class="fm-next-section">
       <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>
       <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
@@ -313,7 +313,7 @@ function scheduleView(){
 
 function profileView(){
   return `<section class="fm-next-screen" data-screen="profile">
-    ${topbar({title:'MY'})}
+    ${topbar({title:'MY',showBrandTagline:false})}
     <div class="fm-next-profile-card"><div class="fm-next-profile-head"><span class="fm-next-profile-avatar">${state.userName.slice(0,1)}</span><div><h2>${state.userName}님</h2><p>${state.signedIn?'계정 연결됨':'게스트로 둘러보는 중'}</p></div></div><div class="fm-next-profile-stats"><div><b>${state.level}</b><span>체감 레벨</span></div><div><b>${state.position}</b><span>선호 포지션</span></div><div><b>${state.joinedMatchId?'1':'0'}</b><span>참가 경기</span></div></div></div>
     <div class="fm-next-menu-list"><button class="fm-next-menu-item" data-action="edit-setup"><span>${icon('level')}경기 추천 설정</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="show-policy"><span>${icon('shield')}취소·환불 정책</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="reset-flow"><span>${icon('reset')}처음부터 다시 보기</span>${icon('chevron')}</button></div>
     ${nav('profile')}
