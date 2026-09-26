@@ -25,9 +25,6 @@ function ensureHomePolishStyle(){
   const style=document.createElement('style');
   style.id=HOME_POLISH_STYLE_ID;
   style.textContent=`
-    .fm-next-page[data-mode="real"] [data-screen="home"]>.fm-next-greeting{display:none!important}
-    .fm-next-page[data-mode="real"] [data-screen="home"]>.fm-next-topbar [data-action="nav-profile"]{display:none!important}
-    .fm-next-page[data-mode="real"] [data-screen="home"]>.fm-next-topbar::after{content:"";display:block;width:44px;height:44px;flex:0 0 44px}
     .fm-next-page[data-mode="real"] [data-screen="home"] .fm-home-ai-search-title{font-size:0!important;line-height:1.35!important}
     .fm-next-page[data-mode="real"] [data-screen="home"] .fm-home-ai-search-title::after{content:"AI에게 원하는 경기를 검색해보세요.";display:block;font-size:18px;line-height:1.35;letter-spacing:-.035em}
     .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="result"]:has(.fm-ai-mode[data-mode="connected-ai"]) .fm-ai-conditions{display:flex!important;flex-wrap:nowrap!important;gap:3px!important;white-space:nowrap}
@@ -39,6 +36,16 @@ function ensureHomePolishStyle(){
 function polishRealHome(){
   const screen=root?.querySelector('.fm-next-page[data-mode="real"] [data-screen="home"]');
   if(!screen)return;
+  screen.querySelector(':scope > .fm-next-greeting')?.remove();
+  const profileAction=screen.querySelector(':scope > .fm-next-topbar [data-action="nav-profile"]');
+  if(profileAction){
+    const spacer=document.createElement('span');
+    spacer.style.width='44px';
+    spacer.style.flex='0 0 44px';
+    spacer.setAttribute('aria-hidden','true');
+    spacer.dataset.homeTopbarSpacer='';
+    profileAction.replaceWith(spacer);
+  }
   const title=screen.querySelector('.fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-head strong,.fm-ai-card[data-ai-assistant] .fm-ai-head strong');
   if(!title)return;
   title.classList.add('fm-home-ai-search-title');
