@@ -3,8 +3,12 @@ const STORAGE_COPY='저장한 설정은 이 브라우저에만 저장되며 다�
 
 function syncStorageCopy(){
   if(!root?.querySelector('.fm-next-page[data-mode="real"]'))return;
-  const boundary=root.querySelector('[data-screen="profile"] .fm-personalization-boundary');
+  const profile=root.querySelector('[data-screen="profile"]');
+  const boundary=profile?.querySelector('.fm-personalization-boundary');
+  const head=profile?.querySelector('.fm-personalization-panel--profile .fm-personalization-head');
+  const saveCta=head?.querySelector('button[data-personalization-action="save-profile"]');
   if(boundary&&boundary.textContent!==STORAGE_COPY)boundary.textContent=STORAGE_COPY;
+  if(saveCta){head.style.gridTemplateColumns='minmax(0,1fr)';saveCta.style.width='100%'}
 }
 
 if(root){
