@@ -8,6 +8,7 @@ on:
       - src/v4/personalization.css
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
+      - src/v4/discovery.js
       - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js
@@ -30,6 +31,7 @@ on:
       - src/v4/personalization.css
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
+      - src/v4/discovery.js
       - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js

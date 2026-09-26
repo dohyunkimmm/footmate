@@ -239,9 +239,9 @@ function homeView(){
 
 function discoverView(){
   return `<section class="fm-next-screen" data-screen="discover">
-    ${topbar({title:'경기 찾기',actionHtml:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
+    ${topbar({actionHtml:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
     <div class="fm-next-section">
-      <div class="fm-next-section-head"><div><h1>${state.region} 추천 경기</h1><p>${state.level} · ${state.position} 기준 · 가까운 순</p></div></div>
+      <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>
       <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
       <div class="fm-next-list">${MATCHES.map((match,index)=>matchCard(match,index)).join('')}</div>
     </div>

@@ -113,13 +113,14 @@ test('1440px Home and Discover match the completed visual hierarchy',async({page
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   const discoverTopGap=await page.locator('[data-screen="discover"]').evaluate(element=>{
     const header=element.querySelector('.fm-next-topbar').getBoundingClientRect();
-    const heading=element.querySelector('.fm-next-section-head').getBoundingClientRect();
-    const title=element.querySelector('.fm-next-topbar>strong').getBoundingClientRect();
-    const app=element.closest('.fm-next-app').getBoundingClientRect();
-    return {gap:heading.top-header.bottom,titleCenter:title.left+title.width/2,appCenter:app.left+app.width/2};
+    const conditions=element.querySelector('.fm-next-section > .fm-next-match-tags').getBoundingClientRect();
+    const heading=element.querySelector('[data-discovery-heading]');
+    return {gap:conditions.top-header.bottom,titleCount:element.querySelectorAll('.fm-next-topbar>strong').length,headingHidden:Boolean(heading?.hidden),headingDisplay:heading?getComputedStyle(heading).display:null};
   });
   expect(discoverTopGap.gap).toBeGreaterThanOrEqual(18);
-  expect(Math.abs(discoverTopGap.titleCenter-discoverTopGap.appCenter)).toBeLessThanOrEqual(1);
+  expect(discoverTopGap.titleCount).toBe(0);
+  expect(discoverTopGap.headingHidden).toBe(true);
+  expect(discoverTopGap.headingDisplay).toBe('none');
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('visual-system-discover-1440.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);

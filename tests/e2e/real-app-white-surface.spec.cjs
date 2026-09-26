@@ -145,6 +145,12 @@ test('390px Discover uses the same neutral match surface system',async({page})=>
   await page.getByRole('button',{name:'전체 보기'}).click();
   const screen=page.locator('[data-screen="discover"]');
   await expect(screen).toBeVisible();
+  await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
+  await expect(screen.locator('[data-discovery-heading]')).toBeHidden();
+  const firstCard=screen.locator('.fm-next-match-card').first();
+  await expect(firstCard).not.toContainText('인조잔디');
+  await expect(firstCard.locator('.fm-next-match-tags .fm-next-tag').last()).toContainText(/입문|초중급|중급|고급/);
+  await expect(firstCard.locator('.fm-next-match-footer small')).toContainText(/vs/);
   const media=screen.locator('.fm-next-match-card-media').first();
   await expect(media).toHaveCSS('color','rgb(19, 32, 25)');
   await expect(screen.locator('.fm-next-nav')).toHaveCSS('position','absolute');
