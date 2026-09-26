@@ -1,0 +1,40 @@
+name: Patch MY Fresh Render Ownership
+on:
+  push:
+    branches: [fix/my-fresh-profile-containment-20260926]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, '[patch-my-fresh-render]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/my-fresh-profile-containment-20260926
+      - name: Patch fresh-state renderer only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('src/v4/personalization.js')
+          text=path.read_text()
+          old1="const strong='background:#173c2c;color:#fff;border-color:#173c2c;box-shadow:none';const headAction="
+          new1="const strong='background:#173c2c;color:#fff;border-color:#173c2c;box-shadow:none';const fresh=!memory.profile;const headStyle=fresh?'display:grid;gap:12px;align-items:flex-start':'display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between';const copyStyle=fresh?'display:grid;gap:8px;min-width:0;width:100%':'display:grid;gap:8px;min-width:0';const summaryWidth=fresh?'100%':'max-content';const headAction="
+          old2='style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between"><div style="display:grid;gap:8px;min-width:0">'
+          new2='style="${headStyle}"><div style="${copyStyle}">'
+          old3='style="display:inline-flex;width:max-content;max-width:100%;box-sizing:border-box;'
+          new3='style="display:inline-flex;width:${summaryWidth};max-width:100%;box-sizing:border-box;'
+          for old,new in [(old1,new1),(old2,new2),(old3,new3)]:
+              if text.count(old)!=1:
+                  raise SystemExit(f'expected exactly one renderer match, found {text.count(old)}: {old[:70]}')
+              text=text.replace(old,new)
+          path.write_text(text)
+          PY
+          node --check src/v4/personalization.js
+      - name: Commit renderer fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/v4/personalization.js
+          git commit -m "fix: own fresh MY width in renderer [patch-my-fresh-render]"
+          git push
