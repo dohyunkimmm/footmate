@@ -32,6 +32,26 @@ jobs:
           css=css.replace(old,new)
           if old in css:
               raise SystemExit('legacy schedule matchday selector remains')
+
+          compact_pairs=[
+            ('padding:14px 16px;','padding:11px 16px;'),
+            ('margin-bottom:10px;','margin-bottom:8px;'),
+            ('margin-top:10px;','margin-top:8px;'),
+          ]
+          anchors=[
+            new+' .fm-next-upcoming{',
+            new+' .fm-next-upcoming-top{',
+            new+' .fm-next-upcoming-actions{',
+          ]
+          for anchor,(before,after) in zip(anchors,compact_pairs):
+              start=css.find(anchor)
+              if start < 0:
+                  raise SystemExit(f'compact anchor missing: {anchor}')
+              end=css.find('}',start)
+              block=css[start:end]
+              if before not in block:
+                  raise SystemExit(f'compact value missing in {anchor}: {before}')
+              css=css[:start]+block.replace(before,after,1)+css[end:]
           css_path.write_text(css)
 
           test_path=Path('tests/e2e/v5.1-visual-system-completion.spec.cjs')
