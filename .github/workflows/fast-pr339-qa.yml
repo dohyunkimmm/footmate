@@ -1,0 +1,57 @@
+name: Fast PR339 QA
+on:
+  push:
+    branches: [polish/discover-card-density-20260926]
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Regression contracts
+        run: |
+          node scripts/check-release-version.cjs
+          node scripts/check-qa-toolchain.cjs
+          node scripts/check-v4.9-boundary.cjs
+          node scripts/check-v5.1-boundary.cjs
+          node scripts/check-v4.9-performance-budget.cjs
+          node tests/contracts/v4.8-platform.contract.mjs
+          node tests/contracts/v4.9-release-candidate.contract.mjs
+          node tests/contracts/v5.1-connected-platform.contract.mjs
+          node tests/contracts/beta-backend.contract.mjs
+          node tests/contracts/beta-must-recovery.contract.mjs
+          node tests/contracts/beta-operation-audit.contract.mjs
+          node tests/contracts/beta-must-privacy.contract.mjs
+          node tests/contracts/beta-supabase-hardening.contract.mjs
+          node tests/contracts/beta-operator-console.contract.mjs
+          node tests/contracts/v5.1-ai-assistant.contract.cjs
+          node tests/contracts/v5.2-real-beta-readiness.contract.mjs
+          node tests/contracts/v5.2-product-completion.contract.mjs
+          node tests/contracts/beta-transactional-email.contract.mjs
+          node tests/contracts/beta-email-reliability.contract.mjs
+          node tests/contracts/beta-free-growth.contract.mjs
+          node tests/contracts/beta-auth-mfa.contract.mjs
+          node tests/contracts/beta-push-media.contract.mjs
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install browser QA
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+          npx playwright install --with-deps chromium webkit
+      - name: Browser E2E axe responsive and visual comparison
+        run: |
+          npx playwright test --project=chromium tests/e2e/v5.1-core.spec.cjs
+          npx playwright test --project=chromium tests/e2e/product-completion.spec.cjs -g "Home AI example executes search|Discover owns filters, sorting and whole-match exploration"
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs -g "390px Discover uses the same neutral match surface system|px keeps Welcome/Home/Discover readable"
+          npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs -g "1440px Home and Discover match|390px Discover does not claim personalization|px discover keeps matches scrollable"
+      - name: Mobile Safari WebKit
+        run: npx playwright test --project=webkit-mobile tests/e2e/v5.2-webkit-mobile.spec.cjs
