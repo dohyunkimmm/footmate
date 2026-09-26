@@ -35,7 +35,7 @@ jobs:
               'Discover topbar title')
           app=replace_once(app,
               '      <div class="fm-next-section-head"><div><h1>${state.region} 추천 경기</h1><p>${state.level} · ${state.position} 기준 · 가까운 순</p></div></div>',
-              '      <div class="fm-next-section-head" data-discovery-heading hidden><div><h1></h1><p></p></div></div>',
+              '      <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>',
               'Discover default heading')
           app_path.write_text(app)
 
@@ -56,7 +56,7 @@ jobs:
           ai=ai_path.read_text()
           ai=replace_once(ai,
               "  const head=screen.querySelector('.fm-next-section-head');text(head?.querySelector('h1'),active&&saved?.result?'AI 조회 결과':'경기 찾기');text(head?.querySelector('p'),active&&saved?.result?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'추천 기준을 유지한 채 전체 경기를 탐색할 수 있어요.');",
-              "  const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);hidden(head,!showingAiResult);text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');",
+              "  const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');",
               'Discover AI-only heading')
           ai_path.write_text(ai)
 
@@ -72,7 +72,7 @@ jobs:
           visual=visual_path.read_text()
           visual=replace_once(visual,
               "  const discoverTopGap=await page.locator('[data-screen=\"discover\"]').evaluate(element=>{\n    const header=element.querySelector('.fm-next-topbar').getBoundingClientRect();\n    const heading=element.querySelector('.fm-next-section-head').getBoundingClientRect();\n    const title=element.querySelector('.fm-next-topbar>strong').getBoundingClientRect();\n    const app=element.closest('.fm-next-app').getBoundingClientRect();\n    return {gap:heading.top-header.bottom,titleCenter:title.left+title.width/2,appCenter:app.left+app.width/2};\n  });\n  expect(discoverTopGap.gap).toBeGreaterThanOrEqual(18);\n  expect(Math.abs(discoverTopGap.titleCenter-discoverTopGap.appCenter)).toBeLessThanOrEqual(1);",
-              "  const discoverTopGap=await page.locator('[data-screen=\"discover\"]').evaluate(element=>{\n    const header=element.querySelector('.fm-next-topbar').getBoundingClientRect();\n    const conditions=element.querySelector('.fm-next-section > .fm-next-match-tags').getBoundingClientRect();\n    const heading=element.querySelector('[data-discovery-heading]');\n    return {gap:conditions.top-header.bottom,titleCount:element.querySelectorAll('.fm-next-topbar>strong').length,headingHidden:Boolean(heading?.hidden)};\n  });\n  expect(discoverTopGap.gap).toBeGreaterThanOrEqual(18);\n  expect(discoverTopGap.titleCount).toBe(0);\n  expect(discoverTopGap.headingHidden).toBe(true);",
+              "  const discoverTopGap=await page.locator('[data-screen=\"discover\"]').evaluate(element=>{\n    const header=element.querySelector('.fm-next-topbar').getBoundingClientRect();\n    const conditions=element.querySelector('.fm-next-section > .fm-next-match-tags').getBoundingClientRect();\n    const heading=element.querySelector('[data-discovery-heading]');\n    return {gap:conditions.top-header.bottom,titleCount:element.querySelectorAll('.fm-next-topbar>strong').length,headingHidden:Boolean(heading?.hidden),headingDisplay:heading?getComputedStyle(heading).display:null};\n  });\n  expect(discoverTopGap.gap).toBeGreaterThanOrEqual(18);\n  expect(discoverTopGap.titleCount).toBe(0);\n  expect(discoverTopGap.headingHidden).toBe(true);\n  expect(discoverTopGap.headingDisplay).toBe('none');",
               'Discover desktop geometry contract')
           visual_path.write_text(visual)
 
