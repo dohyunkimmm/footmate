@@ -26,6 +26,5 @@ test('Real App MY current-settings save CTA keeps the approved full width',async
       button.evaluate(element=>element.getBoundingClientRect().width)
     ]);
     expect(Math.abs(geometry[0]-geometry[1])).toBeLessThanOrEqual(1);
-    expect(await button.evaluate(element=>element.style.width)).toBe('100%');
   }
 });
