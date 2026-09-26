@@ -7,7 +7,6 @@ permissions:
   contents: write
 jobs:
   apply:
-    if: "${{ github.event.head_commit.message == 'ci: apply safe Welcome desktop headroom' }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -24,57 +23,52 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin main
           git merge --no-edit origin/main
-          git checkout origin/main -- \
-            src/v4/personalization.css \
-            tests/e2e/real-app-white-surface.spec.cjs \
-            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png \
-            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png \
-            tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png \
-            tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
+          git checkout origin/main -- src/v4/personalization.css tests/e2e/real-app-white-surface.spec.cjs tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-welcome-390-chromium-linux.png tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
           python - <<'PY'
           from pathlib import Path
+          from textwrap import dedent
           css_path=Path('src/v4/personalization.css')
-          css=css_path.read_text().rstrip()+'''\n@media(min-width:700px){#footmate-next .fm-next-page[data-mode=real] .fm-next-app:not([data-embed=true]):has([data-screen=welcome]){height:calc(100dvh - 20px);max-height:856px;transform:translateY(-6px)}}\n'''
+          css=css_path.read_text().rstrip()+"\n@media(min-width:700px){#footmate-next .fm-next-page[data-mode=real] .fm-next-app:not([data-embed=true]):has([data-screen=welcome]){height:calc(100dvh - 20px);max-height:856px;transform:translateY(-6px)}}\n"
           css_path.write_text(css)
-
           test_path=Path('tests/e2e/real-app-white-surface.spec.cjs')
           test=test_path.read_text()
           marker="test('390px personalized Welcome keeps one primary CTA and one returning-user shortcut',async({page})=>{"
-          block=r'''test('1440px Welcome moves the visible brand 12px upward while preserving lower geometry',async({page})=>{
-  const errs=await openCleanApp(page,{width:1440,height:900});
-  const app=page.locator('.fm-next-app:not([data-embed="true"])');
-  const measure=async()=>app.evaluate(node=>{
-    const box=node.getBoundingClientRect();
-    const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
-    const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
-    const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
-    return {top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
-  });
-  const actual=await measure();
-  const baseline=await app.evaluate(node=>{
-    const original=node.style.cssText;
-    node.style.setProperty('height','calc(100dvh - 32px)','important');
-    node.style.setProperty('max-height','844px','important');
-    node.style.setProperty('transform','none','important');
-    const box=node.getBoundingClientRect();
-    const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
-    const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
-    const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
-    const result={top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
-    node.style.cssText=original;
-    return result;
-  });
-  const delta=baseline.brandTop-actual.brandTop;
-  expect(delta).toBeGreaterThan(11.5);
-  expect(delta).toBeLessThan(12.5);
-  expect(Math.abs(actual.bottom-baseline.bottom)).toBeLessThan(.5);
-  expect(Math.abs(actual.headlineTop-baseline.headlineTop)).toBeLessThan(.5);
-  expect(Math.abs(actual.actionTop-baseline.actionTop)).toBeLessThan(.5);
-  expect(actual.brandTop).toBeGreaterThanOrEqual(0);
-  expect(errs).toEqual([]);
-});
+          block=dedent("""
+          test('1440px Welcome moves the visible brand 12px upward while preserving lower geometry',async({page})=>{
+            const errs=await openCleanApp(page,{width:1440,height:900});
+            const app=page.locator('.fm-next-app:not([data-embed="true"])');
+            const measure=async()=>app.evaluate(node=>{
+              const box=node.getBoundingClientRect();
+              const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
+              const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
+              const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
+              return {top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
+            });
+            const actual=await measure();
+            const baseline=await app.evaluate(node=>{
+              const original=node.style.cssText;
+              node.style.setProperty('height','calc(100dvh - 32px)','important');
+              node.style.setProperty('max-height','844px','important');
+              node.style.setProperty('transform','none','important');
+              const box=node.getBoundingClientRect();
+              const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
+              const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
+              const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
+              const result={top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
+              node.style.cssText=original;
+              return result;
+            });
+            const delta=baseline.brandTop-actual.brandTop;
+            expect(delta).toBeGreaterThan(11.5);
+            expect(delta).toBeLessThan(12.5);
+            expect(Math.abs(actual.bottom-baseline.bottom)).toBeLessThan(.5);
+            expect(Math.abs(actual.headlineTop-baseline.headlineTop)).toBeLessThan(.5);
+            expect(Math.abs(actual.actionTop-baseline.actionTop)).toBeLessThan(.5);
+            expect(actual.brandTop).toBeGreaterThanOrEqual(0);
+            expect(errs).toEqual([]);
+          });
 
-'''
+          """)
           if marker not in test:
             raise SystemExit('Welcome insertion marker not found')
           test=test.replace(marker,block+marker,1)
@@ -87,8 +81,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Verify geometry and unchanged mobile Welcome
-        run: |
-          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs --grep '1440px Welcome moves|390px Welcome|390px personalized Welcome'
+        run: npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs --grep '1440px Welcome moves|390px Welcome|390px personalized Welcome'
       - name: Refresh approved release Welcome baselines
         run: npx playwright test --project=chromium tests/e2e/v5.1-release-flow-review.spec.cjs --grep 'welcome hero keeps readable contrast' --update-snapshots
       - name: Verify refreshed baseline by real comparison
@@ -98,21 +91,16 @@ jobs:
           rm .github/workflows/apply-welcome-desktop-headroom-temp.yml
           python - <<'PY'
           import subprocess
-          allowed={
-            'src/v4/personalization.css',
-            'tests/e2e/real-app-white-surface.spec.cjs',
-            'tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png',
-          }
+          allowed={'src/v4/personalization.css','tests/e2e/real-app-white-surface.spec.cjs','tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png','.github/workflows/apply-welcome-desktop-headroom-temp.yml'}
           status=subprocess.check_output(['git','status','--short']).decode().splitlines()
           paths={line[3:] for line in status}
           print('\n'.join(status))
-          unexpected=paths-allowed-{' .github/workflows/apply-welcome-desktop-headroom-temp.yml'.strip()}
+          unexpected=paths-allowed
           if unexpected:
             raise SystemExit(f'Unexpected final changes: {sorted(unexpected)}')
-          if 'src/v4/personalization.css' not in paths or 'tests/e2e/real-app-white-surface.spec.cjs' not in paths:
-            raise SystemExit(f'Missing required code/test changes: {sorted(paths)}')
-          if 'tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png' not in paths:
-            raise SystemExit('Desktop Welcome baseline did not change')
+          required={'src/v4/personalization.css','tests/e2e/real-app-white-surface.spec.cjs','tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png'}
+          if not required.issubset(paths):
+            raise SystemExit(f'Missing required final changes: {sorted(required-paths)}')
           PY
       - name: Commit safe fix
         run: |
