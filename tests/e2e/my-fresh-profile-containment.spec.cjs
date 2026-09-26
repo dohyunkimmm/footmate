@@ -44,16 +44,22 @@ test('fresh MY guidance stays inside its card before a profile is saved',async({
   await expect(save).toBeVisible();
   const geometry=await panel.evaluate(element=>{
     const panel=element.getBoundingClientRect();
-    const summary=element.querySelector('.fm-personalization-head span').getBoundingClientRect();
-    const boundary=element.querySelector('.fm-personalization-boundary').getBoundingClientRect();
+    const summaryNode=element.querySelector('.fm-personalization-head span');
+    const boundaryNode=element.querySelector('.fm-personalization-boundary');
+    const summary=summaryNode.getBoundingClientRect();
+    const boundary=boundaryNode.getBoundingClientRect();
     const save=element.querySelector('[data-personalization-action="save-profile"]').getBoundingClientRect();
     return {
       panelLeft:panel.left,
       panelRight:panel.right,
       summaryLeft:summary.left,
       summaryRight:summary.right,
+      summaryClientWidth:summaryNode.clientWidth,
+      summaryScrollWidth:summaryNode.scrollWidth,
       boundaryLeft:boundary.left,
       boundaryRight:boundary.right,
+      boundaryClientWidth:boundaryNode.clientWidth,
+      boundaryScrollWidth:boundaryNode.scrollWidth,
       saveLeft:save.left,
       saveRight:save.right,
       documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
@@ -61,8 +67,10 @@ test('fresh MY guidance stays inside its card before a profile is saved',async({
   });
   expect(geometry.summaryLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.summaryRight).toBeLessThanOrEqual(geometry.panelRight);
+  expect(geometry.summaryScrollWidth).toBeLessThanOrEqual(geometry.summaryClientWidth+1);
   expect(geometry.boundaryLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.boundaryRight).toBeLessThanOrEqual(geometry.panelRight);
+  expect(geometry.boundaryScrollWidth).toBeLessThanOrEqual(geometry.boundaryClientWidth+1);
   expect(geometry.saveLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.saveRight).toBeLessThanOrEqual(geometry.panelRight);
   expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
@@ -76,14 +84,18 @@ for(const width of [320,375,390,430]){
     await expect(panel).toBeVisible();
     const overflow=await panel.evaluate(element=>{
       const panel=element.getBoundingClientRect();
-      const summary=element.querySelector('.fm-personalization-head span').getBoundingClientRect();
-      const boundary=element.querySelector('.fm-personalization-boundary').getBoundingClientRect();
-      return {panelLeft:panel.left,panelRight:panel.right,summaryLeft:summary.left,summaryRight:summary.right,boundaryLeft:boundary.left,boundaryRight:boundary.right,documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
+      const summaryNode=element.querySelector('.fm-personalization-head span');
+      const boundaryNode=element.querySelector('.fm-personalization-boundary');
+      const summary=summaryNode.getBoundingClientRect();
+      const boundary=boundaryNode.getBoundingClientRect();
+      return {panelLeft:panel.left,panelRight:panel.right,summaryLeft:summary.left,summaryRight:summary.right,summaryClientWidth:summaryNode.clientWidth,summaryScrollWidth:summaryNode.scrollWidth,boundaryLeft:boundary.left,boundaryRight:boundary.right,boundaryClientWidth:boundaryNode.clientWidth,boundaryScrollWidth:boundaryNode.scrollWidth,documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
     });
     expect(overflow.summaryLeft).toBeGreaterThanOrEqual(overflow.panelLeft);
     expect(overflow.summaryRight).toBeLessThanOrEqual(overflow.panelRight);
+    expect(overflow.summaryScrollWidth).toBeLessThanOrEqual(overflow.summaryClientWidth+1);
     expect(overflow.boundaryLeft).toBeGreaterThanOrEqual(overflow.panelLeft);
     expect(overflow.boundaryRight).toBeLessThanOrEqual(overflow.panelRight);
+    expect(overflow.boundaryScrollWidth).toBeLessThanOrEqual(overflow.boundaryClientWidth+1);
     expect(overflow.documentOverflow).toBeLessThanOrEqual(1);
   });
 }
