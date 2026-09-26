@@ -1,0 +1,50 @@
+name: PR344 Refresh Affected Baselines
+
+on:
+  push:
+    branches: [fix/remove-tab-brand-tagline]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: ${{ !contains(github.event.head_commit.message, '[pr344-baselines]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: fix/remove-tab-brand-tagline
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Install browser QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+          npx playwright install --with-deps chromium
+
+      - name: Refresh affected Real App baselines
+        run: |
+          npx playwright test --project=chromium \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/v4-personalization.spec.cjs \
+            --update-snapshots
+
+      - name: Commit affected baseline updates
+        run: |
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots tests/e2e/v4-personalization.spec.cjs-snapshots
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit"
+            exit 1
+          fi
+          git commit -m "test: refresh tagline visual baselines [pr344-baselines]"
+          git push origin HEAD:fix/remove-tab-brand-tagline
