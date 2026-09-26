@@ -1,0 +1,50 @@
+name: MY Tab QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/v4/personalization.css
+      - src/v4/personalization.js
+      - src/v4/app.js
+      - tests/e2e/my-tab-layout-regression.spec.cjs
+      - tests/e2e/my-tab-layout-regression.spec.cjs-snapshots/**
+      - .github/workflows/my-tab-qa.yml
+  push:
+    branches: [main]
+    paths:
+      - src/v4/personalization.css
+      - src/v4/personalization.js
+      - src/v4/app.js
+      - tests/e2e/my-tab-layout-regression.spec.cjs
+      - tests/e2e/my-tab-layout-regression.spec.cjs-snapshots/**
+      - .github/workflows/my-tab-qa.yml
+permissions:
+  contents: read
+jobs:
+  visual-and-interaction:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Compare MY visual baseline and interaction contracts
+        run: npx playwright test --project=chromium tests/e2e/my-tab-layout-regression.spec.cjs
+      - name: Upload MY QA evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: my-tab-qa-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
