@@ -278,7 +278,7 @@ function configureDiscover(screen){
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="discover"],.fm-ai-card[data-ai-assistant]');
   if(assistant){hidden(assistant,true);assistant.dataset.iaHidden='duplicate-assistant'}
   const saved=snapshot(),active=scopeActive();ensureSummary(screen,saved,active);
-  const head=screen.querySelector('.fm-next-section-head');text(head?.querySelector('h1'),active&&saved?.result?'AI 조회 결과':'경기 찾기');text(head?.querySelector('p'),active&&saved?.result?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'추천 기준을 유지한 채 전체 경기를 탐색할 수 있어요.');
+  const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
   const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState()).map(entry=>entry.match.id)):null;
   const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
   cards.forEach(node=>{const matches=!allowed||allowed.has(node.dataset.matchId);hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++});

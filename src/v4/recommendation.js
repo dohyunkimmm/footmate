@@ -42,7 +42,7 @@ if(root){
     return `<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
   }
 
-  function card(item,index){
+  function card(item,index,scope='home'){
     const match=item.match;
     return `<button type="button" class="fm-next-match-card" data-action="open-match" data-match-id="${match.id}" data-recommendation-score="${item.score}" data-recommendation-region="${match.region}" aria-label="${match.place} 상세 보기">
       <div class="fm-next-match-card-media">
@@ -50,8 +50,8 @@ if(root){
         <div class="fm-next-match-place">${match.place}</div>
       </div>
       <div class="fm-next-match-body">
-        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${item.spotLabel}</span></div>
-        <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>
+        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${item.spotLabel}</span>${scope==='discover'?`<span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span>`:''}</div>
+        <div class="fm-next-match-footer">${scope==='discover'?`<div><small>${match.format} · ${match.duration}</small></div>`:`<div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div>`}<div class="fm-next-price">${money(match.price)}</div></div>
       </div>
     </button>`;
   }
@@ -68,7 +68,7 @@ if(root){
     const sig=signature(state,'home');
     if(list.dataset.fmRecommendationSignature===sig)return;
     list.dataset.fmRecommendationSignature=sig;
-    list.innerHTML=ranked.slice(0,2).map(card).join('');
+    list.innerHTML=ranked.slice(0,2).map((item,index)=>card(item,index,'home')).join('');
     const sectionCopy=screen.querySelector('.fm-next-section-head p');
     if(sectionCopy)sectionCopy.textContent='지역, 레벨, 선호 포지션을 함께 비교해 적합도 높은 순으로 정리했어요.';
     if(!state.joinedMatchId){
@@ -88,7 +88,7 @@ if(root){
     const sig=signature(state,'discover');
     if(list.dataset.fmRecommendationSignature===sig)return;
     list.dataset.fmRecommendationSignature=sig;
-    list.innerHTML=ranked.map(card).join('');
+    list.innerHTML=ranked.map((item,index)=>card(item,index,'discover')).join('');
     const heading=screen.querySelector('.fm-next-section-head h1');
     const copy=screen.querySelector('.fm-next-section-head p');
     if(heading)heading.textContent=`${state.region} 추천 경기`;
