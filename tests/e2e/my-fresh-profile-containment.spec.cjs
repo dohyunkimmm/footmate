@@ -28,17 +28,24 @@ async function openFreshProfile(page,width=390){
 
 test('fresh MY guidance stays inside its card before a profile is saved',async({page})=>{
   await openFreshProfile(page,390);
-  const panel=page.locator('[data-screen="profile"] .fm-personalization-panel--profile');
+  const screen=page.locator('[data-screen="profile"]');
+  const panel=screen.locator('.fm-personalization-panel--profile');
   const summary=panel.locator('.fm-personalization-head span').first();
+  const boundary=panel.locator('.fm-personalization-boundary');
   const save=panel.getByRole('button',{name:'현재 설정 저장'});
   await expect(panel).toBeVisible();
-  await expect(summary).toHaveText('현재 지역·포지션·레벨을 다음 방문의 시작점으로 저장할 수 있어요.');
+  await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
+  await expect(summary).toHaveText('현재 설정을 다음 방문 시작점으로 저장할 수 있어요.');
+  await expect(summary).toHaveCSS('white-space','nowrap');
+  await expect(boundary).toHaveText('저장 정보는 브라우저에만 남고 외부 동기화는 없습니다.');
+  await expect(boundary).toHaveCSS('white-space','nowrap');
   await expect(save).toBeVisible();
   const geometry=await panel.evaluate(element=>{
     const panel=element.getBoundingClientRect();
     const summary=element.querySelector('.fm-personalization-head span').getBoundingClientRect();
     const save=element.querySelector('[data-personalization-action="save-profile"]').getBoundingClientRect();
     const summaryNode=element.querySelector('.fm-personalization-head span');
+    const boundaryNode=element.querySelector('.fm-personalization-boundary');
     return {
       panelLeft:panel.left,
       panelRight:panel.right,
@@ -46,6 +53,8 @@ test('fresh MY guidance stays inside its card before a profile is saved',async({
       summaryRight:summary.right,
       summaryClientWidth:summaryNode.clientWidth,
       summaryScrollWidth:summaryNode.scrollWidth,
+      boundaryClientWidth:boundaryNode.clientWidth,
+      boundaryScrollWidth:boundaryNode.scrollWidth,
       saveLeft:save.left,
       saveRight:save.right
     };
@@ -53,6 +62,7 @@ test('fresh MY guidance stays inside its card before a profile is saved',async({
   expect(geometry.summaryLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.summaryRight).toBeLessThanOrEqual(geometry.panelRight);
   expect(geometry.summaryScrollWidth).toBeLessThanOrEqual(geometry.summaryClientWidth+1);
+  expect(geometry.boundaryScrollWidth).toBeLessThanOrEqual(geometry.boundaryClientWidth+1);
   expect(geometry.saveLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.saveRight).toBeLessThanOrEqual(geometry.panelRight);
   await expect(panel).toHaveScreenshot('my-fresh-profile-390.png',exact);
@@ -66,9 +76,12 @@ for(const width of [320,375,390,430]){
     const overflow=await panel.evaluate(element=>{
       const panel=element.getBoundingClientRect();
       const summary=element.querySelector('.fm-personalization-head span').getBoundingClientRect();
-      return {panelLeft:panel.left,panelRight:panel.right,summaryLeft:summary.left,summaryRight:summary.right};
+      const boundary=element.querySelector('.fm-personalization-boundary').getBoundingClientRect();
+      return {panelLeft:panel.left,panelRight:panel.right,summaryLeft:summary.left,summaryRight:summary.right,boundaryLeft:boundary.left,boundaryRight:boundary.right};
     });
     expect(overflow.summaryLeft).toBeGreaterThanOrEqual(overflow.panelLeft);
     expect(overflow.summaryRight).toBeLessThanOrEqual(overflow.panelRight);
+    expect(overflow.boundaryLeft).toBeGreaterThanOrEqual(overflow.panelLeft);
+    expect(overflow.boundaryRight).toBeLessThanOrEqual(overflow.panelRight);
   });
 }
