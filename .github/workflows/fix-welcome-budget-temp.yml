@@ -1,0 +1,60 @@
+name: Fix Welcome Budget Temp
+on:
+  push:
+    branches:
+      - fix/welcome-brand-copy-offset-20260926
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/welcome-brand-copy-offset-20260926
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Move rule from external CSS into existing shell style
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          css_path=Path('src/v4/personalization.css')
+          css=css_path.read_text()
+          rule='@media(min-width:700px){#footmate-next .fm-next-page[data-mode=real] .fm-next-app:not([data-embed=true]):has([data-screen=welcome]){height:calc(100dvh - 20px);max-height:856px;transform:translateY(-6px)}}\n'
+          if rule not in css:
+            raise SystemExit('Expected external Welcome headroom rule missing')
+          css=css.replace(rule,'',1)
+          css_path.write_text(css)
+
+          html_path=Path('app.html')
+          html=html_path.read_text()
+          anchor='html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){height:calc(100dvh - 32px);max-height:844px;border-radius:30px;box-shadow:0 28px 80px rgba(11,37,27,.13)}'
+          addition='html[data-footmate-surface="real"] .fm-next-app:not([data-embed="true"]):has([data-screen="welcome"]){height:calc(100dvh - 20px);max-height:856px;transform:translateY(-6px)}'
+          if addition not in html:
+            if anchor not in html:
+              raise SystemExit('Desktop shell anchor missing')
+            html=html.replace(anchor,anchor+addition,1)
+            html_path.write_text(html)
+          PY
+      - name: Check performance budget
+        run: node scripts/check-v4.9-performance-budget.cjs
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" css-tree@3.1.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify exact geometry and visual comparisons
+        run: |
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs --grep '1440px Welcome moves|390px Welcome|390px personalized Welcome'
+          npx playwright test --project=chromium tests/e2e/v5.1-release-flow-review.spec.cjs --grep 'welcome hero keeps readable contrast'
+      - name: Remove temporary workflow and commit
+        run: |
+          rm .github/workflows/fix-welcome-budget-temp.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'fix: keep Welcome headroom within CSS budget'
+          git push origin HEAD:fix/welcome-brand-copy-offset-20260926
