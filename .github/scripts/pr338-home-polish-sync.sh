@@ -76,6 +76,30 @@ test('Home AI search hierarchy keeps connected constraints on one row',async({pa
 });
 '''
     spec.write_text(text)
+
+release = Path('tests/e2e/v5.1-release-flow-review.spec.cjs')
+text = release.read_text()
+old_copy = "card.getByText('AI에게 원하는 경기를 말해보세요.',{exact:true})"
+new_copy = "card.getByText('AI에게 원하는 경기를 검색해보세요.',{exact:true})"
+if old_copy not in text:
+    raise SystemExit('release-flow Home AI copy assertion not found')
+release.write_text(text.replace(old_copy, new_copy, 1))
+
+visual = Path('tests/e2e/v5.1-visual-system-completion.spec.cjs')
+text = visual.read_text()
+old_scroll = """    await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
+    await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
+    const last=screen.locator('.fm-next-match-card').last();
+"""
+new_scroll = """    if(metrics.scrollHeight>metrics.clientHeight){
+      await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
+      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
+    }
+    const last=screen.locator('.fm-next-match-card').last();
+"""
+if old_scroll not in text:
+    raise SystemExit('responsive scroll contract block not found')
+visual.write_text(text.replace(old_scroll, new_scroll, 1))
 PY
 
 git diff --check
@@ -99,6 +123,6 @@ npx playwright test --project=chromium tests/e2e/v5.1-ai-assistant.spec.cjs
 
 git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-git add src/v4/app.js src/v4/platform/presentation/release-candidate.js src/v5/ai-match-assistant.js app.html tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/*-snapshots
+git add src/v4/app.js src/v4/platform/presentation/release-candidate.js src/v5/ai-match-assistant.js app.html tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/*-snapshots
 git commit -m 'Apply Home AI polish and refresh visual baselines'
 git push origin "HEAD:${GITHUB_REF_NAME}"
