@@ -1,0 +1,59 @@
+name: Polish Welcome AI Copy
+on:
+  push:
+    branches: [polish/welcome-ai-copy-visibility-20260926]
+permissions:
+  contents: write
+jobs:
+  polish:
+    if: ${{ !contains(github.event.head_commit.message, '[welcome-copy-polish]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: polish/welcome-ai-copy-visibility-20260926
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Apply Welcome AI copy polish
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          function replaceOnce(path,from,to){
+            const source=fs.readFileSync(path,'utf8');
+            const first=source.indexOf(from);
+            if(first<0)throw new Error(`${path}: target not found`);
+            if(source.indexOf(from,first+1)>=0)throw new Error(`${path}: target is not unique`);
+            fs.writeFileSync(path,source.replace(from,to));
+          }
+          replaceOnce('src/v4/app.js','font-size:14px;font-weight:700;line-height:1.5;letter-spacing:-.02em">AI가 최고의 경기를 골라준다','font-size:15px;font-weight:700;line-height:1.5;letter-spacing:-.02em">AI가 최고의 경기를 골라준다');
+          replaceOnce('app.html','/src/v4/app.js?v=493','/src/v4/app.js?v=494');
+          replaceOnce('tests/e2e/welcome-source-layout.spec.cjs',"expect(html).toContain('/src/v4/app.js?v=493');","expect(html).toContain('/src/v4/app.js?v=494');");
+          replaceOnce('tests/e2e/welcome-source-layout.spec.cjs',"expect(app).toContain('AI가 최고의 경기를 골라준다');","expect(app).toContain('AI가 최고의 경기를 골라준다');\n  expect(app).toContain('font-size:15px;font-weight:700');");
+          const test='tests/e2e/real-app-white-surface.spec.cjs';
+          const source=fs.readFileSync(test,'utf8');
+          const needle="  await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);\n";
+          if(!source.includes(needle))throw new Error(`${test}: insertion target not found`);
+          const insert=needle+"  const welcomeAiCopy=page.locator('[data-screen=\\\"welcome\\\"] [data-welcome-ai-copy]');\n  await expect(welcomeAiCopy).toHaveCSS('font-size','15px');\n  await expect(welcomeAiCopy).toHaveCSS('font-weight','700');\n";
+          fs.writeFileSync(test,source.replace(needle,insert));
+          NODE
+      - name: Check performance budget
+        run: node scripts/check-v4.9-performance-budget.cjs
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Refresh affected Welcome baselines
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs --update-snapshots
+      - name: Compare refreshed baselines and geometry
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs
+      - name: Commit real app polish and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/polish-welcome-ai-copy.yml
+          git add -A
+          git commit -m "polish: strengthen Welcome AI support copy [welcome-copy-polish]"
+          git push origin HEAD:polish/welcome-ai-copy-visibility-20260926
