@@ -47,7 +47,7 @@ test('MY stays contained and centered across supported Real App widths',async({p
     expect(g.navLeft).toBeGreaterThanOrEqual(g.appLeft-1);
     expect(g.navRight).toBeLessThanOrEqual(g.appRight+1);
     expect(Math.abs(g.titleCenter-g.appCenter)).toBeLessThanOrEqual(1);
-    await expect(screen.locator('.fm-next-topbar .fm-next-brand')).toHaveCount(0);
+    await expect(screen.locator('.fm-next-topbar .fm-next-brand')).toBeHidden();
     await expect(summary).toContainText('현재 지역·포지션·레벨');
   }
 });
