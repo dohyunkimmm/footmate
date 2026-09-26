@@ -128,9 +128,10 @@ function welcomeView(){
   if(mode==='real'){
     return `<section class="fm-next-screen fm-next-screen--intro" data-screen="welcome">
       <div class="fm-next-intro">
-        <div class="fm-next-topbar fm-next-topbar--dark" style="transform:translateY(-12px)">${brand({dark:true})}<span style="width:44px" aria-hidden="true"></span></div>
-        <div class="fm-next-intro-copy">
+        <div class="fm-next-topbar fm-next-topbar--dark">${brand({dark:true})}<span style="width:44px" aria-hidden="true"></span></div>
+        <div class="fm-next-intro-copy" style="transform:translateY(-44px)">
           <h1>내 수준에 맞는 경기부터,<br>경기 당일까지.</h1>
+          <p data-welcome-ai-copy style="position:absolute;left:0;top:100%;margin:10px 0 0;color:#56655d;font-size:14px;font-weight:700;line-height:1.5;letter-spacing:-.02em">AI가 최고의 경기를 골라준다</p>
         </div>
         <div class="fm-next-actions">
           ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
@@ -419,4 +420,3 @@ root.addEventListener('click',event=>{
 
 window.addEventListener('popstate',()=>render());
 render();
-
