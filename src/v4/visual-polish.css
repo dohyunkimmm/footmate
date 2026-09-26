@@ -1,7 +1,3 @@
-/* FootMate Real App visual system
-   Consolidates the previous polish batches and applies the visible redesign pass.
-   Preserve IA, copy, routes, state machines, recommendation ownership and sample data. */
-
 :root{
   --fm-type-micro:11px;
   --fm-control-compact:36px;
@@ -149,8 +145,6 @@
 .fm-participation-state button.is-ghost{background:transparent;border-color:#aebeb4}
 [data-screen="checkout"][data-participation-status="pending"] [data-participation-submit]{opacity:.45;box-shadow:none}
 
-/* Visual Redesign Pass · premium sport utility
-   Deep-green identity stays. Surfaces, typography, spacing and CTA hierarchy become visibly more editorial and product-like. */
 .fm-next-page[data-mode="real"]{
   --fm-bg:#eef1eb;
   --fm-surface:#f7f9f4;
