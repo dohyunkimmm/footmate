@@ -13,6 +13,7 @@ on:
       - src/v4/platform/domain/recommendation.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
+      - tests/e2e/welcome-source-layout.spec.cjs
       - tests/e2e/real-app-visual-finish.spec.cjs
       - tests/e2e/product-completion.spec.cjs
       - tests/e2e/product-completion.spec.cjs-snapshots/**
@@ -30,6 +31,7 @@ on:
       - src/v4/platform/domain/recommendation.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
+      - tests/e2e/welcome-source-layout.spec.cjs
       - tests/e2e/real-app-visual-finish.spec.cjs
       - tests/e2e/product-completion.spec.cjs
       - tests/e2e/product-completion.spec.cjs-snapshots/**
@@ -69,7 +71,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Compare Real App visual baselines and completion contracts
-        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
+        run: npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
       - name: Upload visual evidence
         if: always()
         uses: actions/upload-artifact@v6
