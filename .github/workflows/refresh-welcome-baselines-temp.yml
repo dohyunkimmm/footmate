@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   refresh:
-    if: ${{ !contains(github.event.head_commit.message, 'test: refresh welcome baselines') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -66,5 +65,5 @@ jobs:
             tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-personalized-welcome-390-chromium-linux.png \
             tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-390-chromium-linux.png \
             tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-welcome-1440-chromium-linux.png
-          git commit -m "test: refresh welcome baselines"
+          git commit -m "test: refresh welcome baselines [skip ci]"
           git push origin HEAD:fix/welcome-brand-actual-offset-20260926
