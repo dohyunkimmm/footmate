@@ -7,7 +7,6 @@ permissions:
   contents: write
 jobs:
   update:
-    if: github.event.head_commit.message == 'chore: refresh MY hub visual baselines'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
