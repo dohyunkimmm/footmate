@@ -1,6 +1,8 @@
 const {test,expect}=require('@playwright/test');
 
 const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
+const FRESH_PROFILE_COPY='현재 지역·포지션·레벨을 다음 방문의 시작점으로 저장할 수 있어요.';
+const BROWSER_ONLY_COPY='저장 프로필·최근 확인 경기·선호 지역/시간/포맷은 이 브라우저에만 남습니다. 회원 DB, 서버 메모리, 기기 간 동기화는 연결하지 않았습니다.';
 
 // Regression target: the exact unsaved MY guidance state that overflowed before a profile was saved.
 async function openFreshProfile(page,width=390){
@@ -35,36 +37,35 @@ test('fresh MY guidance stays inside its card before a profile is saved',async({
   const save=panel.getByRole('button',{name:'현재 설정 저장'});
   await expect(panel).toBeVisible();
   await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
-  await expect(summary).toHaveText('현재 설정을 다음 방문 시작점으로 저장할 수 있어요.');
+  await expect(summary).toHaveText(FRESH_PROFILE_COPY);
   await expect(summary).toHaveCSS('white-space','nowrap');
-  await expect(boundary).toHaveText('저장 정보는 브라우저에만 남고 외부 동기화는 없습니다.');
+  await expect(boundary).toHaveText(BROWSER_ONLY_COPY);
   await expect(boundary).toHaveCSS('white-space','nowrap');
   await expect(save).toBeVisible();
   const geometry=await panel.evaluate(element=>{
     const panel=element.getBoundingClientRect();
     const summary=element.querySelector('.fm-personalization-head span').getBoundingClientRect();
+    const boundary=element.querySelector('.fm-personalization-boundary').getBoundingClientRect();
     const save=element.querySelector('[data-personalization-action="save-profile"]').getBoundingClientRect();
-    const summaryNode=element.querySelector('.fm-personalization-head span');
-    const boundaryNode=element.querySelector('.fm-personalization-boundary');
     return {
       panelLeft:panel.left,
       panelRight:panel.right,
       summaryLeft:summary.left,
       summaryRight:summary.right,
-      summaryClientWidth:summaryNode.clientWidth,
-      summaryScrollWidth:summaryNode.scrollWidth,
-      boundaryClientWidth:boundaryNode.clientWidth,
-      boundaryScrollWidth:boundaryNode.scrollWidth,
+      boundaryLeft:boundary.left,
+      boundaryRight:boundary.right,
       saveLeft:save.left,
-      saveRight:save.right
+      saveRight:save.right,
+      documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
     };
   });
   expect(geometry.summaryLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.summaryRight).toBeLessThanOrEqual(geometry.panelRight);
-  expect(geometry.summaryScrollWidth).toBeLessThanOrEqual(geometry.summaryClientWidth+1);
-  expect(geometry.boundaryScrollWidth).toBeLessThanOrEqual(geometry.boundaryClientWidth+1);
+  expect(geometry.boundaryLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
+  expect(geometry.boundaryRight).toBeLessThanOrEqual(geometry.panelRight);
   expect(geometry.saveLeft).toBeGreaterThanOrEqual(geometry.panelLeft);
   expect(geometry.saveRight).toBeLessThanOrEqual(geometry.panelRight);
+  expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
   await expect(panel).toHaveScreenshot('my-fresh-profile-390.png',exact);
 });
 
@@ -77,11 +78,12 @@ for(const width of [320,375,390,430]){
       const panel=element.getBoundingClientRect();
       const summary=element.querySelector('.fm-personalization-head span').getBoundingClientRect();
       const boundary=element.querySelector('.fm-personalization-boundary').getBoundingClientRect();
-      return {panelLeft:panel.left,panelRight:panel.right,summaryLeft:summary.left,summaryRight:summary.right,boundaryLeft:boundary.left,boundaryRight:boundary.right};
+      return {panelLeft:panel.left,panelRight:panel.right,summaryLeft:summary.left,summaryRight:summary.right,boundaryLeft:boundary.left,boundaryRight:boundary.right,documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
     });
     expect(overflow.summaryLeft).toBeGreaterThanOrEqual(overflow.panelLeft);
     expect(overflow.summaryRight).toBeLessThanOrEqual(overflow.panelRight);
     expect(overflow.boundaryLeft).toBeGreaterThanOrEqual(overflow.panelLeft);
     expect(overflow.boundaryRight).toBeLessThanOrEqual(overflow.panelRight);
+    expect(overflow.documentOverflow).toBeLessThanOrEqual(1);
   });
 }
