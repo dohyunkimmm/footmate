@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 
-test('Welcome moves only headline and AI support copy 44px while CTAs stay anchored',async({page})=>{
+test('Welcome moves only headline and AI support copy 88px while CTAs stay anchored',async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
@@ -39,12 +39,12 @@ test('Welcome moves only headline and AI support copy 44px while CTAs stay ancho
     return {moved,natural,restored};
   });
 
-  expect(Math.round(metrics.natural.headlineTop-metrics.moved.headlineTop)).toBe(44);
-  expect(Math.round(metrics.natural.supportTop-metrics.moved.supportTop)).toBe(44);
+  expect(Math.round(metrics.natural.headlineTop-metrics.moved.headlineTop)).toBe(88);
+  expect(Math.round(metrics.natural.supportTop-metrics.moved.supportTop)).toBe(88);
   expect(Math.round(metrics.natural.actionsTop-metrics.moved.actionsTop)).toBe(0);
   expect(metrics.natural.buttonTops.map((top,index)=>Math.round(top-metrics.moved.buttonTops[index]))).toEqual([0,0]);
   expect(metrics.moved.buttonHeights).toEqual([54,54]);
   expect(metrics.restored.headlineTop).toBeCloseTo(metrics.moved.headlineTop,3);
-  expect(metrics.moved.transform).toBe('matrix(1, 0, 0, 1, 0, -44)');
+  expect(metrics.moved.transform).toBe('matrix(1, 0, 0, 1, 0, -88)');
   expect(metrics.moved.supportText).toBe('AI가 최고의 경기를 골라준다');
 });
