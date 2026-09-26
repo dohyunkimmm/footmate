@@ -212,7 +212,10 @@
       node.textContent=`${prefix}${rule[0]} ÷ ${rule[1]}`;
     });
     const note=validation.querySelector('.fm-next-cs-note');
-    if(note)note.textContent='추가 지표 · 결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률 · 외부 분석 도구 미연동 · 운영·테스트·시뮬레이션 제외 · 표본·기간·기준값 우선 확보';
+    if(note)note.innerHTML=rows([
+      ['추가 지표','결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률'],
+      ['측정 조건','외부 분석 도구 미연동 · 운영·테스트·시뮬레이션 제외 · 표본·기간·기준값 우선 확보']
+    ]);
     setText(validation,'.fm-next-kpi-table>div:last-child dd:nth-of-type(2)','connected-ai와 rules-fallback 분리 · 사용률과 품질 판단 분리');
 
     const release=slides[12];
