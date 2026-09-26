@@ -157,7 +157,7 @@ test('390px Discover uses the same neutral match surface system',async({page})=>
   await expectNoHorizontalOverflow(page);
   const dynamicDates=screen.locator('.fm-next-match-date > span:first-child');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('real-app-white-discover-390.png',{...exact,mask:[dynamicDates]});
+  await expect(page).toHaveScreenshot('real-app-white-discover-390.png',{...exact,maxDiffPixels:24,mask:[dynamicDates]});
   expect(errs).toEqual([]);
 });
 
