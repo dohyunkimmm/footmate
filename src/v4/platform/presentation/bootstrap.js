@@ -68,3 +68,62 @@ window.__FOOTMATE_PLATFORM__=Object.freeze({
   recordEvent:(name,payload,options)=>footmatePlatform.events.record(name,payload,options),
   recordCompletedJoin
 });
+
+/* Product home compact polish: keep the existing flow while removing duplicate hierarchy. */
+const HOME_SEARCH_POLISH_STYLE_ID='fm-home-search-polish';
+const HOME_SEARCH_TITLE='AI에게 원하는 경기를 검색해보세요.';
+let homeSearchPolishScheduled=false;
+
+function ensureHomeSearchPolishStyle(){
+  if(document.getElementById(HOME_SEARCH_POLISH_STYLE_ID))return;
+  const style=document.createElement('style');
+  style.id=HOME_SEARCH_POLISH_STYLE_ID;
+  style.textContent=`
+    .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="result"]:has(.fm-ai-mode[data-mode="connected-ai"]) .fm-ai-conditions{
+      display:flex!important;
+      flex-wrap:nowrap!important;
+      gap:4px!important;
+      max-width:100%;
+      overflow-x:auto;
+      overscroll-behavior-x:contain;
+      scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+    }
+    .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="result"]:has(.fm-ai-mode[data-mode="connected-ai"]) .fm-ai-conditions::-webkit-scrollbar{display:none}
+    .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="result"]:has(.fm-ai-mode[data-mode="connected-ai"]) .fm-ai-conditions span{
+      flex:0 0 auto;
+      padding:4px 5px!important;
+      font-size:9px!important;
+      line-height:1.2;
+      white-space:nowrap;
+    }
+  `;
+  document.head.append(style);
+}
+
+function applyHomeSearchPolish(){
+  if(!root)return;
+  ensureHomeSearchPolishStyle();
+  const screen=root.querySelector('[data-screen="home"]');
+  if(!screen)return;
+
+  screen.querySelector(':scope > .fm-next-greeting')?.remove();
+  screen.querySelector(':scope > .fm-next-topbar [data-action="nav-profile"]')?.remove();
+
+  const title=screen.querySelector('.fm-ai-card[data-ia-role="primary-assistant"] .fm-ai-head strong,.fm-ai-card[data-product-ai="home"] .fm-ai-head strong,.fm-ai-card[data-ai-assistant] .fm-ai-head strong');
+  if(title&&title.textContent!==HOME_SEARCH_TITLE)title.textContent=HOME_SEARCH_TITLE;
+}
+
+function scheduleHomeSearchPolish(){
+  if(homeSearchPolishScheduled)return;
+  homeSearchPolishScheduled=true;
+  requestAnimationFrame(()=>{
+    homeSearchPolishScheduled=false;
+    applyHomeSearchPolish();
+  });
+}
+
+if(root){
+  new MutationObserver(scheduleHomeSearchPolish).observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['data-screen','data-ai-state','data-mode','data-ia-role','data-product-ai']});
+  scheduleHomeSearchPolish();
+}
