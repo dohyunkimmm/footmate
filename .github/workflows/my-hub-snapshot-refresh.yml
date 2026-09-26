@@ -1,12 +1,13 @@
 name: MY Hub Snapshot Refresh
 on:
   push:
-    branches: [feat/my-matchday-hub-20260926]
+    branches:
+      - feat/my-matchday-hub-20260926
 permissions:
   contents: write
 jobs:
   refresh:
-    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, 'chore: refresh MY visual baselines')
+    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
