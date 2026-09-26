@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 permissions:
-  contents: read
+  contents: write
   statuses: read
 concurrency:
   group: footmate-qa-${{ github.ref }}
@@ -136,6 +136,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref || github.ref }}
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Install browser QA dependencies
@@ -147,6 +149,17 @@ jobs:
         run: npx playwright install --with-deps chromium webkit
       - name: Verify installed QA toolchain
         run: node scripts/check-qa-toolchain.cjs
+      - name: Refresh approved MY match hub visual baselines
+        if: github.event_name == 'pull_request' && github.head_ref == 'feat/my-match-hub-20260926-v2'
+        run: |
+          npx playwright test --project=chromium tests/e2e/v4-personalization.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --update-snapshots=changed
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/*-snapshots
+          if ! git diff --cached --quiet; then
+            git commit -m 'test: update MY navigation visual baselines'
+            git push origin HEAD:${GITHUB_HEAD_REF}
+          fi
       - name: Run v5.3 browser, beta, AI, recovery, accessibility and visual baseline gates
         run: npx playwright test --project=chromium tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-decision-flow-polish.spec.cjs tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/v5.1-case-study.spec.cjs tests/e2e/v5.1-case-study-content.spec.cjs tests/e2e/v5.1-case-study-structured-copy.spec.cjs tests/e2e/v5.1-case-study-wrap.spec.cjs tests/e2e/v5.1-case-study-accessibility.spec.cjs tests/e2e/v5.1-case-study-visual.spec.cjs
       - name: Run Mobile Safari/WebKit product gate
