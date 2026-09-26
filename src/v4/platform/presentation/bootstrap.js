@@ -93,7 +93,7 @@ function ensureHomeSearchPolishStyle(){
     .fm-next-page[data-mode="real"] [data-screen="home"] .fm-ai-card[data-ia-role="primary-assistant"][data-ai-state="result"]:has(.fm-ai-mode[data-mode="connected-ai"]) .fm-ai-conditions span{
       flex:0 0 auto;
       padding:4px 5px!important;
-      font-size:9px!important;
+      font-size:10px!important;
       line-height:1.2;
       white-space:nowrap;
     }
