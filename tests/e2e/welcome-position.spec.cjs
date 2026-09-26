@@ -30,11 +30,9 @@ test('Welcome moves only headline and AI support copy 88px while CTAs stay ancho
       supportText:support.textContent.trim()
     });
     const moved=snapshot();
-    const inlineValue=copy.style.getPropertyValue('transform');
-    const inlinePriority=copy.style.getPropertyPriority('transform');
     copy.style.setProperty('transform','none','important');
     const natural=snapshot();
-    if(inlineValue)copy.style.setProperty('transform',inlineValue,inlinePriority);else copy.style.removeProperty('transform');
+    copy.style.removeProperty('transform');
     const restored=snapshot();
     return {moved,natural,restored};
   });
