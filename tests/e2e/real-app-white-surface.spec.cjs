@@ -72,6 +72,41 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
   expect(errs).toEqual([]);
 });
 
+
+test('1440px Welcome moves the visible brand 12px upward while preserving lower geometry',async({page})=>{
+  const errs=await openCleanApp(page,{width:1440,height:900});
+  const app=page.locator('.fm-next-app:not([data-embed="true"])');
+  const measure=async()=>app.evaluate(node=>{
+    const box=node.getBoundingClientRect();
+    const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
+    const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
+    const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
+    return {top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
+  });
+  const actual=await measure();
+  const baseline=await app.evaluate(node=>{
+    const original=node.style.cssText;
+    node.style.setProperty('height','calc(100dvh - 32px)','important');
+    node.style.setProperty('max-height','844px','important');
+    node.style.setProperty('transform','none','important');
+    const box=node.getBoundingClientRect();
+    const brand=node.querySelector('[data-screen="welcome"] .fm-next-brand').getBoundingClientRect();
+    const headline=node.querySelector('[data-screen="welcome"] h1').getBoundingClientRect();
+    const action=node.querySelector('[data-screen="welcome"] .fm-next-actions button').getBoundingClientRect();
+    const result={top:box.top,bottom:box.bottom,height:box.height,brandTop:brand.top,headlineTop:headline.top,actionTop:action.top};
+    node.style.cssText=original;
+    return result;
+  });
+  const delta=baseline.brandTop-actual.brandTop;
+  expect(delta).toBeGreaterThan(11.5);
+  expect(delta).toBeLessThan(12.5);
+  expect(Math.abs(actual.bottom-baseline.bottom)).toBeLessThan(.5);
+  expect(Math.abs(actual.headlineTop-baseline.headlineTop)).toBeLessThan(.5);
+  expect(Math.abs(actual.actionTop-baseline.actionTop)).toBeLessThan(.5);
+  expect(actual.brandTop).toBeGreaterThanOrEqual(0);
+  expect(errs).toEqual([]);
+});
+
 test('390px personalized Welcome keeps one primary CTA and one returning-user shortcut',async({page})=>{
   const errs=await openPersonalizedWelcome(page,{width:390,height:844});
   await expect(page.getByRole('button',{name:/내 경기 찾아보기/})).toBeVisible();
