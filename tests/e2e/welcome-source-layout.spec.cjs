@@ -1,9 +1,9 @@
 const fs=require('fs');
 const {test,expect}=require('@playwright/test');
 
-async function openCleanWelcome(page,{personalized=false}={}){
+async function openCleanWelcome(page,{personalized=false,path='/demo'}={}){
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto(path,{waitUntil:'domcontentloaded'});
   await page.evaluate(({personalized})=>{
     localStorage.clear();
     if(personalized){
@@ -54,26 +54,28 @@ test('Welcome source owns the -44px hero shift, AI support copy, and fresh runti
   expect(html).toContain('/src/v4/personalization.js?v=493');
 });
 
-test('390px /demo Welcome moves only headline/support copy by 44px while CTA stays fixed',async({page})=>{
-  await openCleanWelcome(page);
-  const copy=page.locator('[data-screen="welcome"] .fm-next-intro-copy');
-  const support=page.locator('[data-screen="welcome"] [data-welcome-ai-copy]');
-  await expect(copy).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -44)');
-  await expect(support).toBeVisible();
-  await expect(support).toHaveText('AI가 최고의 경기를 골라준다');
-  const metrics=await welcomeGeometry(page);
-  expect(Math.round(metrics.copyVisualShift)).toBe(-44);
-  expect(metrics.copyVisualShift).toBeGreaterThanOrEqual(-48);
-  expect(metrics.copyVisualShift).toBeLessThanOrEqual(-40);
-  expect(Math.round(metrics.actionsVisualShift)).toBe(0);
-  expect(Math.round(metrics.actionsTop)).toBe(756);
-  expect(metrics.supportTop).toBeGreaterThan(metrics.headlineTop);
-  expect(metrics.supportBottom).toBeLessThan(metrics.actionsTop);
-  expect(metrics.buttonHeights).toEqual([54]);
-});
+for(const path of ['/demo','/app']){
+  test(`390px ${path} Welcome moves only headline/support copy by 44px while CTA stays fixed`,async({page})=>{
+    await openCleanWelcome(page,{path});
+    const copy=page.locator('[data-screen="welcome"] .fm-next-intro-copy');
+    const support=page.locator('[data-screen="welcome"] [data-welcome-ai-copy]');
+    await expect(copy).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -44)');
+    await expect(support).toBeVisible();
+    await expect(support).toHaveText('AI가 최고의 경기를 골라준다');
+    const metrics=await welcomeGeometry(page);
+    expect(Math.round(metrics.copyVisualShift)).toBe(-44);
+    expect(metrics.copyVisualShift).toBeGreaterThanOrEqual(-48);
+    expect(metrics.copyVisualShift).toBeLessThanOrEqual(-40);
+    expect(Math.round(metrics.actionsVisualShift)).toBe(0);
+    expect(Math.round(metrics.actionsTop)).toBe(756);
+    expect(metrics.supportTop).toBeGreaterThan(metrics.headlineTop);
+    expect(metrics.supportBottom).toBeLessThan(metrics.actionsTop);
+    expect(metrics.buttonHeights).toEqual([54]);
+  });
+}
 
 test('390px returning-user /demo Welcome keeps both 54px CTA positions unchanged',async({page})=>{
-  await openCleanWelcome(page,{personalized:true});
+  await openCleanWelcome(page,{personalized:true,path:'/demo'});
   await expect(page.getByRole('button',{name:/내 경기 찾아보기/})).toBeVisible();
   await expect(page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/})).toBeVisible();
   const metrics=await welcomeGeometry(page);
