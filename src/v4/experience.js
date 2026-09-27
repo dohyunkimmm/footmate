@@ -328,13 +328,13 @@ import {footmatePlatform} from './platform/application/platform.js';
 
     if(action==='open-match'||action==='open-joined-match'){
       const from=root.querySelector('[data-screen]')?.dataset.screen;
-      if(['home','discover','schedule'].includes(from))updateInteraction({detailReturnRoute:from});
+      if(['home','discover','schedule','profile'].includes(from))updateInteraction({detailReturnRoute:from});
       return;
     }
 
     if(action==='detail-back'){
       const route=interaction().detailReturnRoute;
-      const navAction={home:'nav-home',discover:'nav-discover',schedule:'nav-schedule'}[route];
+      const navAction={home:'nav-home',discover:'nav-discover',schedule:'nav-schedule',profile:'nav-profile'}[route];
       if(!navAction)return;
       event.preventDefault();
       event.stopPropagation();

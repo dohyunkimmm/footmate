@@ -34,3 +34,7 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed nav
     expect(await page.evaluate(()=>document.activeElement?.dataset?.screen)).toBe('detail');
   }
 });
+
+const {aiFilters,profileSettings}=require('./helpers/priority-ux.cjs');
+test('high priority AI and filter behavior',async({page})=>{await aiFilters(page);});
+test('high priority MY settings and navigation',async({page})=>{await profileSettings(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'}));});

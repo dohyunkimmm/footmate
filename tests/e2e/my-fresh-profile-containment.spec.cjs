@@ -27,9 +27,9 @@ test('fresh MY keeps its title and CTA without the feature description',async({p
   await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
   await expect(panel.getByText('추천 프로필을 저장해보세요',{exact:true})).toBeVisible();
   await expect(panel.getByText(REMOVED_FEATURE_COPY,{exact:true})).toHaveCount(0);
-  await expect(panel.locator('.fm-personalization-head span')).toHaveCount(0);
+  await expect(panel.locator('.fm-personalization-head span')).toHaveText('수원 · 영통 · MF · 중급');
   await expect(boundary).toHaveText(BROWSER_ONLY_COPY);
-  await expect(boundary).toHaveCSS('white-space','nowrap');
+  await expect(boundary).toHaveCSS('white-space','normal');
   await expect(save).toBeVisible();
   const geometry=await panel.evaluate(element=>{
     const panel=element.getBoundingClientRect();

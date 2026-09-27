@@ -18,9 +18,9 @@ test('fresh Real App MY removes the feature-description line without restoring t
   await expect(screen.locator('.fm-next-topbar > strong')).toHaveCount(0);
   await expect(panel.getByText('추천 프로필을 저장해보세요',{exact:true})).toBeVisible();
   await expect(panel.getByText(REMOVED_FEATURE_COPY,{exact:true})).toHaveCount(0);
-  await expect(panel.locator('.fm-personalization-head span')).toHaveCount(0);
+  await expect(panel.locator('.fm-personalization-head span')).toHaveText('수원 · 영통 · MF · 중급');
   await expect(boundary).toHaveText(BROWSER_ONLY_COPY);
-  await expect(boundary).toHaveCSS('white-space','nowrap');
+  await expect(boundary).toHaveCSS('white-space','normal');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
   await expect(panel).toHaveScreenshot('real-app-my-fresh-profile-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:0});
 });
@@ -45,10 +45,10 @@ test('Real App MY aligns the saved profile card and stages preference edits befo
   await expect(panel.locator('.fm-personalization-kicker')).toHaveCount(0);
   await expect(panel).not.toContainText('4.7.0');
   await expect(panel.locator('.fm-personalization-head span').first()).toHaveText('수원 · 영통 · MF · 중급');
-  await expect(panel.getByRole('button',{name:'수정',exact:true})).toBeVisible();
+  await expect(panel.getByRole('button',{name:'선호 조건 수정',exact:true})).toBeVisible();
   await expect(panel.getByRole('button',{name:'현재 설정 저장'})).toHaveCount(0);
   await expect(panel.locator('.fm-personalization-boundary')).toHaveText(BROWSER_ONLY_COPY);
-  await expect(panel.locator('.fm-personalization-boundary')).toHaveCSS('white-space','nowrap');
+  await expect(panel.locator('.fm-personalization-boundary')).toHaveCSS('white-space','normal');
   const widths=await screen.evaluate(element=>({
     profile:element.querySelector('.fm-next-profile-card').getBoundingClientRect().width,
     personalization:element.querySelector('.fm-personalization-panel--profile').getBoundingClientRect().width
@@ -59,14 +59,14 @@ test('Real App MY aligns the saved profile card and stages preference edits befo
   expect(Math.abs(areaRects[0].top-areaRects[1].top)).toBeLessThanOrEqual(1);
   expect(Math.abs(areaRects[2].top-areaRects[3].top)).toBeLessThanOrEqual(1);
   expect(areaRects[2].top).toBeGreaterThan(areaRects[0].top);
-  await panel.getByRole('button',{name:'수정',exact:true}).click();
+  await panel.getByRole('button',{name:'선호 조건 수정',exact:true}).click();
   await expect(panel).toHaveAttribute('data-editing','true');
   await panel.getByRole('button',{name:'21시 이후'}).click();
-  await expect(panel.getByRole('button',{name:'변경사항 저장'})).toBeVisible();
+  await expect(panel.getByRole('button',{name:'선호 조건 저장'})).toBeVisible();
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:personalization')).favorites.timeWindows)).toEqual(['19','20']);
-  await panel.getByRole('button',{name:'변경사항 저장'}).click();
+  await panel.getByRole('button',{name:'선호 조건 저장'}).click();
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:personalization')).favorites.timeWindows)).toEqual(['19','20','21+']);
-  await expect(panel.getByRole('button',{name:'수정',exact:true})).toBeVisible();
+  await expect(panel.getByRole('button',{name:'선호 조건 수정',exact:true})).toBeVisible();
   await expect(screen).toHaveScreenshot('real-app-my-personalization-390.png',{animations:'disabled',caret:'hide'});
 });
 
