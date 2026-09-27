@@ -1,0 +1,53 @@
+name: Compact Final Design System
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/compact-design-system.yml
+
+permissions:
+  contents: write
+
+jobs:
+  compact:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Compact CSS without changing semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          npm install --no-save --ignore-scripts css-tree@3.1.0
+          node <<'NODE'
+          const fs=require('fs');
+          const csstree=require('css-tree');
+          const path='src/v4/design-system-v2.css';
+          const input=fs.readFileSync(path,'utf8');
+          const ast=csstree.parse(input);
+          let output=csstree.generate(ast);
+          // Keep one rule boundary per line so the production asset remains inspectable.
+          output=output.replace(/}/g,'}\n').replace(/\n+/g,'\n').trim()+'\n';
+          // Parse generated output again to ensure syntactic equivalence at the AST level.
+          const reparsed=csstree.parse(output);
+          const canonicalBefore=csstree.generate(ast);
+          const canonicalAfter=csstree.generate(reparsed);
+          if(canonicalBefore!==canonicalAfter) throw new Error('CSS canonical form changed during compaction');
+          fs.writeFileSync(path,output);
+          console.log(JSON.stringify({before:Buffer.byteLength(input),after:Buffer.byteLength(output)}));
+          NODE
+          node scripts/check-v4.9-performance-budget.cjs
+          rm .github/workflows/compact-design-system.yml
+          git add -A
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact final design system asset'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
