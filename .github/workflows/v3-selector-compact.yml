@@ -1,4 +1,4 @@
-name: V3 Raw Equivalent Scope Compact
+name: V3 Native Nesting Compact
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Restore reviewed CSS and compact raw source without reparsing
+      - name: Restore reviewed CSS and compact v3 with native nesting
         shell: bash
         run: |
           set -euo pipefail
@@ -42,77 +42,55 @@ jobs:
             'src/v4/decision.css','src/v4/participation.css','src/v4/matchday.css','src/v4/return.css',
             'src/v4/personalization.css','src/v4/visual-polish.css','src/v5/ai-match-assistant.css'
           ];
+          const marker='/* FootMate Real App · Visual Hierarchy v3 */';
           const markerText=[
             '/* FootMate Design System v2 */',
             '/* White-first Real App surface ownership */',
             '/* Product completion compatibility ownership */',
             '/* FootMate Real App Visual Finish · P0–P2 */',
-            '/* FootMate Real App · Visual Hierarchy v3 */'
+            marker
           ];
           function compactRaw(input){
-            let out='';
-            let i=0;
-            let pendingSpace=false;
-            let quote='';
+            let out='',i=0,pendingSpace=false,quote='';
             while(i<input.length){
               const c=input[i];
               if(quote){
                 out+=c;
-                if(c==='\\' && i+1<input.length){ out+=input[++i]; }
-                else if(c===quote){ quote=''; }
-                i++;
-                continue;
+                if(c==='\\'&&i+1<input.length) out+=input[++i];
+                else if(c===quote) quote='';
+                i++;continue;
               }
               if(c==='"'||c==="'"){
-                if(pendingSpace && out && !'{:;,'.includes(out[out.length-1])) out+=' ';
-                pendingSpace=false;
-                quote=c;
-                out+=c;
-                i++;
-                continue;
+                if(pendingSpace&&out&&!'{:;,'.includes(out[out.length-1])) out+=' ';
+                pendingSpace=false;quote=c;out+=c;i++;continue;
               }
-              if(c==='/' && input[i+1]==='*'){
+              if(c==='/'&&input[i+1]==='*'){
                 const end=input.indexOf('*/',i+2);
                 if(end<0) throw new Error('unterminated CSS comment');
-                pendingSpace=true;
-                i=end+2;
-                continue;
+                pendingSpace=true;i=end+2;continue;
               }
-              if(/\s/.test(c)){
-                pendingSpace=true;
-                i++;
-                continue;
-              }
+              if(/\s/.test(c)){pendingSpace=true;i++;continue;}
               const prev=out[out.length-1]||'';
-              const noSpaceBefore='}:;,'.includes(c);
-              const noSpaceAfter='{:;,'.includes(prev);
-              if(pendingSpace && out && !noSpaceBefore && !noSpaceAfter) out+=' ';
-              pendingSpace=false;
-              out+=c;
-              i++;
+              if(pendingSpace&&out&&!'}:;,'.includes(c)&&!'{:;,'.includes(prev)) out+=' ';
+              pendingSpace=false;out+=c;i++;
             }
             return out.replace(/;}/g,'}').trim()+'\n';
           }
-
-          const appPath='src/v4/app.js';
-          let appSource=fs.readFileSync(appPath,'utf8');
-          const appNeedle="  const activeScreen=root.querySelector('[data-screen]');";
-          const appMarker="  root.querySelector('.fm-next-app')?.classList.toggle('f3',mode==='real'&&!embed);\n"+appNeedle;
-          if(!appSource.includes("classList.toggle('f3'")){
-            if(!appSource.includes(appNeedle)) throw new Error('app marker insertion point missing');
-            appSource=appSource.replace(appNeedle,appMarker);
-            fs.writeFileSync(appPath,appSource);
-          }
-
           for(const file of files){
             const source=fs.readFileSync(file,'utf8');
             let raw=source;
             if(file==='src/v4/design-system-v2.css'){
+              const markerAt=raw.indexOf(marker);
+              if(markerAt<0) throw new Error('v3 ownership marker missing');
+              const splitAt=markerAt+marker.length;
+              const before=raw.slice(0,splitAt);
+              let v3=raw.slice(splitAt);
               const scope='.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"])';
-              const replacement='.f3.f3.f3.f3';
-              const scopeCount=raw.split(scope).length-1;
-              if(scopeCount<100) throw new Error(`unexpected raw scope count: ${scopeCount}`);
-              raw=raw.split(scope).join(replacement);
+              const scopeCount=v3.split(scope).length-1;
+              const beforeScopeCount=before.split(scope).length-1;
+              if(scopeCount<100||beforeScopeCount!==0) throw new Error(`unexpected v3 scope distribution before=${beforeScopeCount} v3=${scopeCount}`);
+              if(/@keyframes\b/i.test(v3)) throw new Error('v3 block contains keyframes; native nesting candidate aborted');
+              v3=v3.split(scope).join('&');
               const vars={
                 '--fm-v3-ink':'--z-i','--fm-v3-text':'--z-t','--fm-v3-muted':'--z-m',
                 '--fm-v3-brand':'--z-b','--fm-v3-brand-2':'--z-b2','--fm-v3-brand-soft':'--z-bs',
@@ -121,8 +99,9 @@ jobs:
                 '--fm-v3-shadow':'--z-s','--fm-v3-shadow-raised':'--z-sr',
                 '--fm-v3-radius-lg':'--z-rl','--fm-v3-radius-md':'--z-rm','--fm-v3-radius-sm':'--z-rs'
               };
-              for(const [from,to] of Object.entries(vars)) raw=raw.split(from).join(to);
-              console.log(`raw scope replacements: ${scopeCount}`);
+              for(const [from,to] of Object.entries(vars)) v3=v3.split(from).join(to);
+              raw=before+'\n'+scope+'{\n'+v3+'\n}\n';
+              console.log(`native nested v3 scopes: ${scopeCount}`);
             }
             let compact=compactRaw(raw);
             if(file==='src/v4/design-system-v2.css') compact=markerText.join('\n')+'\n'+compact;
@@ -137,12 +116,12 @@ jobs:
           set -euo pipefail
           npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
           npx playwright test --project=chromium tests/e2e/checkin-state.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --grep 'check-in|MY match hub visual regression|checked-in continuation action|1440px Matchday panel|1440px joined Schedule'
-      - name: Commit verified raw equivalent-scope compaction
+      - name: Commit verified native-nested compaction
         shell: bash
         run: |
           set -euo pipefail
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact CSS without changing visual output'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact visual hierarchy CSS with native nesting'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
