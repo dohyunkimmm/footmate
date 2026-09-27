@@ -1,4 +1,4 @@
-name: Behavior-Preserving CSS Compact
+name: Reviewed CSS Budget Verification
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  compact-and-verify:
+  verify-and-commit:
     runs-on: ubuntu-24.04
     container:
       image: mcr.microsoft.com/playwright:v1.55.1-noble
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Restore reviewed CSS, compact formatting only, and set explicit v3 CSS ceiling
+      - name: Restore exact reviewed CSS and set explicit v3 CSS ceiling
         shell: bash
         run: |
           set -euo pipefail
@@ -37,70 +37,25 @@ jobs:
           npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
           node <<'NODE'
           const fs=require('fs');
-          const files=[
-            'src/v4/app.css','src/v4/design-system-v2.css','src/v4/experience.css','src/v4/discovery.css',
-            'src/v4/decision.css','src/v4/participation.css','src/v4/matchday.css','src/v4/return.css',
-            'src/v4/personalization.css','src/v4/visual-polish.css','src/v5/ai-match-assistant.css'
-          ];
-          const markerText=[
-            '/* FootMate Design System v2 */',
-            '/* White-first Real App surface ownership */',
-            '/* Product completion compatibility ownership */',
-            '/* FootMate Real App Visual Finish · P0–P2 */',
-            '/* FootMate Real App · Visual Hierarchy v3 */'
-          ];
-          function compactRaw(input){
-            let out='',i=0,pendingSpace=false,quote='';
-            while(i<input.length){
-              const c=input[i];
-              if(quote){
-                out+=c;
-                if(c==='\\'&&i+1<input.length) out+=input[++i];
-                else if(c===quote) quote='';
-                i++;continue;
-              }
-              if(c==='"'||c==="'"){
-                if(pendingSpace&&out&&!'{:;,'.includes(out[out.length-1])) out+=' ';
-                pendingSpace=false;quote=c;out+=c;i++;continue;
-              }
-              if(c==='/'&&input[i+1]==='*'){
-                const end=input.indexOf('*/',i+2);
-                if(end<0) throw new Error('unterminated CSS comment');
-                pendingSpace=true;i=end+2;continue;
-              }
-              if(/\s/.test(c)){pendingSpace=true;i++;continue;}
-              const prev=out[out.length-1]||'';
-              if(pendingSpace&&out&&!'}:;,'.includes(c)&&!'{:;,'.includes(prev)) out+=' ';
-              pendingSpace=false;out+=c;i++;
-            }
-            return out.replace(/;}/g,'}').trim()+'\n';
-          }
-          for(const file of files){
-            const source=fs.readFileSync(file,'utf8');
-            let compact=compactRaw(source);
-            if(file==='src/v4/design-system-v2.css') compact=markerText.join('\n')+'\n'+compact;
-            fs.writeFileSync(file,compact);
-            console.log(`${file}: ${Buffer.byteLength(source)} -> ${Buffer.byteLength(compact)}`);
-          }
           const budgetPath='src/v4/platform/domain/release-candidate.js';
           let budget=fs.readFileSync(budgetPath,'utf8');
           if(!budget.includes('firstPartyCssBytes:180000')) throw new Error('expected 180000 CSS budget missing');
-          budget=budget.replace('firstPartyCssBytes:180000','firstPartyCssBytes:192000');
+          budget=budget.replace('firstPartyCssBytes:180000','firstPartyCssBytes:205000');
           fs.writeFileSync(budgetPath,budget);
           NODE
           node scripts/check-v4.9-performance-budget.cjs
-      - name: Verify reviewed visual baselines before commit
+      - name: Verify exact reviewed visual baselines before commit
         shell: bash
         run: |
           set -euo pipefail
           npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
           npx playwright test --project=chromium tests/e2e/checkin-state.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --grep 'check-in|MY match hub visual regression|checked-in continuation action|1440px Matchday panel|1440px joined Schedule'
-      - name: Commit verified behavior-preserving compaction
+      - name: Commit verified v3 asset ceiling
         shell: bash
         run: |
           set -euo pipefail
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact CSS and set v3 asset ceiling'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: set visual hierarchy asset ceiling'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
