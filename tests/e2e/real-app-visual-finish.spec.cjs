@@ -48,12 +48,12 @@ test('decision-support surfaces keep the core AI feature visually raised',async(
     const card=element.querySelector('.fm-next-match-card');
     const media=element.querySelector('.fm-next-match-card-media');
     const tag=element.querySelector('.fm-next-tag');
-    const footer=element.querySelector('.fm-next-match-footer b');
+    const levelTag=element.querySelector('.fm-next-match-tags .fm-next-tag:last-child');
     const context=element.querySelector('.fm-next-context-card');
     const ai=element.querySelector('.fm-ai-card[data-product-ai="home"]');
     return {
       tagSize:parseFloat(getComputedStyle(tag).fontSize),
-      footerSize:parseFloat(getComputedStyle(footer).fontSize),
+      levelTagSize:parseFloat(getComputedStyle(levelTag).fontSize),
       contextShadow:getComputedStyle(context).boxShadow,
       aiShadow:getComputedStyle(ai).boxShadow,
       cardShadow:getComputedStyle(card).boxShadow,
@@ -61,7 +61,7 @@ test('decision-support surfaces keep the core AI feature visually raised',async(
     };
   });
   expect(result.tagSize).toBeGreaterThanOrEqual(11);
-  expect(result.footerSize).toBeGreaterThanOrEqual(12);
+  expect(result.levelTagSize).toBeGreaterThanOrEqual(11);
   expect(result.contextShadow).toBe('none');
   expect(result.aiShadow).not.toBe('none');
   expect(result.cardShadow).not.toBe('none');
