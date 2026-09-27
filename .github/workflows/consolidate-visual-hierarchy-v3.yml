@@ -21,45 +21,15 @@ jobs:
       - name: Consolidate final visual ownership
         shell: bash
         run: |
+          set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          python - <<'PY'
-          from pathlib import Path
-
-          design_path = Path('src/v4/design-system-v2.css')
-          v3_path = Path('src/v4/visual-hierarchy-v3.css')
-          app_path = Path('app.html')
-          finish_test = Path('tests/e2e/real-app-visual-finish.spec.cjs')
-
-          design = design_path.read_text()
-          v3 = v3_path.read_text()
-          marker = 'FootMate Real App · Visual Hierarchy v3'
-          if marker not in design:
-              design = design.rstrip() + '\n\n' + v3.strip() + '''\n\n/* Visual hierarchy v3 integration contracts. */
-.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"]{
-  box-shadow:0 10px 28px rgba(8,43,29,.075);
-}
-.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-brand{
-  transform:translateY(1px);
-}
-'''
-          design_path.write_text(design)
-
-          app = app_path.read_text()
-          app = app.replace('<link rel="stylesheet" href="/src/v4/visual-hierarchy-v3.css?v=1">\n', '')
-          app_path.write_text(app)
-
-          test = finish_test.read_text()
-          old = "expect(result.contextShadow).toBe('none');"
-          new = "expect(result.contextShadow).not.toBe('none');"
-          if old in test:
-              test = test.replace(old, new)
-          finish_test.write_text(test)
-
-          v3_path.unlink()
-          PY
+          printf '\n\n' >> src/v4/design-system-v2.css
+          cat src/v4/visual-hierarchy-v3.css >> src/v4/design-system-v2.css
+          printf '%s\n' '' '/* Visual hierarchy v3 integration contracts. */' '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-ai-card[data-product-ai="home"]{' '  box-shadow:0 10px 28px rgba(8,43,29,.075);' '}' '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-brand{' '  transform:translateY(1px);' '}' >> src/v4/design-system-v2.css
+          python -c 'from pathlib import Path; p=Path("app.html"); p.write_text(p.read_text().replace("<link rel=\"stylesheet\" href=\"/src/v4/visual-hierarchy-v3.css?v=1\">\\n", ""))'
+          python -c 'from pathlib import Path; p=Path("tests/e2e/real-app-visual-finish.spec.cjs"); p.write_text(p.read_text().replace("expect(result.contextShadow).toBe(\u0027none\u0027);", "expect(result.contextShadow).not.toBe(\u0027none\u0027);"))'
+          rm src/v4/visual-hierarchy-v3.css
           git add app.html src/v4/design-system-v2.css src/v4/visual-hierarchy-v3.css tests/e2e/real-app-visual-finish.spec.cjs
           git diff --cached --check
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'refactor: consolidate visual hierarchy ownership'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
-
-# one-shot trigger
