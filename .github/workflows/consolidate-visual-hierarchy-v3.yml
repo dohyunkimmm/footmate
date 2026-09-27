@@ -61,3 +61,5 @@ jobs:
           git diff --cached --check
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'refactor: consolidate visual hierarchy ownership'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
+
+# one-shot trigger
