@@ -38,16 +38,18 @@ test('v5.2.0 exact Production aliases stay current',async({page})=>{
 
 test('v5.2.0 exact Production verifies Home, Discover and prioritized Detail UI contracts',async({page})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await setupToHome(page);
   await expect(page.locator('[data-screen="home"] .fm-next-match-card')).toHaveCount(2);
+  await verifyMatchCards(page,'home');
   const shell=await page.locator('.fm-next-app').evaluate(element=>element.getBoundingClientRect().width);
   expect(shell).toBeLessThanOrEqual(560);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await verifyMatchCards(page,'discover');
   await page.locator('.fm-next-match-card').first().click();
   const detail=page.locator('[data-screen="detail"]');
   await expect(detail).toBeVisible();
@@ -58,3 +60,24 @@ test('v5.2.0 exact Production verifies Home, Discover and prioritized Detail UI 
   }
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
 });
+
+async function verifyMatchCards(page,name){
+  const screen=page.locator('[data-screen="'+name+'"]');
+  const expected=[
+    {tags:['조건과 잘 맞아요','22분','MF 2자리','고급'],price:'13,000원'},
+    {tags:['함께 비교해볼 만해요','12분','FW 1자리','중급'],price:'11,000원'}
+  ];
+  for(const [index,item] of expected.entries()){
+    const card=screen.locator('.fm-next-match-card').nth(index);
+    const tags=card.locator('.fm-next-match-body > .fm-next-match-tags > .fm-next-tag');
+    await expect(tags).toHaveText(item.tags);
+    for(const tag of await tags.all())await expect(tag).toBeVisible();
+    await expect(card.locator('.fm-next-price')).toHaveText(item.price);
+    await expect(card.locator('.fm-next-match-footer b')).toHaveCount(0);
+    const level=tags.filter({hasText:new RegExp('^'+item.tags[3]+'$')});
+    const gap=await level.evaluate(node=>node.parentElement.getBoundingClientRect().right-node.getBoundingClientRect().right);
+    expect(Math.abs(gap)).toBeLessThanOrEqual(1);
+  }
+  await page.evaluate(()=>document.fonts.ready);
+  await page.screenshot({path:test.info().outputPath('production-'+name+'-390.png'),fullPage:true,animations:'disabled'});
+}
