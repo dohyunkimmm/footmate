@@ -42,13 +42,13 @@ jobs:
             'src/v4/decision.css','src/v4/participation.css','src/v4/matchday.css','src/v4/return.css',
             'src/v4/personalization.css','src/v4/visual-polish.css','src/v5/ai-match-assistant.css'
           ];
-          const marker='/* FootMate Real App · Visual Hierarchy v3 */';
+          const markerStart='/* FootMate Real App · Visual Hierarchy v3';
           const markerText=[
             '/* FootMate Design System v2 */',
             '/* White-first Real App surface ownership */',
             '/* Product completion compatibility ownership */',
             '/* FootMate Real App Visual Finish · P0–P2 */',
-            marker
+            '/* FootMate Real App · Visual Hierarchy v3 */'
           ];
           function compactRaw(input){
             let out='',i=0,pendingSpace=false,quote='';
@@ -80,9 +80,11 @@ jobs:
             const source=fs.readFileSync(file,'utf8');
             let raw=source;
             if(file==='src/v4/design-system-v2.css'){
-              const markerAt=raw.indexOf(marker);
+              const markerAt=raw.indexOf(markerStart);
               if(markerAt<0) throw new Error('v3 ownership marker missing');
-              const splitAt=markerAt+marker.length;
+              const markerEnd=raw.indexOf('*/',markerAt);
+              if(markerEnd<0) throw new Error('v3 ownership marker unterminated');
+              const splitAt=markerEnd+2;
               const before=raw.slice(0,splitAt);
               let v3=raw.slice(splitAt);
               const scope='.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"])';
