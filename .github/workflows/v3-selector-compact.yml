@@ -85,6 +85,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('src/v4/visual-polish.css')
+          path.write_text(path.read_text().rstrip()+"\n")
+          PY
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
