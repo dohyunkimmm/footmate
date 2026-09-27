@@ -11,7 +11,9 @@ function sampleSchedule(offsetDays,time){
   date.setDate(date.getDate()+offsetDays);
   const day=new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric'}).format(date);
   const weekday=new Intl.DateTimeFormat('ko-KR',{weekday:'short'}).format(date);
-  return Object.freeze({dateLabel:`샘플 일정 · ${day} · ${time}`,shortDate:`${weekday} · ${time}`});
+  const [hours,minutes]=time.split(':').map(Number);
+  date.setHours(hours,minutes,0,0);
+  return Object.freeze({dateLabel:`샘플 일정 · ${day} · ${time}`,shortDate:`${weekday} · ${time}`,startsAt:date.toISOString()});
 }
 const SAMPLE_SCHEDULES=Object.freeze([
   sampleSchedule(1,'20:00'),sampleSchedule(2,'21:30'),sampleSchedule(3,'19:00'),sampleSchedule(2,'20:30'),sampleSchedule(1,'20:00'),sampleSchedule(3,'21:00'),sampleSchedule(2,'19:30'),sampleSchedule(4,'21:00')

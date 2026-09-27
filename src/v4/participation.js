@@ -248,7 +248,9 @@ function completePayment(outcome='success'){
   persist();
   announce('참가가 확정되었습니다.');
   if(mode==='real'){
-    writeSession({selectedMatchId:state.matchId,joinedMatchId:state.matchId,matchStage:'upcoming',route:'success'});
+    const match=MATCHES.find(item=>item.id===state.matchId);
+    footmatePlatform.repositories.matchday.write({matchId:state.matchId,status:'upcoming',checkinSchema:1,startsAt:match.startsAt,checkinComplete:false,checkedInAt:null});
+    writeSession({selectedMatchId:state.matchId,joinedMatchId:state.matchId,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
     location.reload();
     return;
   }

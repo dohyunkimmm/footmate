@@ -1,4 +1,5 @@
 import {footmatePlatform} from './platform/application/platform.js';
+import {completeCheckin} from './platform/application/checkin.js';
 
 /* FootMate v4 account experience.
    External authentication remains simulated; the UI models the official sign-in / sign-up interaction. */
@@ -273,6 +274,7 @@ import {footmatePlatform} from './platform/application/platform.js';
   }
 
   function patchCheckin(){
+    if(mode==='real')return;
     const buttons=[...root.querySelectorAll('[data-action="check-in"]')];
     if(!buttons.length)return;
     const state=interaction();
@@ -351,6 +353,7 @@ import {footmatePlatform} from './platform/application/platform.js';
     if(action==='check-in'){
       event.preventDefault();
       event.stopPropagation();
+      if(mode==='real'){completeCheckin();return;}
       const session=footmatePlatform.session.read()||{};
       updateInteraction({checkedInMatchId:session.joinedMatchId||session.selectedMatchId||'evidence-match',checkedInAt:Date.now()});
       patchCheckin();
