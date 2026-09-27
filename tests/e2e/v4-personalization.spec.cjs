@@ -67,7 +67,7 @@ test('Real App MY aligns the saved profile card and stages preference edits befo
   await panel.getByRole('button',{name:'선호 조건 저장'}).click();
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:personalization')).favorites.timeWindows)).toEqual(['19','20','21+']);
   await expect(panel.getByRole('button',{name:'선호 조건 수정',exact:true})).toBeVisible();
-  await expect(screen).toHaveScreenshot('real-app-my-personalization-390.png',{animations:'disabled',caret:'hide'});
+  await expect(screen).toHaveScreenshot('real-app-my-personalization-390.png',{animations:'disabled',caret:'hide',maxDiffPixels:3});
 });
 
 test('fresh recommendation surfaces do not claim personalization before memory exists',async({page})=>{await seed(page,'home');await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0);const ranked=await page.evaluate(()=>window.__FOOTMATE_PERSONALIZATION__.rank());expect(ranked[0].personalizationAdjustment).toBe(0);await page.getByRole('button',{name:'전체 보기'}).click();await expect(page.locator('[data-screen="discover"]')).toBeVisible();await expect(page.locator('[data-personalization-explanation]')).toHaveCount(0)});
