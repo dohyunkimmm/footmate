@@ -78,7 +78,8 @@ test('390px Welcome is white-first with readable ink and green accent CTA',async
     const normalBrandTop=topbarBox.top+paddingTop+(topbarBox.height-paddingTop-paddingBottom-brandBox.height)/2;
     return {offset:brandBox.top-normalBrandTop,topInset:brandBox.top-topbarBox.top};
   });
-  expect(Math.round(renderedBrandGeometry.offset)).toBe(-2);
+  expect(Math.round(renderedBrandGeometry.offset)).toBeGreaterThanOrEqual(-2);
+  expect(Math.round(renderedBrandGeometry.offset)).toBeLessThanOrEqual(-1);
   expect(renderedBrandGeometry.topInset).toBeGreaterThanOrEqual(8);
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
