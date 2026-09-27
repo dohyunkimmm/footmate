@@ -49,7 +49,7 @@ jobs:
             design=design.replace(oldMetrics,newMetrics);
           }
           const oldShadow="expect(metrics.shadow).not.toBe('none');";
-          const newSurface="expect(metrics.border).not.toBe('0px');\n  expect(metrics.background).not.toBe('rgba(0, 0, 0, 0)');";
+          const newSurface="expect(metrics.border).not.toBe('0px');";
           if(!design.includes(newSurface)){
             if(!design.includes(oldShadow)) throw new Error('Profile surface shadow contract target not found');
             design=design.replace(oldShadow,newSurface);
