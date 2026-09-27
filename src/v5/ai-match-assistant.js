@@ -45,11 +45,11 @@ async function requestAi(message,preferences){
   }catch(error){if(error?.name==='AbortError')throw new Error('ai_timeout');throw error}
   finally{clearTimeout(timer)}
 }
-function deterministicResults(result,state){
+function deterministicResults(result,state,limit=3){
   const effective={...state,region:result.region||state.region,position:result.position||state.position,level:result.level||state.level};
   const ranked=typeof window.__FOOTMATE_RECOMMENDATION__?.rank==='function'?window.__FOOTMATE_RECOMMENDATION__.rank(effective):MATCHES.map((match,index)=>({id:match.id,score:100-index,fit:match.fit,reasons:match.reasons.map(reason=>reason.title)}));
   const byId=new Map(MATCHES.map(match=>[match.id,match]));const threshold=timeMinutes(result.afterTime);
-  return ranked.map(item=>({item,match:byId.get(item.id)})).filter(({match})=>{if(!match)return false;if(result.region&&match.region!==result.region)return false;if(result.position&&Number(match.positionSlots?.[result.position]||0)<=0)return false;if(result.maxPrice!=null&&match.price>result.maxPrice)return false;if(result.maxDistanceMin!=null&&match.distanceMin>result.maxDistanceMin)return false;if(threshold!=null){const minutes=matchTimeMinutes(match);if(minutes!=null&&minutes<threshold)return false}return true}).slice(0,3);
+  return ranked.map(item=>({item,match:byId.get(item.id)})).filter(({match})=>{if(!match)return false;if(result.region&&match.region!==result.region)return false;if(result.position&&Number(match.positionSlots?.[result.position]||0)<=0)return false;if(result.maxPrice!=null&&match.price>result.maxPrice)return false;if(result.maxDistanceMin!=null&&match.distanceMin>result.maxDistanceMin)return false;if(threshold!=null){const minutes=matchTimeMinutes(match);if(minutes!=null&&minutes<threshold)return false}return true}).slice(0,limit);
 }
 function conditionLabels(result){const labels=[];if(result.region)labels.push(result.region);if(result.position)labels.push(result.position);if(result.level)labels.push(result.level);if(result.maxPrice!=null)labels.push(`${money(result.maxPrice)} 이하`);if(result.maxDistanceMin!=null)labels.push(`${result.maxDistanceMin}분 이내`);if(result.afterTime)labels.push(`${result.afterTime} 이후`);return labels.length?labels:['현재 설정 유지']}
 function resultMarkup(entries){if(!entries.length)return '<div class="fm-ai-empty"><b>조건에 맞는 샘플 경기가 없어요.</b><span>거리·가격·시간 조건을 조금 넓혀 다시 요청해보세요.</span></div>';return entries.map(({item,match},index)=>`<button type="button" class="fm-ai-result" data-action="open-match" data-match-id="${escapeHtml(match.id)}"><span class="fm-ai-result-rank">${index+1}</span><span class="fm-ai-result-copy"><b>${escapeHtml(match.place)}</b><small>${escapeHtml(match.dateLabel)} · ${escapeHtml(match.level)} · ${escapeHtml(match.distance)} · ${money(match.price)}</small><em>${escapeHtml((item.reasons||[]).slice(0,2).join(' · ')||item.fit||match.fit)}</em></span><span aria-hidden="true">→</span></button>`).join('')}
@@ -278,13 +278,13 @@ function ensureSummary(screen,saved,active){
   if(anchor&&summary.nextElementSibling!==anchor)anchor.before(summary);else if(!anchor&&!summary.isConnected)screen.querySelector('.fm-next-section-head')?.insertAdjacentElement('afterend',summary);
   const labels=conditionLabels(saved.result),message=displayMessage(saved.message);
   const sig=JSON.stringify([active,message,labels]);
-  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div></div><div class="fm-discovery-ai-summary__actions"><button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'전체 경기 보기':'AI 결과 다시 보기'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
+  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div></div><div class="fm-discovery-ai-summary__actions"><button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'AI 조건 해제':'AI 조건 다시 적용'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
   if(summary.dataset.iaSignature===sig&&summary.innerHTML===markup)return;
   summary.dataset.iaSignature=sig;summary.innerHTML=markup;
 }
 function ensureEmpty(screen){
   let empty=screen.querySelector('[data-ia-ai-empty]');
-  if(!empty){empty=document.createElement('div');empty.className='fm-ia-discovery-empty';empty.dataset.iaAiEmpty='true';empty.innerHTML='<b>AI 조건과 현재 필터를 함께 만족하는 경기가 없어요.</b><span>필터를 줄이거나 전체 경기 보기로 탐색 범위를 넓혀보세요.</span>';screen.querySelector('.fm-next-list')?.before(empty)}
+  if(!empty){empty=document.createElement('div');empty.className='fm-ia-discovery-empty';empty.dataset.iaAiEmpty='true';empty.innerHTML='<b>AI 조건과 현재 필터를 함께 만족하는 경기가 없어요.</b><span>필터를 줄이거나 AI 조건을 해제해 탐색 범위를 넓혀보세요.</span>';screen.querySelector('.fm-next-list')?.before(empty)}
   return empty;
 }
 function configureDiscover(screen){
@@ -293,7 +293,7 @@ function configureDiscover(screen){
   if(assistant){hidden(assistant,true);assistant.dataset.iaHidden='duplicate-assistant'}
   const saved=snapshot(),active=scopeActive();ensureSummary(screen,saved,active);
   const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
-  const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState()).map(entry=>entry.match.id)):null;
+  const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState(),Infinity).map(entry=>entry.match.id)):null;
   const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
   cards.forEach(node=>{const matches=!allowed||allowed.has(node.dataset.matchId);hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++});
   const empty=ensureEmpty(screen);hidden(empty,!(active&&saved?.result&&visible===0));hidden(screen.querySelector('.fm-next-list'),Boolean(active&&saved?.result&&visible===0));

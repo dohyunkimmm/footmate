@@ -194,7 +194,7 @@ function setupView(){
     <div class="fm-next-choice-grid">
       ${data.options.map(([value,desc])=>`<button type="button" class="fm-next-choice" data-action="choose-setup" data-field="${data.key}" data-value="${value}" aria-pressed="${current===value}"><b>${setupDisplayValue(data.key,value)}</b><span>${desc}</span></button>`).join('')}
     </div>
-    <div class="fm-next-setup-footer">${button(step===setupSteps.length-1?`추천 경기 보기 ${icon('arrow')}`:'다음','setup-next','primary')}</div>
+    <div class="fm-next-setup-footer">${button(step===setupSteps.length-1?(state.setupOrigin?'설정 적용':`추천 경기 보기 ${icon('arrow')}`):'다음','setup-next','primary')}</div>
   </section>`;
 }
 
@@ -239,7 +239,7 @@ function homeView(){
 
 function discoverView(){
   return `<section class="fm-next-screen" data-screen="discover">
-    ${topbar({showBrandTagline:false,actionHtml:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
+    ${topbar({showBrandTagline:false,actionHtml:mode==='real'?`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="기본 추천 조건 수정" style="width:auto;padding:0 10px;font-size:12px;white-space:nowrap">기본 조건</button>`:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
     <div class="fm-next-section">
       <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>
       <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
@@ -365,13 +365,21 @@ function resetFlow(){
   render();
 }
 
+function finishSetup(cancel=false){
+  const origin=state.setupOrigin;
+  const route=origin&&['home','discover','profile'].includes(origin.route)?origin.route:'home';
+  const previous=cancel&&origin?{region:origin.region,position:origin.position,level:origin.level}:{};
+  setState({...previous,setupComplete:true,route,setupOrigin:null});
+  if(origin)requestAnimationFrame(()=>{const screen=root.querySelector('[data-screen="'+route+'"]');if(screen)screen.scrollTop=origin.scrollTop||0});
+}
+
 root.addEventListener('click',event=>{
   const target=event.target.closest('[data-action]');
   if(!target)return;
   const action=target.dataset.action;
   if(action==='start-setup'){setState({route:'setup',setupStep:0});return;}
   if(action==='continue-home'){setState({route:'home'});return;}
-  if(action==='back-welcome'){setState({route:'welcome'});return;}
+  if(action==='back-welcome'){if(state.setupOrigin)finishSetup(true);else setState({route:'welcome'});return;}
   if(action==='setup-back'){setState({setupStep:Math.max(0,state.setupStep-1)});return;}
   if(action==='choose-setup'){
     const field=target.dataset.field;
@@ -380,10 +388,10 @@ root.addEventListener('click',event=>{
   }
   if(action==='setup-next'){
     if(state.setupStep<setupSteps.length-1){setState({setupStep:state.setupStep+1});}
-    else setState({setupComplete:true,route:'home'});
+    else finishSetup();
     return;
   }
-  if(action==='edit-setup'){setState({route:'setup',setupStep:0});return;}
+  if(action==='edit-setup'){const origin=mode==='real'?{route:state.route,scrollTop:root.querySelector('[data-screen]')?.scrollTop||0,region:state.region,position:state.position,level:state.level}:null;setState({route:'setup',setupStep:0,setupOrigin:origin});return;}
   if(action==='open-match'){
     setState({selectedMatchId:target.dataset.matchId,route:'detail'});return;
   }

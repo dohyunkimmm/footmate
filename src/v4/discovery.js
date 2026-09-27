@@ -138,9 +138,11 @@ function money(value){return new Intl.NumberFormat('ko-KR').format(value)+'원'}
 function iconSpark(){return '<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.3 4.2L17.5 9l-4.2 1.8L12 15l-1.3-4.2L6.5 9l4.2-1.8z"/></svg>'}
 
 function spotLabel(match,state){
-  const position=filters.position!=='all'?filters.position:state.position;
-  const count=Number(match.positionSlots?.[position]||0);
-  return count>0?`${position} ${count}자리`:match.spot;
+  const ai=window.__FOOTMATE_REAL_APP_IA__;
+  const aiPosition=ai?.aiScope?ai.assistant?.result?.position:null;
+  const positions=[...new Set([filters.position!=='all'?filters.position:null,aiPosition].filter(Boolean))];
+  if(!positions.length)positions.push(state.position);
+  return positions.map(position=>{const count=Number(match.positionSlots?.[position]||0);return count>0?`${position} ${count}자리`:match.spot}).join(' · ');
 }
 
 function card(row,index,state){
@@ -193,7 +195,7 @@ function updateChrome(screen,total){
   const summary=chrome.querySelector('.fm-discovery-active');
   if(summary){
     summary.innerHTML=active.length?active.map(key=>`<button type="button" class="fm-discovery-chip" data-discovery-action="remove-filter" data-filter-key="${key}" aria-label="${activeLabel(key)} 필터 해제">${activeLabel(key)} <span aria-hidden="true">×</span></button>`).join(''):'<span class="fm-discovery-default-copy">추가 필터 없음</span>';
-    if(active.length)summary.insertAdjacentHTML('beforeend','<button type="button" class="fm-discovery-clear" data-discovery-action="clear-filters">전체 해제</button>');
+    if(active.length)summary.insertAdjacentHTML('beforeend','<button type="button" class="fm-discovery-clear" data-discovery-action="clear-filters">필터 전체 해제</button>');
   }
   const count=chrome.querySelector('.fm-discovery-count');
   if(count)count.textContent=`${total}개 경기`;
@@ -207,7 +209,7 @@ function renderResults(screen,state){
   if(rows.length){
     list.innerHTML=rows.map((row,index)=>card(row,index,state)).join('');
   }else{
-    list.innerHTML=`<div class="fm-discovery-empty" role="status"><span class="fm-discovery-empty-icon" aria-hidden="true">↗</span><h2>조건에 맞는 경기가 없어요.</h2><p>날짜·시간·거리·가격 범위를 넓히면 다시 비교할 수 있어요.</p><div class="fm-discovery-empty-actions"><button type="button" data-discovery-action="relax-filters">조건 넓히기</button><button type="button" data-discovery-action="clear-filters">전체 조건 해제</button></div></div>`;
+    list.innerHTML=`<div class="fm-discovery-empty" role="status"><span class="fm-discovery-empty-icon" aria-hidden="true">↗</span><h2>조건에 맞는 경기가 없어요.</h2><p>날짜·시간·거리·가격 범위를 넓히면 다시 비교할 수 있어요.</p><div class="fm-discovery-empty-actions"><button type="button" data-discovery-action="relax-filters">조건 넓히기</button><button type="button" data-discovery-action="clear-filters">필터 전체 해제</button></div></div>`;
   }
   screen.dataset.discoveryVersion=DISCOVERY_VERSION;
   screen.dataset.discoveryResultCount=String(rows.length);
@@ -232,7 +234,7 @@ function openFilters(screen,trigger){
       ${selectField('price','가격',[['all','전체'],['11000','11,000원 이하'],['12000','12,000원 이하'],['13000','13,000원 이하']])}
       ${selectField('position','포지션',[['all','전체'],['MF','MF 자리 있음'],['FW','FW 자리 있음'],['DF','DF 자리 있음'],['GK','GK 자리 있음']])}
     </div>
-    <div class="fm-discovery-sheet-actions"><button type="button" class="fm-discovery-reset" data-discovery-action="clear-filters">전체 해제</button><button type="button" class="fm-discovery-done" data-discovery-action="close-filters">결과 보기</button></div>
+    <div class="fm-discovery-sheet-actions"><button type="button" class="fm-discovery-reset" data-discovery-action="clear-filters">필터 전체 해제</button><button type="button" class="fm-discovery-done" data-discovery-action="close-filters">결과 보기</button></div>
   </section>`;
   screen.append(backdrop);
   document.body.classList.add('fm-discovery-dialog-open');
@@ -261,7 +263,8 @@ function apply(){
   const screen=root.querySelector('[data-screen="discover"]');
   if(!screen)return;
   const state=readSession();
-  const signature=[state.region,state.position,state.level,...Object.values(filters)].join('|');
+  const ai=window.__FOOTMATE_REAL_APP_IA__;
+  const signature=[state.region,state.position,state.level,...Object.values(filters),ai?.aiScope?ai.assistant?.result?.position:''].join('|');
   if(screen.dataset.fmDiscoverySignature===signature)return;
   applying=true;
   screen.dataset.fmDiscoverySignature=signature;
