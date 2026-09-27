@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Integrate consistency rules into existing design system
+      - name: Integrate runtime consistency rules
         run: |
           node - <<'NODE'
           const fs=require('fs');
@@ -27,6 +27,7 @@ jobs:
           let designCss=fs.readFileSync(design,'utf8');
           const layerCss=fs.readFileSync(layer,'utf8').trim();
           if(!designCss.includes('Visual Consistency v4'))designCss=`${designCss.trimEnd()}\n\n${layerCss}\n`;
+          if(!designCss.includes('--fm-v4-consistency:1'))designCss=`${designCss.trimEnd()}\n.fm-next-page[data-mode="real"]{--fm-v4-consistency:1}\n`;
           fs.writeFileSync(design,designCss);
 
           let html=fs.readFileSync('app.html','utf8');
@@ -41,15 +42,8 @@ jobs:
           let spec=fs.readFileSync('tests/e2e/visual-consistency-v4.spec.cjs','utf8');
           spec=spec.replace("  await expect.poll(()=>page.evaluate(()=>[...document.styleSheets].some(sheet=>String(sheet.href||'').includes('/src/v4/visual-consistency-v4.css')))).toBe(true);", "  await expect.poll(()=>page.evaluate(()=>getComputedStyle(document.querySelector('.fm-next-page')).getPropertyValue('--fm-v4-consistency').trim())).toBe('1');");
           fs.writeFileSync('tests/e2e/visual-consistency-v4.spec.cjs',spec);
-
-          let qa=fs.readFileSync('.github/workflows/visual-consistency-v4-qa.yml','utf8');
-          qa=qa.replace(/      - src\/v4\/visual-consistency-v4\.css\n/g,'      - src/v4/design-system-v2.css\n');
-          qa=qa.replace("          const html=fs.readFileSync('app.html','utf8');\n          const css=fs.readFileSync('src/v4/visual-consistency-v4.css','utf8');\n          if(!html.includes('/src/v4/visual-consistency-v4.css?v=1'))throw new Error('visual consistency stylesheet link missing');\n          if(!css.includes('Visual Consistency v4'))throw new Error('visual consistency ownership marker missing');", "          const css=fs.readFileSync('src/v4/design-system-v2.css','utf8');\n          if(!css.includes('Visual Consistency v4'))throw new Error('visual consistency ownership marker missing');\n          if(!css.includes('--fm-v4-consistency:1'))throw new Error('visual consistency runtime marker missing');");
-          fs.writeFileSync('.github/workflows/visual-consistency-v4-qa.yml',qa);
           NODE
-          printf '\n.fm-next-page[data-mode="real"]{--fm-v4-consistency:1}\n' >> src/v4/design-system-v2.css
           rm -f src/v4/visual-consistency-v4.css src/v4/visual-consistency-v4-compat.css
-          rm -f .github/workflows/visual-consistency-v4-budget-contract-fix.yml .github/workflows/visual-consistency-v4-consolidate.yml
           npm install --no-save --ignore-scripts css-tree@3.1.0
           node - <<'NODE'
           const fs=require('fs'),csstree=require('css-tree');
@@ -59,11 +53,11 @@ jobs:
           console.log('PASS integrated design CSS syntax');
           NODE
           node scripts/check-v4.9-performance-budget.cjs
-      - name: Commit integrated implementation
+      - name: Commit runtime integration
         run: |
-          rm .github/workflows/visual-consistency-v4-integrate.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add app.html src/v4/design-system-v2.css src/v4/platform/presentation/bootstrap.js tests/e2e/visual-consistency-v4.spec.cjs
+          git add -u src/v4/visual-consistency-v4.css src/v4/visual-consistency-v4-compat.css
           git commit -m "perf: integrate visual consistency into existing design system"
           git push origin HEAD:design/visual-consistency-v4-20260928
