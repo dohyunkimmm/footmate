@@ -85,7 +85,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Use Node because the pinned Playwright container does not ship a `python` executable.
+          # Node is intentionally used here; the pinned Playwright container has no `python` binary.
           node <<'NODE'
           const fs=require('fs');
           const path='src/v4/visual-polish.css';
