@@ -99,7 +99,7 @@ function decorateAi(){
   if(!root)return;
   root.querySelectorAll('[data-ai-assistant]').forEach(card=>{
     card.classList.add('fm-ai-card--core');
-    if(!card.querySelector('[data-ai-core-label]'))card.insertAdjacentHTML('afterbegin','<div class="fm-ai-core-label" data-ai-core-label><span>CORE FEATURE</span><b>AI MATCHING</b></div>');
+    card.querySelectorAll('[data-ai-core-label]').forEach(label=>label.remove());
     const fallbackCopy=card.querySelector('[data-ai-status] span');
     if(fallbackCopy&&/AI 장애나 지연/.test(fallbackCopy.textContent||''))fallbackCopy.textContent=AI_FALLBACK_COPY;
   });
