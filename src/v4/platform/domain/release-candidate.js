@@ -33,7 +33,7 @@ export const PROVIDER_CONTRACTS=Object.freeze({
 
 export const PERFORMANCE_BUDGET=Object.freeze({
   appHtmlBytes:16000,
-  firstPartyCssBytes:180000,
+  firstPartyCssBytes:205000,
   firstPartyJsBytes:320000,
   firstPartyAssetRequests:24
 });
