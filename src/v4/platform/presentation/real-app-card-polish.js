@@ -57,14 +57,8 @@ function markCanonicalSettingsOwner(){
   const panel=screen.querySelector('.fm-personalization-panel--profile');
   const canonical=panel?.querySelector('[data-action="edit-setup"]');
   const menu=[...screen.querySelectorAll('.fm-next-menu-item[data-action="edit-setup"]')].find(node=>/경기 추천 설정/.test(node.textContent||''));
-  if(canonical){
-    canonical.dataset.settingsOwner='canonical';
-    canonical.setAttribute('aria-label','기본 추천 조건 수정');
-  }
-  if(menu&&canonical){
-    menu.dataset.settingsJump='canonical';
-    menu.setAttribute('aria-label','추천 설정으로 이동');
-  }
+  if(canonical)canonical.dataset.settingsOwner='canonical';
+  if(menu&&canonical)menu.dataset.settingsJump='canonical';
 }
 
 function polishRealApp(){
