@@ -119,12 +119,10 @@ async function mediumPriorityUX(page){
   await start(page);
   const home=page.locator('[data-screen="home"]');
   const homeRecommendation=home.locator('.fm-next-context-card [data-action="nav-discover"]').filter({hasText:'추천 경기 보기'});
+  await expect(homeRecommendation).toHaveAttribute('data-discovery-shortcut','true');
+  await expect(homeRecommendation).toHaveAttribute('aria-describedby','fm-medium-home-discover-help');
   await homeRecommendation.click();
-  await expect(home).toBeVisible();
-  await expect(home).toHaveAttribute('data-medium-focus','recommendations');
-  await expect(home.locator(':scope > .fm-next-section-head')).toBeFocused();
 
-  await home.locator('.fm-next-nav [data-action="nav-discover"]').click();
   const discover=page.locator('[data-screen="discover"]');
   await expect(discover).toBeVisible();
   const base=discover.locator('.fm-next-topbar [data-action="edit-setup"]');
@@ -162,7 +160,7 @@ async function mediumPriorityUX(page){
   await expect(panel.getByRole('button',{name:'기본 설정 수정',exact:true})).toBeFocused();
 
   await panel.getByRole('button',{name:'현재 설정 저장',exact:true}).click();
-  const reset=panel.getByRole('button',{name:'개인화 기록 초기화',exact:true});
+  const reset=panel.locator('[data-personalization-action="reset"]');
   await reset.click();
   await expect(reset).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>Boolean(JSON.parse(localStorage.getItem('footmate:v4:personalization')||'{}').profile))).toBe(true);
