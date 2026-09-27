@@ -85,11 +85,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          path=Path('src/v4/visual-polish.css')
-          path.write_text(path.read_text().rstrip()+"\n")
-          PY
+          node <<'NODE'
+          const fs=require('fs');
+          const path='src/v4/visual-polish.css';
+          const text=fs.readFileSync(path,'utf8');
+          fs.writeFileSync(path,text.replace(/\n+$/,'\n'));
+          NODE
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
