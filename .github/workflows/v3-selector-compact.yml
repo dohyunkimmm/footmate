@@ -1,4 +1,4 @@
-name: Reviewed CSS Budget Verification
+name: Approved V3 CSS Verification
 
 on:
   push:
@@ -25,37 +25,29 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Restore exact reviewed CSS and set explicit v3 CSS ceiling
+      - name: Restore exact CSS used for approved v3 baselines
         shell: bash
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          BASE=3f49fb5b682f3967130de23b5f37420fe133e145
+          APPROVED=2c4eac627d0f5a1cf075f1ac1f38823c745961e8
           for file in src/v4/app.css src/v4/design-system-v2.css src/v4/visual-polish.css src/v5/ai-match-assistant.css; do
-            git show "$BASE:$file" > "$file"
+            git show "$APPROVED:$file" > "$file"
           done
           npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
-          node <<'NODE'
-          const fs=require('fs');
-          const budgetPath='src/v4/platform/domain/release-candidate.js';
-          let budget=fs.readFileSync(budgetPath,'utf8');
-          if(!budget.includes('firstPartyCssBytes:180000')) throw new Error('expected 180000 CSS budget missing');
-          budget=budget.replace('firstPartyCssBytes:180000','firstPartyCssBytes:205000');
-          fs.writeFileSync(budgetPath,budget);
-          NODE
           node scripts/check-v4.9-performance-budget.cjs
-      - name: Verify exact reviewed visual baselines before commit
+      - name: Verify current approved visual baselines
         shell: bash
         run: |
           set -euo pipefail
           npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
           npx playwright test --project=chromium tests/e2e/checkin-state.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --grep 'check-in|MY match hub visual regression|checked-in continuation action|1440px Matchday panel|1440px joined Schedule'
-      - name: Commit verified v3 asset ceiling
+      - name: Commit verified approved CSS
         shell: bash
         run: |
           set -euo pipefail
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: set visual hierarchy asset ceiling'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: restore approved visual hierarchy CSS'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
