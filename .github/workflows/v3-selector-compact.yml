@@ -51,3 +51,5 @@ jobs:
           git diff --cached --check
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: restore approved visual hierarchy CSS'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
+
+# retriggered after v3 CSS budget ceiling review
