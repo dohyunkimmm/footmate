@@ -40,18 +40,19 @@ jobs:
           path=Path('src/v4/app.js')
           source=path.read_text()
           needle="  const activeScreen=root.querySelector('[data-screen]');\n"
-          insert="""  const activeScreen=root.querySelector('[data-screen]');
-  const visualV3=mode==='real'&&!embed;
-  if(visualV3){
-    root.querySelector('.fm-next-app')?.classList.add('fm-v3');
-    const marker={home:'v3-home',discover:'v3-discover',detail:'v3-detail',profile:'v3-profile',checkout:'v3-checkout',schedule:'v3-schedule'}[state.route];
-    if(activeScreen&&marker){
-      activeScreen.classList.add('v3-screen',marker);
-      if(state.route==='home'||state.route==='discover')activeScreen.classList.add('v3-browse');
-    }
-    root.querySelectorAll('[data-matchday-module-version]').forEach(node=>node.classList.add('v3-matchday'));
-  }
-"""
+          insert="\n".join([
+              "  const activeScreen=root.querySelector('[data-screen]');",
+              "  const visualV3=mode==='real'&&!embed;",
+              "  if(visualV3){",
+              "    root.querySelector('.fm-next-app')?.classList.add('fm-v3');",
+              "    const marker={home:'v3-home',discover:'v3-discover',detail:'v3-detail',profile:'v3-profile',checkout:'v3-checkout',schedule:'v3-schedule'}[state.route];",
+              "    if(activeScreen&&marker){",
+              "      activeScreen.classList.add('v3-screen',marker);",
+              "      if(state.route==='home'||state.route==='discover')activeScreen.classList.add('v3-browse');",
+              "    }",
+              "    root.querySelectorAll('[data-matchday-module-version]').forEach(node=>node.classList.add('v3-matchday'));",
+              "  }",
+          ])+"\n"
           if needle not in source:
               raise SystemExit('app render marker insertion point missing')
           if 'const visualV3=' not in source:
