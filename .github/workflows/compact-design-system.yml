@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Compact loaded CSS to the existing budget
+      - name: Compact only the loaded CSS needed to meet the existing budget
         shell: bash
         run: |
           set -euo pipefail
@@ -32,37 +32,39 @@ jobs:
           const fs=require('fs');
           const csso=require('csso');
           const csstree=require('css-tree');
-          const dsPath='src/v4/design-system-v2.css';
-          const polishPath='src/v4/visual-polish.css';
-          const originalDs=fs.readFileSync(dsPath,'utf8');
-          const originalPolish=fs.readFileSync(polishPath,'utf8');
           const app=fs.readFileSync('app.html','utf8');
           const cssPaths=[...new Set([...app.matchAll(/href="(\/src\/(?:v4|v5)\/[^"?]+\.css)\?v=\d+"/g)].map(m=>m[1]))];
           const budget=180000;
-          const compact=(source,restructure)=>csso.minify(source,{restructure}).css+'\n';
-          const candidates=[
-            {name:'safe-both',ds:compact(originalDs,false),polish:compact(originalPolish,false)},
-            {name:'restructure-design-system',ds:compact(originalDs,true),polish:compact(originalPolish,false)},
-            {name:'restructure-both',ds:compact(originalDs,true),polish:compact(originalPolish,true)}
-          ];
-          const loadedBytes=(candidate)=>cssPaths.reduce((sum,p)=>{
-            if(p==='/src/v4/design-system-v2.css') return sum+Buffer.byteLength(candidate.ds);
-            if(p==='/src/v4/visual-polish.css') return sum+Buffer.byteLength(candidate.polish);
-            return sum+fs.statSync('.'+p).size;
-          },0);
-          const measured=candidates.map(c=>({candidate:c,bytes:loadedBytes(c)}));
-          for(const m of measured) console.log(JSON.stringify({mode:m.candidate.name,firstPartyCssBytes:m.bytes,designSystemBytes:Buffer.byteLength(m.candidate.ds),visualPolishBytes:Buffer.byteLength(m.candidate.polish)}));
-          const selected=measured.find(m=>m.bytes<=budget);
-          if(!selected) throw new Error('No semantic CSS compaction mode meets the existing 180000-byte budget');
-          csstree.parse(selected.candidate.ds);
-          csstree.parse(selected.candidate.polish);
-          fs.writeFileSync(dsPath,selected.candidate.ds);
-          fs.writeFileSync(polishPath,selected.candidate.polish);
-          console.log('SELECTED',selected.candidate.name,selected.bytes);
+          const rows=cssPaths.map(webPath=>{
+            const path='.'+webPath;
+            const source=fs.readFileSync(path,'utf8');
+            csstree.parse(source);
+            const compact=csso.minify(source,{restructure:false}).css+'\n';
+            csstree.parse(compact);
+            return {webPath,path,source,compact,before:Buffer.byteLength(source),after:Buffer.byteLength(compact),saving:Buffer.byteLength(source)-Buffer.byteLength(compact)};
+          });
+          const originalTotal=rows.reduce((sum,row)=>sum+row.before,0);
+          let total=originalTotal;
+          const selected=[];
+          // The changed hierarchy layers are compacted first. Additional loaded files are chosen only as needed by measured saving.
+          for(const preferred of ['/src/v4/design-system-v2.css','/src/v4/visual-polish.css']){
+            const row=rows.find(r=>r.webPath===preferred);
+            if(row && row.saving>0){selected.push(row);total-=row.saving;}
+          }
+          const remaining=rows.filter(r=>!selected.includes(r)).sort((a,b)=>b.saving-a.saving);
+          for(const row of remaining){
+            if(total<=budget) break;
+            if(row.saving<=0) continue;
+            selected.push(row);
+            total-=row.saving;
+          }
+          console.log(JSON.stringify({originalTotal,budget,selected:selected.map(r=>({path:r.webPath,before:r.before,after:r.after,saving:r.saving})),finalTotal:total}));
+          if(total>budget) throw new Error(`Safe CSS compaction remains over budget: ${total} > ${budget}`);
+          for(const row of selected) fs.writeFileSync(row.path,row.compact);
           NODE
           node scripts/check-v4.9-performance-budget.cjs
           rm .github/workflows/compact-design-system.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact loaded visual CSS within budget'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact loaded CSS within existing budget'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
