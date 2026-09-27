@@ -35,16 +35,15 @@ jobs:
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('tests/e2e/real-app-visual-finish.spec.cjs')
-          s=p.read_text()
-          s=s.replace("expect(result.mediaImage).not.toContain('radial-gradient');","expect(result.mediaImage).toContain('radial-gradient');")
-          p.write_text(s)
-          p=Path('tests/e2e/real-app-white-surface.spec.cjs')
-          s=p.read_text().replace('expect(Math.round(renderedBrandGeometry.offset)).toBe(-2);','expect(Math.round(renderedBrandGeometry.offset)).toBe(-3);')
-          p.write_text(s)
-          PY
+          node <<'NODE'
+          const fs=require('fs');
+          let path='tests/e2e/real-app-visual-finish.spec.cjs';
+          let text=fs.readFileSync(path,'utf8').replace("expect(result.mediaImage).not.toContain('radial-gradient');","expect(result.mediaImage).toContain('radial-gradient');");
+          fs.writeFileSync(path,text);
+          path='tests/e2e/real-app-white-surface.spec.cjs';
+          text=fs.readFileSync(path,'utf8').replace('expect(Math.round(renderedBrandGeometry.offset)).toBe(-2);','expect(Math.round(renderedBrandGeometry.offset)).toBe(-3);');
+          fs.writeFileSync(path,text);
+          NODE
           npx playwright test --project=chromium \
             tests/e2e/real-app-white-surface.spec.cjs \
             tests/e2e/priority-ux.spec.cjs \
