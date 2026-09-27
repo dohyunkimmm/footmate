@@ -4,7 +4,8 @@ on:
     branches: [main]
     paths:
       - app.html
-      - src/v4/visual-consistency-v4.css
+      - src/v4/design-system-v2.css
+      - src/v4/platform/presentation/bootstrap.js
       - tests/e2e/visual-consistency-v4.spec.cjs
       - tests/e2e/visual-consistency-v4.spec.cjs-snapshots/**
       - tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/**
@@ -16,7 +17,8 @@ on:
     branches: [main]
     paths:
       - app.html
-      - src/v4/visual-consistency-v4.css
+      - src/v4/design-system-v2.css
+      - src/v4/platform/presentation/bootstrap.js
       - tests/e2e/visual-consistency-v4.spec.cjs
       - tests/e2e/visual-consistency-v4.spec.cjs-snapshots/**
       - tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/**
@@ -43,18 +45,23 @@ jobs:
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
           AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
-      - name: Verify consistency layer ownership and CSS syntax
+      - name: Verify integrated consistency ownership and CSS syntax
         run: |
           node - <<'NODE'
           const fs=require('fs');
           const csstree=require('css-tree');
           const html=fs.readFileSync('app.html','utf8');
-          const css=fs.readFileSync('src/v4/visual-consistency-v4.css','utf8');
-          if(!html.includes('/src/v4/visual-consistency-v4.css?v=1'))throw new Error('visual consistency stylesheet link missing');
+          const css=fs.readFileSync('src/v4/design-system-v2.css','utf8');
+          const bootstrap=fs.readFileSync('src/v4/platform/presentation/bootstrap.js','utf8');
           if(!css.includes('Visual Consistency v4'))throw new Error('visual consistency ownership marker missing');
+          if(!css.includes('--fm-v4-consistency:1'))throw new Error('visual consistency runtime marker missing');
+          if(html.includes('/src/v4/visual-consistency-v4.css'))throw new Error('standalone visual consistency stylesheet must stay consolidated');
+          if(bootstrap.includes('visual-consistency-v4-compat'))throw new Error('compatibility stylesheet loader must stay removed');
           csstree.parse(css);
-          console.log('PASS visual consistency ownership and CSS syntax');
+          console.log('PASS integrated visual consistency ownership and CSS syntax');
           NODE
+      - name: Check current performance budget
+        run: node scripts/check-v4.9-performance-budget.cjs
       - name: Compare final journey visual baselines
         run: npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs
       - name: Compare impacted established Product baselines
