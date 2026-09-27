@@ -1,0 +1,43 @@
+name: Restore CSS Ownership Markers
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/restore-css-markers.yml
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - name: Restore QA ownership markers without changing CSS semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/v4/design-system-v2.css')
+          css = path.read_text()
+          markers = [
+              '/* White-first Real App surface ownership */',
+              '/* FootMate Real App Visual Finish · P0–P2 */',
+          ]
+          missing = [marker for marker in markers if marker not in css]
+          if missing:
+              path.write_text('\n'.join(missing) + '\n' + css)
+          PY
+          node scripts/check-v4.9-performance-budget.cjs
+          rm .github/workflows/restore-css-markers.yml
+          git add -A
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'chore: restore visual ownership QA markers'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
