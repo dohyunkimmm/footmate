@@ -38,24 +38,26 @@ jobs:
           from pathlib import Path
           p=Path('tests/e2e/v5.1-visual-system-completion.spec.cjs')
           s=p.read_text()
-          old="""    await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
-    await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
-    const last=screen.locator('.fm-next-match-card').last();
-    const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
-    expect(end.bottom).toBeLessThanOrEqual(end.navTop);
-    await screen.evaluate(element=>element.scrollTo({top:0,behavior:'instant'}));
-"""
-          new="""    if(metrics.scrollHeight>metrics.clientHeight){
-      await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
-      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
-      const last=screen.locator('.fm-next-match-card:visible').last();
-      const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
-      expect(end.bottom).toBeLessThanOrEqual(end.navTop);
-      await screen.evaluate(element=>element.scrollTo({top:0,behavior:'instant'}));
-    }else{
-      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBe(0);
-    }
-"""
+          old='\n'.join([
+              "    await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));",
+              "    await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);",
+              "    const last=screen.locator('.fm-next-match-card').last();",
+              "    const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));",
+              "    expect(end.bottom).toBeLessThanOrEqual(end.navTop);",
+              "    await screen.evaluate(element=>element.scrollTo({top:0,behavior:'instant'}));",
+          ])+'\n'
+          new='\n'.join([
+              "    if(metrics.scrollHeight>metrics.clientHeight){",
+              "      await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));",
+              "      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);",
+              "      const last=screen.locator('.fm-next-match-card:visible').last();",
+              "      const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));",
+              "      expect(end.bottom).toBeLessThanOrEqual(end.navTop);",
+              "      await screen.evaluate(element=>element.scrollTo({top:0,behavior:'instant'}));",
+              "    }else{",
+              "      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBe(0);",
+              "    }",
+          ])+'\n'
           if old in s:
               p.write_text(s.replace(old,new,1))
           elif new not in s:
