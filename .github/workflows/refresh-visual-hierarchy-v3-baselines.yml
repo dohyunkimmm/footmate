@@ -39,10 +39,12 @@ jobs:
           const fs=require('fs');
           let path='src/v4/design-system-v2.css';
           let text=fs.readFileSync(path,'utf8');
-          text=text.replace('  .fm-next-button,\n  .fm-discovery-filter-button,','  .fm-discovery-filter-button,');
-          text=text.replace('.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-brand{\n  transform:translateY(1px);\n}\n','');
+          text=text.replace(':is(.fm-next-button,.fm-discovery-filter-button,.fm-discovery-sort select,.fm-personalization-panel button,.fm-personalization-explanation button)',':is(.fm-discovery-filter-button,.fm-discovery-sort select,.fm-personalization-panel button,.fm-personalization-explanation button)');
           if(!text.includes('/* Preserve legacy control geometry outside the v3 surface-specific overrides. */')){
             text += '\n/* Preserve legacy control geometry outside the v3 surface-specific overrides. */\n.fm-next-page[data-mode="real"] .fm-next-button{border-radius:16px}\n';
+          }
+          if(!text.includes('/* Preserve Welcome brand alignment outside the v3 surface scope. */')){
+            text += '\n/* Preserve Welcome brand alignment outside the v3 surface scope. */\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-brand{transform:translateY(1px)}\n';
           }
           fs.writeFileSync(path,text);
           path='tests/e2e/real-app-visual-finish.spec.cjs';
