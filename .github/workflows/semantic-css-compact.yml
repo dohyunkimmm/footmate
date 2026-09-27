@@ -1,0 +1,96 @@
+name: Semantic CSS Compact
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/semantic-css-compact.yml
+
+permissions:
+  contents: write
+
+jobs:
+  compact:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Restore reviewed cascade and compact without restructuring declarations
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          BASE=3f49fb5b682f3967130de23b5f37420fe133e145
+          for file in src/v4/app.css src/v4/design-system-v2.css src/v4/visual-polish.css src/v5/ai-match-assistant.css; do
+            git show "$BASE:$file" > "$file"
+          done
+          npm install --no-save --ignore-scripts csso@5.0.5 css-tree@3.1.0
+          node <<'NODE'
+          const fs=require('fs');
+          const csso=require('csso');
+          const csstree=require('css-tree');
+
+          const polishPath='src/v4/visual-polish.css';
+          let polish=fs.readFileSync(polishPath,'utf8');
+          const contextStart=polish.indexOf('.fm-next-page[data-mode="real"] .fm-next-context-card{');
+          const aiStart=polish.indexOf('.fm-next-page[data-mode="real"] .fm-ai-card{',contextStart);
+          if(contextStart<0||aiStart<0) throw new Error('Expected superseded Home visual block not found');
+          const preserveUpcoming='.fm-next-page[data-mode="real"] .fm-next-upcoming-actions .fm-next-button--secondary:hover{background:rgba(255,255,255,.17);border-color:rgba(255,255,255,.29)}\n\n';
+          polish=polish.slice(0,contextStart)+preserveUpcoming+polish.slice(aiStart);
+          fs.writeFileSync(polishPath,polish);
+
+          const dsPath='src/v4/design-system-v2.css';
+          let ds=fs.readFileSync(dsPath,'utf8');
+          ds += '\n/* Preserve inherited values after removing superseded visual-polish Home rules. */\n'+
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-kicker{margin-bottom:10px}\n'+
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card h2{line-height:1.3}\n'+
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-card-media:before{background-size:38px 38px}\n'+
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-fit-badge{padding:7px 10px}\n';
+          fs.writeFileSync(dsPath,ds);
+
+          for(const path of ['src/v4/app.css','src/v4/visual-polish.css','src/v5/ai-match-assistant.css']){
+            const source=fs.readFileSync(path,'utf8');
+            const compact=csso.minify(source,{restructure:false}).css+'\n';
+            csstree.parse(compact);
+            fs.writeFileSync(path,compact);
+          }
+
+          const source=fs.readFileSync(dsPath,'utf8');
+          let compact=csso.minify(source,{restructure:false}).css;
+          const prefix='.fm-next-page[data-mode=real] .fm-next-app:not([data-embed=true])';
+          const start=compact.indexOf(prefix+'{--fm-v3-ink:');
+          if(start<0) throw new Error('Visual hierarchy v3 root not found after safe minification');
+          const firstClose=compact.indexOf('}',start);
+          if(firstClose<0) throw new Error('Visual hierarchy v3 root close not found');
+          const before=compact.slice(0,start);
+          const vars=compact.slice(start+prefix.length+1,firstClose);
+          const tail=compact.slice(firstClose+1).replaceAll(prefix,'&');
+          compact=before+prefix+'{'+vars+tail+'}';
+          const markers=[
+            '/* White-first Real App surface ownership */',
+            '/* FootMate Real App Visual Finish · P0–P2 */',
+            '/* Product completion compatibility ownership */'
+          ].join('\n')+'\n';
+          compact=markers+compact+'\n';
+          csstree.parse(compact);
+          fs.writeFileSync(dsPath,compact);
+
+          const html=fs.readFileSync('app.html','utf8');
+          const paths=[...new Set([...html.matchAll(/href="(\/src\/(?:v4|v5)\/[^"?]+\.css)\?v=\d+"/g)].map(m=>'.'+m[1]))];
+          const total=paths.reduce((sum,path)=>sum+fs.statSync(path).size,0);
+          console.log(JSON.stringify({firstPartyCssBytes:total,files:Object.fromEntries(paths.map(path=>[path,fs.statSync(path).size]))}));
+          if(total>180000) throw new Error(`Semantic-safe CSS remains over budget: ${total} > 180000`);
+          NODE
+          node scripts/check-v4.9-performance-budget.cjs
+          rm .github/workflows/semantic-css-compact.yml
+          git add -A
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact visual hierarchy without cascade reordering'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
