@@ -25,15 +25,17 @@ function removeDuplicateAiCoreLabel(card){
   label.setAttribute('aria-hidden','true');
 }
 
-function polishRealAppCards(){
+function polishRealAppHome(){
   if(!root||!isRealApp())return;
-  root.querySelectorAll('.fm-next-match-card').forEach(moveDistanceIntoScheduleMeta);
-  root.querySelectorAll('[data-ai-assistant]').forEach(removeDuplicateAiCoreLabel);
+  const home=root.querySelector('[data-screen="home"]');
+  if(!home)return;
+  home.querySelectorAll('.fm-next-match-card').forEach(moveDistanceIntoScheduleMeta);
+  home.querySelectorAll('[data-ai-assistant]').forEach(removeDuplicateAiCoreLabel);
 }
 
 if(root&&isRealApp()){
-  const observer=new MutationObserver(polishRealAppCards);
+  const observer=new MutationObserver(polishRealAppHome);
   observer.observe(root,{childList:true,subtree:true});
-  polishRealAppCards();
-  queueMicrotask(polishRealAppCards);
+  polishRealAppHome();
+  queueMicrotask(polishRealAppHome);
 }
