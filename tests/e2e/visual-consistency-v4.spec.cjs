@@ -17,7 +17,7 @@ async function openCleanApp(page,viewport={width:390,height:844}){
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
-  await expect.poll(()=>page.evaluate(()=>[...document.styleSheets].some(sheet=>String(sheet.href||'').includes('/src/v4/visual-consistency-v4.css')))).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>getComputedStyle(document.querySelector('.fm-next-page')).getPropertyValue('--fm-v4-consistency').trim())).toBe('1');
   await page.mouse.move(1,1);
   return errs;
 }

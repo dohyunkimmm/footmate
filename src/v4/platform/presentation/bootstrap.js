@@ -3,12 +3,6 @@ import './real-app-card-polish.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
-const compatibilityStyle=document.createElement('link');
-compatibilityStyle.rel='stylesheet';
-compatibilityStyle.href='/src/v4/visual-consistency-v4-compat.css?v=1';
-compatibilityStyle.dataset.visualConsistencyV4Compat='true';
-document.head.appendChild(compatibilityStyle);
-
 const migration=footmatePlatform.session.migrate();
 if(root){
   root.dataset.platformVersion=footmatePlatform.version;
