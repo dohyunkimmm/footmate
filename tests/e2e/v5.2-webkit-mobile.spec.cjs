@@ -35,9 +35,10 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed nav
   }
 });
 
-const {aiFilters,profileSettings}=require('./helpers/priority-ux.cjs');
+const {aiFilters,profileSettings,mediumPriorityUX}=require('./helpers/priority-ux.cjs');
 test('high priority AI and filter behavior',async({page})=>{await aiFilters(page);});
 test('high priority MY settings and navigation',async({page})=>{await profileSettings(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'}));});
+test('medium priority Home Discover and MY ownership',async({page})=>{await mediumPriorityUX(page);});
 
 const checkin=require('./helpers/checkin.cjs');
 test('Mobile Safari/WebKit shared check-in completion',async({page})=>checkin.persistence(page));

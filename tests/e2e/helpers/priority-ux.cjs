@@ -114,4 +114,58 @@ async function profileSettings(page,capture=async()=>{}){
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   await expect(page.getByRole('button',{name:'필터 열기',exact:true})).toBeVisible();
 }
-module.exports={aiFilters,profileSettings};
+
+async function mediumPriorityUX(page){
+  await start(page);
+  const home=page.locator('[data-screen="home"]');
+  const homeRecommendation=home.locator('.fm-next-context-card [data-action="nav-discover"]').filter({hasText:'추천 경기 보기'});
+  await expect(homeRecommendation).toHaveAttribute('data-discovery-shortcut','true');
+  await expect(homeRecommendation).toHaveAttribute('aria-describedby','fm-medium-home-discover-help');
+  await homeRecommendation.click();
+
+  const discover=page.locator('[data-screen="discover"]');
+  await expect(discover).toBeVisible();
+  const base=discover.locator('.fm-next-topbar [data-action="edit-setup"]');
+  const filter=discover.locator('[data-discovery-action="open-filters"]');
+  await expect(base).toHaveAttribute('data-condition-scope','base');
+  await expect(filter).toHaveAttribute('data-filter-scope','temporary');
+  await expect(base).toHaveAttribute('aria-describedby','fm-medium-base-condition-help');
+  await expect(filter).toHaveAttribute('aria-describedby','fm-medium-temporary-filter-help');
+
+  const cards=discover.locator('.fm-next-match-card:visible');
+  await expect(cards).toHaveCount(8);
+  await filter.click();
+  await page.getByLabel('가격').selectOption('11000');
+  expect(new URL(page.url()).searchParams.get('d_price')).toBeNull();
+  await expect(cards).toHaveCount(8);
+  await page.getByRole('button',{name:'필터 닫기',exact:true}).click();
+  expect(new URL(page.url()).searchParams.get('d_price')).toBeNull();
+  await expect(cards).toHaveCount(8);
+
+  await filter.click();
+  await page.getByLabel('가격').selectOption('11000');
+  await page.getByRole('button',{name:'결과 보기',exact:true}).click();
+  expect(new URL(page.url()).searchParams.get('d_price')).toBe('11000');
+  await expect(cards).toHaveCount(3);
+
+  await discover.locator('.fm-next-nav [data-action="nav-profile"]').click();
+  const profile=page.locator('[data-screen="profile"]');
+  const panel=page.locator('.fm-personalization-panel--profile');
+  await expect(profile).toBeVisible();
+  await expect(panel).toBeVisible();
+  const menu=profile.locator('.fm-next-menu-item[data-settings-jump="canonical"]');
+  await expect(menu).toHaveCount(1);
+  await menu.click();
+  await expect(profile).toHaveAttribute('data-medium-settings-focus','canonical');
+  await expect(panel.getByRole('button',{name:'기본 설정 수정',exact:true})).toBeFocused();
+
+  await panel.getByRole('button',{name:'현재 설정 저장',exact:true}).click();
+  const reset=panel.locator('[data-personalization-action="reset"]');
+  await reset.click();
+  await expect(reset).toHaveAttribute('aria-pressed','true');
+  expect(await page.evaluate(()=>Boolean(JSON.parse(localStorage.getItem('footmate:v4:personalization')||'{}').profile))).toBe(true);
+  await reset.click();
+  await expect.poll(()=>page.evaluate(()=>Boolean(JSON.parse(localStorage.getItem('footmate:v4:personalization')||'{}').profile))).toBe(false);
+}
+
+module.exports={aiFilters,profileSettings,mediumPriorityUX};
