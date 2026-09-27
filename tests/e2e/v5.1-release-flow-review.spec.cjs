@@ -112,7 +112,7 @@ test('AI Match Assistant is a primary core feature with explicit rules fallback'
   await expect(card).toHaveAttribute('data-ai-state','idle');
   await expect(card.locator('.fm-ai-core-label')).toBeVisible();
   await expect(card.getByText('AI Match Assistant',{exact:true})).toBeVisible();
-  await expect(card.getByText('AI에게 원하는 경기를 말해보세요.',{exact:true})).toBeVisible();
+  await expect(card.getByText('AI에게 원하는 경기를 검색해보세요.',{exact:true})).toBeVisible();
   await expect(card.getByRole('button',{name:'AI로 찾기'})).toBeVisible();
   await expect(card.getByText('AI 장애나 지연 시 기존 rules-based 검색으로 자동 전환합니다.',{exact:true})).toHaveCount(1);
   await page.mouse.move(1,1);

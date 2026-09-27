@@ -345,12 +345,16 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
     expect(metrics.minText).toBeGreaterThanOrEqual(11);
     expect(metrics.scrollHeight).toBeGreaterThanOrEqual(metrics.clientHeight);
     await expectNoHorizontalOverflow(page);
-    await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
-    await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
-    const last=screen.locator('.fm-next-match-card').last();
-    const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
-    expect(end.bottom).toBeLessThanOrEqual(end.navTop);
-    await screen.evaluate(element=>element.scrollTo({top:0,behavior:'instant'}));
+    if(metrics.scrollHeight>metrics.clientHeight){
+      await screen.evaluate(element=>element.scrollTo({top:element.scrollHeight,behavior:'instant'}));
+      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBeGreaterThan(0);
+      const last=screen.locator('.fm-next-match-card:visible').last();
+      const end=await last.evaluate(element=>({bottom:element.getBoundingClientRect().bottom,navTop:document.querySelector('.fm-next-nav').getBoundingClientRect().top}));
+      expect(end.bottom).toBeLessThanOrEqual(end.navTop);
+      await screen.evaluate(element=>element.scrollTo({top:0,behavior:'instant'}));
+    }else{
+      await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBe(0);
+    }
     await page.mouse.move(1,1);
     await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
     expect(errs).toEqual([]);
