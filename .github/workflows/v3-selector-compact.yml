@@ -1,4 +1,4 @@
-name: V3 Native Nesting Compact
+name: Design System Native Nesting Compact
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Restore reviewed CSS and compact v3 with native nesting
+      - name: Restore reviewed CSS and compact design-system scope with native nesting
         shell: bash
         run: |
           set -euo pipefail
@@ -42,7 +42,6 @@ jobs:
             'src/v4/decision.css','src/v4/participation.css','src/v4/matchday.css','src/v4/return.css',
             'src/v4/personalization.css','src/v4/visual-polish.css','src/v5/ai-match-assistant.css'
           ];
-          const markerStart='/* FootMate Real App · Visual Hierarchy v3';
           const markerText=[
             '/* FootMate Design System v2 */',
             '/* White-first Real App surface ownership */',
@@ -80,19 +79,11 @@ jobs:
             const source=fs.readFileSync(file,'utf8');
             let raw=source;
             if(file==='src/v4/design-system-v2.css'){
-              const markerAt=raw.indexOf(markerStart);
-              if(markerAt<0) throw new Error('v3 ownership marker missing');
-              const markerEnd=raw.indexOf('*/',markerAt);
-              if(markerEnd<0) throw new Error('v3 ownership marker unterminated');
-              const splitAt=markerEnd+2;
-              const before=raw.slice(0,splitAt);
-              let v3=raw.slice(splitAt);
-              const scope='.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"])';
-              const scopeCount=v3.split(scope).length-1;
-              const beforeScopeCount=before.split(scope).length-1;
-              if(scopeCount<100||beforeScopeCount!==0) throw new Error(`unexpected v3 scope distribution before=${beforeScopeCount} v3=${scopeCount}`);
-              if(/@keyframes\b/i.test(v3)) throw new Error('v3 block contains keyframes; native nesting candidate aborted');
-              v3=v3.split(scope).join('&');
+              if(/@keyframes\b/i.test(raw)) throw new Error('design system contains keyframes; nesting candidate aborted');
+              const parent='.fm-next-page[data-mode="real"]';
+              const parentCount=raw.split(parent).length-1;
+              if(parentCount<200) throw new Error(`unexpected design-system parent count: ${parentCount}`);
+              raw=raw.split(parent).join('&');
               const vars={
                 '--fm-v3-ink':'--z-i','--fm-v3-text':'--z-t','--fm-v3-muted':'--z-m',
                 '--fm-v3-brand':'--z-b','--fm-v3-brand-2':'--z-b2','--fm-v3-brand-soft':'--z-bs',
@@ -101,9 +92,9 @@ jobs:
                 '--fm-v3-shadow':'--z-s','--fm-v3-shadow-raised':'--z-sr',
                 '--fm-v3-radius-lg':'--z-rl','--fm-v3-radius-md':'--z-rm','--fm-v3-radius-sm':'--z-rs'
               };
-              for(const [from,to] of Object.entries(vars)) v3=v3.split(from).join(to);
-              raw=before+'\n'+scope+'{\n'+v3+'\n}\n';
-              console.log(`native nested v3 scopes: ${scopeCount}`);
+              for(const [from,to] of Object.entries(vars)) raw=raw.split(from).join(to);
+              raw=parent+'{\n'+raw+'\n}\n';
+              console.log(`native nested design-system parent scopes: ${parentCount}`);
             }
             let compact=compactRaw(raw);
             if(file==='src/v4/design-system-v2.css') compact=markerText.join('\n')+'\n'+compact;
@@ -125,5 +116,5 @@ jobs:
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact visual hierarchy CSS with native nesting'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact design system with native nesting'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
