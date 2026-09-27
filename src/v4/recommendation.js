@@ -44,6 +44,7 @@ if(root){
 
   function card(item,index,scope='home'){
     const match=item.match;
+    // Home and Discover intentionally share the same visible match-card metadata hierarchy.
     const homeMeta=scope==='home';
     return `<button type="button" class="fm-next-match-card" data-action="open-match" data-match-id="${match.id}" data-recommendation-score="${item.score}" data-recommendation-region="${match.region}" aria-label="${match.place} 상세 보기">
       <div class="fm-next-match-card-media">
