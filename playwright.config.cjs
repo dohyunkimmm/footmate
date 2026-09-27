@@ -31,9 +31,10 @@ module.exports = defineConfig({
       testIgnore: /v5\.2-webkit-mobile\.spec\.cjs/,
       use: {
         ...devices['Desktop Chrome'],
-        // Keep Skia's raster path independent of the CI runner CPU.
-        // https://chromium.googlesource.com/chromium/src/+/lkgr/content/public/common/content_switches.cc
-        launchOptions: { args: ['--disable-skia-runtime-opts'] }
+        // Keep rasterization independent of CPU and prior scroll/paint history.
+        // Complete painting before capture; keep screenshot thresholds unchanged.
+        // https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
+        launchOptions: { args: ['--disable-skia-runtime-opts', '--disable-partial-raster', '--run-all-compositor-stages-before-draw'] }
       }
     },
     {
