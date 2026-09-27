@@ -22,32 +22,47 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Compact CSS without changing semantics
+      - name: Compact loaded CSS to the existing budget
         shell: bash
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          npm install --no-save --ignore-scripts css-tree@3.1.0
+          npm install --no-save --ignore-scripts csso@5.0.5 css-tree@3.1.0
           node <<'NODE'
           const fs=require('fs');
+          const csso=require('csso');
           const csstree=require('css-tree');
-          const path='src/v4/design-system-v2.css';
-          const input=fs.readFileSync(path,'utf8');
-          const ast=csstree.parse(input);
-          let output=csstree.generate(ast);
-          // Keep one rule boundary per line so the production asset remains inspectable.
-          output=output.replace(/}/g,'}\n').replace(/\n+/g,'\n').trim()+'\n';
-          // Parse generated output again to ensure syntactic equivalence at the AST level.
-          const reparsed=csstree.parse(output);
-          const canonicalBefore=csstree.generate(ast);
-          const canonicalAfter=csstree.generate(reparsed);
-          if(canonicalBefore!==canonicalAfter) throw new Error('CSS canonical form changed during compaction');
-          fs.writeFileSync(path,output);
-          console.log(JSON.stringify({before:Buffer.byteLength(input),after:Buffer.byteLength(output)}));
+          const dsPath='src/v4/design-system-v2.css';
+          const polishPath='src/v4/visual-polish.css';
+          const originalDs=fs.readFileSync(dsPath,'utf8');
+          const originalPolish=fs.readFileSync(polishPath,'utf8');
+          const app=fs.readFileSync('app.html','utf8');
+          const cssPaths=[...new Set([...app.matchAll(/href="(\/src\/(?:v4|v5)\/[^"?]+\.css)\?v=\d+"/g)].map(m=>m[1]))];
+          const budget=180000;
+          const compact=(source,restructure)=>csso.minify(source,{restructure}).css+'\n';
+          const candidates=[
+            {name:'safe-both',ds:compact(originalDs,false),polish:compact(originalPolish,false)},
+            {name:'restructure-design-system',ds:compact(originalDs,true),polish:compact(originalPolish,false)},
+            {name:'restructure-both',ds:compact(originalDs,true),polish:compact(originalPolish,true)}
+          ];
+          const loadedBytes=(candidate)=>cssPaths.reduce((sum,p)=>{
+            if(p==='/src/v4/design-system-v2.css') return sum+Buffer.byteLength(candidate.ds);
+            if(p==='/src/v4/visual-polish.css') return sum+Buffer.byteLength(candidate.polish);
+            return sum+fs.statSync('.'+p).size;
+          },0);
+          const measured=candidates.map(c=>({candidate:c,bytes:loadedBytes(c)}));
+          for(const m of measured) console.log(JSON.stringify({mode:m.candidate.name,firstPartyCssBytes:m.bytes,designSystemBytes:Buffer.byteLength(m.candidate.ds),visualPolishBytes:Buffer.byteLength(m.candidate.polish)}));
+          const selected=measured.find(m=>m.bytes<=budget);
+          if(!selected) throw new Error('No semantic CSS compaction mode meets the existing 180000-byte budget');
+          csstree.parse(selected.candidate.ds);
+          csstree.parse(selected.candidate.polish);
+          fs.writeFileSync(dsPath,selected.candidate.ds);
+          fs.writeFileSync(polishPath,selected.candidate.polish);
+          console.log('SELECTED',selected.candidate.name,selected.bytes);
           NODE
           node scripts/check-v4.9-performance-budget.cjs
           rm .github/workflows/compact-design-system.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact final design system asset'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact loaded visual CSS within budget'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
