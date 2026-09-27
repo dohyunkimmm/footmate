@@ -1453,10 +1453,9 @@
 .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-topbar--dark{background:rgba(255,255,255,.86);color:var(--fm-v3-brand,#073d2b)}
 .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-intro h1{color:#132019}
 .fm-next-page[data-mode="real"] [data-screen="welcome"] [data-welcome-ai-copy]{color:#56655d!important}
-.fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-actions .fm-next-button:first-child{border:1px solid var(--fm-v3-accent,#d8ff73)!important;background:var(--fm-v3-accent,#d8ff73)!important;color:var(--fm-v3-brand,#073d2b)!important;box-shadow:0 14px 30px rgba(0,0,0,.18)!important}
 .fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-step-indicator span.is-active{background:var(--fm-v3-accent,#d8ff73);box-shadow:inset 0 0 0 1px rgba(7,61,43,.16)}
 .fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-choice{position:relative}
-.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-choice[aria-pressed="true"]{padding-right:48px;border-color:rgba(7,61,43,.34);background:linear-gradient(145deg,#f4f9f5,#eef7df)}
+.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-choice[aria-pressed="true"]{padding-right:48px;border-color:rgba(7,61,43,.34);background-color:#f4f9f5!important;background-image:linear-gradient(145deg,#f4f9f5 0%,#eef7df 100%)!important}
 .fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-choice[aria-pressed="true"]:after{content:"✓";position:absolute;right:16px;top:50%;display:grid;place-items:center;width:24px;height:24px;transform:translateY(-50%);border-radius:50%;background:var(--fm-v3-brand,#073d2b);color:var(--fm-v3-accent,#d8ff73);font-weight:900}
 .fm-next-page[data-mode="real"] .fm-release-auth-status{margin:14px 0 0;padding:10px 12px;border:1px solid rgba(17,58,40,.1);border-radius:13px;background:#f7f9f7;color:#607168;font-size:11px;line-height:1.55;text-align:center}
 .fm-next-page[data-mode="real"] .fm-release-auth-status[data-tone="connected"]{border-color:#bcd9c6;background:#e9f5ed;color:#315c45}
