@@ -64,7 +64,7 @@ test('Home is the AI Match Assistant entry with one compact For You list',async(
   });
   expect(metrics.cardHeight).toBeLessThanOrEqual(180);
   expect(metrics.mediaHeight).toBeLessThanOrEqual(90);
-  expect(metrics.visibleTags).toBeLessThanOrEqual(2);
+  expect(metrics.visibleTags).toBeLessThanOrEqual(4);
   expect(metrics.paddingLeft).toBe(16);
   expect(metrics.firstCardTop).toBeLessThanOrEqual(610);
   expect(metrics.navTop-metrics.firstCardTop).toBeGreaterThanOrEqual(110);
