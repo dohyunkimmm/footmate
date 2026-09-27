@@ -33,7 +33,7 @@ jobs:
           npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
           node scripts/check-qa-toolchain.cjs
           node scripts/check-v4.9-performance-budget.cjs
-      - name: Update stale visual contracts for the reviewed v3 direction
+      - name: Update reviewed v3 runtime and visual contracts
         shell: bash
         run: |
           set -euo pipefail
@@ -59,17 +59,28 @@ jobs:
           design=design.slice(0,profileStart)+profile+design.slice(profileEnd);
           fs.writeFileSync(designPath,design);
 
-          const integrityPath='tests/e2e/v5.1-product-integrity.spec.cjs';
-          let integrity=fs.readFileSync(integrityPath,'utf8');
-          const oldHover="expect(filterHover.background).not.toBe(filterRest.background);\n  expect(filterHover.border).not.toBe(filterRest.border);";
-          const newHover="expect(filterHover.background!==filterRest.background||filterHover.border!==filterRest.border).toBe(true);";
-          if(!integrity.includes(newHover)){
-            if(!integrity.includes(oldHover)) throw new Error('Filter hover contract target not found');
-            integrity=integrity.replace(oldHover,newHover);
+          const cssPath='src/v4/design-system-v2.css';
+          let css=fs.readFileSync(cssPath,'utf8');
+          const filterBase=`.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button{
+            border-color:var(--fm-v3-brand);
+            background:var(--fm-v3-brand);
+            color:#fff;
+            box-shadow:0 7px 18px rgba(7,61,43,.12);
+          }`;
+          const filterFeedback=`.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button:hover,
+          .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button:focus-visible{
+            border-color:var(--fm-v3-brand-2);
+            background:var(--fm-v3-brand-2);
+            box-shadow:0 9px 22px rgba(7,61,43,.18);
+          }`;
+          if(!css.includes(filterFeedback)){
+            if(!css.includes(filterBase)) throw new Error('Discover filter base rule not found');
+            css=css.replace(filterBase,`${filterBase}\n${filterFeedback}`);
           }
-          fs.writeFileSync(integrityPath,integrity);
+          fs.writeFileSync(cssPath,css);
           NODE
           git diff --check
+          node scripts/check-v4.9-performance-budget.cjs
       - name: Refresh only reviewed Product visual baselines
         shell: bash
         run: |
@@ -120,7 +131,7 @@ jobs:
             tests/e2e/v4-return.spec.cjs \
             tests/e2e/v4-personalization.spec.cjs \
             tests/e2e/v4-platform.spec.cjs
-      - name: Commit only verified Product contracts and baselines
+      - name: Commit only verified Product runtime contracts and baselines
         shell: bash
         run: |
           set -euo pipefail
