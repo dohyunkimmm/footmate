@@ -1,0 +1,121 @@
+name: V3 Selector Compact
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/v3-selector-compact.yml
+
+permissions:
+  contents: write
+
+jobs:
+  compact-and-verify:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Restore reviewed CSS and compact only v3 selectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          BASE=3f49fb5b682f3967130de23b5f37420fe133e145
+          for file in src/v4/app.css src/v4/design-system-v2.css src/v4/visual-polish.css src/v5/ai-match-assistant.css; do
+            git show "$BASE:$file" > "$file"
+          done
+          npm install --no-save --ignore-scripts csso@5.0.5 css-tree@3.1.0 @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('src/v4/app.js')
+          source=path.read_text()
+          needle="  const activeScreen=root.querySelector('[data-screen]');\n"
+          insert="""  const activeScreen=root.querySelector('[data-screen]');
+  const visualV3=mode==='real'&&!embed;
+  if(visualV3){
+    root.querySelector('.fm-next-app')?.classList.add('fm-v3');
+    const marker={home:'v3-home',discover:'v3-discover',detail:'v3-detail',profile:'v3-profile',checkout:'v3-checkout',schedule:'v3-schedule'}[state.route];
+    if(activeScreen&&marker){
+      activeScreen.classList.add('v3-screen',marker);
+      if(state.route==='home'||state.route==='discover')activeScreen.classList.add('v3-browse');
+    }
+    root.querySelectorAll('[data-matchday-module-version]').forEach(node=>node.classList.add('v3-matchday'));
+  }
+"""
+          if needle not in source:
+              raise SystemExit('app render marker insertion point missing')
+          if 'const visualV3=' not in source:
+              source=source.replace(needle,insert,1)
+          path.write_text(source)
+          PY
+          node <<'NODE'
+          const fs=require('fs');
+          const csso=require('csso');
+          const csstree=require('css-tree');
+          const path='src/v4/design-system-v2.css';
+          const source=fs.readFileSync(path,'utf8');
+          const marker='/* FootMate Real App · Visual Hierarchy v3';
+          const index=source.indexOf(marker);
+          if(index<0) throw new Error('v3 block marker not found');
+          const legacy=source.slice(0,index);
+          let v3=source.slice(index);
+          const prefix='.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"])';
+          const rep=(name,count)=>Array(count).fill('.'+name).join('');
+          const replacements=[
+            [prefix+' :is([data-screen="home"],[data-screen="discover"],[data-screen="detail"],[data-screen="profile"],[data-screen="checkout"],[data-screen="schedule"])',rep('v3-screen',5)],
+            [prefix+' :is([data-screen="home"],[data-screen="discover"])',rep('v3-browse',5)],
+            [prefix+' [data-screen="home"]',rep('v3-home',5)],
+            [prefix+' [data-screen="discover"]',rep('v3-discover',5)],
+            [prefix+' [data-screen="detail"]',rep('v3-detail',5)],
+            [prefix+' [data-screen="profile"]',rep('v3-profile',5)],
+            [prefix+' [data-screen="checkout"]',rep('v3-checkout',5)],
+            [prefix+' [data-screen="schedule"]',rep('v3-schedule',5)],
+            [prefix+' [data-matchday-module-version]',rep('v3-matchday',5)],
+            [prefix,rep('fm-v3',4)]
+          ];
+          const counts={};
+          for(const [from,to] of replacements){
+            const count=v3.split(from).length-1;
+            counts[from]=count;
+            v3=v3.split(from).join(to);
+          }
+          const vars={
+            '--fm-v3-ink':'--v3-i','--fm-v3-text':'--v3-t','--fm-v3-muted':'--v3-m',
+            '--fm-v3-brand':'--v3-b','--fm-v3-brand-2':'--v3-b2','--fm-v3-brand-soft':'--v3-bs',
+            '--fm-v3-accent':'--v3-a','--fm-v3-accent-soft':'--v3-as','--fm-v3-line':'--v3-l',
+            '--fm-v3-line-strong':'--v3-ls','--fm-v3-canvas':'--v3-c','--fm-v3-subtle':'--v3-u',
+            '--fm-v3-shadow':'--v3-s','--fm-v3-shadow-raised':'--v3-sr',
+            '--fm-v3-radius-lg':'--v3-rl','--fm-v3-radius-md':'--v3-rm','--fm-v3-radius-sm':'--v3-rs'
+          };
+          for(const [from,to] of Object.entries(vars)) v3=v3.split(from).join(to);
+          const compact=csso.minify(v3,{restructure:false}).css+'\n';
+          csstree.parse(legacy+compact);
+          fs.writeFileSync(path,legacy+compact);
+          console.log(JSON.stringify({selectorReplacementCounts:counts,legacyBytes:Buffer.byteLength(legacy),v3Before:Buffer.byteLength(source.slice(index)),v3After:Buffer.byteLength(compact)}));
+          NODE
+          node scripts/check-v4.9-performance-budget.cjs
+      - name: Verify visual baselines before commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
+          npx playwright test tests/e2e/check-in-states.spec.cjs tests/e2e/check-in-layout.spec.cjs
+      - name: Commit verified selector compaction
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/v3-selector-compact.yml
+          git add -A
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact v3 selectors without changing reviewed visuals'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
