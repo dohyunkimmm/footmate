@@ -73,7 +73,7 @@ jobs:
               '--fm-v3-radius-lg':'--v3-rl','--fm-v3-radius-md':'--v3-rm','--fm-v3-radius-sm':'--v3-rs'
             };
             for(const [from,to] of Object.entries(vars)) effective=effective.split(from).join(to);
-            const compactDesign=csso.minify(effective,{restructure:true}).css;
+            const compactDesign=csso.minify(effective,{restructure:false}).css;
             const markers=[
               '/* FootMate Design System v2 */',
               '/* White-first Real App surface ownership */',
@@ -92,7 +92,7 @@ jobs:
             ];
             for(const file of modules){
               const css=fs.readFileSync(file,'utf8');
-              const compact=csso.minify(css,{restructure:true}).css+'\n';
+              const compact=csso.minify(css,{restructure:false}).css+'\n';
               fs.writeFileSync(file,compact);
               console.log(`${file}: ${Buffer.byteLength(css)} -> ${Buffer.byteLength(compact)}`);
             }
