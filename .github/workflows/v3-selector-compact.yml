@@ -1,4 +1,4 @@
-name: V3 Safe CSS Compact
+name: V3 Safe Module CSS Minify
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Restore reviewed CSS and remove formatting whitespace only
+      - name: Restore reviewed CSS and minify independent modules only
         shell: bash
         run: |
           set -euo pipefail
@@ -34,14 +34,24 @@ jobs:
           for file in src/v4/app.css src/v4/design-system-v2.css src/v4/visual-polish.css src/v5/ai-match-assistant.css; do
             git show "$BASE:$file" > "$file"
           done
-          npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+          npm install --no-save --ignore-scripts csso@5.0.5 @playwright/test@1.55.1 @axe-core/playwright@4.10.2
           node <<'NODE'
           const fs=require('fs');
-          const files=['src/v4/app.css','src/v4/design-system-v2.css','src/v4/visual-polish.css','src/v5/ai-match-assistant.css'];
+          const csso=require('csso');
+          const files=[
+            'src/v4/app.css',
+            'src/v4/experience.css',
+            'src/v4/discovery.css',
+            'src/v4/decision.css',
+            'src/v4/participation.css',
+            'src/v4/matchday.css',
+            'src/v4/return.css',
+            'src/v4/personalization.css',
+            'src/v5/ai-match-assistant.css'
+          ];
           for(const file of files){
-            const source=fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n');
-            const lines=source.split('\n');
-            const compact=lines.map(line=>line.trim()).filter(line=>line.length>0).join('\n')+'\n';
+            const source=fs.readFileSync(file,'utf8');
+            const compact=csso.minify(source,{restructure:false}).css+'\n';
             fs.writeFileSync(file,compact);
             console.log(`${file}: ${Buffer.byteLength(source)} -> ${Buffer.byteLength(compact)}`);
           }
@@ -53,12 +63,12 @@ jobs:
           set -euo pipefail
           npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
           npx playwright test tests/e2e/check-in-states.spec.cjs tests/e2e/check-in-layout.spec.cjs
-      - name: Commit verified formatting-only compaction
+      - name: Commit verified module minification
         shell: bash
         run: |
           set -euo pipefail
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact CSS formatting without visual changes'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: minify independent CSS modules without visual changes'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
