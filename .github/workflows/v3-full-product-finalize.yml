@@ -42,20 +42,21 @@ jobs:
 
           const designPath='tests/e2e/v5.1-design-system-v2.spec.cjs';
           let design=fs.readFileSync(designPath,'utf8');
-          const profileBefore=`    return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor};
-          });
-          expect(metrics.radius).toBeGreaterThanOrEqual(20);
-          expect(metrics.radius).toBeLessThanOrEqual(26);
-          expect(metrics.shadow).not.toBe('none');`;
-          const profileAfter=`    return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor,border:style.borderTopWidth};
-          });
-          expect(metrics.radius).toBeGreaterThanOrEqual(20);
-          expect(metrics.radius).toBeLessThanOrEqual(26);
-          expect(metrics.border).not.toBe('0px');`;
-          if(!design.includes(profileAfter)){
-            if(!design.includes(profileBefore)) throw new Error('Profile surface contract target not found');
-            design=design.replace(profileBefore,profileAfter);
-          }
+          const profileStart=design.indexOf("test('1440px Profile personalization is a first-class Design System v2 surface'");
+          const profileEnd=design.indexOf("\ntest('1440px Detail decision content uses the same surface family'",profileStart);
+          if(profileStart<0||profileEnd<0) throw new Error('Profile test block not found');
+          let profile=design.slice(profileStart,profileEnd);
+          const profileBefore=profile;
+          profile=profile.replace(
+            "return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor};",
+            "return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor,border:style.borderTopWidth};"
+          );
+          profile=profile.replace(
+            "expect(metrics.shadow).not.toBe('none');",
+            "expect(metrics.border).not.toBe('0px');"
+          );
+          if(profile===profileBefore||!profile.includes("expect(metrics.border).not.toBe('0px');")) throw new Error('Profile surface contract was not updated');
+          design=design.slice(0,profileStart)+profile+design.slice(profileEnd);
           fs.writeFileSync(designPath,design);
 
           const integrityPath='tests/e2e/v5.1-product-integrity.spec.cjs';
