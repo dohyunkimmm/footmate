@@ -82,9 +82,10 @@ async function verifyMatchCards(page,name){
   await page.screenshot({path:test.info().outputPath('production-'+name+'-390.png'),fullPage:true,animations:'disabled'});
 }
 
-const {aiFilters,profileSettings}=require('./helpers/priority-ux.cjs');
+const {aiFilters,profileSettings,mediumPriorityUX}=require('./helpers/priority-ux.cjs');
 test('high priority AI and filter behavior',async({page})=>{await aiFilters(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'}));});
 test('high priority MY settings and navigation',async({page})=>{await profileSettings(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'}));});
+test('medium priority Home Discover and MY ownership',async({page})=>{await mediumPriorityUX(page);});
 
 const checkin=require('./helpers/checkin.cjs');
 test('Production shared check-in completion',async({page})=>checkin.persistence(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
