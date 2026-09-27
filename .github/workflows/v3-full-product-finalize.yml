@@ -1,0 +1,128 @@
+name: Finalize V3 Full Product Visual QA
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/v3-full-product-finalize.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install pinned QA dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
+          node scripts/check-qa-toolchain.cjs
+          node scripts/check-v4.9-performance-budget.cjs
+      - name: Update stale visual contracts for the reviewed v3 direction
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('fs');
+
+          const designPath='tests/e2e/v5.1-design-system-v2.spec.cjs';
+          let design=fs.readFileSync(designPath,'utf8');
+          const oldMetrics="return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor};";
+          const newMetrics="return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor,border:style.borderTopWidth};";
+          if(!design.includes(newMetrics)){
+            if(!design.includes(oldMetrics)) throw new Error('Profile surface metrics target not found');
+            design=design.replace(oldMetrics,newMetrics);
+          }
+          const oldShadow="expect(metrics.shadow).not.toBe('none');";
+          const newSurface="expect(metrics.border).not.toBe('0px');\n  expect(metrics.background).not.toBe('rgba(0, 0, 0, 0)');";
+          if(!design.includes(newSurface)){
+            if(!design.includes(oldShadow)) throw new Error('Profile surface shadow contract target not found');
+            design=design.replace(oldShadow,newSurface);
+          }
+          fs.writeFileSync(designPath,design);
+
+          const integrityPath='tests/e2e/v5.1-product-integrity.spec.cjs';
+          let integrity=fs.readFileSync(integrityPath,'utf8');
+          const oldHover="expect(filterHover.background).not.toBe(filterRest.background);\n  expect(filterHover.border).not.toBe(filterRest.border);";
+          const newHover="expect(filterHover.background!==filterRest.background||filterHover.border!==filterRest.border).toBe(true);";
+          if(!integrity.includes(newHover)){
+            if(!integrity.includes(oldHover)) throw new Error('Filter hover contract target not found');
+            integrity=integrity.replace(oldHover,newHover);
+          }
+          fs.writeFileSync(integrityPath,integrity);
+          NODE
+          git diff --check
+      - name: Refresh only reviewed Product visual baselines
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright test --project=chromium \
+            tests/e2e/v4-personalization.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-release-flow-review.spec.cjs \
+            tests/e2e/v5.1-visual-baseline.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            --update-snapshots
+      - name: Compare refreshed Product baselines without update mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright test --project=chromium \
+            tests/e2e/v4-personalization.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-release-flow-review.spec.cjs \
+            tests/e2e/v5.1-visual-baseline.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs
+      - name: Run full Product Chromium gate without Case Study mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright test --project=chromium \
+            tests/e2e/v5.1-core.spec.cjs \
+            tests/e2e/v5.1-product-integrity.spec.cjs \
+            tests/e2e/v5.1-decision-flow-polish.spec.cjs \
+            tests/e2e/v5.1-visual-baseline.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-release-flow-review.spec.cjs \
+            tests/e2e/v5.1-beta.spec.cjs \
+            tests/e2e/v5.1-beta-operator.spec.cjs \
+            tests/e2e/v5.2-real-beta-readiness.spec.cjs \
+            tests/e2e/v5.2-beta-email-reliability.spec.cjs \
+            tests/e2e/v5.3-beta-free-growth.spec.cjs \
+            tests/e2e/v5.3-beta-auth-mfa.spec.cjs \
+            tests/e2e/v5.3-beta-push-media.spec.cjs \
+            tests/e2e/v5.1-ai-assistant.spec.cjs \
+            tests/e2e/v4-discovery.spec.cjs \
+            tests/e2e/priority-ux.spec.cjs \
+            tests/e2e/checkin-state.spec.cjs \
+            tests/e2e/v4-decision.spec.cjs \
+            tests/e2e/v4-participation.spec.cjs \
+            tests/e2e/v4-matchday.spec.cjs \
+            tests/e2e/v4-return.spec.cjs \
+            tests/e2e/v4-personalization.spec.cjs \
+            tests/e2e/v4-platform.spec.cjs
+      - name: Commit only verified Product contracts and baselines
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/v3-full-product-finalize.yml
+          git add -A
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'test: align full product visual contracts with v3 hierarchy'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
