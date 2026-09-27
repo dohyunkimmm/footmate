@@ -38,6 +38,7 @@ document.addEventListener('click',event=>{
   }
   const checkin=event.target.closest('[data-matchday-action="checkin"]');
   if(checkin&&!checkin.disabled){
+    if(checkin.closest('[data-product-checkin]'))return;
     const matchId=session().joinedMatchId||null;
     footmatePlatform.events.record('checkin.completed',{matchId},{dedupeKey:`checkin.completed:${matchId||'none'}`});
     return;

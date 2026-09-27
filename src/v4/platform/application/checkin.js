@@ -48,6 +48,7 @@ export async function completeCheckin(){
     const saved=repository.read({})||{};
     if(saved.matchId!==before.matchId||!saved.checkinComplete||saved.checkedInAt!==checkedInAt)throw new Error('Check-in was not saved');
     footmatePlatform.session.patch({checkedInMatchId:before.matchId,checkedInAt:Date.parse(checkedInAt)});
+    footmatePlatform.events.record('checkin.completed',{matchId:before.matchId,checkedInAt},{dedupeKey:`checkin.completed:${before.matchId}:${checkedInAt}`});
     return true;
   }catch(_error){
     failedMatchId=before.matchId;

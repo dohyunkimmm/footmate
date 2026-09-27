@@ -25,6 +25,7 @@ async function persistence(page,capture=async()=>{}){
   const saved=await record(page);
   expect(saved.checkinComplete).toBe(true);
   expect(saved.checkedInAt).toBe(new Date(fixed).toISOString());
+  expect(await page.evaluate(()=>window.__FOOTMATE_PLATFORM__.readEvents().filter(event=>event.name==='checkin.completed').length)).toBe(1);
   await expect(panel(page).getByRole('button',{name:'체크인 완료',exact:true})).toBeDisabled();
   await expect(panel(page)).toContainText('완료 시간');
   await expect(page.locator('.fm-next-status-card:nth-child(2) b')).toHaveText('체크인 완료');
@@ -81,10 +82,12 @@ async function recovery(page,capture=async()=>{}){
   await panel(page).getByRole('button',{name:'체크인하기',exact:true}).click();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','failed');
   expect((await record(page)).checkinComplete).toBe(false);
+  expect(await page.evaluate(()=>window.__FOOTMATE_PLATFORM__.readEvents().filter(event=>event.name==='checkin.completed').length)).toBe(0);
   await capture('checkin-retry',panel(page));
   await page.evaluate(()=>{Storage.prototype.setItem=window.restoreCheckinStorage;delete window.restoreCheckinStorage;});
   await panel(page).getByRole('button',{name:'다시 시도',exact:true}).click();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+  expect(await page.evaluate(()=>window.__FOOTMATE_PLATFORM__.readEvents().filter(event=>event.name==='checkin.completed').length)).toBe(1);
   await page.evaluate(()=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session'));localStorage.setItem('footmate:v4:session',JSON.stringify({...session,joinedMatchId:'gwanggyo-2130',selectedMatchId:'gwanggyo-2130'}));});
   await page.reload({waitUntil:'domcontentloaded'});
   await expect(panel(page)).toHaveAttribute('data-checkin-state','waiting');

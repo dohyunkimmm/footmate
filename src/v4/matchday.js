@@ -42,7 +42,7 @@ function productPanel(value,compact=false){
   const operations=terminal?(value.status==='canceled'?'<button type="button" data-matchday-action="find">다른 경기 찾기</button>':'<button type="button" data-matchday-action="notice">공지 다시 보기</button>'):'<button type="button" data-matchday-action="arrive">도착 상태 알리기</button><button type="button" data-matchday-action="late">늦을 것 같아요</button>'+(state.status==='late'?'<button type="button" data-matchday-action="recover">도착 상태 수정</button>':'')+'<button type="button" data-matchday-action="update">경기 변경 공지 보기</button>';
   element.querySelector('.fm-matchday-actions').innerHTML=control+operations;
   element.querySelector('.fm-matchday-grid article span').textContent=state.arrival==='arrived'?'도착 확인 완료':state.arrival==='late'?'도착 지연을 기록했어요.':state.arrival==='on-the-way'?'이동 중으로 기록했어요.':'경기 시작 20분 전부터 종료 전까지 이용할 수 있어요.';
-  element.querySelector('.fm-matchday-boundary').textContent='샘플 경기 체크인 체험입니다. 이 브라우저에만 저장되며 실제 출석으로 처리되지 않습니다. 실시간 위치·지도·팀 채팅·알림 backend는 연결하지 않았습니다.';
+  element.querySelector('.fm-matchday-boundary').textContent='샘플 체크인 · 브라우저에만 저장되며 실제 출석이 아닙니다. 실시간 위치·지도·팀 채팅·알림 backend는 연결하지 않았습니다.';
   return element.outerHTML;
 }
 
