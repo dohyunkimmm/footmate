@@ -1,4 +1,5 @@
 import './my-storage-copy.js';
+import './real-app-card-polish.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
