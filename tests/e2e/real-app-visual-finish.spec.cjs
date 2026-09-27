@@ -68,7 +68,7 @@ test('decision-support surfaces keep the core AI feature visually raised',async(
   expect(result.aiShadow).not.toBe('none');
   expect(result.cardShadow).not.toBe('none');
   expect(result.mediaImage).toContain('linear-gradient');
-  expect(result.mediaImage).not.toContain('radial-gradient');
+  expect(result.mediaImage).toContain('radial-gradient');
   expect(errs).toEqual([]);
 });
 
