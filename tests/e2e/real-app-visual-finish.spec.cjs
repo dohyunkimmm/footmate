@@ -143,3 +143,4 @@ test('reduced motion keeps geometry and suppresses decorative motion',async({pag
   expect(motion.width).toBeGreaterThan(0);
   expect(errs).toEqual([]);
 });
+
