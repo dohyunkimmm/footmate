@@ -1235,6 +1235,12 @@
   color:#fff;
   box-shadow:0 7px 18px rgba(7,61,43,.12);
 }
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button:hover,
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button:focus-visible{
+  border-color:var(--fm-v3-brand-2);
+  background:var(--fm-v3-brand-2);
+  box-shadow:0 9px 22px rgba(7,61,43,.18);
+}
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-sort select{
   border-color:var(--fm-v3-line-strong);
   background:#fff;

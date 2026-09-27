@@ -118,11 +118,11 @@ test('1440px Profile personalization is a first-class Design System v2 surface',
   await expect(panel).toBeVisible();
   const metrics=await panel.evaluate(element=>{
     const style=getComputedStyle(element);
-    return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor};
+    return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor,border:style.borderTopWidth};
   });
   expect(metrics.radius).toBeGreaterThanOrEqual(20);
   expect(metrics.radius).toBeLessThanOrEqual(26);
-  expect(metrics.shadow).not.toBe('none');
+  expect(metrics.border).not.toBe('0px');
   await page.mouse.move(1,1);
   await expect(panel).toHaveScreenshot('design-system-v2-personalization-1440.png',exactScreenshot);
   await expectNoHorizontalOverflow(page);
