@@ -50,8 +50,8 @@ if(root){
         <div class="fm-next-match-place">${match.place}</div>
       </div>
       <div class="fm-next-match-body">
-        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${item.spotLabel}</span>${scope==='discover'?`<span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span>`:''}</div>
-        <div class="fm-next-match-footer">${scope==='discover'?`<div><small>${match.format} · ${match.duration}</small></div>`:`<div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div>`}<div class="fm-next-price">${money(match.price)}</div></div>
+        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${item.spotLabel}</span><span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span></div>
+        <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small></div><div class="fm-next-price">${money(match.price)}</div></div>
       </div>
     </button>`;
   }
