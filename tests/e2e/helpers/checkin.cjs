@@ -26,16 +26,18 @@ async function persistence(page,capture=async()=>{}){
   expect(saved.checkinComplete).toBe(true);
   expect(saved.checkedInAt).toBe(new Date(fixed).toISOString());
   expect(await page.evaluate(()=>window.__FOOTMATE_PLATFORM__.readEvents().filter(event=>event.name==='checkin.completed').length)).toBe(1);
-  await expect(panel(page).getByRole('button',{name:'체크인 완료',exact:true})).toBeDisabled();
+  await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   await expect(panel(page)).toContainText('완료 시간');
   await expect(page.locator('.fm-next-status-card:nth-child(2) b')).toHaveText('체크인 완료');
   await capture('checkin-my-completed',panel(page));
   await page.locator('.fm-next-nav [data-action="nav-home"]').click();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+  await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   await capture('checkin-home-completed',page.locator('[data-screen="home"]'));
   await page.locator('[data-action="open-joined-match"]').click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+  await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   await capture('checkin-detail-completed',page.locator('[data-screen="detail"]'));
   await page.reload({waitUntil:'domcontentloaded'});
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
@@ -69,6 +71,7 @@ async function gates(page,capture=async()=>{}){
   await capture('checkin-canceled',panel(page));
   await seed(page,{legacy:true});
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+  await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   expect((await record(page)).checkedInAt).toBe(new Date(fixed-60000).toISOString());
 }
 
@@ -87,6 +90,7 @@ async function recovery(page,capture=async()=>{}){
   await page.evaluate(()=>{Storage.prototype.setItem=window.restoreCheckinStorage;delete window.restoreCheckinStorage;});
   await panel(page).getByRole('button',{name:'다시 시도',exact:true}).click();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+  await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   expect(await page.evaluate(()=>window.__FOOTMATE_PLATFORM__.readEvents().filter(event=>event.name==='checkin.completed').length)).toBe(1);
   await page.evaluate(()=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session'));localStorage.setItem('footmate:v4:session',JSON.stringify({...session,joinedMatchId:'gwanggyo-2130',selectedMatchId:'gwanggyo-2130'}));});
   await page.reload({waitUntil:'domcontentloaded'});

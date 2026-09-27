@@ -82,9 +82,13 @@ async function profileSettings(page,capture=async()=>{}){
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await expect(panel.locator('.fm-personalization-head span')).toHaveText('수원 · 영통 · MF · 중급');
   await expect(panel.locator('[data-profile-current]')).toContainText('서울 · 강남 · GK · 중급');
+  await expect(panel.locator('[data-low-empty-preferences]')).toHaveText('선호 지역·시간대·경기 포맷을 아직 저장하지 않았어요.');
+  await expect(panel.locator('fieldset:visible')).toHaveCount(0);
   await capture('profile-current',panel);
   const memory=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:personalization')));
   await panel.getByRole('button',{name:'선호 조건 수정',exact:true}).click();
+  await expect(panel.locator('[data-low-empty-preferences]')).toHaveCount(0);
+  await expect(panel.locator('fieldset:visible')).toHaveCount(3);
   await panel.getByRole('button',{name:'21시 이후',exact:true}).click();
   await panel.getByRole('button',{name:'취소',exact:true}).click();
   expect((await memory()).favorites.timeWindows).not.toContain('21+');
