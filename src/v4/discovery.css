@@ -4,4 +4,4 @@
 
 [data-mode=real] [data-screen=discover] .fm-next-icon-button[data-action=edit-setup]::before{display:none}
 
-.fm-next-page[data-mode=real] [data-screen=discover] :is(.fm-next-match-card,.fm-next-list){display:none!important}
+.fm-next-page[data-mode=real] [data-screen=discover] :is(.fm-next-match-card,.fm-next-list)[hidden]{display:none!important}
