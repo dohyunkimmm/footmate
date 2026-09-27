@@ -68,7 +68,8 @@ jobs:
             ];
             for(const file of modules){
               const css=fs.readFileSync(file,'utf8');
-              const compact=csso.minify(css,{restructure:file==='src/v4/visual-polish.css'}).css+'\n';
+              const restructure=file==='src/v4/visual-polish.css'||file==='src/v4/app.css';
+              const compact=csso.minify(css,{restructure}).css+'\n';
               fs.writeFileSync(file,compact);
               console.log(`${file}: ${Buffer.byteLength(css)} -> ${Buffer.byteLength(compact)}`);
             }
