@@ -2,7 +2,7 @@
    Keeps established Welcome and Schedule geometry contracts while preserving the new hierarchy. */
 
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro{
-  padding-bottom:38px;
+  padding-bottom:36px;
   background:
     radial-gradient(circle at 86% 12%,rgba(216,255,115,.18),transparent 25%),
     radial-gradient(circle at 8% 78%,rgba(15,91,64,.07),transparent 28%),
