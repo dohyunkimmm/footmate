@@ -2,6 +2,7 @@
    Keeps established Welcome and Schedule geometry contracts while preserving the new hierarchy. */
 
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro{
+  padding-bottom:38px;
   background:
     radial-gradient(circle at 86% 12%,rgba(216,255,115,.18),transparent 25%),
     radial-gradient(circle at 8% 78%,rgba(15,91,64,.07),transparent 28%),
@@ -26,6 +27,9 @@
   color:#56655d!important;
   font-size:15px!important;
 }
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions{
+  gap:10px;
+}
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button:nth-child(2){
   border:1px solid var(--fm-v4-accent)!important;
   background:var(--fm-v4-accent)!important;
@@ -43,6 +47,9 @@
   background:var(--fm-v4-accent)!important;
   color:var(--fm-v4-brand)!important;
   box-shadow:0 14px 30px rgba(0,0,0,.18)!important;
+}
+.fm-next-page[data-mode="real"] .fm-release-auth-status{
+  color:#53655c;
 }
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming{
   padding:8px 18px 10px;
