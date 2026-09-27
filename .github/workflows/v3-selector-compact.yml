@@ -35,31 +35,29 @@ jobs:
             git show "$BASE:$file" > "$file"
           done
           npm install --no-save --ignore-scripts csso@5.0.5 css-tree@3.1.0 @playwright/test@1.55.1 @axe-core/playwright@4.10.2
-          python - <<'PY'
-          from pathlib import Path
-          path=Path('src/v4/app.js')
-          source=path.read_text()
-          needle="  const activeScreen=root.querySelector('[data-screen]');\n"
-          insert="\n".join([
-              "  const activeScreen=root.querySelector('[data-screen]');",
-              "  const visualV3=mode==='real'&&!embed;",
-              "  if(visualV3){",
-              "    root.querySelector('.fm-next-app')?.classList.add('fm-v3');",
-              "    const marker={home:'v3-home',discover:'v3-discover',detail:'v3-detail',profile:'v3-profile',checkout:'v3-checkout',schedule:'v3-schedule'}[state.route];",
-              "    if(activeScreen&&marker){",
-              "      activeScreen.classList.add('v3-screen',marker);",
-              "      if(state.route==='home'||state.route==='discover')activeScreen.classList.add('v3-browse');",
-              "    }",
-              "    root.querySelectorAll('[data-matchday-module-version]').forEach(node=>node.classList.add('v3-matchday'));",
-              "  }",
-          ])+"\n"
-          if needle not in source:
-              raise SystemExit('app render marker insertion point missing')
-          if 'const visualV3=' not in source:
-              source=source.replace(needle,insert,1)
-          path.write_text(source)
-          PY
-          node <<'NODE'
+          node <<'APPNODE'
+          const fs=require('fs');
+          const path='src/v4/app.js';
+          let source=fs.readFileSync(path,'utf8');
+          const needle="  const activeScreen=root.querySelector('[data-screen]');\n";
+          const insert=[
+            "  const activeScreen=root.querySelector('[data-screen]');",
+            "  const visualV3=mode==='real'&&!embed;",
+            "  if(visualV3){",
+            "    root.querySelector('.fm-next-app')?.classList.add('fm-v3');",
+            "    const marker={home:'v3-home',discover:'v3-discover',detail:'v3-detail',profile:'v3-profile',checkout:'v3-checkout',schedule:'v3-schedule'}[state.route];",
+            "    if(activeScreen&&marker){",
+            "      activeScreen.classList.add('v3-screen',marker);",
+            "      if(state.route==='home'||state.route==='discover')activeScreen.classList.add('v3-browse');",
+            "    }",
+            "    root.querySelectorAll('[data-matchday-module-version]').forEach(node=>node.classList.add('v3-matchday'));",
+            "  }",
+          ].join('\n')+'\n';
+          if(!source.includes(needle)) throw new Error('app render marker insertion point missing');
+          if(!source.includes('const visualV3=')) source=source.replace(needle,insert);
+          fs.writeFileSync(path,source);
+          APPNODE
+          node <<'CSSNODE'
           const fs=require('fs');
           const csso=require('csso');
           const csstree=require('css-tree');
@@ -103,7 +101,7 @@ jobs:
           csstree.parse(legacy+compact);
           fs.writeFileSync(path,legacy+compact);
           console.log(JSON.stringify({selectorReplacementCounts:counts,legacyBytes:Buffer.byteLength(legacy),v3Before:Buffer.byteLength(source.slice(index)),v3After:Buffer.byteLength(compact)}));
-          NODE
+          CSSNODE
           node scripts/check-v4.9-performance-budget.cjs
       - name: Verify visual baselines before commit
         shell: bash
