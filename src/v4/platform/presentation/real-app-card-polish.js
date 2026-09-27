@@ -4,19 +4,6 @@ function isRealApp(){
   return document.documentElement.dataset.footmateSurface==='real';
 }
 
-function moveDistanceIntoScheduleMeta(card){
-  const schedule=card.querySelector('.fm-next-match-date > span:first-child');
-  if(!schedule)return;
-  const distance=[...card.querySelectorAll('.fm-next-match-tags .fm-next-tag')]
-    .find(tag=>/^\d+\s*분$/.test((tag.textContent||'').trim()));
-  if(!distance)return;
-  const value=(distance.textContent||'').trim();
-  if(value&&!schedule.textContent.split('·').map(part=>part.trim()).includes(value)){
-    schedule.textContent=`${schedule.textContent.trim()} · ${value}`;
-  }
-  distance.remove();
-}
-
 function removeDuplicateAiCoreLabel(card){
   const label=card.querySelector('[data-ai-core-label]');
   if(!label||label.hidden)return;
@@ -29,7 +16,6 @@ function polishRealAppHome(){
   if(!root||!isRealApp())return;
   const home=root.querySelector('[data-screen="home"]');
   if(!home)return;
-  home.querySelectorAll('.fm-next-match-card').forEach(moveDistanceIntoScheduleMeta);
   home.querySelectorAll('[data-ai-assistant]').forEach(removeDuplicateAiCoreLabel);
 }
 
