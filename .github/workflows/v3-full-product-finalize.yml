@@ -42,17 +42,19 @@ jobs:
 
           const designPath='tests/e2e/v5.1-design-system-v2.spec.cjs';
           let design=fs.readFileSync(designPath,'utf8');
-          const oldMetrics="return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor};";
-          const newMetrics="return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor,border:style.borderTopWidth};";
-          if(!design.includes(newMetrics)){
-            if(!design.includes(oldMetrics)) throw new Error('Profile surface metrics target not found');
-            design=design.replace(oldMetrics,newMetrics);
-          }
-          const oldShadow="expect(metrics.shadow).not.toBe('none');";
-          const newSurface="expect(metrics.border).not.toBe('0px');";
-          if(!design.includes(newSurface)){
-            if(!design.includes(oldShadow)) throw new Error('Profile surface shadow contract target not found');
-            design=design.replace(oldShadow,newSurface);
+          const profileBefore=`    return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor};
+          });
+          expect(metrics.radius).toBeGreaterThanOrEqual(20);
+          expect(metrics.radius).toBeLessThanOrEqual(26);
+          expect(metrics.shadow).not.toBe('none');`;
+          const profileAfter=`    return {radius:parseFloat(style.borderRadius),shadow:style.boxShadow,background:style.backgroundColor,border:style.borderTopWidth};
+          });
+          expect(metrics.radius).toBeGreaterThanOrEqual(20);
+          expect(metrics.radius).toBeLessThanOrEqual(26);
+          expect(metrics.border).not.toBe('0px');`;
+          if(!design.includes(profileAfter)){
+            if(!design.includes(profileBefore)) throw new Error('Profile surface contract target not found');
+            design=design.replace(profileBefore,profileAfter);
           }
           fs.writeFileSync(designPath,design);
 
