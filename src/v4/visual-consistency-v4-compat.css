@@ -45,8 +45,8 @@
   box-shadow:0 14px 30px rgba(0,0,0,.18)!important;
 }
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming{
-  padding:14px 18px;
+  padding:8px 18px 10px;
 }
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming-actions{
-  margin-top:11px;
+  margin-top:6px;
 }
