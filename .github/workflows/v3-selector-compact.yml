@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Restore reviewed CSS and serialize Chromium-effective design rules
+      - name: Restore reviewed CSS and compact browser-effective rules
         shell: bash
         run: |
           set -euo pipefail
@@ -41,15 +41,15 @@ jobs:
           const csstree=require('css-tree');
           const {chromium}=require('@playwright/test');
           (async()=>{
-            const file='src/v4/design-system-v2.css';
-            const source=fs.readFileSync(file,'utf8');
+            const design='src/v4/design-system-v2.css';
+            const source=fs.readFileSync(design,'utf8');
             const browser=await chromium.launch({headless:true});
             const page=await browser.newPage();
             await page.setContent('<!doctype html><html><head></head><body></body></html>');
             await page.addStyleTag({content:source});
             const effective=await page.evaluate(()=>Array.from(document.styleSheets[0].cssRules,rule=>rule.cssText).join('\n'));
             await browser.close();
-            const compact=csso.minify(effective,{restructure:false}).css;
+            const compactDesign=csso.minify(effective,{restructure:true}).css;
             const markers=[
               '/* FootMate Design System v2 */',
               '/* White-first Real App surface ownership */',
@@ -57,10 +57,21 @@ jobs:
               '/* FootMate Real App Visual Finish · P0–P2 */',
               '/* FootMate Real App · Visual Hierarchy v3 */'
             ].join('\n');
-            const output=markers+'\n'+compact+'\n';
-            csstree.parse(output);
-            fs.writeFileSync(file,output);
-            console.log(JSON.stringify({sourceBytes:Buffer.byteLength(source),effectiveBytes:Buffer.byteLength(effective),outputBytes:Buffer.byteLength(output)}));
+            const designOutput=markers+'\n'+compactDesign+'\n';
+            csstree.parse(designOutput);
+            fs.writeFileSync(design,designOutput);
+            console.log(`design: ${Buffer.byteLength(source)} -> ${Buffer.byteLength(designOutput)}`);
+            const modules=[
+              'src/v4/app.css','src/v4/experience.css','src/v4/discovery.css','src/v4/decision.css',
+              'src/v4/participation.css','src/v4/matchday.css','src/v4/return.css','src/v4/personalization.css',
+              'src/v4/visual-polish.css','src/v5/ai-match-assistant.css'
+            ];
+            for(const file of modules){
+              const css=fs.readFileSync(file,'utf8');
+              const compact=csso.minify(css,{restructure:false}).css+'\n';
+              fs.writeFileSync(file,compact);
+              console.log(`${file}: ${Buffer.byteLength(css)} -> ${Buffer.byteLength(compact)}`);
+            }
           })().catch(error=>{console.error(error);process.exit(1)});
           NODE
           node scripts/check-v4.9-performance-budget.cjs
@@ -77,5 +88,5 @@ jobs:
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact browser-effective design CSS without visual changes'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'perf: compact browser-effective CSS without visual changes'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
