@@ -34,6 +34,16 @@ function visuallyHiddenDescription(screen,id,text){
   return node;
 }
 
+function markHomeDiscoverShortcut(){
+  const screen=root?.querySelector('[data-screen="home"]');
+  if(!screen)return;
+  const shortcut=[...screen.querySelectorAll('.fm-next-context-card [data-action="nav-discover"]')].find(node=>/추천 경기 보기/.test(node.textContent||''));
+  if(!shortcut)return;
+  const desc=visuallyHiddenDescription(screen,'fm-medium-home-discover-help','현재 추천의 전체 후보를 경기 찾기 화면에서 이어서 탐색합니다.');
+  shortcut.dataset.discoveryShortcut='true';
+  shortcut.setAttribute('aria-describedby',desc.id);
+}
+
 function markDiscoveryScopes(){
   const screen=root?.querySelector('[data-screen="discover"]');
   if(!screen)return;
@@ -65,6 +75,7 @@ function polishRealApp(){
   if(!root||!isRealApp())return;
   root.dataset.mediumUxVersion=MEDIUM_UX_VERSION;
   root.querySelectorAll('[data-screen="home"] [data-ai-assistant]').forEach(removeDuplicateAiCoreLabel);
+  markHomeDiscoverShortcut();
   markDiscoveryScopes();
   markCanonicalSettingsOwner();
 }
@@ -114,19 +125,6 @@ function clearFilterDraft(sheet){
   sheet.querySelectorAll('[data-discovery-field]').forEach(field=>{field.value='all';field.dataset.mediumDraft='true'});
 }
 
-function focusHomeRecommendations(button){
-  const screen=button.closest('[data-screen="home"]');
-  if(!screen)return;
-  const heading=screen.querySelector(':scope > .fm-next-section-head');
-  const firstCard=screen.querySelector(':scope > .fm-next-list .fm-next-match-card:not([hidden])');
-  const target=heading||firstCard;
-  if(!target)return;
-  target.setAttribute('tabindex','-1');
-  target.scrollIntoView({block:'start',behavior:'smooth'});
-  target.focus({preventScroll:true});
-  screen.dataset.mediumFocus='recommendations';
-}
-
 function focusCanonicalSettings(menu){
   const screen=menu.closest('[data-screen="profile"]');
   const canonical=screen?.querySelector('.fm-personalization-panel--profile [data-action="edit-setup"]');
@@ -149,14 +147,6 @@ if(root&&isRealApp()){
   document.addEventListener('click',event=>{
     const target=event.target.closest?.('button');
     if(!target)return;
-
-    const homeRecommendation=target.closest('[data-screen="home"] .fm-next-context-card')&&target.dataset.action==='nav-discover'&&/추천 경기 보기/.test(target.textContent||'');
-    if(homeRecommendation){
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      focusHomeRecommendations(target);
-      return;
-    }
 
     const sheet=target.closest('.fm-discovery-sheet');
     if(sheet&&target.dataset.discoveryAction==='clear-filters'){
