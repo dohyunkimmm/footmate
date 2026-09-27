@@ -1,0 +1,44 @@
+name: Temporary Real App Card Baseline Refresh
+on:
+  push:
+    branches: [polish/real-app-card-meta-ai-label]
+    paths:
+      - .github/workflows/tmp-refresh-real-app-card-baselines.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Refresh only the intentional Home card baselines
+        run: >-
+          npx playwright test --project=chromium
+          tests/e2e/product-completion.spec.cjs
+          tests/e2e/real-app-white-surface.spec.cjs
+          --grep "Home is the AI Match Assistant entry with one compact For You list|AI fallback exposes an explicit retry action on Home without duplicating results there|390px Home uses neutral match media while raising the core AI surface"
+          --update-snapshots
+      - name: Commit refreshed Ubuntu Chromium baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-ia-390-chromium-linux.png \
+            tests/e2e/product-completion.spec.cjs-snapshots/product-completion-ai-fallback-ia-390-chromium-linux.png \
+            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png
+          if ! git diff --cached --quiet; then
+            git commit -m "test: refresh intentional Home card baselines"
+            git push origin HEAD:polish/real-app-card-meta-ai-label
+          fi
