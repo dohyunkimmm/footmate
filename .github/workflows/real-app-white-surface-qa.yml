@@ -12,6 +12,8 @@ on:
       - src/v4/discovery.js
       - src/v4/discovery.css
       - src/v4/experience.js
+      - src/v4/matchday.js
+      - src/v4/platform/application/checkin.js
       - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js
@@ -43,6 +45,8 @@ on:
       - src/v4/discovery.js
       - src/v4/discovery.css
       - src/v4/experience.js
+      - src/v4/matchday.js
+      - src/v4/platform/application/checkin.js
       - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js

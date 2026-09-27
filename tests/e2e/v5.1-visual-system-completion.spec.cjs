@@ -214,6 +214,7 @@ test('390px participation failure matches the recovery hierarchy',async({page})=
 });
 
 test('1440px Matchday panel matches the completed operational surface',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-09-26T12:00:00Z'));
   const errs=await seedJoinedSchedule(page);
   const panel=page.getByRole('region',{name:'경기 당일 운영'});
   await expect(panel).toBeVisible();
