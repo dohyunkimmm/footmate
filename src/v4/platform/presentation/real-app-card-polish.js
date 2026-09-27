@@ -1,5 +1,6 @@
 const root=document.getElementById('footmate-next');
 const MEDIUM_UX_VERSION='1.0.0';
+const LOW_UX_VERSION='1.0.0';
 const PERSONALIZATION_KEY='footmate:v4:personalization';
 let committingFilterDraft=false;
 
@@ -71,13 +72,52 @@ function markCanonicalSettingsOwner(){
   if(menu&&canonical)menu.dataset.settingsJump='canonical';
 }
 
+function compactEmptySavedPreferences(){
+  const panel=root?.querySelector('[data-screen="profile"] .fm-personalization-panel--profile');
+  if(!panel)return;
+  const fieldsets=[...panel.querySelectorAll(':scope > fieldset')];
+  const existing=panel.querySelector('[data-low-empty-preferences]');
+  const saved=panel.querySelector('.fm-personalization-head b')?.textContent?.trim()==='저장한 추천 프로필';
+  const editing=panel.dataset.editing==='true';
+  const emptyCopy='아직 선택한 항목이 없어요.';
+  const allEmpty=fieldsets.length===3&&fieldsets.every(fieldset=>fieldset.querySelector('.fm-personalization-options')?.textContent?.trim()===emptyCopy);
+  if(!saved||editing||!allEmpty){
+    existing?.remove();
+    fieldsets.forEach(fieldset=>{
+      if(fieldset.dataset.lowEmptyPreference==='true'){
+        fieldset.hidden=false;
+        delete fieldset.dataset.lowEmptyPreference;
+      }
+    });
+    return;
+  }
+  fieldsets.forEach(fieldset=>{
+    fieldset.hidden=true;
+    fieldset.dataset.lowEmptyPreference='true';
+  });
+  if(existing)return;
+  const summary=document.createElement('p');
+  summary.dataset.lowEmptyPreferences='';
+  summary.textContent='선호 지역·시간대·경기 포맷을 아직 저장하지 않았어요.';
+  summary.style.cssText='margin:18px 0 0;padding:18px 0 0;border-top:1px solid rgba(20,55,40,.08);color:#607168;font-size:12px;line-height:1.55';
+  const actions=panel.querySelector('.fm-personalization-actions');
+  if(actions)panel.insertBefore(summary,actions);
+}
+
+function removeCompletedCheckinControl(){
+  root?.querySelectorAll('[data-product-checkin][data-checkin-state="completed"] [data-matchday-action="checkin"][disabled]').forEach(button=>button.remove());
+}
+
 function polishRealApp(){
   if(!root||!isRealApp())return;
   root.dataset.mediumUxVersion=MEDIUM_UX_VERSION;
+  root.dataset.lowUxVersion=LOW_UX_VERSION;
   root.querySelectorAll('[data-screen="home"] [data-ai-assistant]').forEach(removeDuplicateAiCoreLabel);
   markHomeDiscoverShortcut();
   markDiscoveryScopes();
   markCanonicalSettingsOwner();
+  compactEmptySavedPreferences();
+  removeCompletedCheckinControl();
 }
 
 function personalizationHasData(){
