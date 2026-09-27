@@ -79,6 +79,7 @@ jobs:
           );
 
           text=text.replace(/\n\/\* Preserve Welcome brand geometry outside the v3 surface scope\. \*\/\n\.fm-next-page\[data-mode="real"\] \.fm-next-app:not\(\[data-embed="true"\]\) \[data-screen="welcome"\] \.fm-next-brand\{position:relative;top:1px\}\s*$/,'\n');
+          text=text.replace(/\s+$/,'')+'\n';
 
           fs.writeFileSync(path,text);
           NODE
