@@ -29,7 +29,12 @@ module.exports = defineConfig({
     {
       name: 'chromium',
       testIgnore: /v5\.2-webkit-mobile\.spec\.cjs/,
-      use: { ...devices['Desktop Chrome'] }
+      use: {
+        ...devices['Desktop Chrome'],
+        // Keep Skia's raster path independent of the CI runner CPU.
+        // https://chromium.googlesource.com/chromium/src/+/lkgr/content/public/common/content_switches.cc
+        launchOptions: { args: ['--disable-skia-runtime-opts'] }
+      }
     },
     {
       name: 'webkit-mobile',

@@ -134,6 +134,9 @@ jobs:
     needs: impact
     if: needs.impact.outputs.runtime == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -143,8 +146,8 @@ jobs:
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
           AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium webkit
+      - name: Verify pinned browser image
+        run: node -e "if (require('./package.json').qaToolchain.playwright !== '1.55.1') throw new Error('Update the Playwright container with qaToolchain.playwright')"
       - name: Verify installed QA toolchain
         run: node scripts/check-qa-toolchain.cjs
       - name: Run v5.3 browser, beta, AI, recovery, accessibility and visual baseline gates

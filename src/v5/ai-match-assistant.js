@@ -45,6 +45,8 @@ async function requestAi(message,preferences){
   }catch(error){if(error?.name==='AbortError')throw new Error('ai_timeout');throw error}
   finally{clearTimeout(timer)}
 }
+// Compact assistant previews use three results; Discover intersects all eligible candidates with its manual filters.
+// The existing recommendation engine remains the owner of ranking in both presentations.
 function deterministicResults(result,state,limit=3){
   const effective={...state,region:result.region||state.region,position:result.position||state.position,level:result.level||state.level};
   const ranked=typeof window.__FOOTMATE_RECOMMENDATION__?.rank==='function'?window.__FOOTMATE_RECOMMENDATION__.rank(effective):MATCHES.map((match,index)=>({id:match.id,score:100-index,fit:match.fit,reasons:match.reasons.map(reason=>reason.title)}));
