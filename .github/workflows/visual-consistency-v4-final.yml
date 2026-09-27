@@ -65,15 +65,16 @@ jobs:
           tests/e2e/v5.1-core.spec.cjs
       - name: Commit verified visual baselines
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add 'tests/e2e/*-snapshots'
-          if git diff --cached --quiet; then
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" config user.name "github-actions[bot]"
+          git -C "$GITHUB_WORKSPACE" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$GITHUB_WORKSPACE" add 'tests/e2e/*-snapshots'
+          if git -C "$GITHUB_WORKSPACE" diff --cached --quiet; then
             echo 'No baseline changes to commit.'
             exit 0
           fi
-          git commit -m "test: verify final visual consistency baselines"
-          git push origin HEAD:design/visual-consistency-v4-20260928
+          git -C "$GITHUB_WORKSPACE" commit -m "test: verify final visual consistency baselines"
+          git -C "$GITHUB_WORKSPACE" push origin HEAD:design/visual-consistency-v4-20260928
       - name: Upload final visual evidence
         if: always()
         uses: actions/upload-artifact@v6
