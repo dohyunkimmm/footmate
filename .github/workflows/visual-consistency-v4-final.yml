@@ -63,14 +63,18 @@ jobs:
           tests/e2e/welcome-source-layout.spec.cjs
           tests/e2e/v4-participation.spec.cjs
           tests/e2e/v5.1-core.spec.cjs
-      - name: Commit verified visual baselines
+      - name: Commit verified visual baselines and remove temporary finalizers
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git -C "$GITHUB_WORKSPACE" config user.name "github-actions[bot]"
           git -C "$GITHUB_WORKSPACE" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git -C "$GITHUB_WORKSPACE" add 'tests/e2e/*-snapshots'
+          git -C "$GITHUB_WORKSPACE" add -- tests/e2e
+          git -C "$GITHUB_WORKSPACE" rm -f --ignore-unmatch \
+            .github/workflows/visual-consistency-v4-final.yml \
+            .github/workflows/visual-consistency-v4-contract-fix.yml \
+            .github/workflows/visual-consistency-v4-qa.yml
           if git -C "$GITHUB_WORKSPACE" diff --cached --quiet; then
-            echo 'No baseline changes to commit.'
+            echo 'No baseline or cleanup changes to commit.'
             exit 0
           fi
           git -C "$GITHUB_WORKSPACE" commit -m "test: verify final visual consistency baselines"
