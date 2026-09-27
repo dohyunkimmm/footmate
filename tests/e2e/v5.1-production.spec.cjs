@@ -83,5 +83,5 @@ async function verifyMatchCards(page,name){
 }
 
 const {aiFilters,profileSettings}=require('./helpers/priority-ux.cjs');
-test('high priority AI and filter behavior',async({page})=>{await aiFilters(page);});
+test('high priority AI and filter behavior',async({page})=>{await aiFilters(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'}));});
 test('high priority MY settings and navigation',async({page})=>{await profileSettings(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'}));});

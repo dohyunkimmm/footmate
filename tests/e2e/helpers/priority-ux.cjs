@@ -25,15 +25,15 @@ async function aiFilters(page,capture=async()=>{}){
   await search('모든 경기');
   await expect(cards).toHaveCount(8);
   await page.locator('[data-discovery-action="open-filters"]').click();
-  await page.getByLabel('가격',{exact:true}).selectOption('11000');
-  await page.getByLabel('포지션',{exact:true}).selectOption('GK');
+  await page.getByLabel('가격').selectOption('11000');
+  await page.getByLabel('포지션').selectOption('GK');
   await page.getByRole('button',{name:'결과 보기',exact:true}).click();
   await expect(cards).toHaveCount(2);
   expect((await cards.evaluateAll(nodes=>nodes.map(n=>n.dataset.matchId))).sort()).toEqual(['giheung-2000','maetan-2030']);
   for(const card of await cards.all())await expect(card.locator('.fm-next-match-tags > .fm-next-tag').nth(2)).toHaveText('GK 1자리');
   await capture('ai-filter',page.locator('[data-screen="discover"]'));
   await page.locator('[data-discovery-action="open-filters"]').click();
-  await page.getByRole('button',{name:'필터 전체 해제',exact:true}).click();
+  await page.getByRole('dialog',{name:'경기 조건 좁히기'}).getByRole('button',{name:'필터 전체 해제',exact:true}).click();
   await page.getByRole('button',{name:'결과 보기',exact:true}).click();
   await expect(cards).toHaveCount(8);
   expect(await page.evaluate(()=>window.__FOOTMATE_REAL_APP_IA__.aiScope)).toBe(true);
@@ -43,7 +43,7 @@ async function aiFilters(page,capture=async()=>{}){
   for(const card of await cards.all())await expect(card.locator('.fm-next-match-tags > .fm-next-tag').nth(2)).toHaveText('GK 1자리');
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')).position)).toBe('MF');
   await page.locator('[data-discovery-action="open-filters"]').click();
-  await page.getByLabel('가격',{exact:true}).selectOption('11000');
+  await page.getByLabel('가격').selectOption('11000');
   await page.getByRole('button',{name:'결과 보기',exact:true}).click();
   await expect(cards).toHaveCount(2);
   await page.getByRole('button',{name:'AI 조건 해제',exact:true}).click();
@@ -51,6 +51,21 @@ async function aiFilters(page,capture=async()=>{}){
   expect(new URL(page.url()).searchParams.get('d_price')).toBe('11000');
   await page.getByRole('button',{name:'AI 조건 다시 적용',exact:true}).click();
   await expect(cards).toHaveCount(2);
+  await page.locator('[data-discovery-action="open-filters"]').click();
+  await page.getByLabel('포지션').selectOption('MF');
+  await page.getByRole('button',{name:'결과 보기',exact:true}).click();
+  await expect(cards).toHaveCount(1);
+  await expect(cards.first().locator('.fm-next-match-tags > .fm-next-tag').nth(2)).toHaveText('MF 1자리 · GK 1자리');
+  await page.locator('[data-discovery-action="open-filters"]').click();
+  await page.getByLabel('거리').selectOption('15');
+  await page.getByRole('button',{name:'결과 보기',exact:true}).click();
+  await expect(cards).toHaveCount(0);
+  await expect(page.locator('[data-ia-ai-empty]')).toBeVisible();
+  await page.locator('[data-discovery-action="open-filters"]').click();
+  await page.getByRole('dialog',{name:'경기 조건 좁히기'}).getByRole('button',{name:'필터 전체 해제',exact:true}).click();
+  await page.getByRole('button',{name:'결과 보기',exact:true}).click();
+  await expect(cards).toHaveCount(5);
+  expect(await page.evaluate(()=>window.__FOOTMATE_REAL_APP_IA__.aiScope)).toBe(true);
 }
 
 async function profileSettings(page,capture=async()=>{}){
@@ -93,7 +108,7 @@ async function profileSettings(page,capture=async()=>{}){
   await page.locator('[data-action="back-welcome"]').click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')).region)).toBe('서울 · 강남');
-  await page.locator('[data-screen="profile"] [data-action="nav-discover"]').click();
+  await page.locator('[data-screen="profile"] .fm-next-nav [data-action="nav-discover"]').click();
   await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
   await page.locator('[data-action="back-welcome"]').click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();

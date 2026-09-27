@@ -9,6 +9,8 @@ on:
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
       - src/v4/discovery.js
+      - src/v4/discovery.css
+      - src/v4/experience.js
       - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js
@@ -23,6 +25,9 @@ on:
       - tests/e2e/welcome-source-layout.spec.cjs
       - tests/e2e/real-app-visual-finish.spec.cjs
       - tests/e2e/product-completion.spec.cjs
+      - tests/e2e/priority-ux.spec.cjs
+      - tests/e2e/helpers/priority-ux.cjs
+      - tests/e2e/priority-ux.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs-snapshots/**
       - .github/workflows/real-app-white-surface-qa.yml
   push:
@@ -34,6 +39,8 @@ on:
       - src/v5/ai-match-assistant.js
       - src/v4/app.js
       - src/v4/discovery.js
+      - src/v4/discovery.css
+      - src/v4/experience.js
       - src/v4/personalization.js
       - src/v4/decision.js
       - src/v4/recommendation.js
@@ -48,6 +55,9 @@ on:
       - tests/e2e/welcome-source-layout.spec.cjs
       - tests/e2e/real-app-visual-finish.spec.cjs
       - tests/e2e/product-completion.spec.cjs
+      - tests/e2e/priority-ux.spec.cjs
+      - tests/e2e/helpers/priority-ux.cjs
+      - tests/e2e/priority-ux.spec.cjs-snapshots/**
       - tests/e2e/product-completion.spec.cjs-snapshots/**
       - .github/workflows/real-app-white-surface-qa.yml
 permissions:
