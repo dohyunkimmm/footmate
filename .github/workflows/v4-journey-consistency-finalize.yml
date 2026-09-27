@@ -1,0 +1,387 @@
+name: V4 Journey Consistency Finalize
+on:
+  push:
+    branches: [design/visual-consistency-v4-20260928]
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: design/visual-consistency-v4-20260928
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
+      - name: Apply journey consistency layer
+        shell: bash
+        run: |
+          if ! grep -q "FootMate Real App · Journey Consistency v4" src/v4/design-system-v2.css; then
+            cat <<'CSS' >> src/v4/design-system-v2.css
+
+/* FootMate Real App · Journey Consistency v4
+   Extends the approved v3 visual language across entry, setup, join, confirmation,
+   schedule secondary states and edge-state recovery without changing IA, copy or state ownership. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){
+  --fm-v4-journey-brand:#073d2b;
+  --fm-v4-journey-brand-2:#0f5b40;
+  --fm-v4-journey-accent:#d8ff73;
+  --fm-v4-journey-accent-soft:#f1f9d9;
+  --fm-v4-journey-line:rgba(17,58,40,.10);
+  --fm-v4-journey-line-strong:rgba(17,58,40,.17);
+  --fm-v4-journey-shadow:0 14px 34px rgba(8,43,29,.09);
+}
+
+/* 1. Welcome + Setup: one branded entry language before Home. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro{
+  background:
+    radial-gradient(circle at 84% 13%,rgba(216,255,115,.28),transparent 24%),
+    radial-gradient(circle at 18% 78%,rgba(15,91,64,.24),transparent 30%),
+    linear-gradient(150deg,#052f21 0%,#073d2b 52%,#0f5b40 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro:before{
+  opacity:.20;
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom,#000,transparent 68%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro:after{
+  border-color:rgba(216,255,115,.20);
+  box-shadow:0 0 0 46px rgba(216,255,115,.03),0 0 0 92px rgba(255,255,255,.018);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-topbar--dark{
+  background:linear-gradient(180deg,rgba(4,37,26,.88),rgba(4,37,26,0));
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-brand small{color:rgba(255,255,255,.68)}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro-copy h1{
+  color:#fff;
+  text-shadow:0 10px 28px rgba(0,0,0,.10);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] [data-welcome-ai-copy]{
+  color:rgba(255,255,255,.68)!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button--primary:first-child{
+  border-color:var(--fm-v4-journey-accent);
+  background:var(--fm-v4-journey-accent);
+  color:var(--fm-v4-journey-brand);
+  box-shadow:0 12px 30px rgba(0,0,0,.16);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button--primary:nth-child(2){
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.11);
+  color:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"]{
+  background:linear-gradient(180deg,#fff 0%,#f8faf7 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-step-indicator{
+  gap:7px;
+  margin-bottom:26px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-step-indicator span{
+  height:6px;
+  background:#e7ece8;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-step-indicator span.is-done{background:#9db8aa}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-step-indicator span.is-active{
+  background:linear-gradient(90deg,var(--fm-v4-journey-brand),var(--fm-v4-journey-brand-2));
+  box-shadow:0 4px 12px rgba(7,61,43,.15);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-question{
+  color:var(--fm-v3-ink);
+  letter-spacing:-.05em;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice{
+  border:1px solid var(--fm-v4-journey-line);
+  background:#fff;
+  box-shadow:0 7px 22px rgba(8,43,29,.045);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice:hover{
+  border-color:var(--fm-v4-journey-line-strong);
+  box-shadow:var(--fm-v4-journey-shadow);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice[aria-pressed="true"]{
+  border-color:rgba(216,255,115,.24);
+  background:
+    radial-gradient(circle at 92% 14%,rgba(216,255,115,.20),transparent 25%),
+    linear-gradient(145deg,#073d2b,#0f5b40);
+  color:#fff;
+  box-shadow:0 12px 28px rgba(7,61,43,.14);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice[aria-pressed="true"] b{color:#fff}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice[aria-pressed="true"] span{color:rgba(255,255,255,.72)}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-setup-footer{
+  background:linear-gradient(180deg,rgba(248,250,247,0),rgba(248,250,247,.96) 24%,#f8faf7 58%);
+}
+
+/* 2. Auth + Checkout + Success: one decision-to-confirmation journey. */
+.fm-next-page[data-mode="real"] .fm-next-auth-v3[data-screen="auth"],
+.fm-next-page[data-mode="real"] .fm-next-auth-wrap[data-screen="auth"]{
+  background:
+    radial-gradient(circle at 10% 8%,rgba(216,255,115,.17),transparent 25%),
+    linear-gradient(180deg,#f7faf7 0%,#eef3ef 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-card{
+  border-color:rgba(7,61,43,.10);
+  background:rgba(255,255,255,.96);
+  box-shadow:0 22px 56px rgba(8,43,29,.11);
+}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-brand .fm-next-brand-mark{
+  background:var(--fm-v4-journey-accent);
+  color:var(--fm-v4-journey-brand);
+  box-shadow:0 8px 20px rgba(7,61,43,.12);
+}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-title h1{color:var(--fm-v3-ink)}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-field input:focus{
+  border-color:var(--fm-v4-journey-brand-2);
+  box-shadow:0 0 0 4px rgba(15,91,64,.10);
+}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-primary{
+  background:linear-gradient(180deg,var(--fm-v4-journey-brand-2),var(--fm-v4-journey-brand));
+  box-shadow:0 12px 28px rgba(7,61,43,.18);
+}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-context{
+  border:1px solid rgba(7,61,43,.08);
+  background:var(--fm-v4-journey-accent-soft);
+  color:#355747;
+}
+.fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-release-auth-status{
+  border:1px solid var(--fm-v4-journey-line);
+  border-radius:14px;
+  background:#f7f9f7;
+  color:#56675e;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"]{
+  background:linear-gradient(180deg,#fff 0%,#fafbf9 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"] .fm-next-checkout-summary{
+  border:1px solid rgba(216,255,115,.13);
+  background:
+    radial-gradient(circle at 90% 8%,rgba(216,255,115,.24),transparent 26%),
+    linear-gradient(145deg,#062f22 0%,#0a4934 64%,#116045 100%);
+  box-shadow:0 16px 38px rgba(7,61,43,.16);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"]>.fm-next-detail-section{
+  border:1px solid var(--fm-v4-journey-line);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"] .fm-next-payment-method,
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"] .fm-participation-methods button[aria-checked="true"]{
+  border-color:rgba(7,61,43,.18);
+  background:linear-gradient(145deg,var(--fm-v4-journey-accent-soft),#fff);
+  box-shadow:inset 3px 0 0 var(--fm-v4-journey-brand-2);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"] .fm-next-pay-row--total{
+  margin-top:6px;
+  padding-top:14px;
+  border-top:1px solid var(--fm-v4-journey-line-strong);
+  color:var(--fm-v4-journey-brand);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"] .fm-next-inline-note{
+  border:1px solid rgba(7,61,43,.10);
+  background:#f3f7f4;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="success"]{
+  background:
+    radial-gradient(circle at 50% 7%,rgba(216,255,115,.25),transparent 26%),
+    linear-gradient(180deg,#fbfcf8 0%,#eef4ee 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="success"] .fm-next-success-icon{
+  background:var(--fm-v4-journey-accent);
+  color:var(--fm-v4-journey-brand);
+  box-shadow:0 18px 38px rgba(7,61,43,.16);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="success"] .fm-next-ticket{
+  border:1px solid rgba(7,61,43,.10);
+  background:#fff;
+  box-shadow:var(--fm-v4-journey-shadow);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="success"] .fm-next-ticket-time span:last-child{
+  border-radius:999px;
+  background:var(--fm-v4-journey-accent-soft);
+  color:var(--fm-v4-journey-brand);
+}
+
+/* 3. Schedule secondary / empty states: next action first, lifecycle stays quiet. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-my-matches>.fm-next-section-head{
+  margin-bottom:14px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-empty{
+  position:relative;
+  overflow:hidden;
+  min-height:300px;
+  border:1px solid var(--fm-v4-journey-line);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(216,255,115,.18),transparent 34%),
+    linear-gradient(180deg,#fff,#f8faf8);
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-empty:before{
+  content:"";
+  display:block;
+  width:54px;
+  height:54px;
+  margin:0 auto 18px;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 50% 50%,var(--fm-v4-journey-accent) 0 28%,transparent 30%),
+    var(--fm-v4-journey-brand-soft,#eaf4ee);
+  box-shadow:inset 0 0 0 1px rgba(7,61,43,.08);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-empty .fm-next-button{
+  min-width:150px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-status-card:not(.is-current){
+  border-color:rgba(17,58,40,.07);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-status-card.is-current{
+  border-color:rgba(7,61,43,.16);
+  background:linear-gradient(145deg,#f7faef,#fff);
+}
+
+/* 4. Edge-state consistency: shared semantic surfaces, preserved state meaning. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(.fm-discovery-empty,.fm-ai-empty,.fm-ai-loading,.fm-participation-state){
+  border-radius:18px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-loading{
+  border-color:rgba(7,61,43,.12);
+  background:linear-gradient(145deg,#f7faf7,#fff);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-empty{
+  border-color:var(--fm-v4-journey-line);
+  background:#fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-discovery-empty{
+  border-color:var(--fm-v4-journey-line);
+  background:
+    radial-gradient(circle at 50% 0%,rgba(216,255,115,.13),transparent 32%),
+    #fff;
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-participation-state[data-participation-panel="pending"]{
+  border-color:rgba(7,61,43,.16);
+  background:#f4f8f5;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-participation-state.is-failure{
+  box-shadow:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-participation-state[data-participation-panel="canceled"]{
+  background:#f8f9f8;
+}
+
+@media(hover:hover){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button--primary:first-child:hover{
+    background:#e3ff92;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button--primary:nth-child(2):hover{
+    background:rgba(255,255,255,.17);
+  }
+}
+
+@media(max-width:430px){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice{min-height:74px;padding:15px 16px}
+  .fm-next-page[data-mode="real"] .fm-next-auth-v3 .fm-auth-card{border-radius:24px}
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="checkout"] .fm-next-checkout-summary{border-radius:22px}
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="success"] .fm-next-ticket{border-radius:22px}
+}
+CSS
+          fi
+      - name: Check CSS syntax and regression contracts
+        run: |
+          node scripts/check-v4.9-performance-budget.cjs
+          node - <<'NODE'
+          const fs=require('fs');
+          const csstree=require('css-tree');
+          const css=fs.readFileSync('src/v4/design-system-v2.css','utf8');
+          if(!css.includes('FootMate Real App · Journey Consistency v4'))throw new Error('journey consistency marker missing');
+          csstree.parse(css);
+          console.log('PASS journey consistency CSS syntax');
+          NODE
+          node tests/contracts/v4.9-release-candidate.contract.mjs
+          node tests/contracts/v5.1-connected-platform.contract.mjs
+          node tests/contracts/v5.2-product-completion.contract.mjs
+      - name: Refresh changed Product visual baselines
+        run: |
+          npx playwright test --project=chromium --update-snapshots \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/real-app-white-surface.spec.cjs \
+            tests/e2e/priority-ux.spec.cjs \
+            tests/e2e/my-fresh-profile-containment.spec.cjs \
+            tests/e2e/welcome-position.spec.cjs \
+            tests/e2e/welcome-source-layout.spec.cjs \
+            tests/e2e/product-completion.spec.cjs \
+            tests/e2e/real-app-visual-finish.spec.cjs \
+            tests/e2e/v4-participation.spec.cjs \
+            tests/e2e/v4-matchday.spec.cjs
+      - name: Compare changed Product visual baselines without updates
+        run: |
+          npx playwright test --project=chromium \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/real-app-white-surface.spec.cjs \
+            tests/e2e/priority-ux.spec.cjs \
+            tests/e2e/my-fresh-profile-containment.spec.cjs \
+            tests/e2e/welcome-position.spec.cjs \
+            tests/e2e/welcome-source-layout.spec.cjs \
+            tests/e2e/product-completion.spec.cjs \
+            tests/e2e/real-app-visual-finish.spec.cjs \
+            tests/e2e/v4-participation.spec.cjs \
+            tests/e2e/v4-matchday.spec.cjs
+      - name: Run full Product Chromium gate
+        run: |
+          npx playwright test --project=chromium \
+            tests/e2e/v5.1-core.spec.cjs \
+            tests/e2e/v5.1-product-integrity.spec.cjs \
+            tests/e2e/v5.1-decision-flow-polish.spec.cjs \
+            tests/e2e/v5.1-visual-baseline.spec.cjs \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            tests/e2e/v5.1-design-system-v2.spec.cjs \
+            tests/e2e/v5.1-release-flow-review.spec.cjs \
+            tests/e2e/v5.1-beta.spec.cjs \
+            tests/e2e/v5.1-beta-operator.spec.cjs \
+            tests/e2e/v5.2-real-beta-readiness.spec.cjs \
+            tests/e2e/v5.2-beta-email-reliability.spec.cjs \
+            tests/e2e/v5.3-beta-free-growth.spec.cjs \
+            tests/e2e/v5.3-beta-auth-mfa.spec.cjs \
+            tests/e2e/v5.3-beta-push-media.spec.cjs \
+            tests/e2e/v5.1-ai-assistant.spec.cjs \
+            tests/e2e/v4-discovery.spec.cjs \
+            tests/e2e/priority-ux.spec.cjs \
+            tests/e2e/checkin-state.spec.cjs \
+            tests/e2e/v4-decision.spec.cjs \
+            tests/e2e/v4-participation.spec.cjs \
+            tests/e2e/v4-matchday.spec.cjs \
+            tests/e2e/v4-return.spec.cjs \
+            tests/e2e/v4-personalization.spec.cjs \
+            tests/e2e/v4-platform.spec.cjs
+      - name: Run Mobile Safari product gate
+        run: npx playwright test --project=webkit-mobile tests/e2e/v5.2-webkit-mobile.spec.cjs
+      - name: Commit verified runtime and visual baselines
+        shell: bash
+        run: |
+          rm -f .github/workflows/v4-journey-consistency-finalize.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/v4/design-system-v2.css tests/e2e .github/workflows/v4-journey-consistency-finalize.yml
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "No verified changes to commit"
+            exit 1
+          fi
+          git commit -m "polish: complete real app journey visual consistency"
+          git push origin HEAD:design/visual-consistency-v4-20260928
