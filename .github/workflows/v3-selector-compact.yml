@@ -30,7 +30,7 @@ jobs:
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          APPROVED=2c4eac627d0f5a1cf075f1ac1f38823c745961e8
+          APPROVED=35e9ec32f8c99033044b5ea7cb70c60c980827ef
           for file in src/v4/app.css src/v4/design-system-v2.css src/v4/visual-polish.css src/v5/ai-match-assistant.css; do
             git show "$APPROVED:$file" > "$file"
           done
