@@ -235,7 +235,7 @@ test('checked-in continues to postgame feedback and loops back to match discover
 
 test('checked-in continuation action matches the approved 390px visual baseline',async({page})=>{
   await seedSession(page,{route:'schedule',signedIn:true,joinedMatchId:'gwanggyo-2130',checkedInMatchId:'gwanggyo-2130',matchStage:'matchday'},{
-    viewport:{width:390,height:844},
+    viewport:{width:390,height:1100},
     matchday:{version:'4.5.0',matchId:'gwanggyo-2130',status:'checked-in',arrival:'arrived',noticeSeen:false,updatedAt:new Date().toISOString()}
   });
   const checked=page.locator('[data-matchday-state="checked-in"]');

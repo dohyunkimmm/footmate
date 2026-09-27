@@ -20,7 +20,7 @@ export function readCheckin(now=Date.now()){
     const completed=record.status==='checked-in'||session.checkedInMatchId===match.id||legacy.checkedInMatchId===match.id;
     const oldTime=legacy.checkedInMatchId===match.id?legacy.checkedInAt:session.checkedInAt;
     const checkedInAt=completed&&Number.isFinite(oldTime)&&Math.abs(oldTime)<=8640000000000000?new Date(oldTime).toISOString():null;
-    record={...record,matchId:match.id,checkinSchema:1,startsAt:validTime(record.startsAt)?record.startsAt:match.startsAt,checkedInAt,checkinComplete:completed};
+    record={...record,matchId:match.id,status:record.status==='canceled'?'canceled':completed?'checked-in':record.status||'upcoming',checkinSchema:1,startsAt:validTime(record.startsAt)?record.startsAt:match.startsAt,checkedInAt,checkinComplete:completed};
     repository.write(record);
   }
   const startsAt=validTime(record.startsAt)?Date.parse(record.startsAt):Date.parse(match.startsAt);
@@ -62,7 +62,7 @@ export function checkinCopy(value=readCheckin()){
   const format=time=>new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(time));
   const copies={
     unjoined:['참가 신청 전','참가를 확정한 뒤 체크인할 수 있어요.'],
-    waiting:['참가 확정',`${value.opensAt?format(value.opensAt):''}부터 체크인할 수 있어요.`],
+    waiting:['체크인 시작 전',`${value.opensAt?format(value.opensAt):''}부터 체크인할 수 있어요.`],
     available:['체크인 가능','경기장에 도착했다면 체크인해주세요.'],
     processing:['체크인 중','완료 상태를 저장하고 있어요.'],
     failed:['체크인 저장 실패','저장하지 못했어요. 다시 시도해주세요.'],

@@ -27,6 +27,7 @@ async function persistence(page,capture=async()=>{}){
   expect(saved.checkedInAt).toBe(new Date(fixed).toISOString());
   await expect(panel(page).getByRole('button',{name:'체크인 완료',exact:true})).toBeDisabled();
   await expect(panel(page)).toContainText('완료 시간');
+  await expect(page.locator('.fm-next-status-card:nth-child(2) b')).toHaveText('체크인 완료');
   await capture('checkin-my-completed',panel(page));
   await page.locator('.fm-next-nav [data-action="nav-home"]').click();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');

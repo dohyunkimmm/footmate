@@ -11,7 +11,7 @@ function session(){return footmatePlatform.session.read()||{}}
 function currentMatchId(){return session().joinedMatchId||null}
 function initial(){const stored=matchdayRepository.read({})||{},matchId=currentMatchId();if(stored.matchId===matchId&&allowed.has(stored.status))return stored;return {version:MATCHDAY_VERSION,matchId,status:'upcoming',arrival:'unknown',noticeSeen:false,updatedAt:new Date().toISOString()}}
 let state=initial();
-function persist(patch={}){const saved=matchdayRepository.read({})||{};state={...state,...(product&&saved.matchId===currentMatchId()?saved:{}),...patch,version:MATCHDAY_VERSION,matchId:currentMatchId(),updatedAt:new Date().toISOString()};matchdayRepository.write(state);enhance();return state}
+function persist(patch={}){const saved=matchdayRepository.read({})||{};state={...state,...(product&&saved.matchId===currentMatchId()?saved:{}),...patch,version:MATCHDAY_VERSION,matchId:currentMatchId(),updatedAt:new Date().toISOString()};if(product&&state.checkinComplete&&state.status!=='canceled')state={...state,status:'checked-in'};matchdayRepository.write(state);enhance();return state}
 function syncSession(patch={}){const next={...session(),...patch};footmatePlatform.session.write(next);return next}
 function navigate(route){syncSession({route});location.reload()}
 function statusCopy(status){return {upcoming:['경기 준비','경기 시작 20분 전부터 체크인할 수 있어요.'],matchday:['도착 준비','경기장 도착 상태를 확인하고 체크인을 완료해주세요.'],'checked-in':['체크인 완료','도착 확인이 끝났습니다. 팀 공지와 경기장 안내를 확인하세요.'],late:['늦을 것 같아요','도착 지연 상태를 저장했습니다. 운영자에게 전달되는 UX 계약을 시뮬레이션합니다.'],updated:['운영 변경 확인','변경 공지를 확인했습니다. 최신 안내를 기준으로 이동해주세요.'],canceled:['경기 취소','운영 취소 상태입니다. 참가비 반환과 대체 경기 탐색 흐름을 확인할 수 있습니다.']}[status]||['경기 준비','경기 정보를 확인하세요.']}
@@ -55,12 +55,13 @@ function enhanceProduct(){
   const applicable=value.matchId&&(route!=='detail'||session().selectedMatchId===value.matchId);
   const container=['profile','schedule'].includes(route)?screen.querySelector('[data-my-matches]'):route==='home'?screen:route==='detail'?screen:null;
   if(!applicable||!container){screen.querySelectorAll('[data-product-checkin]').forEach(node=>node.remove());if(!value.matchId)screen.querySelectorAll('[data-action="check-in"]').forEach(node=>node.remove());return;}
+  if(['profile','schedule'].includes(route))container.setAttribute('data-matchday-module-version',MATCHDAY_VERSION);
   // Old Home/MY actions must not provide a second, independently stored check-in.
   screen.querySelectorAll('[data-action="check-in"]').forEach(button=>{button.dataset.action='open-joined-match';button.textContent='경기 상세'});
-  const html=productPanel(value,['home','detail'].includes(route));
   const existing=container.querySelector('[data-product-checkin]');
   const signature=JSON.stringify([value.status,value.matchId,value.opensAt,value.checkedInAt,state.status,state.arrival,state.noticeSeen]);
   if(existing?.dataset.checkinSignature!==signature){
+    const html=productPanel(value,['home','detail'].includes(route));
     const wrapper=document.createElement('div');wrapper.innerHTML=html;
     const next=wrapper.firstElementChild;next.dataset.checkinSignature=signature;
     if(existing)existing.replaceWith(next);
@@ -69,6 +70,8 @@ function enhanceProduct(){
     else container.appendChild(next);
   }
   const status=screen.querySelector('.fm-next-status-card.is-current');
+  const checkinSummary=screen.querySelector('.fm-next-status-card:nth-child(2)');
+  if(checkinSummary){const [title,copy]=checkinCopy(value);if(checkinSummary.querySelector('b')?.textContent!==title)checkinSummary.querySelector('b').textContent=title;if(checkinSummary.querySelector('p')?.textContent!==copy)checkinSummary.querySelector('p').textContent=copy;}
   if(status&&['canceled','ended'].includes(value.status)){
     const [title,copy]=checkinCopy(value);
     if(status.querySelector('b')?.textContent!==title)status.querySelector('b').textContent=title;
@@ -77,6 +80,8 @@ function enhanceProduct(){
   const dateLabel='샘플 일정 · '+new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric'}).format(new Date(value.startsAt))+' · '+new Intl.DateTimeFormat('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value.startsAt));
   const dateNode=screen.querySelector(route==='detail'?'.fm-next-detail-time':'.fm-next-upcoming-count');
   if(dateNode&&dateNode.textContent!==dateLabel)dateNode.textContent=dateLabel;
+  const homeDate=route==='home'&&session().matchStage!=='postgame'?screen.querySelector('.fm-next-context-card h2')?.firstChild:null;
+  if(homeDate?.nodeType===Node.TEXT_NODE){const shortDate=new Intl.DateTimeFormat('ko-KR',{weekday:'short'}).format(new Date(value.startsAt))+' · '+new Intl.DateTimeFormat('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value.startsAt));if(homeDate.textContent!==shortDate)homeDate.textContent=shortDate;}
   if(['canceled','ended'].includes(value.status)){
     const [title,copy]=checkinCopy(value);
     const badge=screen.querySelector('.fm-next-upcoming-top > span:first-child');
