@@ -1,0 +1,89 @@
+name: Apply v3 Contract Fixes
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/fix-v3-contracts.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - name: Restore compatibility layer and scope v3
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          node <<'NODE'
+          const fs=require('fs');
+
+          let path='app.html';
+          let text=fs.readFileSync(path,'utf8');
+          const withoutPolish='<link rel="stylesheet" href="/src/v5/ai-match-assistant.css?v=511"><link rel="stylesheet" href="/src/v4/design-system-v2.css?v=2">';
+          const withPolish='<link rel="stylesheet" href="/src/v5/ai-match-assistant.css?v=511"><link rel="stylesheet" href="/src/v4/visual-polish.css?v=4"><link rel="stylesheet" href="/src/v4/design-system-v2.css?v=2">';
+          if(!text.includes(withPolish)){
+            if(!text.includes(withoutPolish)) throw new Error('app stylesheet anchor not found');
+            text=text.replace(withoutPolish,withPolish);
+          }
+          fs.writeFileSync(path,text);
+
+          path='src/v4/design-system-v2.css';
+          text=fs.readFileSync(path,'utf8');
+
+          const appVars='.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){';
+          const varsStart=text.lastIndexOf(appVars);
+          if(varsStart<0) throw new Error('v3 vars block not found');
+          const varsEnd=text.indexOf('\n}',varsStart);
+          let varsBlock=text.slice(varsStart,varsEnd+2);
+          varsBlock=varsBlock.replace('\n  color:var(--fm-v3-ink);','');
+          text=text.slice(0,varsStart)+varsBlock+text.slice(varsEnd+2);
+
+          const core=':is([data-screen="home"],[data-screen="discover"],[data-screen="detail"],[data-screen="profile"],[data-screen="checkout"],[data-screen="schedule"])';
+          text=text.replace(
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen:not(.fm-next-screen--intro){',
+            `.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) ${core}{`
+          );
+          text=text.replace(
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-topbar:not(.fm-next-topbar--dark){',
+            `.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) ${core} .fm-next-topbar:not(.fm-next-topbar--dark){`
+          );
+          text=text.replace(
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-brand-mark{',
+            `.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) ${core} .fm-next-brand-mark{`
+          );
+          text=text.replace(
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(.fm-next-section-head h1,.fm-next-section-head h2,.fm-next-greeting h1){',
+            `.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) ${core} :is(.fm-next-section-head h1,.fm-next-section-head h2,.fm-next-greeting h1){`
+          );
+          text=text.replace(
+            '.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(.fm-next-section-head p,.fm-next-question-copy,.fm-next-menu-item span){',
+            `.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) ${core} :is(.fm-next-section-head p,.fm-next-question-copy,.fm-next-menu-item span){`
+          );
+
+          text=text.replace(
+            '[data-screen="profile"] .fm-next-profile-card{\n  overflow:hidden;\n  border-color:rgba(7,61,43,.13);\n  background:\n    radial-gradient(circle at 90% 8%,rgba(216,255,115,.18),transparent 24%),\n    linear-gradient(145deg,#f5faf6,#fff 70%);\n  box-shadow:none;',
+            '[data-screen="profile"] .fm-next-profile-card{\n  overflow:hidden;\n  border-color:rgba(7,61,43,.13);\n  background:\n    radial-gradient(circle at 90% 8%,rgba(216,255,115,.18),transparent 24%),\n    linear-gradient(145deg,#f5faf6,#fff 70%);\n  box-shadow:var(--fm-v3-shadow);'
+          );
+          text=text.replace(
+            '[data-screen="profile"] .fm-personalization-panel{\n  border-color:rgba(7,61,43,.13);\n  border-radius:22px;\n  background:linear-gradient(145deg,#f8faf8,#fff);\n  box-shadow:none;',
+            '[data-screen="profile"] .fm-personalization-panel{\n  border-color:rgba(7,61,43,.13);\n  border-radius:22px;\n  background:linear-gradient(145deg,#f8faf8,#fff);\n  box-shadow:var(--fm-v3-shadow);'
+          );
+
+          text=text.replace(/\n\/\* Preserve Welcome brand geometry outside the v3 surface scope\. \*\/\n\.fm-next-page\[data-mode="real"\] \.fm-next-app:not\(\[data-embed="true"\]\) \[data-screen="welcome"\] \.fm-next-brand\{position:relative;top:1px\}\s*$/,'\n');
+
+          fs.writeFileSync(path,text);
+          NODE
+          rm .github/workflows/fix-v3-contracts.yml
+          git add -A
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: restore compatibility contracts around v3 hierarchy'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
