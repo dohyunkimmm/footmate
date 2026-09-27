@@ -1,0 +1,51 @@
+name: Visual Consistency V4 Contract Fix
+on:
+  push:
+    branches: [design/visual-consistency-v4-20260928]
+    paths:
+      - .github/workflows/visual-consistency-v4-contract-fix.yml
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-consistency-v4-20260928
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Align Welcome and Setup contracts
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const path='src/v4/design-system-v2.css';
+          let css=fs.readFileSync(path,'utf8');
+          const welcome='.fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-actions .fm-next-button:first-child{border:1px solid var(--fm-v3-accent,#d8ff73)!important;background:var(--fm-v3-accent,#d8ff73)!important;color:var(--fm-v3-brand,#073d2b)!important;box-shadow:0 14px 30px rgba(0,0,0,.18)!important}\n';
+          if(!css.includes(welcome))throw new Error('welcome override target missing');
+          css=css.replace(welcome,'');
+          const setup='.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-choice[aria-pressed="true"]{padding-right:48px;border-color:rgba(7,61,43,.34);background:linear-gradient(145deg,#f4f9f5,#eef7df)}';
+          const setupFixed='.fm-next-page[data-mode="real"] [data-screen="setup"] .fm-next-choice[aria-pressed="true"]{padding-right:48px;border-color:rgba(7,61,43,.34);background-color:#f4f9f5!important;background-image:linear-gradient(145deg,#f4f9f5 0%,#eef7df 100%)!important}';
+          if(!css.includes(setup))throw new Error('setup selected target missing');
+          css=css.replace(setup,setupFixed);
+          fs.writeFileSync(path,css);
+          NODE
+          npm install --no-save --ignore-scripts css-tree@3.1.0
+          node - <<'NODE'
+          const fs=require('fs'),csstree=require('css-tree');
+          const css=fs.readFileSync('src/v4/design-system-v2.css','utf8');
+          if(css.includes('.fm-next-actions .fm-next-button:first-child{border:1px solid var(--fm-v3-accent'))throw new Error('welcome lime override remains');
+          if(!css.includes('background-image:linear-gradient(145deg,#f4f9f5 0%,#eef7df 100%)!important'))throw new Error('setup gradient fix missing');
+          csstree.parse(css);
+          NODE
+          node scripts/check-v4.9-performance-budget.cjs
+      - name: Commit contract-aligned styling
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/v4/design-system-v2.css
+          git commit -m "fix: align welcome and setup visual contracts"
+          git push origin HEAD:design/visual-consistency-v4-20260928
