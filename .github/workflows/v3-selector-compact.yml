@@ -1,4 +1,4 @@
-name: Hybrid V3 CSS Verification
+name: Approved V3 CSS Set Verification
 
 on:
   push:
@@ -25,30 +25,16 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Keep compact legacy CSS and restore only approved v3 suffix
+      - name: Restore complete CSS set used for approved v3 baselines
         shell: bash
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          APPROVED=2c4eac627d0f5a1cf075f1ac1f38823c745961e8
+          for file in src/v4/app.css src/v4/design-system-v2.css src/v4/visual-polish.css src/v5/ai-match-assistant.css; do
+            git show "$APPROVED:$file" > "$file"
+          done
           npm install --no-save --ignore-scripts @playwright/test@1.55.1 @axe-core/playwright@4.10.2
-          git show 2c4eac627d0f5a1cf075f1ac1f38823c745961e8:src/v4/design-system-v2.css > /tmp/approved-design.css
-          node <<'NODE'
-          const fs=require('fs');
-          const path='src/v4/design-system-v2.css';
-          const current=fs.readFileSync(path,'utf8');
-          const approved=fs.readFileSync('/tmp/approved-design.css','utf8');
-          const brokenStart='.fm-next-page[data-mode=real] .fm-next-app:not([data-embed=true]){--fm-v3-ink:';
-          const marker='/* FootMate Real App · Visual Hierarchy v3';
-          const currentAt=current.indexOf(brokenStart);
-          const approvedAt=approved.indexOf(marker);
-          if(currentAt<0) throw new Error('current compact v3 start not found');
-          if(approvedAt<0) throw new Error('approved v3 marker not found');
-          const prefix=current.slice(0,currentAt).replace(/\s+$/,'');
-          const suffix=approved.slice(approvedAt);
-          const hybrid=prefix+'\n'+suffix;
-          fs.writeFileSync(path,hybrid);
-          console.log(JSON.stringify({currentBytes:Buffer.byteLength(current),prefixBytes:Buffer.byteLength(prefix),approvedSuffixBytes:Buffer.byteLength(suffix),hybridBytes:Buffer.byteLength(hybrid)}));
-          NODE
           node scripts/check-v4.9-performance-budget.cjs
       - name: Verify current approved visual baselines
         shell: bash
@@ -56,12 +42,12 @@ jobs:
           set -euo pipefail
           npx playwright test tests/e2e/real-app-white-surface.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
           npx playwright test --project=chromium tests/e2e/checkin-state.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs --grep 'check-in|MY match hub visual regression|checked-in continuation action|1440px Matchday panel|1440px joined Schedule'
-      - name: Commit verified hybrid CSS
+      - name: Commit verified approved v3 CSS set
         shell: bash
         run: |
           set -euo pipefail
           rm .github/workflows/v3-selector-compact.yml
           git add -A
           git diff --cached --check
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: restore approved visual hierarchy paint'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: restore approved visual hierarchy CSS set'
           git push origin HEAD:design/visual-hierarchy-v3-20260927
