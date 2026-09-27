@@ -44,6 +44,9 @@ jobs:
           if(!text.includes('/* Scope v3 button geometry to redesigned product surfaces only. */')){
             text += '\n/* Scope v3 button geometry to redesigned product surfaces only. */\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is([data-screen="home"],[data-screen="discover"],[data-screen="detail"],[data-screen="profile"],[data-screen="checkout"],[data-matchday-module-version]) .fm-next-button{border-radius:var(--fm-v3-radius-sm)}\n';
           }
+          if(!text.includes('/* Preserve setup control geometry outside the v3 surface scope. */')){
+            text += '\n/* Preserve setup control geometry outside the v3 surface scope. */\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-button{border-radius:16px}\n';
+          }
           if(!text.includes('/* Preserve Welcome brand geometry outside the v3 surface scope. */')){
             text += '\n/* Preserve Welcome brand geometry outside the v3 surface scope. */\n.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-brand{position:relative;top:1px}\n';
           }
