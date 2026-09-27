@@ -83,10 +83,9 @@ function nav(active){
   const items=[
     ['home','홈','home','nav-home'],
     ['discover','경기 찾기','search','nav-discover'],
-    ['schedule','내 경기','calendar','nav-schedule'],
     ['profile','MY','user','nav-profile']
   ];
-  return `<nav class="fm-next-nav" aria-label="FootMate 주요 메뉴">
+  return `<nav class="fm-next-nav" aria-label="FootMate 주요 메뉴" style="grid-template-columns:repeat(3,minmax(0,1fr))">
     ${items.map(([id,label,iconName,action])=>`<button type="button" data-action="${action}" ${active===id?'aria-current="page"':''}><span class="fm-next-nav-icon">${icon(iconName)}</span>${label}</button>`).join('')}
   </nav>`;
 }
@@ -221,9 +220,9 @@ function adaptiveContext(){
     return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('clock')} TODAY · KICKOFF 20:00</div><h2>경기까지 1시간 20분</h2><p>${match.place} · 현재 도착 7/10</p><div class="fm-next-context-actions">${button('체크인하기','check-in','lime')}${button('길찾기','show-route','secondary')}</div></div>`;
   }
   if(state.matchStage==='postgame'){
-    return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('check')} MATCH COMPLETE</div><h2>오늘 경기, 어땠나요?</h2><p>간단한 평가가 다음 추천의 경기 강도를 더 잘 맞추는 데 사용됩니다.</p><div class="fm-next-context-actions">${button('경기 평가하기','rate-match','lime')}${button('결과 보기','nav-schedule','secondary')}</div></div>`;
+    return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('check')} MATCH COMPLETE</div><h2>오늘 경기, 어땠나요?</h2><p>간단한 평가가 다음 추천의 경기 강도를 더 잘 맞추는 데 사용됩니다.</p><div class="fm-next-context-actions">${button('경기 평가하기','rate-match','lime')}${button('결과 보기','nav-profile','secondary')}</div></div>`;
   }
-  return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('calendar')} NEXT MATCH</div><h2>${match.shortDate}<br>${match.place}</h2><p>참가가 확정됐어요. 경기 당일 필요한 정보를 한곳에서 확인할 수 있습니다.</p><div class="fm-next-context-actions">${button('내 경기 보기','nav-schedule','lime')}${button('경기 상세','open-joined-match','secondary')}</div></div>`;
+  return `<div class="fm-next-context-card"><div class="fm-next-context-kicker">${icon('calendar')} NEXT MATCH</div><h2>${match.shortDate}<br>${match.place}</h2><p>참가가 확정됐어요. 경기 당일 필요한 정보를 한곳에서 확인할 수 있습니다.</p><div class="fm-next-context-actions">${button('내 경기 보기','nav-profile','lime')}${button('경기 상세','open-joined-match','secondary')}</div></div>`;
 }
 
 function homeView(){
@@ -260,7 +259,7 @@ function detailView(){
       <div class="fm-next-detail-address">${icon('pin')}<span>${match.address}</span></div>
       <div class="fm-next-detail-summary"><div><small>경기 레벨</small><b>${match.level}</b></div><div><small>남은 자리</small><b>${match.spot}</b></div><div><small>참가비</small><b>${money(match.price)}</b></div></div>
     </div>
-    <div class="fm-next-sticky-cta"><div class="fm-next-sticky-cta-row"><div class="fm-next-sticky-price"><small>참가비</small><b>${money(match.price)}</b></div>${button(state.joinedMatchId===match.id?'내 경기 보기':'참가하기',state.joinedMatchId===match.id?'nav-schedule':'join-match','primary')}</div></div>
+    <div class="fm-next-sticky-cta"><div class="fm-next-sticky-cta-row"><div class="fm-next-sticky-price"><small>참가비</small><b>${money(match.price)}</b></div>${button(state.joinedMatchId===match.id?'내 경기 보기':'참가하기',state.joinedMatchId===match.id?'nav-profile':'join-match','primary')}</div></div>
   </section>`;
 }
 
@@ -293,27 +292,33 @@ function checkoutView(){
 function successView(){
   const match=joinedMatch(state)||selectedMatch(state);
   return `<section class="fm-next-success" data-screen="success">
-    <div class="fm-next-success-icon">${icon('check')}</div><h1>참가가 확정됐어요.</h1><p>경기 당일 필요한 정보와 체크인은 이제 ‘내 경기’에서 이어집니다.</p>
+    <div class="fm-next-success-icon">${icon('check')}</div><h1>참가가 확정됐어요.</h1><p>경기 당일 필요한 정보와 체크인은 이제 MY에서 이어집니다.</p>
     <div class="fm-next-ticket"><div class="fm-next-ticket-time"><span>${match.dateLabel}</span><span>${match.spot.replace('1자리','참가 확정').replace('2자리','참가 확정')}</span></div><h2>${match.place}</h2><p>${match.address}<br>${match.format} · ${match.duration} · ${match.level}</p></div>
-    <div class="fm-next-actions">${button('내 경기 보기','nav-schedule','primary')}${button('홈으로','nav-home','secondary')}</div>
+    <div class="fm-next-actions">${button('내 경기 보기','nav-profile','primary')}${button('홈으로','nav-home','secondary')}</div>
+  </section>`;
+}
+
+function myMatchesSection(){
+  const match=joinedMatch(state);
+  return `<section class="fm-next-section fm-next-my-matches" data-my-matches aria-label="내 경기">
+    <div class="fm-next-section-head"><div><h2>내 경기</h2><p>${match?'경기 전부터 결과 확인까지 MY에서 이어집니다.':'참가한 경기는 MY에서 이어서 확인할 수 있어요.'}</p></div></div>
+    ${match?`<div class="fm-next-upcoming"><div class="fm-next-upcoming-top"><span>${state.matchStage==='matchday'?'TODAY':state.matchStage==='postgame'?'COMPLETED':'UPCOMING'}</span><span class="fm-next-upcoming-count">${match.dateLabel}</span></div><h2>${match.place}</h2><p>${match.address}</p><div class="fm-next-upcoming-actions">${button(state.matchStage==='matchday'?'체크인':'경기 상세',state.matchStage==='matchday'?'check-in':'open-joined-match','lime')}${button('팀 메시지','team-chat','secondary')}</div></div>
+    <div class="fm-next-status-list"><div class="fm-next-status-card is-current"><span class="fm-next-status-icon">${icon(state.matchStage==='postgame'?'check':'calendar')}</span><div><b>${state.matchStage==='postgame'?'경기 완료':'참가 확정'}</b><p>${state.matchStage==='postgame'?'경기 결과와 평가가 저장됐어요.':'경기 정보 변경이 있으면 이 화면에서 바로 알려드려요.'}</p></div></div><div class="fm-next-status-card${state.matchStage==='matchday'?' is-current':''}"><span class="fm-next-status-icon">${icon('pin')}</span><div><b>경기 당일</b><p>경기 20분 전부터 체크인과 길찾기를 바로 사용할 수 있어요.</p></div></div><div class="fm-next-status-card${state.matchStage==='postgame'?' is-current':''}"><span class="fm-next-status-icon">${icon('level')}</span><div><b>경기 후</b><p>간단한 평가와 경기 레벨 변화가 다음 추천에 반영됩니다.</p></div></div></div>`:`<div class="fm-next-empty">아직 참가한 경기가 없어요.<br>마음에 드는 경기를 찾아 참가해보세요.<div style="margin-top:16px">${button('경기 찾기','nav-discover','primary')}</div></div>`}
   </section>`;
 }
 
 function scheduleView(){
-  const match=joinedMatch(state);
   return `<section class="fm-next-screen" data-screen="schedule">
     ${topbar({title:'내 경기'})}
-    <div class="fm-next-section">
-      <div class="fm-next-section-head"><div><h1>${match?'다가오는 경기':'아직 참가한 경기가 없어요'}</h1><p>${match?'경기 전부터 결과 확인까지 한곳에서 이어집니다.':'마음에 드는 경기를 찾아 참가해보세요.'}</p></div></div>
-      ${match?`<div class="fm-next-upcoming"><div class="fm-next-upcoming-top"><span>${state.matchStage==='matchday'?'TODAY':state.matchStage==='postgame'?'COMPLETED':'UPCOMING'}</span><span class="fm-next-upcoming-count">${match.dateLabel}</span></div><h2>${match.place}</h2><p>${match.address}</p><div class="fm-next-upcoming-actions">${button(state.matchStage==='matchday'?'체크인':'경기 상세',state.matchStage==='matchday'?'check-in':'open-joined-match','lime')}${button('팀 메시지','team-chat','secondary')}</div></div>
-      <div class="fm-next-status-list"><div class="fm-next-status-card is-current"><span class="fm-next-status-icon">${icon(state.matchStage==='postgame'?'check':'calendar')}</span><div><b>${state.matchStage==='postgame'?'경기 완료':'참가 확정'}</b><p>${state.matchStage==='postgame'?'경기 결과와 평가가 저장됐어요.':'경기 정보 변경이 있으면 이 화면에서 바로 알려드려요.'}</p></div></div><div class="fm-next-status-card${state.matchStage==='matchday'?' is-current':''}"><span class="fm-next-status-icon">${icon('pin')}</span><div><b>경기 당일</b><p>경기 20분 전부터 체크인과 길찾기를 바로 사용할 수 있어요.</p></div></div><div class="fm-next-status-card${state.matchStage==='postgame'?' is-current':''}"><span class="fm-next-status-icon">${icon('level')}</span><div><b>경기 후</b><p>간단한 평가와 경기 레벨 변화가 다음 추천에 반영됩니다.</p></div></div></div>`:`<div class="fm-next-empty">추천 경기를 확인하고 참가하면<br>여기에서 경기 당일까지 이어서 볼 수 있어요.<div style="margin-top:16px">${button('경기 찾기','nav-discover','primary')}</div></div>`}
-    </div>${nav('schedule')}
+    ${myMatchesSection()}
+    ${nav('profile')}
   </section>`;
 }
 
 function profileView(){
   return `<section class="fm-next-screen" data-screen="profile">
     ${topbar({title:'MY',showBrandTagline:false})}
+    ${myMatchesSection()}
     <div class="fm-next-profile-card"><div class="fm-next-profile-head"><span class="fm-next-profile-avatar">${state.userName.slice(0,1)}</span><div><h2>${state.userName}님</h2><p>${state.signedIn?'계정 연결됨':'게스트로 둘러보는 중'}</p></div></div><div class="fm-next-profile-stats"><div><b>${state.level}</b><span>체감 레벨</span></div><div><b>${state.position}</b><span>선호 포지션</span></div><div><b>${state.joinedMatchId?'1':'0'}</b><span>참가 경기</span></div></div></div>
     <div class="fm-next-menu-list"><button class="fm-next-menu-item" data-action="edit-setup"><span>${icon('level')}경기 추천 설정</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="show-policy"><span>${icon('shield')}취소·환불 정책</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="reset-flow"><span>${icon('reset')}처음부터 다시 보기</span>${icon('chevron')}</button></div>
     ${nav('profile')}
