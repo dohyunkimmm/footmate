@@ -1,0 +1,31 @@
+name: Fix stale visual hierarchy link
+
+on:
+  push:
+    branches:
+      - design/visual-hierarchy-v3-20260927
+    paths:
+      - .github/workflows/fix-stale-v3-link.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-hierarchy-v3-20260927
+          fetch-depth: 0
+      - name: Remove stale stylesheet reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          sed -i '\#visual-hierarchy-v3.css#d' app.html
+          if grep -q 'visual-hierarchy-v3.css' app.html; then exit 1; fi
+          git add app.html
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: remove stale visual hierarchy asset reference'
+          git push origin HEAD:design/visual-hierarchy-v3-20260927
