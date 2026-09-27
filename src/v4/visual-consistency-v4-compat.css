@@ -1,0 +1,49 @@
+/* FootMate Real App · Visual Consistency v4 compatibility refinement.
+   Keeps established Welcome and Schedule geometry contracts while preserving the new hierarchy. */
+
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro{
+  background:
+    radial-gradient(circle at 86% 12%,rgba(216,255,115,.18),transparent 25%),
+    radial-gradient(circle at 8% 78%,rgba(15,91,64,.07),transparent 28%),
+    linear-gradient(180deg,#fff 0%,#f8faf8 100%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro:before{
+  opacity:.07;
+  mask-image:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.6) 34%,transparent 76%);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro:after{
+  border-color:rgba(7,61,43,.11);
+  box-shadow:0 0 0 42px rgba(216,255,115,.045),0 0 0 84px rgba(7,61,43,.018);
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-topbar--dark{
+  background-color:rgba(255,255,255,.86);
+  background-image:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-intro h1{
+  color:#132019;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] [data-welcome-ai-copy]{
+  color:#56655d!important;
+  font-size:15px!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button:nth-child(2){
+  border:1px solid var(--fm-v4-accent)!important;
+  background:var(--fm-v4-accent)!important;
+  color:var(--fm-v4-brand)!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.18)!important;
+  opacity:.76;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-choice[aria-pressed="true"]{
+  background-color:#f4f9f5!important;
+  background-image:linear-gradient(145deg,#f4f9f5 0%,#eef7df 100%)!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-setup-footer .fm-next-button{
+  border:1px solid var(--fm-v4-accent)!important;
+  border-radius:16px;
+  background:var(--fm-v4-accent)!important;
+  color:var(--fm-v4-brand)!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.18)!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming{
+  padding:19px;
+}
