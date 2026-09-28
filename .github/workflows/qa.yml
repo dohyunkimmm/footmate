@@ -16,10 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       runtime: ${{ steps.impact.outputs.runtime }}
+      production: ${{ steps.impact.outputs.production }}
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
-      - name: Determine runtime impact
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Determine runtime and production impact
         id: impact
         env:
           EVENT_NAME: "${{ github.event_name }}"
@@ -36,15 +39,22 @@ jobs:
             head="$PUSH_HEAD_SHA"
           fi
 
+          changed_files="$(git diff --name-only "$base" "$head")"
           runtime=false
-          for file in $(git diff --name-only "$base" "$head"); do
+          for file in $changed_files; do
             case "$file" in
               README.md|docs/*|.github/*|*.md) ;;
               *) runtime=true ;;
             esac
           done
 
+          production=true
+          if FOOTMATE_VERCEL_CHANGED_FILES="$changed_files" node scripts/vercel-ignore-build.cjs; then
+            production=false
+          fi
+
           echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
+          echo "production=$production" >> "$GITHUB_OUTPUT"
 
   docs_only:
     name: Docs-only QA
@@ -168,7 +178,7 @@ jobs:
   production_smoke:
     name: Production Smoke
     needs: [impact, regression, browser_e2e]
-    if: github.event_name == 'push' && needs.impact.outputs.runtime == 'true'
+    if: github.event_name == 'push' && needs.impact.outputs.production == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
