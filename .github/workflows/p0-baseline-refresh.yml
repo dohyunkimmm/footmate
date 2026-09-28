@@ -63,4 +63,4 @@ jobs:
           test "$COUNT" -le 6
           git commit -m 'test: refresh final P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
-# one-shot generator; final run after ownership cleanup, remove after success
+# one-shot generator; run against marker-free P0 spec, remove after success
