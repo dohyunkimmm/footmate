@@ -6,6 +6,7 @@ permissions:
   contents: write
 jobs:
   finalize:
+    if: contains(github.event.head_commit.message, '[run-finalizer]')
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.55.1-noble
