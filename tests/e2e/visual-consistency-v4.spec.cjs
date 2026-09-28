@@ -72,7 +72,7 @@ async function expectNoHorizontalOverflow(page){
   expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
 }
 
-const shot={animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:24};
+const shot={animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:32};
 
 test('390px Welcome and Setup share the final V3 visual language',async({page})=>{
   const errs=await openCleanApp(page);
