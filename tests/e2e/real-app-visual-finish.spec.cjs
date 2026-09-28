@@ -84,14 +84,14 @@ test('decision-support surfaces keep the core AI feature as the single raised fo
   });
   expect(result.tagSize).toBeGreaterThanOrEqual(11);
   expect(levelTagSize).toBeGreaterThanOrEqual(11);
-  expect(result.contextColor).toBe('rgb(16, 34, 25)');
+  expect(result.contextColor).toBe('rgb(19, 32, 25)');
   expect(result.contextImage).toContain('linear-gradient');
   expect(result.contextShadow).toBe('none');
   expect(result.contextPrimaryBackground).toBe('rgb(255, 255, 255)');
   expect(result.aiShadow).not.toBe('none');
   expect(result.cardShadow).toBe('none');
   expect(result.mediaImage).toContain('linear-gradient');
-  expect(result.placeColor).toBe('rgb(16, 34, 25)');
+  expect(result.placeColor).toBe('rgb(19, 32, 25)');
   expect(errs).toEqual([]);
 });
 
