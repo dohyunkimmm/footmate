@@ -421,7 +421,7 @@
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup at blocker closure: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
-- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics 미연동
+- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동
 
 ### Closed Beta Must hardening · 2026-09-21
 
