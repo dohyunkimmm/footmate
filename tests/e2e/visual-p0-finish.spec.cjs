@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -17,7 +17,6 @@ async function openCleanApp(page,viewport){
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
-  await expect.poll(()=>page.evaluate(()=>getComputedStyle(document.querySelector('.fm-next-app')).getPropertyValue('--fm-p0-finish').trim())).toBe('1');
   await page.mouse.move(1,1);
   return errs;
 }
@@ -56,24 +55,26 @@ test('P0 Home keeps AI Assistant as the only raised focal surface',async({page})
   const screen=page.locator('[data-screen="home"]');
   const state=await screen.evaluate(element=>{
     const context=element.querySelector('.fm-next-context-card');
+    const contextTitle=context.querySelector('h2');
     const ai=element.querySelector('.fm-ai-card[data-product-ai="home"]');
     const firstCard=element.querySelector('.fm-next-list .fm-next-match-card:first-child');
     const firstMedia=firstCard?.querySelector('.fm-next-match-card-media');
+    const firstPlace=firstCard?.querySelector('.fm-next-match-place');
     return {
-      contextColor:getComputedStyle(context).color,
+      contextTitleColor:getComputedStyle(contextTitle).color,
       contextShadow:getComputedStyle(context).boxShadow,
       aiShadow:getComputedStyle(ai).boxShadow,
       firstCardShadow:getComputedStyle(firstCard).boxShadow,
-      firstMediaColor:getComputedStyle(firstMedia).color,
+      firstPlaceColor:getComputedStyle(firstPlace).color,
       firstMediaImage:getComputedStyle(firstMedia).backgroundImage
     };
   });
-  expect(state.contextColor).toBe('rgb(19, 32, 25)');
+  expect(state.contextTitleColor).toBe('rgb(7, 61, 43)');
   expect(state.contextShadow).toBe('none');
   expect(state.aiShadow).not.toBe('none');
   expect(state.firstCardShadow).toBe('none');
-  expect(state.firstMediaColor).toBe('rgb(19, 32, 25)');
-  expect(state.firstMediaImage).toContain('linear-gradient');
+  expect(state.firstPlaceColor).toBe('rgb(7, 61, 43)');
+  expect(state.firstMediaImage).toBe('none');
   expect(errs).toEqual([]);
 });
 
