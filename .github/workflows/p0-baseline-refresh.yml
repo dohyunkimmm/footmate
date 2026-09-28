@@ -39,6 +39,10 @@ jobs:
             tests/e2e/welcome-position.spec.cjs \
             tests/e2e/welcome-source-layout.spec.cjs \
             --update-snapshots=all
+          npx playwright test --project=chromium \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs \
+            --grep '1440px Matchday panel' \
+            --update-snapshots=all
           git restore --source=HEAD -- \
             tests/e2e/priority-ux.spec.cjs-snapshots/priority-ai-filter-390-chromium-linux.png \
             tests/e2e/product-completion.spec.cjs-snapshots/product-completion-discover-ia-390-chromium-linux.png \
@@ -57,10 +61,11 @@ jobs:
             tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png \
             tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-checkout-390-chromium-linux.png \
             tests/e2e/visual-p0-finish.spec.cjs-snapshots/visual-p0-shell-699-chromium-linux.png \
-            tests/e2e/visual-p0-finish.spec.cjs-snapshots/visual-p0-shell-700-chromium-linux.png
+            tests/e2e/visual-p0-finish.spec.cjs-snapshots/visual-p0-shell-700-chromium-linux.png \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-matchday-1440-chromium-linux.png
           COUNT="$(git diff --cached --name-only | wc -l)"
           test "$COUNT" -ge 1
-          test "$COUNT" -le 6
+          test "$COUNT" -le 7
           git commit -m 'test: refresh final P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
-# one-shot generator; run against marker-free P0 spec, remove after success
+# one-shot generator; include shell-owned Matchday width, then remove after success
