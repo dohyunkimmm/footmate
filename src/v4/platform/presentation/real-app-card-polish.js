@@ -1,11 +1,37 @@
 const root=document.getElementById('footmate-next');
 const MEDIUM_UX_VERSION='1.0.0';
 const LOW_UX_VERSION='1.0.0';
+const VISUAL_P1_VERSION='1.0.0';
 const PERSONALIZATION_KEY='footmate:v4:personalization';
 let committingFilterDraft=false;
 
 function isRealApp(){
   return document.documentElement.dataset.footmateSurface==='real';
+}
+
+function ensureP1SecondaryHierarchyStyles(){
+  if(document.getElementById('fm-visual-p1-secondary-hierarchy'))return;
+  const style=document.createElement('style');
+  style.id='fm-visual-p1-secondary-hierarchy';
+  style.textContent=`
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-chrome{gap:8px;margin:8px 0 12px;padding:0 0 12px;border:0;border-bottom:1px solid rgba(17,58,40,.08);border-radius:0;background:transparent;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button{border-color:rgba(7,61,43,.18);background:#fff;color:#073d2b;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-filter-button:is(:hover,:focus-visible){border-color:rgba(7,61,43,.28);background:#f2f7e7;color:#073d2b;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-discovery-sheet-head small{font-size:11px}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"] :is(.fm-decision-reason-grid>div,.fm-decision-info-list>div,.fm-decision-policy-grid>div){border-color:rgba(17,58,40,.08);border-radius:14px;background:#f7f9f7;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"] .fm-decision-policy-grid>div.is-strong{border-color:rgba(7,61,43,.14);background:#f1f9d9}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"] :is(.fm-decision-reason-grid span,.fm-decision-info-list>div>span){background:#eaf4ee;color:#0f5b40}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="detail"] :is(.fm-decision-policy-grid small,.fm-decision-compare-bar small,.fm-decision-dialog-head small,.fm-decision-compare-card>small){font-size:11px}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-matchday-module-version] .fm-matchday-panel{border-color:rgba(17,58,40,.10);background:#fff;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-matchday-module-version] .fm-matchday-grid article{border-color:rgba(17,58,40,.08);background:#f7f9f7}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-matchday-module-version] .fm-matchday-home{border:1px solid rgba(7,61,43,.10);background:#f1f7e5}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-matchday-module-version] :is(.fm-matchday-home small,.fm-next-status-card p){font-size:11px;line-height:1.45}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="profile"] .fm-personalization-panel{border-color:rgba(17,58,40,.10);border-radius:20px;background:#fff;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="profile"] .fm-personalization-explanation{border-color:rgba(17,58,40,.08);border-radius:18px;background:#f7f9f7;box-shadow:none}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="profile"] :is(.fm-personalization-panel button,.fm-personalization-explanation button){border-radius:14px}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="profile"] .fm-personalization-panel button[aria-pressed="true"]{border-color:rgba(7,61,43,.22);background:#f1f9d9;color:#073d2b}
+`;
+  document.head.append(style);
 }
 
 function removeDuplicateAiCoreLabel(card){
@@ -110,8 +136,10 @@ function removeCompletedCheckinControl(){
 
 function polishRealApp(){
   if(!root||!isRealApp())return;
+  ensureP1SecondaryHierarchyStyles();
   root.dataset.mediumUxVersion=MEDIUM_UX_VERSION;
   root.dataset.lowUxVersion=LOW_UX_VERSION;
+  root.dataset.visualP1Version=VISUAL_P1_VERSION;
   root.querySelectorAll('[data-screen="home"] [data-ai-assistant]').forEach(removeDuplicateAiCoreLabel);
   markHomeDiscoverShortcut();
   markDiscoveryScopes();
