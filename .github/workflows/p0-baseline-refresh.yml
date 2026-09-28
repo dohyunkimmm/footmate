@@ -27,6 +27,7 @@ jobs:
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
       - name: Generate intended P0 baselines in pinned Chromium
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           npx playwright test --project=chromium \
             tests/e2e/real-app-white-surface.spec.cjs \
             tests/e2e/visual-consistency-v4.spec.cjs \
@@ -43,10 +44,11 @@ jobs:
           test -z "$UNEXPECTED"
       - name: Commit generated P0 baselines
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tests/e2e/*-snapshots/*.png
           git diff --cached --quiet && { echo 'No baseline changes generated'; exit 1; }
           git commit -m 'test: refresh P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
-# one-shot generator; rerun from final P0 gate commit, then remove before merge
+# one-shot generator; final pinned baseline pass, then remove before merge
