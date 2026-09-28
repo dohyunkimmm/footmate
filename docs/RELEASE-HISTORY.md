@@ -2,6 +2,19 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Real App P1 secondary visual hierarchy closure · 2026-09-28
+
+- Scope: Discover 임시 filter를 neutral secondary control로 낮추고, Detail decision nested card를 평탄화하며 decision microcopy를 11px readability floor로 정리하고, Matchday / MY의 equal-weight elevation을 줄여 현재·primary action hierarchy를 선명하게 조정
+- Runtime PR: #386 · merged SHA `b57e97bd1a540cb095e248fe34930c5727a326aa`
+- Product/runtime baseline: `b57e97bd1a540cb095e248fe34930c5727a326aa`; P0 Home focal hierarchy, Checkout execution CTA, shell continuity, IA·routes·copy·state model·Matching/ELO ownership·persistence·39-screen baseline 유지
+- Performance boundary: first-party CSS `204,975 / 205,000` bytes 유지, first-party asset request 24 유지, 신규 stylesheet / network request 추가 없음
+- Visual Regression: pinned Ubuntu/Chromium에서 Discover·Matchday/check-in·MY의 의도된 Product baseline만 갱신하고 temporary baseline generator workflow를 제거한 뒤 comparison-only `toHaveScreenshot()` 재실행; PR Real App White Surface QA run `36416233311` · SUCCESS, post-merge run `36416971373` · SUCCESS
+- Final PR QA: FootMate QA run `36416233308` · SUCCESS · Regression 36 PASS · Chromium Browser E2E + axe / beta / AI / recovery / visual gates PASS · Mobile Safari/WebKit PASS; P1 semantic contract를 permanent QA gate로 유지
+- Post-merge main QA: FootMate QA run `36416971482` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Production verification: exact HTTP smoke PASS · exact AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium Production smoke 13/13 PASS · official `footmate-black.vercel.app`의 `/demo`와 `/demo?mode=portfolio` HTTP 200 · 최근 24시간 Vercel runtime error 없음
+- Exact Vercel Production: `dpl_3NYpm2XYGAeU1152BzbSwJn5Mq71` · SHA `b57e97bd1a540cb095e248fe34930c5727a326aa` · READY · official alias `footmate-black.vercel.app`
+- Documentation boundary: visual polish / QA closure이므로 README·Closed Beta runbook·Notion·별도 Case Study 프로젝트의 제품 설명은 변경하지 않음
+
 ## Real App visual consistency completion · 2026-09-28
 
 - Scope: Welcome / Setup, Auth → Checkout → Success, Schedule secondary / empty states, loading / empty / pending / failure / canceled / fallback 상태를 승인된 Real App visual language로 통일하면서 IA·route·product behavior·Matching/ELO ownership은 유지
