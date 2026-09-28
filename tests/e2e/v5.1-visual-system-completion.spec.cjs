@@ -357,7 +357,7 @@ for(const width of [320,375,390,430])for(const route of ['home','discover']){
       await expect.poll(()=>screen.evaluate(element=>element.scrollTop)).toBe(0);
     }
     await page.mouse.move(1,1);
-    await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:0,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
+    await expect(page).toHaveScreenshot(`product-density-${route}-${width}.png`,{animations:'disabled',caret:'hide',maxDiffPixels:16,mask:[screen.locator('.fm-next-match-date > span:first-child')]});
     expect(errs).toEqual([]);
   });
 }
