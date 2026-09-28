@@ -68,11 +68,12 @@ test('decision-support surfaces keep the core AI feature as the single raised fo
     const place=element.querySelector('.fm-next-match-place');
     const tag=element.querySelector('.fm-next-tag');
     const context=element.querySelector('.fm-next-context-card');
+    const contextTitle=context.querySelector('h2');
     const contextPrimary=element.querySelector('.fm-next-context-actions .fm-next-button:first-child');
     const ai=element.querySelector('.fm-ai-card[data-product-ai="home"]');
     return {
       tagSize:parseFloat(getComputedStyle(tag).fontSize),
-      contextColor:getComputedStyle(context).color,
+      contextTitleColor:getComputedStyle(contextTitle).color,
       contextImage:getComputedStyle(context).backgroundImage,
       contextShadow:getComputedStyle(context).boxShadow,
       contextPrimaryBackground:getComputedStyle(contextPrimary).backgroundColor,
@@ -84,14 +85,14 @@ test('decision-support surfaces keep the core AI feature as the single raised fo
   });
   expect(result.tagSize).toBeGreaterThanOrEqual(11);
   expect(levelTagSize).toBeGreaterThanOrEqual(11);
-  expect(result.contextColor).toBe('rgb(19, 32, 25)');
-  expect(result.contextImage).toContain('linear-gradient');
+  expect(result.contextTitleColor).toBe('rgb(7, 61, 43)');
+  expect(result.contextImage).toBe('none');
   expect(result.contextShadow).toBe('none');
-  expect(result.contextPrimaryBackground).toBe('rgb(255, 255, 255)');
+  expect(result.contextPrimaryBackground).toBe('rgb(216, 255, 115)');
   expect(result.aiShadow).not.toBe('none');
   expect(result.cardShadow).toBe('none');
-  expect(result.mediaImage).toContain('linear-gradient');
-  expect(result.placeColor).toBe('rgb(19, 32, 25)');
+  expect(result.mediaImage).toBe('none');
+  expect(result.placeColor).toBe('rgb(7, 61, 43)');
   expect(errs).toEqual([]);
 });
 
