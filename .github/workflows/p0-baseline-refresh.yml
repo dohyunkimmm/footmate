@@ -42,6 +42,7 @@ jobs:
           git restore --source=HEAD -- \
             tests/e2e/priority-ux.spec.cjs-snapshots/priority-ai-filter-390-chromium-linux.png \
             tests/e2e/product-completion.spec.cjs-snapshots/product-completion-discover-ia-390-chromium-linux.png \
+            tests/e2e/product-completion.spec.cjs-snapshots/product-completion-detail-390-chromium-linux.png \
             tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-discover-390-chromium-linux.png \
             tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-success-390-chromium-linux.png \
             tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-participation-failure-390-chromium-linux.png
@@ -57,7 +58,9 @@ jobs:
             tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-checkout-390-chromium-linux.png \
             tests/e2e/visual-p0-finish.spec.cjs-snapshots/visual-p0-shell-699-chromium-linux.png \
             tests/e2e/visual-p0-finish.spec.cjs-snapshots/visual-p0-shell-700-chromium-linux.png
-          test "$(git diff --cached --name-only | wc -l)" -eq 6
+          COUNT="$(git diff --cached --name-only | wc -l)"
+          test "$COUNT" -ge 1
+          test "$COUNT" -le 6
           git commit -m 'test: refresh final P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
-# final rerun after preserving neutral gradient contract
+# one-shot generator; remove after successful baseline commit
