@@ -30,7 +30,7 @@ jobs:
           node scripts/check-v4.9-performance-budget.cjs
       - name: Refresh changed Product visual baselines
         run: |
-          npx playwright test --project=chromium --update-snapshots \
+          npx playwright test --project=chromium --update-snapshots=all \
             tests/e2e/visual-consistency-v4.spec.cjs \
             tests/e2e/v5.1-visual-system-completion.spec.cjs \
             tests/e2e/v5.1-visual-baseline.spec.cjs \
