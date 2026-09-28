@@ -16,6 +16,7 @@ async function openCleanApp(page,viewport={width:390,height:844}){
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>window.__FOOTMATE_P1_DECISION_CLARITY__?.version==='1.0.0');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   return errs;
 }
@@ -26,6 +27,33 @@ async function setupToHome(page){
   await page.getByRole('button',{name:'다음'}).click();
   await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
+}
+
+async function setSession(page,route,patch={}){
+  await page.evaluate(({nextRoute,nextPatch})=>{
+    localStorage.setItem('footmate:v4:session',JSON.stringify({
+      route:nextRoute,
+      setupComplete:true,
+      setupStep:2,
+      region:'수원 · 영통',
+      position:'MF',
+      level:'중급',
+      signedIn:true,
+      joinedMatchId:null,
+      selectedMatchId:'suwon-ingye-2000',
+      matchStage:'upcoming',
+      userName:'도현',
+      ...nextPatch
+    }));
+  },{nextRoute:route,nextPatch:patch});
+}
+
+async function reopenRoute(page,route,patch={}){
+  await setSession(page,route,patch);
+  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window.__FOOTMATE_P1_DECISION_CLARITY__?.version==='1.0.0');
+  await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+  await expect(page.locator(`[data-screen="${route}"]`)).toBeVisible();
 }
 
 test('P1 keeps secondary discovery controls neutral and readable',async({page})=>{
@@ -78,5 +106,74 @@ test('P1 flattens nested decision cards and keeps microcopy at the readability f
   expect(state.nestedShadow).toBe('none');
   expect(state.nestedRadius).toBe(14);
   expect(state.policySmall).toBeGreaterThanOrEqual(11);
+  expect(errs).toEqual([]);
+});
+
+test('P1 keeps Discover filter edits as draft until Result view commit',async({page})=>{
+  const errs=await openCleanApp(page);
+  await reopenRoute(page,'discover');
+  await page.locator('[data-discovery-action="open-filters"]').click();
+  let sheet=page.locator('[data-discovery-sheet="true"]');
+  await expect(sheet.locator('[data-p1-discovery-draft-status]')).toHaveText('현재 적용된 조건입니다.');
+  await sheet.locator('[data-discovery-field="distance"]').selectOption('20');
+  await expect(sheet.locator('[data-p1-discovery-draft-status]')).toHaveText('변경 사항이 아직 적용되지 않았어요.');
+  expect(await page.evaluate(()=>window.__FOOTMATE_DISCOVERY__.getState().distance)).toBe('all');
+  expect(new URL(page.url()).searchParams.get('d_distance')).toBeNull();
+  await sheet.locator('.fm-discovery-close').click();
+  expect(await page.evaluate(()=>window.__FOOTMATE_DISCOVERY__.getState().distance)).toBe('all');
+
+  await page.locator('[data-discovery-action="open-filters"]').click();
+  sheet=page.locator('[data-discovery-sheet="true"]');
+  await sheet.locator('[data-discovery-field="distance"]').selectOption('20');
+  await sheet.locator('.fm-discovery-done').click();
+  await expect(page.locator('[data-discovery-sheet="true"]')).toHaveCount(0);
+  expect(await page.evaluate(()=>window.__FOOTMATE_DISCOVERY__.getState().distance)).toBe('20');
+  expect(new URL(page.url()).searchParams.get('d_distance')).toBe('20');
+  await expect(page.locator('.fm-discovery-chip')).toContainText('20분 이내');
+  expect(errs).toEqual([]);
+});
+
+test('P1 keeps Discover reset as draft until Result view commit',async({page})=>{
+  const errs=await openCleanApp(page);
+  await setSession(page,'discover');
+  await page.goto('/app?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window.__FOOTMATE_P1_DECISION_CLARITY__?.version==='1.0.0');
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('.fm-discovery-chip')).toContainText('20분 이내');
+  await page.locator('[data-discovery-action="open-filters"]').click();
+  const sheet=page.locator('[data-discovery-sheet="true"]');
+  await sheet.locator('.fm-discovery-reset').click();
+  expect(await page.evaluate(()=>window.__FOOTMATE_DISCOVERY__.getState().distance)).toBe('20');
+  await expect(sheet.locator('[data-p1-discovery-draft-status]')).toHaveText('변경 사항이 아직 적용되지 않았어요.');
+  await sheet.locator('.fm-discovery-done').click();
+  expect(await page.evaluate(()=>window.__FOOTMATE_DISCOVERY__.getState().distance)).toBe('all');
+  expect(new URL(page.url()).searchParams.get('d_distance')).toBeNull();
+  expect(errs).toEqual([]);
+});
+
+test('P1 keeps AI decision information at an 11px readable floor',async({page})=>{
+  const errs=await openCleanApp(page);
+  await reopenRoute(page,'home');
+  const values=await page.locator('[data-screen="home"] .fm-ai-card').evaluate(card=>{
+    const selectors=['.fm-ai-mode','.fm-ai-status span','.fm-ai-conditions span','.fm-ai-result-copy small','.fm-ai-result-copy em','.fm-ai-empty span','.fm-ai-guardrail'];
+    return selectors.flatMap(selector=>[...card.querySelectorAll(selector)])
+      .filter(node=>getComputedStyle(node).display!=='none')
+      .map(node=>({text:(node.textContent||'').trim(),size:parseFloat(getComputedStyle(node).fontSize)}));
+  });
+  expect(values.length).toBeGreaterThan(0);
+  for(const value of values)expect(value.size,value.text).toBeGreaterThanOrEqual(11);
+  expect(errs).toEqual([]);
+});
+
+test('P1 keeps the prototype payment boundary adjacent to the Checkout CTA',async({page})=>{
+  const errs=await openCleanApp(page);
+  await reopenRoute(page,'checkout');
+  const note=page.locator('[data-p1-checkout-boundary]');
+  const confirm=page.locator('[data-action="confirm-payment"],[data-participation-submit]').first();
+  await expect(note).toBeVisible();
+  await expect(note).toHaveText('프로토타입 · 실제 결제 없음');
+  await expect(confirm).toBeVisible();
+  const adjacent=await note.evaluate(node=>node.nextElementSibling?.matches('[data-action="confirm-payment"],[data-participation-submit]')||false);
+  expect(adjacent).toBe(true);
   expect(errs).toEqual([]);
 });
