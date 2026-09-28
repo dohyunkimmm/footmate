@@ -89,9 +89,21 @@ if(!document.getElementById(STYLE_ID)){
   color:#5c6d64;
 }
 
-/* Keep the established joined-Schedule compactness contract. */
+/* Keep the established joined-Schedule compactness contract without removing information. */
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming{
-  padding:19px;
+  padding:14px 16px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming-top{
+  margin-bottom:12px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming h2{
+  font-size:21px;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming p{
+  line-height:1.55;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] .fm-next-upcoming-actions{
+  margin-top:12px;
 }
 
 @media(max-width:430px){
