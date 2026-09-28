@@ -1,0 +1,46 @@
+name: P1 Visual Baseline Refresh
+on:
+  push:
+    branches: [design/visual-p1-secondary-hierarchy-20260928]
+    paths:
+      - .github/workflows/p1-baseline-refresh.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design/visual-p1-secondary-hierarchy-20260928
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Verify pinned browser image
+        run: node -e "if (require('./package.json').qaToolchain.playwright !== '1.55.1') throw new Error('Update the Playwright container with qaToolchain.playwright')"
+      - name: Refresh only P1-affected Product baselines
+        run: |
+          npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep '1440px Home and Discover|1440px MY owns|1440px Matchday panel' --update-snapshots
+          npx playwright test --project=chromium tests/e2e/v5.1-design-system-v2.spec.cjs --grep 'Profile personalization|Detail decision content' --update-snapshots
+          npx playwright test --project=chromium tests/e2e/v4-matchday.spec.cjs --grep 'MY match hub visual regression' --update-snapshots
+      - name: Commit refreshed baselines
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/e2e/*-snapshots/*.png
+          if git diff --cached --quiet; then
+            echo 'No baseline changes produced'
+            exit 0
+          fi
+          git commit -m 'test: refresh intentional P1 visual baselines'
+          git push origin HEAD:design/visual-p1-secondary-hierarchy-20260928
