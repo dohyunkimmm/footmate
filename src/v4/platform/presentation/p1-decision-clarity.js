@@ -1,9 +1,5 @@
 const root=document.getElementById('footmate-next');
 const P1_DECISION_CLARITY_VERSION='1.0.0';
-const filterKeys=['date','time','distance','price','position'];
-const filterDefaults=Object.freeze({date:'all',time:'all',distance:'all',price:'all',position:'all'});
-let filterDraft=null;
-let committingDraft=false;
 let scheduled=false;
 
 function isRealApp(){
@@ -21,61 +17,6 @@ function ensureStyles(){
 .fm-next-page[data-mode="real"] .fm-p1-checkout-boundary{margin:0 0 8px;text-align:center;color:#5f7068;font-size:11px;font-weight:700;line-height:1.4}
 `;
   document.head.append(style);
-}
-
-function discoveryState(){
-  return window.__FOOTMATE_DISCOVERY__?.getState?.()||filterDefaults;
-}
-
-function draftDirty(){
-  if(!filterDraft)return false;
-  const applied=discoveryState();
-  return filterKeys.some(key=>String(filterDraft[key])!==String(applied[key]));
-}
-
-function updateDraftStatus(sheet=root?.querySelector('[data-discovery-sheet="true"]')){
-  if(!sheet||!filterDraft)return;
-  let status=sheet.querySelector('[data-p1-discovery-draft-status]');
-  if(!status){
-    status=document.createElement('p');
-    status.className='fm-discovery-draft-status';
-    status.dataset.p1DiscoveryDraftStatus='true';
-    status.setAttribute('role','status');
-    status.setAttribute('aria-live','polite');
-    sheet.querySelector('.fm-discovery-sheet-copy')?.insertAdjacentElement('afterend',status);
-  }
-  const dirty=draftDirty();
-  status.dataset.dirty=String(dirty);
-  status.textContent=dirty?'변경 사항이 아직 적용되지 않았어요.':'현재 적용된 조건입니다.';
-}
-
-function beginFilterDraft(){
-  const sheet=root?.querySelector('[data-discovery-sheet="true"]');
-  if(!sheet)return;
-  filterDraft={...filterDefaults,...discoveryState()};
-  updateDraftStatus(sheet);
-}
-
-function resetFilterDraft(sheet){
-  if(!filterDraft)return;
-  filterDraft={...filterDraft,...filterDefaults};
-  sheet.querySelectorAll('[data-discovery-field]').forEach(field=>{
-    const key=field.dataset.discoveryField;
-    if(key in filterDefaults)field.value=filterDefaults[key];
-  });
-  updateDraftStatus(sheet);
-}
-
-function commitFilterDraft(sheet){
-  if(!filterDraft)return;
-  committingDraft=true;
-  sheet.querySelectorAll('[data-discovery-field]').forEach(field=>{
-    const key=field.dataset.discoveryField;
-    if(key in filterDraft)field.value=filterDraft[key];
-    field.dispatchEvent(new Event('change',{bubbles:true}));
-  });
-  committingDraft=false;
-  filterDraft=null;
 }
 
 function ensureCheckoutBoundary(){
@@ -98,51 +39,10 @@ function applyP1DecisionClarity(){
   if(!root||!isRealApp())return;
   ensureStyles();
   ensureCheckoutBoundary();
-  if(filterDraft)updateDraftStatus();
   root.dataset.p1DecisionClarityVersion=P1_DECISION_CLARITY_VERSION;
 }
 
-function handleDraftChange(event){
-  if(!isRealApp()||committingDraft||!filterDraft)return;
-  const field=event.target.closest('[data-discovery-field]');
-  const sheet=field?.closest('[data-discovery-sheet="true"]');
-  if(!field||!sheet)return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  filterDraft={...filterDraft,[field.dataset.discoveryField]:field.value};
-  updateDraftStatus(sheet);
-}
-
-document.addEventListener('click',event=>{
-  if(!isRealApp())return;
-  const target=event.target.closest('[data-discovery-action]');
-  if(!target)return;
-  const action=target.dataset.discoveryAction;
-  if(action==='open-filters'){
-    requestAnimationFrame(beginFilterDraft);
-    return;
-  }
-  const sheet=target.closest('[data-discovery-sheet="true"]');
-  if(!sheet)return;
-  if(action==='clear-filters'){
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    resetFilterDraft(sheet);
-    return;
-  }
-  if(target.classList.contains('fm-discovery-done')){
-    commitFilterDraft(sheet);
-    return;
-  }
-  if(action==='close-filters')filterDraft=null;
-},true);
-
-document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&root?.querySelector('[data-discovery-sheet="true"]'))filterDraft=null;
-},true);
-
 if(root){
-  root.addEventListener('change',handleDraftChange,true);
   const observer=new MutationObserver(()=>{
     if(scheduled)return;
     scheduled=true;
