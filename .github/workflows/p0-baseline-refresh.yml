@@ -49,4 +49,4 @@ jobs:
           git diff --cached --quiet && { echo 'No baseline changes generated'; exit 1; }
           git commit -m 'test: refresh P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
-# one-shot generator; removed before merge
+# one-shot generator; rerun from final P0 gate commit, then remove before merge
