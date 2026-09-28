@@ -1,10 +1,12 @@
 const {test,expect}=require('@playwright/test');
 
+const VISUAL_BASELINE_TIME=new Date('2026-09-25T12:00:00Z');
+
 function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -12,6 +14,7 @@ function failures(page){
 async function openCleanApp(page,viewport){
   const errs=failures(page);
   await page.setViewportSize(viewport);
+  await page.clock.setFixedTime(VISUAL_BASELINE_TIME);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
