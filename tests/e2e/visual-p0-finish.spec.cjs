@@ -74,7 +74,7 @@ test('P0 Home keeps AI Assistant as the only raised focal surface',async({page})
   expect(state.aiShadow).not.toBe('none');
   expect(state.firstCardShadow).toBe('none');
   expect(state.firstPlaceColor).toBe('rgb(7, 61, 43)');
-  expect(state.firstMediaImage).toBe('none');
+  expect(state.firstMediaImage).toContain('linear-gradient');
   expect(errs).toEqual([]);
 });
 
