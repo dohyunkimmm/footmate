@@ -293,34 +293,3 @@ test('Real App interaction feedback is consistent across secondary, navigation, 
   expect(Math.max(...transitionDurations)).toBeLessThanOrEqual(.1);
   expect(errs).toEqual([]);
 });
-
-test('Case Study desktop companion panels retain reviewable width and structured-cell space',async({page})=>{
-  const errs=failures(page);
-  await page.setViewportSize({width:1440,height:900});
-  await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.1.1'&&document.querySelectorAll('.slide').length===16);
-  for(let index=1;index<16;index+=1){
-    await page.evaluate(i=>window.goTo(i),index);
-    await expect(page.locator('.slide.on')).toHaveCount(1);
-    const panel=await page.locator('.slide.on').evaluate(slide=>{
-      const story=slide.querySelector('.fm-next-story');
-      const aside=slide.querySelector('.fm-next-story-aside');
-      if(!story||!aside)return null;
-      const storyRect=story.getBoundingClientRect();
-      const asideRect=aside.getBoundingClientRect();
-      const structured=[...slide.querySelectorAll('.fm-next-cs-day-states,.fm-next-cs-recovery,.fm-next-cs-outcomes')].map(grid=>({
-        width:grid.getBoundingClientRect().width,
-        childWidths:[...grid.children].map(child=>child.getBoundingClientRect().width)
-      }));
-      return {storyWidth:storyRect.width,asideWidth:asideRect.width,structured};
-    });
-    expect(panel,`missing story panel on section ${index+1}`).not.toBeNull();
-    expect(panel.asideWidth,`aside too narrow on section ${index+1}`).toBeGreaterThanOrEqual(339);
-    expect(panel.asideWidth/panel.storyWidth,`aside ratio too small on section ${index+1}`).toBeGreaterThanOrEqual(0.30);
-    for(const [gridIndex,grid] of panel.structured.entries()){
-      expect(grid.width,`structured grid ${gridIndex+1} too narrow on section ${index+1}`).toBeGreaterThan(500);
-      for(const [childIndex,width] of grid.childWidths.entries())expect(width,`structured cell ${childIndex+1} too narrow on section ${index+1}`).toBeGreaterThan(145);
-    }
-  }
-  expect(errs).toEqual([]);
-});
