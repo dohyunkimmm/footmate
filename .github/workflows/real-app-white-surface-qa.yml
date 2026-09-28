@@ -28,7 +28,6 @@ on:
       - src/v4/decision.js
       - src/v4/recommendation.js
       - src/v4/platform/domain/recommendation.js
-      - src/v4/platform/presentation/bootstrap.js
       - src/v4/platform/presentation/real-app-card-polish.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
@@ -76,7 +75,6 @@ on:
       - src/v4/decision.js
       - src/v4/recommendation.js
       - src/v4/platform/domain/recommendation.js
-      - src/v4/platform/presentation/bootstrap.js
       - src/v4/platform/presentation/real-app-card-polish.js
       - tests/e2e/real-app-white-surface.spec.cjs
       - tests/e2e/real-app-white-surface.spec.cjs-snapshots/**
