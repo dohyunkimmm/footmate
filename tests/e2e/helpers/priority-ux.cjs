@@ -70,7 +70,7 @@ async function aiFilters(page,capture=async()=>{}){
 
 async function profileSettings(page,capture=async()=>{}){
   await start(page);
-  await page.locator('[data-screen="home"] [data-action="nav-profile"]').click();
+  await page.locator('[data-screen="home"] .fm-next-nav [data-action="nav-profile"]').click();
   const panel=page.locator('.fm-personalization-panel--profile');
   await panel.getByRole('button',{name:'현재 설정 저장',exact:true}).click();
   await panel.getByRole('button',{name:'기본 설정 수정',exact:true}).click();
