@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -100,6 +100,7 @@ test('Checkout keeps execution CTA dark green while lime remains semantic accent
   const errs=await openCleanApp(page);
   await reachCheckout(page);
   const submit=page.locator('[data-screen="checkout"] [data-participation-submit]');
+  await expect.poll(()=>submit.evaluate(node=>getComputedStyle(node).backgroundColor)).toBe('rgb(7, 61, 43)');
   const style=await submit.evaluate(node=>({
     background:getComputedStyle(node).backgroundColor,
     border:getComputedStyle(node).borderTopColor,
