@@ -68,11 +68,11 @@ if(!document.getElementById(STYLE_ID)){
   min-height:54px;
   height:54px;
   padding:0 20px;
-  border:1px solid #073d2b;
+  border:1px solid #073d2b!important;
   border-radius:16px;
-  background:#073d2b;
-  color:#fff;
-  box-shadow:0 10px 24px rgba(7,61,43,.17);
+  background:#073d2b!important;
+  color:#fff!important;
+  box-shadow:0 10px 24px rgba(7,61,43,.17)!important;
   font-size:15px;
   font-weight:700;
   letter-spacing:-.015em;
@@ -80,8 +80,8 @@ if(!document.getElementById(STYLE_ID)){
 }
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="welcome"] .fm-next-actions .fm-next-button--primary:hover,
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="setup"] .fm-next-setup-footer .fm-next-button--primary:hover{
-  border-color:#0f5b40;
-  background:#0f5b40;
+  border-color:#0f5b40!important;
+  background:#0f5b40!important;
 }
 
 /* WCAG AA: default provider status must clear the 4.5:1 threshold at 11px. */
