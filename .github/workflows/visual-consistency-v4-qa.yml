@@ -1,0 +1,55 @@
+name: Visual Consistency v4 QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/v4/platform/presentation/real-app-card-polish.js
+      - src/v4/platform/presentation/real-app-card-polish-core.js
+      - src/v4/platform/presentation/visual-consistency-v4.js
+      - tests/e2e/visual-consistency-v4.spec.cjs
+      - tests/e2e/visual-consistency-v4.spec.cjs-snapshots/**
+      - .github/workflows/visual-consistency-v4-qa.yml
+  push:
+    branches: [main]
+    paths:
+      - src/v4/platform/presentation/real-app-card-polish.js
+      - src/v4/platform/presentation/real-app-card-polish-core.js
+      - src/v4/platform/presentation/visual-consistency-v4.js
+      - tests/e2e/visual-consistency-v4.spec.cjs
+      - tests/e2e/visual-consistency-v4.spec.cjs-snapshots/**
+      - .github/workflows/visual-consistency-v4-qa.yml
+permissions:
+  contents: read
+jobs:
+  product-journey-visual:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install visual QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Check visual consistency scripts
+        run: |
+          node --check src/v4/platform/presentation/visual-consistency-v4.js
+          node --check tests/e2e/visual-consistency-v4.spec.cjs
+      - name: Compare extended journey visual baselines
+        run: npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: visual-consistency-v4-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
