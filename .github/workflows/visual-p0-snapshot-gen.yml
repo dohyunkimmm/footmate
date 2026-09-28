@@ -1,0 +1,41 @@
+name: Visual P0 Snapshot Generate
+on:
+  push:
+    branches: [design/visual-p0-finish-20260928]
+    paths:
+      - src/v4/return.css
+      - tests/e2e/visual-p0-finish.spec.cjs
+      - .github/workflows/visual-p0-snapshot-gen.yml
+permissions:
+  contents: read
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install pinned Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Generate intended P0 baselines
+        run: npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-consistency-v4.spec.cjs tests/e2e/visual-p0-finish.spec.cjs --update-snapshots
+      - name: Upload generated baselines
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: visual-p0-generated-${{ github.run_id }}
+          path: |
+            tests/e2e/real-app-white-surface.spec.cjs-snapshots/
+            tests/e2e/visual-consistency-v4.spec.cjs-snapshots/
+            tests/e2e/visual-p0-finish.spec.cjs-snapshots/
+            playwright-report/
+            test-results/
+          if-no-files-found: error
+          retention-days: 2
