@@ -1,6 +1,8 @@
 const fs=require('fs');
 const {test,expect}=require('@playwright/test');
 
+const WELCOME_AI_COPY='AI가 원하는 조건을 해석해, 맞는 경기를 빠르게 찾게 도와줘요.';
+
 async function openCleanWelcome(page,{personalized=false,path='/demo'}={}){
   await page.setViewportSize({width:390,height:844});
   await page.goto(path,{waitUntil:'domcontentloaded'});
@@ -13,6 +15,7 @@ async function openCleanWelcome(page,{personalized=false,path='/demo'}={}){
   },{personalized});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.waitForFunction(()=>document.querySelector('[data-screen="welcome"] [data-welcome-ai-copy]')?.dataset.aiRoleAligned==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
@@ -41,18 +44,21 @@ async function welcomeGeometry(page){
   });
 }
 
-test('Welcome source owns AI support copy and visible render shift stays current-production plus 44px',()=>{
+test('Welcome presentation contract owns AI role copy while source layout remains stable',()=>{
   const app=fs.readFileSync('src/v4/app.js','utf8');
+  const trust=fs.readFileSync('src/v4/platform/presentation/p0-usability-trust.js','utf8');
   const personalization=fs.readFileSync('src/v4/personalization.js','utf8');
   const css=fs.readFileSync('src/v4/personalization.css','utf8');
   const html=fs.readFileSync('app.html','utf8');
   expect(app).toContain('class="fm-next-intro-copy" style="transform:translateY(-44px)"');
   expect(app).toContain('data-welcome-ai-copy');
-  expect(app).toContain('AI가 최고의 경기를 골라준다');
   expect(app).toContain('font-size:15px;font-weight:700');
+  expect(trust).toContain(WELCOME_AI_COPY);
+  expect(trust).toContain("welcomeAiRole:'natural-language constraint interpretation'");
+  expect(trust).toContain("rankingOwner:'deterministic recommendation engine'");
   expect(css).toContain('.fm-next-intro-copy{transform:translateY(-88px)!important}');
   expect(personalization).not.toContain("copy.style.transform='translateY(-44px)'");
-  expect(personalization).not.toContain("support.textContent='AI가 최고의 경기를 골라준다'");
+  expect(html).toContain('/src/v4/platform/presentation/bootstrap.js?v=490');
   expect(html).toContain('/src/v4/app.js?v=494');
   expect(html).toContain('/src/v4/personalization.js?v=493');
 });
@@ -64,7 +70,7 @@ for(const path of ['/demo','/app']){
     const support=page.locator('[data-screen="welcome"] [data-welcome-ai-copy]');
     await expect(copy).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -88)');
     await expect(support).toBeVisible();
-    await expect(support).toHaveText('AI가 최고의 경기를 골라준다');
+    await expect(support).toHaveText(WELCOME_AI_COPY);
     const metrics=await welcomeGeometry(page);
     expect(Math.round(metrics.copyVisualShift)).toBe(-88);
     expect(metrics.copyVisualShift).toBeGreaterThanOrEqual(-92);
