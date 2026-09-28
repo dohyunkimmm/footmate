@@ -61,8 +61,7 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     return {left:box.left,right:innerWidth-box.right,width:box.width,borderRadius:getComputedStyle(element).borderRadius};
   });
   // Standalone Real App keeps the compact desktop frame; portfolio remains outside this shell contract.
-  expect(geometry.width).toBeGreaterThanOrEqual(400);
-  expect(geometry.width).toBeLessThanOrEqual(404);
+  expect(geometry.width).toBe(430);
   expect(Math.abs(geometry.left-geometry.right)).toBeLessThanOrEqual(1);
   expect(parseFloat(geometry.borderRadius)).toBe(30);
 
@@ -70,7 +69,7 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
   const cardStyle=await card.evaluate(element=>({radius:parseFloat(getComputedStyle(element).borderRadius),shadow:getComputedStyle(element).boxShadow}));
   expect(cardStyle.radius).toBeGreaterThanOrEqual(20);
   expect(cardStyle.radius).toBeLessThanOrEqual(22);
-  expect(cardStyle.shadow).not.toBe('none');
+  expect(cardStyle.shadow).toBe('none');
 
   const nav=page.locator('.fm-next-nav');
   const navGeometry=await nav.evaluate(element=>{
@@ -78,8 +77,8 @@ test('1440px Design System v2 keeps the mobile app shell centered and component 
     return {left:box.left,right:innerWidth-box.right,width:box.width};
   });
   expect(Math.abs(navGeometry.left-navGeometry.right)).toBeLessThanOrEqual(1);
-  expect(navGeometry.width).toBeGreaterThanOrEqual(376);
-  expect(navGeometry.width).toBeLessThanOrEqual(380);
+  expect(navGeometry.width).toBeGreaterThanOrEqual(404);
+  expect(navGeometry.width).toBeLessThanOrEqual(408);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
