@@ -1,5 +1,5 @@
 /* FootMate Case Study · P2 polish orchestration
-   Finishing pass only: restrained reveal order, cadence hooks, and responsive polish.
+   Finishing pass only: restrained reveal order, cadence hooks, copy polish, and responsive polish.
    No new product facts, routes, IA, or runtime behavior. */
 (function(){
   const ROOT='html[data-fm-next-case-study="true"]';
@@ -24,6 +24,26 @@
     markReveal(slide.querySelector('.fm-next-story-kicker'),0);
     markReveal(slide.querySelector('.fm-next-story h2'),1);
     markReveal(slide.querySelector('.fm-next-story-lead'),2);
+  }
+
+  function stripTerminalPeriod(node){
+    if(!node)return;
+    node.textContent=node.textContent.replace(/[.。]\s*$/,'');
+  }
+
+  function polishVisualCopy(){
+    const selectors=[
+      '.fm-p0-journey-step p',
+      '.fm-p0-route header p',
+      '.fm-p0-app-context b',
+      '.fm-p0-annotations p',
+      '.fm-p0-arch-node span',
+      '.fm-p1-persona-context>p',
+      '.fm-p1-jtbd-head>b',
+      '.fm-p1-auth-screen p',
+      '.fm-p1-validation-banner>p'
+    ];
+    document.querySelectorAll(selectors.join(',')).forEach(stripTerminalPeriod);
   }
 
   function markP0Sequences(){
@@ -67,6 +87,7 @@
     const slides=storySlides();
     if(!slides.length)return false;
 
+    polishVisualCopy();
     slides.forEach(markSection);
     markP0Sequences();
     markP1Sequences();
