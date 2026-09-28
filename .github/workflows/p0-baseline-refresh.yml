@@ -1,0 +1,41 @@
+name: P0 Baseline Refresh
+on:
+  push:
+    branches: [design/visual-p0-finish-20260928]
+    paths:
+      - .github/workflows/p0-baseline-refresh.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Refresh only approved P0 Home baselines
+        run: |
+          npx playwright test --project=chromium tests/e2e/product-completion.spec.cjs --grep '^Home is the AI Match Assistant entry with one compact For You list$' --update-snapshots=all
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs --grep '^390px Home uses neutral match media while raising the core AI surface$' --update-snapshots=all
+          git status --short
+          test "$(git status --short | wc -l)" -eq 2
+          git status --short | grep 'tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-ia-390-chromium-linux.png'
+          git status --short | grep 'tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png'
+      - name: Commit approved baselines
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-ia-390-chromium-linux.png tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png
+          git commit -m 'test: refresh approved P0 visual baselines'
+          git push origin HEAD:${{ github.ref_name }}
