@@ -1,6 +1,8 @@
 const root=document.getElementById('footmate-next');
 const P1_DECISION_CLARITY_VERSION='1.0.0';
+const DISCOVERY_KEYS=['date','time','distance','price','position'];
 let scheduled=false;
+let draftStatusScheduled=false;
 
 function isRealApp(){
   return document.documentElement.dataset.footmateSurface==='real';
@@ -35,12 +37,40 @@ function ensureCheckoutBoundary(){
   }
 }
 
+function syncDiscoveryDraftStatus(){
+  draftStatusScheduled=false;
+  const sheet=root?.querySelector('[data-discovery-sheet="true"]');
+  const status=sheet?.querySelector('[data-p1-discovery-draft-status]');
+  const applied=window.__FOOTMATE_DISCOVERY__?.getState?.();
+  if(!sheet||!status||!applied)return;
+  const dirty=DISCOVERY_KEYS.some(key=>{
+    const field=sheet.querySelector(`[data-discovery-field="${key}"]`);
+    return field&&String(field.value)!==String(applied[key]);
+  });
+  status.dataset.dirty=String(dirty);
+  status.textContent=dirty?'변경 사항이 아직 적용되지 않았어요.':'현재 적용된 조건입니다.';
+}
+
+function scheduleDiscoveryDraftStatus(){
+  if(draftStatusScheduled)return;
+  draftStatusScheduled=true;
+  requestAnimationFrame(syncDiscoveryDraftStatus);
+}
+
 function applyP1DecisionClarity(){
   if(!root||!isRealApp())return;
   ensureStyles();
   ensureCheckoutBoundary();
+  if(root.querySelector('[data-discovery-sheet="true"]'))scheduleDiscoveryDraftStatus();
   root.dataset.p1DecisionClarityVersion=P1_DECISION_CLARITY_VERSION;
 }
+
+document.addEventListener('change',event=>{
+  if(event.target.closest('[data-discovery-sheet="true"] [data-discovery-field]'))scheduleDiscoveryDraftStatus();
+});
+document.addEventListener('click',event=>{
+  if(event.target.closest('[data-discovery-sheet="true"] .fm-discovery-reset'))scheduleDiscoveryDraftStatus();
+});
 
 if(root){
   const observer=new MutationObserver(()=>{
