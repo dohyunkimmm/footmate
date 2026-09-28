@@ -11,7 +11,7 @@ function ensureTouchTargetStyles(){
   const style=document.createElement('style');
   style.id='fm-p0-usability-trust';
   style.textContent=`
-.fm-next-page[data-mode="real"] :is(.fm-ai-examples button,.fm-discovery-chip,.fm-discovery-clear){min-height:44px;min-block-size:44px}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(.fm-ai-examples button,.fm-discovery-chip,.fm-discovery-clear){min-height:44px;min-block-size:44px}
 .fm-next-page[data-mode="real"] .fm-release-team-head button{width:44px;min-width:44px;height:44px;min-height:44px}
 `;
   document.head.append(style);
