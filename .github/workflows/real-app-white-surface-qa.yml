@@ -17,6 +17,7 @@ on:
       - src/v4/platform/application/checkin.js
       - src/v4/platform/presentation/bootstrap.js
       - src/v4/platform/presentation/p0-usability-trust.js
+      - src/v4/platform/presentation/p1-decision-clarity.js
       - tests/e2e/checkin-state.spec.cjs
       - tests/e2e/helpers/checkin.cjs
       - tests/e2e/v4-matchday.spec.cjs*
@@ -66,6 +67,7 @@ on:
       - src/v4/platform/application/checkin.js
       - src/v4/platform/presentation/bootstrap.js
       - src/v4/platform/presentation/p0-usability-trust.js
+      - src/v4/platform/presentation/p1-decision-clarity.js
       - tests/e2e/checkin-state.spec.cjs
       - tests/e2e/helpers/checkin.cjs
       - tests/e2e/v4-matchday.spec.cjs*
@@ -134,7 +136,7 @@ jobs:
           console.log('PASS Real App CSS syntax and consolidated ownership');
           NODE
       - name: Check product completion JS syntax
-        run: node --check src/v5/ai-match-assistant.js && node --check src/v4/platform/presentation/real-app-card-polish.js && node --check src/v4/platform/presentation/p0-usability-trust.js
+        run: node --check src/v5/ai-match-assistant.js && node --check src/v4/platform/presentation/real-app-card-polish.js && node --check src/v4/platform/presentation/p0-usability-trust.js && node --check src/v4/platform/presentation/p1-decision-clarity.js
       - name: Verify pinned browser image
         run: node -e "if (require('./package.json').qaToolchain.playwright !== '1.55.1') throw new Error('Update the Playwright container with qaToolchain.playwright')"
       - name: Compare Real App visual baselines and completion contracts
