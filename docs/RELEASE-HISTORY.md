@@ -2,6 +2,18 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Real App visual consistency completion · 2026-09-28
+
+- Scope: Welcome / Setup, Auth → Checkout → Success, Schedule secondary / empty states, loading / empty / pending / failure / canceled / fallback 상태를 승인된 Real App visual language로 통일하면서 IA·route·product behavior·Matching/ELO ownership은 유지
+- Runtime PR: #373 · merged SHA `463f04546a583526a37b5d4ddd7b063a6e3a2d55`
+- Product/runtime baseline: `463f04546a583526a37b5d4ddd7b063a6e3a2d55`
+- Visual Regression: GitHub Actions와 동일한 pinned Ubuntu/Chromium 환경에서 Product visual baseline 52/52 갱신 후 별도 comparison-only `toHaveScreenshot()` 52/52 PASS; `visual-consistency-v4`를 permanent Real App QA gate에 포함
+- Final PR QA: Real App White Surface QA run `36358981291` · SUCCESS; FootMate QA run `36358981262` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Current main follow-up QA: FootMate QA run `36369768824` · SUCCESS · visual baseline gates PASS · Production Smoke PASS; #374/#377은 QA 안정화 범위이며 runtime visual/product contract는 변경하지 않음
+- Production verification: official `footmate-black.vercel.app`의 `/demo`와 `/demo?mode=portfolio` HTTP 200 · exact HTTP smoke PASS · exact AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium Production smoke 13/13 PASS · 최근 24시간 Vercel runtime error 없음
+- Exact Vercel Production: `dpl_EZgiLRB1kT51ZThnyF7FAMHTBFT1` · SHA `463f04546a583526a37b5d4ddd7b063a6e3a2d55` · READY · official alias `footmate-black.vercel.app`
+- Documentation boundary: 이번 변경은 visual consistency / QA closure이므로 README·Closed Beta runbook·Notion·별도 Case Study 프로젝트의 제품 설명을 변경하지 않음
+
 ## Real App Home → Discover IA closure · 2026-09-25
 
 - Scope: Home을 AI Match Assistant entry + compact personalization으로, Discover를 AI/search result exploration + condition edit/filter/sort/full list로 분리하고 Home example suggestion이 실제 Assistant 실행 후 Discover 결과로 이어지도록 정리
