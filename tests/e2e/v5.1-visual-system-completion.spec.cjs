@@ -104,7 +104,7 @@ test('1440px Home and Discover match the completed visual hierarchy',async({page
     const navButton=element.querySelector('.fm-next-nav button').getBoundingClientRect();
     return {appWidth:app.width,headerHeight:header.height,navHeight:nav.height,navButtonHeight:navButton.height};
   });
-  expect(homeGeometry.appWidth).toBe(402);
+  expect(homeGeometry.appWidth).toBe(430);
   expect(homeGeometry.headerHeight).toBeLessThanOrEqual(64);
   expect(homeGeometry.navHeight).toBeLessThanOrEqual(64);
   expect(homeGeometry.navButtonHeight).toBeLessThanOrEqual(50);

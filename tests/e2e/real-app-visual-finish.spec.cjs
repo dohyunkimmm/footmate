@@ -28,7 +28,21 @@ async function setupToHome(page){
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 
-test('standalone Real App keeps visual finish ownership in Design System v2 without an extra stylesheet request',async({page})=>{
+async function reachCheckout(page){
+  await setupToHome(page);
+  await page.locator('[data-screen="home"] .fm-next-match-card').first().click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await page.evaluate(()=>{
+    const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
+    localStorage.setItem('footmate:v4:session',JSON.stringify({...session,signedIn:true,route:'checkout',userName:session.userName||'도현'}));
+  });
+  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+  await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+  await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
+}
+
+test('standalone Real App keeps visual finish ownership without an extra stylesheet request',async({page})=>{
   const errs=await openCleanApp(page);
   const state=await page.evaluate(()=>({
     styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(node=>node.getAttribute('href')).filter(Boolean),
@@ -40,7 +54,7 @@ test('standalone Real App keeps visual finish ownership in Design System v2 with
   expect(errs).toEqual([]);
 });
 
-test('decision-support surfaces keep the core AI feature visually raised',async({page})=>{
+test('decision-support surfaces keep the core AI feature as the single raised focal surface',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const screen=page.locator('[data-screen="home"]');
@@ -51,25 +65,61 @@ test('decision-support surfaces keep the core AI feature visually raised',async(
   const result=await screen.evaluate(element=>{
     const card=element.querySelector('.fm-next-match-card');
     const media=element.querySelector('.fm-next-match-card-media');
+    const place=element.querySelector('.fm-next-match-place');
     const tag=element.querySelector('.fm-next-tag');
     const context=element.querySelector('.fm-next-context-card');
+    const contextTitle=context.querySelector('h2');
+    const contextPrimary=element.querySelector('.fm-next-context-actions .fm-next-button:first-child');
     const ai=element.querySelector('.fm-ai-card[data-product-ai="home"]');
     return {
       tagSize:parseFloat(getComputedStyle(tag).fontSize),
+      contextTitleColor:getComputedStyle(contextTitle).color,
+      contextImage:getComputedStyle(context).backgroundImage,
       contextShadow:getComputedStyle(context).boxShadow,
+      contextPrimaryBackground:getComputedStyle(contextPrimary).backgroundColor,
       aiShadow:getComputedStyle(ai).boxShadow,
       cardShadow:getComputedStyle(card).boxShadow,
-      mediaImage:getComputedStyle(media).backgroundImage
+      mediaImage:getComputedStyle(media).backgroundImage,
+      placeColor:getComputedStyle(place).color
     };
   });
   expect(result.tagSize).toBeGreaterThanOrEqual(11);
   expect(levelTagSize).toBeGreaterThanOrEqual(11);
-  expect(result.contextShadow).not.toBe('none');
+  expect(result.contextTitleColor).toBe('rgb(7, 61, 43)');
+  expect(result.contextImage).toBe('none');
+  expect(result.contextShadow).toBe('none');
+  expect(result.contextPrimaryBackground).toBe('rgb(216, 255, 115)');
   expect(result.aiShadow).not.toBe('none');
-  expect(result.cardShadow).not.toBe('none');
+  expect(result.cardShadow).toBe('none');
   expect(result.mediaImage).toContain('linear-gradient');
-  expect(result.mediaImage).toContain('radial-gradient');
+  expect(result.placeColor).toBe('rgb(7, 61, 43)');
   expect(errs).toEqual([]);
+});
+
+test('Checkout keeps execution CTA dark green while lime remains semantic accent',async({page})=>{
+  const errs=await openCleanApp(page);
+  await reachCheckout(page);
+  const submit=page.locator('[data-screen="checkout"] [data-participation-submit]');
+  const style=await submit.evaluate(node=>({
+    background:getComputedStyle(node).backgroundColor,
+    border:getComputedStyle(node).borderTopColor,
+    color:getComputedStyle(node).color,
+    height:node.getBoundingClientRect().height
+  }));
+  expect(style.background).toBe('rgb(7, 61, 43)');
+  expect(style.border).toBe('rgb(7, 61, 43)');
+  expect(style.color).toBe('rgb(255, 255, 255)');
+  expect(style.height).toBeGreaterThanOrEqual(44);
+  expect(errs).toEqual([]);
+});
+
+test('standalone shell does not shrink when viewport crosses 699 to 700px',async({page})=>{
+  for(const width of [699,700,1440]){
+    const errs=await openCleanApp(page,{width,height:844});
+    const shellWidth=await page.locator('.fm-next-app:not([data-embed="true"])').evaluate(node=>node.getBoundingClientRect().width);
+    expect(shellWidth).toBeCloseTo(430,0);
+    expect(errs).toEqual([]);
+  }
 });
 
 test('Home and Discover expose the same match-card metadata and right-aligned level chips',async({page})=>{
@@ -143,4 +193,3 @@ test('reduced motion keeps geometry and suppresses decorative motion',async({pag
   expect(motion.width).toBeGreaterThan(0);
   expect(errs).toEqual([]);
 });
-
