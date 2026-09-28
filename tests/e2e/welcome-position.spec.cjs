@@ -9,7 +9,7 @@ test('Welcome moves only headline and AI support copy 88px while CTAs stay ancho
   });
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
-  await page.waitForFunction(()=>document.querySelector('[data-screen="welcome"] [data-welcome-ai-copy]'));
+  await page.waitForFunction(()=>document.querySelector('[data-screen="welcome"] [data-welcome-ai-copy]')?.dataset.aiRoleAligned==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 
   const metrics=await page.evaluate(()=>{
@@ -44,5 +44,5 @@ test('Welcome moves only headline and AI support copy 88px while CTAs stay ancho
   expect(metrics.moved.buttonHeights).toEqual([54,54]);
   expect(metrics.restored.headlineTop).toBeCloseTo(metrics.moved.headlineTop,3);
   expect(metrics.moved.transform).toBe('matrix(1, 0, 0, 1, 0, -88)');
-  expect(metrics.moved.supportText).toBe('AI가 최고의 경기를 골라준다');
+  expect(metrics.moved.supportText).toBe('AI가 원하는 조건을 해석해, 맞는 경기를 빠르게 찾게 도와줘요.');
 });
