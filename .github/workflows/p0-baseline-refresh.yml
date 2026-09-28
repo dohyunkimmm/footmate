@@ -20,22 +20,32 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Install Playwright
+      - name: Install pinned QA dependencies
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
-          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
-      - name: Refresh only approved P0 Home baselines
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Generate intended P0 baselines in pinned Chromium
         run: |
-          npx playwright test --project=chromium tests/e2e/product-completion.spec.cjs --grep '^Home is the AI Match Assistant entry with one compact For You list$' --update-snapshots=all
-          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs --grep '^390px Home uses neutral match media while raising the core AI surface$' --update-snapshots=all
+          npx playwright test --project=chromium \
+            tests/e2e/real-app-white-surface.spec.cjs \
+            tests/e2e/visual-consistency-v4.spec.cjs \
+            tests/e2e/visual-p0-finish.spec.cjs \
+            tests/e2e/product-completion.spec.cjs \
+            tests/e2e/real-app-visual-finish.spec.cjs \
+            tests/e2e/priority-ux.spec.cjs \
+            tests/e2e/my-fresh-profile-containment.spec.cjs \
+            tests/e2e/welcome-position.spec.cjs \
+            tests/e2e/welcome-source-layout.spec.cjs \
+            --update-snapshots=all
           git status --short
-          test "$(git status --short | wc -l)" -eq 2
-          git status --short | grep 'tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-ia-390-chromium-linux.png'
-          git status --short | grep 'tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png'
-      - name: Commit approved baselines
+          UNEXPECTED="$(git status --porcelain | grep -vE '^( M|M |A |\?\?) tests/e2e/.*-snapshots/.*\.png$' || true)"
+          test -z "$UNEXPECTED"
+      - name: Commit generated P0 baselines
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tests/e2e/product-completion.spec.cjs-snapshots/product-completion-home-ia-390-chromium-linux.png tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png
-          git commit -m 'test: refresh approved P0 visual baselines'
+          git add tests/e2e/*-snapshots/*.png
+          git diff --cached --quiet && { echo 'No baseline changes generated'; exit 1; }
+          git commit -m 'test: refresh P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
