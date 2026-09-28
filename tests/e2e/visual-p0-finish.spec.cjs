@@ -4,7 +4,7 @@ function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{
-    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`);
+    if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`));
   });
   return items;
 }
@@ -68,11 +68,11 @@ test('P0 Home keeps AI Assistant as the only raised focal surface',async({page})
       firstMediaImage:getComputedStyle(firstMedia).backgroundImage
     };
   });
-  expect(state.contextColor).toBe('rgb(16, 34, 25)');
+  expect(state.contextColor).toBe('rgb(19, 32, 25)');
   expect(state.contextShadow).toBe('none');
   expect(state.aiShadow).not.toBe('none');
-  expect(state.firstCardShadow).not.toBe(state.aiShadow);
-  expect(state.firstMediaColor).toBe('rgb(16, 34, 25)');
+  expect(state.firstCardShadow).toBe('none');
+  expect(state.firstMediaColor).toBe('rgb(19, 32, 25)');
   expect(state.firstMediaImage).toContain('linear-gradient');
   expect(errs).toEqual([]);
 });
@@ -98,10 +98,11 @@ for(const width of [699,700]){
     const app=page.locator('.fm-next-app:not([data-embed="true"])');
     const geometry=await app.evaluate(node=>({
       width:node.getBoundingClientRect().width,
-      radius:getComputedStyle(node).borderRadius
+      radius:parseFloat(getComputedStyle(node).borderRadius)||0
     }));
-    expect(Math.round(geometry.width)).toBe(402);
-    expect(parseFloat(geometry.radius)).toBeGreaterThanOrEqual(28);
+    expect(Math.round(geometry.width)).toBe(430);
+    if(width===699)expect(geometry.radius).toBe(0);
+    else expect(geometry.radius).toBeGreaterThanOrEqual(28);
     await expect(page).toHaveScreenshot(`visual-p0-shell-${width}.png`,shot);
     expect(errs).toEqual([]);
   });
