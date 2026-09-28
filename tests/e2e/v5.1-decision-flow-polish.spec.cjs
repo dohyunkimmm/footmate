@@ -30,6 +30,7 @@ async function setupToHome(page){
 async function openFirstDetail(page){
   await page.locator('.fm-next-match-card').first().click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await page.waitForFunction(()=>document.querySelectorAll('[data-screen="detail"]>.fm-next-detail-section:not([hidden])').length>=4);
 }
 
 async function reachCheckout(page){
