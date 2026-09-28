@@ -67,5 +67,6 @@ jobs:
           test "$COUNT" -ge 1
           test "$COUNT" -le 7
           git commit -m 'test: refresh final P0 visual baselines'
-          git push origin HEAD:${{ github.ref_name }}
-# one-shot generator; include shell-owned Matchday width, then remove after success
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
+# one-shot generator; rebase generated baselines over any concurrent branch-only QA commit, then remove after success
