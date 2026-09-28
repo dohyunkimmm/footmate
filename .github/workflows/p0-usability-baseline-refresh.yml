@@ -1,0 +1,47 @@
+name: P0 Usability Baseline Refresh
+on:
+  push:
+    branches:
+      - fix/p0-touch-target-ai-trust-20260928
+    paths:
+      - .github/workflows/p0-usability-baseline-refresh.yml
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/p0-touch-target-ai-trust-20260928
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Refresh only P0 affected Ubuntu Chromium snapshots
+        run: |
+          npx playwright test --project=chromium tests/e2e/priority-ux.spec.cjs --grep 'AI and manual filters' --update-snapshots
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs --grep 'Welcome' --update-snapshots
+          npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs --grep 'Welcome and Setup' --update-snapshots
+          npx playwright test --project=chromium tests/e2e/visual-p0-finish.spec.cjs --grep 'shell stays continuous' --update-snapshots
+      - name: Commit reviewed P0 baselines
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/priority-ux.spec.cjs-snapshots tests/e2e/real-app-white-surface.spec.cjs-snapshots tests/e2e/visual-consistency-v4.spec.cjs-snapshots tests/e2e/visual-p0-finish.spec.cjs-snapshots
+          if git diff --cached --quiet; then
+            echo 'No snapshot changes to commit.'
+            exit 0
+          fi
+          git commit -m 'test: refresh P0 usability visual baselines'
+          git push origin HEAD:fix/p0-touch-target-ai-trust-20260928
