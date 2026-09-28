@@ -27,7 +27,7 @@
   }
 
   function markP0Sequences(){
-    markGroup(document,'.fm-p0-journey','.fm-p0-journey-step',3);
+    markGroup(document,'.fm-p0-journey-step',3);
     markGroup(document,'.fm-p0-priority-map .fm-p0-priority-card',9);
     document.querySelectorAll('.fm-p0-route-steps').forEach(group=>markGroup(group,'.fm-p0-route-step',3));
     markGroup(document,'.fm-p0-annotations li',3);
