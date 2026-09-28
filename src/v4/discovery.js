@@ -10,6 +10,7 @@ const requestedMode=params.get('mode');
 const mode=['guided','evidence'].includes(requestedMode)?requestedMode:'real';
 
 const defaults=Object.freeze({date:'all',time:'all',distance:'all',price:'all',position:'all',sort:'fit'});
+const filterKeys=Object.freeze(['date','time','distance','price','position']);
 const allowed=Object.freeze({
   date:new Set(['all','tomorrow','2days','4days']),
   time:new Set(['all','19','20','21plus']),
@@ -28,6 +29,7 @@ const labels=Object.freeze({
 });
 
 let filters=readInitialFilters();
+let filterDraft=null;
 let lastFilterTrigger=null;
 let applying=false;
 
@@ -73,6 +75,7 @@ function persist(){
 
 function clearPersistedDiscovery(){
   filters={...defaults};
+  filterDraft=null;
   if(mode!=='real')return;
   discoveryRepository.clear();
   const url=new URL(location.href);
@@ -160,7 +163,7 @@ function card(row,index,state){
 }
 
 function activeFilters(){
-  return ['date','time','distance','price','position'].filter(key=>filters[key]!==defaults[key]);
+  return filterKeys.filter(key=>filters[key]!==defaults[key]);
 }
 
 function activeLabel(key){return labels[key]?.[filters[key]]||filters[key]}
@@ -216,10 +219,38 @@ function renderResults(screen,state){
 }
 
 function option(value,label,current){return `<option value="${value}"${current===value?' selected':''}>${label}</option>`}
-function selectField(key,title,items){return `<label class="fm-discovery-field"><span>${title}</span><select data-discovery-field="${key}">${items.map(([value,label])=>option(value,label,filters[key])).join('')}</select></label>`}
+function selectField(key,title,items){
+  const current=filterDraft?.[key]??filters[key];
+  return `<label class="fm-discovery-field"><span>${title}</span><select data-discovery-field="${key}">${items.map(([value,label])=>option(value,label,current)).join('')}</select></label>`;
+}
+
+function draftDirty(){
+  if(!filterDraft)return false;
+  return filterKeys.some(key=>filterDraft[key]!==filters[key]);
+}
+
+function updateDraftStatus(sheet=root?.querySelector('[data-discovery-sheet="true"]')){
+  if(!sheet||!filterDraft)return;
+  const status=sheet.querySelector('[data-p1-discovery-draft-status]');
+  if(!status)return;
+  const dirty=draftDirty();
+  status.dataset.dirty=String(dirty);
+  status.textContent=dirty?'변경 사항이 아직 적용되지 않았어요.':'현재 적용된 조건입니다.';
+}
+
+function resetDraft(sheet){
+  if(!filterDraft)return;
+  filterDraft={...filterDraft,date:'all',time:'all',distance:'all',price:'all',position:'all'};
+  sheet.querySelectorAll('[data-discovery-field]').forEach(field=>{
+    const key=field.dataset.discoveryField;
+    if(key in filterDraft)field.value=filterDraft[key];
+  });
+  updateDraftStatus(sheet);
+}
 
 function openFilters(screen,trigger){
   closeFilters(false);
+  filterDraft={...filters};
   lastFilterTrigger=trigger||screen.querySelector('[data-discovery-action="open-filters"]');
   const backdrop=document.createElement('div');
   backdrop.className='fm-discovery-sheet-backdrop';
@@ -227,6 +258,7 @@ function openFilters(screen,trigger){
   backdrop.innerHTML=`<section class="fm-discovery-sheet" role="dialog" aria-modal="true" aria-labelledby="fm-discovery-title">
     <div class="fm-discovery-sheet-head"><div><small>DISCOVERY FILTERS</small><h2 id="fm-discovery-title">경기 조건 좁히기</h2></div><button type="button" class="fm-discovery-close" data-discovery-action="close-filters" aria-label="필터 닫기">×</button></div>
     <p class="fm-discovery-sheet-copy">추천 기준은 유지하고, 지금 가능한 경기만 빠르게 좁혀보세요.</p>
+    <p class="fm-discovery-draft-status" data-p1-discovery-draft-status role="status" aria-live="polite" data-dirty="false">현재 적용된 조건입니다.</p>
     <div class="fm-discovery-fields">
       ${selectField('date','날짜',[['all','전체'],['tomorrow','내일'],['2days','2일 이내'],['4days','4일 이내']])}
       ${selectField('time','시간',[['all','전체'],['19','19시대'],['20','20시대'],['21plus','21시 이후']])}
@@ -234,7 +266,7 @@ function openFilters(screen,trigger){
       ${selectField('price','가격',[['all','전체'],['11000','11,000원 이하'],['12000','12,000원 이하'],['13000','13,000원 이하']])}
       ${selectField('position','포지션',[['all','전체'],['MF','MF 자리 있음'],['FW','FW 자리 있음'],['DF','DF 자리 있음'],['GK','GK 자리 있음']])}
     </div>
-    <div class="fm-discovery-sheet-actions"><button type="button" class="fm-discovery-reset" data-discovery-action="clear-filters">필터 전체 해제</button><button type="button" class="fm-discovery-done" data-discovery-action="close-filters">결과 보기</button></div>
+    <div class="fm-discovery-sheet-actions"><button type="button" class="fm-discovery-reset" data-discovery-action="clear-filters">필터 전체 해제</button><button type="button" class="fm-discovery-done" data-discovery-action="apply-filters">결과 보기</button></div>
   </section>`;
   screen.append(backdrop);
   document.body.classList.add('fm-discovery-dialog-open');
@@ -242,6 +274,7 @@ function openFilters(screen,trigger){
 }
 
 function closeFilters(restore=true){
+  filterDraft=null;
   const sheet=root.querySelector('[data-discovery-sheet="true"]');
   if(sheet)sheet.remove();
   document.body.classList.remove('fm-discovery-dialog-open');
@@ -256,6 +289,17 @@ function updateFilters(patch){
     screen.dataset.fmDiscoverySignature='';
     apply();
   }
+}
+
+function applyFilterDraft(){
+  if(!filterDraft){closeFilters();return;}
+  const next={...filterDraft};
+  filterDraft=null;
+  const sheet=root.querySelector('[data-discovery-sheet="true"]');
+  if(sheet)sheet.remove();
+  document.body.classList.remove('fm-discovery-dialog-open');
+  updateFilters(next);
+  if(lastFilterTrigger?.isConnected)lastFilterTrigger.focus();
 }
 
 function apply(){
@@ -283,7 +327,13 @@ root?.addEventListener('click',event=>{
       return;
     }
     if(action==='close-filters'){closeFilters();return;}
-    if(action==='clear-filters'){updateFilters({date:'all',time:'all',distance:'all',price:'all',position:'all'});return;}
+    if(action==='apply-filters'){applyFilterDraft();return;}
+    if(action==='clear-filters'){
+      const sheet=discoveryTarget.closest('[data-discovery-sheet="true"]');
+      if(sheet&&filterDraft){resetDraft(sheet);return;}
+      updateFilters({date:'all',time:'all',distance:'all',price:'all',position:'all'});
+      return;
+    }
     if(action==='relax-filters'){updateFilters({date:'all',time:'all',distance:'all',price:'all'});return;}
     if(action==='remove-filter'){
       const key=discoveryTarget.dataset.filterKey;
@@ -299,7 +349,16 @@ root?.addEventListener('change',event=>{
   const sort=event.target.closest('[data-discovery-sort]');
   if(sort){updateFilters({sort:sort.value});return;}
   const field=event.target.closest('[data-discovery-field]');
-  if(field){updateFilters({[field.dataset.discoveryField]:field.value});}
+  if(field){
+    const sheet=field.closest('[data-discovery-sheet="true"]');
+    if(sheet&&filterDraft){
+      const key=field.dataset.discoveryField;
+      if(key in defaults)filterDraft={...filterDraft,[key]:field.value};
+      updateDraftStatus(sheet);
+      return;
+    }
+    updateFilters({[field.dataset.discoveryField]:field.value});
+  }
 });
 
 root?.addEventListener('keydown',event=>{
@@ -321,6 +380,7 @@ root?.addEventListener('keydown',event=>{
 
 window.addEventListener('popstate',()=>{
   filters=readInitialFilters();
+  filterDraft=null;
   requestAnimationFrame(()=>{const screen=root?.querySelector('[data-screen="discover"]');if(screen)screen.dataset.fmDiscoverySignature='';apply();});
 });
 
