@@ -421,7 +421,7 @@
 - Exact Production AI inference: PASS
 - Exact Production Chromium smoke: PASS
 - Render backup at blocker closure: `dep-dao6hvbtqb8s73b3ms7g` · SHA `b84b571c4d62070109089cf515fa9eb63f338f53` · LIVE at verification time
-- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics는 미연동
+- Integration boundary: Closed Beta participation은 free-only; 실제 PG·notification delivery·external analytics 미연동
 
 ### Closed Beta Must hardening · 2026-09-21
 
@@ -443,7 +443,7 @@
 - Security advisor remaining warnings: authenticated SECURITY DEFINER RPC 5개는 의도된 user/operator transaction entrypoint이며 각 함수 내부 auth/operator 검증을 유지; leaked-password protection은 현재 Supabase 프로젝트에서 비활성
 - Automated responsive coverage: 320 / 375 / 390 / 430px PASS
 - Manual gates: 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E 모두 PASS; 추적 issue #147 closed. 자동 QA 결과와 사용자 수동 검증 결과는 구분해 기록함
-- Integration boundary: `/app`는 sample/mock 경계를 유지하고 `/beta`는 Supabase connected; 실제 PG·notification delivery·external analytics 미연동
+- Integration boundary: `/app`는 sample/mock 경계를 유지하고 `/beta`는 Supabase connected; 실제 PG·notification delivery·external analytics는 미연동
 
 ### Architecture / QA ownership cleanup · 2026-09-21
 
