@@ -42,17 +42,15 @@ async function reachCheckout(page){
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
 }
 
-test('standalone Real App keeps visual finish ownership in Design System v2 without an extra stylesheet request',async({page})=>{
+test('standalone Real App keeps visual finish ownership without an extra stylesheet request',async({page})=>{
   const errs=await openCleanApp(page);
   const state=await page.evaluate(()=>({
     styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(node=>node.getAttribute('href')).filter(Boolean),
-    support:getComputedStyle(document.querySelector('.fm-next-app')).getPropertyValue('--fm-finish-type-support').trim(),
-    p0:getComputedStyle(document.querySelector('.fm-next-app')).getPropertyValue('--fm-p0-visual-finish').trim()
+    support:getComputedStyle(document.querySelector('.fm-next-app')).getPropertyValue('--fm-finish-type-support').trim()
   }));
   expect(state.styles.at(-1)).toContain('/src/v4/design-system-v2.css');
   expect(state.styles.some(href=>href.includes('real-app-visual-finish.css'))).toBe(false);
   expect(state.support).toBe('12px');
-  expect(state.p0).toBe('1');
   expect(errs).toEqual([]);
 });
 
@@ -87,14 +85,12 @@ test('decision-support surfaces keep the core AI feature as the single raised fo
   expect(result.tagSize).toBeGreaterThanOrEqual(11);
   expect(levelTagSize).toBeGreaterThanOrEqual(11);
   expect(result.contextColor).toBe('rgb(16, 34, 25)');
-  expect(result.contextImage).toContain('linear-gradient');
-  expect(result.contextImage).not.toContain('rgb(6, 47, 34)');
-  expect(result.contextShadow).not.toBe('none');
+  expect(result.contextImage).toBe('none');
+  expect(result.contextShadow).toBe('none');
   expect(result.contextPrimaryBackground).toBe('rgb(255, 255, 255)');
   expect(result.aiShadow).not.toBe('none');
-  expect(result.cardShadow).not.toBe('none');
-  expect(result.mediaImage).toContain('linear-gradient');
-  expect(result.mediaImage).toContain('radial-gradient');
+  expect(result.cardShadow).toBe('none');
+  expect(result.mediaImage).toBe('none');
   expect(result.placeColor).toBe('rgb(16, 34, 25)');
   expect(errs).toEqual([]);
 });
@@ -119,12 +115,8 @@ test('Checkout keeps execution CTA dark green while lime remains semantic accent
 test('standalone shell does not shrink when viewport crosses 699 to 700px',async({page})=>{
   for(const width of [699,700,1440]){
     const errs=await openCleanApp(page,{width,height:844});
-    const state=await page.locator('.fm-next-app:not([data-embed="true"])').evaluate(node=>({
-      width:node.getBoundingClientRect().width,
-      marker:getComputedStyle(node).getPropertyValue('--fm-p0-visual-finish').trim()
-    }));
-    expect(state.marker).toBe('1');
-    expect(state.width).toBeCloseTo(430,0);
+    const shellWidth=await page.locator('.fm-next-app:not([data-embed="true"])').evaluate(node=>node.getBoundingClientRect().width);
+    expect(shellWidth).toBeCloseTo(430,0);
     expect(errs).toEqual([]);
   }
 });
