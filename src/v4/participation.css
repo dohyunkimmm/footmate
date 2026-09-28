@@ -23,3 +23,61 @@
 @media (min-width:520px){.fm-participation-methods{grid-template-columns:1fr 1fr}.fm-participation-methods button{min-height:76px}}
 @media (max-width:360px){.fm-participation-state>div{display:grid}.fm-participation-state button{width:100%}}
 @media (prefers-reduced-motion:reduce){.fm-participation-methods button{transition:none}}
+
+/* Real App P0 visual finish · 2026-09-28
+   Cross-surface effective overrides only. Preserve IA, copy, behavior and state ownership. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){--fm-p0-visual-finish:1}
+
+/* Home: AI Assistant is the single raised focal surface; context and recommendation stay supporting. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card{
+  border-color:var(--fm-v3-line,rgba(17,58,40,.10))!important;
+  background:linear-gradient(145deg,#fbfcfb,#fff)!important;
+  color:var(--fm-v3-ink,#102219)!important;
+  box-shadow:0 6px 18px rgba(8,43,29,.035)!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card:after{
+  border-color:rgba(7,61,43,.08)!important;
+  box-shadow:0 0 0 34px rgba(7,61,43,.014)!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-kicker{color:var(--fm-v3-brand-2,#0f5b40)!important}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card h2{color:var(--fm-v3-ink,#102219)!important}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-card p{color:var(--fm-v3-muted,#687870)!important}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-actions .fm-next-button:first-child{
+  border-color:var(--fm-v3-line-strong,rgba(17,58,40,.17))!important;
+  background:#fff!important;
+  color:var(--fm-v3-brand,#073d2b)!important;
+  box-shadow:none!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-context-actions .fm-next-button:nth-child(2){
+  border-color:transparent!important;
+  background:var(--fm-v3-subtle,#f7f9f7)!important;
+  color:var(--fm-v3-brand,#073d2b)!important;
+  box-shadow:none!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-list .fm-next-match-card:first-child{
+  border-color:var(--fm-v3-line,rgba(17,58,40,.10))!important;
+  box-shadow:var(--fm-v3-shadow,0 10px 28px rgba(8,43,29,.07))!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-list .fm-next-match-card:first-child .fm-next-match-card-media{
+  border-bottom-color:var(--fm-v3-line,rgba(17,58,40,.10))!important;
+  background:radial-gradient(circle at 86% 18%,rgba(216,255,115,.16),transparent 26%),linear-gradient(145deg,#fbfcfb,#f2f5f2)!important;
+}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-list .fm-next-match-card:first-child .fm-next-match-date{color:var(--fm-v3-muted,#687870)!important}
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="home"] .fm-next-list .fm-next-match-card:first-child .fm-next-match-place{color:var(--fm-v3-ink,#102219)!important}
+
+/* Checkout: primary execution action follows the dark-green action grammar; lime remains semantic accent. */
+.fm-next-page[data-mode="real"] [data-screen="checkout"] [data-participation-submit]{
+  border-color:var(--fm-v3-brand,#073d2b)!important;
+  background:var(--fm-v3-brand,#073d2b)!important;
+  color:#fff!important;
+  box-shadow:0 11px 26px rgba(7,61,43,.16)!important;
+}
+.fm-next-page[data-mode="real"] [data-screen="checkout"] [data-participation-submit]:hover:not(:disabled){
+  border-color:var(--fm-v3-brand-2,#0f5b40)!important;
+  background:var(--fm-v3-brand-2,#0f5b40)!important;
+}
+
+/* Standalone shell: remove the 699→700px width regression without widening the product IA. */
+@media(min-width:700px){
+  html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]){width:min(100%,430px)!important}
+}
