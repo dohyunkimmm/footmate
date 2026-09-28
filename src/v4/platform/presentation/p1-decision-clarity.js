@@ -111,7 +111,7 @@ document.addEventListener('click',event=>{
   if(!target)return;
   const action=target.dataset.discoveryAction;
   if(action==='open-filters'){
-    queueMicrotask(beginFilterDraft);
+    requestAnimationFrame(beginFilterDraft);
     return;
   }
   const sheet=target.closest('[data-discovery-sheet="true"]');
