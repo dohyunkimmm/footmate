@@ -42,22 +42,17 @@ function updateDraftStatus(sheet=root?.querySelector('[data-discovery-sheet="tru
     status.dataset.p1DiscoveryDraftStatus='true';
     status.setAttribute('role','status');
     status.setAttribute('aria-live','polite');
-    const copy=sheet.querySelector('.fm-discovery-sheet-copy');
-    copy?.insertAdjacentElement('afterend',status);
+    sheet.querySelector('.fm-discovery-sheet-copy')?.insertAdjacentElement('afterend',status);
   }
   const dirty=draftDirty();
   status.dataset.dirty=String(dirty);
   status.textContent=dirty?'변경 사항이 아직 적용되지 않았어요.':'현재 적용된 조건입니다.';
 }
 
-function handleDraftFieldChange(event){
-  if(committingDraft||!filterDraft)return;
-  event.preventDefault();
-  event.stopPropagation();
-  event.stopImmediatePropagation();
-  const field=event.currentTarget;
-  const sheet=field.closest('[data-discovery-sheet="true"]');
-  filterDraft={...filterDraft,[field.dataset.discoveryField]:field.value};
+function beginFilterDraft(){
+  const sheet=root?.querySelector('[data-discovery-sheet="true"]');
+  if(!sheet)return;
+  filterDraft={...filterDefaults,...discoveryState()};
   updateDraftStatus(sheet);
 }
 
@@ -71,13 +66,6 @@ function resetFilterDraft(sheet){
   updateDraftStatus(sheet);
 }
 
-function handleDraftReset(event){
-  event.preventDefault();
-  event.stopPropagation();
-  event.stopImmediatePropagation();
-  resetFilterDraft(event.currentTarget.closest('[data-discovery-sheet="true"]'));
-}
-
 function commitFilterDraft(sheet){
   if(!filterDraft)return;
   committingDraft=true;
@@ -88,20 +76,6 @@ function commitFilterDraft(sheet){
   });
   committingDraft=false;
   filterDraft=null;
-}
-
-function handleDraftDone(event){
-  commitFilterDraft(event.currentTarget.closest('[data-discovery-sheet="true"]'));
-}
-
-function beginFilterDraft(){
-  const sheet=root?.querySelector('[data-discovery-sheet="true"]');
-  if(!sheet)return;
-  filterDraft={...filterDefaults,...discoveryState()};
-  sheet.querySelectorAll('[data-discovery-field]').forEach(field=>field.addEventListener('change',handleDraftFieldChange,true));
-  sheet.querySelector('.fm-discovery-reset')?.addEventListener('click',handleDraftReset,true);
-  sheet.querySelector('.fm-discovery-done')?.addEventListener('click',handleDraftDone,true);
-  updateDraftStatus(sheet);
 }
 
 function ensureCheckoutBoundary(){
@@ -128,6 +102,17 @@ function applyP1DecisionClarity(){
   root.dataset.p1DecisionClarityVersion=P1_DECISION_CLARITY_VERSION;
 }
 
+function handleDraftChange(event){
+  if(!isRealApp()||committingDraft||!filterDraft)return;
+  const field=event.target.closest('[data-discovery-field]');
+  const sheet=field?.closest('[data-discovery-sheet="true"]');
+  if(!field||!sheet)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  filterDraft={...filterDraft,[field.dataset.discoveryField]:field.value};
+  updateDraftStatus(sheet);
+}
+
 document.addEventListener('click',event=>{
   if(!isRealApp())return;
   const target=event.target.closest('[data-discovery-action]');
@@ -138,7 +123,18 @@ document.addEventListener('click',event=>{
     return;
   }
   const sheet=target.closest('[data-discovery-sheet="true"]');
-  if(sheet&&action==='close-filters'&&!target.classList.contains('fm-discovery-done'))filterDraft=null;
+  if(!sheet)return;
+  if(action==='clear-filters'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    resetFilterDraft(sheet);
+    return;
+  }
+  if(target.classList.contains('fm-discovery-done')){
+    commitFilterDraft(sheet);
+    return;
+  }
+  if(action==='close-filters')filterDraft=null;
 },true);
 
 document.addEventListener('keydown',event=>{
@@ -146,6 +142,7 @@ document.addEventListener('keydown',event=>{
 },true);
 
 if(root){
+  root.addEventListener('change',handleDraftChange,true);
   const observer=new MutationObserver(()=>{
     if(scheduled)return;
     scheduled=true;
