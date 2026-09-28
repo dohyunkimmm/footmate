@@ -67,6 +67,7 @@ jobs:
           test "$COUNT" -ge 1
           test "$COUNT" -le 7
           git commit -m 'test: refresh final P0 visual baselines'
+          git restore --worktree .
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"
-# one-shot generator; rebase generated baselines over any concurrent branch-only QA commit, then remove after success
+# one-shot generator; commit only approved P0 baselines, discard other regenerated pixels, then rebase/push
