@@ -1,0 +1,152 @@
+/* FootMate Case Study · P2 finishing polish
+   Restrained motion, visual cadence, focus states, and mobile simplification only. */
+html[data-fm-next-case-study="true"]{
+  --fm-p2-ease:cubic-bezier(.22,.61,.36,1);
+  --fm-p2-line:var(--fm-p1-line,var(--fm-p0-line,#dfe7e2));
+  --fm-p2-line-strong:var(--fm-p1-line-strong,var(--fm-p0-line-strong,#c6d9cc));
+  --fm-p2-accent:var(--fm-p1-accent,var(--fm-p0-accent,#2d6e47));
+}
+
+/* Final section cadence: slightly tighter and more consistent after P0/P1. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story{
+  gap:14px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story-kicker{
+  margin-bottom:8px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story h2{
+  margin-bottom:9px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story-lead{
+  margin-bottom:12px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] :is(
+  .fm-p0-journey,.fm-p0-guest-flow,.fm-p0-recommendation,.fm-p0-recovery-map,.fm-p0-architecture,
+  .fm-p1-persona-scene,.fm-p1-jtbd-journey,.fm-p1-auth-flow,.fm-p1-metrics,.fm-p1-release-map
+){
+  margin-top:12px!important;
+}
+
+/* Section-entry reveal. Desktop only so the long mobile page stays immediate and stable. */
+@keyframes fm-p2-rise{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(min-width:901px) and (prefers-reduced-motion:no-preference){
+  html[data-fm-case-study-p2-polish="true"] .slide.on [data-p2-reveal="true"]{
+    animation:fm-p2-rise 220ms var(--fm-p2-ease) both;
+    animation-delay:calc(var(--fm-p2-order,0) * 24ms);
+  }
+}
+
+/* Quiet hover feedback: only on devices that truly hover. */
+@media(hover:hover) and (pointer:fine){
+  html[data-fm-next-case-study="true"] :is(
+    .fm-p0-journey-step,.fm-p0-route-step,.fm-p0-annotations li,.fm-p0-recovery-row,.fm-p0-arch-node,
+    .fm-p1-persona-lenses>div,.fm-p1-jtbd-journey li,.fm-p1-auth-screen,.fm-p1-ratio,.fm-p1-release-map>article
+  ){
+    transition:transform 160ms var(--fm-p2-ease),border-color 160ms ease,box-shadow 160ms ease;
+  }
+  html[data-fm-next-case-study="true"] :is(
+    .fm-p0-journey-step,.fm-p0-route-step,.fm-p0-annotations li,.fm-p0-recovery-row,.fm-p0-arch-node,
+    .fm-p1-persona-lenses>div,.fm-p1-jtbd-journey li,.fm-p1-auth-screen,.fm-p1-ratio,.fm-p1-release-map>article
+  ):hover{
+    transform:translateY(-2px);
+    border-color:var(--fm-p2-line-strong)!important;
+    box-shadow:0 10px 28px rgba(28,58,40,.055);
+  }
+}
+
+/* Keyboard focus stays visible across the dark shell and light story surfaces. */
+html[data-fm-next-case-study="true"] :is(.toc-item,.cs-button,.dot,.cs-mobile-head a):focus-visible{
+  outline:2px solid #c9ef62;
+  outline-offset:3px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story :is(a,button,[tabindex]):focus-visible{
+  outline:2px solid var(--fm-p2-accent);
+  outline-offset:3px;
+  border-radius:8px;
+}
+
+/* Compact desktop: preserve breathing room without forcing vertical overflow. */
+@media(max-height:820px) and (min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story{
+    gap:10px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story-lead{
+    margin-bottom:9px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] :is(
+    .fm-p0-journey,.fm-p0-guest-flow,.fm-p0-recommendation,.fm-p0-recovery-map,.fm-p0-architecture,
+    .fm-p1-persona-scene,.fm-p1-jtbd-journey,.fm-p1-auth-flow,.fm-p1-metrics,.fm-p1-release-map
+  ){
+    margin-top:9px!important;
+  }
+}
+
+/* Mobile: keep sequence meaning but remove decorative arrow repetition. */
+@media(max-width:640px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story{
+    gap:11px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story-lead{
+    margin-bottom:9px;
+  }
+  html[data-fm-next-case-study="true"] :is(
+    .fm-p0-journey-arrow,.fm-p0-route-arrow,.fm-p0-recovery-row>i,.fm-p0-arch-main>i,
+    .fm-p1-auth-flow>i,.fm-p1-funnel>i
+  ){
+    display:none!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-p1-jtbd-journey li:not(:last-child):after{
+    display:none!important;
+  }
+  html[data-fm-next-case-study="true"] :is(
+    .fm-p0-journey,.fm-p0-route-steps,.fm-p0-recovery-map,.fm-p0-arch-main,
+    .fm-p1-jtbd-journey>ol,.fm-p1-auth-flow,.fm-p1-funnel
+  ){
+    gap:8px!important;
+  }
+
+  /* Persona lenses use two columns instead of squeezing three text columns. */
+  html[data-fm-next-case-study="true"] .fm-p1-persona-lenses>div{
+    grid-template-columns:74px minmax(0,1fr)!important;
+    gap:4px 10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-p1-persona-lenses small{
+    grid-row:1 / span 2;
+    align-self:start;
+    padding-top:3px;
+  }
+  html[data-fm-next-case-study="true"] .fm-p1-persona-lenses b,
+  html[data-fm-next-case-study="true"] .fm-p1-persona-lenses p{
+    margin:0!important;
+  }
+
+  /* KPI numerator/denominator remain comparable without a long four-row stack. */
+  html[data-fm-next-case-study="true"] .fm-p1-ratio{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:6px 10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-p1-ratio>b{
+    grid-column:1 / -1;
+  }
+  html[data-fm-next-case-study="true"] .fm-p1-ratio>i{
+    display:none!important;
+  }
+
+  html[data-fm-next-case-study="true"] .fm-p1-release-map li{
+    grid-template-columns:minmax(70px,auto) minmax(0,1fr);
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html[data-fm-next-case-study="true"] *,
+  html[data-fm-next-case-study="true"] *:before,
+  html[data-fm-next-case-study="true"] *:after{
+    scroll-behavior:auto!important;
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+}
