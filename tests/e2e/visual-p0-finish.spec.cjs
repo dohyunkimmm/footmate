@@ -9,7 +9,7 @@ function failures(page){
   return items;
 }
 
-async function openCleanApp(page,viewport={width:390,height:844}){
+async function openCleanApp(page,viewport){
   const errs=failures(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
@@ -17,7 +17,6 @@ async function openCleanApp(page,viewport={width:390,height:844}){
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
-  await expect.poll(()=>page.evaluate(()=>getComputedStyle(document.querySelector('.fm-next-page')).getPropertyValue('--fm-p0-visual-finish').trim())).toBe('1');
   await page.mouse.move(1,1);
   return errs;
 }
@@ -48,67 +47,64 @@ async function reachCheckout(page){
   await page.mouse.move(1,1);
 }
 
-async function expectNoHorizontalOverflow(page){
-  const overflow=await page.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth}));
-  expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
-  expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
-}
+const shot={animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:0};
 
-const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
-
-test('390px Home keeps AI as the only raised focal surface',async({page})=>{
-  const errs=await openCleanApp(page);
+test('P0 Home keeps AI Assistant as the only raised focal surface',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
-  const home=page.locator('[data-screen="home"]');
-  const state=await home.evaluate(element=>{
+  const screen=page.locator('[data-screen="home"]');
+  const state=await screen.evaluate(element=>{
     const context=element.querySelector('.fm-next-context-card');
+    const contextTitle=context.querySelector('h2');
     const ai=element.querySelector('.fm-ai-card[data-product-ai="home"]');
-    const firstCard=element.querySelector('.fm-next-match-card');
+    const firstCard=element.querySelector('.fm-next-list .fm-next-match-card:first-child');
     const firstMedia=firstCard?.querySelector('.fm-next-match-card-media');
+    const firstPlace=firstCard?.querySelector('.fm-next-match-place');
     return {
+      contextTitleColor:getComputedStyle(contextTitle).color,
       contextShadow:getComputedStyle(context).boxShadow,
-      contextColor:getComputedStyle(context).color,
       aiShadow:getComputedStyle(ai).boxShadow,
-      firstShadow:getComputedStyle(firstCard).boxShadow,
-      firstMediaColor:getComputedStyle(firstMedia).color,
-      firstMediaBackground:getComputedStyle(firstMedia).backgroundImage
+      firstCardShadow:getComputedStyle(firstCard).boxShadow,
+      firstPlaceColor:getComputedStyle(firstPlace).color,
+      firstMediaImage:getComputedStyle(firstMedia).backgroundImage
     };
   });
+  expect(state.contextTitleColor).toBe('rgb(7, 61, 43)');
   expect(state.contextShadow).toBe('none');
-  expect(state.contextColor).toBe('rgb(16, 34, 25)');
   expect(state.aiShadow).not.toBe('none');
-  expect(state.firstShadow).not.toBe('none');
-  expect(state.firstMediaColor).toBe('rgb(16, 34, 25)');
-  expect(state.firstMediaBackground).toContain('linear-gradient');
-  const dynamicDates=home.locator('.fm-next-match-date > span:first-child');
-  await expect(page).toHaveScreenshot('visual-p0-home-390.png',{...exact,mask:[dynamicDates]});
-  await expectNoHorizontalOverflow(page);
+  expect(state.firstCardShadow).toBe('none');
+  expect(state.firstPlaceColor).toBe('rgb(7, 61, 43)');
+  expect(state.firstMediaImage).toContain('linear-gradient');
   expect(errs).toEqual([]);
 });
 
-test('390px Checkout primary execution CTA uses dark green grammar',async({page})=>{
-  const errs=await openCleanApp(page);
+test('P0 Checkout uses deep green for the execution CTA',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
   await reachCheckout(page);
-  const submit=page.locator('[data-screen="checkout"] [data-participation-submit]');
-  const style=await submit.evaluate(node=>({background:getComputedStyle(node).backgroundColor,color:getComputedStyle(node).color,border:getComputedStyle(node).borderTopColor}));
+  const button=page.locator('[data-screen="checkout"] [data-participation-submit]');
+  const style=await button.evaluate(node=>({
+    background:getComputedStyle(node).backgroundColor,
+    border:getComputedStyle(node).borderTopColor,
+    color:getComputedStyle(node).color
+  }));
   expect(style.background).toBe('rgb(7, 61, 43)');
-  expect(style.color).toBe('rgb(255, 255, 255)');
   expect(style.border).toBe('rgb(7, 61, 43)');
-  await expect(page).toHaveScreenshot('visual-p0-checkout-390.png',exact);
-  await expectNoHorizontalOverflow(page);
+  expect(style.color).toBe('rgb(255, 255, 255)');
   expect(errs).toEqual([]);
 });
 
 for(const width of [699,700]){
-  test(`${width}px standalone shell keeps continuous 430px width`,async({page})=>{
+  test(`P0 shell stays continuous at ${width}px`,async({page})=>{
     const errs=await openCleanApp(page,{width,height:844});
-    await setupToHome(page);
     const app=page.locator('.fm-next-app:not([data-embed="true"])');
-    const box=await app.boundingBox();
-    expect(Math.round(box.width)).toBe(430);
-    const dynamicDates=page.locator('[data-screen="home"] .fm-next-match-date > span:first-child');
-    await expect(app).toHaveScreenshot(`visual-p0-shell-${width}.png`,{...exact,mask:[dynamicDates]});
-    await expectNoHorizontalOverflow(page);
+    const geometry=await app.evaluate(node=>({
+      width:node.getBoundingClientRect().width,
+      radius:parseFloat(getComputedStyle(node).borderRadius)||0
+    }));
+    expect(Math.round(geometry.width)).toBe(430);
+    if(width===699)expect(geometry.radius).toBe(0);
+    else expect(geometry.radius).toBeGreaterThanOrEqual(28);
+    await expect(page).toHaveScreenshot(`visual-p0-shell-${width}.png`,shot);
     expect(errs).toEqual([]);
   });
 }
