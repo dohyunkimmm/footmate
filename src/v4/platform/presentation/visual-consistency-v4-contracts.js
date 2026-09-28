@@ -91,23 +91,23 @@ if(!document.getElementById(STYLE_ID)){
 
 /* Keep the established joined-Schedule compactness contract without removing information. */
 @media(min-width:1100px){
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen[data-screen="schedule"][data-matchday-module-version] .fm-next-section .fm-next-upcoming{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] [data-my-matches][data-matchday-module-version] .fm-next-upcoming{
     padding:6px 16px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen[data-screen="schedule"][data-matchday-module-version] .fm-next-section .fm-next-upcoming-top{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] [data-my-matches][data-matchday-module-version] .fm-next-upcoming-top{
     margin-bottom:6px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen[data-screen="schedule"][data-matchday-module-version] .fm-next-section .fm-next-upcoming h2{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] [data-my-matches][data-matchday-module-version] .fm-next-upcoming h2{
     font-size:21px;
     line-height:1.25;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen[data-screen="schedule"][data-matchday-module-version] .fm-next-section .fm-next-upcoming p{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] [data-my-matches][data-matchday-module-version] .fm-next-upcoming p{
     line-height:1.5;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen[data-screen="schedule"][data-matchday-module-version] .fm-next-section .fm-next-upcoming-actions{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] [data-my-matches][data-matchday-module-version] .fm-next-upcoming-actions{
     margin-top:6px;
   }
-  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-next-screen[data-screen="schedule"][data-matchday-module-version] .fm-next-section .fm-next-upcoming-actions .fm-next-button{
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="schedule"] [data-my-matches][data-matchday-module-version] .fm-next-upcoming-actions .fm-next-button{
     min-height:44px;
   }
 }
