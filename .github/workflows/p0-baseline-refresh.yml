@@ -60,3 +60,4 @@ jobs:
           test "$(git diff --cached --name-only | wc -l)" -eq 6
           git commit -m 'test: refresh final P0 visual baselines'
           git push origin HEAD:${{ github.ref_name }}
+# final rerun after preserving neutral gradient contract
