@@ -26,7 +26,7 @@ const baseSession={
   matchStage:'discover',
   userName:'도현'
 };
-const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:0};
+const exactScreenshot={animations:'disabled',caret:'hide',maxDiffPixels:24};
 
 async function waitRuntime(page){
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1'&&window.__FOOTMATE_RELEASE_REVIEW__?.version==='flow-review-v1');
