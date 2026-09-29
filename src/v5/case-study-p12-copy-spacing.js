@@ -11,8 +11,7 @@
     const evidence=slide?.querySelector('.fm-p1-evidence-grid');
     if(!slide||!lead||!banner||!evidence)return false;
 
-    const leadLines=lead.querySelectorAll('.fm-cs-line');
-    if(leadLines[0])leadLines[0].textContent='아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.';
+    lead.textContent='아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.';
 
     const bannerTitle=banner.querySelector('b');
     const bannerCopy=banner.querySelector('p');
