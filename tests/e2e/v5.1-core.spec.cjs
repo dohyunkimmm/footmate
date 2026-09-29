@@ -23,7 +23,8 @@ test('temporary final Case Study visual review capture',async({page})=>{
     await page.setViewportSize({width:view.width,height:view.height});
     await page.goto('/',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelectorAll('.toc-item:not([hidden])').length===13);
-    await page.waitForTimeout(250);
+    await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyP2Polish==='true');
+    await expect(page.locator('.fm-p1-release-map>article')).toHaveCount(3);
     for(let i=0;i<13;i+=1){
       await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 13`);
       await page.locator('.viewer').screenshot({path:`test-results/case-study-final-review/${view.name}-${String(i+1).padStart(2,'0')}.png`,animations:'disabled'});
