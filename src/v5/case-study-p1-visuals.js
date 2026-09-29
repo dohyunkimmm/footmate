@@ -34,8 +34,8 @@
     persona.innerHTML=`
       <div class="fm-p1-persona-context">
         <span>DESIGN PERSONA · 검증 전 가설</span>
-        <b>퇴근 후 갈 수 있는 경기를<br>오래 고민하지 않고 고르고 싶습니다.</b>
-        <p>평일 저녁 · 주 1~2회 · 30분 안쪽 이동을 가정한 설계용 Persona입니다.</p>
+        <b>퇴근 후 갈 수 있는 경기를<br>오래 고민하지 않고 고르고 싶습니다</b>
+        <p>평일 저녁 · 주 1~2회 · 30분 안쪽 이동을 가정한 설계용 Persona입니다</p>
       </div>
       <div class="fm-p1-persona-lenses">
         <div data-kind="context"><small>CONTEXT</small><b>주요 상황</b><p>평일 저녁 · 주 1~2회<br>30분 안쪽으로 이동</p></div>
@@ -46,14 +46,14 @@
     jtbd.classList.add('fm-p1-jtbd-journey');
     jtbd.setAttribute('aria-label','Persona 가설에서 Beta 관찰까지의 JTBD 흐름');
     jtbd.innerHTML=`
-      <div class="fm-p1-jtbd-head"><small>JTBD · 다음 관찰 질문</small><b>가설을 화면 요구사항과 관찰 항목으로 연결합니다.</b></div>
+      <div class="fm-p1-jtbd-head"><small>JTBD · 다음 관찰 질문</small><b>가설을 화면 요구사항과 관찰 항목으로 연결합니다</b></div>
       <ol>
         <li><span>01</span><div><small>SITUATION</small><b>갈 수 있는 경기 찾기</b><p>평일 저녁 · 30분 안쪽 이동</p></div></li>
         <li><span>02</span><div><small>DECISION</small><b>맞는지 빠르게 판단</b><p>레벨 · 거리 · 포지션 · 남은 자리</p></div></li>
-        <li class="is-focus"><span>03</span><div><small>JOB</small><b>“나와 잘 맞는 이유를 빠르게 이해하고 싶다.”</b><p>추천 이유와 참가 조건을 함께 확인</p></div></li>
+        <li class="is-focus"><span>03</span><div><small>JOB</small><b>“나와 잘 맞는 이유를 빠르게 이해하고 싶다”</b><p>추천 이유와 참가 조건을 함께 확인</p></div></li>
         <li><span>04</span><div><small>OBSERVE IN BETA</small><b>어디서 망설이는지 관찰</b><p>먼저 보는 조건 · 부족하다고 느끼는 정보</p></div></li>
       </ol>
-      <p class="fm-p1-jtbd-caveat">인터뷰로 검증한 집단이 아니며, Beta 관찰을 통해 Persona와 판단 기준을 수정할 전제입니다.</p>`;
+      <p class="fm-p1-jtbd-caveat">인터뷰로 검증한 집단이 아니며, Beta 관찰을 통해 Persona와 판단 기준을 수정할 전제입니다</p>`;
     return true;
   }
 
@@ -84,11 +84,11 @@
     flow.classList.add('fm-p1-auth-flow');
     flow.setAttribute('aria-label','추천 확인부터 로그인과 참가 상태까지 선택 맥락을 보존하는 흐름');
     flow.innerHTML=`
-      ${authFrame('01','둘러보기','추천 · 상세 확인','로그인 전에도 경기 가치와 참가 조건을 확인합니다.')}
+      ${authFrame('01','둘러보기','추천 · 상세 확인','로그인 전에도 경기 가치와 참가 조건을 확인합니다')}
       <i aria-hidden="true">→</i>
-      ${authFrame('02','참가 의도','참가하기','선택한 경기와 참가 의도를 다음 단계로 전달합니다.')}
+      ${authFrame('02','참가 의도','참가하기','선택한 경기와 참가 의도를 다음 단계로 전달합니다')}
       <i aria-hidden="true">→</i>
-      ${authFrame('03','인증','로그인','인증 때문에 같은 경기를 다시 찾지 않도록 맥락을 유지합니다.',true)}
+      ${authFrame('03','인증','로그인','인증 때문에 같은 경기를 다시 찾지 않도록 맥락을 유지합니다',true)}
       <i aria-hidden="true">→</i>
       <article class="fm-p1-auth-frame fm-p1-auth-result">
         <span class="fm-p1-auth-no">04</span>
@@ -123,7 +123,7 @@
     metrics.classList.add('fm-p1-metrics');
     metrics.setAttribute('aria-label','측정 성과가 아닌 Validation Metric 정의와 사용자 퍼널');
     metrics.innerHTML=`
-      <div class="fm-p1-validation-banner"><span>VALIDATION METRIC</span><b>Measured Result가 아닙니다.</b><p>목표치보다 먼저 분자·분모·제외 조건과 기준값을 정의합니다.</p></div>
+      <div class="fm-p1-validation-banner"><span>VALIDATION METRIC</span><b>Measured Result가 아닙니다</b><p>목표치보다 먼저 분자·분모·제외 조건과 기준값을 정의합니다</p></div>
       <div class="fm-p1-funnel-wrap">
         <div class="fm-p1-funnel" aria-label="탐색 결과 노출에서 상세 진입과 참가 완료까지의 관찰 퍼널">
           <div><small>01 · DISCOVERY</small><b>결과 노출</b><span>탐색 결과를 확인</span></div>
