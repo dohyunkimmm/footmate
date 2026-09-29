@@ -92,4 +92,65 @@ for(const [name,viewport] of [
       animations:'disabled'
     });
   });
+
+  test(`P3 Persona composition stays compact on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await showSection(page,2);
+    const slide=page.locator('.slide.on.fm-next-story-slide');
+    const context=slide.locator('.fm-p1-persona-context');
+    await expect(context).toBeVisible();
+    await expect(slide.locator('.fm-p1-persona-lenses')).toBeVisible();
+    const gap=await context.evaluate(node=>{
+      const label=node.querySelector(':scope>span').getBoundingClientRect();
+      const title=node.querySelector(':scope>b').getBoundingClientRect();
+      return title.top-label.bottom;
+    });
+    expect(gap).toBeLessThanOrEqual(viewport.width>900?24:20);
+    await verifyNoHorizontalOverflow(page);
+    await slide.screenshot({
+      path:`test-results/case-study-p3-section-${viewport.width}.png`,
+      animations:'disabled'
+    });
+  });
+
+  test(`P10 Recovery evidence stays readable on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await showSection(page,9);
+    const slide=page.locator('.slide.on.fm-next-story-slide');
+    const strip=slide.locator('.fm-evidence-recovery-strip');
+    const figures=strip.locator('.fm-evidence-figure');
+    await expect(figures).toHaveCount(3);
+    await verifyEvidenceImages(page);
+    await verifyNoHorizontalOverflow(page);
+
+    if(viewport.width<=900){
+      const geometry=await strip.evaluate(node=>{
+        const stripBox=node.getBoundingClientRect();
+        const widths=[...node.querySelectorAll('.fm-evidence-figure')].map(el=>el.getBoundingClientRect().width);
+        return {stripWidth:stripBox.width,widths,overflow:getComputedStyle(node).overflowX};
+      });
+      expect(geometry.overflow).not.toBe('auto');
+      geometry.widths.forEach(width=>expect(width).toBeGreaterThanOrEqual(geometry.stripWidth-2));
+    }
+
+    await slide.screenshot({
+      path:`test-results/case-study-p10-section-${viewport.width}.png`,
+      animations:'disabled'
+    });
+  });
+
+  test(`all 13 Case Study sections rough visual audit on ${name}`,async({page})=>{
+    test.setTimeout(90000);
+    await openCaseStudy(page,viewport);
+    for(let index=0;index<13;index+=1){
+      await showSection(page,index);
+      const slide=page.locator('.slide.on.fm-next-story-slide');
+      await expect(slide).toBeVisible();
+      await verifyNoHorizontalOverflow(page);
+      await slide.screenshot({
+        path:`test-results/case-study-full-audit/${name}-${String(index+1).padStart(2,'0')}.png`,
+        animations:'disabled'
+      });
+    }
+  });
 }

@@ -1,0 +1,39 @@
+/* FootMate Case Study · P3 Persona balance pass
+   Rough composition correction: remove the oversized gap inside the Design Persona card. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-scene{
+  align-items:start!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-context{
+  min-height:0;
+  justify-content:flex-start;
+  padding:20px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-context>span{
+  margin-bottom:0;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-context>b{
+  margin-top:16px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-context>p{
+  margin-top:8px;
+}
+@media(min-width:1121px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-scene{
+    grid-template-columns:minmax(250px,.82fr) minmax(0,1.68fr)!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-lenses>div{
+    padding:16px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-lenses b{
+    margin-top:14px;
+  }
+}
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-context{
+    min-height:0;
+    padding:17px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-context>b{
+    margin-top:12px;
+  }
+}
