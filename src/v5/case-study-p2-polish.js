@@ -84,7 +84,6 @@
   function apply(){
     if(document.documentElement.dataset.fmCaseStudyP2Polish==='true')return true;
     if(document.documentElement.dataset.fmCaseStudyP1Visuals!=='true')return false;
-    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
     if(document.documentElement.dataset.fmCaseStudyP1FinalRepair!=='true')return false;
     if(document.querySelectorAll('.fm-p1-release-map>article').length!==3)return false;
     const slides=storySlides();
@@ -103,7 +102,7 @@
     let tries=0;
     const timer=setInterval(()=>{
       tries+=1;
-      if(apply()||tries>280)clearInterval(timer);
+      if(apply()||tries>1200)clearInterval(timer);
     },25);
   }
 })();
