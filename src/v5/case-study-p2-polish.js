@@ -81,8 +81,27 @@
     });
   }
 
+  function loadProductEvidence(){
+    if(!document.querySelector('link[data-fm-case-study-product-evidence]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='/src/v5/case-study-product-evidence.css?v=1';
+      link.dataset.fmCaseStudyProductEvidence='style';
+      document.head.appendChild(link);
+    }
+    if(!document.querySelector('script[data-fm-case-study-product-evidence]')){
+      const script=document.createElement('script');
+      script.src='/src/v5/case-study-product-evidence.js?v=1';
+      script.dataset.fmCaseStudyProductEvidence='script';
+      document.body.appendChild(script);
+    }
+  }
+
   function apply(){
-    if(document.documentElement.dataset.fmCaseStudyP2Polish==='true')return true;
+    if(document.documentElement.dataset.fmCaseStudyP2Polish==='true'){
+      loadProductEvidence();
+      return true;
+    }
     if(document.documentElement.dataset.fmCaseStudyP1Visuals!=='true')return false;
     if(document.documentElement.dataset.fmCaseStudyP1FinalRepair!=='true')return false;
     if(document.querySelectorAll('.fm-p1-release-map>article').length!==3)return false;
@@ -95,6 +114,7 @@
     markP1Sequences();
     markFallbackBlocks();
     document.documentElement.dataset.fmCaseStudyP2Polish='true';
+    loadProductEvidence();
     return true;
   }
 
