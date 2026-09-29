@@ -1,0 +1,38 @@
+/* FootMate Case Study · card row rhythm
+   Normalize vertical spacing only when card/grid compositions wrap into multiple rows.
+   Horizontal gaps remain owned by each section so density and information grouping stay intact. */
+
+html[data-fm-next-case-study="true"]{
+  --fm-cs-card-row-gap:10px;
+}
+
+html[data-fm-next-case-study="true"] :is(
+  .fm-next-cs-grid,
+  .fm-next-cs-persona,
+  .fm-next-cs-principles,
+  .fm-next-cs-stack,
+  .fm-p0-priority-map,
+  .fm-p0-route-steps,
+  .fm-p0-annotations,
+  .fm-p0-recovery-map,
+  .fm-p0-arch-main,
+  .fm-p0-arch-guardrails,
+  .fm-p1-persona-lenses,
+  .fm-p1-jtbd-journey>ol,
+  .fm-p1-auth-flow,
+  .fm-p1-auth-boundary .fm-cs-reasons,
+  .fm-p1-metrics,
+  .fm-p1-funnel-ratios,
+  .fm-p1-secondary-metrics,
+  .fm-p1-release-map,
+  .fm-next-cs-detail-order,
+  .fm-next-cs-day-states
+){
+  row-gap:var(--fm-cs-card-row-gap)!important;
+}
+
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"]{
+    --fm-cs-card-row-gap:8px;
+  }
+}
