@@ -23,11 +23,11 @@
     flow.classList.add('fm-p0-journey');
     flow.setAttribute('aria-label','FootMate 핵심 사용자 여정: 탐색, 결정, 참가, 경기, 재탐색');
     flow.innerHTML=[
-      ['01','탐색','Find','조건을 정하고 맞는 경기를 찾습니다'],
-      ['02','결정','Decide','추천 이유와 참가 조건을 확인합니다'],
-      ['03','참가','Join','선택을 유지한 채 로그인하고 참가합니다'],
-      ['04','경기','Play','경기 당일 상태와 체크인을 확인합니다'],
-      ['05','재탐색','Return','경기 후 신호를 다음 탐색에 잇습니다']
+      ['01','탐색','Find','조건 설정 후 맞는 경기 탐색'],
+      ['02','결정','Decide','추천 이유 · 참가 조건 확인'],
+      ['03','참가','Join','선택 유지 후 로그인 · 참가'],
+      ['04','경기','Play','경기 당일 상태 · 체크인 확인'],
+      ['05','재탐색','Return','경기 후 신호를 다음 탐색에 연결']
     ].map(([no,ko,en,copy],index)=>`
       <div class="fm-p0-journey-step">
         <span class="fm-p0-step-no">${no}</span>
@@ -60,7 +60,7 @@
     comparison.setAttribute('aria-label','가입 우선 흐름과 탐색 우선 흐름 비교');
     comparison.innerHTML=`
       <article class="fm-p0-route is-before">
-        <header><span>비교한 대안</span><b>가입 우선</b><p>가치 확인 전에 계정 생성이 필요합니다</p></header>
+        <header><span>비교한 대안</span><b>가입 우선</b><p>가치 확인 전 계정 생성 필요</p></header>
         <div class="fm-p0-route-steps">
           ${routeStep('01','첫 화면','진입')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
@@ -72,7 +72,7 @@
         </div>
       </article>
       <article class="fm-p0-route is-selected">
-        <header><span>채택한 흐름</span><b>탐색 우선</b><p>추천을 확인한 뒤 참가 의도가 생겼을 때 로그인합니다</p></header>
+        <header><span>채택한 흐름</span><b>탐색 우선</b><p>추천 확인 후 참가 직전 로그인</p></header>
         <div class="fm-p0-route-steps">
           ${routeStep('01','조건 설정','탐색')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
@@ -98,7 +98,7 @@
       <div class="fm-p0-reco-stage">
         <div class="fm-p0-app-frame">
           <div class="fm-p0-app-top"><b>FootMate</b><span>추천 경기</span></div>
-          <div class="fm-p0-app-context"><small>오늘의 추천</small><b>저장한 조건과 현재 경기 상태를 함께 봅니다</b></div>
+          <div class="fm-p0-app-context"><small>오늘의 추천</small><b>저장 조건 · 현재 경기 상태 함께 확인</b></div>
           <article class="fm-p0-match-card">
             <div class="fm-p0-match-meta"><span>오늘 20:00</span><span>수원 영통</span></div>
             <h3>조건과 잘 맞아요</h3>
@@ -113,10 +113,10 @@
         </div>
       </div>
       <ol class="fm-p0-annotations">
-        <li><span>01</span><div><b>저장 프로필</b><p>사용자의 기본 수준과 프로필을 반복 입력하지 않습니다</p></div></li>
-        <li><span>02</span><div><b>선호 지역 · 시간 · 경기 형식</b><p>최근 선호는 추천을 돕는 입력으로만 사용합니다</p></div></li>
-        <li><span>03</span><div><b>최근 확인 이력</b><p>반복 탐색의 입력 부담을 줄이되 오늘의 의도를 덮지 않습니다</p></div></li>
-        <li><span>04</span><div><b>현재 경기 조건 · 잔여 자리</b><p>추천 후보·순위·이유는 결정론적 추천 엔진이 결정합니다</p></div></li>
+        <li><span>01</span><div><b>저장 프로필</b><p>기본 수준 · 프로필 반복 입력 최소화</p></div></li>
+        <li><span>02</span><div><b>선호 지역 · 시간 · 경기 형식</b><p>최근 선호 → 추천 보조 입력으로만 사용</p></div></li>
+        <li><span>03</span><div><b>최근 확인 이력</b><p>반복 탐색 입력 부담 완화 · 오늘의 의도 우선</p></div></li>
+        <li><span>04</span><div><b>현재 경기 조건 · 잔여 자리</b><p>후보 · 순위 · 이유 → 결정론적 추천 엔진</p></div></li>
       </ol>`;
     return true;
   }
