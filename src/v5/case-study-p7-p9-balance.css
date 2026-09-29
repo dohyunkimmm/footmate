@@ -1,0 +1,38 @@
+/* FootMate Case Study · P7/P9 evidence balance
+   Desktop composition only. Keep copy, evidence, IA, and mobile stacking unchanged. */
+
+@media(min-width:901px){
+  /* Match P6's product-first rhythm: product UI occupies the left visual anchor,
+     while the decision/lifecycle explanation uses the wider supporting column. */
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="matchday-return"][data-evidence-upgrade="operations"] .fm-evidence-operations-layout{
+    grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr)!important;
+    gap:24px!important;
+    align-items:center;
+    width:100%;
+  }
+
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout>.fm-evidence-figure,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="matchday-return"][data-evidence-upgrade="operations"] .fm-evidence-operations-layout>.fm-evidence-figure{
+    grid-column:1;
+    grid-row:1;
+    min-width:0;
+    width:100%;
+  }
+
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout>.fm-next-cs-detail-order,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="matchday-return"][data-evidence-upgrade="operations"] .fm-evidence-operations-layout>.fm-next-cs-day-states{
+    grid-column:2;
+    grid-row:1;
+    min-width:0;
+    width:100%;
+  }
+}
+
+@media(min-width:901px) and (max-width:1180px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="matchday-return"][data-evidence-upgrade="operations"] .fm-evidence-operations-layout{
+    grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr)!important;
+    gap:18px!important;
+  }
+}
