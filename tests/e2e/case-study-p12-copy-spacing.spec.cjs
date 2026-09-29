@@ -29,8 +29,8 @@ for(const [name,viewport] of [
 
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="validation-evidence"]');
     const lead=slide.locator('.fm-next-story-lead');
-    await expect(lead).toContainText('아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.');
-    await expect(lead).not.toContainText('Measured Result 아님');
+    await expect(lead).toHaveText('아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.');
+    await expect(lead).not.toContainText('Measured Result');
 
     const banner=slide.locator('.fm-p1-validation-banner');
     await expect(banner.locator('b')).toHaveText('측정 전 기준 정의');
@@ -43,23 +43,21 @@ for(const [name,viewport] of [
     for(let index=0;index<3;index+=1){
       const card=cards.nth(index);
       const label=card.locator('.fm-p1-evidence-label');
-      const title=card.locator('h3');
-      const bodyLines=card.locator('p>.fm-cs-line');
+      const body=card.locator('p');
       await expect(label).toHaveText(expectedLabels[index]);
+      await expect(body).toBeVisible();
       const rhythm=await card.evaluate(node=>{
         const cardStyle=getComputedStyle(node);
-        const labelNode=node.querySelector('.fm-p1-evidence-label');
-        const titleNode=node.querySelector('h3');
-        const lineNodes=[...node.querySelectorAll('p>.fm-cs-line')];
-        const labelStyle=getComputedStyle(labelNode);
-        const titleStyle=getComputedStyle(titleNode);
+        const labelStyle=getComputedStyle(node.querySelector('.fm-p1-evidence-label'));
+        const titleStyle=getComputedStyle(node.querySelector('h3'));
+        const bodyStyle=getComputedStyle(node.querySelector('p'));
         return {
           cardPaddingTop:parseFloat(cardStyle.paddingTop),
           labelPosition:labelStyle.position,
           labelMarginBottom:parseFloat(labelStyle.marginBottom),
           titleMarginBottom:parseFloat(titleStyle.marginBottom),
-          lineDisplays:lineNodes.map(line=>getComputedStyle(line).display),
-          lineMargins:lineNodes.slice(1).map(line=>parseFloat(getComputedStyle(line).marginTop))
+          bodyFontSize:parseFloat(bodyStyle.fontSize),
+          bodyLineHeight:parseFloat(bodyStyle.lineHeight)
         };
       });
       expect(rhythm.cardPaddingTop).toBeGreaterThanOrEqual(12);
@@ -68,9 +66,8 @@ for(const [name,viewport] of [
       expect(rhythm.labelMarginBottom).toBeGreaterThanOrEqual(7);
       expect(rhythm.labelMarginBottom).toBeLessThanOrEqual(8);
       expect(rhythm.titleMarginBottom).toBe(7);
-      expect(rhythm.lineDisplays.every(value=>value==='block')).toBeTruthy();
-      expect(rhythm.lineMargins.every(value=>value===4)).toBeTruthy();
-      await expect(bodyLines.first()).toBeVisible();
+      expect(rhythm.bodyLineHeight/rhythm.bodyFontSize).toBeGreaterThanOrEqual(1.65);
+      expect(rhythm.bodyLineHeight/rhythm.bodyFontSize).toBeLessThanOrEqual(1.71);
     }
 
     await noHorizontalOverflow(page);
