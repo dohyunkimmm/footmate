@@ -117,6 +117,40 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="releas
   margin-top:4px!important;
 }
 
+/* Final review: give the existing Decision Detail order enough visual weight without adding copy. */
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"] .fm-next-cs-detail-order{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr)!important;
+    align-items:stretch!important;
+    gap:9px!important;
+    width:100%;
+    margin-top:10px!important;
+    padding:14px!important;
+    border:1px solid var(--fm-p2-line)!important;
+    border-radius:18px!important;
+    background:#f8faf9!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"] .fm-next-cs-detail-order>span{
+    display:flex!important;
+    align-items:center;
+    justify-content:center;
+    min-height:58px;
+    padding:12px 10px!important;
+    border:1px solid var(--fm-p2-line)!important;
+    border-radius:14px!important;
+    background:#fff!important;
+    text-align:center;
+    font-weight:800;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"] .fm-next-cs-detail-order>i{
+    align-self:center;
+    color:var(--fm-p2-accent)!important;
+    font-style:normal;
+    font-weight:850;
+  }
+}
+
 /* Horizontal rhythm: keep section edges aligned while reclaiming width before mobile. */
 @media(min-width:981px) and (max-width:1120px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"]{
@@ -171,7 +205,8 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="releas
   }
   html[data-fm-next-case-study="true"] :is(
     .fm-p0-journey-arrow,.fm-p0-route-arrow,.fm-p0-recovery-row>i,.fm-p0-arch-main>i,
-    .fm-p1-auth-flow>i,.fm-p1-funnel>i
+    .fm-p1-auth-flow>i,.fm-p1-funnel>i,
+    .fm-next-story-slide[data-v5-content-role="detail-decision"] .fm-next-cs-detail-order>i
   ){
     display:none!important;
   }
@@ -182,6 +217,11 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="releas
     .fm-p0-journey,.fm-p0-route-steps,.fm-p0-recovery-map,.fm-p0-arch-main,
     .fm-p1-jtbd-journey>ol,.fm-p1-auth-flow,.fm-p1-funnel
   ){
+    gap:8px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"] .fm-next-cs-detail-order{
+    display:grid!important;
+    grid-template-columns:1fr!important;
     gap:8px!important;
   }
 
