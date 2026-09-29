@@ -3,6 +3,7 @@
    Keeps the 13-section IA, headings, product facts, routes, and runtime unchanged. */
 (function(){
   const ROOT='html[data-fm-next-case-study="true"]';
+  let prerequisitesReadyAt=0;
 
   function byRole(role){
     return document.querySelector(`${ROOT} .fm-next-story-slide[data-v5-content-role="${role}"]`);
@@ -195,10 +196,18 @@
   }
 
   function apply(){
-    if(document.documentElement.dataset.fmCaseStudyP1FinalRepair==='true'&&
-       document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
+    if(document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
     if(document.documentElement.dataset.fmCaseStudyP0Visuals!=='true')return false;
-    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
+    if(document.documentElement.dataset.footmateCaseStudyStructuredCopy!=='3'||
+       document.documentElement.dataset.footmateCaseStudyReaderPolish!=='2'){
+      prerequisitesReadyAt=0;
+      return false;
+    }
+    if(!prerequisitesReadyAt){
+      prerequisitesReadyAt=performance.now();
+      return false;
+    }
+    if(performance.now()-prerequisitesReadyAt<100)return false;
     if(!patchAll())return false;
     document.documentElement.dataset.fmCaseStudyP1Visuals='true';
     document.documentElement.dataset.fmCaseStudyP1FinalRepair='true';
