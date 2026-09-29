@@ -34,6 +34,7 @@ for(const [name,viewport] of [
       const slide=page.locator('.slide.on.fm-next-story-slide');
       await expect(slide).toHaveAttribute('data-evidence-upgrade',key);
       const image=slide.locator(selector);
+      await image.scrollIntoViewIfNeeded();
       await expect(image).toBeVisible();
       const framing=await image.evaluate(node=>{
         const style=getComputedStyle(node);
@@ -63,21 +64,22 @@ for(const [name,viewport] of [
     await expect(images).toHaveCount(2);
 
     const geometry=await strip.evaluate(node=>{
-      const stripBox=node.getBoundingClientRect();
       const boxes=[...node.querySelectorAll('.fm-evidence-media img')].map(img=>{
         const box=img.getBoundingClientRect();
         const style=getComputedStyle(img);
-        return {height:box.height,objectFit:style.objectFit,objectPosition:style.objectPosition};
+        return {height:box.height,objectFit:style.objectFit,objectPosition:style.objectPosition,clipPath:style.clipPath,marginBottom:parseFloat(style.marginBottom)};
       });
       const captions=[...node.querySelectorAll('figcaption')].map(el=>el.getBoundingClientRect());
-      return {stripBox,boxes,captions,viewportHeight:innerHeight};
+      return {boxes,captions};
     });
 
     if(viewport.width>900){
       geometry.boxes.forEach(box=>{
         expect(box.height).toBeGreaterThanOrEqual(190);
         expect(box.objectFit).toBe('cover');
-        expect(box.objectPosition).toContain('top');
+        expect(box.objectPosition).toMatch(/0%$/);
+        expect(box.clipPath).not.toBe('none');
+        expect(box.marginBottom).toBeLessThan(0);
       });
       geometry.captions.forEach(box=>expect(box.bottom).toBeLessThan(875));
     }else{
