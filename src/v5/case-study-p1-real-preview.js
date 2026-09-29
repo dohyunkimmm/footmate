@@ -15,7 +15,7 @@
     preview.setAttribute('aria-label','FootMate 최신 Real App 홈 화면 정적 프리뷰');
     preview.innerHTML=`
       <div class="fm-p1-real-top">
-        <div class="fm-p1-real-brand"><img src="/favicon.svg" alt=""><b>FootMate</b></div>
+        <div class="fm-p1-real-brand"><span class="fm-p1-real-logo-mark" aria-hidden="true">◉</span><b>FootMate</b></div>
       </div>
       <div class="fm-p1-real-segment" aria-label="홈 탐색 모드">
         <b>추천 경기 보기</b><span>조건 바꾸기</span>
