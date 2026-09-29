@@ -1,11 +1,32 @@
 /* FootMate Case Study · P10 Recovery balance pass
-   Static portfolio composition: show each recovery evidence state at full mobile width. */
+   Recruiter scan pass: keep the recovery map complete, remove the redundant summary row,
+   and use two representative UI proofs with clearer separation. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-next-review-summary{
+  display:none!important;
+}
+
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:14px!important;
+    width:min(100%,780px)!important;
+    margin:16px auto 0!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-media img{
+    height:168px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip figcaption{
+    margin-top:7px!important;
+  }
+}
+
 @media(max-width:900px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip{
     grid-auto-flow:row!important;
     grid-template-columns:1fr!important;
     grid-auto-columns:auto!important;
-    gap:12px!important;
+    gap:14px!important;
+    margin-top:14px!important;
     overflow:visible!important;
     padding:2px 0 0!important;
     scroll-snap-type:none!important;

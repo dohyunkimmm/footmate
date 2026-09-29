@@ -126,13 +126,13 @@
 
     const strip=document.createElement('div');
     strip.className='fm-evidence-recovery-strip';
-    strip.setAttribute('aria-label','제품 복구 및 빈 상태 화면');
+    strip.setAttribute('aria-label','제품 복구 상태 대표 화면');
     strip.append(
       figure(
         'recovery-discovery-empty.png',
         'EMPTY',
         '탐색 결과 없음',
-        'Product visual baseline',
+        '빈 상태 UI',
         'FootMate 탐색 결과 없음 제품 화면',
         'is-recovery'
       ),
@@ -140,16 +140,8 @@
         'recovery-participation-failure.png',
         'FAILURE',
         '참가 실패',
-        'Product visual baseline',
+        '실패 상태 UI',
         'FootMate 참가 실패 제품 화면',
-        'is-recovery'
-      ),
-      figure(
-        'recovery-schedule-empty.png',
-        'EMPTY',
-        '예정 경기 없음',
-        'Product visual baseline',
-        'FootMate 예정 경기 없음 제품 화면',
         'is-recovery'
       )
     );

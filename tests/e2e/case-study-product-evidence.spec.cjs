@@ -117,13 +117,28 @@ for(const [name,viewport] of [
     await openCaseStudy(page,viewport);
     await showSection(page,9);
     const slide=page.locator('.slide.on.fm-next-story-slide');
+    const map=slide.locator('.fm-p0-recovery-map');
     const strip=slide.locator('.fm-evidence-recovery-strip');
     const figures=strip.locator('.fm-evidence-figure');
-    await expect(figures).toHaveCount(3);
+    await expect(strip).toHaveAttribute('aria-label','제품 복구 상태 대표 화면');
+    await expect(figures).toHaveCount(2);
+    await expect(figures.nth(0).locator('figcaption')).toContainText('탐색 결과 없음');
+    await expect(figures.nth(1).locator('figcaption')).toContainText('참가 실패');
     await verifyEvidenceImages(page);
     await verifyNoHorizontalOverflow(page);
 
-    if(viewport.width<=900){
+    if(viewport.width>900){
+      const geometry=await slide.evaluate(node=>{
+        const mapBox=node.querySelector('.fm-p0-recovery-map').getBoundingClientRect();
+        const stripNode=node.querySelector('.fm-evidence-recovery-strip');
+        const stripBox=stripNode.getBoundingClientRect();
+        const figures=[...stripNode.querySelectorAll('.fm-evidence-figure')].map(el=>el.getBoundingClientRect());
+        return {mapBottom:mapBox.bottom,stripTop:stripBox.top,stripWidth:stripBox.width,figureWidths:figures.map(box=>box.width)};
+      });
+      expect(geometry.stripTop-geometry.mapBottom).toBeGreaterThanOrEqual(12);
+      expect(Math.abs(geometry.figureWidths[0]-geometry.figureWidths[1])).toBeLessThanOrEqual(2);
+      expect(geometry.figureWidths[0]).toBeGreaterThan(300);
+    }else{
       const geometry=await strip.evaluate(node=>{
         const stripBox=node.getBoundingClientRect();
         const widths=[...node.querySelectorAll('.fm-evidence-figure')].map(el=>el.getBoundingClientRect().width);
