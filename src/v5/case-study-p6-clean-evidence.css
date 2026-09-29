@@ -1,0 +1,33 @@
+/* FootMate Case Study · P6 clean recommendation evidence
+   Crop the mask-free fixed-time Home validation capture to the centered 430px app shell.
+   Presentation-only: preserve the existing evidence footprint and change no product behavior. */
+
+html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
+  width:182px!important;
+  height:380px!important;
+  max-width:100%!important;
+  object-fit:cover!important;
+  object-position:50% 0!important;
+  border-radius:22px!important;
+}
+
+@media(max-height:820px) and (min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
+    width:172px!important;
+    height:360px!important;
+  }
+}
+
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
+    width:220px!important;
+    height:460px!important;
+  }
+}
+
+@media(max-width:360px){
+  html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
+    width:200px!important;
+    height:419px!important;
+  }
+}
