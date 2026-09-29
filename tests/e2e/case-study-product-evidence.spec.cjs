@@ -87,9 +87,8 @@ for(const [name,viewport] of [
       expect(geometry.secondary.width).toBeGreaterThanOrEqual(geometry.metrics.width-2);
     }
 
-    await page.screenshot({
-      path:`test-results/case-study-p12-balance-${viewport.width}.png`,
-      fullPage:false,
+    await slide.screenshot({
+      path:`test-results/case-study-p12-section-${viewport.width}.png`,
       animations:'disabled'
     });
   });
