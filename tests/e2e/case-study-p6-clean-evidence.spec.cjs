@@ -27,10 +27,10 @@ test('P6 recommendation evidence uses the mask-free fixed-time Home capture',asy
   }));
   expect(evidence.naturalWidth).toBe(1440);
   expect(evidence.naturalHeight).toBe(900);
-  expect(evidence.width).toBeGreaterThanOrEqual(218);
-  expect(evidence.width).toBeLessThanOrEqual(250);
-  expect(evidence.height).toBeGreaterThanOrEqual(458);
-  expect(evidence.height).toBeLessThanOrEqual(522);
+  expect(evidence.width).toBeGreaterThanOrEqual(180);
+  expect(evidence.width).toBeLessThanOrEqual(184);
+  expect(evidence.height).toBeGreaterThanOrEqual(378);
+  expect(evidence.height).toBeLessThanOrEqual(382);
   expect(evidence.fit).toBe('cover');
   expect(evidence.position).toContain('50%');
   expect(evidence.documentWidth).toBeLessThanOrEqual(evidence.viewport+1);
