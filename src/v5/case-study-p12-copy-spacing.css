@@ -1,0 +1,34 @@
+/* FootMate Case Study · P12 validation evidence card rhythm
+   Normalize label → title → body spacing without changing the outer P12 composition. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
+  position:relative;
+  padding:14px 16px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-label{
+  position:static!important;
+  display:block;
+  margin:0 0 8px!important;
+  line-height:1.2;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card>h3{
+  margin:0 0 7px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card>p{
+  margin:0!important;
+  line-height:1.68!important;
+}
+
+@media(max-height:820px) and (min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
+    padding:12px 14px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-label{
+    margin-bottom:7px!important;
+  }
+}
+
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
+    padding:14px 16px!important;
+  }
+}
