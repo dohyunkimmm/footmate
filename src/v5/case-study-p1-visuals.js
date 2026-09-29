@@ -4,10 +4,6 @@
 (function(){
   const ROOT='html[data-fm-next-case-study="true"]';
 
-  function slides(){
-    return [...document.querySelectorAll(`${ROOT} .slide`)];
-  }
-
   function byRole(role){
     return document.querySelector(`${ROOT} .fm-next-story-slide[data-v5-content-role="${role}"]`);
   }
@@ -18,11 +14,19 @@
   }
 
   function patchPersona(){
-    const all=slides();
-    const slide=all[2];
-    const persona=slide?.querySelector('.fm-next-cs-persona');
-    const jtbd=slide?.querySelector('.fm-next-cs-jtbd');
-    if(!slide||!persona||!jtbd)return false;
+    const jtbd=document.querySelector(`${ROOT} .fm-next-cs-jtbd`);
+    const slide=jtbd?.closest('.fm-next-story-slide');
+    if(!slide||!jtbd)return false;
+
+    let persona=slide.querySelector('.fm-next-cs-persona');
+    if(!persona){
+      persona=document.createElement('div');
+      persona.className='fm-next-cs-persona';
+      const anchor=slide.querySelector('.fm-next-review-summary')||slide.querySelector('.fm-next-story-lead');
+      if(anchor)anchor.insertAdjacentElement('afterend',persona);
+      else slide.querySelector('.fm-next-story-copy')?.appendChild(persona);
+    }
+    if(!persona.isConnected)return false;
 
     mark(slide,'persona-jtbd');
     persona.classList.add('fm-p1-persona-scene');
@@ -63,11 +67,18 @@
   }
 
   function patchAuth(){
-    const slide=byRole('auth-participation');
-    const flow=slide?.querySelector('.fm-next-cs-auth-flow');
-    const state=slide?.querySelector('.fm-next-cs-state-line');
+    const flow=document.querySelector(`${ROOT} .fm-next-cs-auth-flow`);
+    const slide=flow?.closest('.fm-next-story-slide');
     const scope=slide?.querySelector('.fm-next-cs-scope');
-    if(!slide||!flow||!state||!scope)return false;
+    if(!slide||!flow||!scope)return false;
+
+    let state=slide.querySelector('.fm-next-cs-state-line');
+    if(!state){
+      state=document.createElement('div');
+      state.className='fm-next-cs-state-line';
+      flow.insertAdjacentElement('afterend',state);
+    }
+    if(!state.isConnected)return false;
 
     mark(slide,'sign-in-join');
     flow.classList.add('fm-p1-auth-flow');
@@ -135,7 +146,7 @@
     qa.setAttribute('aria-label','Validation Metric과 구분되는 제품 검증 evidence');
     const labels=['AUTOMATED QA','HUMAN CHECK','AI-ASSISTED REVIEW'];
     [...qa.children].forEach((card,index)=>{
-      card.insertAdjacentHTML('afterbegin',`<span class="fm-p1-evidence-label">${labels[index]||'EVIDENCE'}</span>`);
+      if(!card.querySelector('.fm-p1-evidence-label'))card.insertAdjacentHTML('afterbegin',`<span class="fm-p1-evidence-label">${labels[index]||'EVIDENCE'}</span>`);
     });
     note.classList.add('fm-p1-validation-note');
     return true;
@@ -147,9 +158,18 @@
 
   function patchRelease(){
     const slide=byRole('production-boundary');
-    const outcomes=slide?.querySelector('.fm-next-cs-outcomes');
-    const final=slide?.querySelector('.fm-next-cs-final');
-    if(!slide||!outcomes||!final)return false;
+    const copy=slide?.querySelector('.fm-next-story-copy');
+    if(!slide||!copy)return false;
+
+    let outcomes=slide.querySelector('.fm-next-cs-outcomes');
+    if(!outcomes){
+      outcomes=document.createElement('div');
+      outcomes.className='fm-next-cs-outcomes';
+      const anchor=copy.querySelector('.fm-next-review-summary')||copy.querySelector('.fm-next-story-lead');
+      if(anchor)anchor.insertAdjacentElement('afterend',outcomes);
+      else copy.appendChild(outcomes);
+    }
+    const final=slide.querySelector('.fm-next-cs-final');
 
     mark(slide,'release-boundary');
     outcomes.classList.add('fm-p1-release-map');
@@ -181,25 +201,30 @@
           ${releaseItem('not-measured','미검증','수익성 · 실제 이용 지표')}
         </ul>
       </article>`;
-    final.classList.add('fm-p1-release-next');
+    final?.classList.add('fm-p1-release-next');
     return true;
+  }
+
+  function patchAll(){
+    const patched=[patchPersona(),patchAuth(),patchKPI(),patchRelease()];
+    return patched.every(Boolean);
   }
 
   function apply(){
     if(document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
     if(document.documentElement.dataset.fmCaseStudyP0Visuals!=='true')return false;
-    if(slides().length!==16)return false;
-
-    const patched=[patchPersona(),patchAuth(),patchKPI(),patchRelease()];
-    if(!patched.every(Boolean))return false;
+    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
+    if(!patchAll())return false;
     document.documentElement.dataset.fmCaseStudyP1Visuals='true';
+    document.documentElement.dataset.fmCaseStudyP1FinalRepair='true';
     return true;
   }
 
-  let tries=0;
-  function boot(){
-    if(apply())return;
-    if(tries++<60)requestAnimationFrame(boot);
+  if(!apply()){
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries+=1;
+      if(apply()||tries>1200)clearInterval(timer);
+    },25);
   }
-  boot();
 })();
