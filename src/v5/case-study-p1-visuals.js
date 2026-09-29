@@ -197,6 +197,7 @@
   function apply(){
     if(document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
     if(document.documentElement.dataset.fmCaseStudyP0Visuals!=='true')return false;
+    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
     if(slides().length!==16)return false;
 
     const patched=[patchPersona(),patchAuth(),patchKPI(),patchRelease()];
