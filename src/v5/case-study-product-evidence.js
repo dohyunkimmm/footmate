@@ -91,11 +91,38 @@
     return true;
   }
 
+  function recoveryRow(problem,preserve,next,tone){
+    return `<div class="fm-p0-recovery-row" data-tone="${tone}">
+      <div class="fm-p0-recovery-problem"><small>문제</small><b>${problem}</b></div>
+      <i aria-hidden="true">→</i>
+      <div class="fm-p0-recovery-preserve"><small>보존</small><b>${preserve}</b></div>
+      <i aria-hidden="true">→</i>
+      <div class="fm-p0-recovery-next"><small>다음 행동</small><b>${next}</b></div>
+    </div>`;
+  }
+
+  function normalizeRecoveryMap(map){
+    map.classList.add('fm-p0-recovery-map');
+    map.setAttribute('aria-label','문제 발생 시 보존할 상태와 다음 행동');
+    map.innerHTML=`
+      <div class="fm-p0-recovery-head" aria-hidden="true"><span>문제</span><span>보존할 상태</span><span>다음 행동</span></div>
+      ${recoveryRow('추천 없음','입력한 탐색 조건','지역·시간 수정 또는 조건 완화','search')}
+      ${recoveryRow('자리 마감','선택 경기와 포지션','대기 등록 또는 비슷한 경기 탐색','capacity')}
+      ${recoveryRow('결제 실패 · 시뮬레이션','선택 경기와 참가 의도','재시도 또는 결제수단 변경','payment')}
+      ${recoveryRow('경기 당일 문제','참가·체크인 상태','체크인 재시도 또는 운영 도움','matchday')}`;
+    [...map.querySelectorAll('.fm-p0-recovery-row')].forEach((row,index)=>{
+      row.dataset.p2Reveal='true';
+      row.style.setProperty('--fm-p2-order',String(3+index));
+    });
+  }
+
   function patchRecovery(){
     const slide=section('recovery-principle');
     const map=slide?.querySelector('.fm-p0-recovery-map')||slide?.querySelector('.fm-next-cs-recovery');
     if(!slide||!map)return false;
     if(slide.querySelector('.fm-evidence-recovery-strip'))return true;
+
+    normalizeRecoveryMap(map);
 
     const strip=document.createElement('div');
     strip.className='fm-evidence-recovery-strip';
