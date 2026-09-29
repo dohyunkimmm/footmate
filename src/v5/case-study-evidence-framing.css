@@ -1,0 +1,67 @@
+/* FootMate Case Study · evidence framing cleanup
+   P7/P9: stop the product proof at the logical sticky CTA / bottom-nav endpoint.
+   P10: show complete recovery-state copy and action without making the section taller. */
+
+/* P7 Decision Detail · hide the tiny next-content bleed below the sticky join CTA. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="detail"] .fm-evidence-figure.is-detail img{
+  clip-path:inset(0 0 14px 0 round 18px);
+  margin-bottom:-14px;
+}
+
+/* P9 Operations · stop the capture at the bottom navigation instead of showing the next row. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="operations"] .fm-evidence-figure.is-operations img{
+  clip-path:inset(0 0 14px 0 round 18px);
+  margin-bottom:-14px;
+}
+
+@media(min-width:901px){
+  /* Reclaim the height used by the recovery map, then give the two UI proofs enough viewport
+     to show the full empty-state sentence and retry button. */
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-map{
+    gap:6px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row{
+    padding:7px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row>div{
+    padding:7px 10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip{
+    margin-top:10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-media img{
+    height:198px!important;
+    object-fit:cover!important;
+    object-position:top!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip figcaption{
+    margin-top:5px!important;
+  }
+}
+
+@media(min-width:901px) and (max-height:820px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-map{
+    gap:5px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row{
+    padding:6px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row>div{
+    padding:6px 9px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip{
+    width:min(100%,720px)!important;
+    margin-top:8px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-media img{
+    height:184px!important;
+  }
+}
+
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="detail"] .fm-evidence-figure.is-detail img,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="operations"] .fm-evidence-figure.is-operations img{
+    clip-path:inset(0 0 18px 0 round 18px);
+    margin-bottom:-18px;
+  }
+}
