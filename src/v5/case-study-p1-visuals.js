@@ -206,10 +206,11 @@
     return true;
   }
 
-  let tries=0;
-  function boot(){
-    if(apply())return;
-    if(tries++<60)requestAnimationFrame(boot);
+  if(!apply()){
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries+=1;
+      if(apply()||tries>200)clearInterval(timer);
+    },25);
   }
-  boot();
 })();
