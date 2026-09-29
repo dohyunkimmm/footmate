@@ -92,6 +92,8 @@ test('P1 flattens nested decision cards and keeps microcopy at the readability f
   await page.locator('[data-screen="home"] .fm-next-match-card').first().click();
   const detail=page.locator('[data-screen="detail"]');
   await expect(detail).toBeVisible();
+  await expect(detail.locator('.fm-decision-reason-grid>div').first()).toBeVisible();
+  await expect(detail.locator('.fm-decision-policy-grid small').first()).toBeVisible();
   const state=await detail.evaluate(element=>{
     const nested=element.querySelector('.fm-decision-reason-grid>div');
     const policySmall=element.querySelector('.fm-decision-policy-grid small');
