@@ -135,7 +135,7 @@
     qa.setAttribute('aria-label','Validation Metric과 구분되는 제품 검증 evidence');
     const labels=['AUTOMATED QA','HUMAN CHECK','AI-ASSISTED REVIEW'];
     [...qa.children].forEach((card,index)=>{
-      card.insertAdjacentHTML('afterbegin',`<span class="fm-p1-evidence-label">${labels[index]||'EVIDENCE'}</span>`);
+      if(!card.querySelector('.fm-p1-evidence-label'))card.insertAdjacentHTML('afterbegin',`<span class="fm-p1-evidence-label">${labels[index]||'EVIDENCE'}</span>`);
     });
     note.classList.add('fm-p1-validation-note');
     return true;
@@ -194,10 +194,9 @@
     return true;
   }
 
-  function apply(){
+  function applyInitial(){
     if(document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
     if(document.documentElement.dataset.fmCaseStudyP0Visuals!=='true')return false;
-    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
     if(slides().length!==16)return false;
 
     const patched=[patchPersona(),patchAuth(),patchKPI(),patchRelease()];
@@ -206,11 +205,28 @@
     return true;
   }
 
-  if(!apply()){
+  function repairAfterClarity(){
+    if(document.documentElement.dataset.fmCaseStudyP1FinalRepair==='true')return true;
+    if(document.documentElement.dataset.fmCaseStudyP1Visuals!=='true')return false;
+    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
+    if(!patchRelease())return false;
+    document.documentElement.dataset.fmCaseStudyP1FinalRepair='true';
+    return true;
+  }
+
+  if(!applyInitial()){
     let tries=0;
-    const timer=setInterval(()=>{
+    const initialTimer=setInterval(()=>{
       tries+=1;
-      if(apply()||tries>200)clearInterval(timer);
+      if(applyInitial()||tries>200)clearInterval(initialTimer);
+    },25);
+  }
+
+  if(!repairAfterClarity()){
+    let repairTries=0;
+    const repairTimer=setInterval(()=>{
+      repairTries+=1;
+      if(repairAfterClarity()||repairTries>240)clearInterval(repairTimer);
     },25);
   }
 })();
