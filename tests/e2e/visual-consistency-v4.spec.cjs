@@ -87,10 +87,7 @@ async function expectNoHorizontalOverflow(page){
   expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
 }
 
-// Full-page conversion screenshots can pick up small cross-region Chromium text/edge rasterization
-// differences even when geometry and CSS contracts are unchanged. A rerun of unchanged approved code
-// reproduced 186 differing pixels, so keep a bounded allowance while retaining exact semantic/layout tests.
-const shot={animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:220};
+const shot={animations:'disabled',caret:'hide',fullPage:false,maxDiffPixels:32};
 
 test('390px Welcome and Setup share the final V3 visual language',async({page})=>{
   const errs=await openCleanApp(page);
