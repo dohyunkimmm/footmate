@@ -1,6 +1,5 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
-const fs=require('fs');
 function failures(page){const items=[];page.on('pageerror',e=>items.push(`pageerror: ${e.message}`));page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('Failed to load resource'))items.push(`console.error: ${m.text()}`)});return items}
 async function boot(page,path='/app',viewport={width:390,height:844}){const errs=failures(page);await page.setViewportSize(viewport);await page.goto(path,{waitUntil:'domcontentloaded'});await page.waitForSelector('#footmate-next [data-screen]');await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1'&&window.__FOOTMATE_AI__?.version==='5.1.1');return errs}
 async function serious(page){const result=await new AxeBuilder({page}).include('.fm-next-app').withTags(['wcag2a','wcag2aa']).analyze();return result.violations.filter(v=>['serious','critical'].includes(v.impact))}
@@ -14,24 +13,3 @@ test('v5.1.1 preserves recommendation through checkout continuity and accessibil
 test('v5.1.1 cross-domain consistency guardrail remains intact',async({page})=>{await boot(page);const result=await page.evaluate(()=>({good:window.__FOOTMATE_V5__.evaluateJourney({recommendation:{selectedMatchId:'m1'},participation:{status:'success',matchId:'m1'},matchday:{status:'checked-in',matchId:'m1'},returnState:{completed:true,matchId:'m1'}}),bad:window.__FOOTMATE_V5__.evaluateJourney({recommendation:{selectedMatchId:'m1'},participation:{status:'success',matchId:'m2'},matchday:{status:'checked-in',matchId:'m2'},returnState:{completed:true,matchId:'m3'}})}));expect(result.good.valid).toBe(true);expect(result.bad.valid).toBe(false);expect(result.bad.problems).toContain('selected-participation-mismatch');expect(result.bad.problems).toContain('matchday-return-mismatch')});
 
 test('v5.1.1 preserves responsive modes and compatibility routes',async({page})=>{for(const width of [320,375,390,430]){const errs=await boot(page,'/app',{width,height:780});expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);expect(errs).toEqual([]);await page.evaluate(()=>localStorage.clear())}await page.setViewportSize({width:1280,height:900});await page.goto('/app?mode=guided',{waitUntil:'domcontentloaded'});await expect(page.getByText('Guided Case Study')).toBeVisible();await page.goto('/app?mode=evidence',{waitUntil:'domcontentloaded'});await expect(page.getByText('EVIDENCE MODE',{exact:true})).toBeVisible();for(const route of ['/demo','/next']){await page.goto(route,{waitUntil:'domcontentloaded'});await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','5.2.0')}});
-
-test('temporary final Case Study visual review capture',async({page})=>{
-  test.setTimeout(120000);
-  fs.mkdirSync('test-results/case-study-final-review',{recursive:true});
-  await page.emulateMedia({reducedMotion:'reduce'});
-  for(const view of [{name:'desktop',width:1440,height:1000},{name:'mobile',width:390,height:844}]){
-    await page.setViewportSize({width:view.width,height:view.height});
-    await page.goto('/',{waitUntil:'domcontentloaded'});
-    await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelectorAll('.toc-item:not([hidden])').length===13);
-    await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyP2Polish==='true');
-    await expect(page.locator('.fm-p1-release-map>article')).toHaveCount(3);
-    for(let i=0;i<13;i+=1){
-      await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 13`);
-      await page.locator('.viewer').screenshot({path:`test-results/case-study-final-review/${view.name}-${String(i+1).padStart(2,'0')}.png`,animations:'disabled'});
-      if(i<12){
-        await page.evaluate(()=>document.querySelector('.btn-next')?.click());
-        await expect(page.locator('.topbar-count')).toHaveText(`${String(i+2).padStart(2,'0')} / 13`);
-      }
-    }
-  }
-});
