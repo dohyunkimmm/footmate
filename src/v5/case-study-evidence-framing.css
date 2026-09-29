@@ -27,12 +27,22 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
     padding:7px 10px!important;
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip{
-    margin-top:10px!important;
+    margin-top:12px!important;
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-media img{
     height:198px!important;
     object-fit:cover!important;
     object-position:top!important;
+  }
+  /* The source captures continue below the useful recovery state. End each proof after its
+     meaningful state UI so no half-visible downstream controls remain. */
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-figure:nth-child(1) img{
+    clip-path:inset(0 0 14px 0 round 18px);
+    margin-bottom:-14px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-figure:nth-child(2) img{
+    clip-path:inset(0 0 6px 0 round 18px);
+    margin-bottom:-6px;
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip figcaption{
     margin-top:5px!important;
@@ -51,7 +61,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip{
     width:min(100%,720px)!important;
-    margin-top:8px!important;
+    margin-top:12px!important;
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-evidence-recovery-strip .fm-evidence-media img{
     height:184px!important;
