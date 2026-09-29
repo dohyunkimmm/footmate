@@ -68,6 +68,55 @@ html[data-fm-next-case-study="true"] .fm-next-story :is(a,button,[tabindex]):foc
   border-radius:8px;
 }
 
+/* Follow-up spacing QA: use the story gap as the primary rhythm and avoid doubled margins. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide:is([data-p0-visual],[data-p1-visual]) .fm-next-story{
+  gap:12px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] :is(
+  .fm-p0-journey,.fm-p0-guest-flow,.fm-p0-recommendation,.fm-p0-recovery-map,.fm-p0-architecture,
+  .fm-p1-persona-scene,.fm-p1-jtbd-journey,.fm-p1-auth-flow,.fm-p1-metrics,.fm-p1-release-map
+){
+  margin-top:6px!important;
+  margin-bottom:6px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p0-visual="journey"] .fm-p0-priority-map{
+  margin-top:6px!important;
+  margin-bottom:2px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-scene{
+  margin-bottom:4px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-jtbd-journey{
+  margin-top:4px!important;
+  margin-bottom:2px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="sign-in-join"] .fm-p1-auth-flow{
+  margin-bottom:2px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="sign-in-join"] .fm-p1-auth-preserve{
+  margin-top:4px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="sign-in-join"] .fm-p1-auth-boundary{
+  margin-top:6px!important;
+  margin-bottom:2px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="kpi-validation"] .fm-p1-metrics{
+  margin-bottom:4px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="kpi-validation"] .fm-p1-evidence-grid{
+  margin-top:4px!important;
+  margin-bottom:4px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="kpi-validation"] .fm-p1-validation-note{
+  margin-top:4px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="release-boundary"] .fm-p1-release-map{
+  margin-bottom:4px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="release-boundary"] .fm-p1-release-next{
+  margin-top:4px!important;
+}
+
 /* Compact desktop: preserve breathing room without forcing vertical overflow. */
 @media(max-height:820px) and (min-width:901px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story{
@@ -80,17 +129,25 @@ html[data-fm-next-case-study="true"] .fm-next-story :is(a,button,[tabindex]):foc
     .fm-p0-journey,.fm-p0-guest-flow,.fm-p0-recommendation,.fm-p0-recovery-map,.fm-p0-architecture,
     .fm-p1-persona-scene,.fm-p1-jtbd-journey,.fm-p1-auth-flow,.fm-p1-metrics,.fm-p1-release-map
   ){
-    margin-top:9px!important;
+    margin-top:4px!important;
+    margin-bottom:4px!important;
   }
 }
 
 /* Mobile: keep sequence meaning but remove decorative arrow repetition. */
 @media(max-width:640px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story{
-    gap:11px;
+    gap:10px;
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story-lead{
-    margin-bottom:9px;
+    margin-bottom:8px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] :is(
+    .fm-p0-journey,.fm-p0-guest-flow,.fm-p0-recommendation,.fm-p0-recovery-map,.fm-p0-architecture,
+    .fm-p1-persona-scene,.fm-p1-jtbd-journey,.fm-p1-auth-flow,.fm-p1-metrics,.fm-p1-release-map
+  ){
+    margin-top:4px!important;
+    margin-bottom:4px!important;
   }
   html[data-fm-next-case-study="true"] :is(
     .fm-p0-journey-arrow,.fm-p0-route-arrow,.fm-p0-recovery-row>i,.fm-p0-arch-main>i,

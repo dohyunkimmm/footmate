@@ -1,5 +1,7 @@
 const {test,expect}=require('@playwright/test');
 
+const VISUAL_BASELINE_DATE='2026-09-28T12:00:00.000Z';
+
 function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
@@ -9,8 +11,21 @@ function failures(page){
   return items;
 }
 
+async function pinVisualDate(page){
+  await page.addInitScript(({iso})=>{
+    const NativeDate=Date;
+    const fixed=NativeDate.parse(iso);
+    class FixedDate extends NativeDate{
+      constructor(...args){super(...(args.length?args:[fixed]));}
+      static now(){return fixed;}
+    }
+    globalThis.Date=FixedDate;
+  },{iso:VISUAL_BASELINE_DATE});
+}
+
 async function openCleanApp(page,viewport={width:390,height:844}){
   const errs=failures(page);
+  await pinVisualDate(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
