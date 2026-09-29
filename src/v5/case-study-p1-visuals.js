@@ -149,7 +149,7 @@
     const slide=byRole('production-boundary');
     const outcomes=slide?.querySelector('.fm-next-cs-outcomes');
     const final=slide?.querySelector('.fm-next-cs-final');
-    if(!slide||!outcomes||!final)return false;
+    if(!slide||!outcomes)return false;
 
     mark(slide,'release-boundary');
     outcomes.classList.add('fm-p1-release-map');
@@ -181,7 +181,7 @@
           ${releaseItem('not-measured','미검증','수익성 · 실제 이용 지표')}
         </ul>
       </article>`;
-    final.classList.add('fm-p1-release-next');
+    final?.classList.add('fm-p1-release-next');
     return true;
   }
 
