@@ -1,136 +1,94 @@
 /* FootMate Case Study · product evidence visual upgrade
-   Uses verified product visual baselines to increase evidence density and section scale contrast.
+   Verified product visual baselines + editorial composition only.
    No new product facts, routes, IA, or runtime behavior. */
 html[data-fm-next-case-study="true"]{
-  --fm-evidence-lime:#c9ef62;
-  --fm-evidence-lime-ink:#254414;
-  --fm-evidence-forest:#103c2b;
-  --fm-evidence-line:#dbe6df;
-  --fm-evidence-soft:#f3f8f5;
+  --fm-evidence-lime:#c9ef62;--fm-evidence-lime-ink:#254414;--fm-evidence-forest:#103c2b;
+  --fm-evidence-line:#dbe6df;--fm-evidence-soft:#f3f8f5
 }
-
 html[data-fm-next-case-study="true"] .fm-evidence-figure{min-width:0;margin:0}
 html[data-fm-next-case-study="true"] .fm-evidence-media{
-  position:relative;display:grid;place-items:center;min-width:0;overflow:hidden;
-  border:1px solid var(--fm-evidence-line);border-radius:26px;
-  background:radial-gradient(circle at 78% 10%,rgba(201,239,98,.22),transparent 28%),linear-gradient(155deg,#f8fbf9,#edf5f0)
+  position:relative;display:grid;place-items:center;min-width:0;overflow:hidden;border:1px solid var(--fm-evidence-line);
+  border-radius:26px;background:radial-gradient(circle at 78% 10%,rgba(201,239,98,.22),transparent 28%),linear-gradient(155deg,#f8fbf9,#edf5f0)
 }
-html[data-fm-next-case-study="true"] .fm-evidence-media img{
-  display:block;max-width:100%;object-fit:contain;border-radius:22px;
-  box-shadow:0 24px 64px rgba(21,54,35,.12)
-}
+html[data-fm-next-case-study="true"] .fm-evidence-media img{display:block;max-width:100%;object-fit:contain;border-radius:22px;box-shadow:0 24px 64px rgba(21,54,35,.12)}
 html[data-fm-next-case-study="true"] .fm-evidence-badge{
-  position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:7px;
-  padding:7px 10px;border:1px solid rgba(34,70,35,.12);border-radius:999px;
-  background:rgba(255,255,255,.92);color:var(--fm-evidence-forest);font-size:9px;line-height:1;
-  font-weight:900;letter-spacing:.06em;backdrop-filter:blur(8px)
+  position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;
+  border:1px solid rgba(34,70,35,.12);border-radius:999px;background:rgba(255,255,255,.92);color:var(--fm-evidence-forest);
+  font-size:9px;line-height:1;font-weight:900;letter-spacing:.06em;backdrop-filter:blur(8px)
 }
-html[data-fm-next-case-study="true"] .fm-evidence-badge:before{
-  content:"";width:8px;height:8px;border-radius:999px;background:var(--fm-evidence-lime);box-shadow:0 0 0 3px rgba(201,239,98,.2)
-}
-html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption{
-  display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:#728278;font-size:9px;line-height:1.4
-}
+html[data-fm-next-case-study="true"] .fm-evidence-badge:before{content:"";width:8px;height:8px;border-radius:999px;background:var(--fm-evidence-lime);box-shadow:0 0 0 3px rgba(201,239,98,.2)}
+html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:#728278;font-size:9px;line-height:1.4}
 html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption b{color:#263b30;font-size:10px;font-weight:850}
 html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption span{text-align:right}
 
-/* Recommendation: replace the illustrative mock with a verified product render. */
-html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{
-  grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr)!important;gap:24px!important;align-items:center!important
-}
-html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-reco-stage{
-  padding:0!important;border:0!important;background:transparent!important
-}
-html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation .fm-evidence-media{min-height:360px;padding:22px}
-html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{height:min(48vh,440px);width:auto}
+/* Recommendation · actual product render as the visual anchor. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr)!important;gap:24px!important;align-items:center!important}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-reco-stage{padding:0!important;border:0!important;background:transparent!important}
+html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation .fm-evidence-media{min-height:320px;padding:20px}
+html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{height:min(43vh,380px);width:auto}
 
-/* Decision Detail: move from five equal cards to an editorial decision sequence beside the real UI. */
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout{
-  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.65fr);gap:28px;align-items:center;margin-top:8px
+/* Decision Detail · editorial sequence + actual product detail. */
+html[data-fm-next-case-study="true"] .fm-evidence-detail-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.65fr);gap:28px;align-items:center;margin-top:8px}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order{
+  counter-reset:fm-detail-step;display:grid!important;grid-template-columns:1fr!important;gap:0!important;width:100%;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important
 }
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout .fm-next-cs-detail-order{
-  counter-reset:fm-detail-step;display:grid!important;grid-template-columns:1fr!important;gap:0!important;width:100%;
-  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important
-}
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout .fm-next-cs-detail-order>span{
-  counter-increment:fm-detail-step;display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;
-  align-items:center!important;justify-content:stretch!important;min-height:0!important;padding:14px 0!important;
-  border:0!important;border-bottom:1px solid var(--fm-evidence-line)!important;border-radius:0!important;
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order>span{
+  counter-increment:fm-detail-step;display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;justify-content:stretch!important;
+  min-height:0!important;padding:14px 0!important;border:0!important;border-bottom:1px solid var(--fm-evidence-line)!important;border-radius:0!important;
   background:transparent!important;text-align:left!important;font-size:13px
 }
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout .fm-next-cs-detail-order>span:first-of-type{border-top:1px solid var(--fm-evidence-line)!important}
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout .fm-next-cs-detail-order>span:before{
-  content:"0" counter(fm-detail-step);display:grid;place-items:center;width:27px;height:27px;border-radius:999px;
-  background:var(--fm-evidence-lime);color:var(--fm-evidence-lime-ink);font-size:9px;font-weight:900
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order>span:first-of-type{border-top:1px solid var(--fm-evidence-line)!important}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order>span:before{
+  content:"0" counter(fm-detail-step);display:grid;place-items:center;width:27px;height:27px;border-radius:999px;background:var(--fm-evidence-lime);color:var(--fm-evidence-lime-ink);font-size:9px;font-weight:900
 }
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout .fm-next-cs-detail-order>i{display:none!important}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order>i{display:none!important}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail .fm-evidence-media{padding:18px}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail img{height:min(47vh,430px);width:auto}
 
-/* Operations: pair the lifecycle with the actual matchday home and flatten repeated cards into a timeline. */
-html[data-fm-next-case-study="true"] .fm-evidence-operations-layout{
-  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.65fr);gap:28px;align-items:center;margin-top:8px
-}
+/* Operations · flattened lifecycle + matchday product surface. */
+html[data-fm-next-case-study="true"] .fm-evidence-operations-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.65fr);gap:28px;align-items:center;margin-top:8px}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states{display:grid!important;grid-template-columns:1fr!important;gap:0!important}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states>div{
-  display:grid!important;grid-template-columns:minmax(80px,.34fr) minmax(0,.66fr)!important;gap:4px 18px!important;
-  align-items:start!important;padding:14px 0!important;border:0!important;border-bottom:1px solid var(--fm-evidence-line)!important;
-  border-radius:0!important;background:transparent!important;box-shadow:none!important
+  display:grid!important;grid-template-columns:minmax(80px,.34fr) minmax(0,.66fr)!important;gap:4px 18px!important;align-items:start!important;padding:14px 0!important;
+  border:0!important;border-bottom:1px solid var(--fm-evidence-line)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important
 }
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states>div:first-child{border-top:1px solid var(--fm-evidence-line)!important}
-html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states small{
-  grid-row:1 / span 2;color:#718278;font-size:9px;font-weight:850;letter-spacing:.03em
-}
+html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states small{grid-row:1 / span 2;color:#718278;font-size:9px;font-weight:850;letter-spacing:.03em}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states b{margin:0!important;color:#1c3025;font-size:13px}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states p{margin:3px 0 0!important;color:#6c7c73;font-size:10px!important}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations .fm-evidence-media{padding:18px}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations img{height:min(47vh,430px);width:auto}
 
-/* Recovery: keep the semantic state map, then show actual empty/failure states as the visual peak. */
-html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px
-}
-html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media{padding:10px;border-radius:20px}
-html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{
-  width:100%;height:248px;object-fit:cover;object-position:top;border-radius:15px;box-shadow:0 16px 36px rgba(21,54,35,.08)
-}
+/* Recovery · semantic map first, actual empty/failure states second. */
+html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:8px}
+html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media{padding:9px;border-radius:20px}
+html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{width:100%;height:178px;object-fit:cover;object-position:top;border-radius:15px;box-shadow:0 16px 36px rgba(21,54,35,.08)}
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-badge{top:10px;left:10px;padding:6px 8px;font-size:8px}
-html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip figcaption{margin-top:6px}
+html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip figcaption{margin-top:5px}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-map{box-shadow:none!important}
 
-/* Brand bridge: product lime appears only on evidence and decisive states. */
-html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade] .fm-p0-match-footer strong{
-  display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:var(--fm-evidence-lime);color:var(--fm-evidence-lime-ink)
-}
+/* Brand bridge · product lime only on evidence / decisive state. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade] .fm-p0-match-footer strong{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:var(--fm-evidence-lime);color:var(--fm-evidence-lime-ink)}
 
 @media(min-width:901px) and (max-width:1180px){
-  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{
-    grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr)!important;gap:18px!important
-  }
-  html[data-fm-next-case-study="true"] :is(.fm-evidence-detail-layout,.fm-evidence-operations-layout){
-    grid-template-columns:minmax(0,1.15fr) minmax(240px,.85fr);gap:20px
-  }
-  html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{height:228px}
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr)!important;gap:18px!important}
+  html[data-fm-next-case-study="true"] :is(.fm-evidence-detail-layout,.fm-evidence-operations-layout){grid-template-columns:minmax(0,1.15fr) minmax(240px,.85fr);gap:20px}
+  html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{height:165px}
 }
-
 @media(max-height:820px) and (min-width:901px){
   html[data-fm-next-case-study="true"] :is(.fm-evidence-figure.is-recommendation img,.fm-evidence-figure.is-detail img,.fm-evidence-figure.is-operations img){height:min(40vh,360px)}
-  html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{height:205px}
+  html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{height:150px}
 }
-
-/* Mobile / tablet: evidence becomes the large visual beat; recovery remains swipeable instead of creating a long stack. */
 @media(max-width:900px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{grid-template-columns:1fr!important;gap:14px!important}
   html[data-fm-next-case-study="true"] :is(.fm-evidence-detail-layout,.fm-evidence-operations-layout){grid-template-columns:1fr;gap:14px}
-  html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail,
-  html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations{order:-1}
-  html[data-fm-next-case-study="true"] :is(.fm-evidence-figure.is-recommendation img,.fm-evidence-figure.is-detail img,.fm-evidence-figure.is-operations img){
-    width:min(100%,300px);height:auto;max-height:520px
-  }
+  html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail,html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations{order:-1}
+  html[data-fm-next-case-study="true"] :is(.fm-evidence-figure.is-recommendation img,.fm-evidence-figure.is-detail img,.fm-evidence-figure.is-operations img){width:min(100%,300px);height:auto;max-height:520px}
   html[data-fm-next-case-study="true"] .fm-evidence-media{padding:14px;border-radius:22px}
   html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip{
-    display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:minmax(220px,76vw);gap:10px;
-    overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory;scrollbar-width:none
+    display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:minmax(220px,76vw);gap:10px;overflow-x:auto;padding:2px 2px 8px;
+    scroll-snap-type:x mandatory;scrollbar-width:none
   }
   html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip::-webkit-scrollbar{display:none}
   html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-figure{scroll-snap-align:start}
