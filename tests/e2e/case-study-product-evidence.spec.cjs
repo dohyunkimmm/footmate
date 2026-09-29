@@ -63,4 +63,33 @@ for(const [name,viewport] of [
       });
     }
   });
+
+  test(`P12 KPI validation composition stays visually balanced on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await showSection(page,11);
+    const slide=page.locator('.slide.on.fm-next-story-slide');
+    await expect(slide).toHaveAttribute('data-v5-content-role','validation-evidence');
+    await expect(slide.locator('.fm-p1-validation-banner')).toBeVisible();
+    await expect(slide.locator('.fm-p1-funnel-wrap')).toBeVisible();
+    await expect(slide.locator('.fm-p1-secondary-metrics')).toBeVisible();
+    await verifyNoHorizontalOverflow(page);
+
+    if(viewport.width>900){
+      const geometry=await slide.evaluate(node=>{
+        const metrics=node.querySelector('.fm-p1-metrics');
+        const banner=node.querySelector('.fm-p1-validation-banner');
+        const funnel=node.querySelector('.fm-p1-funnel-wrap');
+        const secondary=node.querySelector('.fm-p1-secondary-metrics');
+        const box=el=>el.getBoundingClientRect();
+        return {metrics:box(metrics),banner:box(banner),funnel:box(funnel),secondary:box(secondary)};
+      });
+      expect(Math.abs(geometry.banner.height-geometry.funnel.height)).toBeLessThanOrEqual(2);
+      expect(geometry.secondary.width).toBeGreaterThanOrEqual(geometry.metrics.width-2);
+    }
+
+    await slide.screenshot({
+      path:`test-results/case-study-p12-section-${viewport.width}.png`,
+      animations:'disabled'
+    });
+  });
 }
