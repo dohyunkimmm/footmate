@@ -113,6 +113,32 @@ for(const [name,viewport] of [
     });
   });
 
+  test(`P10 Recovery evidence stays readable on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await showSection(page,9);
+    const slide=page.locator('.slide.on.fm-next-story-slide');
+    const strip=slide.locator('.fm-evidence-recovery-strip');
+    const figures=strip.locator('.fm-evidence-figure');
+    await expect(figures).toHaveCount(3);
+    await verifyEvidenceImages(page);
+    await verifyNoHorizontalOverflow(page);
+
+    if(viewport.width<=900){
+      const geometry=await strip.evaluate(node=>{
+        const stripBox=node.getBoundingClientRect();
+        const widths=[...node.querySelectorAll('.fm-evidence-figure')].map(el=>el.getBoundingClientRect().width);
+        return {stripWidth:stripBox.width,widths,overflow:getComputedStyle(node).overflowX};
+      });
+      expect(geometry.overflow).not.toBe('auto');
+      geometry.widths.forEach(width=>expect(width).toBeGreaterThanOrEqual(geometry.stripWidth-2));
+    }
+
+    await slide.screenshot({
+      path:`test-results/case-study-p10-section-${viewport.width}.png`,
+      animations:'disabled'
+    });
+  });
+
   test(`all 13 Case Study sections rough visual audit on ${name}`,async({page})=>{
     test.setTimeout(90000);
     await openCaseStudy(page,viewport);
