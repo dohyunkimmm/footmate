@@ -15,12 +15,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 }
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card>p{
   margin:0!important;
-}
-html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card>p>.fm-cs-line{
-  display:block;
-}
-html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card>p>.fm-cs-line+.fm-cs-line{
-  margin-top:4px;
+  line-height:1.68!important;
 }
 
 @media(max-height:820px) and (min-width:901px){
