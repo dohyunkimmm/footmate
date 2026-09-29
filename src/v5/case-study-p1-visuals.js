@@ -190,40 +190,26 @@
   }
 
   function patchAll(){
-    if(document.documentElement.dataset.fmCaseStudyP0Visuals!=='true')return false;
     const patched=[patchPersona(),patchAuth(),patchKPI(),patchRelease()];
     return patched.every(Boolean);
   }
 
-  function applyInitial(){
-    if(document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
-    if(!patchAll())return false;
-    document.documentElement.dataset.fmCaseStudyP1Visuals='true';
-    return true;
-  }
-
-  function repairAfterClarity(){
-    if(document.documentElement.dataset.fmCaseStudyP1FinalRepair==='true')return true;
-    if(document.documentElement.dataset.fmCaseStudyP1Visuals!=='true')return false;
+  function apply(){
+    if(document.documentElement.dataset.fmCaseStudyP1FinalRepair==='true'&&
+       document.documentElement.dataset.fmCaseStudyP1Visuals==='true')return true;
+    if(document.documentElement.dataset.fmCaseStudyP0Visuals!=='true')return false;
     if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
     if(!patchAll())return false;
+    document.documentElement.dataset.fmCaseStudyP1Visuals='true';
     document.documentElement.dataset.fmCaseStudyP1FinalRepair='true';
     return true;
   }
 
-  if(!applyInitial()){
+  if(!apply()){
     let tries=0;
-    const initialTimer=setInterval(()=>{
+    const timer=setInterval(()=>{
       tries+=1;
-      if(applyInitial()||tries>600)clearInterval(initialTimer);
-    },25);
-  }
-
-  if(!repairAfterClarity()){
-    let repairTries=0;
-    const repairTimer=setInterval(()=>{
-      repairTries+=1;
-      if(repairAfterClarity()||repairTries>600)clearInterval(repairTimer);
+      if(apply()||tries>1200)clearInterval(timer);
     },25);
   }
 })();
