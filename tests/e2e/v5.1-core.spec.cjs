@@ -16,20 +16,21 @@ test('v5.1.1 cross-domain consistency guardrail remains intact',async({page})=>{
 test('v5.1.1 preserves responsive modes and compatibility routes',async({page})=>{for(const width of [320,375,390,430]){const errs=await boot(page,'/app',{width,height:780});expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);expect(errs).toEqual([]);await page.evaluate(()=>localStorage.clear())}await page.setViewportSize({width:1280,height:900});await page.goto('/app?mode=guided',{waitUntil:'domcontentloaded'});await expect(page.getByText('Guided Case Study')).toBeVisible();await page.goto('/app?mode=evidence',{waitUntil:'domcontentloaded'});await expect(page.getByText('EVIDENCE MODE',{exact:true})).toBeVisible();for(const route of ['/demo','/next']){await page.goto(route,{waitUntil:'domcontentloaded'});await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','5.2.0')}});
 
 test('temporary final Case Study visual review capture',async({page})=>{
+  test.setTimeout(120000);
   fs.mkdirSync('test-results/case-study-final-review',{recursive:true});
   await page.emulateMedia({reducedMotion:'reduce'});
   for(const view of [{name:'desktop',width:1440,height:1000},{name:'mobile',width:390,height:844}]){
     await page.setViewportSize({width:view.width,height:view.height});
     await page.goto('/',{waitUntil:'domcontentloaded'});
-    await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelectorAll('.slide:not([hidden])').length===13);
-    await page.waitForTimeout(300);
-    const slides=page.locator('.slide:not([hidden])');
-    expect(await slides.count()).toBe(13);
+    await page.waitForFunction(()=>document.querySelectorAll('.slide').length===16&&document.querySelectorAll('.toc-item:not([hidden])').length===13);
+    await page.waitForTimeout(250);
     for(let i=0;i<13;i+=1){
-      const slide=slides.nth(i);
-      await slide.scrollIntoViewIfNeeded();
-      await page.waitForTimeout(80);
-      await slide.screenshot({path:`test-results/case-study-final-review/${view.name}-${String(i+1).padStart(2,'0')}.png`,animations:'disabled'});
+      await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 13`);
+      await page.locator('.viewer').screenshot({path:`test-results/case-study-final-review/${view.name}-${String(i+1).padStart(2,'0')}.png`,animations:'disabled'});
+      if(i<12){
+        await page.locator('.btn-next').click();
+        await page.waitForTimeout(120);
+      }
     }
   }
 });
