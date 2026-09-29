@@ -147,9 +147,18 @@
 
   function patchRelease(){
     const slide=byRole('production-boundary');
-    const outcomes=slide?.querySelector('.fm-next-cs-outcomes');
-    const final=slide?.querySelector('.fm-next-cs-final');
-    if(!slide||!outcomes)return false;
+    const copy=slide?.querySelector('.fm-next-story-copy');
+    if(!slide||!copy)return false;
+
+    let outcomes=slide.querySelector('.fm-next-cs-outcomes');
+    if(!outcomes){
+      outcomes=document.createElement('div');
+      outcomes.className='fm-next-cs-outcomes';
+      const anchor=copy.querySelector('.fm-next-review-summary')||copy.querySelector('.fm-next-story-lead');
+      if(anchor)anchor.insertAdjacentElement('afterend',outcomes);
+      else copy.appendChild(outcomes);
+    }
+    const final=slide.querySelector('.fm-next-cs-final');
 
     mark(slide,'release-boundary');
     outcomes.classList.add('fm-p1-release-map');
