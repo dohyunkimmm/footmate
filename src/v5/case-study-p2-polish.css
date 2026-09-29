@@ -117,6 +117,26 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="releas
   margin-top:4px!important;
 }
 
+/* Horizontal rhythm: keep section edges aligned while reclaiming width before mobile. */
+@media(min-width:981px) and (max-width:1120px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"]{
+    padding-left:48px!important;
+    padding-right:48px!important;
+  }
+}
+@media(min-width:901px) and (max-width:980px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"]{
+    padding-left:36px!important;
+    padding-right:36px!important;
+  }
+}
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] :is(.fm-next-cover-slide,.fm-next-story-slide[data-p2-polish="true"]){
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+}
+
 /* Compact desktop: preserve breathing room without forcing vertical overflow. */
 @media(max-height:820px) and (min-width:901px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"] .fm-next-story{
