@@ -185,7 +185,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: browser-e2e-${{ github.run_id }}
+          name: v5.3-browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
