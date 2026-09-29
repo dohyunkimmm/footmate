@@ -81,20 +81,27 @@
     });
   }
 
+  function loadEvidenceScript(){
+    if(document.querySelector('script[data-fm-case-study-product-evidence]'))return;
+    const script=document.createElement('script');
+    script.src='/src/v5/case-study-product-evidence.js?v=1';
+    script.dataset.fmCaseStudyProductEvidence='script';
+    document.body.appendChild(script);
+  }
+
   function loadProductEvidence(){
-    if(!document.querySelector('link[data-fm-case-study-product-evidence]')){
-      const link=document.createElement('link');
-      link.rel='stylesheet';
-      link.href='/src/v5/case-study-product-evidence.css?v=1';
-      link.dataset.fmCaseStudyProductEvidence='style';
-      document.head.appendChild(link);
+    const existing=document.querySelector('link[data-fm-case-study-product-evidence]');
+    if(existing){
+      if(existing.sheet)loadEvidenceScript();
+      else existing.addEventListener('load',loadEvidenceScript,{once:true});
+      return;
     }
-    if(!document.querySelector('script[data-fm-case-study-product-evidence]')){
-      const script=document.createElement('script');
-      script.src='/src/v5/case-study-product-evidence.js?v=1';
-      script.dataset.fmCaseStudyProductEvidence='script';
-      document.body.appendChild(script);
-    }
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='/src/v5/case-study-product-evidence.css?v=1';
+    link.dataset.fmCaseStudyProductEvidence='style';
+    link.addEventListener('load',loadEvidenceScript,{once:true});
+    document.head.appendChild(link);
   }
 
   function apply(){
