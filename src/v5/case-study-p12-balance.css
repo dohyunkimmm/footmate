@@ -1,0 +1,45 @@
+/* FootMate Case Study · P12 KPI & Validation balance pass
+   Rough composition correction only: rebalance left validation card vs right funnel. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-metrics{
+  grid-template-columns:minmax(260px,.9fr) minmax(0,1.6fr)!important;
+  align-items:stretch;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner{
+  grid-row:auto;
+  min-height:0;
+  justify-content:center;
+  padding:20px 22px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner b{
+  margin-top:16px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner p{
+  margin-top:8px;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-secondary-metrics{
+  grid-column:1 / -1;
+}
+@media(max-height:820px) and (min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner{
+    min-height:0;
+    padding:16px 18px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner b{
+    margin-top:12px;
+  }
+}
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-metrics{
+    grid-template-columns:1fr!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner{
+    min-height:0;
+    padding:18px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner b{
+    margin-top:12px;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-secondary-metrics{
+    grid-column:1;
+  }
+}
