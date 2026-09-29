@@ -28,8 +28,8 @@ test('temporary final Case Study visual review capture',async({page})=>{
       await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 13`);
       await page.locator('.viewer').screenshot({path:`test-results/case-study-final-review/${view.name}-${String(i+1).padStart(2,'0')}.png`,animations:'disabled'});
       if(i<12){
-        await page.locator('.btn-next').click();
-        await page.waitForTimeout(120);
+        await page.evaluate(()=>document.querySelector('.btn-next')?.click());
+        await expect(page.locator('.topbar-count')).toHaveText(`${String(i+2).padStart(2,'0')} / 13`);
       }
     }
   }
