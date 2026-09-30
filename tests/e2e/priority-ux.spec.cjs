@@ -9,4 +9,3 @@ test('MY distinguishes saved and current settings and returns to the editing ori
 test('medium priority Home Discover and MY ownership stays explicit and recoverable',async({page})=>{
   await mediumPriorityUX(page);
 });
-require('./real-app-flow-naturalness.spec.cjs');
