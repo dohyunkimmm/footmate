@@ -1,5 +1,14 @@
 const {test,expect}=require('@playwright/test');
 
+async function chooseSetupDefaultIfNeeded(page){
+  const setup=page.locator('[data-screen="setup"]');
+  if(!await setup.isVisible().catch(()=>false))return;
+  if(await setup.locator('[data-action="choose-setup"][aria-pressed="true"]').count())return;
+  const field=await setup.locator('[data-action="choose-setup"]').first().getAttribute('data-field');
+  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];
+  if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
+}
+
 function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
@@ -23,8 +32,11 @@ async function openCleanApp(page,viewport={width:390,height:844}){
 
 async function setupToHome(page){
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);
   await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);
   await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);
   await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('[data-screen="home"] .fm-ai-card[data-product-ai="home"]')).toBeVisible();

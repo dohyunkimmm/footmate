@@ -1,5 +1,14 @@
 const {test,expect}=require('@playwright/test');
 
+async function chooseSetupDefaultIfNeeded(page){
+  const setup=page.locator('[data-screen="setup"]');
+  if(!await setup.isVisible().catch(()=>false))return;
+  if(await setup.locator('[data-action="choose-setup"][aria-pressed="true"]').count())return;
+  const field=await setup.locator('[data-action="choose-setup"]').first().getAttribute('data-field');
+  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];
+  if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
+}
+
 const VISUAL_BASELINE_DATE='2026-09-28T12:00:00.000Z';
 
 function failures(page){
@@ -45,8 +54,11 @@ async function startSetup(page){
 
 async function setupToHome(page){
   await startSetup(page);
+  await chooseSetupDefaultIfNeeded(page);
   await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);
   await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);
   await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }

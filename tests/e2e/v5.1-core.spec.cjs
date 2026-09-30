@@ -1,8 +1,18 @@
 const {test,expect}=require('@playwright/test');
+
+async function chooseSetupDefaultIfNeeded(page){
+  const setup=page.locator('[data-screen="setup"]');
+  if(!await setup.isVisible().catch(()=>false))return;
+  if(await setup.locator('[data-action="choose-setup"][aria-pressed="true"]').count())return;
+  const field=await setup.locator('[data-action="choose-setup"]').first().getAttribute('data-field');
+  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];
+  if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
+}
 const AxeBuilder=require('@axe-core/playwright').default;
 function failures(page){const items=[];page.on('pageerror',e=>items.push(`pageerror: ${e.message}`));page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('Failed to load resource'))items.push(`console.error: ${m.text()}`)});return items}
 async function boot(page,path='/app',viewport={width:390,height:844}){const errs=failures(page);await page.setViewportSize(viewport);await page.goto(path,{waitUntil:'domcontentloaded'});await page.waitForSelector('#footmate-next [data-screen]');await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1'&&window.__FOOTMATE_AI__?.version==='5.1.1');return errs}
 async function serious(page){const result=await new AxeBuilder({page}).include('.fm-next-app').withTags(['wcag2a','wcag2aa']).analyze();return result.violations.filter(v=>['serious','critical'].includes(v.impact))}
+await chooseSetupDefaultIfNeeded(page);
 async function setup(page){await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await page.getByRole('button',{name:'다음'}).click();await page.getByRole('button',{name:'다음'}).click();await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible()}
 test.beforeEach(async({page})=>{await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(()=>localStorage.clear())});
 
