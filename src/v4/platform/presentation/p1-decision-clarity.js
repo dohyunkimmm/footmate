@@ -1,5 +1,5 @@
 const root=document.getElementById('footmate-next');
-const P1_DECISION_CLARITY_VERSION='1.0.1';
+const P1_DECISION_CLARITY_VERSION='1.0.0';
 const DISCOVERY_KEYS=['date','time','distance','price','position'];
 let scheduled=false;
 let draftStatusScheduled=false;
