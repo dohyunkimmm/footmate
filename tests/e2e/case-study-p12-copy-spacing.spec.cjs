@@ -36,9 +36,8 @@ for(const [name,viewport] of [
     const problem=page.locator('.slide.on');
     await expect(problem).toContainText('설계 가설 단계이며, 사용자 조사와 경쟁사 대비 우위는 Beta에서 확인합니다.');
     await expect(problem).not.toContainText('미입증');
-    await page.screenshot({
+    await problem.screenshot({
       path:`test-results/case-study-copy-cleanup-p2-${viewport.width}.png`,
-      fullPage:false,
       animations:'disabled'
     });
 
@@ -50,9 +49,8 @@ for(const [name,viewport] of [
     await expect(auth).not.toContainText('실연동');
     await expect(auth).not.toContainText('미연동');
     await noHorizontalOverflow(page);
-    await page.screenshot({
+    await auth.screenshot({
       path:`test-results/case-study-copy-cleanup-p8-${viewport.width}.png`,
-      fullPage:false,
       animations:'disabled'
     });
   });
