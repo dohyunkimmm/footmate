@@ -2,7 +2,7 @@ import {MATCHES} from '../../data.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
-const FLOW_VERSION='1.3.1';
+const FLOW_VERSION='1.3.2';
 const FIRST_HOME_KEY='footmate:real-app:first-home-pending';
 let scheduled=false;
 let authBusy=false;
@@ -62,14 +62,6 @@ function patchFirstHome(screen){
   copy.dataset.flowFirstHomeCopy='true';
   copy.innerHTML='<small>설정이 완료됐어요</small><h1>조건에 맞는 경기를 <span>찾았어요.</span></h1>';
   greeting.prepend(copy);
-}
-
-function patchVisibleDates(scope){
-  scope.querySelectorAll('span').forEach(node=>{
-    const text=(node.textContent||'').trim();
-    if(!/^샘플 일정\s*·\s*/.test(text))return;
-    userCopy(node,cleanDate(text));
-  });
 }
 
 function patchDetail(screen){
@@ -147,7 +139,7 @@ function openExperienceDialog(){
 
 function apply(){
   scheduled=false;if(!root||!isRealApp())return;ensureStyles();const screen=root.querySelector('[data-screen]');if(!screen)return;
-  patchVisibleDates(screen);if(screen.dataset.screen==='home')patchFirstHome(screen);if(screen.dataset.screen==='detail')patchDetail(screen);if(screen.dataset.screen==='auth')wireAuth(screen);if(screen.dataset.screen==='checkout')patchCheckout(screen);if(screen.dataset.screen==='profile')patchProfile(screen);patchMatchday(screen);patchReturn(screen);patchCompareDialog();root.dataset.flowNaturalnessVersion=FLOW_VERSION;
+  if(screen.dataset.screen==='home')patchFirstHome(screen);if(screen.dataset.screen==='detail')patchDetail(screen);if(screen.dataset.screen==='auth')wireAuth(screen);if(screen.dataset.screen==='checkout')patchCheckout(screen);if(screen.dataset.screen==='profile')patchProfile(screen);patchMatchday(screen);patchReturn(screen);patchCompareDialog();root.dataset.flowNaturalnessVersion=FLOW_VERSION;
 }
 function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(apply)}
 function install(){if(!root)return;new MutationObserver(schedule).observe(root,{childList:true,subtree:true,characterData:true});schedule();}
