@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createSupabaseBetaClient} from '../../src/v5/infrastructure/supabase-beta.js';
 
-const hotfix=await readFile(new URL('../../supabase/migrations/20260921_cancel_participation_ambiguity_fix.sql',import.meta.url),'utf8');
+const hotfix=await readFile(new URL('../../supabase/migrations/20260921001021_cancel_participation_ambiguity_fix.sql',import.meta.url),'utf8');
 
 for(const required of [
   'create or replace function public.cancel_participation',
