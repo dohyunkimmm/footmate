@@ -18,10 +18,12 @@
     const problem=slides[1];
     const auth=slides[7];
     const validation=slides[11];
+    const release=slides[12];
     const lead=validation?.querySelector('.fm-next-story-lead');
+    const releaseLead=release?.querySelector('.fm-next-story-lead');
     const banner=validation?.querySelector('.fm-p1-validation-banner');
     const evidence=validation?.querySelector('.fm-p1-evidence-grid');
-    if(!problem||!auth||!validation||!lead||!banner||!evidence)return false;
+    if(!problem||!auth||!validation||!release||!lead||!releaseLead||!banner||!evidence)return false;
 
     setReasonValue(
       problem.querySelector('.fm-next-cs-quote'),
@@ -34,6 +36,7 @@
     setReasonValue(authScope,'검증 범위','Google/Kakao OAuth는 Production에서 확인했고, 실제 PG 연동은 후속 범위입니다.');
 
     lead.textContent='아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.';
+    releaseLead.textContent='핵심 연결과 사용자 확인을 마치고, KPI·결제·수익성은 후속 검증으로 남겼습니다.';
 
     const bannerTitle=banner.querySelector('b');
     const bannerCopy=banner.querySelector('p');
