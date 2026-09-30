@@ -28,7 +28,7 @@ for(const [name,viewport] of [
   ['desktop',{width:1440,height:900}],
   ['mobile',{width:390,height:844}]
 ]){
-  test(`P2 and P8 scope copy reads as finished portfolio copy on ${name}`,async({page})=>{
+  test(`P2 P8 and P13 scope copy reads as finished portfolio copy on ${name}`,async({page})=>{
     await openCaseStudy(page,viewport);
 
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[1]?.click());
@@ -48,9 +48,20 @@ for(const [name,viewport] of [
     await expect(auth).toContainText('Google/Kakao OAuth는 Production에서 확인했고, 실제 PG 연동은 후속 범위입니다.');
     await expect(auth).not.toContainText('실연동');
     await expect(auth).not.toContainText('미연동');
-    await noHorizontalOverflow(page);
     await auth.screenshot({
       path:`test-results/case-study-copy-cleanup-p8-${viewport.width}.png`,
+      animations:'disabled'
+    });
+
+    await page.evaluate(()=>document.querySelectorAll('.toc-item')[12]?.click());
+    await page.waitForTimeout(120);
+    const release=page.locator('.slide.on');
+    const releaseLead=release.locator('.fm-next-story-lead');
+    await expect(releaseLead).toHaveText('핵심 연결과 사용자 확인을 마치고, KPI·결제·수익성은 후속 검증으로 남겼습니다.');
+    await expect(releaseLead).not.toContainText('실제 이용자 KPI');
+    await noHorizontalOverflow(page);
+    await release.screenshot({
+      path:`test-results/case-study-copy-cleanup-p13-${viewport.width}.png`,
       animations:'disabled'
     });
   });
