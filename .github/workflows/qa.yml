@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 permissions:
-  contents: write
+  contents: read
   statuses: read
 concurrency:
   group: footmate-qa-${{ github.ref }}
@@ -179,39 +179,6 @@ jobs:
         run: node --check src/v5/ai-match-assistant.js && node --check src/v4/platform/presentation/real-app-card-polish.js && node --check src/v4/platform/presentation/p0-usability-trust.js && node --check src/v4/platform/presentation/p1-decision-clarity.js
       - name: Run browser, beta, AI, recovery, accessibility and visual gates
         run: npx playwright test --project=chromium tests/e2e/v5.1-core.spec.cjs tests/e2e/v5.1-product-integrity.spec.cjs tests/e2e/v5.1-decision-flow-polish.spec.cjs tests/e2e/v5.1-visual-baseline.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs tests/e2e/v5.1-design-system-v2.spec.cjs tests/e2e/v5.1-release-flow-review.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/priority-ux.spec.cjs tests/e2e/checkin-state.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-participation.spec.cjs tests/e2e/v4-matchday.spec.cjs tests/e2e/v4-return.spec.cjs tests/e2e/v4-personalization.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/visual-p1-secondary-hierarchy.spec.cjs tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-consistency-v4.spec.cjs tests/e2e/visual-p0-finish.spec.cjs tests/e2e/p0-usability-trust.spec.cjs tests/e2e/my-fresh-profile-containment.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/product-completion.spec.cjs tests/e2e/real-app-visual-finish.spec.cjs
-      - name: Commit reviewed Real App visual baselines
-        if: failure() && github.event_name == 'pull_request' && github.head_ref == 'feat/real-app-flow-naturalness'
-        env:
-          TARGET_BRANCH: ${{ github.head_ref }}
-        run: |
-          update_snapshot() {
-            name="$1"
-            target="$2"
-            actual="$(find test-results -type f -name "${name}-actual.png" -print -quit)"
-            if [ -z "$actual" ]; then
-              echo "missing reviewed visual: $name"
-              exit 1
-            fi
-            cp "$actual" "$target"
-          }
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git fetch origin "$TARGET_BRANCH:refs/remotes/origin/$TARGET_BRANCH"
-          git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
-          update_snapshot checkin-my-completed-390 tests/e2e/checkin-state.spec.cjs-snapshots/checkin-my-completed-390-chromium-linux.png
-          update_snapshot product-completion-detail-390 tests/e2e/product-completion.spec.cjs-snapshots/product-completion-detail-390-chromium-linux.png
-          update_snapshot my-match-hub-390 tests/e2e/v4-matchday.spec.cjs-snapshots/my-match-hub-390-chromium-linux.png
-          update_snapshot real-app-my-personalization-390 tests/e2e/v4-personalization.spec.cjs-snapshots/real-app-my-personalization-390-chromium-linux.png
-          update_snapshot design-system-v2-decision-surface-1440 tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots/design-system-v2-decision-surface-1440-chromium-linux.png
-          update_snapshot release-flow-checked-in-390 tests/e2e/v5.1-release-flow-review.spec.cjs-snapshots/release-flow-checked-in-390-chromium-linux.png
-          update_snapshot real-app-detail-1440 tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots/real-app-detail-1440-chromium-linux.png
-          update_snapshot real-app-checkout-1440 tests/e2e/v5.1-visual-baseline.spec.cjs-snapshots/real-app-checkout-1440-chromium-linux.png
-          update_snapshot visual-system-matchday-1440 tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-matchday-1440-chromium-linux.png
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tests/e2e/*-snapshots/*.png
-          git diff --cached --quiet && exit 0
-          git commit -m "test: approve Real App visual baselines"
-          git push origin "HEAD:$TARGET_BRANCH"
       - name: Run Mobile Safari/WebKit product gate
         run: npx playwright test --project=webkit-mobile tests/e2e/v5.2-webkit-mobile.spec.cjs
       - name: Upload browser QA evidence
