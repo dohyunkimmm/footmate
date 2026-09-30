@@ -8,15 +8,16 @@ async function detail(page,id='suwon-ingye-2000',viewport={width:390,height:844}
 async function switchMatch(page,id){await page.evaluate(id=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session'));localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'detail',selectedMatchId:id}));location.reload()},id);await page.waitForSelector('[data-screen="detail"][data-decision-version="4.3.0"]')}
 const compareButton=page=>page.getByRole('button',{name:'비교',exact:true});
 
-test('v4.3 detail exposes decision evidence without pretending sample data is live',async({page})=>{
+test('v4.3 detail exposes decision evidence in user-facing language',async({page})=>{
   const errs=await detail(page);
   await expect(page.getByRole('heading',{name:'참가 결정 체크'})).toBeVisible();
   await expect(page.getByRole('heading',{name:'자리와 포지션'})).toBeVisible();
-  await expect(page.getByText('실시간 정원이 아닌 현재 샘플 경기 데이터 기준입니다.')).toBeVisible();
-  await expect(page.getByText('시설·운영 정보는 서비스 기획 검증용 샘플 데이터입니다.')).toBeVisible();
+  await expect(page.getByText('현재 경기의 남은 자리와 포지션을 확인하세요.',{exact:true})).toBeVisible();
+  await expect(page.getByText('잔여 인원과 포지션은 현재 표시된 경기 정보 기준이에요.',{exact:true})).toBeVisible();
+  await expect(page.getByText('시설과 준비물은 참가 전에 운영 안내와 함께 확인해주세요.',{exact:true})).toBeVisible();
   await expect(page.getByRole('heading',{name:'취소 · 환불 기준'})).toBeVisible();
   await expect(page.getByText('경기 24시간 전까지',{exact:true})).toBeVisible();
-  await expect(page.getByText('경기 3시간 이내의 상세 취소 기준은 실제 운영 정책 연동 단계에서 확정합니다.')).toBeVisible();
+  await expect(page.getByText('경기 시작이 가까워질수록 환불 금액이 달라질 수 있어요.',{exact:true})).toBeVisible();
   await expect(page.locator('[data-decision-section="fit"] [data-decision-score]')).toHaveAttribute('data-decision-score',/\d+/);
   expect(errs).toEqual([]);
 });
@@ -43,7 +44,7 @@ test('v4.3 compares exactly two matches and lets the user choose one',async({pag
   const trigger=page.getByRole('button',{name:'비교하기',exact:true});await trigger.click();
   const dialog=page.getByRole('dialog',{name:'두 경기 비교'});await expect(dialog).toBeVisible();
   await expect(dialog.locator('[data-compare-match-id]')).toHaveCount(2);
-  await expect(dialog).toContainText('샘플 잔여');
+  await expect(dialog).toContainText('남은 자리');
   await expect(dialog).toContainText('참가비');
   await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
   await expect(trigger).toBeFocused();
