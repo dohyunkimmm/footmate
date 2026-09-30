@@ -2,7 +2,7 @@ import {MATCHES} from '../../data.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
-const FLOW_VERSION='1.2.0';
+const FLOW_VERSION='1.3.0';
 let scheduled=false;
 let authBusy=false;
 let nextAuthOutcome='success';
@@ -13,13 +13,11 @@ const patchSession=patch=>footmatePlatform.session.patch(patch);
 const cleanDate=value=>String(value||'').replace(/^샘플 일정\s*·\s*/,'');
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
-function visualCopy(node,value){
-  if(!node||node.dataset.flowCopy===value)return;
-  const style=getComputedStyle(node);
-  node.style.setProperty('--fm-flow-font-size',style.fontSize);
-  node.style.setProperty('--fm-flow-line-height',style.lineHeight);
+function userCopy(node,value){
+  if(!node)return;
   node.dataset.flowCopy=value;
   node.setAttribute('aria-label',value);
+  if(node.textContent!==value)node.textContent=value;
 }
 
 function ensureStyles(){
@@ -27,8 +25,6 @@ function ensureStyles(){
   const style=document.createElement('style');
   style.id='fm-real-app-flow-naturalness';
   style.textContent=`
-.fm-next-page[data-mode="real"] [data-flow-copy]{font-size:0!important}
-.fm-next-page[data-mode="real"] [data-flow-copy]::after{content:attr(data-flow-copy);font-size:var(--fm-flow-font-size);line-height:var(--fm-flow-line-height);white-space:normal}
 .fm-next-page[data-mode="real"] .fm-flow-first-home>small{display:block}
 .fm-next-page[data-mode="real"] .fm-next-greeting[data-flow-first-home="true"]>small,
 .fm-next-page[data-mode="real"] .fm-next-greeting[data-flow-first-home="true"]>h1{display:none}
@@ -63,25 +59,25 @@ function patchFirstHome(screen){
 }
 
 function patchVisibleDates(scope){
-  scope.querySelectorAll('.fm-next-match-date > span:first-child').forEach(node=>{
+  scope.querySelectorAll('.fm-next-match-date > span:first-child,.fm-next-detail-meta > span:first-child').forEach(node=>{
     const next=cleanDate(node.textContent);
-    if(next!==node.textContent)visualCopy(node,next);
+    if(next!==node.textContent)userCopy(node,next);
   });
 }
 
 function patchDetail(screen){
   const capacity=screen.querySelector('[data-decision-section="capacity"]');
   if(capacity){
-    visualCopy(capacity.querySelector('.fm-next-section-head p'),'현재 경기의 남은 자리와 포지션을 확인하세요.');
-    visualCopy(capacity.querySelector('.fm-decision-capacity small'),'남은 자리');
+    userCopy(capacity.querySelector('.fm-next-section-head p'),'현재 경기의 남은 자리와 포지션을 확인하세요.');
+    userCopy(capacity.querySelector('.fm-decision-capacity small'),'남은 자리');
     capacity.querySelector('.fm-decision-meter')?.setAttribute('aria-label','현재 참가 인원');
     capacity.querySelector('.fm-decision-position-grid')?.setAttribute('aria-label','참가자 포지션 구성');
-    visualCopy(capacity.querySelector('.fm-decision-disclosure'),'잔여 인원과 포지션은 현재 표시된 경기 정보 기준이에요.');
+    userCopy(capacity.querySelector('.fm-decision-disclosure'),'잔여 인원과 포지션은 현재 표시된 경기 정보 기준이에요.');
   }
-  visualCopy(screen.querySelector('[data-decision-section="fit"] .fm-next-section-head p'),'내 조건과 맞는 이유를 참가 전에 한 번 더 확인하세요.');
-  visualCopy(screen.querySelector('[data-decision-section="venue"] .fm-decision-disclosure'),'시설과 준비물은 참가 전에 운영 안내와 함께 확인해주세요.');
+  userCopy(screen.querySelector('[data-decision-section="fit"] .fm-next-section-head p'),'내 조건과 맞는 이유를 참가 전에 한 번 더 확인하세요.');
+  userCopy(screen.querySelector('[data-decision-section="venue"] .fm-decision-disclosure'),'시설과 준비물은 참가 전에 운영 안내와 함께 확인해주세요.');
   const refund=screen.querySelector('[data-decision-section="refund"]');
-  if(refund){visualCopy(refund.querySelector('.fm-next-section-head p'),'취소 시점별 환불 기준을 확인하세요.');visualCopy(refund.querySelector('.fm-decision-disclosure'),'경기 시작이 가까워질수록 환불 금액이 달라질 수 있어요.');}
+  if(refund){userCopy(refund.querySelector('.fm-next-section-head p'),'취소 시점별 환불 기준을 확인하세요.');userCopy(refund.querySelector('.fm-decision-disclosure'),'경기 시작이 가까워질수록 환불 금액이 달라질 수 있어요.');}
 }
 
 function ensureAuthStatus(screen){
@@ -105,15 +101,18 @@ function wireAuth(screen){
   button.dataset.flowAuthWired='true';button.addEventListener('click',event=>{if(button.dataset.flowAuthBypass==='true'||event.defaultPrevented)return;event.preventDefault();event.stopPropagation();beginAccountAuth(button);});
 }
 
-function patchCheckout(screen){visualCopy(screen.querySelector('[data-p1-checkout-boundary]'),'체험 결제 · 실제 청구 없음');}
+function patchCheckout(screen){userCopy(screen.querySelector('[data-p1-checkout-boundary]'),'체험 결제 · 실제 청구 없음');}
 function patchMatchday(scope){
-  scope.querySelectorAll('.fm-matchday-kicker').forEach(node=>visualCopy(node,'오늘 경기'));
-  scope.querySelectorAll('.fm-matchday-boundary').forEach(node=>{if(/backend|프로토타입|simulation/i.test(node.textContent))visualCopy(node,'실시간 위치·지도·팀 채팅·알림 외부 서비스는 연결하지 않았습니다.');});
+  scope.querySelectorAll('.fm-matchday-kicker').forEach(node=>userCopy(node,'오늘 경기'));
+  scope.querySelectorAll('.fm-matchday-boundary').forEach(node=>{if(/backend|프로토타입|simulation|외부 서비스/i.test(node.textContent))userCopy(node,'실시간 위치·지도·팀 채팅·알림 외부 서비스는 연결하지 않았습니다.');});
+  scope.querySelectorAll('.fm-matchday-op p').forEach(node=>{if(/backend|샘플 안내/i.test(node.textContent))userCopy(node,/메시지|공지/.test(node.textContent)?'운영 공지는 이 화면에서 확인할 수 있어요.':'경기 당일 필요한 정보를 이 화면에서 확인할 수 있어요.');});
 }
 function patchReturn(scope){
-  scope.querySelectorAll('.fm-return-kicker').forEach(node=>visualCopy(node,'경기 후 피드백'));
-  scope.querySelectorAll('.fm-return-boundary').forEach(node=>visualCopy(node,'남긴 평가는 내 다음 경기 추천을 조정하는 데만 사용돼요.'));
-  scope.querySelectorAll('.fm-return-history small').forEach(node=>visualCopy(node,'경기 기록'));
+  scope.querySelectorAll('.fm-return-kicker').forEach(node=>userCopy(node,'경기 후 피드백'));
+  scope.querySelectorAll('.fm-return-boundary').forEach(node=>userCopy(node,'남긴 평가는 내 다음 경기 추천을 조정하는 데만 사용돼요.'));
+  scope.querySelectorAll('.fm-return-history small').forEach(node=>userCopy(node,'경기 기록'));
+  scope.querySelectorAll('.fm-return-status span').forEach(node=>{if(/보조 신호/.test(node.textContent))userCopy(node,'체감 난이도와 다시 뛰고 싶은 조건을 남기면 다음 추천에 반영해요.');});
+  scope.querySelectorAll('.fm-return-summary article small').forEach(node=>{if(/보조 신호/.test(node.textContent))userCopy(node,'다음에 추천할 경기');});
 }
 
 function savedMatchesMarkup(ids){
@@ -123,17 +122,17 @@ function savedMatchesMarkup(ids){
 function patchProfile(screen){
   const ids=window.__FOOTMATE_DECISION__?.read?.().savedMatchIds||[];const signature=ids.join(',');const existing=screen.querySelector('[data-flow-saved]');
   if(!ids.length)existing?.remove();else if(existing?.dataset.flowSavedSignature!==signature){const wrapper=document.createElement('div');wrapper.innerHTML=savedMatchesMarkup(ids);const next=wrapper.firstElementChild;if(existing)existing.replaceWith(next);else screen.querySelector('.fm-next-profile-card')?.before(next);}
-  const reset=screen.querySelector('[data-action="reset-flow"]');if(reset){reset.setAttribute('aria-label','체험 버전 안내');const label=reset.querySelector('span');if(label)visualCopy(label,'체험 버전 안내');}
+  const reset=screen.querySelector('[data-action="reset-flow"]');if(reset){reset.setAttribute('aria-label','체험 버전 안내');const label=reset.querySelector('span:last-child')||reset.querySelector('span');if(label)userCopy(label,'체험 버전 안내');}
 }
 function patchCompareDialog(){
   const dialog=root?.querySelector('[data-decision-dialog="compare"]');if(!dialog)return;
-  visualCopy(dialog.querySelector('.fm-decision-dialog-head small'),'경기 비교');
-  dialog.querySelectorAll('dt').forEach(node=>{if(node.textContent.trim()==='샘플 잔여')visualCopy(node,'남은 자리');});
-  visualCopy(dialog.querySelector('.fm-decision-disclosure'),'두 경기의 현재 표시 정보를 같은 기준으로 비교했어요.');
+  userCopy(dialog.querySelector('.fm-decision-dialog-head small'),'경기 비교');
+  dialog.querySelectorAll('dt').forEach(node=>{if(node.textContent.trim()==='샘플 잔여')userCopy(node,'남은 자리');});
+  userCopy(dialog.querySelector('.fm-decision-disclosure'),'두 경기의 현재 표시 정보를 같은 기준으로 비교했어요.');
 }
 
 function openExperienceDialog(){
-  root?.querySelector('[data-flow-dialog]')?.remove();
+  document.querySelector('[data-flow-dialog="experience"]')?.remove();
   const overlay=document.createElement('div');overlay.className='fm-flow-info-backdrop';overlay.dataset.flowDialog='experience';
   overlay.innerHTML='<section class="fm-flow-info-dialog" role="dialog" aria-modal="true" aria-labelledby="fm-flow-info-title"><h2 id="fm-flow-info-title">체험 버전 안내</h2><p>경기, 잔여 자리, 시설 정보는 체험용 데이터예요. 로그인·결제·체크인 등 외부 서비스는 실제 계정이나 금액과 연결되지 않습니다.</p><p>선택한 조건과 진행 상태는 이 브라우저에만 저장돼요.</p><div class="fm-flow-info-actions"><button type="button" data-flow-action="close-info">닫기</button><button type="button" data-flow-action="confirm-reset">체험 데이터 초기화</button></div></section>';
   document.body.append(overlay);requestAnimationFrame(()=>overlay.querySelector('[data-flow-action="close-info"]')?.focus());
@@ -144,11 +143,16 @@ function apply(){
   patchVisibleDates(screen);if(screen.dataset.screen==='home')patchFirstHome(screen);if(screen.dataset.screen==='detail')patchDetail(screen);if(screen.dataset.screen==='auth')wireAuth(screen);if(screen.dataset.screen==='checkout')patchCheckout(screen);if(screen.dataset.screen==='profile')patchProfile(screen);patchMatchday(screen);patchReturn(screen);patchCompareDialog();root.dataset.flowNaturalnessVersion=FLOW_VERSION;
 }
 function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(apply)}
-function install(){if(!root)return;new MutationObserver(schedule).observe(root,{childList:true,subtree:true});schedule();}
+function install(){if(!root)return;new MutationObserver(schedule).observe(root,{childList:true,subtree:true,characterData:true});schedule();}
 
 document.addEventListener('click',event=>{
   if(!isRealApp())return;const target=event.target.closest('[data-action]');
-  if(target?.dataset.action==='setup-next'){const session=readSession();if(Number(session.setupStep)===2&&!session.setupOrigin&&!session.setupComplete)patchSession({firstHomePending:true});}
+  if(target?.dataset.action==='setup-next'){
+    queueMicrotask(()=>{
+      const session=readSession();
+      if(Number(session.setupStep)===2&&session.route==='home'&&session.setupComplete&&!session.setupOrigin&&!session.hasVisitedHome){patchSession({firstHomePending:true});schedule();}
+    });
+  }
   if(root?.querySelector('[data-screen="home"]')&&readSession().firstHomePending&&['open-match','nav-discover','nav-profile'].includes(target?.dataset.action))patchSession({firstHomePending:false,hasVisitedHome:true});
   if(target?.dataset.action==='reset-flow'&&target.dataset.flowResetBypass!=='true'){event.preventDefault();event.stopPropagation();openExperienceDialog();return;}
   const action=event.target.closest('[data-flow-action]');
