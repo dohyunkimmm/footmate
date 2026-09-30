@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const migration=fs.readFileSync('supabase/migrations/20260921_beta_operator_mfa.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260921221321_beta_operator_mfa.sql','utf8');
 const beta=fs.readFileSync('beta.html','utf8');
 const operator=fs.readFileSync('beta-operator.html','utf8');
 const social=fs.readFileSync('src/v5/beta-social-auth.js','utf8');
