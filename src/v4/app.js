@@ -186,6 +186,7 @@ function setupView(){
   const step=Math.max(0,Math.min(setupSteps.length-1,state.setupStep||0));
   const data=setupSteps[step];
   const current=state[data.key];
+  const nextDisabled=current?'':'disabled aria-disabled="true"';
   return `<section class="fm-next-screen fm-next-screen--plain" data-screen="setup">
     ${topbar({backAction:step===0?'back-welcome':'setup-back',title:'내 플레이 설정'})}
     <div class="fm-next-step-indicator" aria-label="설정 진행 ${step+1}/${setupSteps.length}">${setupSteps.map((_,i)=>`<span class="${i<step?'is-done':i===step?'is-active':''}"></span>`).join('')}</div>
@@ -194,7 +195,7 @@ function setupView(){
     <div class="fm-next-choice-grid">
       ${data.options.map(([value,desc])=>`<button type="button" class="fm-next-choice" data-action="choose-setup" data-field="${data.key}" data-value="${value}" aria-pressed="${current===value}"><b>${setupDisplayValue(data.key,value)}</b><span>${desc}</span></button>`).join('')}
     </div>
-    <div class="fm-next-setup-footer">${button(step===setupSteps.length-1?(state.setupOrigin?'설정 적용':`추천 경기 보기 ${icon('arrow')}`):'다음','setup-next','primary')}</div>
+    <div class="fm-next-setup-footer">${button(step===setupSteps.length-1?(state.setupOrigin?'설정 적용':`추천 경기 보기 ${icon('arrow')}`):'다음','setup-next','primary',nextDisabled)}</div>
   </section>`;
 }
 
@@ -377,7 +378,7 @@ root.addEventListener('click',event=>{
   const target=event.target.closest('[data-action]');
   if(!target)return;
   const action=target.dataset.action;
-  if(action==='start-setup'){setState({route:'setup',setupStep:0});return;}
+  if(action==='start-setup'){const freshReal=mode==='real'&&!state.setupComplete;setState(freshReal?{route:'setup',setupStep:0,region:'',position:'',level:''}:{route:'setup',setupStep:0});return;}
   if(action==='continue-home'){setState({route:'home'});return;}
   if(action==='back-welcome'){if(state.setupOrigin)finishSetup(true);else setState({route:'welcome'});return;}
   if(action==='setup-back'){setState({setupStep:Math.max(0,state.setupStep-1)});return;}
@@ -387,7 +388,10 @@ root.addEventListener('click',event=>{
     return;
   }
   if(action==='setup-next'){
-    if(state.setupStep<setupSteps.length-1){setState({setupStep:state.setupStep+1});}
+    const step=Math.max(0,Math.min(setupSteps.length-1,state.setupStep||0));
+    const data=setupSteps[step];
+    if(!state[data.key])return;
+    if(step<setupSteps.length-1){setState({setupStep:step+1});}
     else finishSetup();
     return;
   }

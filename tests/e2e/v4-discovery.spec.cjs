@@ -1,4 +1,13 @@
 const {test,expect}=require('@playwright/test');
+
+async function chooseSetupDefaultIfNeeded(page){
+  const setup=page.locator('[data-screen="setup"]');
+  if(!await setup.isVisible().catch(()=>false))return;
+  if(await setup.locator('[data-action="choose-setup"][aria-pressed="true"]').count())return;
+  const field=await setup.locator('[data-action="choose-setup"]').first().getAttribute('data-field');
+  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];
+  if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
+}
 const AxeBuilder=require('@axe-core/playwright').default;
 
 function failures(page){
@@ -17,9 +26,9 @@ async function openDiscover(page,width=390){
   await page.evaluate(()=>{localStorage.clear();history.replaceState({},'',location.pathname)});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await page.getByRole('button',{name:'다음'}).click();
-  await page.getByRole('button',{name:'다음'}).click();
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toHaveAttribute('data-discovery-version','4.2.0');
   await expect(page.getByRole('button',{name:'필터 열기'})).toBeVisible();

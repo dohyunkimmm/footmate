@@ -1,6 +1,15 @@
 const {test,expect}=require('@playwright/test');
+
+async function chooseSetupDefaultIfNeeded(page){
+  const setup=page.locator('[data-screen="setup"]');
+  if(!await setup.isVisible().catch(()=>false))return;
+  if(await setup.locator('[data-action="choose-setup"][aria-pressed="true"]').count())return;
+  const field=await setup.locator('[data-action="choose-setup"]').first().getAttribute('data-field');
+  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];
+  if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
+}
 const AxeBuilder=require('@axe-core/playwright').default;
-async function setup(page){await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()});await page.reload({waitUntil:'domcontentloaded'});await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await page.getByRole('button',{name:'다음'}).click();await page.getByRole('button',{name:'다음'}).click();await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible();await expect(page.locator('[data-ai-assistant="5.1.1"]')).toBeVisible()}
+async function setup(page){await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()});await page.reload({waitUntil:'domcontentloaded'});await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible();await expect(page.locator('[data-ai-assistant="5.1.1"]')).toBeVisible()}
 
 test('v5.1.1 AI Match Assistant falls back to rules when local API is unavailable',async({page})=>{await setup(page);await page.getByLabel('찾고 싶은 경기 조건').fill('20분 안쪽에서 GK 자리 있는 경기');await page.getByRole('button',{name:'AI로 찾기'}).click();await expect(page.locator('[data-ai-mode]')).toHaveText('Rules fallback');await expect(page.locator('[data-screen="home"]')).toBeVisible();await expect(page.locator('[data-ai-conditions]')).toContainText('GK');await expect(page.locator('[data-ai-conditions]')).toContainText('20분 이내');await expect(page.locator('.fm-ai-result').first()).toBeHidden();await expect(page.locator('.fm-product-ai-retry')).toBeVisible();const runtime=await page.evaluate(()=>({version:window.__FOOTMATE_AI__?.version,mode:window.__FOOTMATE_AI__?.mode,rankingOwner:window.__FOOTMATE_AI__?.rankingOwner,timeout:window.__FOOTMATE_AI__?.requestTimeoutMs,hitl:window.__FOOTMATE_AI__?.hitl}));expect(runtime).toEqual({version:'5.1.1',mode:'rules-fallback',rankingOwner:'deterministic recommendation engine',timeout:7000,hitl:['join','payment']})});
 
