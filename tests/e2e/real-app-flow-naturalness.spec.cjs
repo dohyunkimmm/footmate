@@ -1,118 +1,15 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 
-function failures(page){
-  const items=[];
-  page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
-  page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`)});
-  return items;
-}
+function failures(page){const items=[];page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`)});return items}
+async function openClean(page){await page.setViewportSize({width:390,height:844});await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()});await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__FOOTMATE_REAL_APP_FLOW__?.version==='1.1.0')}
+async function chooseSetup(page){await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await page.locator('[data-action="choose-setup"][data-value="수원 · 영통"]').click();await page.getByRole('button',{name:'다음'}).click();await page.locator('[data-action="choose-setup"][data-value="MF"]').click();await page.getByRole('button',{name:'다음'}).click();await page.locator('[data-action="choose-setup"][data-value="중급"]').click();await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible()}
+async function openDirect(page,route,extra={}){await page.setViewportSize({width:390,height:844});await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(({route,extra})=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({route,setupComplete:true,setupStep:0,region:'수원 · 영통',position:'MF',level:'중급',signedIn:false,joinedMatchId:null,selectedMatchId:'suwon-ingye-2000',matchStage:'discover',userName:'게스트',...extra}))},{route,extra});await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__FOOTMATE_REAL_APP_FLOW__?.version==='1.1.0');await expect(page.locator(`[data-screen="${route}"]`)).toBeVisible()}
 
-async function clean(page){
-  const errs=failures(page);
-  await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()});
-  await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_REAL_APP_FLOW__?.version==='1.0.0');
-  return errs;
-}
+test('fresh setup gets a first-use completion greeting and detail back keeps its origin',async({page})=>{const errs=failures(page);await openClean(page);await chooseSetup(page);const home=page.locator('[data-screen="home"]');await expect(home.locator('[data-flow-first-home-copy]')).toContainText('설정이 완료됐어요');await expect(home.locator('[data-flow-first-home-copy]')).toContainText('조건에 맞는 경기를 찾았어요.');await home.locator('.fm-next-match-card').first().click();await expect(page.locator('[data-screen="detail"]')).toBeVisible();await page.getByRole('button',{name:'이전 화면'}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible();await page.getByRole('button',{name:'경기 찾기',exact:true}).click();const discover=page.locator('[data-screen="discover"]');await discover.locator('.fm-next-match-card').first().click();await expect(page.locator('[data-screen="detail"]')).toBeVisible();await page.getByRole('button',{name:'이전 화면'}).click();await expect(page.locator('[data-screen="discover"]')).toBeVisible();expect(errs).toEqual([])});
 
-async function chooseSetup(page){
-  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await page.locator('[data-action="choose-setup"][data-value="수원 · 영통"]').click();
-  await page.getByRole('button',{name:'다음'}).click();
-  await page.locator('[data-action="choose-setup"][data-value="MF"]').click();
-  await page.getByRole('button',{name:'다음'}).click();
-  await page.locator('[data-action="choose-setup"][data-value="중급"]').click();
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
-  await expect(page.locator('[data-screen="home"]')).toBeVisible();
-}
+test('account login adds loading failure and retry without changing validation ownership',async({page})=>{const errs=failures(page);await openDirect(page,'detail');await page.getByRole('button',{name:'참가하기'}).click();await expect(page.locator('[data-screen="auth"]')).toBeVisible();await page.getByRole('textbox',{name:'아이디'}).fill('member01');await page.getByLabel('비밀번호',{exact:true}).fill('password123!');await page.evaluate(()=>window.__FOOTMATE_REAL_APP_FLOW__.setNextAuthOutcome('failure'));const login=page.getByRole('button',{name:'로그인',exact:true});await login.click();await expect(page.locator('[data-flow-auth-status]')).toContainText('확인하고 있어요');await expect(page.locator('[data-flow-auth-status]')).toContainText('다시 시도해주세요');await login.click();await expect(page.locator('[data-screen="checkout"]')).toBeVisible();await expect(page.locator('[data-p1-checkout-boundary]')).toHaveText('체험 결제 · 실제 청구 없음');expect(errs).toEqual([])});
 
-async function openDirect(page,route,extra={}){
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await page.evaluate(({route,extra})=>{
-    localStorage.clear();
-    localStorage.setItem('footmate:v4:session',JSON.stringify({
-      route,setupComplete:true,setupStep:0,region:'수원 · 영통',position:'MF',level:'중급',signedIn:false,
-      joinedMatchId:null,selectedMatchId:'suwon-ingye-2000',matchStage:'discover',userName:'게스트',...extra
-    }));
-  },{route,extra});
-  await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_REAL_APP_FLOW__?.version==='1.0.0');
-  await expect(page.locator(`[data-screen="${route}"]`)).toBeVisible();
-}
+test('saved matches have a MY destination and technical disclosure opens only on demand',async({page})=>{const errs=failures(page);await openDirect(page,'detail');await page.getByRole('button',{name:'저장',exact:true}).click();await page.evaluate(()=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'profile'}))});await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__FOOTMATE_REAL_APP_FLOW__?.version==='1.1.0');const profile=page.locator('[data-screen="profile"]');const saved=profile.locator('[data-flow-saved]');await expect(saved).toContainText('수원 인계 풋살파크');await saved.getByRole('button',{name:/수원 인계 풋살파크/}).click();await expect(page.locator('[data-screen="detail"]')).toBeVisible();await page.getByRole('button',{name:'이전 화면'}).click();await expect(profile).toBeVisible();const info=profile.locator('[data-action="reset-flow"]');await expect(info).toHaveAttribute('aria-label','체험 버전 안내');await info.click();const dialog=page.getByRole('dialog',{name:'체험 버전 안내'});await expect(dialog).toContainText('실제 계정이나 금액과 연결되지 않습니다');const result=await new AxeBuilder({page}).include('.fm-flow-info-dialog').withTags(['wcag2a','wcag2aa']).analyze();expect(result.violations.filter(item=>['serious','critical'].includes(item.impact))).toEqual([]);await dialog.getByRole('button',{name:'닫기'}).click();expect(errs).toEqual([])});
 
-test('fresh setup keeps first-use Home natural and detail back respects Home and Discover origins',async({page})=>{
-  const errs=await clean(page);
-  await chooseSetup(page);
-  const home=page.locator('[data-screen="home"]');
-  await expect(home.locator('.fm-next-greeting small')).not.toHaveText('다시 반가워요');
-  await expect(home).not.toContainText('샘플 일정');
-  await home.locator('.fm-next-match-card').first().click();
-  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-  await page.getByRole('button',{name:'이전 화면'}).click();
-  await expect(page.locator('[data-screen="home"]')).toBeVisible();
-  await page.getByRole('button',{name:'전체 보기'}).click();
-  const discover=page.locator('[data-screen="discover"]');
-  await discover.locator('.fm-next-match-card').first().click();
-  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-  await page.getByRole('button',{name:'이전 화면'}).click();
-  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
-  expect(errs).toEqual([]);
-});
-
-test('auth keeps the connected provider flow instead of adding a simulated sign-in layer',async({page})=>{
-  const errs=failures(page);
-  await openDirect(page,'detail');
-  await page.getByRole('button',{name:'참가하기'}).click();
-  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
-  await expect(page.locator('[data-oauth-provider="google"]')).toBeVisible();
-  await expect(page.locator('[data-oauth-provider="kakao"]')).toBeVisible();
-  await expect(page.locator('[data-flow-auth-status]')).toHaveCount(0);
-  expect(errs).toEqual([]);
-});
-
-test('saved matches have a MY destination and return from saved detail to MY',async({page})=>{
-  const errs=failures(page);
-  await openDirect(page,'detail');
-  await page.getByRole('button',{name:'저장',exact:true}).click();
-  await page.evaluate(()=>{
-    const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
-    localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'profile'}));
-  });
-  await page.reload({waitUntil:'domcontentloaded'});
-  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
-  const saved=page.locator('[data-flow-saved]');
-  await expect(saved.getByRole('heading',{name:'저장한 경기'})).toBeVisible();
-  await expect(saved).toContainText('수원 인계 풋살파크');
-  await saved.getByRole('button',{name:/수원 인계 풋살파크/}).click();
-  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-  await page.getByRole('button',{name:'이전 화면'}).click();
-  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
-  await page.getByText('체험 버전 안내').click();
-  await expect(page.getByRole('button',{name:'체험 데이터 초기화'})).toBeVisible();
-  const result=await new AxeBuilder({page}).include('[data-screen="profile"]').withTags(['wcag2a','wcag2aa']).analyze();
-  expect(result.violations.filter(item=>['serious','critical'].includes(item.impact))).toEqual([]);
-  expect(errs).toEqual([]);
-});
-
-test('success and matchday surfaces use user-facing continuity copy',async({page})=>{
-  const errs=failures(page);
-  await openDirect(page,'success',{signedIn:true,joinedMatchId:'suwon-ingye-2000',selectedMatchId:'suwon-ingye-2000',matchStage:'upcoming'});
-  const success=page.locator('[data-screen="success"]');
-  await expect(success.getByRole('button',{name:'내 경기 확인하기'})).toBeVisible();
-  await expect(success).not.toContainText('샘플 일정');
-  await page.evaluate(()=>{
-    const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
-    localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'profile'}));
-    localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId:'suwon-ingye-2000',status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()}));
-  });
-  await page.reload({waitUntil:'domcontentloaded'});
-  const profile=page.locator('[data-screen="profile"]');
-  await expect(profile.locator('.fm-matchday-kicker')).toHaveText('오늘 경기');
-  await expect(profile.locator('.fm-matchday-boundary')).toContainText('이 브라우저에만 저장');
-  await expect(profile).not.toContainText('MATCHDAY ·');
-  await expect(profile).not.toContainText('backend');
-  expect(errs).toEqual([]);
-});
+test('decision matchday and postgame surfaces keep simulation boundaries in user language',async({page})=>{const errs=failures(page);await openDirect(page,'detail');const detail=page.locator('[data-screen="detail"]');await expect(detail.getByText('남은 자리',{exact:true}).first()).toBeVisible();await expect(detail).not.toContainText('현재 샘플 잔여');await page.evaluate(()=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'profile',signedIn:true,joinedMatchId:'suwon-ingye-2000',matchStage:'upcoming',userName:'도현'}));localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId:'suwon-ingye-2000',status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()}))});await page.reload({waitUntil:'domcontentloaded'});const profile=page.locator('[data-screen="profile"]');await expect(profile.locator('.fm-matchday-kicker')).toHaveText('오늘 경기');await expect(profile).not.toContainText('backend');await page.evaluate(()=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'schedule',matchStage:'postgame'}))});await page.reload({waitUntil:'domcontentloaded'});await expect(page.locator('.fm-return-kicker')).toHaveText('경기 후 피드백');await expect(page.locator('.fm-return-boundary').first()).toContainText('다음 경기 추천');expect(errs).toEqual([])});
