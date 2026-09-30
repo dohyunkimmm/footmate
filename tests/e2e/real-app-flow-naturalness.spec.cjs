@@ -72,6 +72,7 @@ test('auth keeps validation ownership and adds loading failure retry before chec
   await page.waitForFunction(()=>document.querySelector('[data-screen="auth"]')?.dataset.fmAuthExperience==='3');
   await page.evaluate(()=>window.__FOOTMATE_REAL_APP_FLOW__.setNextAuthOutcome('failure'));
   const kakao=page.getByRole('button',{name:'카카오로 계속하기'});
+  await expect(kakao).toHaveAttribute('data-flow-auth-wired','true');
   await kakao.click();
   await expect(page.locator('[data-flow-auth-status]')).toContainText('확인하고 있어요');
   await expect(page.locator('[data-flow-auth-status]')).toContainText('다시 시도해주세요');
