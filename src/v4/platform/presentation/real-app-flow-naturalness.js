@@ -6,6 +6,7 @@ const FLOW_VERSION='1.0.0';
 let scheduled=false;
 let authBusy=false;
 let nextAuthOutcome='success';
+let firstHomeScreen=null;
 
 const readSession=()=>footmatePlatform.session.read()||{};
 const patchSession=patch=>footmatePlatform.session.patch(patch);
@@ -75,11 +76,12 @@ function patchHome(screen){
   const greeting=screen.querySelector('.fm-next-greeting');
   const small=greeting?.querySelector('small');
   const title=greeting?.querySelector('h1');
-  const first=Boolean(session.firstHomePending);
+  const first=Boolean(session.firstHomePending)||firstHomeScreen===screen;
   if(first){
+    firstHomeScreen=screen;
     setTextNode(small,'설정이 완료됐어요');
     setSplitHeading(title,'조건에 맞는 경기를 ','찾았어요.');
-    patchSession({firstHomePending:false,hasVisitedHome:true});
+    if(session.firstHomePending||!session.hasVisitedHome)patchSession({firstHomePending:false,hasVisitedHome:true});
   }else if(session.signedIn){
     setTextNode(small,'다시 반가워요');
     const lead=session.userName&&session.userName!=='게스트'?`${session.userName}님, `:'';
@@ -241,6 +243,12 @@ function patchReturn(scope){
   scope.querySelectorAll('.fm-return-boundary').forEach(node=>setText(node,'남긴 평가는 내 다음 경기 추천을 조정하는 데만 사용돼요.'));
   scope.querySelectorAll('.fm-return-history small').forEach(node=>setText(node,'경기 기록'));
   scope.querySelectorAll('.fm-return-history span').forEach(node=>setText(node,'완료한 경기와 내 피드백을 모아볼 수 있어요.'));
+  scope.querySelectorAll('.fm-return-status span').forEach(node=>{
+    if(node.textContent.includes('보조 신호'))setText(node,'체감 난이도와 다시 뛰고 싶은 조건을 남기면 다음 추천에 반영해요.');
+  });
+  scope.querySelectorAll('.fm-return-summary article small').forEach(node=>{
+    if(node.textContent.includes('보조 신호'))setText(node,'다음에 추천할 경기');
+  });
 }
 
 function patchPersonalization(scope){
@@ -323,7 +331,16 @@ document.addEventListener('click',event=>{
   const target=event.target.closest('[data-action]');
   if(target?.dataset.action==='setup-next'){
     const session=readSession();
-    if(Number(session.setupStep)===2&&!session.setupOrigin&&!session.setupComplete)patchSession({firstHomePending:true});
+    if(Number(session.setupStep)===2&&!session.setupOrigin&&!session.setupComplete){
+      setTimeout(()=>{
+        const home=root.querySelector('[data-screen="home"]');
+        const current=readSession();
+        if(!home||!current.setupComplete)return;
+        firstHomeScreen=home;
+        patchSession({firstHomePending:true});
+        patchHome(home);
+      },0);
+    }
   }
   const saved=event.target.closest('[data-flow-action="open-saved-match"]');
   if(saved){
