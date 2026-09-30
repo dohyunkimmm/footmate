@@ -1,0 +1,68 @@
+name: Patch setup E2E helpers
+on:
+  push:
+    branches: [fix/real-app-unselected-setup]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/real-app-unselected-setup
+          fetch-depth: 0
+      - name: Make existing setup helpers choose explicit compatibility defaults
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          helper = '''\nasync function chooseSetupDefaultIfNeeded(page){\n  const setup=page.locator('[data-screen="setup"]');\n  if(!await setup.isVisible().catch(()=>false))return;\n  if(await setup.locator('[data-action="choose-setup"][aria-pressed="true"]').count())return;\n  const field=await setup.locator('[data-action="choose-setup"]').first().getAttribute('data-field');\n  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];\n  if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();\n}\n'''
+          changed=[]
+          for path in sorted(Path('tests/e2e').glob('*.cjs')):
+            source=path.read_text()
+            lines=source.splitlines(True)
+            output=[]
+            touched=False
+            for line in lines:
+              target=("getByRole('button',{name:'다음'}).click();" in line or
+                      "getByRole('button',{name:/추천 경기 보기/}).click();" in line)
+              if target:
+                m=re.search(r"await\s+([A-Za-z_$][\w$]*)\.getByRole",line)
+                if m:
+                  indent=line[:len(line)-len(line.lstrip())]
+                  helper_line=f"{indent}await chooseSetupDefaultIfNeeded({m.group(1)});\n"
+                  if not output or output[-1] != helper_line:
+                    output.append(helper_line)
+                  touched=True
+              output.append(line)
+            if not touched:
+              continue
+            updated=''.join(output)
+            if 'async function chooseSetupDefaultIfNeeded' not in updated:
+              match=re.search(r"^const .*require\('@playwright/test'\);\n",updated,re.M)
+              if not match:
+                raise SystemExit(f'Playwright require marker missing: {path}')
+              updated=updated[:match.end()]+helper+updated[match.end():]
+            path.write_text(updated)
+            changed.append(str(path))
+
+          print(f'Updated {len(changed)} files')
+          print('\n'.join(changed))
+          if not changed:
+            raise SystemExit('No setup helper call sites found')
+          PY
+          git diff --check
+          node --check tests/e2e/real-app-visual-finish.spec.cjs
+          node --check tests/e2e/v5.1-visual-baseline.spec.cjs
+          git status --short
+      - name: Commit helper updates and remove temporary workflow
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/patch-setup-e2e-helpers.yml
+          git add tests/e2e
+          git commit -m "test: choose setup defaults explicitly in E2E"
+          git push origin HEAD:fix/real-app-unselected-setup
