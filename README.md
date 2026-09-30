@@ -7,7 +7,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 ## Product at a glance
 
 - Primary journey: **Find → Decide → Join → Play → Return**
-- Real App IA: **Home = AI Match Assistant entry + compact personalization → Discover = AI/search result exploration + filter/sort → Detail = match decision → Join = joined-match status → MY = profile/settings**
+- Real App IA: **Home = AI Match Assistant entry + compact personalization → Discover = AI/search result exploration + filter/sort → Detail = match decision → Join = joined-match status → MY = saved matches + profile/settings**
 - Case Study: `/`
 - Real App: `/app`
 - Closed Beta: `/beta` — Supabase Auth / Postgres / Realtime / capacity / participation / waitlist / reminders / feedback / in-app notification / transactional email / opt-in Web Push / media upload connected
@@ -48,12 +48,16 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - Home personalization — For You를 1–2개 compact match로 제한하고 동일 경기의 중복 추천 section을 만들지 않음
 - Discover result exploration — Home의 자연어/structured constraints를 이어받아 조건 summary/edit, filter/sort, zero-result recovery와 전체 결과 탐색을 제공하며 full Assistant를 중복 mount하지 않음
 - Home → Discover → Detail 선택 동안 AI/discovery state와 selected match identity를 일관되게 유지
+- fresh setup 완료 직후에는 일회성 완료 안내를 제공하고 이후 재방문 greeting과 구분
+- Detail 뒤로가기는 Home/Discover 등 실제 진입 surface를 복원
+- MY에서 저장한 경기를 다시 열 수 있고, 체험 버전의 sample/mock/browser-local 경계는 `체험 버전 안내`에서 필요할 때 확인
 - 자연어 경기 탐색 → structured constraints
 - AI connected path + provider fallback + browser rules fallback
 - deterministic recommendation ranking과 human-readable recommendation reason
 - Discovery filter/sort, zero-result recovery, URL/session persistence
 - Decision Detail, save, 최대 2경기 compare
 - Sign in / checkout / pending / retry / cancel / reload recovery
+- Checkout·Matchday·postgame Return의 기술/프로토타입 표현은 사용자 판단에 필요한 상태·행동 중심 문구로 정리하고 실제 외부 연동 경계는 별도 안내에서 유지
 - Matchday check-in과 운영 상태 복구
 - postgame Return과 browser-local personalization
 - Closed Beta email/password Auth, profile persistence, live match read, position-aware join/cancel, reload session recovery
@@ -147,6 +151,7 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 - `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
 - `src/v5/ai-match-assistant.js` — AI UI/application bridge, Home Assistant entry/example execution, Discover handoff, browser timeout/fallback, AI state restoration
 - `src/v4/discovery.js` — Discover filter/sort/result-list ownership and persisted discovery state; AI state ownership은 갖지 않음
+- `src/v4/platform/presentation/real-app-flow-naturalness.js` — Real App first-use greeting, origin-preserving flow copy, MY saved-match destination, experience disclosure, Matchday/Return user-facing presentation layer
 - `src/v5/beta.js` — Closed Beta Auth / profile / match / participation / freshness / account-data UI state
 - `src/v5/beta-recovery-bootstrap.js` — recovery token bootstrap before base Beta Auth connection
 - `src/v5/beta-readiness.js` — account recovery / cancellation policy / self check-in / in-app notification UI extension
