@@ -139,7 +139,7 @@ await assert.rejects(
   error=>error instanceof SupabaseBetaError&&error.code==='BETA_NETWORK_ERROR'&&/네트워크/.test(error.message)
 );
 
-const foundationMigration=await readFile(new URL('../../supabase/migrations/20260920_beta_foundation.sql',import.meta.url),'utf8');
+const foundationMigration=await readFile(new URL('../../supabase/migrations/20260920142953_beta_foundation.sql',import.meta.url),'utf8');
 for(const required of [
   'create table if not exists public.profiles',
   'create table if not exists public.matches',
@@ -155,7 +155,7 @@ for(const required of [
 ])assert.ok(foundationMigration.includes(required),`missing foundation migration contract: ${required}`);
 assert.ok(!foundationMigration.includes('service_role'),'service-role credentials must not be embedded in the migration');
 
-const positionMigration=await readFile(new URL('../../supabase/migrations/20260920_position_aware_beta.sql',import.meta.url),'utf8');
+const positionMigration=await readFile(new URL('../../supabase/migrations/20260920143140_position_aware_beta.sql',import.meta.url),'utf8');
 for(const required of [
   'create table if not exists public.match_slots',
   'alter table public.match_slots enable row level security',
@@ -172,7 +172,7 @@ for(const required of [
 ])assert.ok(positionMigration.includes(required),`missing position migration contract: ${required}`);
 assert.ok(!positionMigration.includes('service_role'),'service-role credentials must not be embedded in the position migration');
 
-const openMatchIntegrityMigration=await readFile(new URL('../../supabase/migrations/20260920_open_match_integrity.sql',import.meta.url),'utf8');
+const openMatchIntegrityMigration=await readFile(new URL('../../supabase/migrations/20260920143150_open_match_integrity.sql',import.meta.url),'utf8');
 for(const required of [
   'select coalesce(sum(capacity_total), 0)::integer',
   'where match_id = new.id',
