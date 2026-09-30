@@ -110,7 +110,12 @@ test('390px Welcome and Setup share the final V3 visual language',async({page})=
   await startSetup(page);
   const setup=page.locator('[data-screen="setup"]');
   const selected=setup.locator('.fm-next-choice[aria-pressed="true"]');
+  const next=setup.locator('[data-action="setup-next"]');
+  await expect(selected).toHaveCount(0);
+  await expect(next).toBeDisabled();
+  await setup.locator('[data-action="choose-setup"][data-value="수원 · 영통"]').click();
   await expect(selected).toHaveCount(1);
+  await expect(next).toBeEnabled();
   const selectedStyle=await selected.evaluate(node=>({border:getComputedStyle(node).borderColor,background:getComputedStyle(node).backgroundImage}));
   expect(selectedStyle.border).not.toBe('rgba(0, 0, 0, 0)');
   expect(selectedStyle.background).not.toBe('none');
