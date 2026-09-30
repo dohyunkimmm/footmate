@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
-const migration=await readFile(new URL('../../supabase/migrations/20260920_supabase_hardening.sql',import.meta.url),'utf8');
+const migration=await readFile(new URL('../../supabase/migrations/20260920223306_supabase_hardening.sql',import.meta.url),'utf8');
 
 for(const required of [
   'alter function public.touch_updated_at()',

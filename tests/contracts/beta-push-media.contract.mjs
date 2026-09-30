@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const migration=fs.readFileSync('supabase/migrations/20260922_beta_push_media.sql','utf8');
-const hotfix=fs.readFileSync('supabase/migrations/20260922_beta_push_cancel_hotfix.sql','utf8');
-const schedule=fs.readFileSync('supabase/migrations/20260922_beta_push_worker_schedule.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260922012426_beta_push_media.sql','utf8');
+const hotfix=fs.readFileSync('supabase/migrations/20260922035936_beta_push_cancel_hotfix.sql','utf8');
+const schedule=fs.readFileSync('supabase/migrations/20260922012607_beta_push_worker_schedule.sql','utf8');
 const worker=fs.readFileSync('supabase/functions/process-beta-push-outbox/index.ts','utf8');
 const push=fs.readFileSync('src/v5/beta-push.js','utf8');
 const media=fs.readFileSync('src/v5/beta-media.js','utf8');

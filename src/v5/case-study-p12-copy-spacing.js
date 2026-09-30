@@ -1,15 +1,37 @@
-/* FootMate Case Study · P12 copy + evidence-card rhythm
-   Scope: KPI & Validation only. Keeps metrics, evidence ownership, and product runtime unchanged. */
+/* FootMate Case Study · copy cleanup + P12 evidence-card rhythm
+   Scope: reader-facing Case Study copy only. Product runtime and metric definitions remain unchanged. */
 (function(){
+  function setReasonValue(root,label,value){
+    const row=[...(root?.querySelectorAll('.fm-cs-reasons>div')||[])].find(node=>node.querySelector('dt')?.textContent.trim()===label);
+    const valueNode=row?.querySelector('dd');
+    if(valueNode)valueNode.textContent=value;
+  }
+
   function apply(){
     if(document.documentElement.dataset.fmCaseStudyP12CopySpacing==='true')return true;
+    if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
     if(document.documentElement.dataset.fmCaseStudyP1Visuals!=='true')return false;
 
-    const slide=document.querySelector('html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"]');
-    const lead=slide?.querySelector('.fm-next-story-lead');
-    const banner=slide?.querySelector('.fm-p1-validation-banner');
-    const evidence=slide?.querySelector('.fm-p1-evidence-grid');
-    if(!slide||!lead||!banner||!evidence)return false;
+    const slides=[...document.querySelectorAll('html[data-fm-next-case-study="true"] .slide:not([hidden])')];
+    if(slides.length!==13)return false;
+
+    const problem=slides[1];
+    const auth=slides[7];
+    const validation=slides[11];
+    const lead=validation?.querySelector('.fm-next-story-lead');
+    const banner=validation?.querySelector('.fm-p1-validation-banner');
+    const evidence=validation?.querySelector('.fm-p1-evidence-grid');
+    if(!problem||!auth||!validation||!lead||!banner||!evidence)return false;
+
+    setReasonValue(
+      problem.querySelector('.fm-next-cs-quote'),
+      '검증 범위',
+      '설계 가설 단계이며, 사용자 조사와 경쟁사 대비 우위는 Beta에서 확인합니다.'
+    );
+
+    const authScope=auth.querySelector('.fm-next-cs-scope');
+    setReasonValue(authScope,'Closed Beta','Supabase 계정과 참가 흐름을 실제로 연동했습니다.');
+    setReasonValue(authScope,'검증 범위','Google/Kakao OAuth는 Production에서 확인했고, 실제 PG 연동은 후속 범위입니다.');
 
     lead.textContent='아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.';
 

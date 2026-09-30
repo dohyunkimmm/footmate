@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const migration=fs.readFileSync('supabase/migrations/20260921_beta_free_growth.sql','utf8');
-const hotfix=fs.readFileSync('supabase/migrations/20260922_beta_push_cancel_hotfix.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260921143648_beta_free_growth.sql','utf8');
+const hotfix=fs.readFileSync('supabase/migrations/20260922035936_beta_push_cancel_hotfix.sql','utf8');
 const growth=fs.readFileSync('src/v5/beta-growth.js','utf8');
 const html=fs.readFileSync('beta.html','utf8');
 

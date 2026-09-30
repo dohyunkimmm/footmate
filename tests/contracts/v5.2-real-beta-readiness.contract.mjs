@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 // Branch protection keeps the historical required check name "Regression 36" while this file adds the v5.2 contract.
-const migration=fs.readFileSync('supabase/migrations/20260921_v5_2_real_beta_readiness.sql','utf8');
-const notificationIndexMigration=fs.readFileSync('supabase/migrations/20260921_v5_2_notification_fk_index.sql','utf8');
-const operatorCheckInFix=fs.readFileSync('supabase/migrations/20260921_operator_check_in_ambiguity_fix.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260921051924_v5_2_real_beta_readiness.sql','utf8');
+const notificationIndexMigration=fs.readFileSync('supabase/migrations/20260921055744_v5_2_notification_fk_index.sql','utf8');
+const operatorCheckInFix=fs.readFileSync('supabase/migrations/20260921131551_operator_check_in_ambiguity_fix.sql','utf8');
 const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
 const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
 const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');

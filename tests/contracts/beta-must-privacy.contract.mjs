@@ -43,7 +43,7 @@ for(const forbidden of ['SUPABASE_SERVICE_ROLE_KEY','SUPABASE_SECRET_KEY','servi
   assert.ok(!fn.includes(forbidden),`function source must not embed ${forbidden}`);
 }
 
-const indexes=await readFile(new URL('../../supabase/migrations/20260921_beta_operation_audit_indexes.sql',import.meta.url),'utf8');
+const indexes=await readFile(new URL('../../supabase/migrations/20260921003146_beta_operation_audit_indexes.sql',import.meta.url),'utf8');
 for(const required of [
   'beta_operation_events_actor_idx',
   'beta_operation_events_subject_user_idx',

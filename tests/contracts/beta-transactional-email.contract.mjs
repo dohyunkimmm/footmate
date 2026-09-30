@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-const migration=fs.readFileSync('supabase/migrations/20260921_beta_transactional_email.sql','utf8');
-const grants=fs.readFileSync('supabase/migrations/20260921_fix_beta_email_service_role_grants.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260921105156_beta_transactional_email.sql','utf8');
+const grants=fs.readFileSync('supabase/migrations/20260921112447_fix_beta_email_service_role_grants.sql','utf8');
 const edge=fs.readFileSync('supabase/functions/send-beta-notification-email/index.ts','utf8');
 const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
 const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');

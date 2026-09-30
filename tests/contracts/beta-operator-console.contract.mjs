@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
-const migration=await readFile(new URL('../../supabase/migrations/20260920_beta_operator_console.sql',import.meta.url),'utf8');
-const hotfix=await readFile(new URL('../../supabase/migrations/20260921_operator_save_match_conflict_fix.sql',import.meta.url),'utf8');
+const migration=await readFile(new URL('../../supabase/migrations/20260920231557_beta_operator_console.sql',import.meta.url),'utf8');
+const hotfix=await readFile(new URL('../../supabase/migrations/20260920235552_operator_save_match_conflict_fix.sql',import.meta.url),'utf8');
 const adapter=await readFile(new URL('../../src/v5/infrastructure/supabase-beta.js',import.meta.url),'utf8');
 
 for(const required of [
