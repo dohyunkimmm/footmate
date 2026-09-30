@@ -3,9 +3,9 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, fix/real-app-unselected-setup]
+    branches: [main]
 permissions:
-  contents: write
+  contents: read
   statuses: read
 concurrency:
   group: footmate-qa-${{ github.ref }}
@@ -191,45 +191,6 @@ jobs:
             test-results/
           if-no-files-found: warn
           retention-days: 14
-
-  setup_baseline:
-    name: Fresh Setup Baseline Validation
-    if: github.event_name == 'push' && github.ref == 'refs/heads/fix/real-app-unselected-setup'
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.55.1-noble
-      options: --ipc=host
-    steps:
-      - uses: actions/checkout@v5
-        with: {fetch-depth: 0}
-      - uses: actions/setup-node@v5
-        with: {node-version: '24', package-manager-cache: false}
-      - name: Install pinned browser QA dependencies
-        run: |
-          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
-          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
-          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
-      - name: Verify affected functional contracts
-        run: npx playwright test --project=chromium tests/e2e/priority-ux.spec.cjs
-      - name: Generate intended selected Setup baseline
-        run: npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs --grep "Welcome and Setup" --update-snapshots
-      - name: Compare selected Setup against updated baseline
-        run: npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs --grep "Welcome and Setup"
-      - name: Generate intended fresh Setup baseline
-        run: npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "390px Setup matches" --update-snapshots
-      - name: Compare fresh Setup against updated baseline
-        run: npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "390px Setup matches"
-      - name: Commit validated Setup baselines and restore QA workflow
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git fetch origin main
-          git show origin/main:.github/workflows/qa.yml > .github/workflows/qa.yml
-          git add .github/workflows/qa.yml tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-setup-390-chromium-linux.png tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-setup-390-chromium-linux.png
-          git diff --cached --check
-          git commit -m "test: approve explicit Real App setup baselines"
-          git push origin HEAD:fix/real-app-unselected-setup
 
   production_smoke:
     name: Production Smoke
