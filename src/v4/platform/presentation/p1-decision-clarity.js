@@ -21,6 +21,8 @@ html[data-footmate-surface="real"] .fm-discovery-sheet .fm-discovery-draft-statu
   document.head.append(style);
 }
 
+ensureStyles();
+
 function ensureCheckoutBoundary(){
   const screen=root?.querySelector('[data-screen="checkout"]');
   if(!screen)return;
