@@ -1,0 +1,28 @@
+/* FootMate Case Study · final balance pass
+   Scope: P8 alignment, P10 shared row rhythm, P13 natural desktop card height only. */
+
+/* P8 Sign in · Join
+   The legacy high-specificity scope padding re-inset the lower boundary cards.
+   Keep their visual edges aligned with the four-step auth flow above. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope.fm-p1-auth-boundary{
+  padding:0!important;
+}
+
+/* P10 Recovery
+   Reuse the Case Study's shared multi-row rhythm instead of a local 5/6px exception.
+   Horizontal spacing remains owned by the recovery composition. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-map{
+  row-gap:var(--fm-cs-card-row-gap,10px)!important;
+}
+
+/* P13 Release & Learnings
+   The three zones contain 4 / 4 / 3 rows. Let each card end with its content on desktop
+   instead of stretching the shorter OPEN BOUNDARY card to the tallest column. */
+@media(min-width:901px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map{
+    align-items:start!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article{
+    height:auto!important;
+  }
+}
