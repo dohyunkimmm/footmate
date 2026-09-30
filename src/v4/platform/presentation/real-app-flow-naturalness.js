@@ -2,7 +2,8 @@ import {MATCHES} from '../../data.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
-const FLOW_VERSION='1.3.0';
+const FLOW_VERSION='1.3.1';
+const FIRST_HOME_KEY='footmate:real-app:first-home-pending';
 let scheduled=false;
 let authBusy=false;
 let nextAuthOutcome='success';
@@ -44,11 +45,16 @@ function ensureStyles(){
   document.head.append(style);
 }
 
+function isFirstHomePending(){
+  try{return sessionStorage.getItem(FIRST_HOME_KEY)==='1'}catch{return false}
+}
+function setFirstHomePending(value){
+  try{if(value)sessionStorage.setItem(FIRST_HOME_KEY,'1');else sessionStorage.removeItem(FIRST_HOME_KEY)}catch{}
+}
 function patchFirstHome(screen){
-  const session=readSession();
   const greeting=screen.querySelector('.fm-next-greeting');
   if(!greeting)return;
-  if(!session.firstHomePending){greeting.removeAttribute('data-flow-first-home');greeting.querySelector('[data-flow-first-home-copy]')?.remove();return;}
+  if(!isFirstHomePending()){greeting.removeAttribute('data-flow-first-home');greeting.querySelector('[data-flow-first-home-copy]')?.remove();return;}
   greeting.dataset.flowFirstHome='true';
   if(greeting.querySelector('[data-flow-first-home-copy]'))return;
   const copy=document.createElement('div');
@@ -59,9 +65,10 @@ function patchFirstHome(screen){
 }
 
 function patchVisibleDates(scope){
-  scope.querySelectorAll('.fm-next-match-date > span:first-child,.fm-next-detail-meta > span:first-child').forEach(node=>{
-    const next=cleanDate(node.textContent);
-    if(next!==node.textContent)userCopy(node,next);
+  scope.querySelectorAll('span').forEach(node=>{
+    const text=(node.textContent||'').trim();
+    if(!/^샘플 일정\s*·\s*/.test(text))return;
+    userCopy(node,cleanDate(text));
   });
 }
 
@@ -147,13 +154,10 @@ function install(){if(!root)return;new MutationObserver(schedule).observe(root,{
 
 document.addEventListener('click',event=>{
   if(!isRealApp())return;const target=event.target.closest('[data-action]');
-  if(target?.dataset.action==='setup-next'){
-    queueMicrotask(()=>{
-      const session=readSession();
-      if(Number(session.setupStep)===2&&session.route==='home'&&session.setupComplete&&!session.setupOrigin&&!session.hasVisitedHome){patchSession({firstHomePending:true});schedule();}
-    });
+  if(target?.dataset.action==='setup-next'&&root?.querySelector('[data-screen="setup"]')&&/추천 경기 보기/.test(target.textContent||'')&&!readSession().setupOrigin){
+    setFirstHomePending(true);
   }
-  if(root?.querySelector('[data-screen="home"]')&&readSession().firstHomePending&&['open-match','nav-discover','nav-profile'].includes(target?.dataset.action))patchSession({firstHomePending:false,hasVisitedHome:true});
+  if(root?.querySelector('[data-screen="home"]')&&isFirstHomePending()&&['open-match','nav-discover','nav-profile'].includes(target?.dataset.action))setFirstHomePending(false);
   if(target?.dataset.action==='reset-flow'&&target.dataset.flowResetBypass!=='true'){event.preventDefault();event.stopPropagation();openExperienceDialog();return;}
   const action=event.target.closest('[data-flow-action]');
   if(action?.dataset.flowAction==='close-info'){action.closest('[data-flow-dialog]')?.remove();return;}
@@ -162,4 +166,4 @@ document.addEventListener('click',event=>{
 },true);
 
 setTimeout(install,0);
-window.__FOOTMATE_REAL_APP_FLOW__=Object.freeze({version:FLOW_VERSION,setNextAuthOutcome:value=>{nextAuthOutcome=value==='failure'?'failure':'success';return nextAuthOutcome;},read:()=>({authBusy,firstHomePending:Boolean(readSession().firstHomePending)})});
+window.__FOOTMATE_REAL_APP_FLOW__=Object.freeze({version:FLOW_VERSION,setNextAuthOutcome:value=>{nextAuthOutcome=value==='failure'?'failure':'success';return nextAuthOutcome;},read:()=>({authBusy,firstHomePending:isFirstHomePending()})});
