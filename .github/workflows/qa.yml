@@ -194,9 +194,11 @@ jobs:
             fi
             cp "$actual" "$target"
           }
-          git fetch origin "$TARGET_BRANCH"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git fetch origin "$TARGET_BRANCH:refs/remotes/origin/$TARGET_BRANCH"
           git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
           update_snapshot checkin-my-completed-390 tests/e2e/checkin-state.spec.cjs-snapshots/checkin-my-completed-390-chromium-linux.png
+          update_snapshot product-completion-detail-390 tests/e2e/product-completion.spec.cjs-snapshots/product-completion-detail-390-chromium-linux.png
           update_snapshot my-match-hub-390 tests/e2e/v4-matchday.spec.cjs-snapshots/my-match-hub-390-chromium-linux.png
           update_snapshot real-app-my-personalization-390 tests/e2e/v4-personalization.spec.cjs-snapshots/real-app-my-personalization-390-chromium-linux.png
           update_snapshot design-system-v2-decision-surface-1440 tests/e2e/v5.1-design-system-v2.spec.cjs-snapshots/design-system-v2-decision-surface-1440-chromium-linux.png
