@@ -378,7 +378,7 @@ root.addEventListener('click',event=>{
   const target=event.target.closest('[data-action]');
   if(!target)return;
   const action=target.dataset.action;
-  if(action==='start-setup'){setState(state.setupComplete?{route:'setup',setupStep:0}:{route:'setup',setupStep:0,region:'',position:'',level:''});return;}
+  if(action==='start-setup'){const freshReal=mode==='real'&&!state.setupComplete;setState(freshReal?{route:'setup',setupStep:0,region:'',position:'',level:''}:{route:'setup',setupStep:0});return;}
   if(action==='continue-home'){setState({route:'home'});return;}
   if(action==='back-welcome'){if(state.setupOrigin)finishSetup(true);else setState({route:'welcome'});return;}
   if(action==='setup-back'){setState({setupStep:Math.max(0,state.setupStep-1)});return;}
