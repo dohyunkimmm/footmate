@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-const migration=fs.readFileSync('supabase/migrations/20260921_beta_email_reliability.sql','utf8');
-const schedule=fs.readFileSync('supabase/migrations/20260921_beta_email_worker_schedule.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260921123248_beta_email_reliability.sql','utf8');
+const schedule=fs.readFileSync('supabase/migrations/20260921123605_beta_email_worker_schedule.sql','utf8');
 const userSender=fs.readFileSync('supabase/functions/send-beta-notification-email/index.ts','utf8');
 const worker=fs.readFileSync('supabase/functions/process-beta-email-outbox/index.ts','utf8');
 const webhook=fs.readFileSync('supabase/functions/resend-beta-email-webhook/index.ts','utf8');
