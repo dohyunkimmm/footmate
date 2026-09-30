@@ -2,6 +2,21 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
+## Real App flow naturalness closure · 2026-10-01
+
+- Scope: Real App의 기존 기능·도메인 상태 머신은 유지하면서 첫 setup 완료 안내, 실제 진입 surface를 복원하는 Detail back, 사용자 판단 중심의 Detail/Checkout/Matchday/Return 카피, MY 저장 경기 재진입, 체험 버전 안내 통합으로 prototype-like flow를 줄임
+- Runtime PR: #415 · merged SHA `767700291fad8f8959028dd028e3853da8982d41`
+- Accessibility hotfix: #416 · Discover filter draft-status의 초기 색 대비를 상호작용 전에 안정적으로 설치하고 CSS performance budget을 유지 · merged SHA `63ac31d59099a480337cd73787dcf0ebd24224dc`
+- Product/runtime baseline: `63ac31d59099a480337cd73787dcf0ebd24224dc`
+- P0/P1/P2 boundary: Home/Discover/AI의 기존 IA와 deterministic recommendation ownership은 유지; MY의 saved-match destination, Matchday/Return user-facing labels, consolidated experience disclosure를 추가. 기존 Discover zero-result recovery는 유지했으며 별도 personalized “유사 경기 3개” 확장은 추가하지 않음
+- Data/integration boundary: `/app` match/capacity/participant data는 sample records, auth/payment/capacity/notification provider는 deterministic mock, persistence는 browser local state라는 기존 경계를 유지하며 실제 연동처럼 표현하지 않음
+- Visual Regression: #415에서 변경된 Detail/Checkout/MY/Matchday surfaces의 Ubuntu/Chromium approved baseline을 갱신한 뒤 comparison-only `toHaveScreenshot()` PASS; #416 PR QA에서도 Browser E2E + axe + Visual Regression PASS
+- Final hotfix PR QA: FootMate QA #2319 · run `36784796599` · Regression 36 PASS · performance budget PASS · Browser E2E + axe / visual gates PASS · Mobile Safari/WebKit PASS
+- Post-merge main QA: FootMate QA #2320 · run `36785731361` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Production verification: exact Vercel deployment wait PASS · exact Production HTTP smoke PASS · AI inference PASS · Chromium Production smoke PASS
+- Exact Vercel Production: `dpl_BSHizVH8jLpNSARcCgMMg5NoWETu` · SHA `63ac31d59099a480337cd73787dcf0ebd24224dc` · READY · official alias `footmate-black.vercel.app`
+- Documentation sync: root README와 이 Release History를 현재 flow/Production 사실로 동기화. Closed Beta 운영 절차는 변경되지 않아 Runbook 유지; Notion과 별도 Case Study 프로젝트는 핵심 IA·제품 설명을 materially 바꾸는 변경이 아니므로 sync하지 않음
+
 ## Real App P1 secondary visual hierarchy closure · 2026-09-28
 
 - Scope: Discover 임시 filter를 neutral secondary control로 낮추고, Detail decision nested card를 평탄화하며 decision microcopy를 11px readability floor로 정리하고, Matchday / MY의 equal-weight elevation을 줄여 현재·primary action hierarchy를 선명하게 조정
