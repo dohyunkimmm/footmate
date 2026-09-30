@@ -53,29 +53,30 @@ for(const [name,viewport,expectedRecoveryGap] of [
     expect(p8.paddingRight).toBe(0);
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p8.png`});
 
-    // P10 · recovery rows follow the same shared row rhythm as other multi-row cards.
+    // P10 · recovery rows follow the shared card rhythm. Desktop removes only the redundant recap,
+    // keeping the two product proofs and captions safely above persistent navigation controls.
     await showSection(page,9);
     const p10=await page.locator('.slide.on .fm-p0-recovery-map').evaluate(el=>({
       rowGap:parseFloat(getComputedStyle(el).rowGap),
       rect:el.getBoundingClientRect().toJSON()
     }));
     expect(p10.rowGap).toBe(expectedRecoveryGap);
+    const decision=page.locator('.slide.on .fm-next-cs-decision');
     if(name==='desktop'){
       const geometry=await page.locator('.slide.on').evaluate(slide=>{
         const strip=slide.querySelector('.fm-evidence-recovery-strip')?.getBoundingClientRect();
-        const decision=slide.querySelector('.fm-next-cs-decision')?.getBoundingClientRect();
         const controls=document.querySelector('.cs-controls')?.getBoundingClientRect();
         return {
           strip:strip&&{top:strip.top,bottom:strip.bottom,height:strip.height},
-          decision:decision&&{top:decision.top,bottom:decision.bottom,height:decision.height},
           controls:controls&&{top:controls.top,bottom:controls.bottom}
         };
       });
       expect(geometry.strip).toBeTruthy();
-      expect(geometry.decision).toBeTruthy();
       expect(geometry.controls).toBeTruthy();
       expect(geometry.strip.bottom).toBeLessThan(geometry.controls.top-4);
-      expect(geometry.decision.bottom).toBeLessThan(geometry.controls.top-4);
+      await expect(decision).toBeHidden();
+    }else{
+      await expect(decision).toBeVisible();
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p10.png`});
 
