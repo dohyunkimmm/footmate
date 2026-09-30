@@ -1,0 +1,112 @@
+name: Update Real App setup baseline
+on:
+  push:
+    branches: [fix/real-app-unselected-setup]
+permissions:
+  contents: write
+jobs:
+  baseline:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/real-app-unselected-setup
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Patch affected E2E contracts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          helper_path=Path('tests/e2e/helpers/priority-ux.cjs')
+          text=helper_path.read_text()
+          helper="""async function chooseSetupDefaultIfNeeded(page){
+  const setup=page.locator('[data-screen=\"setup\"]');
+  if(!await setup.isVisible().catch(()=>false))return;
+  if(await setup.locator('[data-action=\"choose-setup\"][aria-pressed=\"true\"]').count())return;
+  const field=await setup.locator('[data-action=\"choose-setup\"]').first().getAttribute('data-field');
+  const value={region:'수원 · 영통',position:'MF',level:'중급'}[field];
+  if(value)await setup.locator(`[data-action=\"choose-setup\"][data-value=\"${value}\"]`).click();
+}
+
+"""
+          marker="const {expect}=require('@playwright/test');\n\n"
+          if 'async function chooseSetupDefaultIfNeeded' not in text:
+            if marker not in text: raise SystemExit('priority helper insert marker missing')
+            text=text.replace(marker,marker+helper,1)
+          old="""  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+"""
+          new="""  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await chooseSetupDefaultIfNeeded(page);
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await chooseSetupDefaultIfNeeded(page);
+  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+"""
+          if old not in text: raise SystemExit('priority start sequence missing')
+          helper_path.write_text(text.replace(old,new,1))
+
+          visual_path=Path('tests/e2e/visual-consistency-v4.spec.cjs')
+          text=visual_path.read_text()
+          old="""  const setup=page.locator('[data-screen=\"setup\"]');
+  const selected=setup.locator('.fm-next-choice[aria-pressed=\"true\"]');
+  await expect(selected).toHaveCount(1);
+  const selectedStyle=await selected.evaluate(node=>({border:getComputedStyle(node).borderColor,background:getComputedStyle(node).backgroundImage}));
+  expect(selectedStyle.border).not.toBe('rgba(0, 0, 0, 0)');
+  expect(selectedStyle.background).not.toBe('none');
+  await expect(page).toHaveScreenshot('visual-consistency-setup-390.png',shot);
+"""
+          new="""  const setup=page.locator('[data-screen=\"setup\"]');
+  const selected=setup.locator('.fm-next-choice[aria-pressed=\"true\"]');
+  const next=setup.locator('[data-action=\"setup-next\"]');
+  await expect(selected).toHaveCount(0);
+  await expect(next).toBeDisabled();
+  await setup.locator('[data-action=\"choose-setup\"][data-value=\"수원 · 영통\"]').click();
+  await expect(selected).toHaveCount(1);
+  await expect(next).toBeEnabled();
+  const selectedStyle=await selected.evaluate(node=>({border:getComputedStyle(node).borderColor,background:getComputedStyle(node).backgroundImage}));
+  expect(selectedStyle.border).not.toBe('rgba(0, 0, 0, 0)');
+  expect(selectedStyle.background).not.toBe('none');
+  await expect(page).toHaveScreenshot('visual-consistency-setup-390.png',shot);
+"""
+          if old not in text: raise SystemExit('visual consistency contract marker missing')
+          visual_path.write_text(text.replace(old,new,1))
+          PY
+          node --check tests/e2e/helpers/priority-ux.cjs
+          node --check tests/e2e/visual-consistency-v4.spec.cjs
+          git diff --check
+      - name: Install pinned browser QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Verify affected functional and selected-state visual contracts
+        run: |
+          npx playwright test --project=chromium tests/e2e/priority-ux.spec.cjs
+          npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs --grep "Welcome and Setup"
+      - name: Generate intended fresh Setup baseline
+        run: |
+          npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "390px Setup matches" --update-snapshots
+      - name: Compare fresh Setup against updated baseline
+        run: |
+          npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "390px Setup matches"
+      - name: Commit validated contract and baseline changes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/update-real-app-setup-baseline.yml
+          git add tests/e2e/helpers/priority-ux.cjs tests/e2e/visual-consistency-v4.spec.cjs tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-setup-390-chromium-linux.png
+          git diff --cached --check
+          git commit -m "test: align setup contracts with explicit selection"
+          git push origin HEAD:fix/real-app-unselected-setup
