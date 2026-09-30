@@ -1,5 +1,5 @@
 const root=document.getElementById('footmate-next');
-const P1_DECISION_CLARITY_VERSION='1.0.0';
+const P1_DECISION_CLARITY_VERSION='1.0.1';
 const DISCOVERY_KEYS=['date','time','distance','price','position'];
 let scheduled=false;
 let draftStatusScheduled=false;
@@ -14,8 +14,8 @@ function ensureStyles(){
   style.id='fm-p1-decision-clarity';
   style.textContent=`
 .fm-next-page[data-mode="real"] :is(.fm-ai-mode,.fm-ai-status span,.fm-ai-conditions span,.fm-ai-result-copy small,.fm-ai-result-copy em,.fm-ai-empty span,.fm-ai-guardrail){font-size:11px}
-html[data-footmate-surface="real"] .fm-discovery-draft-status{margin:8px 0 2px;padding:8px 10px;border-radius:11px;background:#f1f5f2;color:#53675e;font-size:11px;line-height:1.45}
-html[data-footmate-surface="real"] .fm-discovery-draft-status[data-dirty="true"]{background:#fff7df;color:#6b5118;font-weight:700}
+html[data-footmate-surface="real"] .fm-discovery-sheet .fm-discovery-draft-status{margin:8px 0 2px;padding:8px 10px;border-radius:11px;background:#f1f5f2;color:#465b51!important;font-size:11px;line-height:1.45}
+html[data-footmate-surface="real"] .fm-discovery-sheet .fm-discovery-draft-status[data-dirty="true"]{background:#fff7df;color:#6b5118!important;font-weight:700}
 .fm-next-page[data-mode="real"] .fm-p1-checkout-boundary{margin:0 0 8px;text-align:center;color:#5f7068;font-size:11px;font-weight:700;line-height:1.4}
 `;
   document.head.append(style);
