@@ -42,6 +42,33 @@ async function reachCheckout(page){
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
 }
 
+
+test('fresh Real App setup starts unselected and requires an explicit choice',async({page})=>{
+  const errs=await openCleanApp(page);
+  await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
+  const screen=page.locator('[data-screen="setup"]');
+  const next=screen.locator('[data-action="setup-next"]');
+  await expect(screen.locator('[data-action="choose-setup"][aria-pressed="true"]')).toHaveCount(0);
+  await expect(next).toBeDisabled();
+
+  await screen.locator('[data-action="choose-setup"][data-value="수원 · 영통"]').click();
+  await expect(next).toBeEnabled();
+  await next.click();
+  await expect(screen.locator('[data-action="choose-setup"][aria-pressed="true"]')).toHaveCount(0);
+  await expect(screen.locator('[data-action="setup-next"]')).toBeDisabled();
+
+  await screen.locator('[data-action="choose-setup"][data-value="MF"]').click();
+  await screen.locator('[data-action="setup-next"]').click();
+  await expect(screen.locator('[data-action="choose-setup"][aria-pressed="true"]')).toHaveCount(0);
+  await screen.locator('[data-action="choose-setup"][data-value="중급"]').click();
+  await screen.locator('[data-action="setup-next"]').click();
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+
+  const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')||'{}'));
+  expect(session).toMatchObject({setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급'});
+  expect(errs).toEqual([]);
+});
+
 test('standalone Real App keeps visual finish ownership without an extra stylesheet request',async({page})=>{
   const errs=await openCleanApp(page);
   const state=await page.evaluate(()=>({
