@@ -16,17 +16,11 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
 }
 
 @media(min-width:901px){
-  /* Recover the height needed by the shared 10px row gap from inside each repeated row,
-     not by shrinking the gap again. All four rows keep the same internal padding. */
-  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row{
-    padding:4px!important;
-  }
-  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row>div{
-    padding:5px 9px!important;
-  }
+  /* The compact "common recovery principle" card repeats the same problem → preserve → next-action
+     structure already visible above. Remove only this redundant desktop recap so the two product proofs
+     and their captions remain clear of the persistent navigation controls. Mobile keeps the recap. */
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-next-cs-decision{
-    margin-top:8px!important;
-    padding:10px 14px!important;
+    display:none!important;
   }
 
   /* P13 Release & Learnings
@@ -37,18 +31,5 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article{
     height:auto!important;
-  }
-}
-
-@media(min-width:901px) and (max-height:820px){
-  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row{
-    padding:3px!important;
-  }
-  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-row>div{
-    padding:4px 8px!important;
-  }
-  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-next-cs-decision{
-    margin-top:6px!important;
-    padding:8px 12px!important;
   }
 }
