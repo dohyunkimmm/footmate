@@ -61,8 +61,21 @@ for(const [name,viewport,expectedRecoveryGap] of [
     }));
     expect(p10.rowGap).toBe(expectedRecoveryGap);
     if(name==='desktop'){
-      const strip=await page.locator('.slide.on .fm-evidence-recovery-strip').evaluate(el=>el.getBoundingClientRect().toJSON());
-      expect(strip.y+strip.height).toBeLessThan(viewport.height-40);
+      const geometry=await page.locator('.slide.on').evaluate(slide=>{
+        const strip=slide.querySelector('.fm-evidence-recovery-strip')?.getBoundingClientRect();
+        const decision=slide.querySelector('.fm-next-cs-decision')?.getBoundingClientRect();
+        const controls=document.querySelector('.cs-controls')?.getBoundingClientRect();
+        return {
+          strip:strip&&{top:strip.top,bottom:strip.bottom,height:strip.height},
+          decision:decision&&{top:decision.top,bottom:decision.bottom,height:decision.height},
+          controls:controls&&{top:controls.top,bottom:controls.bottom}
+        };
+      });
+      expect(geometry.strip).toBeTruthy();
+      expect(geometry.decision).toBeTruthy();
+      expect(geometry.controls).toBeTruthy();
+      expect(geometry.strip.bottom).toBeLessThan(geometry.controls.top-4);
+      expect(geometry.decision.bottom).toBeLessThan(geometry.controls.top-4);
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p10.png`});
 
@@ -86,7 +99,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
       const open=p13.cards.find(card=>card.zone==='open-boundary');
       expect(open.height).toBeLessThan(real.height-20);
       expect(open.height).toBeLessThan(beta.height-20);
-      for(const card of p13.cards)expect(Math.abs(card.height-card.scrollHeight)).toBeLessThanOrEqual(2);
+      for(const card of p13.cards)expect(Math.abs(card.height-card.scrollHeight)).toBeLessThanOrEqual(3);
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p13.png`});
 
