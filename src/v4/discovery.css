@@ -5,3 +5,6 @@
 [data-mode=real] [data-screen=discover] .fm-next-icon-button[data-action=edit-setup]::before{display:none}
 
 .fm-next-page[data-mode=real] [data-screen=discover] :is(.fm-next-match-card,.fm-next-list)[hidden]{display:none!important}
+
+html[data-footmate-surface="real"] .fm-discovery-sheet .fm-discovery-draft-status{margin:8px 0 2px;padding:8px 10px;border-radius:11px;background:#f1f5f2;color:#465b51!important;font-size:11px;line-height:1.45}
+html[data-footmate-surface="real"] .fm-discovery-sheet .fm-discovery-draft-status[data-dirty="true"]{background:#fff7df;color:#6b5118!important;font-weight:700}
