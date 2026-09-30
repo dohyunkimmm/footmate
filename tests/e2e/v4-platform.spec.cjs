@@ -10,8 +10,7 @@ async function chooseSetupDefaultIfNeeded(page){
 }
 
 async function openClean(page){await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(()=>localStorage.clear())}
-await chooseSetupDefaultIfNeeded(page);
-async function setup(page){await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await page.getByRole('button',{name:'다음'}).click();await page.getByRole('button',{name:'다음'}).click();await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible()}
+async function setup(page){await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible()}
 
 test.beforeEach(async({page})=>{await openClean(page)});
 

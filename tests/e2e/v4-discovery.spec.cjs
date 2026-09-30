@@ -26,12 +26,9 @@ async function openDiscover(page,width=390){
   await page.evaluate(()=>{localStorage.clear();history.replaceState({},'',location.pathname)});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await page.getByRole('button',{name:'전체 보기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toHaveAttribute('data-discovery-version','4.2.0');
   await expect(page.getByRole('button',{name:'필터 열기'})).toBeVisible();

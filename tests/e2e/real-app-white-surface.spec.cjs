@@ -46,12 +46,9 @@ async function openPersonalizedWelcome(page,viewport){
 
 async function setupToHome(page){
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await page.mouse.move(1,1);
 }

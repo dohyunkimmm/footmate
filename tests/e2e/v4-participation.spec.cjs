@@ -24,12 +24,9 @@ async function checkout(page,viewport={width:390,height:844}){
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await page.locator('.fm-next-match-card').first().click();
   await page.getByRole('button',{name:'참가하기'}).click();
   await page.getByRole('textbox',{name:'아이디'}).fill('member01');

@@ -31,12 +31,9 @@ async function openCleanApp(page,viewport){
 
 async function setupToHome(page){
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await page.mouse.move(1,1);
 }
@@ -110,13 +107,9 @@ test('390px primary controls and navigation share one control grammar',async({pa
   expect(metrics.radius).toBeGreaterThanOrEqual(14);
   expect(metrics.radius).toBeLessThanOrEqual(17);
   expect(metrics.weight).toBeGreaterThanOrEqual(700);
-
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   const current=page.locator('.fm-next-nav button[aria-current="page"]');
   await expect(current).toHaveCount(1);

@@ -37,12 +37,9 @@ async function startSetup(page){
 
 async function setupToHome(page){
   await startSetup(page);
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await page.mouse.move(1,1);
 }
@@ -279,12 +276,9 @@ test('320/375/390/430 keep Setup and Auth single-column and overflow-safe',async
     const setupColumns=await page.locator('.fm-next-choice-grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length);
     expect(setupColumns,`setup columns at ${width}px`).toBe(1);
     await expectNoHorizontalOverflow(page);
-    await chooseSetupDefaultIfNeeded(page);
-    await page.getByRole('button',{name:'다음'}).click();
-    await chooseSetupDefaultIfNeeded(page);
-    await page.getByRole('button',{name:'다음'}).click();
-    await chooseSetupDefaultIfNeeded(page);
-    await page.getByRole('button',{name:/추천 경기 보기/}).click();
+    await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+    await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+    await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
     await openFirstDetail(page);
     await page.getByRole('button',{name:'참가하기'}).click();
     await expect(page.locator('[data-screen="auth"]')).toBeVisible();

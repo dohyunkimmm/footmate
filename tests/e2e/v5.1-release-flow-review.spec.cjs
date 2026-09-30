@@ -65,12 +65,9 @@ async function seedSession(page,state={},options={}){
 }
 async function setupToHome(page){
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:/추천 경기 보기/}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 async function goHomeToAuth(page){
@@ -103,14 +100,12 @@ test('fresh /app entry always opens the welcome screen instead of the persisted 
 test('setup uses 공격수 / 수비수 / 초급 / 고급 display language without changing canonical domain values',async({page})=>{
   const errs=await openFresh(page,{width:390,height:844});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
   await expect(page.getByText('공격수',{exact:true})).toBeVisible();
   await expect(page.getByText('수비수',{exact:true})).toBeVisible();
   await expect(page.getByText('수비',{exact:true})).toHaveCount(0);
   await expect(page.getByText('포워드',{exact:true})).toHaveCount(0);
-  await chooseSetupDefaultIfNeeded(page);
-  await page.getByRole('button',{name:'다음'}).click();
+  await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
   await expect(page.getByText('초급',{exact:true})).toBeVisible();
   await expect(page.getByText('고급',{exact:true})).toBeVisible();
   await expect(page.getByText('초중급',{exact:true})).toHaveCount(0);
