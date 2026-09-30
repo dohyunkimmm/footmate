@@ -176,13 +176,13 @@ test('P1 keeps AI decision information at an 11px readable floor',async({page})=
   expect(errs).toEqual([]);
 });
 
-test('P1 keeps the prototype payment boundary adjacent to the Checkout CTA',async({page})=>{
+test('P1 keeps the checkout boundary adjacent to the Checkout CTA',async({page})=>{
   const errs=await openCleanApp(page);
   await reopenRoute(page,'checkout');
   const note=page.locator('[data-p1-checkout-boundary]');
   const confirm=page.locator('[data-action="confirm-payment"],[data-participation-submit]').first();
   await expect(note).toBeVisible();
-  await expect(note).toHaveText('프로토타입 · 실제 결제 없음');
+  await expect(note).toHaveText('체험 결제 · 실제 청구 없음');
   await expect(confirm).toBeVisible();
   const adjacent=await note.evaluate(node=>node.nextElementSibling?.matches('[data-action="confirm-payment"],[data-participation-submit]')||false);
   expect(adjacent).toBe(true);
