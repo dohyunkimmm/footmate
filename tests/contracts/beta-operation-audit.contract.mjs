@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
-const migration=await readFile(new URL('../../supabase/migrations/20260921_beta_operation_audit.sql',import.meta.url),'utf8');
+const migration=await readFile(new URL('../../supabase/migrations/20260921001657_beta_operation_audit.sql',import.meta.url),'utf8');
 
 for(const required of [
   'create table if not exists public.beta_operation_events',
