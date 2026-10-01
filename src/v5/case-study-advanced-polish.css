@@ -1,6 +1,6 @@
 /* FootMate Case Study · advanced portfolio polish
-   Scope: desktop section anchor, evidence scale rules, late-mobile density,
-   navigation affordance, and final CTA emphasis. Cover stays unchanged. */
+   Scope: evidence scale rules, late-mobile density, navigation affordance,
+   and final CTA emphasis. Cover and the base vertical section rhythm stay unchanged. */
 
 /* Korean micro-labels should read like editorial labels, not all-caps system tokens. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] :is(
@@ -18,19 +18,9 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   letter-spacing:.035em!important;
 }
 
-/* Desktop body sections share one visual start anchor.
-   Short sections no longer float in the vertical center while dense sections start near the top. */
+/* Desktop keeps the original Case Study vertical centering.
+   Only evidence scale, final CTA, and navigation affordance are refined here. */
 @media(min-width:901px) and (min-height:840px){
-  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide){
-    justify-content:flex-start!important;
-    align-items:flex-start!important;
-    padding-top:92px!important;
-    padding-bottom:58px!important;
-  }
-  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide)>.fm-next-story{
-    margin-top:0!important;
-  }
-
   /* Product proof scale system: P7/P9 are primary proof, P6 is secondary proof.
      Captions share one rhythm while the source crop remains untouched. */
   html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-evidence-figure[data-evidence-scale="primary"] img{
