@@ -1,0 +1,67 @@
+name: FootMate Release App v6 QA
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: write
+concurrency:
+  group: footmate-v6-release-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contract:
+    name: Release App Contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Check Release App syntax
+        run: node --check src/v6/release-app.js
+      - name: Check Release App architecture
+        run: node tests/contracts/v6-release-app.contract.mjs
+
+  browser:
+    name: Release App Browser + Visual
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install pinned Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Generate Release App approved screenshots
+        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs --update-snapshots
+      - name: Commit approved Release App baselines
+        if: github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/v6-release-app.spec.cjs-snapshots/
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit"
+            exit 0
+          fi
+          git commit -m "test: approve release app visual baselines"
+          git push origin "HEAD:${HEAD_REF}"
+      - name: Upload Release App baseline candidates and evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: v6-release-app-${{ github.run_id }}
+          path: |
+            tests/e2e/v6-release-app.spec.cjs-snapshots/
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
