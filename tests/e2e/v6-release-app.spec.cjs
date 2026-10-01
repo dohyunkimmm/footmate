@@ -26,6 +26,10 @@ async function waitForReleaseReady(page){
   await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
 }
 
+async function waitForFonts(page){
+  await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+}
+
 async function openCleanApp(page,viewport={width:1440,height:900}){
   const errs=failures(page);
   await page.setViewportSize(viewport);
@@ -33,7 +37,7 @@ async function openCleanApp(page,viewport={width:1440,height:900}){
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await waitForReleaseReady(page);
-  await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+  await waitForFonts(page);
   return errs;
 }
 
@@ -77,6 +81,7 @@ async function seedSession(page,patch){
   },patch);
   await page.reload({waitUntil:'domcontentloaded'});
   await waitForReleaseReady(page);
+  await waitForFonts(page);
 }
 
 test('Release App flattens desktop Detail into one decision surface',async({page})=>{
@@ -119,8 +124,40 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(profile).toBeVisible();
   await expect(profile).toHaveAttribute('data-v6-my','true');
   await expect(profile.locator('[data-my-matches]')).toContainText('내 경기');
+  const hierarchy=await profile.evaluate(node=>({
+    saved:parseFloat(getComputedStyle(node.querySelector('[data-v6-my-section="saved"]')).marginTop),
+    profile:parseFloat(getComputedStyle(node.querySelector('[data-v6-my-section="profile"]')).marginTop),
+    settings:parseFloat(getComputedStyle(node.querySelector('[data-v6-settings-label]')).marginTop)
+  }));
+  expect(hierarchy.saved).toBeGreaterThanOrEqual(30);
+  expect(hierarchy.profile).toBeGreaterThanOrEqual(36);
+  expect(hierarchy.settings).toBeGreaterThanOrEqual(36);
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('v6-release-my-upcoming-1440.png',shot);
+  expect(errs).toEqual([]);
+});
+
+test('Release App free Join failure is recoverable without leaving a stuck button',async({page})=>{
+  const errs=await openCleanApp(page);
+  await setupToHome(page);await openDetail(page);await reachJoin(page);
+  const validMatchId=await page.evaluate(()=>{
+    const current=JSON.parse(localStorage.getItem('footmate:session')||'{}');
+    localStorage.setItem('footmate:session',JSON.stringify({...current,selectedMatchId:'missing-match'}));
+    return current.selectedMatchId;
+  });
+  await page.getByRole('button',{name:'무료로 참가 확정'}).click();
+  const join=page.locator('[data-screen="checkout"]');
+  await expect(join).toHaveAttribute('data-v6-join-state','error');
+  await expect(join.getByRole('alert')).toContainText('참가를 확정하지 못했어요.');
+  await expect(join.getByRole('button',{name:'다시 시도'})).toBeEnabled();
+  await expect(join.getByRole('button',{name:'경기 다시 선택'})).toBeVisible();
+  await page.evaluate(matchId=>{
+    const current=JSON.parse(localStorage.getItem('footmate:session')||'{}');
+    localStorage.setItem('footmate:session',JSON.stringify({...current,selectedMatchId:matchId}));
+  },validMatchId);
+  await join.getByRole('button',{name:'다시 시도'}).click();
+  await waitForReleaseReady(page);
+  await expect(page.locator('[data-screen="success"]')).toBeVisible();
   expect(errs).toEqual([]);
 });
 
@@ -135,7 +172,7 @@ test('legacy Schedule state migrates into canonical MY ownership',async({page})=
   expect(errs).toEqual([]);
 });
 
-test('Home lifecycle and postgame Return converge on MY',async({page})=>{
+test('Home lifecycle closes Return and hands the next action back to Discover',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
@@ -156,9 +193,44 @@ test('Home lifecycle and postgame Return converge on MY',async({page})=>{
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('v6-release-my-postgame-1440.png',shot);
   await seedSession(page,{route:'home',matchStage:'postgame'});
-  await expect(page.locator('[data-v6-lifecycle="return"]')).toBeVisible();
+  const complete=page.locator('[data-v6-lifecycle="complete"]');
+  await expect(complete).toBeVisible();
+  await expect(complete).toContainText('경기 기록을 저장했어요.');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-home-return-1440.png',shot);
+  await expect(page).toHaveScreenshot('v6-release-home-complete-1440.png',shot);
+  await complete.getByRole('button',{name:'다음 경기 찾기'}).click();
+  await waitForReleaseReady(page);
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  expect(errs).toEqual([]);
+});
+
+test('Release App mobile changed surfaces match approved visual baselines',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
+  await seedSession(page,{route:'home',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
+  await expect(page.locator('[data-v6-lifecycle="upcoming"]')).toBeVisible();
+  await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',shot);
+
+  await seedSession(page,{route:'home',joinedMatchId:null,matchStage:'discover'});
+  await openDetail(page);await reachJoin(page);
+  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',shot);
+
+  await page.evaluate(({matchId})=>localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId,status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()})),{matchId});
+  await seedSession(page,{route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'matchday'});
+  await expect(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-matchday-390.png',shot);
+
+  await seedSession(page,{route:'profile',matchStage:'postgame'});
+  await expect(page.locator('[data-v6-return="draft"]')).toBeVisible();
+  await expect(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-postgame-390.png',shot);
+  expect(errs).toEqual([]);
+});
+
+test('Release App 320px Join keeps the compact visual contract',async({page})=>{
+  const errs=await openCleanApp(page,{width:320,height:844});
+  await setupToHome(page);await openDetail(page);await reachJoin(page);
+  await expectNoHorizontalOverflow(page);
+  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-320.png',shot);
   expect(errs).toEqual([]);
 });
 
@@ -170,10 +242,12 @@ for(const width of [320,375,390,430]){
     await openDetail(page);
     await expectNoHorizontalOverflow(page);
     await expect(page.locator('[data-screen="detail"]')).toHaveAttribute('data-v6-detail','true');
+    if(width===390)await expectAxeClean(page,'[data-screen="detail"]');
     await reachJoin(page);
     await expectNoHorizontalOverflow(page);
     const join=page.locator('[data-screen="checkout"]');
     await expect(join.locator('[data-v6-hidden-payment="true"]')).toBeHidden();
+    if(width===390)await expectAxeClean(page,'[data-screen="checkout"]');
     await page.getByRole('button',{name:'무료로 참가 확정'}).click();
     await waitForReleaseReady(page);
     await expect(page.locator('[data-screen="success"]')).toBeVisible();
@@ -182,9 +256,7 @@ for(const width of [320,375,390,430]){
     const my=page.locator('[data-screen="profile"]');
     await expect(my).toHaveAttribute('data-v6-my','true');
     await expectNoHorizontalOverflow(page);
-    if(width===390){
-      await expectAxeClean(page,'[data-screen="profile"]');
-    }
+    if(width===390)await expectAxeClean(page,'[data-screen="profile"]');
     expect(errs).toEqual([]);
   });
 }
