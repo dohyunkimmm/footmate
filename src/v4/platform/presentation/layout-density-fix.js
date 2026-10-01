@@ -1,3 +1,4 @@
+// Real App low-content spacing ownership: keep compact density scoped away from embeds.
 const STYLE_ID='fm-layout-density-fix';
 
 function installLayoutDensityFix(){
