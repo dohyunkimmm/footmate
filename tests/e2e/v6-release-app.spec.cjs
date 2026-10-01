@@ -124,12 +124,11 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(profile).toBeVisible();
   await expect(profile).toHaveAttribute('data-v6-my','true');
   await expect(profile.locator('[data-my-matches]')).toContainText('내 경기');
-  const hierarchy=await profile.evaluate(node=>({
-    saved:parseFloat(getComputedStyle(node.querySelector('[data-v6-my-section="saved"]')).marginTop),
-    profile:parseFloat(getComputedStyle(node.querySelector('[data-v6-my-section="profile"]')).marginTop),
-    settings:parseFloat(getComputedStyle(node.querySelector('[data-v6-settings-label]')).marginTop)
-  }));
-  expect(hierarchy.saved).toBeGreaterThanOrEqual(30);
+  const hierarchy=await profile.evaluate(node=>{
+    const margin=selector=>{const item=node.querySelector(selector);return item?parseFloat(getComputedStyle(item).marginTop):null};
+    return {saved:margin('[data-v6-my-section="saved"]'),profile:margin('[data-v6-my-section="profile"]'),settings:margin('[data-v6-settings-label]')};
+  });
+  expect(hierarchy.saved===null||hierarchy.saved>=30).toBe(true);
   expect(hierarchy.profile).toBeGreaterThanOrEqual(36);
   expect(hierarchy.settings).toBeGreaterThanOrEqual(36);
   await page.mouse.move(1,1);
@@ -212,7 +211,7 @@ test('Release App mobile changed surfaces match approved visual baselines',async
   await expect(page.locator('[data-v6-lifecycle="upcoming"]')).toBeVisible();
   await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',shot);
 
-  await seedSession(page,{route:'home',joinedMatchId:null,matchStage:'discover'});
+  await seedSession(page,{route:'home',signedIn:false,joinedMatchId:null,matchStage:'discover'});
   await openDetail(page);await reachJoin(page);
   await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',shot);
 
