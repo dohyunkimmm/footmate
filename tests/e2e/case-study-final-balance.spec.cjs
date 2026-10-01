@@ -200,13 +200,15 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await expect(page.locator('html')).toHaveAttribute('data-fm-case-study-advanced-polish','true');
 
     if(name==='desktop'){
-      // Short and dense body sections now share one title start line.
+      // Restore the pre-#423 reading rhythm: short sections sit around the visual middle
+      // instead of being pinned to the same 92px top anchor. Dense sections may start higher.
       const tops=[];
-      for(const index of [1,7,10,11,12]){
+      for(const index of [1,7,10]){
         await showSection(page,index);
         tops.push(await page.locator('.slide.on .fm-next-story h2').evaluate(el=>el.getBoundingClientRect().top));
       }
-      expect(Math.max(...tops)-Math.min(...tops)).toBeLessThanOrEqual(3);
+      expect(Math.min(...tops)).toBeGreaterThan(170);
+      expect(Math.max(...tops)-Math.min(...tops)).toBeLessThanOrEqual(70);
     }
 
     // P11 · system-like architecture tokens become reader-facing Korean micro labels.
