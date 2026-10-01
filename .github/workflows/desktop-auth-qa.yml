@@ -37,6 +37,12 @@ jobs:
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
       - name: Verify PC Auth horizontal lock
         run: npx playwright test --project=chromium tests/e2e/desktop-auth-horizontal-lock.spec.cjs
+      - name: Generate candidate Auth 1440 baseline
+        run: npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "1440px Auth" --update-snapshots
+      - name: Stage candidate Auth baseline
+        run: |
+          mkdir -p test-results/auth-baseline
+          cp tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-auth-1440-chromium-linux.png test-results/auth-baseline/
       - name: Upload desktop evidence
         if: always()
         uses: actions/upload-artifact@v6
