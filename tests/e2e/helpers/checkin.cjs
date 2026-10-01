@@ -34,12 +34,15 @@ async function persistence(page,capture=async()=>{}){
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
   await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   await capture('checkin-home-completed',page.locator('[data-screen="home"]'));
-  await page.locator('[data-action="open-joined-match"]').click();
-  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  // v6 keeps joined-match and Matchday ownership in MY. Return through canonical MY
+  // rather than the legacy Home -> Detail secondary action.
+  await page.locator('.fm-next-nav [data-action="nav-profile"]').click();
+  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
   await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
-  await capture('checkin-detail-completed',page.locator('[data-screen="detail"]'));
+  await capture('checkin-my-returned',page.locator('[data-screen="profile"]'));
   await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
   expect((await record(page)).checkedInAt).toBe(saved.checkedInAt);
   // An operations notice must not undo completion.
