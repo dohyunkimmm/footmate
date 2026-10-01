@@ -13,10 +13,15 @@ html[data-footmate-surface="real"] .fm-next-page,
 html[data-footmate-surface="real"] .fm-next-stage{
   overscroll-behavior-x:none;
 }
-html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-screen{
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"]{
   touch-action:pan-y pinch-zoom;
   overscroll-behavior-x:none;
 }
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-screen,
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] [data-screen="auth"]{
+  overscroll-behavior-x:none;
+}
+.fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] [data-screen="auth"],
 .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
   overflow-x:hidden;
 }
