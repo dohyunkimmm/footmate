@@ -7,6 +7,26 @@
     if(valueNode)valueNode.textContent=value;
   }
 
+  function ensureReleaseClosing(release){
+    const map=release?.querySelector('.fm-p1-release-map');
+    if(!release||!map)return false;
+
+    let closing=release.querySelector('.fm-p1-release-next');
+    if(!closing){
+      closing=document.createElement('div');
+      closing.className='fm-next-cs-final fm-p1-release-next';
+      closing.setAttribute('aria-label','Case Study 핵심 Learning과 Real App 이동');
+      closing.innerHTML=`
+        <span>KEY LEARNING · 다음 검증으로 연결</span>
+        <dl class="fm-cs-reasons">
+          <div><dt>배운 점</dt><dd>연결 성공뿐 아니라 실패·중복·상태 갱신을 함께 정의해야 운영 흐름이 이어집니다.</dd></div>
+        </dl>
+        <a href="/app" target="_blank" rel="noopener">FootMate 앱 보기 ↗</a>`;
+      map.insertAdjacentElement('afterend',closing);
+    }
+    return closing.isConnected;
+  }
+
   function apply(){
     if(document.documentElement.dataset.fmCaseStudyP12CopySpacing==='true')return true;
     if(document.documentElement.dataset.footmateCaseStudyFinalClarity!=='1')return false;
@@ -43,7 +63,10 @@
     if(bannerTitle)bannerTitle.textContent='측정 전 기준 정의';
     if(bannerCopy)bannerCopy.textContent='목표치보다 분자 · 분모 · 제외 조건 · 기준값을 먼저 정의';
 
+    if(!ensureReleaseClosing(release))return false;
+
     document.documentElement.dataset.fmCaseStudyP12CopySpacing='true';
+    document.documentElement.dataset.fmCaseStudyCompletionPolish='true';
     return true;
   }
 
