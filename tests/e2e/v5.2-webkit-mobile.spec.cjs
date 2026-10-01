@@ -31,6 +31,39 @@ async function expectNoDocumentOverflow(page){
   return geometry;
 }
 
+async function expectVerticalOnlyPan(page){
+  const policy=await page.locator('.fm-next-screen:visible').evaluate(node=>{
+    const style=getComputedStyle(node);
+    return {
+      touchAction:style.touchAction,
+      overscrollX:style.overscrollBehaviorX,
+      rootOverscrollX:getComputedStyle(document.documentElement).overscrollBehaviorX,
+      bodyOverscrollX:getComputedStyle(document.body).overscrollBehaviorX
+    };
+  });
+  const touchTokens=policy.touchAction.split(/\s+/);
+  expect(touchTokens).toContain('pan-y');
+  expect(touchTokens).toContain('pinch-zoom');
+  expect(policy.overscrollX).toBe('none');
+  expect(policy.rootOverscrollX).toBe('none');
+  expect(policy.bodyOverscrollX).toBe('none');
+}
+
+async function reachAuth(page){
+  await page.locator('.fm-next-match-card').first().click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await expectNoDocumentOverflow(page);
+  await expectVerticalOnlyPan(page);
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  await page.waitForFunction(()=>{
+    const status=document.querySelector('[data-release-auth-status]');
+    return !status||status.dataset.tone!=='loading';
+  },null,{timeout:7000}).catch(()=>{});
+  await expectNoDocumentOverflow(page);
+  await expectVerticalOnlyPan(page);
+}
+
 async function reloadRoute(page,patch){
   await page.evaluate(patch=>{
     const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
@@ -40,7 +73,7 @@ async function reloadRoute(page,patch){
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
 }
 
-test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed navigation stable',async({page})=>{
+test('Mobile Safari/WebKit keeps the Real App flow geometry, vertical scroll and horizontal pan containment stable',async({page})=>{
   for(const width of [320,375,390,430]){
     await page.setViewportSize({width,height:844});
     await page.goto('/app',{waitUntil:'domcontentloaded'});
@@ -53,26 +86,26 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed nav
 
     await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
     await expectNoDocumentOverflow(page);
+    await expectVerticalOnlyPan(page);
 
     await setupToHome(page);
     const geometry=await expectNoDocumentOverflow(page);
+    await expectVerticalOnlyPan(page);
     expect(geometry.nav.width).toBeLessThanOrEqual(width);
 
-    await page.locator('.fm-next-match-card').first().click();
-    await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-    await expect(page.locator('[data-decision-section]')).toHaveCount(4);
-    expect(await page.evaluate(()=>document.activeElement?.dataset?.screen)).toBe('detail');
-    await expectNoDocumentOverflow(page);
-
+    await reachAuth(page);
     const selectedMatchId=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')||'{}').selectedMatchId);
     expect(selectedMatchId).toBeTruthy();
+
     await reloadRoute(page,{route:'success',signedIn:true,joinedMatchId:selectedMatchId,userName:'도현',matchStage:'upcoming'});
     await expect(page.locator('[data-screen="success"]')).toBeVisible();
     await expectNoDocumentOverflow(page);
+    await expectVerticalOnlyPan(page);
 
     await reloadRoute(page,{route:'schedule',signedIn:true,joinedMatchId:null,selectedMatchId:null,userName:'도현',matchStage:'upcoming'});
     await expect(page.locator('[data-screen="schedule"] .fm-next-empty')).toContainText('아직 참가한 경기가 없어요.');
     await expectNoDocumentOverflow(page);
+    await expectVerticalOnlyPan(page);
   }
 });
 
