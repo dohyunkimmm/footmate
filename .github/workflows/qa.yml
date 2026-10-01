@@ -17,6 +17,7 @@ jobs:
     outputs:
       runtime: ${{ steps.impact.outputs.runtime }}
       production: ${{ steps.impact.outputs.production }}
+      production_smoke: ${{ steps.impact.outputs.production_smoke }}
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
@@ -53,8 +54,16 @@ jobs:
             production=false
           fi
 
+          production_smoke="$production"
+          for file in $changed_files; do
+            case "$file" in
+              tests/production-*.cjs|tests/e2e/v6-release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
+            esac
+          done
+
           echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
           echo "production=$production" >> "$GITHUB_OUTPUT"
+          echo "production_smoke=$production_smoke" >> "$GITHUB_OUTPUT"
 
   docs_only:
     name: Docs-only QA
@@ -195,13 +204,14 @@ jobs:
   production_smoke:
     name: Production Smoke
     needs: [impact, regression, browser_e2e]
-    if: github.event_name == 'push' && needs.impact.outputs.production == 'true'
+    if: github.event_name == 'push' && needs.impact.outputs.production_smoke == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Wait for exact Vercel deployment
+        if: needs.impact.outputs.production == 'true'
         env: {GH_TOKEN: "${{ github.token }}"}
         run: |
           for attempt in $(seq 1 42); do
