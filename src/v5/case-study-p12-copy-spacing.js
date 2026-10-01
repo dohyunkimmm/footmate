@@ -97,3 +97,20 @@
     document.body.appendChild(script);
   }
 })();
+
+/* Detail-finish stylesheet intentionally loads after the advanced polish so its token pass
+   can stay presentation-only and win without increasing specificity across legacy layers. */
+(function(){
+  const existing=document.querySelector('link[data-fm-detail-finish]');
+  if(existing){
+    if(existing.sheet)document.documentElement.dataset.fmCaseStudyDetailFinish='true';
+    else existing.addEventListener('load',()=>{document.documentElement.dataset.fmCaseStudyDetailFinish='true';},{once:true});
+    return;
+  }
+  const link=document.createElement('link');
+  link.rel='stylesheet';
+  link.href='/src/v5/case-study-detail-finish.css?v=1';
+  link.dataset.fmDetailFinish='true';
+  link.addEventListener('load',()=>{document.documentElement.dataset.fmCaseStudyDetailFinish='true';},{once:true});
+  document.head.appendChild(link);
+})();
