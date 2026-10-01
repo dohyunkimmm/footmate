@@ -4,6 +4,7 @@ import './p0-usability-trust.js';
 import './p1-decision-clarity.js';
 import './real-app-flow-naturalness.js';
 import './auth-height-fix.js';
+import './layout-density-fix.js';
 import './first-home-greeting.js';
 import {footmatePlatform} from '../application/platform.js';
 
