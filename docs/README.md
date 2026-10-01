@@ -14,10 +14,11 @@
 
 ## Current release engineering docs
 
-FootMate에서 현재 직접 유지하는 release/product 문서는 아래 여덟 개입니다.
+FootMate에서 현재 직접 유지하는 release/product 문서는 아래 아홉 개입니다.
 
 - `RELEASE-HISTORY.md` — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
 - `RELEASE-HISTORY-CORRECTIONS.md` — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
+- `RELEASE-APP-V6.md` — current Release App v6 IA, state ownership, free Join, MY lifecycle, provider boundary와 QA contract
 - `CASE-STUDY-COPY-QA-CORRECTIONS.md` — Case Study reference copy의 이후 승인 변경. `archive/CASE-STUDY-COPY-QA.md`와 충돌하면 더 최신 correction이 현재 기준
 - `BETA-PILOT-RUNBOOK.md` — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - `BETA-MEASUREMENT-READINESS.md` — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
