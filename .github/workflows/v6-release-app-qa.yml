@@ -1,0 +1,51 @@
+name: FootMate Release App v6 QA
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: footmate-v6-release-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contract:
+    name: Release App Contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Check Release App syntax
+        run: node --check src/v6/release-app.js
+      - name: Check Release App architecture
+        run: node tests/contracts/v6-release-app.contract.mjs
+
+  browser:
+    name: Release App Browser + Visual
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install pinned browser QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+      - name: Run Release App browser and visual comparison
+        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs
+      - name: Upload Release App visual evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: v6-release-app-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14

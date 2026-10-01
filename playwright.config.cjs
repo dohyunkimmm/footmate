@@ -38,7 +38,7 @@ module.exports = defineConfig({
     },
     {
       name: 'webkit-mobile',
-      testMatch: /v5\.2-webkit-mobile\.spec\.cjs/,
+      testMatch: /(?:v5\.2-webkit-mobile|v6-release-app)\.spec\.cjs/,
       use: { ...devices['iPhone 13'] }
     }
   ]
