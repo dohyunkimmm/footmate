@@ -9,7 +9,7 @@ const bootstrap=read('src/v4/platform/presentation/bootstrap.js');
 
 assert.match(bootstrap,/\.\.\/\.\.\/\.\.\/v6\/release-app\.js/,'release app layer must boot with the product');
 assert.match(release,/RELEASE_APP_VERSION='6\.0\.0'/,'release app version marker missing');
-assert.match(release,/route==='schedule'/,'legacy Schedule route migration missing');
+assert.match(release,/current\.route!==['"]schedule['"]/,'legacy Schedule route migration missing');
 assert.equal(migrateSession({schemaVersion:2,route:'schedule'}).state.route,'profile','Schedule must migrate into MY');
 assert.match(release,/무료로 참가 확정/,'release join must not present a simulated PG checkout');
 assert.match(release,/paymentMethod:'none'/,'free join must persist a non-payment participation snapshot');
