@@ -5,6 +5,8 @@ async function openCaseStudy(page,viewport){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyP1Visuals==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyAdvancedPolish==='true');
+  await page.waitForFunction(()=>[...document.styleSheets].some(sheet=>sheet.href?.includes('case-study-advanced-polish.css')));
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
@@ -80,7 +82,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p10.png`});
 
-    // P13 · desktop release cards keep natural heights; the 3-row OPEN BOUNDARY card should
+    // P13 · desktop release cards keep natural heights; the 3-row open-boundary card should
     // end before the two 4-row cards instead of being stretched to their height.
     await showSection(page,12);
     const p13=await page.locator('.slide.on .fm-p1-release-map').evaluate(map=>{
@@ -165,7 +167,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     const closing=page.locator('.slide.on .fm-p1-release-next');
     await expect(closing).toBeVisible();
-    await expect(closing.locator('a')).toContainText('FootMate 앱 보기');
+    await expect(closing.locator('a')).toContainText('Real App에서 흐름 확인');
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');
       const rows=[...final.querySelectorAll('.fm-cs-reasons>div')];
@@ -190,6 +192,79 @@ for(const [name,viewport,expectedRecoveryGap] of [
     }
 
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-completion-polish-${name}-p13.png`});
+    await noHorizontalOverflow(page);
+  });
+
+  test(`Case Study advanced polish stays coherent on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await expect(page.locator('html')).toHaveAttribute('data-fm-case-study-advanced-polish','true');
+
+    if(name==='desktop'){
+      // Short and dense body sections now share one title start line.
+      const tops=[];
+      for(const index of [1,7,10,11,12]){
+        await showSection(page,index);
+        tops.push(await page.locator('.slide.on .fm-next-story h2').evaluate(el=>el.getBoundingClientRect().top));
+      }
+      expect(Math.max(...tops)-Math.min(...tops)).toBeLessThanOrEqual(3);
+    }
+
+    // P11 · system-like architecture tokens become reader-facing Korean micro labels.
+    await showSection(page,10);
+    const architectureLabels=await page.locator('.slide.on .fm-p0-arch-node small').allTextContents();
+    expect(architectureLabels).toEqual(['입력','AI 해석','구조화 조건','추천 엔진','추천 결과','사용자 확인']);
+    if(name==='mobile'){
+      const density=await page.locator('.slide.on').evaluate(slide=>({
+        paddingTop:parseFloat(getComputedStyle(slide).paddingTop),
+        nodePaddingTop:parseFloat(getComputedStyle(slide.querySelector('.fm-p0-arch-node')).paddingTop)
+      }));
+      expect(density.paddingTop).toBeLessThanOrEqual(28.5);
+      expect(density.nodePaddingTop).toBeLessThanOrEqual(10.5);
+    }
+
+    // P12 · QA and funnel micro labels are localized while the structure stays intact.
+    await showSection(page,11);
+    await expect(page.locator('.slide.on .fm-p1-validation-banner>span')).toHaveText('검증 지표');
+    expect(await page.locator('.slide.on .fm-p1-evidence-label').allTextContents()).toEqual(['자동 QA','사람 검수','AI 보조 검수']);
+    if(name==='mobile'){
+      const padding=await page.locator('.slide.on').evaluate(slide=>parseFloat(getComputedStyle(slide).paddingTop));
+      expect(padding).toBeLessThanOrEqual(28.5);
+    }
+
+    // P13 · open boundary and learning label are localized and CTA intent is explicit.
+    await showSection(page,12);
+    await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('미연동 · 미검증');
+    await expect(page.locator('.slide.on .fm-p1-release-next>span')).toContainText('핵심 학습');
+    const finalLink=page.locator('.slide.on .fm-p1-release-next>a');
+    await expect(finalLink).toContainText('Real App에서 흐름 확인');
+
+    if(name==='desktop'){
+      const ctaHeight=await finalLink.evaluate(el=>el.getBoundingClientRect().height);
+      expect(ctaHeight).toBeGreaterThanOrEqual(44);
+
+      // Product evidence uses two explicit scale levels with a shared caption rhythm.
+      await showSection(page,5);
+      const secondary=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
+      await expect(secondary).toHaveAttribute('data-evidence-scale','secondary');
+      expect(await secondary.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(380);
+
+      await showSection(page,6);
+      const detail=page.locator('.slide.on .fm-evidence-figure.is-detail');
+      await expect(detail).toHaveAttribute('data-evidence-scale','primary');
+      expect(await detail.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
+      await expect(page.locator('.btn-prev')).toHaveAttribute('data-nav-label','이전 · 추천');
+      await expect(page.locator('.btn-next')).toHaveAttribute('data-nav-label','다음 · 로그인·참가');
+
+      await showSection(page,8);
+      const operations=page.locator('.slide.on .fm-evidence-figure.is-operations');
+      await expect(operations).toHaveAttribute('data-evidence-scale','primary');
+      expect(await operations.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
+    }else{
+      const padding=await page.locator('.slide.on').evaluate(slide=>parseFloat(getComputedStyle(slide).paddingTop));
+      expect(padding).toBeLessThanOrEqual(28.5);
+    }
+
+    await page.locator('.slide.on').screenshot({path:`test-results/case-study-advanced-polish-${name}.png`});
     await noHorizontalOverflow(page);
   });
 }
