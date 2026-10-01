@@ -55,7 +55,8 @@ jobs:
           fs.writeFileSync('docs/RELEASE-HISTORY.md',history);
           NODE
       - name: Commit release identity sync
-        env: {HEAD_REF: ${{ github.head_ref }}}
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
