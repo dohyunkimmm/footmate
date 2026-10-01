@@ -36,7 +36,9 @@ async function desktopHorizontalState(page){
     const app=auth.closest('.fm-next-app');
     const stage=auth.closest('.fm-next-stage');
     const pageRoot=auth.closest('.fm-next-page');
+    const card=auth.querySelector('.fm-auth-card');
     const style=getComputedStyle(auth);
+    const cardStyle=getComputedStyle(card);
     return {
       viewport:innerWidth,
       windowScrollX:scrollX,
@@ -48,6 +50,13 @@ async function desktopHorizontalState(page){
       pageScrollLeft:pageRoot?.scrollLeft||0,
       authOverflowX:style.overflowX,
       authOverscrollX:style.overscrollBehaviorX,
+      authClientHeight:auth.clientHeight,
+      authScrollHeight:auth.scrollHeight,
+      authBackground:style.backgroundColor,
+      cardBackground:cardStyle.backgroundColor,
+      cardBorderTopWidth:cardStyle.borderTopWidth,
+      cardBorderRadius:cardStyle.borderRadius,
+      cardBoxShadow:cardStyle.boxShadow,
       auth:rect(auth),
       app:rect(app),
       stage:rect(stage)
@@ -66,9 +75,15 @@ function expectDesktopLocked(state){
   expect(['hidden','clip']).toContain(state.authOverflowX);
   expect(state.authOverscrollX).toBe('none');
   expect(Math.abs((state.app.left+state.app.right)/2-state.viewport/2)).toBeLessThanOrEqual(1);
+  expect(state.authScrollHeight).toBeLessThanOrEqual(state.authClientHeight+1);
+  expect(state.authBackground).toBe('rgb(255, 255, 255)');
+  expect(state.cardBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(state.cardBorderTopWidth).toBe('0px');
+  expect(state.cardBorderRadius).toBe('0px');
+  expect(state.cardBoxShadow).toBe('none');
 }
 
-test('1440px PC Auth ignores horizontal trackpad/wheel scrolling without exposing side whitespace',async({page})=>{
+test('1440px PC Auth stays flat and fixed without nested whitespace or horizontal motion',async({page})=>{
   await openDesktopAuth(page);
   const auth=page.locator('[data-screen="auth"]');
   const box=await auth.boundingBox();
