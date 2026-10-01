@@ -163,11 +163,11 @@ for(const [name,viewport,expectedRecoveryGap] of [
       expect(type.evidenceLabel).toBeGreaterThanOrEqual(9);
     }
 
-    // P13 · one focal release zone, then a visible key-learning + Real App closing CTA.
+    // P13 · one focal release zone, then a visible key-learning closing summary.
     await showSection(page,12);
     const closing=page.locator('.slide.on .fm-p1-release-next');
     await expect(closing).toBeVisible();
-    await expect(closing.locator('a')).toContainText('Real App에서 흐름 확인');
+    await expect(closing.locator('a')).toHaveCount(0);
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');
       const rows=[...final.querySelectorAll('.fm-cs-reasons>div')];
@@ -233,17 +233,13 @@ for(const [name,viewport,expectedRecoveryGap] of [
       expect(padding).toBeLessThanOrEqual(28.5);
     }
 
-    // P13 · open boundary and learning label are localized and CTA intent is explicit.
+    // P13 · open boundary and learning label are localized without duplicating the Real App entry.
     await showSection(page,12);
     await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('미연동 · 미검증');
     await expect(page.locator('.slide.on .fm-p1-release-next>span')).toContainText('핵심 학습');
-    const finalLink=page.locator('.slide.on .fm-p1-release-next>a');
-    await expect(finalLink).toContainText('Real App에서 흐름 확인');
+    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(0);
 
     if(name==='desktop'){
-      const ctaHeight=await finalLink.evaluate(el=>el.getBoundingClientRect().height);
-      expect(ctaHeight).toBeGreaterThanOrEqual(44);
-
       // Product evidence uses two explicit scale levels with a shared caption rhythm.
       await showSection(page,5);
       const secondary=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
