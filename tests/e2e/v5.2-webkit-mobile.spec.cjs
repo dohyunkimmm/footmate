@@ -17,6 +17,29 @@ async function setupToHome(page){
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
 }
 
+async function expectNoDocumentOverflow(page){
+  const geometry=await page.evaluate(()=>({
+    viewport:innerWidth,
+    documentWidth:document.documentElement.scrollWidth,
+    bodyWidth:document.body.scrollWidth,
+    shell:document.querySelector('.fm-next-app')?.getBoundingClientRect().width||0,
+    nav:document.querySelector('.fm-next-nav')?.getBoundingClientRect().toJSON()||null
+  }));
+  expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewport+1);
+  expect(geometry.bodyWidth).toBeLessThanOrEqual(geometry.viewport+1);
+  expect(geometry.shell).toBeLessThanOrEqual(Math.min(560,geometry.viewport+1));
+  return geometry;
+}
+
+async function reloadRoute(page,patch){
+  await page.evaluate(patch=>{
+    const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
+    localStorage.setItem('footmate:v4:session',JSON.stringify({...session,...patch}));
+  },patch);
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+}
+
 test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed navigation stable',async({page})=>{
   for(const width of [320,375,390,430]){
     await page.setViewportSize({width,height:844});
@@ -27,20 +50,29 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed nav
     expect(await page.evaluate(()=>performance.now())).toBeLessThanOrEqual(4000);
     await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content','#f7f8f7');
     await expect(page.locator('#footmate-next')).not.toHaveAttribute('aria-live',/.+/);
+
+    await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
+    await expectNoDocumentOverflow(page);
+
     await setupToHome(page);
-    const geometry=await page.evaluate(()=>({
-      viewport:innerWidth,
-      documentWidth:document.documentElement.scrollWidth,
-      shell:document.querySelector('.fm-next-app')?.getBoundingClientRect().width||0,
-      nav:document.querySelector('.fm-next-nav')?.getBoundingClientRect().toJSON()||null
-    }));
-    expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewport+1);
-    expect(geometry.shell).toBeLessThanOrEqual(560);
+    const geometry=await expectNoDocumentOverflow(page);
     expect(geometry.nav.width).toBeLessThanOrEqual(width);
+
     await page.locator('.fm-next-match-card').first().click();
     await expect(page.locator('[data-screen="detail"]')).toBeVisible();
     await expect(page.locator('[data-decision-section]')).toHaveCount(4);
     expect(await page.evaluate(()=>document.activeElement?.dataset?.screen)).toBe('detail');
+    await expectNoDocumentOverflow(page);
+
+    const selectedMatchId=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')||'{}').selectedMatchId);
+    expect(selectedMatchId).toBeTruthy();
+    await reloadRoute(page,{route:'success',signedIn:true,joinedMatchId:selectedMatchId,userName:'도현',matchStage:'upcoming'});
+    await expect(page.locator('[data-screen="success"]')).toBeVisible();
+    await expectNoDocumentOverflow(page);
+
+    await reloadRoute(page,{route:'schedule',signedIn:true,joinedMatchId:null,selectedMatchId:null,userName:'도현',matchStage:'upcoming'});
+    await expect(page.locator('[data-screen="schedule"] .fm-next-empty')).toContainText('아직 참가한 경기가 없어요.');
+    await expectNoDocumentOverflow(page);
   }
 });
 
