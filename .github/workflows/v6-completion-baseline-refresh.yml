@@ -1,12 +1,12 @@
 name: Temporary v6 completion baseline refresh
 on:
   push:
-    branches: [fix/v6-completion-polish]
+    branches:
+      - fix/v6-completion-polish
 permissions:
   contents: write
 jobs:
   refresh:
-    if: ${{ !contains(github.event.head_commit.message, 'test: refresh v6 completion visual baselines') }}
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.55.1-noble
@@ -14,21 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
-        with: {node-version: '24', package-manager-cache: false}
-      - name: Apply final source and contract corrections
-        shell: bash
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Check Release App contracts
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          source=Path('src/v6/release-app.js')
-          text=source.read_text()
-          text=text.replace(',\'"\':\'&quot\',', ',\'"\':\'&quot;\',')
-          source.write_text(text)
-          contract=Path('tests/contracts/v6-release-app.contract.mjs')
-          text=contract.read_text()
-          text=text.replace("assert.match(release,/data-v6-my-section/,'MY hierarchy markers missing');", "assert.match(release,/dataset\\.v6MySection/,'MY hierarchy markers missing');")
-          contract.write_text(text)
-          PY
           node --check src/v6/release-app.js
           node tests/contracts/v6-release-app.contract.mjs
       - name: Install pinned browser QA dependencies
@@ -44,7 +34,7 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/v6/release-app.js tests/contracts/v6-release-app.contract.mjs tests/e2e/v6-release-app.spec.cjs-snapshots
+          git add tests/e2e/v6-release-app.spec.cjs-snapshots
           if git diff --cached --quiet; then
             echo "No baseline changes"
             exit 0
