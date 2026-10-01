@@ -91,6 +91,8 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(page).toHaveScreenshot('v6-release-join-1440.png',shot);
   await page.getByRole('button',{name:'무료로 참가 확정'}).click();
   await expect(page.locator('[data-screen="success"]')).toBeVisible();
+  await page.mouse.move(1,1);
+  await expect(page).toHaveScreenshot('v6-release-success-1440.png',shot);
   const snapshot=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:participation')||'{}'));
   expect(snapshot.amount).toBe(0);
   expect(snapshot.paymentMethod).toBe('none');
@@ -99,6 +101,8 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(profile).toBeVisible();
   await expect(profile).toHaveAttribute('data-v6-my','true');
   await expect(profile.locator('[data-my-matches]')).toContainText('내 경기');
+  await page.mouse.move(1,1);
+  await expect(page).toHaveScreenshot('v6-release-my-upcoming-1440.png',shot);
   expect(errs).toEqual([]);
 });
 
@@ -120,6 +124,8 @@ test('Home lifecycle and postgame Return converge on MY',async({page})=>{
   await seedSession(page,{route:'home',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
   const lifecycle=page.locator('[data-v6-lifecycle="upcoming"]');
   await expect(lifecycle).toBeVisible();
+  await page.mouse.move(1,1);
+  await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',shot);
   await lifecycle.getByRole('button',{name:'내 경기 보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await seedSession(page,{route:'profile',matchStage:'postgame'});
@@ -133,5 +139,7 @@ test('Home lifecycle and postgame Return converge on MY',async({page})=>{
   await expect(page).toHaveScreenshot('v6-release-my-postgame-1440.png',shot);
   await seedSession(page,{route:'home',matchStage:'postgame'});
   await expect(page.locator('[data-v6-lifecycle="return"]')).toBeVisible();
+  await page.mouse.move(1,1);
+  await expect(page).toHaveScreenshot('v6-release-home-return-1440.png',shot);
   expect(errs).toEqual([]);
 });
