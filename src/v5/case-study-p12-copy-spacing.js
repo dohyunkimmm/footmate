@@ -101,16 +101,30 @@
 /* Detail-finish stylesheet intentionally loads after the advanced polish so its token pass
    can stay presentation-only and win without increasing specificity across legacy layers. */
 (function(){
+  const markReady=()=>{document.documentElement.dataset.fmCaseStudyDetailFinish='true';};
+  const ensureDensityCompat=()=>{
+    if(document.querySelector('style[data-fm-detail-density-compat]'))return;
+    const style=document.createElement('style');
+    style.dataset.fmDetailDensityCompat='true';
+    style.textContent='@media(max-width:900px){html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="domain-ai-boundary"] .fm-p0-arch-node{padding-top:10px!important;padding-bottom:10px!important}}';
+    document.head.appendChild(style);
+  };
+
   const existing=document.querySelector('link[data-fm-detail-finish]');
   if(existing){
-    if(existing.sheet)document.documentElement.dataset.fmCaseStudyDetailFinish='true';
-    else existing.addEventListener('load',()=>{document.documentElement.dataset.fmCaseStudyDetailFinish='true';},{once:true});
+    if(existing.sheet){
+      ensureDensityCompat();
+      markReady();
+    }else{
+      existing.addEventListener('load',()=>{ensureDensityCompat();markReady();},{once:true});
+    }
     return;
   }
+
   const link=document.createElement('link');
   link.rel='stylesheet';
   link.href='/src/v5/case-study-detail-finish.css?v=1';
   link.dataset.fmDetailFinish='true';
-  link.addEventListener('load',()=>{document.documentElement.dataset.fmCaseStudyDetailFinish='true';},{once:true});
+  link.addEventListener('load',()=>{ensureDensityCompat();markReady();},{once:true});
   document.head.appendChild(link);
 })();
