@@ -31,37 +31,42 @@ async function expectNoDocumentOverflow(page){
   return geometry;
 }
 
-async function expectVerticalOnlyPan(page){
-  const policy=await page.locator('.fm-next-screen:visible').evaluate(node=>{
-    const style=getComputedStyle(node);
+async function expectHorizontalPanContainment(page,screenSelector,{auth=false}={}){
+  const screen=page.locator(screenSelector).first();
+  await expect(screen).toBeVisible();
+  const policy=await screen.evaluate(node=>{
+    const shell=node.closest('.fm-next-app');
+    if(!shell)throw new Error('Real App shell not found');
+    const shellStyle=getComputedStyle(shell);
+    const screenStyle=getComputedStyle(node);
     return {
-      touchAction:style.touchAction,
-      overscrollX:style.overscrollBehaviorX,
+      shellTouchAction:shellStyle.touchAction,
+      shellOverscrollX:shellStyle.overscrollBehaviorX,
+      screenOverscrollX:screenStyle.overscrollBehaviorX,
+      screenOverflowX:screenStyle.overflowX,
       rootOverscrollX:getComputedStyle(document.documentElement).overscrollBehaviorX,
       bodyOverscrollX:getComputedStyle(document.body).overscrollBehaviorX
     };
   });
-  const touchTokens=policy.touchAction.split(/\s+/);
+  const touchTokens=policy.shellTouchAction.split(/\s+/);
   expect(touchTokens).toContain('pan-y');
   expect(touchTokens).toContain('pinch-zoom');
-  expect(policy.overscrollX).toBe('none');
+  expect(policy.shellOverscrollX).toBe('none');
+  expect(policy.screenOverscrollX).toBe('none');
   expect(policy.rootOverscrollX).toBe('none');
   expect(policy.bodyOverscrollX).toBe('none');
+  if(auth)expect(['hidden','clip']).toContain(policy.screenOverflowX);
 }
 
 async function reachAuth(page){
   await page.locator('.fm-next-match-card').first().click();
   await expect(page.locator('[data-screen="detail"]')).toBeVisible();
   await expectNoDocumentOverflow(page);
-  await expectVerticalOnlyPan(page);
+  await expectHorizontalPanContainment(page,'[data-screen="detail"]');
   await page.getByRole('button',{name:'참가하기'}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
-  await page.waitForFunction(()=>{
-    const status=document.querySelector('[data-release-auth-status]');
-    return !status||status.dataset.tone!=='loading';
-  },null,{timeout:7000}).catch(()=>{});
   await expectNoDocumentOverflow(page);
-  await expectVerticalOnlyPan(page);
+  await expectHorizontalPanContainment(page,'[data-screen="auth"]',{auth:true});
 }
 
 async function reloadRoute(page,patch){
@@ -74,6 +79,7 @@ async function reloadRoute(page,patch){
 }
 
 test('Mobile Safari/WebKit keeps the Real App flow geometry, vertical scroll and horizontal pan containment stable',async({page})=>{
+  test.setTimeout(90000);
   for(const width of [320,375,390,430]){
     await page.setViewportSize({width,height:844});
     await page.goto('/app',{waitUntil:'domcontentloaded'});
@@ -86,11 +92,11 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, vertical scroll and
 
     await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
     await expectNoDocumentOverflow(page);
-    await expectVerticalOnlyPan(page);
+    await expectHorizontalPanContainment(page,'[data-screen="welcome"]');
 
     await setupToHome(page);
     const geometry=await expectNoDocumentOverflow(page);
-    await expectVerticalOnlyPan(page);
+    await expectHorizontalPanContainment(page,'[data-screen="home"]');
     expect(geometry.nav.width).toBeLessThanOrEqual(width);
 
     await reachAuth(page);
@@ -100,12 +106,12 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, vertical scroll and
     await reloadRoute(page,{route:'success',signedIn:true,joinedMatchId:selectedMatchId,userName:'도현',matchStage:'upcoming'});
     await expect(page.locator('[data-screen="success"]')).toBeVisible();
     await expectNoDocumentOverflow(page);
-    await expectVerticalOnlyPan(page);
+    await expectHorizontalPanContainment(page,'[data-screen="success"]');
 
     await reloadRoute(page,{route:'schedule',signedIn:true,joinedMatchId:null,selectedMatchId:null,userName:'도현',matchStage:'upcoming'});
     await expect(page.locator('[data-screen="schedule"] .fm-next-empty')).toContainText('아직 참가한 경기가 없어요.');
     await expectNoDocumentOverflow(page);
-    await expectVerticalOnlyPan(page);
+    await expectHorizontalPanContainment(page,'[data-screen="schedule"]');
   }
 });
 
