@@ -15,7 +15,7 @@ on:
       - 'tests/e2e/desktop-auth-horizontal-lock.spec.cjs'
       - '.github/workflows/desktop-auth-qa.yml'
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: desktop-auth-qa-${{ github.ref }}
   cancel-in-progress: true
@@ -29,6 +29,8 @@ jobs:
       options: --ipc=host
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Install pinned Playwright
@@ -39,10 +41,19 @@ jobs:
         run: npx playwright test --project=chromium tests/e2e/desktop-auth-horizontal-lock.spec.cjs
       - name: Generate candidate Auth 1440 baseline
         run: npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "1440px Auth" --update-snapshots
-      - name: Stage candidate Auth baseline
+      - name: Commit candidate Auth baseline
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          mkdir -p test-results/auth-baseline
-          cp tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-auth-1440-chromium-linux.png test-results/auth-baseline/
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-auth-1440-chromium-linux.png
+          if git diff --cached --quiet; then
+            echo "Auth baseline unchanged"
+          else
+            git commit -m "test: update desktop auth visual baseline"
+            git push origin "HEAD:${HEAD_REF}"
+          fi
       - name: Upload desktop evidence
         if: always()
         uses: actions/upload-artifact@v6
