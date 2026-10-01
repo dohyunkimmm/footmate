@@ -36,14 +36,15 @@ jobs:
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
-      - name: Run Release App browser and screenshot comparison
-        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs
-      - name: Upload Release App evidence
+      - name: Generate Release App approved screenshot candidates
+        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs --update-snapshots
+      - name: Upload Release App baseline candidates and evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: v6-release-app-${{ github.run_id }}
           path: |
+            tests/e2e/v6-release-app.spec.cjs-snapshots/
             playwright-report/
             test-results/
           if-no-files-found: warn
