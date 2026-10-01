@@ -124,18 +124,18 @@
 
     const auth=slides[7];
     setText(auth,'.fm-next-story h2','선택한 경기를 계정 확인 뒤에도 이어갑니다.');
-    setText(auth,'.fm-next-story-lead','선택 경기와 복귀 위치를 유지하고 결과를 완료·실패·취소로 구분했습니다.');
-    setSummary(auth,[['상태 보존','선택 경기 · 복귀 위치'],['계정','로그인'],['결과','완료 · 실패 · 취소']]);
+    setText(auth,'.fm-next-story-lead','선택 경기와 복귀 위치를 유지하고 로그인 뒤 무료 참가 확인으로 이어집니다.');
+    setSummary(auth,[['상태 보존','선택 경기 · 복귀 위치'],['계정','로그인'],['결과','무료 참가 확인 · MY']]);
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','인증 · 결제 UX 시뮬레이션'],
+      ['Real App','로그인 · 무료 참가 확인 · MY'],
       ['Closed Beta','Supabase 계정 · 참가 실연동'],
       ['검증 범위','Google/Kakao OAuth Production 확인 · 실제 PG 미연동']
     ]));
 
     const operations=slides[8];
-    setText(operations,'.fm-next-story h2','경기 당일 필요한 행동과 이후 흐름을 홈에 모았습니다.');
-    setText(operations,'.fm-next-story-lead','예정·체크인·경기 후 단계에 맞춰 다음 행동을 우선 노출합니다.');
-    setSummary(operations,[['진행','예정 → 당일 → 체크인 → 종료 후'],['운영','정원 · 취소 · 체크인'],['이후','다음 탐색']]);
+    setText(operations,'.fm-next-story h2','경기 당일 필요한 행동과 이후 흐름을 MY에 모았습니다.');
+    setText(operations,'.fm-next-story-lead','Home은 다음 행동을 안내하고, Matchday와 경기 후 흐름은 MY에서 이어집니다.');
+    setSummary(operations,[['진행','예정 → 당일 → 체크인 → 종료 후'],['소유','MY · Matchday · Return'],['Home','다음 행동 · MY 진입']]);
     const dayStates=operations.querySelectorAll('.fm-next-cs-day-states>div');
     const dayCopy=[
       ['탐색 중','조건 설정','추천 확인'],
@@ -165,7 +165,7 @@
     const recoveryCopy=[
       ['추천 없음','입력한 탐색 조건 → 지역·시간 수정 또는 조건 완화'],
       ['자리 마감','선택 경기 · 포지션 → 대기 등록 또는 비슷한 경기 탐색'],
-      ['결제 실패 · 시뮬레이션','선택 경기 · 참가 의도 → 재시도 또는 결제수단 변경'],
+      ['참가 상태 문제','선택 경기 · 참가 의도 → 상태 확인 또는 다시 참가'],
       ['경기 당일 문제','참가 · 체크인 상태 → 체크인 재시도 또는 운영 도움']
     ];
     recoveryCopy.forEach(([heading,copy],index)=>{
@@ -179,8 +179,8 @@
 
     const domain=slides[10];
     setText(domain,'.fm-next-story h2','추천·상태·실행의 소유권을 분리했습니다.');
-    setText(domain,'.fm-next-story-lead','AI는 조건 해석만 맡고, 판단과 참가·결제의 책임을 분리했습니다.');
-    setSummary(domain,[['해석','AI · 자연어 조건'],['판단','엔진 · 후보·순위·이유'],['실행','사용자 확인 · 참가·결제']]);
+    setText(domain,'.fm-next-story-lead','AI는 조건 해석만 맡고, 판단과 참가 확정의 책임을 분리했습니다.');
+    setSummary(domain,[['해석','AI · 자연어 조건'],['판단','엔진 · 후보·순위·이유'],['실행','사용자 확인 · 참가 확정']]);
     const modes=domain.querySelectorAll('.fm-next-cs-modes>div');
     if(modes[0]){
       setText(modes[0],'h3','추천 소유권');
@@ -188,11 +188,11 @@
     }
     if(modes[1]){
       setText(modes[1],'h3','상태 책임');
-      setText(modes[1],'p','참가 · 체크인 · 경기 후 책임 분리 · 동일 판단 일원화');
+      setText(modes[1],'p','참가 · 체크인 · 경기 후 책임 분리 · 사용자-facing 상태는 MY로 일원화');
     }
     if(modes[2]){
       setText(modes[2],'h3','실행 경계');
-      setText(modes[2],'p','경기 사실 · 가격 · 정원 · 순위 AI 생성 금지 · 참가 · 결제 사용자 최종 확인');
+      setText(modes[2],'p','경기 사실 · 가격 · 정원 · 순위 AI 생성 금지 · 참가 확정 사용자 최종 확인');
     }
 
     const validation=slides[11];
@@ -220,8 +220,8 @@
 
     const release=slides[12];
     setText(release,'.fm-next-story h2','구현 결과와 다음 과제를 정리했습니다.');
-    setText(release,'.fm-next-story-lead','연결 범위와 사용자 확인을 마쳤고, 실제 이용자 KPI·결제·수익성은 후속 검증으로 남겼습니다.');
-    setSummary(release,[['구현','AI · Supabase · Resend · Push'],['검증','행동 과업 · iOS · Android'],['다음 단계','실제 결제 · 이용자 KPI · 수익성']]);
+    setText(release,'.fm-next-story-lead','Real App과 Closed Beta의 연결 범위를 나눠 확인했고, 실제 이용자 KPI·결제·수익성은 후속 검증으로 남겼습니다.');
+    setSummary(release,[['Real App','AI · sample · browser-local'],['Closed Beta','Supabase · Resend · Push'],['다음 단계','실제 결제 · 이용자 KPI · 수익성']]);
     release.querySelector('.fm-next-cs-outcomes')?.remove();
     release.querySelector('.fm-next-cs-final')?.remove();
 
