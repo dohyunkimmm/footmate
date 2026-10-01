@@ -1,5 +1,5 @@
 /* FootMate Case Study · final balance pass
-   Scope: final alignment, shared row rhythm, natural card height, and whitespace density only. */
+   Scope: final alignment, shared row rhythm, natural card height, whitespace density, and portfolio finish. */
 
 /* P8 Sign in · Join
    The legacy high-specificity scope padding re-inset the lower boundary cards.
@@ -31,6 +31,104 @@ html[data-fm-next-case-study="true"] .fm-next-cs-metric{
   padding:9px 14px!important;
 }
 
+/* The floating product badge reads like browser chrome on editorial pages.
+   The product context is already stated by the Case Study title and section copy. */
+html[data-fm-next-case-study="true"] .label{
+  display:none!important;
+}
+
+/* Reviewer summary is a scan aid, not a second row of primary cards. */
+html[data-fm-next-case-study="true"] .fm-next-review-summary>div{
+  border-color:transparent!important;
+  background:#f6f8f7!important;
+  box-shadow:none!important;
+}
+
+/* P2 supporting cards step back so the green decision/assumption block owns the hierarchy. */
+html[data-fm-next-case-study="true"] .track>.slide:nth-child(2) .fm-next-cs-grid.three>.fm-next-cs-card{
+  border-color:transparent!important;
+  background:#f7f9f8!important;
+  box-shadow:none!important;
+}
+
+/* P12 product-verification cards are secondary to the Validation Metric + funnel composition. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
+  border-color:transparent!important;
+  background:#f7f9f8!important;
+  box-shadow:none!important;
+}
+
+/* P13 keeps one clear focal zone. Real App / open boundary are intentionally quieter. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article:not(.is-focus){
+  border-color:transparent!important;
+  background:#f8f9f8!important;
+  box-shadow:none!important;
+}
+
+/* Restore a deliberate ending below the release map.
+   Only the key learning remains in the compact closing strip; detailed next-step rows already exist above. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-next-story-aside{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:0!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto;
+  column-gap:18px;
+  row-gap:4px;
+  align-items:center;
+  margin-top:10px!important;
+  padding:12px 14px!important;
+  border:1px solid var(--fm-cs-accent-line,#c7ddce)!important;
+  border-radius:16px!important;
+  background:#f7fbf8!important;
+  box-shadow:none!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>span{
+  grid-column:1;
+  grid-row:1;
+  margin:0!important;
+  color:#188038!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+  font-weight:850!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>.fm-cs-reasons{
+  grid-column:1;
+  grid-row:2;
+  display:block!important;
+  margin:0!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>.fm-cs-reasons>div{
+  display:none!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>.fm-cs-reasons>div:first-child{
+  display:block!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>.fm-cs-reasons>div:first-child>dt{
+  display:none!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>.fm-cs-reasons>div:first-child>dd{
+  margin:0!important;
+  color:#26372e!important;
+  font-size:12px!important;
+  line-height:1.5!important;
+  font-weight:700!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>a{
+  grid-column:2;
+  grid-row:1 / span 2;
+  align-self:center;
+  min-height:38px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  white-space:nowrap;
+}
+
 @media(min-width:901px){
   /* The compact "common recovery principle" card repeats the same problem → preserve → next-action
      structure already visible above. Remove only this redundant desktop recap so the two product proofs
@@ -48,6 +146,43 @@ html[data-fm-next-case-study="true"] .fm-next-cs-metric{
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article{
     height:auto!important;
   }
+
+  /* Small muted labels were visually underpowered at 1440px. Raise them one step without changing hierarchy. */
+  html[data-fm-next-case-study="true"] .fm-next-review-summary span{
+    color:#596a61!important;
+    font-size:12px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner p{
+    color:#596a61!important;
+    font-size:12px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-funnel small{
+    color:#697a71!important;
+    font-size:9px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-funnel span,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-ratio>span{
+    color:#596a61!important;
+    font-size:10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-ratio small{
+    color:#697a71!important;
+    font-size:8px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-label{
+    color:#697a71!important;
+    font-size:9px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map header small{
+    font-size:10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map li>span{
+    color:#596a61;
+    font-size:9px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map li>b{
+    font-size:11px!important;
+  }
 }
 
 /* Desktop cover
@@ -56,5 +191,45 @@ html[data-fm-next-case-study="true"] .fm-next-cs-metric{
 @media(min-width:1181px) and (min-height:760px){
   html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-copy{
     transform:translateY(-80px);
+  }
+}
+
+/* Mobile review summaries become a compact scan strip instead of three stacked cards. */
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-review-summary{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin:4px 0 0!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-review-summary>div{
+    padding:7px 8px!important;
+    border-radius:10px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-review-summary span{
+    margin-bottom:2px!important;
+    color:#607168!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-review-summary b{
+    font-size:10px!important;
+    line-height:1.3!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto auto auto;
+    gap:5px!important;
+    padding:12px!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>span,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>.fm-cs-reasons,
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>a{
+    grid-column:1;
+    grid-row:auto;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>a{
+    width:100%;
+    justify-self:stretch;
+    margin-top:3px!important;
   }
 }
