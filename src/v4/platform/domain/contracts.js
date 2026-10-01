@@ -35,7 +35,7 @@ export const EVENT_NAMES=Object.freeze([
 ]);
 
 const eventNames=new Set(EVENT_NAMES);
-const routes=new Set(['welcome','setup','home','discover','detail','auth','checkout','success','schedule','profile']);
+const routes=new Set(['welcome','setup','home','discover','detail','auth','checkout','success','profile']);
 const matchStages=new Set(['discover','upcoming','matchday','postgame']);
 const isObject=value=>Boolean(value)&&typeof value==='object'&&!Array.isArray(value);
 const stringOr=(value,fallback)=>typeof value==='string'?value:fallback;
@@ -45,7 +45,8 @@ export function migrateSession(candidate={}){
   const source=isObject(candidate)?candidate:{};
   const fromVersion=Number.isInteger(source.schemaVersion)?source.schemaVersion:0;
   const state={...source,schemaVersion:SESSION_SCHEMA_VERSION};
-  if('route' in source)state.route=routes.has(source.route)?source.route:'welcome';
+  const scheduleMigrated=source.route==='schedule';
+  if('route' in source)state.route=scheduleMigrated?'profile':routes.has(source.route)?source.route:'welcome';
   if('setupStep' in source)state.setupStep=Number.isInteger(source.setupStep)&&source.setupStep>=0?source.setupStep:0;
   if('setupComplete' in source)state.setupComplete=Boolean(source.setupComplete);
   if('region' in source)state.region=stringOr(source.region,'수원 · 영통');
@@ -57,7 +58,7 @@ export function migrateSession(candidate={}){
   if('checkedInMatchId' in source)state.checkedInMatchId=nullableString(source.checkedInMatchId);
   if('matchStage' in source)state.matchStage=matchStages.has(source.matchStage)?source.matchStage:'discover';
   if('userName' in source)state.userName=stringOr(source.userName,'게스트');
-  return {state,fromVersion,toVersion:SESSION_SCHEMA_VERSION,migrated:fromVersion!==SESSION_SCHEMA_VERSION};
+  return {state,fromVersion,toVersion:SESSION_SCHEMA_VERSION,migrated:fromVersion!==SESSION_SCHEMA_VERSION||scheduleMigrated};
 }
 
 export function createDomainEvent(name,payload={},options={}){

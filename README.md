@@ -1,13 +1,24 @@
 # FootMate — AI-assisted Futsal Match Discovery
 
+## Release App v6
+
+- Canonical IA: **Home / 경기 찾기 / MY**
+- Home is lifecycle-aware: discovery → upcoming → matchday → postgame.
+- MY is the canonical owner of joined matches, saved matches, Matchday, Return, profile and settings.
+- Legacy `schedule` state migrates to MY.
+- `/app` Join is an explicit **free participation confirmation**; real PG is not connected.
+- `/beta` and `/beta/operator` remain the Supabase-connected validation/operator surfaces and are not presented as if merged into `/app`.
+- Desktop Detail / Join / MY follow the single-surface visual system validated on Auth.
+
+
 FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에게 맞는지 이해한 뒤 참가·경기 당일·경기 후까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
 
-현재 제품은 자연어 경기 탐색을 실제 AI inference와 연결하되, 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유하도록 설계했습니다. AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, 참가와 결제는 항상 사용자가 직접 확인합니다.
+현재 제품은 자연어 경기 탐색을 실제 AI inference와 연결하되, 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유하도록 설계했습니다. AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, Release App의 참가 확정은 사용자가 직접 확인합니다. 사용자-facing Join은 무료 참가 확인이며 실제 PG는 연결되지 않았습니다.
 
 ## Product at a glance
 
 - Primary journey: **Find → Decide → Join → Play → Return**
-- Real App IA: **Home = AI Match Assistant entry + compact personalization → Discover = AI/search result exploration + filter/sort → Detail = match decision → Join = joined-match status → MY = saved matches + profile/settings**
+- Real App IA: **Home = lifecycle-aware next action → 경기 찾기/Discover = AI/search exploration + filter/sort → Detail = match decision → Join = free participation confirmation → MY = joined/saved matches + Matchday + Return + profile/settings**
 - Case Study: `/`
 - Real App: `/app`
 - Closed Beta: `/beta` — Supabase Auth / Postgres / Realtime / capacity / participation / waitlist / reminders / feedback / in-app notification / transactional email / opt-in Web Push / media upload connected
@@ -27,10 +38,10 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - **Reason before score** — 내부 적합도는 정렬에 사용하되 사용자는 생활권·레벨·포지션·거리처럼 판단 가능한 이유를 먼저 봅니다.
 - **AI interprets, deterministic engine ranks** — AI는 자연어를 검색 조건으로 바꾸고 실제 경기 후보·순위·추천 이유는 recommendation engine이 결정합니다.
 - **Entry and results are separate surfaces** — Home은 AI 조건 입력과 짧은 개인화 추천에 집중하고, 실제 결과 탐색·조건 수정·filter/sort·전체 목록은 Discover가 소유합니다.
-- **Recoverable participation** — checkout → pending → success | failure | canceled를 분리하고 retry·status check·reload recovery를 제공합니다.
+- **Release participation** — 로그인 후 무료 참가 확인 → 성공 → MY로 이어집니다. 기존 payment pending/retry 모델은 compatibility 검증에만 남고 Release App의 사용자-facing Join에서는 노출하지 않습니다.
 - **State-aware Matchday** — upcoming → matchday → checked-in과 late·update·cancel recovery를 분리합니다.
 - **Return loop** — 경기 후 체감 난이도·완료·반복 의도를 다음 추천의 보조 신호로 사용합니다.
-- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가와 결제를 자동 실행하지 않습니다.
+- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가 확정을 자동 실행하지 않습니다.
 
 ## AI Agent Workflow
 
@@ -39,7 +50,7 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - **Context** — 현재 region / position / level browser state와 사용자의 자연어 요청
 - **Plan** — 지역·포지션·레벨·최대 가격·최대 이동 시간·시작 시간 조건으로 구조화
 - **Tools** — Vercel AI Gateway + deterministic recommendation ranking + sample match catalog
-- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 join/payment는 HITL로 유지
+- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 Join 확정은 HITL로 유지
 - **Observe** — connected-ai / rules-fallback, 실제 사용 model, fallback 여부와 마지막 검색 조건을 추적
 
 ## Implemented experience
@@ -56,7 +67,7 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - deterministic recommendation ranking과 human-readable recommendation reason
 - Discovery filter/sort, zero-result recovery, URL/session persistence
 - Decision Detail, save, 최대 2경기 compare
-- Sign in / checkout / pending / retry / cancel / reload recovery
+- Sign in / free Join confirmation / success / MY handoff; legacy payment pending/retry paths remain compatibility-only regression coverage
 - Checkout·Matchday·postgame Return의 기술/프로토타입 표현은 사용자 판단에 필요한 상태·행동 중심 문구로 정리하고 실제 외부 연동 경계는 별도 안내에서 유지
 - Matchday check-in과 운영 상태 복구
 - postgame Return과 browser-local personalization
@@ -96,7 +107,8 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - Vercel AI Gateway: **connected and Production-verified**
 - `/app` recommendation ranking: **deterministic runtime logic**
 - `/app` match catalog / capacity / participant composition: **sample records**
-- `/app` auth / payment / capacity / notification providers: **deterministic mock**
+- `/app` auth / capacity / notification providers: **deterministic mock**
+- `/app` Join: **browser-local free participation confirmation**; real PG 미연동
 - `/app` persistence: **browser local state** — `footmate:*` canonical keys를 primary로 사용하고 기존 `footmate:v4:*` 9개 key는 migration/rollback compatibility mirror로 유지
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
 - `/beta` Realtime / waitlist / reminder / feedback / real-match recommendation loop: **Supabase connected**; Realtime event는 change signal로만 사용하고 authoritative row는 REST에서 다시 읽음
