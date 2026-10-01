@@ -134,6 +134,7 @@
     background:transparent;
     box-shadow:none;
   }
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="profile"] .fm-next-profile-card[data-v6-my-section="profile"]{margin-top:36px}
   .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="profile"] .fm-next-menu-list{
     border:0;border-radius:0;background:transparent;box-shadow:none;
   }
