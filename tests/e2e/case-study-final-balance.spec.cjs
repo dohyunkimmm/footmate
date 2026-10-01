@@ -106,4 +106,90 @@ for(const [name,viewport,expectedRecoveryGap] of [
 
     await noHorizontalOverflow(page);
   });
+
+  test(`Case Study finish polish stays intentional on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await expect(page.locator('.label')).toBeHidden();
+
+    // P2 · scan summaries and supporting cards remain secondary to the decision block.
+    await showSection(page,1);
+    const p2=await page.locator('.slide.on').evaluate(slide=>{
+      const summary=slide.querySelector('.fm-next-review-summary>div');
+      const support=slide.querySelector('.fm-next-cs-grid.three>.fm-next-cs-card');
+      const quote=slide.querySelector('.fm-next-cs-quote');
+      const style=el=>el?getComputedStyle(el):null;
+      return {
+        summaryBorder:style(summary)?.borderTopColor,
+        supportBorder:style(support)?.borderTopColor,
+        supportBg:style(support)?.backgroundColor,
+        quoteBorder:style(quote)?.borderTopColor
+      };
+    });
+    expect(p2.summaryBorder).toBe('rgba(0, 0, 0, 0)');
+    expect(p2.supportBorder).toBe('rgba(0, 0, 0, 0)');
+    expect(p2.supportBg).not.toBe('rgb(255, 255, 255)');
+    expect(p2.quoteBorder).not.toBe('rgba(0, 0, 0, 0)');
+
+    // P3 · on mobile, the 3 reviewer metadata items form one compact scan strip.
+    await showSection(page,2);
+    const summaryGeometry=await page.locator('.slide.on .fm-next-review-summary').evaluate(summary=>({
+      height:summary.getBoundingClientRect().height,
+      children:[...summary.children].map(node=>{
+        const box=node.getBoundingClientRect();
+        return {top:box.top,left:box.left,width:box.width,height:box.height};
+      })
+    }));
+    expect(summaryGeometry.children).toHaveLength(3);
+    if(name==='mobile'){
+      expect(Math.max(...summaryGeometry.children.map(x=>x.top))-Math.min(...summaryGeometry.children.map(x=>x.top))).toBeLessThanOrEqual(1);
+      expect(summaryGeometry.height).toBeLessThan(90);
+      expect(summaryGeometry.children.every(x=>x.width>90)).toBeTruthy();
+    }
+
+    // P12 · small muted desktop copy is readable without changing the main hierarchy.
+    await showSection(page,11);
+    if(name==='desktop'){
+      const type=await page.locator('.slide.on').evaluate(slide=>({
+        funnelSmall:parseFloat(getComputedStyle(slide.querySelector('.fm-p1-funnel small')).fontSize),
+        funnelMeta:parseFloat(getComputedStyle(slide.querySelector('.fm-p1-funnel span')).fontSize),
+        ratioMeta:parseFloat(getComputedStyle(slide.querySelector('.fm-p1-ratio>span')).fontSize),
+        evidenceLabel:parseFloat(getComputedStyle(slide.querySelector('.fm-p1-evidence-label')).fontSize)
+      }));
+      expect(type.funnelSmall).toBeGreaterThanOrEqual(9);
+      expect(type.funnelMeta).toBeGreaterThanOrEqual(10);
+      expect(type.ratioMeta).toBeGreaterThanOrEqual(10);
+      expect(type.evidenceLabel).toBeGreaterThanOrEqual(9);
+    }
+
+    // P13 · one focal release zone, then a visible key-learning + Real App closing CTA.
+    await showSection(page,12);
+    const closing=page.locator('.slide.on .fm-p1-release-next');
+    await expect(closing).toBeVisible();
+    await expect(closing.locator('a')).toContainText('FootMate 앱 보기');
+    const finish=await page.locator('.slide.on').evaluate(slide=>{
+      const final=slide.querySelector('.fm-p1-release-next');
+      const rows=[...final.querySelectorAll('.fm-cs-reasons>div')];
+      const visibleRows=rows.filter(row=>getComputedStyle(row).display!=='none');
+      const focus=slide.querySelector('.fm-p1-release-map>article.is-focus');
+      const quiet=slide.querySelector('.fm-p1-release-map>article:not(.is-focus)');
+      const controls=document.querySelector('.cs-controls')?.getBoundingClientRect();
+      const box=final.getBoundingClientRect();
+      return {
+        visibleRows:visibleRows.length,
+        focusBg:getComputedStyle(focus).backgroundColor,
+        quietBg:getComputedStyle(quiet).backgroundColor,
+        final:{top:box.top,bottom:box.bottom,height:box.height},
+        controls:controls&&{top:controls.top,bottom:controls.bottom}
+      };
+    });
+    expect(finish.visibleRows).toBe(1);
+    expect(finish.focusBg).not.toBe(finish.quietBg);
+    if(name==='desktop'){
+      expect(finish.controls).toBeTruthy();
+      expect(finish.final.bottom).toBeLessThan(finish.controls.top-4);
+    }
+
+    await page.locator('.slide.on').screenshot({path:`test-results/case-study-completion-polish-${name}-p13.png`});
+    await noHorizontalOverflow(page);
+  });
 }
