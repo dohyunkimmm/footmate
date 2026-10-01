@@ -32,7 +32,8 @@ assert.ok(decision.includes("hero.insertAdjacentHTML('afterend',decisionSections
 assert.ok(recommendation.includes("import {rankRecommendations} from './platform/domain/recommendation.js';"));
 assert.equal(config.includes('retries: 0'),true);
 assert.ok(config.includes("name: 'webkit-mobile'"));
-assert.ok(workflow.includes('Run Mobile Safari/WebKit product gate'));
+assert.ok(workflow.includes('Run Release App Mobile Safari/WebKit gate'));
+assert.ok(workflow.includes('tests/e2e/v6-release-app.spec.cjs'));
 assert.ok(production.includes('data-product-detail'));
 assert.ok(PERFORMANCE_BUDGET.firstPartyCssBytes>0&&PERFORMANCE_BUDGET.firstPartyJsBytes>0);
 assert.deepEqual(RUNTIME_PERFORMANCE_BUDGET,{shellMaxWidthPx:560,maxHorizontalOverflowPx:1,screenReadyMs:4000});
