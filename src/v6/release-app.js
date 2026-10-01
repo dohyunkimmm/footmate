@@ -12,12 +12,24 @@ let scheduled=false;
 let patching=false;
 
 function installStyles(){
-  if(document.querySelector('link[data-footmate-v6-release]'))return;
+  const existing=document.querySelector('link[data-footmate-v6-release]');
+  if(existing){
+    if(existing.sheet)return Promise.resolve();
+    return new Promise(resolve=>{
+      existing.addEventListener('load',resolve,{once:true});
+      existing.addEventListener('error',resolve,{once:true});
+    });
+  }
   const link=document.createElement('link');
   link.rel='stylesheet';
   link.href='/src/v6/release-app.css?v=1';
   link.dataset.footmateV6Release='true';
+  const ready=new Promise(resolve=>{
+    link.addEventListener('load',resolve,{once:true});
+    link.addEventListener('error',resolve,{once:true});
+  });
   document.head.append(link);
+  return ready;
 }
 
 function migrateLegacyRoute(){
@@ -60,6 +72,8 @@ function patchHome(screen){
   if(value.kind!=='discover'){
     const greeting=screen.querySelector('.fm-next-greeting');
     if(greeting)greeting.insertAdjacentHTML('afterend',lifecycleMarkup(value));
+    const legacyContext=screen.querySelector('.fm-next-context-card');
+    if(legacyContext)legacyContext.dataset.v6Secondary='true';
   }
   screen.querySelectorAll('[data-matchday-home],[data-product-checkin]').forEach(node=>node.dataset.v6Secondary='true');
 }
@@ -217,8 +231,13 @@ function schedule(){
   requestAnimationFrame(apply);
 }
 
+function exposeReady(){
+  window.__FOOTMATE_RELEASE_APP__=Object.freeze({version:RELEASE_APP_VERSION,readLifecycle:lifecycleState,migrateLegacyRoute});
+  schedule();
+}
+
 if(isReal()){
-  installStyles();
+  const styleReady=installStyles();
   migrateLegacyRoute();
   document.addEventListener('click',event=>{
     const joinButton=event.target.closest?.('[data-v6-free-join],[data-screen="checkout"] [data-action="confirm-payment"]');
@@ -241,7 +260,7 @@ if(isReal()){
     if(name==='save-return'){event.preventDefault();event.stopImmediatePropagation();saveReturn(match.id);schedule();return;}
   },true);
   if(root)new MutationObserver(schedule).observe(root,{childList:true,subtree:true,characterData:true});
-  schedule();
+  styleReady.then(exposeReady,exposeReady);
+}else{
+  exposeReady();
 }
-
-window.__FOOTMATE_RELEASE_APP__=Object.freeze({version:RELEASE_APP_VERSION,readLifecycle:lifecycleState,migrateLegacyRoute});
