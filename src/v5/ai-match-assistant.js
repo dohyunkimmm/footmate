@@ -15,7 +15,14 @@ const money=value=>new Intl.NumberFormat('ko-KR').format(value)+'원';
 function readJson(key,fallback={}){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}}
 function readState(){return createState(readJson(NEXT_STORAGE_KEY,{}))}
 function saveAssistant(value){try{localStorage.setItem(AI_STORAGE_KEY,JSON.stringify(value))}catch{}}
-function readAssistant(){return readJson(AI_STORAGE_KEY,null)}
+function readAssistant(){
+  const saved=readJson(AI_STORAGE_KEY,null);
+  if(!saved||typeof saved!=='object'||!saved.result)return saved;
+  const result=normalizeResult(saved.result);
+  const normalized={...saved,result};
+  if(JSON.stringify(saved.result)!==JSON.stringify(result))saveAssistant(normalized);
+  return normalized;
+}
 function matchTimeMinutes(match){const found=String(match.dateLabel||'').match(/(\d{1,2}):(\d{2})/);return found?Number(found[1])*60+Number(found[2]):null}
 function timeMinutes(value){const found=String(value||'').match(/^(\d{1,2}):(\d{2})$/);return found?Number(found[1])*60+Number(found[2]):null}
 function clampNumber(value,min,max){const number=Number(value);return Number.isFinite(number)?Math.min(max,Math.max(min,Math.round(number))):null}
@@ -54,18 +61,25 @@ function deterministicResults(result,state,limit=3){
   return ranked.map(item=>({item,match:byId.get(item.id)})).filter(({match})=>{if(!match)return false;if(result.region&&match.region!==result.region)return false;if(result.position&&Number(match.positionSlots?.[result.position]||0)<=0)return false;if(result.maxPrice!=null&&match.price>result.maxPrice)return false;if(result.maxDistanceMin!=null&&match.distanceMin>result.maxDistanceMin)return false;if(threshold!=null){const minutes=matchTimeMinutes(match);if(minutes!=null&&minutes<threshold)return false}return true}).slice(0,limit);
 }
 function conditionLabels(result){const labels=[];if(result.region)labels.push(result.region);if(result.position)labels.push(result.position);if(result.level)labels.push(result.level);if(result.maxPrice!=null)labels.push(`${money(result.maxPrice)} 이하`);if(result.maxDistanceMin!=null)labels.push(`${result.maxDistanceMin}분 이내`);if(result.afterTime)labels.push(`${result.afterTime} 이후`);return labels.length?labels:['현재 설정 유지']}
+function resultSummary(result){
+  const labels=conditionLabels(result).filter(label=>label!=='현재 설정 유지');
+  if(!labels.length)return '요청 조건을 반영했어요.';
+  const visible=labels.slice(0,3),remaining=labels.length-visible.length;
+  return `${visible.join(' · ')}${remaining?` 외 ${remaining}개`:''} 조건을 반영했어요.`;
+}
 function resultMarkup(entries){if(!entries.length)return '<div class="fm-ai-empty"><b>조건에 맞는 샘플 경기가 없어요.</b><span>거리·가격·시간 조건을 조금 넓혀 다시 요청해보세요.</span></div>';return entries.map(({item,match},index)=>`<button type="button" class="fm-ai-result" data-action="open-match" data-match-id="${escapeHtml(match.id)}"><span class="fm-ai-result-rank">${index+1}</span><span class="fm-ai-result-copy"><b>${escapeHtml(match.place)}</b><small>${escapeHtml(match.dateLabel)} · ${escapeHtml(match.level)} · ${escapeHtml(match.distance)} · ${money(match.price)}</small><em>${escapeHtml((item.reasons||[]).slice(0,2).join(' · ')||item.fit||match.fit)}</em></span><span aria-hidden="true">→</span></button>`).join('')}
 function renderSaved(card,saved){
   if(!saved||!saved.result)return;
   card.dataset.aiState='result';
   if(['connected-ai','rules-fallback'].includes(saved.mode))lastMode=saved.mode;
   const state=readState(),result=normalizeResult(saved.result),entries=deterministicResults(result,state),status=card.querySelector('[data-ai-status]'),conditions=card.querySelector('[data-ai-conditions]'),results=card.querySelector('[data-ai-results]'),mode=card.querySelector('[data-ai-mode]');
-  if(status)status.innerHTML=`<b>${escapeHtml(result.reply)}</b><span>${saved.mode==='connected-ai'?'AI가 자연어를 조건으로 해석했고, 순위는 기존 추천 엔진이 계산했습니다.':'AI 연결 실패 후 rules-based fallback으로 같은 추천 엔진을 사용했습니다.'}</span>`;
+  const headline=saved.mode==='connected-ai'?resultSummary(result):result.reply;
+  if(status)status.innerHTML=`<b>${escapeHtml(headline)}</b><span>${saved.mode==='connected-ai'?'AI가 자연어를 조건으로 해석했고, 순위는 기존 추천 엔진이 계산했습니다.':'AI 연결 실패 후 rules-based fallback으로 같은 추천 엔진을 사용했습니다.'}</span>`;
   if(conditions)conditions.innerHTML=conditionLabels(result).map(label=>`<span>${escapeHtml(label)}</span>`).join('');if(results)results.innerHTML=resultMarkup(entries);if(mode){mode.textContent=saved.mode==='connected-ai'?'AI connected':'Rules fallback';mode.dataset.mode=saved.mode}
 }
 async function run(card,message){
   const input=card.querySelector('[data-ai-input]'),submit=card.querySelector('[data-ai-submit]'),status=card.querySelector('[data-ai-status]'),results=card.querySelector('[data-ai-results]'),conditions=card.querySelector('[data-ai-conditions]'),mode=card.querySelector('[data-ai-mode]');
-  if(!message.trim())return;card.dataset.aiState='loading';submit.disabled=true;input.disabled=true;if(status)status.innerHTML='<b>AI가 요청을 해석하고 있어요.</b><span>경기 후보와 순위는 기존 추천 엔진에서 확인합니다.</span>';if(results)results.innerHTML='<div class="fm-ai-loading" aria-hidden="true"><span></span><span></span><span></span></div>';if(conditions)conditions.innerHTML='';
+  if(!message.trim())return;card.dataset.aiState='loading';submit.disabled=true;input.disabled=true;if(status)status.innerHTML='<b>조건을 확인하고 있어요.</b><span>AI 응답이 늦으면 기존 검색으로 자동 전환합니다.</span>';if(results)results.innerHTML='<div class="fm-ai-loading" aria-hidden="true"><span></span><span></span><span></span></div>';if(conditions)conditions.innerHTML='';
   const state=readState();let result,runMode='connected-ai';
   try{result=await requestAi(message,{region:state.region,position:state.position,level:state.level});lastMode='connected-ai'}catch{result=fallbackParse(message);runMode='rules-fallback';lastMode='rules-fallback'}
   try{const saved={version:VERSION,message:message.slice(0,240),mode:runMode,result,updatedAt:new Date().toISOString()};saveAssistant(saved);renderSaved(card,saved);if(mode)mode.dataset.mode=runMode}finally{submit.disabled=false;input.disabled=false;input.focus()}
