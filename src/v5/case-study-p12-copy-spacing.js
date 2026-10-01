@@ -78,3 +78,22 @@
     },25);
   }
 })();
+
+/* Late-bound presentation loader keeps the base Case Study bundle stable while allowing
+   the final portfolio-only polish to load after all structural patches are available. */
+(function(){
+  if(!document.querySelector('link[data-fm-advanced-polish]')){
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='/src/v5/case-study-advanced-polish.css?v=1';
+    link.dataset.fmAdvancedPolish='true';
+    document.head.appendChild(link);
+  }
+  if(!document.querySelector('script[data-fm-advanced-polish]')){
+    const script=document.createElement('script');
+    script.src='/src/v5/case-study-advanced-polish.js?v=1';
+    script.defer=true;
+    script.dataset.fmAdvancedPolish='true';
+    document.body.appendChild(script);
+  }
+})();
