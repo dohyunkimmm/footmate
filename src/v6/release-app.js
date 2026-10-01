@@ -22,7 +22,7 @@ function installStyles(){
   }
   const link=document.createElement('link');
   link.rel='stylesheet';
-  link.href='/src/v6/release-app.css?v=1';
+  link.href='/src/v6/release-app.css?v=2';
   link.dataset.footmateV6Release='true';
   const ready=new Promise(resolve=>{
     link.addEventListener('load',()=>resolve(link),{once:true});
@@ -39,11 +39,17 @@ function migrateLegacyRoute(){
   patchSession({route:'profile'});
 }
 
+function completedReturn(matchId){
+  const store=footmatePlatform.repositories.returnLoop.read({})||{};
+  const history=Array.isArray(store.history)?store.history:[];
+  return history.find(item=>item.matchId===matchId&&item.completed)||null;
+}
+
 function lifecycleState(){
   const current=session();
   const match=matchById(current.joinedMatchId);
   if(!match)return {kind:'discover',match:null};
-  if(current.matchStage==='postgame')return {kind:'return',match};
+  if(current.matchStage==='postgame')return {kind:completedReturn(match.id)?'complete':'return',match};
   const checkin=footmatePlatform.repositories.matchday.read({})||{};
   if(['available','processing','failed','completed','matchday','checked-in','late','updated'].includes(String(checkin.status||''))||current.matchStage==='matchday')return {kind:'matchday',match};
   return {kind:'upcoming',match};
@@ -52,16 +58,20 @@ function lifecycleState(){
 function lifecycleMarkup(value){
   if(value.kind==='discover')return '';
   const match=value.match;
-  const copy=value.kind==='return'
-    ?['경기 기록을 마무리할 시간이에요.','체감 난이도를 남기면 다음 추천을 더 잘 맞출 수 있어요.','경기 피드백 남기기']
-    :value.kind==='matchday'
-      ?['오늘 경기 준비','체크인과 경기장 안내를 MY에서 한 번에 확인하세요.','오늘 경기 보기']
-      :['다음 경기가 준비돼 있어요.','참가 정보와 경기 전 안내를 MY에서 이어서 확인하세요.','내 경기 보기'];
+  const copy=value.kind==='complete'
+    ?['경기 기록을 저장했어요.','남긴 피드백을 다음 추천에 반영했어요. 이제 다음 경기를 찾아보세요.','다음 경기 찾기']
+    :value.kind==='return'
+      ?['경기 기록을 마무리할 시간이에요.','체감 난이도를 남기면 다음 추천을 더 잘 맞출 수 있어요.','경기 피드백 남기기']
+      :value.kind==='matchday'
+        ?['오늘 경기 준비','체크인과 경기장 안내를 MY에서 한 번에 확인하세요.','오늘 경기 보기']
+        :['다음 경기가 준비돼 있어요.','참가 정보와 경기 전 안내를 MY에서 이어서 확인하세요.','내 경기 보기'];
+  const label=value.kind==='complete'?'COMPLETE':value.kind==='return'?'AFTER MATCH':value.kind==='matchday'?'MATCHDAY':'UP NEXT';
+  const action=value.kind==='complete'?'open-discover':'open-my';
   return `<section class="fm-v6-lifecycle" data-v6-lifecycle="${value.kind}" data-v6-match-id="${esc(match.id)}" aria-label="현재 할 일">
-    <small>${value.kind==='return'?'AFTER MATCH':value.kind==='matchday'?'MATCHDAY':'UP NEXT'}</small>
+    <small>${label}</small>
     <h2>${copy[0]}</h2><p>${copy[1]}</p>
     <div class="fm-v6-lifecycle-match"><b>${esc(match.place)}</b><span>${esc(match.dateLabel)}</span></div>
-    <button type="button" class="fm-next-button fm-next-button--primary" data-v6-action="open-my">${copy[2]}</button>
+    <button type="button" class="fm-next-button fm-next-button--primary" data-v6-action="${action}">${copy[2]}</button>
   </section>`;
 }
 
@@ -99,7 +109,7 @@ function patchDetail(screen){
 }
 
 function commitFreeJoin(match){
-  if(!match)return;
+  if(!match)return false;
   const now=Date.now();
   const confirmationId=`FM-${now.toString(36).toUpperCase()}`;
   footmatePlatform.events.record('join.started',{matchId:match.id,paymentMethod:'none',attemptNumber:1,release:RELEASE_APP_VERSION});
@@ -122,10 +132,52 @@ function commitFreeJoin(match){
   patchSession({selectedMatchId:match.id,joinedMatchId:match.id,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
   footmatePlatform.events.record('join.completed',{matchId:match.id,confirmationId,paymentMethod:'none',release:RELEASE_APP_VERSION},{dedupeKey:`join.completed:${confirmationId}`});
   location.reload();
+  return true;
+}
+
+function setJoinError(screen,message){
+  if(!screen)return;
+  screen.dataset.v6JoinState='error';
+  const confirm=screen.querySelector('[data-action="confirm-payment"],[data-participation-submit]');
+  if(confirm){
+    confirm.disabled=false;
+    confirm.removeAttribute('aria-busy');
+    confirm.textContent='다시 시도';
+  }
+  const existing=screen.querySelector('[data-v6-join-error]');
+  if(existing){
+    const copy=existing.querySelector('p');
+    if(copy)copy.textContent=message;
+    return;
+  }
+  const markup=`<div class="fm-v6-join-error" data-v6-join-error role="alert"><b>참가를 확정하지 못했어요.</b><p>${esc(message)}</p><button type="button" class="fm-next-button fm-next-button--secondary" data-v6-action="join-back-discover">경기 다시 선택</button></div>`;
+  if(confirm)confirm.insertAdjacentHTML('beforebegin',markup);
+  else screen.insertAdjacentHTML('beforeend',markup);
+}
+
+function beginFreeJoin(joinButton){
+  const screen=joinButton.closest?.('[data-screen="checkout"]');
+  if(!screen)return;
+  screen.dataset.v6JoinState='processing';
+  screen.querySelector('[data-v6-join-error]')?.remove();
+  joinButton.disabled=true;
+  joinButton.setAttribute('aria-busy','true');
+  joinButton.textContent='참가 확정 중…';
+  const match=matchById(session().selectedMatchId);
+  if(!match){
+    setJoinError(screen,'참가 정보를 다시 불러오지 못했어요. 다시 시도하거나 경기를 다시 선택해 주세요.');
+    return;
+  }
+  try{
+    commitFreeJoin(match);
+  }catch{
+    setJoinError(screen,'참가 확정 중 문제가 발생했어요. 다시 시도해 주세요.');
+  }
 }
 
 function patchCheckout(screen){
   screen.dataset.v6Join='free';
+  if(!screen.dataset.v6JoinState)screen.dataset.v6JoinState='ready';
   const title=screen.querySelector('.fm-next-topbar>strong');
   if(title&&title.textContent!=='참가 확인')title.textContent='참가 확인';
   const summary=screen.querySelector('.fm-next-checkout-summary');
@@ -148,10 +200,13 @@ function patchCheckout(screen){
   if(note&&note.textContent!==noteCopy)note.textContent=noteCopy;
   const confirm=screen.querySelector('[data-action="confirm-payment"],[data-participation-submit]');
   if(confirm){
-    confirm.disabled=false;
-    confirm.removeAttribute('aria-busy');
+    const state=screen.dataset.v6JoinState;
     confirm.dataset.v6FreeJoin='true';
-    if(confirm.textContent!=='무료로 참가 확정')confirm.textContent='무료로 참가 확정';
+    confirm.disabled=state==='processing';
+    if(state==='processing')confirm.setAttribute('aria-busy','true');
+    else confirm.removeAttribute('aria-busy');
+    const label=state==='processing'?'참가 확정 중…':state==='error'?'다시 시도':'무료로 참가 확정';
+    if(confirm.textContent!==label)confirm.textContent=label;
   }
   screen.querySelectorAll('[data-participation-panel]').forEach(node=>node.dataset.v6LegacyPayment='true');
 }
@@ -190,7 +245,12 @@ function patchProfile(screen){
   screen.dataset.v6My='true';
   const top=screen.querySelector('.fm-next-topbar>strong');if(top&&top.textContent!=='MY')top.textContent='MY';
   const my=screen.querySelector('[data-my-matches]');
-  if(my){const head=my.querySelector('.fm-next-section-head h2');if(head&&head.textContent!=='내 경기')head.textContent='내 경기';}
+  if(my){
+    my.dataset.v6MySection='matches';
+    const head=my.querySelector('.fm-next-section-head h2');if(head&&head.textContent!=='내 경기')head.textContent='내 경기';
+  }
+  const savedMatches=screen.querySelector('.fm-flow-saved');
+  if(savedMatches)savedMatches.dataset.v6MySection='saved';
   const current=session();
   const match=matchById(current.joinedMatchId);
   const existing=screen.querySelector('[data-v6-return]');
@@ -202,9 +262,15 @@ function patchProfile(screen){
     }
   }else existing?.remove();
   const profile=screen.querySelector('.fm-next-profile-card');
-  if(profile&&!profile.querySelector('[data-v6-profile-label]'))profile.insertAdjacentHTML('afterbegin','<small class="fm-v6-section-label" data-v6-profile-label>내 정보</small>');
+  if(profile){
+    profile.dataset.v6MySection='profile';
+    if(!profile.querySelector('[data-v6-profile-label]'))profile.insertAdjacentHTML('afterbegin','<small class="fm-v6-section-label" data-v6-profile-label>내 정보</small>');
+  }
   const menu=screen.querySelector('.fm-next-menu-list');
-  if(menu&&!menu.previousElementSibling?.matches?.('[data-v6-settings-label]'))menu.insertAdjacentHTML('beforebegin','<small class="fm-v6-section-label" data-v6-settings-label>설정</small>');
+  if(menu){
+    menu.dataset.v6MySection='settings';
+    if(!menu.previousElementSibling?.matches?.('[data-v6-settings-label]'))menu.insertAdjacentHTML('beforebegin','<small class="fm-v6-section-label" data-v6-settings-label>설정</small>');
+  }
 }
 
 function writeReturnDraft(matchId,patch){
@@ -264,9 +330,7 @@ if(isReal()){
     const joinButton=event.target.closest?.('[data-v6-free-join],[data-screen="checkout"] [data-action="confirm-payment"]');
     if(joinButton){
       event.preventDefault();event.stopImmediatePropagation();
-      const match=matchById(session().selectedMatchId);
-      joinButton.disabled=true;joinButton.textContent='참가 확정 중…';
-      commitFreeJoin(match);
+      beginFreeJoin(joinButton);
       return;
     }
     const action=event.target.closest?.('[data-v6-action]');
@@ -274,6 +338,9 @@ if(isReal()){
     const name=action.dataset.v6Action;
     if(name==='open-my'){
       event.preventDefault();event.stopImmediatePropagation();patchSession({route:'profile'});location.reload();return;
+    }
+    if(name==='open-discover'||name==='join-back-discover'){
+      event.preventDefault();event.stopImmediatePropagation();patchSession({route:'discover'});location.reload();return;
     }
     const current=session();const match=matchById(current.joinedMatchId);if(!match)return;
     if(name==='difficulty'){event.preventDefault();event.stopImmediatePropagation();writeReturnDraft(match.id,{difficulty:action.dataset.value});schedule();return;}
