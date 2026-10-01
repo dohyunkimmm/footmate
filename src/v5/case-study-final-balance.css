@@ -22,11 +22,10 @@ html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-proof>d
 }
 
 /* Validation / Interactive Demo metrics
-   Content-sized cards prevent short metrics from reading like large empty panels. */
-html[data-fm-next-case-study="true"] .fm-next-cs-metrics{
-  align-items:start!important;
-}
+   Content-sized cards prevent short metrics from reading like large empty panels without changing the
+   P12 two-column composition's own stretch alignment. */
 html[data-fm-next-case-study="true"] .fm-next-cs-metric{
+  align-self:start!important;
   min-height:0!important;
   height:auto!important;
   padding:9px 14px!important;
