@@ -1,0 +1,75 @@
+name: Desktop Auth QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/v4/platform/presentation/auth-height-fix.js'
+      - 'src/v4/experience.css'
+      - 'tests/e2e/desktop-auth-horizontal-lock.spec.cjs'
+      - '.github/workflows/desktop-auth-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/v4/platform/presentation/auth-height-fix.js'
+      - 'src/v4/experience.css'
+      - 'tests/e2e/desktop-auth-horizontal-lock.spec.cjs'
+      - '.github/workflows/desktop-auth-qa.yml'
+permissions:
+  contents: read
+concurrency:
+  group: desktop-auth-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop_auth_local:
+    name: 1440px Desktop Auth
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install pinned Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Verify PC Auth horizontal lock
+        run: npx playwright test --project=chromium tests/e2e/desktop-auth-horizontal-lock.spec.cjs
+      - name: Upload desktop evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: desktop-auth-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  desktop_auth_production:
+    name: Production 1440px Desktop Auth
+    needs: desktop_auth_local
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Install pinned Playwright
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify Production PC Auth horizontal lock
+        env:
+          BASE_URL: https://footmate-black.vercel.app
+        run: npx playwright test --project=chromium tests/e2e/desktop-auth-horizontal-lock.spec.cjs
+      - name: Upload Production desktop evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: production-desktop-auth-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 14
