@@ -5,74 +5,11 @@ on:
   push:
     branches: [main]
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: footmate-v6-release-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  release_sync:
-    name: Sync v6 Release Identity
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
-      - uses: actions/setup-node@v5
-        with: {node-version: '24', package-manager-cache: false}
-      - name: Align release identity and durable docs
-        run: |
-          node <<'NODE'
-          const fs=require('fs');
-          const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
-          pkg.version='6.0.0';
-          fs.writeFileSync('package.json',JSON.stringify(pkg,null,2)+'\n');
-
-          let app=fs.readFileSync('app.html','utf8');
-          app=app.replace('<meta name="description" content="자연어 경기 탐색을 deterministic recommendation과 연결하고 참가부터 경기 후까지 이어지는 FootMate 인터랙티브 프로토타입입니다.">','<meta name="description" content="AI 경기 탐색부터 참가·경기 당일·경기 후까지 하나의 흐름으로 이어지는 FootMate Release App입니다.">');
-          app=app.replace('<meta name="footmate-release" content="5.2.0">','<meta name="footmate-release" content="6.0.0">');
-          app=app.replace('<meta name="footmate-release-name" content="ai-match-assistant">','<meta name="footmate-release-name" content="unified-release-app">');
-          fs.writeFileSync('app.html',app);
-
-          let readme=fs.readFileSync('README.md','utf8');
-          const marker='## Release App v6';
-          if(!readme.includes(marker)){
-            const block=`\n${marker}\n\n- Canonical IA: **Home / 경기 찾기 / MY**\n- Home is lifecycle-aware: discovery → upcoming → matchday → postgame.\n- MY is the canonical owner of joined matches, saved matches, Matchday, Return, profile and settings.\n- Legacy \`schedule\` state migrates to MY.\n- \`/app\` Join is an explicit **free participation confirmation**; real PG is not connected.\n- \`/beta\` and \`/beta/operator\` remain the Supabase-connected validation/operator surfaces and are not presented as if merged into \`/app\`.\n- Desktop Detail / Join / MY follow the single-surface visual system validated on Auth.\n\n`;
-            const firstBreak=readme.indexOf('\n');
-            readme=readme.slice(0,firstBreak+1)+block+readme.slice(firstBreak+1);
-          }
-          readme=readme.replace('AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, 참가와 결제는 항상 사용자가 직접 확인합니다.','AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, Release App의 참가 확정은 사용자가 직접 확인합니다. 사용자-facing Join은 무료 참가 확인이며 실제 PG는 연결되지 않았습니다.');
-          readme=readme.replace('- Real App IA: **Home = AI Match Assistant entry + compact personalization → Discover = AI/search result exploration + filter/sort → Detail = match decision → Join = joined-match status → MY = saved matches + profile/settings**','- Real App IA: **Home = lifecycle-aware next action → 경기 찾기/Discover = AI/search exploration + filter/sort → Detail = match decision → Join = free participation confirmation → MY = joined/saved matches + Matchday + Return + profile/settings**');
-          readme=readme.replace('- **Recoverable participation** — checkout → pending → success | failure | canceled를 분리하고 retry·status check·reload recovery를 제공합니다.','- **Release participation** — 로그인 후 무료 참가 확인 → 성공 → MY로 이어집니다. 기존 payment pending/retry 모델은 compatibility 검증에만 남고 Release App의 사용자-facing Join에서는 노출하지 않습니다.');
-          readme=readme.replace('- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가와 결제를 자동 실행하지 않습니다.','- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가 확정을 자동 실행하지 않습니다.');
-          readme=readme.replace('- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 join/payment는 HITL로 유지','- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 Join 확정은 HITL로 유지');
-          readme=readme.replace('- Sign in / checkout / pending / retry / cancel / reload recovery','- Sign in / free Join confirmation / success / MY handoff; legacy payment pending/retry paths remain compatibility-only regression coverage');
-          readme=readme.replace('- `/app` auth / payment / capacity / notification providers: **deterministic mock**','- `/app` auth / capacity / notification providers: **deterministic mock**\n- `/app` Join: **browser-local free participation confirmation**; real PG 미연동');
-          fs.writeFileSync('README.md',readme);
-
-          let history=fs.readFileSync('docs/RELEASE-HISTORY.md','utf8');
-          if(!history.includes('## 6.0.0 — Unified Release App')){
-            const block=`\n## 6.0.0 — Unified Release App\n\n- Home / 경기 찾기 / MY 3-tab IA를 canonical navigation으로 유지하면서 joined-match ownership을 MY로 통합.\n- legacy \`schedule\` session은 MY로 migration.\n- Home은 discover / upcoming / matchday / postgame lifecycle의 다음 primary action을 제공.\n- Desktop Detail / Join / MY는 Auth에서 검증한 single-surface visual hierarchy로 정리.\n- \`/app\`의 simulated payment 사용자 UI를 제거하고 무료 참가 확인으로 전환; real PG 미연동 경계 유지.\n- Matchday와 postgame Return의 canonical surface를 MY로 통합.\n- Matching/ELO, deterministic recommendation, Discover filter/sort, save/compare ownership은 유지.\n- \`/beta\`와 \`/beta/operator\`의 Supabase connected capability는 별도 validation/operator surface로 유지.\n\n`;
-            const firstBreak=history.indexOf('\n');
-            history=history.slice(0,firstBreak+1)+block+history.slice(firstBreak+1);
-          }
-          fs.writeFileSync('docs/RELEASE-HISTORY.md',history);
-          NODE
-      - name: Commit release identity sync
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json app.html README.md docs/RELEASE-HISTORY.md
-          if git diff --cached --quiet; then
-            echo "Release identity already synchronized"
-            exit 0
-          fi
-          git commit -m "docs: align v6 release identity"
-          git push origin "HEAD:${HEAD_REF}"
-
   contract:
     name: Release App Contract
     runs-on: ubuntu-latest
