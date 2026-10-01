@@ -42,7 +42,12 @@ jobs:
             const firstBreak=readme.indexOf('\n');
             readme=readme.slice(0,firstBreak+1)+block+readme.slice(firstBreak+1);
           }
+          readme=readme.replace('AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, 참가와 결제는 항상 사용자가 직접 확인합니다.','AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, Release App의 참가 확정은 사용자가 직접 확인합니다. 사용자-facing Join은 무료 참가 확인이며 실제 PG는 연결되지 않았습니다.');
+          readme=readme.replace('- Real App IA: **Home = AI Match Assistant entry + compact personalization → Discover = AI/search result exploration + filter/sort → Detail = match decision → Join = joined-match status → MY = saved matches + profile/settings**','- Real App IA: **Home = lifecycle-aware next action → 경기 찾기/Discover = AI/search exploration + filter/sort → Detail = match decision → Join = free participation confirmation → MY = joined/saved matches + Matchday + Return + profile/settings**');
           readme=readme.replace('- **Recoverable participation** — checkout → pending → success | failure | canceled를 분리하고 retry·status check·reload recovery를 제공합니다.','- **Release participation** — 로그인 후 무료 참가 확인 → 성공 → MY로 이어집니다. 기존 payment pending/retry 모델은 compatibility 검증에만 남고 Release App의 사용자-facing Join에서는 노출하지 않습니다.');
+          readme=readme.replace('- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가와 결제를 자동 실행하지 않습니다.','- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가 확정을 자동 실행하지 않습니다.');
+          readme=readme.replace('- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 join/payment는 HITL로 유지','- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 Join 확정은 HITL로 유지');
+          readme=readme.replace('- Sign in / checkout / pending / retry / cancel / reload recovery','- Sign in / free Join confirmation / success / MY handoff; legacy payment pending/retry paths remain compatibility-only regression coverage');
           readme=readme.replace('- `/app` auth / payment / capacity / notification providers: **deterministic mock**','- `/app` auth / capacity / notification providers: **deterministic mock**\n- `/app` Join: **browser-local free participation confirmation**; real PG 미연동');
           fs.writeFileSync('README.md',readme);
 
