@@ -1,7 +1,7 @@
 /* FootMate Release App v6
    One journey, one canonical MY ownership, one continuous surface on desktop. */
 
-.fm-next-page[data-mode="real"] [data-release-app-version="6.0.0"]{
+#footmate-next[data-release-app-version="6.0.0"]{
   --fm-v6-line:rgba(15,54,38,.10);
   --fm-v6-soft:#f6f9f6;
   --fm-v6-accent:#d8ff73;
