@@ -42,15 +42,18 @@ async function expectHorizontalPanContainment(page,screenSelector,{auth=false}={
     return {
       shellTouchAction:shellStyle.touchAction,
       shellOverscrollX:shellStyle.overscrollBehaviorX,
+      screenTouchAction:screenStyle.touchAction,
       screenOverscrollX:screenStyle.overscrollBehaviorX,
       screenOverflowX:screenStyle.overflowX,
       rootOverscrollX:getComputedStyle(document.documentElement).overscrollBehaviorX,
       bodyOverscrollX:getComputedStyle(document.body).overscrollBehaviorX
     };
   });
-  const touchTokens=policy.shellTouchAction.split(/\s+/);
-  expect(touchTokens).toContain('pan-y');
-  expect(touchTokens).toContain('pinch-zoom');
+  for(const touchAction of [policy.shellTouchAction,policy.screenTouchAction]){
+    const touchTokens=touchAction.split(/\s+/);
+    expect(touchTokens).toContain('pan-y');
+    expect(touchTokens).toContain('pinch-zoom');
+  }
   expect(policy.shellOverscrollX).toBe('none');
   expect(policy.screenOverscrollX).toBe('none');
   expect(policy.rootOverscrollX).toBe('none');
