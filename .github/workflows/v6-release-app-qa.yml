@@ -32,10 +32,11 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
-      - name: Install pinned Playwright
+      - name: Install pinned browser QA dependencies
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
-          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
       - name: Run Release App browser and visual comparison
         run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs
       - name: Upload Release App visual evidence
