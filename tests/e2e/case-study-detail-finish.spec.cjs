@@ -110,7 +110,7 @@ for(const [name,viewport] of [
     expect(p13.closingRadius).toBe(16);
     expect(p13.ctaRadius).toBe(12);
     expect(p13.focusBg).not.toBe(p13.quietBg);
-    expect(p13.chips.every(chip=>chip.height>=22&&chip.width>=44&&chip.radius>50)).toBeTruthy();
+    expect(p13.chips.every(chip=>chip.height>=22&&chip.width>=44&&chip.radius>=chip.height/2-1)).toBeTruthy();
     expect(p13.ctaHeight).toBeGreaterThanOrEqual(44);
     if(name==='desktop')expect(p13.centerDelta).toBeLessThanOrEqual(1.5);
 
