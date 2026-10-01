@@ -73,9 +73,40 @@
   }
 
   function markEvidenceScale(){
-    document.querySelector(`${ROOT} .fm-evidence-figure.is-recommendation`)?.setAttribute('data-evidence-scale','secondary');
-    document.querySelector(`${ROOT} .fm-evidence-figure.is-detail`)?.setAttribute('data-evidence-scale','primary');
-    document.querySelector(`${ROOT} .fm-evidence-figure.is-operations`)?.setAttribute('data-evidence-scale','primary');
+    const targets=[
+      ['.fm-evidence-figure.is-recommendation','secondary'],
+      ['.fm-evidence-figure.is-detail','primary'],
+      ['.fm-evidence-figure.is-operations','primary']
+    ];
+    let marked=0;
+    for(const [selector,scale] of targets){
+      const node=document.querySelector(`${ROOT} ${selector}`);
+      if(!node)continue;
+      node.setAttribute('data-evidence-scale',scale);
+      marked+=1;
+    }
+    return marked;
+  }
+
+  function wireEvidenceScale(){
+    const track=document.querySelector('.track');
+    const sync=()=>markEvidenceScale();
+    if(sync()===3)return;
+    if(!track)return;
+
+    const observer=new MutationObserver(()=>{
+      if(sync()===3)observer.disconnect();
+    });
+    observer.observe(track,{childList:true,subtree:true});
+
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries+=1;
+      if(sync()===3||tries>240){
+        clearInterval(timer);
+        observer.disconnect();
+      }
+    },25);
   }
 
   function updateNavigationLabels(){
@@ -117,7 +148,7 @@
     if(slides.length!==13)return false;
 
     translateMicroLabels();
-    markEvidenceScale();
+    wireEvidenceScale();
     wireNavigation();
     html.dataset.fmCaseStudyAdvancedPolish='true';
     return true;
