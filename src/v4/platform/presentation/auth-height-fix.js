@@ -1,5 +1,6 @@
 const STYLE_ID='fm-auth-height-fix';
 
+// Keep login spacing compact without changing field or button sizing.
 function installAuthHeightFix(){
   if(document.getElementById(STYLE_ID))return;
   const style=document.createElement('style');
