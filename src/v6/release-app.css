@@ -38,6 +38,10 @@
 .fm-v6-free-copy{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
 .fm-v6-free-copy b{font-size:18px;color:var(--fm-pitch)}
 .fm-v6-free-copy span{max-width:210px;color:var(--fm-muted);font-size:12px;line-height:1.5;text-align:right}
+.fm-v6-join-error{margin:16px 0 10px;padding:14px;border:1px solid rgba(148,68,48,.18);border-radius:15px;background:#fff7f3;color:#63382c}
+.fm-v6-join-error b{display:block;font-size:13px}
+.fm-v6-join-error p{margin:5px 0 12px;font-size:12px;line-height:1.5;color:#795145}
+.fm-v6-join-error .fm-next-button{width:100%;min-height:40px}
 
 .fm-v6-return{margin:0 0 24px;padding:20px;border:1px solid var(--fm-v6-line);border-radius:22px;background:#fff}
 .fm-v6-return>small{color:#176445}
@@ -66,8 +70,11 @@
 
 /* MY becomes the canonical owner of joined matches, saved matches and settings. */
 [data-screen="profile"][data-v6-my="true"] .fm-next-section{padding-top:20px}
-[data-screen="profile"][data-v6-my="true"] .fm-next-profile-card{margin-top:8px}
-[data-screen="profile"][data-v6-my="true"] .fm-flow-saved{margin-top:20px}
+[data-screen="profile"][data-v6-my="true"] [data-v6-my-section="saved"]{margin-top:30px}
+[data-screen="profile"][data-v6-my="true"] [data-v6-my-section="profile"]{margin-top:36px}
+[data-screen="profile"][data-v6-my="true"] [data-v6-profile-label]{margin:0 0 8px}
+[data-screen="profile"][data-v6-my="true"] [data-v6-settings-label]{margin:36px 0 8px}
+[data-screen="profile"][data-v6-my="true"] .fm-flow-saved{margin-bottom:0}
 
 @media(min-width:700px){
   /* Auth proved the desktop direction: one continuous surface, cards only for real objects. */
@@ -143,4 +150,7 @@
   .fm-v6-lifecycle-match span{text-align:left}
   .fm-v6-free-copy{align-items:flex-start;flex-direction:column;gap:5px}
   .fm-v6-free-copy span{text-align:left}
+  [data-screen="profile"][data-v6-my="true"] [data-v6-my-section="saved"]{margin-top:26px}
+  [data-screen="profile"][data-v6-my="true"] [data-v6-my-section="profile"]{margin-top:30px}
+  [data-screen="profile"][data-v6-my="true"] [data-v6-settings-label]{margin-top:30px}
 }
