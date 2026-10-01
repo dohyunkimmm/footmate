@@ -34,11 +34,24 @@ async function persistence(page,capture=async()=>{}){
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
   await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
   await capture('checkin-home-completed',page.locator('[data-screen="home"]'));
-  await page.locator('[data-action="open-joined-match"]').click();
-  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
-  await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
-  await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
-  await capture('checkin-detail-completed',page.locator('[data-screen="detail"]'));
+
+  const releaseMy=page.locator('[data-v6-lifecycle="matchday"] [data-v6-action="open-my"]');
+  if(await releaseMy.isVisible().catch(()=>false)){
+    await releaseMy.click();
+    await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
+    const my=page.locator('[data-screen="profile"]');
+    await expect(my).toHaveAttribute('data-v6-my','true');
+    await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+    await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
+    await capture('checkin-my-returned-completed',my);
+  }else{
+    await page.locator('[data-action="open-joined-match"]').click();
+    await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+    await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
+    await expect(panel(page).locator('[data-matchday-action="checkin"]')).toHaveCount(0);
+    await capture('checkin-detail-completed',page.locator('[data-screen="detail"]'));
+  }
+
   await page.reload({waitUntil:'domcontentloaded'});
   await expect(panel(page)).toHaveAttribute('data-checkin-state','completed');
   expect((await record(page)).checkedInAt).toBe(saved.checkedInAt);
