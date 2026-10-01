@@ -6,6 +6,9 @@ function installAuthHeightFix(){
   const style=document.createElement('style');
   style.id=STYLE_ID;
   style.textContent=`
+.fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
+  overflow-x:hidden;
+}
 @media (min-width:700px){
   .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
     min-height:100%;

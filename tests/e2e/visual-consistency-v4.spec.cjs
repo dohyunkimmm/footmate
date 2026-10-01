@@ -127,6 +127,7 @@ test('390px Welcome and Setup share the final V3 visual language',async({page})=
 test('390px Auth Checkout and Success read as one conversion journey',async({page})=>{
   const errs=await openCleanApp(page);
   await reachAuth(page);
+  await expectNoHorizontalOverflow(page);
   await expect(page).toHaveScreenshot('visual-consistency-auth-390.png',shot);
 
   await moveAuthToCheckout(page);
