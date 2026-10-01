@@ -6,8 +6,13 @@ function installAuthHeightFix(){
   const style=document.createElement('style');
   style.id=STYLE_ID;
   style.textContent=`
-.fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
+.fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] :is([data-screen="auth"],.fm-next-auth-v3){
+  width:100%;
+  max-width:100%;
+  min-width:0;
   overflow-x:hidden;
+  overscroll-behavior-x:none;
+  touch-action:pan-y pinch-zoom;
 }
 @media (min-width:700px){
   .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
