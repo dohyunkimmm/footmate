@@ -80,7 +80,7 @@ for(const [name,viewport] of [
 
     const cards=slide.locator('.fm-p1-evidence-grid>.fm-next-cs-card');
     await expect(cards).toHaveCount(3);
-    const expectedLabels=['AUTOMATED QA','HUMAN CHECK','AI-ASSISTED REVIEW'];
+    const expectedLabels=['자동 QA','사람 검수','AI 보조 검수'];
 
     for(let index=0;index<3;index+=1){
       const card=cards.nth(index);
