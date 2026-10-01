@@ -14,17 +14,17 @@
 
 ## Current release engineering docs
 
-FootMate에서 현재 직접 유지하는 release/product 문서는 아래 아홉 개입니다.
+FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 같습니다.
 
-- `RELEASE-HISTORY.md` — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
-- `RELEASE-HISTORY-CORRECTIONS.md` — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
-- `RELEASE-APP-V6.md` — current Release App v6 IA, state ownership, free Join, MY lifecycle, provider boundary와 QA contract
-- `CASE-STUDY-COPY-QA-CORRECTIONS.md` — Case Study reference copy의 이후 승인 변경. `archive/CASE-STUDY-COPY-QA.md`와 충돌하면 더 최신 correction이 현재 기준
-- `BETA-PILOT-RUNBOOK.md` — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
-- `BETA-MEASUREMENT-READINESS.md` — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
-- `V5.1.1-AI-RESILIENCE-PATCH.md` — current AI provider/timeout/state/request guard patch contract
-- `V5.1-AI-MATCH-ASSISTANT.md` — current AI Match Assistant architecture and acceptance contract
-- `README.md` — 이 documentation index와 현재/역사 문서 경계
+- [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
+- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
+- [RELEASE-APP-V6.md](RELEASE-APP-V6.md) — current Release App v6 IA, state ownership, free Join, MY lifecycle, provider boundary와 QA contract
+- [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — Case Study reference copy의 이후 승인 변경. `archive/CASE-STUDY-COPY-QA.md`와 충돌하면 더 최신 correction이 현재 기준
+- [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
+- [BETA-MEASUREMENT-READINESS.md](BETA-MEASUREMENT-READINESS.md) — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
+- [V5.1.1-AI-RESILIENCE-PATCH.md](V5.1.1-AI-RESILIENCE-PATCH.md) — v6에서도 유지되는 AI provider/timeout/state/request guard 하위 계약
+- [V5.1-AI-MATCH-ASSISTANT.md](V5.1-AI-MATCH-ASSISTANT.md) — v6에서도 유지되는 AI Match Assistant architecture/acceptance 하위 계약
+- [README.md](README.md) — 이 documentation index와 현재/역사 문서 경계
 
 `archive/CASE-STUDY-COPY-QA.md`와 Case Study 관련 baseline/설명 파일은 현재 FootMate 작업의 수정 대상이 아니라 별도 Case Study 프로젝트 상태를 확인할 때만 사용하는 read-only reference로 취급합니다. 과거 Case Study PR·SHA·QA 이력은 Release History/Corrections에 역사적 근거로 보존할 수 있지만 FootMate의 현재 실행 계약으로 사용하지 않습니다. Case Study reference copy의 이후 승인 변경은 `CASE-STUDY-COPY-QA-CORRECTIONS.md`에서 supersession을 확인합니다.
 

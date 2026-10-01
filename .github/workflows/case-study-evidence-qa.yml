@@ -2,6 +2,12 @@ name: Case Study Evidence QA
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'index.html'
+      - 'src/v5/case-study-*'
+      - 'tests/e2e/case-study-*.spec.cjs'
+      - 'playwright.config.cjs'
+      - 'package.json'
 permissions:
   contents: read
 jobs:
