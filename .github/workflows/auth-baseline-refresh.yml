@@ -30,6 +30,9 @@ jobs:
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
       - name: Generate auth baselines in pinned Chromium
         run: |
+          rm -f \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-auth-1440-chromium-linux.png \
+            tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-auth-390-chromium-linux.png
           npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "1440px Auth matches the decision-to-join hierarchy" --update-snapshots
           npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs --grep "390px Auth Checkout and Success read as one conversion journey" --update-snapshots
           git checkout HEAD -- tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-checkout-390-chromium-linux.png tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-success-390-chromium-linux.png
