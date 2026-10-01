@@ -215,7 +215,8 @@ test('Release App mobile changed surfaces match approved visual baselines',async
   await openDetail(page);await reachJoin(page);
   await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',shot);
 
-  await page.evaluate(({matchId})=>localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId,status:'upcoming',startsAt:'2026-10-01T22:06:00.000Z'})),{matchId});
+  await page.clock.install({time:new Date('2026-10-01T21:56:00.000Z')});
+  await page.evaluate(({matchId})=>localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId,status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()})),{matchId});
   await seedSession(page,{route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'matchday'});
   await expect(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-matchday-390.png',shot);
 
