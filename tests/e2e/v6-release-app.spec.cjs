@@ -118,8 +118,9 @@ test('Home lifecycle and postgame Return converge on MY',async({page})=>{
   await setupToHome(page);
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
   await seedSession(page,{route:'home',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
-  await expect(page.locator('[data-v6-lifecycle="upcoming"]')).toBeVisible();
-  await page.getByRole('button',{name:'내 경기 보기'}).click();
+  const lifecycle=page.locator('[data-v6-lifecycle="upcoming"]');
+  await expect(lifecycle).toBeVisible();
+  await lifecycle.getByRole('button',{name:'내 경기 보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await seedSession(page,{route:'profile',matchStage:'postgame'});
   const panel=page.locator('[data-v6-return="draft"]');
