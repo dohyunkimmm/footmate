@@ -14,6 +14,13 @@ function installLayoutDensityFix(){
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-empty{
   min-height:260px;
 }
+@media(max-width:430px){
+  .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) [data-screen="discover"] .fm-discovery-empty{
+    min-height:0;
+    padding:22px 20px 24px;
+    margin-bottom:80px;
+  }
+}
 `;
   document.head.append(style);
 }
