@@ -7,7 +7,7 @@ const isReal=()=>document.documentElement.dataset.footmateSurface==='real';
 const session=()=>createState(footmatePlatform.session.read()||{});
 const patchSession=patch=>footmatePlatform.session.patch(patch);
 const matchById=id=>MATCHES.find(match=>match.id===id)||null;
-const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[char]));
+const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 let scheduled=false;
 let patching=false;
 
