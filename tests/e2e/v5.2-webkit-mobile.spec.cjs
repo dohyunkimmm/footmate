@@ -31,6 +31,24 @@ async function expectNoDocumentOverflow(page){
   return geometry;
 }
 
+async function expectAuthHorizontalPanLocked(page){
+  const lock=await page.locator('[data-screen="auth"]').evaluate(node=>{
+    const style=getComputedStyle(node);
+    return {
+      touchAction:style.touchAction,
+      overscrollBehaviorX:style.overscrollBehaviorX,
+      overflowX:style.overflowX,
+      width:node.getBoundingClientRect().width,
+      parentWidth:node.parentElement?.getBoundingClientRect().width||0
+    };
+  });
+  expect(lock.touchAction).toContain('pan-y');
+  expect(lock.touchAction).not.toContain('pan-x');
+  expect(lock.overscrollBehaviorX).toBe('none');
+  expect(['hidden','clip']).toContain(lock.overflowX);
+  expect(lock.width).toBeLessThanOrEqual(lock.parentWidth+1);
+}
+
 async function reloadRoute(page,patch){
   await page.evaluate(patch=>{
     const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
@@ -66,6 +84,12 @@ test('Mobile Safari/WebKit keeps the Real App flow geometry, focus and fixed nav
 
     const selectedMatchId=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')||'{}').selectedMatchId);
     expect(selectedMatchId).toBeTruthy();
+
+    await page.getByRole('button',{name:'참가하기'}).click();
+    await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+    await expectNoDocumentOverflow(page);
+    await expectAuthHorizontalPanLocked(page);
+
     await reloadRoute(page,{route:'success',signedIn:true,joinedMatchId:selectedMatchId,userName:'도현',matchStage:'upcoming'});
     await expect(page.locator('[data-screen="success"]')).toBeVisible();
     await expectNoDocumentOverflow(page);
