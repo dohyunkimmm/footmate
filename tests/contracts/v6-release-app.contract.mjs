@@ -20,7 +20,7 @@ assert.match(release,/data-v6-lifecycle/,'state-aware Home contract missing');
 assert.match(release,/kind:completedReturn\(match\.id\)\?'complete':'return'/,'completed Return must close the Home lifecycle loop');
 assert.match(release,/data-v6-action=\"\$\{action\}\"/,'lifecycle CTA must follow lifecycle state');
 assert.match(release,/data-v6-return/,'postgame ownership must live in MY');
-assert.match(release,/data-v6-my-section/,'MY hierarchy markers missing');
+assert.match(release,/dataset\.v6MySection/,'MY hierarchy markers missing');
 assert.match(styles,/one canonical MY ownership/i,'release visual ownership marker missing');
 assert.match(styles,/\[data-screen="detail"\] \.fm-next-detail-section/,'desktop Detail flattening missing');
 assert.match(styles,/\[data-screen="profile"\] \.fm-next-profile-card/,'desktop MY flattening missing');
