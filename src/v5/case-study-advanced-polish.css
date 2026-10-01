@@ -1,0 +1,192 @@
+/* FootMate Case Study · advanced portfolio polish
+   Scope: desktop section anchor, evidence scale rules, late-mobile density,
+   navigation affordance, and final CTA emphasis. Cover stays unchanged. */
+
+/* Korean micro-labels should read like editorial labels, not all-caps system tokens. */
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] :is(
+  .fm-p0-arch-node small,
+  .fm-p0-priority-label,
+  .fm-p1-jtbd-journey li small,
+  .fm-p1-auth-preserve small,
+  .fm-p1-validation-banner>span,
+  .fm-p1-funnel small,
+  .fm-p1-evidence-label,
+  .fm-p1-release-map header small,
+  .fm-p1-release-next>span
+){
+  text-transform:none!important;
+  letter-spacing:.035em!important;
+}
+
+/* Desktop body sections share one visual start anchor.
+   Short sections no longer float in the vertical center while dense sections start near the top. */
+@media(min-width:901px) and (min-height:840px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide){
+    justify-content:flex-start!important;
+    align-items:flex-start!important;
+    padding-top:92px!important;
+    padding-bottom:58px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide)>.fm-next-story{
+    margin-top:0!important;
+  }
+
+  /* Product proof scale system: P7/P9 are primary proof, P6 is secondary proof.
+     Captions share one rhythm while the source crop remains untouched. */
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-evidence-figure[data-evidence-scale="primary"] img{
+    height:430px!important;
+    max-height:430px!important;
+    object-fit:cover!important;
+    object-position:top!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-evidence-figure[data-evidence-scale="secondary"] img{
+    height:380px!important;
+    max-height:380px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-evidence-figure[data-evidence-scale] figcaption{
+    min-height:20px;
+    margin-top:8px!important;
+    align-items:center;
+  }
+
+  /* Final action should read as the deliberate end of the case study on desktop. */
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next>a{
+    min-height:44px!important;
+    padding:0 18px!important;
+    font-size:12px!important;
+    font-weight:850!important;
+  }
+
+  /* Previous / next controls reveal section context on hover or keyboard focus. */
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .cs-button{
+    position:relative;
+    overflow:visible;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .cs-button::after{
+    content:attr(data-nav-label);
+    position:absolute;
+    bottom:calc(100% + 9px);
+    z-index:8;
+    width:max-content;
+    max-width:190px;
+    padding:7px 10px;
+    border:1px solid #dce5df;
+    border-radius:9px;
+    background:rgba(255,255,255,.97);
+    box-shadow:0 8px 22px rgba(23,44,31,.09);
+    color:#405249;
+    font-size:10px;
+    line-height:1.25;
+    font-weight:800;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .16s ease,transform .16s ease;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .btn-prev::after{
+    left:0;
+    transform:translateY(3px);
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .btn-next::after{
+    right:0;
+    transform:translateY(3px);
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .cs-button:is(:hover,:focus-visible)::after{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* Late mobile sections are information-heavy. Reduce repeated chrome and spacing by ~10%
+   without removing content or changing the KPI/release information architecture. */
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:is(
+    [data-v5-content-role="domain-ai-boundary"],
+    [data-v5-content-role="validation-evidence"],
+    [data-v5-content-role="production-boundary"]
+  ){
+    padding:28px 18px 38px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:is(
+    [data-v5-content-role="domain-ai-boundary"],
+    [data-v5-content-role="validation-evidence"],
+    [data-v5-content-role="production-boundary"]
+  ) .fm-next-story{
+    gap:9px!important;
+    padding-bottom:4px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:is(
+    [data-v5-content-role="domain-ai-boundary"],
+    [data-v5-content-role="validation-evidence"],
+    [data-v5-content-role="production-boundary"]
+  ) .fm-next-story-kicker{
+    margin-bottom:7px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:is(
+    [data-v5-content-role="domain-ai-boundary"],
+    [data-v5-content-role="validation-evidence"],
+    [data-v5-content-role="production-boundary"]
+  ) .fm-next-story h2{
+    margin-bottom:7px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:is(
+    [data-v5-content-role="domain-ai-boundary"],
+    [data-v5-content-role="validation-evidence"],
+    [data-v5-content-role="production-boundary"]
+  ) .fm-next-story-lead{
+    margin-bottom:9px!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="domain-ai-boundary"] .fm-p0-architecture{
+    margin-top:8px!important;
+    gap:8px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="domain-ai-boundary"] .fm-p0-arch-main{
+    gap:6px!important;
+    padding:10px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="domain-ai-boundary"] .fm-p0-arch-node{
+    padding:10px 12px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="domain-ai-boundary"] .fm-p0-arch-guardrails{
+    gap:6px!important;
+    padding:10px!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-metrics{
+    gap:8px!important;
+    margin-top:8px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-banner{
+    min-height:136px!important;
+    padding:16px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-funnel-wrap{
+    padding:12px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid{
+    gap:7px!important;
+    margin-top:8px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
+    padding:12px 14px!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map{
+    gap:8px!important;
+    margin-top:8px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article{
+    padding:15px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map ul{
+    gap:6px!important;
+    margin-top:10px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map li{
+    padding:8px 9px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next{
+    margin-top:8px!important;
+  }
+}
