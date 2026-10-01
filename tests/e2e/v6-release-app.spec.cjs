@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+const AxeBuilder=require('@axe-core/playwright').default;
 
 const shot={animations:'disabled',caret:'hide',maxDiffPixels:50};
 
@@ -7,6 +8,18 @@ function failures(page){
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
   page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))items.push(`console.error: ${message.text()}`)});
   return items;
+}
+
+async function expectNoHorizontalOverflow(page){
+  const geometry=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,shell:document.querySelector('.fm-next-app')?.getBoundingClientRect().width||0}));
+  expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewport+1);
+  expect(geometry.bodyWidth).toBeLessThanOrEqual(geometry.viewport+1);
+  expect(geometry.shell).toBeLessThanOrEqual(Math.min(560,geometry.viewport+1));
+}
+
+async function expectAxeClean(page,selector){
+  const result=await new AxeBuilder({page}).include(selector).withTags(['wcag2a','wcag2aa']).analyze();
+  expect(result.violations.filter(item=>['serious','critical'].includes(item.impact))).toEqual([]);
 }
 
 async function openCleanApp(page,viewport={width:1440,height:900}){
@@ -141,5 +154,47 @@ test('Home lifecycle and postgame Return converge on MY',async({page})=>{
   await expect(page.locator('[data-v6-lifecycle="return"]')).toBeVisible();
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('v6-release-home-return-1440.png',shot);
+  expect(errs).toEqual([]);
+});
+
+test('Release App mobile Detail, free Join and MY stay overflow-safe and accessible',async({page})=>{
+  for(const width of [320,375,390,430]){
+    const errs=await openCleanApp(page,{width,height:844});
+    await setupToHome(page);
+    await expectNoHorizontalOverflow(page);
+    await openDetail(page);
+    await expectNoHorizontalOverflow(page);
+    await expect(page.locator('[data-screen="detail"]')).toHaveAttribute('data-v6-detail','true');
+    await reachJoin(page);
+    await expectNoHorizontalOverflow(page);
+    const join=page.locator('[data-screen="checkout"]');
+    await expect(join.locator('[data-v6-hidden-payment="true"]')).toBeHidden();
+    await page.getByRole('button',{name:'무료로 참가 확정'}).click();
+    await expect(page.locator('[data-screen="success"]')).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+    await page.getByRole('button',{name:'내 경기 보기'}).click();
+    const my=page.locator('[data-screen="profile"]');
+    await expect(my).toHaveAttribute('data-v6-my','true');
+    await expectNoHorizontalOverflow(page);
+    if(width===390){
+      await expectAxeClean(page,'[data-screen="profile"]');
+    }
+    expect(errs).toEqual([]);
+  }
+});
+
+test('Release App keeps Matchday operations inside MY',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
+  await page.evaluate(({matchId})=>localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId,status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()})),{matchId});
+  await seedSession(page,{route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'matchday'});
+  const my=page.locator('[data-screen="profile"]');
+  await expect(my).toHaveAttribute('data-v6-my','true');
+  const matchday=my.getByRole('region',{name:'경기 당일 운영'});
+  await expect(matchday).toBeVisible();
+  await expect(matchday).toHaveAttribute('data-matchday-version','4.5.0');
+  await expectNoHorizontalOverflow(page);
+  await expectAxeClean(page,'[data-screen="profile"]');
   expect(errs).toEqual([]);
 });
