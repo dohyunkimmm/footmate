@@ -1,5 +1,10 @@
 const { execFileSync } = require('node:child_process');
 
+const DEPLOY_REQUIRED_PATTERNS = [
+  /^tests\/production-/,
+  /^tests\/e2e\/[^/]*production[^/]*\.spec\.cjs$/,
+];
+
 const IGNORABLE_PATTERNS = [
   /^README\.md$/,
   /^docs\//,
@@ -9,6 +14,7 @@ const IGNORABLE_PATTERNS = [
 ];
 
 function isIgnorable(file) {
+  if (DEPLOY_REQUIRED_PATTERNS.some((pattern) => pattern.test(file))) return false;
   return IGNORABLE_PATTERNS.some((pattern) => pattern.test(file));
 }
 
