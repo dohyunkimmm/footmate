@@ -79,7 +79,7 @@ for(const [name,viewport] of [
     expect(p12.funnelFocusBg).not.toBe(p12.evidenceBg);
     expect(p12.labelSpacing).toBeLessThan(1);
 
-    // 1/2/4/7 · P13 has one focal card, pill status tokens, and a centered final CTA.
+    // 1/2/4/7 · P13 has one focal card, pill status tokens, and a clean learning-only close.
     await showSection(page,12);
     const p13=await page.locator('.slide.on').evaluate(slide=>{
       const quiet=slide.querySelector('.fm-p1-release-map>article:not(.is-focus)');
@@ -90,9 +90,6 @@ for(const [name,viewport] of [
         return {height:box.height,width:box.width,radius:parseFloat(css.borderTopLeftRadius),lineHeight:parseFloat(css.lineHeight)};
       });
       const closing=slide.querySelector('.fm-p1-release-next');
-      const cta=closing.querySelector('a');
-      const closingBox=closing.getBoundingClientRect();
-      const ctaBox=cta.getBoundingClientRect();
       return {
         quietRadius:parseFloat(getComputedStyle(quiet).borderTopLeftRadius),
         focusRadius:parseFloat(getComputedStyle(focus).borderTopLeftRadius),
@@ -100,21 +97,19 @@ for(const [name,viewport] of [
         focusBg:getComputedStyle(focus).backgroundColor,
         chips,
         closingRadius:parseFloat(getComputedStyle(closing).borderTopLeftRadius),
-        ctaRadius:parseFloat(getComputedStyle(cta).borderTopLeftRadius),
-        ctaHeight:ctaBox.height,
-        centerDelta:Math.abs((ctaBox.top+ctaBox.height/2)-(closingBox.top+closingBox.height/2))
+        hasCta:Boolean(closing.querySelector('a')),
+        closingText:closing.textContent.trim()
       };
     });
     expect(p13.quietRadius).toBe(16);
     expect(p13.focusRadius).toBe(16);
     expect(p13.closingRadius).toBe(16);
-    expect(p13.ctaRadius).toBe(12);
     expect(p13.focusBg).not.toBe(p13.quietBg);
+    expect(p13.hasCta).toBeFalsy();
+    expect(p13.closingText).toContain('핵심 학습');
     // Chromium can resolve 22/44px minimums a fraction below the authored value after layout.
     // Keep a half-pixel tolerance while still verifying the intended pill geometry.
     expect(p13.chips.every(chip=>chip.height>=21.5&&chip.width>=43.5&&chip.radius>=10.5)).toBeTruthy();
-    expect(p13.ctaHeight).toBeGreaterThanOrEqual(44);
-    if(name==='desktop')expect(p13.centerDelta).toBeLessThanOrEqual(1.5);
 
     if(name==='desktop'){
       // 6 · Navigation is quieter while the active dot remains unambiguous.
