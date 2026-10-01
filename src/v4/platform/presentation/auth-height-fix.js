@@ -14,15 +14,6 @@ function installAuthHeightFix(){
   overscroll-behavior-x:none;
   touch-action:pan-y pinch-zoom;
 }
-.fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
-  background:#fff;
-}
-.fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3 .fm-auth-card{
-  border:0;
-  border-radius:0;
-  background:transparent;
-  box-shadow:none;
-}
 .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3:has([data-auth-form="login"]) .fm-auth-head{
   min-height:60px;
   padding-block:8px;
@@ -59,6 +50,13 @@ function installAuthHeightFix(){
 @media (min-width:700px){
   .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
     min-height:100%;
+    background:#fff;
+  }
+  .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3 .fm-auth-card{
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
   }
   .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3:has([data-auth-form="login"]) .fm-auth-head{
     min-height:48px;
