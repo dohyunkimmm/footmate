@@ -22,13 +22,17 @@ async function expectAxeClean(page,selector){
   expect(result.violations.filter(item=>['serious','critical'].includes(item.impact))).toEqual([]);
 }
 
+async function waitForReleaseReady(page){
+  await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
+}
+
 async function openCleanApp(page,viewport={width:1440,height:900}){
   const errs=failures(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
+  await waitForReleaseReady(page);
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   return errs;
 }
@@ -72,7 +76,7 @@ async function seedSession(page,patch){
     localStorage.setItem('footmate:session',JSON.stringify({...current,...patch}));
   },patch);
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
+  await waitForReleaseReady(page);
 }
 
 test('Release App flattens desktop Detail into one decision surface',async({page})=>{
@@ -103,6 +107,7 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('v6-release-join-1440.png',shot);
   await page.getByRole('button',{name:'무료로 참가 확정'}).click();
+  await waitForReleaseReady(page);
   await expect(page.locator('[data-screen="success"]')).toBeVisible();
   await page.mouse.move(1,1);
   await expect(page).toHaveScreenshot('v6-release-success-1440.png',shot);
@@ -123,7 +128,7 @@ test('legacy Schedule state migrates into canonical MY ownership',async({page})=
   const errs=await openCleanApp(page);
   await page.evaluate(()=>localStorage.setItem('footmate:session',JSON.stringify({schemaVersion:2,route:'schedule',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:true,matchStage:'discover'})));
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
+  await waitForReleaseReady(page);
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   const route=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')||'{}').route);
   expect(route).toBe('profile');
@@ -157,8 +162,8 @@ test('Home lifecycle and postgame Return converge on MY',async({page})=>{
   expect(errs).toEqual([]);
 });
 
-test('Release App mobile Detail, free Join and MY stay overflow-safe and accessible',async({page})=>{
-  for(const width of [320,375,390,430]){
+for(const width of [320,375,390,430]){
+  test(`Release App mobile Detail, free Join and MY stay overflow-safe and accessible at ${width}px`,async({page})=>{
     const errs=await openCleanApp(page,{width,height:844});
     await setupToHome(page);
     await expectNoHorizontalOverflow(page);
@@ -170,6 +175,7 @@ test('Release App mobile Detail, free Join and MY stay overflow-safe and accessi
     const join=page.locator('[data-screen="checkout"]');
     await expect(join.locator('[data-v6-hidden-payment="true"]')).toBeHidden();
     await page.getByRole('button',{name:'무료로 참가 확정'}).click();
+    await waitForReleaseReady(page);
     await expect(page.locator('[data-screen="success"]')).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await page.getByRole('button',{name:'내 경기 보기'}).click();
@@ -180,8 +186,8 @@ test('Release App mobile Detail, free Join and MY stay overflow-safe and accessi
       await expectAxeClean(page,'[data-screen="profile"]');
     }
     expect(errs).toEqual([]);
-  }
-});
+  });
+}
 
 test('Release App keeps Matchday operations inside MY',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
