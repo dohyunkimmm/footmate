@@ -135,7 +135,11 @@ test('Real App setup and checkout keep one clear full-width primary action on mo
   await expect(setupPrimary).toBeVisible();
   const setupRect=await setupPrimary.boundingBox();
   expect(setupRect.width).toBeGreaterThanOrEqual(340);
-  expect(setupRect.y+setupRect.height).toBeGreaterThanOrEqual(790);
+  const setupChoiceBottom=await page.locator('[data-screen="setup"] .fm-next-choice-grid').evaluate(node=>node.getBoundingClientRect().bottom);
+  const setupGap=setupRect.y-setupChoiceBottom;
+  expect(setupGap).toBeGreaterThanOrEqual(16);
+  expect(setupGap).toBeLessThanOrEqual(48);
+  expect(setupRect.y+setupRect.height).toBeLessThanOrEqual(720);
   await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
   await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();
   await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();

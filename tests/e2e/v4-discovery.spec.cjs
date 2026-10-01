@@ -84,7 +84,8 @@ test('v4.2 zero-result recovery widens restrictive conditions without losing pos
   await page.getByRole('button',{name:'결과 보기'}).click();
   await expect(page.getByRole('heading',{name:'조건에 맞는 경기가 없어요.'})).toBeVisible();
   const emptyHierarchy=await page.locator('.fm-discovery-empty').evaluate(element=>{const style=getComputedStyle(element),rect=element.getBoundingClientRect(),actions=element.querySelector('.fm-discovery-empty-actions'),primary=actions.querySelector('button:first-child'),secondary=actions.querySelector('button:last-child'),primaryStyle=getComputedStyle(primary),secondaryStyle=getComputedStyle(secondary);return {height:rect.height,borderStyle:style.borderTopStyle,background:style.backgroundImage,actionsWidth:actions.getBoundingClientRect().width,primaryBackground:primaryStyle.backgroundColor,secondaryBackground:secondaryStyle.backgroundColor}});
-  expect(emptyHierarchy.height).toBeGreaterThanOrEqual(280);
+  expect(emptyHierarchy.height).toBeGreaterThanOrEqual(220);
+  expect(emptyHierarchy.height).toBeLessThanOrEqual(270);
   expect(emptyHierarchy.borderStyle).toBe('solid');
   expect(emptyHierarchy.background).not.toBe('none');
   expect(emptyHierarchy.actionsWidth).toBeLessThanOrEqual(321);
