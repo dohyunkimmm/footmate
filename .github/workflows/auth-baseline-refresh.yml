@@ -30,6 +30,7 @@ jobs:
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
       - name: Generate auth baselines in pinned Chromium
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           rm -f \
             tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-auth-1440-chromium-linux.png \
             tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-auth-390-chromium-linux.png
