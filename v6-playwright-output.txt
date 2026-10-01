@@ -1,0 +1,87 @@
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › tests/e2e/v6-release-app.spec.cjs:87:1 › Release App flattens desktop Detail into one decision surface (2.6s)
+  ✘   2 [chromium] › tests/e2e/v6-release-app.spec.cjs:105:1 › Release App replaces simulated payment with free join and hands ownership to MY (4.6s)
+  ✓   3 [chromium] › tests/e2e/v6-release-app.spec.cjs:140:1 › Release App free Join failure is recoverable without leaving a stuck button (4.0s)
+  ✓   4 [chromium] › tests/e2e/v6-release-app.spec.cjs:164:1 › legacy Schedule state migrates into canonical MY ownership (1.4s)
+A snapshot doesn't exist at /__w/footmate/footmate/tests/e2e/v6-release-app.spec.cjs-snapshots/v6-release-home-complete-1440-chromium-linux.png, writing actual.
+  ✓   5 [chromium] › tests/e2e/v6-release-app.spec.cjs:175:1 › Home lifecycle closes Return and hands the next action back to Discover (6.1s)
+A snapshot doesn't exist at /__w/footmate/footmate/tests/e2e/v6-release-app.spec.cjs-snapshots/v6-release-home-upcoming-390-chromium-linux.png, writing actual.
+  ✘   6 [chromium] › tests/e2e/v6-release-app.spec.cjs:207:1 › Release App mobile changed surfaces match approved visual baselines (30.3s)
+A snapshot doesn't exist at /__w/footmate/footmate/tests/e2e/v6-release-app.spec.cjs-snapshots/v6-release-join-320-chromium-linux.png, writing actual.
+  ✓   7 [chromium] › tests/e2e/v6-release-app.spec.cjs:229:1 › Release App 320px Join keeps the compact visual contract (3.0s)
+  ✓   8 [chromium] › tests/e2e/v6-release-app.spec.cjs:238:3 › Release App mobile Detail, free Join and MY stay overflow-safe and accessible at 320px (3.3s)
+  ✓   9 [chromium] › tests/e2e/v6-release-app.spec.cjs:238:3 › Release App mobile Detail, free Join and MY stay overflow-safe and accessible at 375px (3.4s)
+  ✓  10 [chromium] › tests/e2e/v6-release-app.spec.cjs:238:3 › Release App mobile Detail, free Join and MY stay overflow-safe and accessible at 390px (4.9s)
+  ✓  11 [chromium] › tests/e2e/v6-release-app.spec.cjs:238:3 › Release App mobile Detail, free Join and MY stay overflow-safe and accessible at 430px (3.3s)
+  ✓  12 [chromium] › tests/e2e/v6-release-app.spec.cjs:264:1 › Release App keeps Matchday operations inside MY (2.7s)
+
+
+  1) [chromium] › tests/e2e/v6-release-app.spec.cjs:105:1 › Release App replaces simulated payment with free join and hands ownership to MY 
+
+    Error: locator.evaluate: TypeError: Failed to execute 'getComputedStyle' on 'Window': parameter 1 is not of type 'Element'.
+        at eval (eval at evaluate (:291:30), <anonymous>:2:23)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:291:30), <anonymous>:2:23)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /__w/footmate/footmate/tests/e2e/v6-release-app.spec.cjs:127:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/v6-release-app-Release-App-716cd-n-and-hands-ownership-to-MY-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/v6-release-app-Release-App-716cd-n-and-hands-ownership-to-MY-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/v6-release-app-Release-App-716cd-n-and-hands-ownership-to-MY-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/v6-release-app-Release-App-716cd-n-and-hands-ownership-to-MY-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/e2e/v6-release-app.spec.cjs:207:1 › Release App mobile changed surfaces match approved visual baselines 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('textbox', { name: '아이디' })[22m
+
+
+      67 | async function reachJoin(page){
+      68 |   await page.getByRole('button',{name:'참가하기'}).click();
+    > 69 |   await page.getByRole('textbox',{name:'아이디'}).fill('member01');
+         |                                                ^
+      70 |   await page.getByLabel('비밀번호',{exact:true}).fill('password123!');
+      71 |   await page.getByRole('button',{name:'로그인'}).click();
+      72 |   const join=page.locator('[data-screen="checkout"]');
+        at reachJoin (/__w/footmate/footmate/tests/e2e/v6-release-app.spec.cjs:69:48)
+        at /__w/footmate/footmate/tests/e2e/v6-release-app.spec.cjs:216:26
+
+    attachment #1: v6-release-home-upcoming-390 (image/png) ────────────────────────────────────────
+    Expected: tests/e2e/v6-release-app.spec.cjs-snapshots/v6-release-home-upcoming-390-chromium-linux.png
+    Received: test-results/playwright/v6-release-app-Release-App-03c6f-h-approved-visual-baselines-chromium/v6-release-home-upcoming-390-actual.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/v6-release-app-Release-App-03c6f-h-approved-visual-baselines-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/v6-release-app-Release-App-03c6f-h-approved-visual-baselines-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/v6-release-app-Release-App-03c6f-h-approved-visual-baselines-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/v6-release-app-Release-App-03c6f-h-approved-visual-baselines-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/e2e/v6-release-app.spec.cjs:105:1 › Release App replaces simulated payment with free join and hands ownership to MY 
+    [chromium] › tests/e2e/v6-release-app.spec.cjs:207:1 › Release App mobile changed surfaces match approved visual baselines 
+  10 passed (1.2m)
