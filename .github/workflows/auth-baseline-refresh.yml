@@ -1,0 +1,49 @@
+name: Auth baseline refresh
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.event.pull_request.head.ref == 'fix/auth-login-vertical-rhythm' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install browser QA dependencies
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION" css-tree@3.1.0
+      - name: Generate auth baselines in pinned Chromium
+        run: |
+          npx playwright test --project=chromium tests/e2e/v5.1-visual-system-completion.spec.cjs --grep "1440px Auth matches the decision-to-join hierarchy" --update-snapshots
+          npx playwright test --project=chromium tests/e2e/visual-consistency-v4.spec.cjs --grep "390px Auth Checkout and Success read as one conversion journey" --update-snapshots
+          git checkout HEAD -- tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-checkout-390-chromium-linux.png tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-success-390-chromium-linux.png
+      - name: Commit approved auth baselines and remove helper
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/auth-baseline-refresh.yml
+          git add .github/workflows/auth-baseline-refresh.yml \
+            tests/e2e/v5.1-visual-system-completion.spec.cjs-snapshots/visual-system-auth-1440-chromium-linux.png \
+            tests/e2e/visual-consistency-v4.spec.cjs-snapshots/visual-consistency-auth-390-chromium-linux.png
+          git diff --cached --quiet && { echo "No baseline changes generated"; exit 1; }
+          git commit -m "test: refresh auth visual baselines"
+          git push origin "HEAD:$BRANCH"
