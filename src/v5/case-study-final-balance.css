@@ -1,5 +1,5 @@
 /* FootMate Case Study · final balance pass
-   Scope: P8 alignment, P10 shared row rhythm, P13 natural desktop card height only. */
+   Scope: final alignment, shared row rhythm, natural card height, and whitespace density only. */
 
 /* P8 Sign in · Join
    The legacy high-specificity scope padding re-inset the lower boundary cards.
@@ -13,6 +13,23 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
    Horizontal spacing remains owned by the recovery composition. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-map{
   row-gap:var(--fm-cs-card-row-gap,10px)!important;
+}
+
+/* Cover role cards
+   Keep the existing horizontal inset and remove only excess vertical padding. */
+html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-proof>div{
+  padding:9px 13px!important;
+}
+
+/* Validation / Interactive Demo metrics
+   Content-sized cards prevent short metrics from reading like large empty panels. */
+html[data-fm-next-case-study="true"] .fm-next-cs-metrics{
+  align-items:start!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-cs-metric{
+  min-height:0!important;
+  height:auto!important;
+  padding:9px 14px!important;
 }
 
 @media(min-width:901px){
@@ -31,5 +48,14 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
   }
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article{
     height:auto!important;
+  }
+}
+
+/* Desktop cover
+   Lift only the copy block so the left column starts closer to the product preview.
+   Narrow/short viewports keep the established centering to avoid clipping. */
+@media(min-width:1181px) and (min-height:760px){
+  html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-copy{
+    transform:translateY(-80px);
   }
 }
