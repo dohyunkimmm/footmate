@@ -1,5 +1,17 @@
 # FootMate Release History
 
+## 6.0.0 — Unified Release App
+
+- Home / 경기 찾기 / MY 3-tab IA를 canonical navigation으로 유지하면서 joined-match ownership을 MY로 통합.
+- legacy `schedule` session은 MY로 migration.
+- Home은 discover / upcoming / matchday / postgame lifecycle의 다음 primary action을 제공.
+- Desktop Detail / Join / MY는 Auth에서 검증한 single-surface visual hierarchy로 정리.
+- `/app`의 simulated payment 사용자 UI를 제거하고 무료 참가 확인으로 전환; real PG 미연동 경계 유지.
+- Matchday와 postgame Return의 canonical surface를 MY로 통합.
+- Matching/ELO, deterministic recommendation, Discover filter/sort, save/compare ownership은 유지.
+- `/beta`와 `/beta/operator`의 Supabase connected capability는 별도 validation/operator surface로 유지.
+
+
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
 ## Real App flow naturalness closure · 2026-10-01
