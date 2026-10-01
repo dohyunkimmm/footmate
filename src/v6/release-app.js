@@ -7,7 +7,6 @@ const isReal=()=>document.documentElement.dataset.footmateSurface==='real';
 const session=()=>createState(footmatePlatform.session.read()||{});
 const patchSession=patch=>footmatePlatform.session.patch(patch);
 const matchById=id=>MATCHES.find(match=>match.id===id)||null;
-const joinedMatch=()=>matchById(session().joinedMatchId);
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 let scheduled=false;
 let patching=false;
@@ -42,15 +41,15 @@ function lifecycleMarkup(value){
   if(value.kind==='discover')return '';
   const match=value.match;
   const copy=value.kind==='return'
-    ?['경기 기록을 마무리할 시간이에요.','체감 난이도를 남기면 다음 추천을 더 잘 맞출 수 있어요.','경기 피드백 남기기','open-my']
+    ?['경기 기록을 마무리할 시간이에요.','체감 난이도를 남기면 다음 추천을 더 잘 맞출 수 있어요.','경기 피드백 남기기']
     :value.kind==='matchday'
-      ?['오늘 경기 준비','체크인과 경기장 안내를 MY에서 한 번에 확인하세요.','오늘 경기 보기','open-my']
-      :['다음 경기가 준비돼 있어요.','참가 정보와 경기 전 안내를 MY에서 이어서 확인하세요.','내 경기 보기','open-my'];
+      ?['오늘 경기 준비','체크인과 경기장 안내를 MY에서 한 번에 확인하세요.','오늘 경기 보기']
+      :['다음 경기가 준비돼 있어요.','참가 정보와 경기 전 안내를 MY에서 이어서 확인하세요.','내 경기 보기'];
   return `<section class="fm-v6-lifecycle" data-v6-lifecycle="${value.kind}" aria-label="현재 할 일">
     <small>${value.kind==='return'?'AFTER MATCH':value.kind==='matchday'?'MATCHDAY':'UP NEXT'}</small>
     <h2>${copy[0]}</h2><p>${copy[1]}</p>
     <div class="fm-v6-lifecycle-match"><b>${esc(match.place)}</b><span>${esc(match.dateLabel)}</span></div>
-    <button type="button" class="fm-next-button fm-next-button--primary" data-v6-action="${copy[3]}">${copy[2]}</button>
+    <button type="button" class="fm-next-button fm-next-button--primary" data-v6-action="open-my">${copy[2]}</button>
   </section>`;
 }
 
@@ -58,9 +57,10 @@ function patchHome(screen){
   screen.dataset.v6Home='true';
   screen.querySelectorAll('[data-v6-lifecycle]').forEach(node=>node.remove());
   const value=lifecycleState();
-  if(value.kind==='discover')return;
-  const greeting=screen.querySelector('.fm-next-greeting');
-  if(greeting)greeting.insertAdjacentHTML('afterend',lifecycleMarkup(value));
+  if(value.kind!=='discover'){
+    const greeting=screen.querySelector('.fm-next-greeting');
+    if(greeting)greeting.insertAdjacentHTML('afterend',lifecycleMarkup(value));
+  }
   screen.querySelectorAll('[data-matchday-home],[data-product-checkin]').forEach(node=>node.dataset.v6Secondary='true');
 }
 
@@ -77,9 +77,11 @@ function patchDetail(screen){
   screen.querySelectorAll('[data-product-checkin]').forEach(node=>node.dataset.v6Secondary='true');
 }
 
-function freeJoin(match){
+function commitFreeJoin(match){
   if(!match)return;
   const now=Date.now();
+  const confirmationId=`FM-${now.toString(36).toUpperCase()}`;
+  footmatePlatform.events.record('join.started',{matchId:match.id,paymentMethod:'none',attemptNumber:1,release:RELEASE_APP_VERSION});
   footmatePlatform.repositories.participation.write({
     schemaVersion:2,
     version:RELEASE_APP_VERSION,
@@ -90,14 +92,14 @@ function freeJoin(match){
     policySnapshot:{refund24h:'무료 참가',operatorCancel:'운영 취소 시 별도 결제 환불 없음'},
     attemptId:`join-${now}`,
     attemptNumber:1,
-    confirmationId:`FM-${now.toString(36).toUpperCase()}`,
+    confirmationId,
     failureCode:null,
     createdAt:now,
     updatedAt:now
   });
   footmatePlatform.repositories.matchday.write({matchId:match.id,status:'upcoming',checkinSchema:1,startsAt:match.startsAt,checkinComplete:false,checkedInAt:null});
   patchSession({selectedMatchId:match.id,joinedMatchId:match.id,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
-  footmatePlatform.events.record('join.completed',{matchId:match.id,confirmationId:`FM-${now.toString(36).toUpperCase()}`,paymentMethod:'none',release:RELEASE_APP_VERSION},{dedupeKey:`join.completed:${match.id}:${now}`});
+  footmatePlatform.events.record('join.completed',{matchId:match.id,confirmationId,paymentMethod:'none',release:RELEASE_APP_VERSION},{dedupeKey:`join.completed:${confirmationId}`});
   location.reload();
 }
 
@@ -161,9 +163,7 @@ function patchProfile(screen){
   screen.dataset.v6My='true';
   const top=screen.querySelector('.fm-next-topbar>strong');if(top)top.textContent='MY';
   const my=screen.querySelector('[data-my-matches]');
-  if(my){
-    const head=my.querySelector('.fm-next-section-head h2');if(head)head.textContent='내 경기';
-  }
+  if(my){const head=my.querySelector('.fm-next-section-head h2');if(head)head.textContent='내 경기';}
   screen.querySelectorAll('[data-v6-return]').forEach(node=>node.remove());
   const current=session();
   const match=matchById(current.joinedMatchId);
@@ -178,7 +178,7 @@ function writeReturnDraft(matchId,patch){
   const state=footmatePlatform.repositories.returnLoop.read({})||{};
   const history=Array.isArray(state.history)?state.history:[];
   const current=state.draft?.matchId===matchId?state.draft:{matchId,difficulty:null,repeatIntent:null};
-  footmatePlatform.repositories.returnLoop.write({version:'6.0.0',history,draft:{...current,...patch}});
+  footmatePlatform.repositories.returnLoop.write({version:RELEASE_APP_VERSION,history,draft:{...current,...patch}});
 }
 
 function saveReturn(matchId){
@@ -187,7 +187,7 @@ function saveReturn(matchId){
   const draft=state.draft?.matchId===matchId?state.draft:null;
   if(!draft?.difficulty||draft.repeatIntent===null)return;
   const entry={matchId,completed:true,difficulty:draft.difficulty,repeatIntent:Boolean(draft.repeatIntent),submittedAt:new Date().toISOString()};
-  footmatePlatform.repositories.returnLoop.write({version:'6.0.0',history:[...history.filter(item=>item.matchId!==matchId),entry],draft:null});
+  footmatePlatform.repositories.returnLoop.write({version:RELEASE_APP_VERSION,history:[...history.filter(item=>item.matchId!==matchId),entry],draft:null});
   footmatePlatform.events.record('postgame.submitted',{matchId,difficulty:entry.difficulty,repeatIntent:entry.repeatIntent},{dedupeKey:`postgame.submitted:${matchId}`});
 }
 
@@ -221,14 +221,12 @@ if(isReal()){
   installStyles();
   migrateLegacyRoute();
   document.addEventListener('click',event=>{
-    const freeJoin=event.target.closest?.('[data-v6-free-join],[data-screen="checkout"] [data-action="confirm-payment"]');
-    if(freeJoin){
+    const joinButton=event.target.closest?.('[data-v6-free-join],[data-screen="checkout"] [data-action="confirm-payment"]');
+    if(joinButton){
       event.preventDefault();event.stopImmediatePropagation();
       const match=matchById(session().selectedMatchId);
-      freeJoin.disabled=true;freeJoin.textContent='참가 확정 중…';
-      queueMicrotask(()=>freeJoin&&freeJoin.isConnected?freeJoin.textContent='참가 확정 중…':null);
-      setTimeout(()=>freeJoin&&freeJoin.isConnected?freeJoin.disabled=false:null,1500);
-      freeJoin(match);
+      joinButton.disabled=true;joinButton.textContent='참가 확정 중…';
+      commitFreeJoin(match);
       return;
     }
     const action=event.target.closest?.('[data-v6-action]');
@@ -242,7 +240,7 @@ if(isReal()){
     if(name==='repeat'){event.preventDefault();event.stopImmediatePropagation();writeReturnDraft(match.id,{repeatIntent:action.dataset.value==='true'});schedule();return;}
     if(name==='save-return'){event.preventDefault();event.stopImmediatePropagation();saveReturn(match.id);schedule();return;}
   },true);
-  if(root){new MutationObserver(schedule).observe(root,{childList:true,subtree:true,characterData:true});}
+  if(root)new MutationObserver(schedule).observe(root,{childList:true,subtree:true,characterData:true});
   schedule();
 }
 
