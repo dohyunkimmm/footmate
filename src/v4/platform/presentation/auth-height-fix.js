@@ -1,11 +1,22 @@
 const STYLE_ID='fm-auth-height-fix';
 
-// Keep login spacing compact without changing field or button sizing.
+// Keep login spacing compact and prevent horizontal touch-pan without changing vertical scrolling.
 function installAuthHeightFix(){
   if(document.getElementById(STYLE_ID))return;
   const style=document.createElement('style');
   style.id=STYLE_ID;
   style.textContent=`
+html[data-footmate-surface="real"],
+html[data-footmate-surface="real"] body,
+html[data-footmate-surface="real"] #footmate-next,
+html[data-footmate-surface="real"] .fm-next-page,
+html[data-footmate-surface="real"] .fm-next-stage{
+  overscroll-behavior-x:none;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-screen{
+  touch-action:pan-y pinch-zoom;
+  overscroll-behavior-x:none;
+}
 .fm-next-page[data-mode="real"] .fm-next-app[data-embed="false"] .fm-next-auth-v3{
   overflow-x:hidden;
 }
