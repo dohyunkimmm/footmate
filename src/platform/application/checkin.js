@@ -1,4 +1,4 @@
-import {MATCHES} from '../../data.js';
+import {MATCHES} from '../../app/data.js';
 import {footmatePlatform} from './platform.js';
 
 // Product check-in has one durable owner. Old session/interaction fields are read
