@@ -29,7 +29,7 @@ assert.ok(design.includes('White-first Real App surface ownership'));
 assert.ok(design.includes('Product completion compatibility ownership'));
 for(const heading of ['나와 잘 맞는 이유','경기 정보','함께 뛰는 사람','취소·환불'])assert.equal(appJs.includes(`<h2>${heading}</h2>`),false);
 assert.ok(decision.includes("hero.insertAdjacentHTML('afterend',decisionSections(match,session))"));
-assert.ok(recommendation.includes("import {rankRecommendations} from './platform/domain/recommendation.js';"));
+assert.ok(recommendation.includes("import {rankRecommendations} from '../platform/domain/recommendation.js';"));
 assert.equal(config.includes('retries: 0'),true);
 assert.ok(config.includes("name: 'webkit-mobile'"));
 assert.ok(workflow.includes('Run Release App Mobile Safari/WebKit gate'));
