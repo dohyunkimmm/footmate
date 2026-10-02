@@ -5,13 +5,13 @@ import fs from 'node:fs';
 const migration=fs.readFileSync('supabase/migrations/20260921051924_v5_2_real_beta_readiness.sql','utf8');
 const notificationIndexMigration=fs.readFileSync('supabase/migrations/20260921055744_v5_2_notification_fk_index.sql','utf8');
 const operatorCheckInFix=fs.readFileSync('supabase/migrations/20260921131551_operator_check_in_ambiguity_fix.sql','utf8');
-const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
-const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
-const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
-const betaBootstrap=fs.readFileSync('src/v5/beta-recovery-bootstrap.js','utf8');
+const client=fs.readFileSync('src/beta/infrastructure/supabase-readiness.js','utf8');
+const beta=fs.readFileSync('src/beta/readiness.js','utf8');
+const operator=fs.readFileSync('src/beta/operator-readiness.js','utf8');
+const betaBootstrap=fs.readFileSync('src/beta/recovery-bootstrap.js','utf8');
 const betaHtml=fs.readFileSync('beta.html','utf8');
 const operatorHtml=fs.readFileSync('beta-operator.html','utf8');
-const operatorMfa=fs.existsSync('src/v5/beta-operator-mfa.js')?fs.readFileSync('src/v5/beta-operator-mfa.js','utf8'):'';
+const operatorMfa=fs.existsSync('src/beta/operator-mfa.js')?fs.readFileSync('src/beta/operator-mfa.js','utf8'):'';
 
 for(const column of ['cancel_cutoff_at','check_in_opens_at','checked_in_at'])assert.match(migration,new RegExp(column));
 for(const rpc of ['check_in_participation','operator_check_in_participant','operator_complete_match','mark_beta_notification_read','operator_save_match_v2'])assert.match(migration,new RegExp(`function public\\.${rpc}`));
@@ -63,7 +63,7 @@ assert.match(operatorHtml,/data-operator-state/);
 if(operatorMfa){
   assert.match(operatorHtml,/beta-operator-mfa\.js\?v=1/);
   assert.match(operatorMfa,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
-  assert.ok(operatorMfa.indexOf("import('/src/v5/beta-operator.js?v=1')")<operatorMfa.indexOf("import('/src/v5/beta-operator-readiness.js?v=1')"));
+  assert.ok(operatorMfa.indexOf("import('/src/beta/operator.js?v=1')")<operatorMfa.indexOf("import('/src/beta/operator-readiness.js?v=1')"));
 }else{
   assert.match(operatorHtml,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
 }
