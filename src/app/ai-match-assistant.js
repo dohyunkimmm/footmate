@@ -1,4 +1,4 @@
-import {MATCHES,NEXT_STORAGE_KEY,createState} from '../v4/data.js';
+import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
 
 const VERSION='5.1.1';
 const AI_STORAGE_KEY='footmate:v5.1:ai';
