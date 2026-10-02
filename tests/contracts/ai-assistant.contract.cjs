@@ -51,6 +51,6 @@ async function invoke(options){const req=request(options);const res=response();a
 
     const health=await invoke({method:'GET',ip:'10.0.1.8'});
     assert.equal(health.statusCode,200);assert.equal(health.body.version,'5.1.1');assert.equal(health.body.provider,'vercel-ai-gateway');assert.equal(health.body.model,'openai/gpt-5.4-mini');assert.equal(health.body.fallbackModel,'openai/gpt-5.4-nano');assert.equal(health.body.gatewayTimeoutMs,3000);assert.equal(health.body.reasoningEffort,'none');assert.equal(health.body.configured,true);
-    console.log('PASS v5.1.1 AI assistant contract');
+    console.log('PASS AI assistant contract');
   }finally{global.fetch=oldFetch;if(oldKey===undefined)delete process.env.AI_GATEWAY_API_KEY;else process.env.AI_GATEWAY_API_KEY=oldKey;if(oldOidc===undefined)delete process.env.VERCEL_OIDC_TOKEN;else process.env.VERCEL_OIDC_TOKEN=oldOidc}
 })().catch(error=>{console.error(error);process.exitCode=1});
