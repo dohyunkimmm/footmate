@@ -3,10 +3,8 @@
 
 #footmate-next[data-release-app-version="6.0.0"]{
   --fm-v6-line:rgba(15,54,38,.10);
-  --fm-v6-soft:#f3f7f4;
-  --fm-v6-accent:#d6fa74;
-  --fm-v6-deep:#083d2c;
-  --fm-v6-deep-2:#16583e;
+  --fm-v6-soft:#f6f9f6;
+  --fm-v6-accent:#d8ff73;
   --fm-v6-ink:#132019;
   --fm-v6-muted:#66756c;
 }
@@ -16,9 +14,9 @@
   padding:20px;
   border:1px solid rgba(10,55,38,.10);
   border-radius:24px;
-  background:linear-gradient(145deg,var(--fm-v6-deep) 0%,var(--fm-v6-deep-2) 100%);
+  background:linear-gradient(145deg,#0a3022 0%,#124a35 100%);
   color:#fff;
-  box-shadow:0 18px 42px rgba(8,49,34,.16);
+  box-shadow:0 18px 38px rgba(9,46,33,.15);
 }
 .fm-v6-lifecycle>small,.fm-v6-return>small,.fm-v6-section-label,.fm-v6-detail-kicker{
   display:block;
@@ -71,13 +69,11 @@
 [data-screen="detail"] [data-product-checkin]{display:none!important}
 
 /* Checkout is a join confirmation surface, not a simulated PG surface. */
-[data-screen="checkout"][data-v6-join="free"] .fm-next-checkout-summary{background:linear-gradient(145deg,var(--fm-v6-deep) 0%,var(--fm-v6-deep-2) 100%)}
 [data-screen="checkout"][data-v6-join="free"] .fm-next-inline-note{margin-top:14px;background:#fff4d7;color:#755712}
 [data-screen="checkout"][data-v6-join="free"] [data-participation-submit]{width:100%;background:#073d2b;color:#fff}
 
 /* MY becomes the canonical owner of joined matches, saved matches and settings. */
 [data-screen="profile"][data-v6-my="true"] .fm-next-section{padding-top:20px}
-[data-screen="profile"][data-v6-my="true"] .fm-next-upcoming{background:linear-gradient(145deg,var(--fm-v6-deep) 0%,var(--fm-v6-deep-2) 100%);box-shadow:0 18px 42px rgba(8,49,34,.15)}
 [data-screen="profile"][data-v6-my="true"] [data-v6-my-section="saved"]{margin-top:30px}
 [data-screen="profile"][data-v6-my="true"] [data-v6-my-section="profile"]{margin-top:36px}
 [data-screen="profile"][data-v6-my="true"] [data-v6-profile-label]{margin:0 0 8px}
