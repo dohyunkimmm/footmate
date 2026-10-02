@@ -6,6 +6,7 @@ async function openCaseStudy(page,viewport){
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyP1Visuals==='true');
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyAdvancedPolish==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyPriorityFinish==='true');
   await page.waitForFunction(()=>[...document.styleSheets].some(sheet=>sheet.href?.includes('advanced-polish.css')));
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
@@ -244,7 +245,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
       await showSection(page,5);
       const secondary=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
       await expect(secondary).toHaveAttribute('data-evidence-scale','secondary');
-      expect(await secondary.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(380);
+      expect(await secondary.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
 
       await showSection(page,6);
       const detail=page.locator('.slide.on .fm-evidence-figure.is-detail');
