@@ -3,10 +3,10 @@
 ## Release App v6
 
 - Canonical IA: **Home / 경기 찾기 / MY**
-- Home is lifecycle-aware: discovery → upcoming → matchday → postgame.
+- Home is lifecycle-aware: discovery → upcoming → matchday → postgame → Return 완료 후 다음 경기 탐색으로 다시 연결됩니다.
 - MY is the canonical owner of joined matches, saved matches, Matchday, Return, profile and settings.
 - Legacy `schedule` state migrates to MY.
-- `/app` Join is an explicit **free participation confirmation**; real PG is not connected.
+- `/app` Join is an explicit **free participation confirmation**; real PG is not connected. 참가 정보 유실·확정 오류는 오류 안내, 재시도, 경기 다시 선택으로 복구합니다.
 - `/beta` and `/beta/operator` remain the Supabase-connected validation/operator surfaces and are not presented as if merged into `/app`.
 - Desktop Detail / Join / MY follow the single-surface visual system validated on Auth.
 
@@ -38,9 +38,9 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - **Reason before score** — 내부 적합도는 정렬에 사용하되 사용자는 생활권·레벨·포지션·거리처럼 판단 가능한 이유를 먼저 봅니다.
 - **AI interprets, deterministic engine ranks** — AI는 자연어를 검색 조건으로 바꾸고 실제 경기 후보·순위·추천 이유는 recommendation engine이 결정합니다.
 - **Entry and results are separate surfaces** — Home은 AI 조건 입력과 짧은 개인화 추천에 집중하고, 실제 결과 탐색·조건 수정·filter/sort·전체 목록은 Discover가 소유합니다.
-- **Release participation** — 로그인 후 무료 참가 확인 → 성공 → MY로 이어집니다. 기존 payment pending/retry 모델은 compatibility 검증에만 남고 Release App의 사용자-facing Join에서는 노출하지 않습니다.
+- **Release participation** — 로그인 후 무료 참가 확인 → 성공 → MY로 이어집니다. 참가 정보 유실·확정 오류는 stuck 상태가 아니라 재시도 또는 경기 다시 선택으로 복구하며, 기존 payment pending/retry 모델은 compatibility 검증에만 남고 Release App의 사용자-facing Join에서는 노출하지 않습니다.
 - **State-aware Matchday** — upcoming → matchday → checked-in과 late·update·cancel recovery를 분리합니다.
-- **Return loop** — 경기 후 체감 난이도·완료·반복 의도를 다음 추천의 보조 신호로 사용합니다.
+- **Return loop** — 경기 후 체감 난이도·완료·반복 의도를 다음 추천의 보조 신호로 사용하고, 저장 완료 후 Home lifecycle을 완료 상태로 닫아 `다음 경기 찾기`로 연결합니다.
 - **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가 확정을 자동 실행하지 않습니다.
 
 ## AI Agent Workflow
@@ -67,10 +67,10 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - deterministic recommendation ranking과 human-readable recommendation reason
 - Discovery filter/sort, zero-result recovery, URL/session persistence
 - Decision Detail, save, 최대 2경기 compare
-- Sign in / free Join confirmation / success / MY handoff; legacy payment pending/retry paths remain compatibility-only regression coverage
+- Sign in / free Join confirmation / success / MY handoff + 참가 정보 유실·확정 오류의 retry / 경기 다시 선택 recovery; legacy payment pending/retry paths remain compatibility-only regression coverage
 - Checkout·Matchday·postgame Return의 기술/프로토타입 표현은 사용자 판단에 필요한 상태·행동 중심 문구로 정리하고 실제 외부 연동 경계는 별도 안내에서 유지
 - Matchday check-in과 운영 상태 복구
-- postgame Return과 browser-local personalization
+- postgame Return과 browser-local personalization + Return 저장 완료 후 Home `다음 경기 찾기` handoff
 - Closed Beta email/password Auth, profile persistence, live match read, position-aware join/cancel, reload session recovery
 - Closed Beta Google/Kakao OAuth entrypoint — Supabase에서 실제 provider가 활성화된 경우에만 노출; Production 실로그인 수동 QA 완료
 - Closed Beta password recovery, recovery-link password update, signup verification email resend
@@ -96,9 +96,9 @@ Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·
 - `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
 - `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
 - desktop Real App shell: stable max 560px composition; unrequested 1040px expansion is not part of the Product contract
-- Browser E2E + axe accessibility regression
+- Browser E2E + axe accessibility regression — v6 390px Detail / Join / MY axe 계약 포함
 - Mobile Safari/WebKit 자동 gate — 320 / 375 / 390 / 430px에서 overflow, fixed navigation, Detail/focus contract 검증
-- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
+- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. v6는 390px Home lifecycle / Join / MY Matchday / MY postgame과 320px compact Join을 승인 baseline으로 비교하며, 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
 
 ## Production / integration boundary
 
