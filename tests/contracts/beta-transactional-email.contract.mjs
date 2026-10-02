@@ -4,9 +4,9 @@ import fs from 'node:fs';
 const migration=fs.readFileSync('supabase/migrations/20260921105156_beta_transactional_email.sql','utf8');
 const grants=fs.readFileSync('supabase/migrations/20260921112447_fix_beta_email_service_role_grants.sql','utf8');
 const edge=fs.readFileSync('supabase/functions/send-beta-notification-email/index.ts','utf8');
-const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
-const beta=fs.readFileSync('src/v5/beta-readiness.js','utf8');
-const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
+const client=fs.readFileSync('src/beta/infrastructure/supabase-readiness.js','utf8');
+const beta=fs.readFileSync('src/beta/readiness.js','utf8');
+const operator=fs.readFileSync('src/beta/operator-readiness.js','utf8');
 
 for(const column of ['email_status','email_attempts','email_last_attempt_at','email_sent_at','email_message_id','email_last_error']){
   assert.match(migration,new RegExp(column));
