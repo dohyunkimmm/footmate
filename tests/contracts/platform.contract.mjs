@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import {SESSION_SCHEMA_VERSION,EVENT_SCHEMA_VERSION,STORAGE_KEYS,LEGACY_STORAGE_KEYS,createDomainEvent} from '../../src/v4/platform/domain/contracts.js';
-import {createMemoryStorageProvider,createJsonRepository} from '../../src/v4/platform/infrastructure/storage.js';
-import {createFootMatePlatform} from '../../src/v4/platform/application/platform.js';
+import {SESSION_SCHEMA_VERSION,EVENT_SCHEMA_VERSION,STORAGE_KEYS,LEGACY_STORAGE_KEYS,createDomainEvent} from '../../src/platform/domain/contracts.js';
+import {createMemoryStorageProvider,createJsonRepository} from '../../src/platform/infrastructure/storage.js';
+import {createFootMatePlatform} from '../../src/platform/application/platform.js';
 
 assert.equal(STORAGE_KEYS.session,'footmate:session');
 assert.equal(LEGACY_STORAGE_KEYS.session,'footmate:v4:session');
