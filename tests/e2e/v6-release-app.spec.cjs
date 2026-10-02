@@ -2,6 +2,7 @@ const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 
 const shot={animations:'disabled',caret:'hide',maxDiffPixels:50};
+const productionSmoke=['1','true','yes'].includes(String(process.env.PRODUCTION_SMOKE||'').toLowerCase());
 
 function failures(page){
   const items=[];
@@ -179,7 +180,7 @@ test('Home lifecycle closes Return and hands the next action back to Discover',a
   const lifecycle=page.locator('[data-v6-lifecycle="upcoming"]');
   await expect(lifecycle).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',shot);
+  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',shot);
   await lifecycle.getByRole('button',{name:'내 경기 보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await seedSession(page,{route:'profile',matchStage:'postgame'});
@@ -190,13 +191,13 @@ test('Home lifecycle closes Return and hands the next action back to Discover',a
   await panel.getByRole('button',{name:'평가 저장'}).click();
   await expect(page.locator('[data-v6-return="saved"]')).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-my-postgame-1440.png',shot);
+  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-my-postgame-1440.png',shot);
   await seedSession(page,{route:'home',matchStage:'postgame'});
   const complete=page.locator('[data-v6-lifecycle="complete"]');
   await expect(complete).toBeVisible();
   await expect(complete).toContainText('경기 기록을 저장했어요.');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-home-complete-1440.png',shot);
+  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-complete-1440.png',shot);
   await complete.getByRole('button',{name:'다음 경기 찾기'}).click();
   await waitForReleaseReady(page);
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
