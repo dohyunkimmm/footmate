@@ -1,5 +1,5 @@
 import {MATCHES,createState} from './data.js';
-import {footmatePlatform} from './platform/application/platform.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const PERSONALIZATION_VERSION='4.7.0';
 const PERSONALIZATION_STORAGE_KEY=footmatePlatform.storageKeys.personalization;
