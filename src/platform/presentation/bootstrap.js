@@ -1,4 +1,4 @@
-import '../../../v6/release-app.js';
+import '../../app/release-app.js';
 import './my-storage-copy.js';
 import './real-app-card-polish.js';
 import './p0-usability-trust.js';
