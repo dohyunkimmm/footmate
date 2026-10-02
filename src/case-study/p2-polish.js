@@ -84,7 +84,7 @@
   function loadEvidenceScript(){
     if(document.querySelector('script[data-fm-case-study-product-evidence]'))return;
     const script=document.createElement('script');
-    script.src='/src/v5/case-study-product-evidence.js?v=1';
+    script.src='/src/case-study/product-evidence.js?v=1';
     script.dataset.fmCaseStudyProductEvidence='script';
     document.body.appendChild(script);
   }
@@ -98,7 +98,7 @@
     }
     const link=document.createElement('link');
     link.rel='stylesheet';
-    link.href='/src/v5/case-study-product-evidence.css?v=1';
+    link.href='/src/case-study/product-evidence.css?v=1';
     link.dataset.fmCaseStudyProductEvidence='style';
     link.addEventListener('load',loadEvidenceScript,{once:true});
     document.head.appendChild(link);
