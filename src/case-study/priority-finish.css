@@ -381,7 +381,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] 
 }
 html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence .fm-next-cs-card{
   min-height:0!important;
-  padding:28px 13px 11px!important;
+  padding:13px!important;
 }
 html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-note{
   margin-top:10px!important;
@@ -405,7 +405,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] 
 @media(min-width:901px){
   html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-map{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:8px!important;
+    gap:10px!important;
   }
   html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-map .fm-p0-recovery-head{
     display:none!important;
