@@ -109,17 +109,17 @@ jobs:
         run: node scripts/check-release-version.cjs
       - name: Check QA toolchain contract
         run: node scripts/check-qa-toolchain.cjs
-      - name: Check v4.9 compatibility boundary
+      - name: Check app compatibility boundary
         run: node scripts/check-app-boundary.cjs
-      - name: Check v5.1.1 AI Match Assistant boundary
+      - name: Check AI Match Assistant boundary
         run: node scripts/check-ai-boundary.cjs
       - name: Check current performance budget
         run: node scripts/check-app-performance-budget.cjs
-      - name: Run v4.8 platform regression contracts
+      - name: Run platform regression contracts
         run: node tests/contracts/platform.contract.mjs
-      - name: Run v4.9 release candidate contracts
+      - name: Run release candidate contracts
         run: node tests/contracts/release-candidate.contract.mjs
-      - name: Run v5.1.1 connected platform contracts
+      - name: Run connected platform contracts
         run: node tests/contracts/connected-platform.contract.mjs
       - name: Run beta backend foundation contracts
         run: node tests/contracts/beta-backend.contract.mjs
@@ -133,9 +133,9 @@ jobs:
         run: node tests/contracts/beta-supabase-hardening.contract.mjs
       - name: Run beta operator console contracts
         run: node tests/contracts/beta-operator-console.contract.mjs
-      - name: Run v5.1.1 AI assistant contracts
+      - name: Run AI assistant contracts
         run: node tests/contracts/ai-assistant.contract.cjs
-      - name: Run v5.2 real beta readiness contracts
+      - name: Run beta readiness contracts
         run: node tests/contracts/beta-readiness.contract.mjs
       - name: Run product completion contracts
         run: node tests/contracts/product-completion.contract.mjs
@@ -198,7 +198,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: v6-browser-e2e-${{ github.run_id }}
+          name: browser-e2e-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -241,9 +241,9 @@ jobs:
       - name: Run exact Production Chromium smoke
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
         run: npx playwright test tests/e2e/production-app.spec.cjs tests/e2e/beta-production-core.spec.cjs tests/e2e/beta-production-readiness.spec.cjs
-      - name: Run exact Production v6 release journeys
+      - name: Run exact Production release journeys
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs --grep "Release App free Join failure is recoverable without leaving a stuck button|Home lifecycle closes Return and hands the next action back to Discover|Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
       - name: Upload Production browser evidence
         if: always()
         uses: actions/upload-artifact@v6
