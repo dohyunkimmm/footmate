@@ -64,27 +64,42 @@ for(const [name,viewport] of [
     }
   });
 
+
+  test(`P2 problem hierarchy makes the core decision issue explicit on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await showSection(page,1);
+    const slide=page.locator('.slide.on.fm-next-story-slide');
+    await expect(slide).toHaveAttribute('data-p0-visual','problem');
+    await expect(slide.locator('.fm-p0-problem-sources>article')).toHaveCount(3);
+    await expect(slide.locator('.fm-p0-problem-core')).toContainText('참가 결정의 불확실성');
+    await expect(slide.locator('.fm-p0-problem-path>span')).toHaveCount(4);
+    await verifyNoHorizontalOverflow(page);
+  });
+
   test(`P12 KPI validation composition stays visually balanced on ${name}`,async({page})=>{
     await openCaseStudy(page,viewport);
     await showSection(page,11);
     const slide=page.locator('.slide.on.fm-next-story-slide');
     await expect(slide).toHaveAttribute('data-v5-content-role','validation-evidence');
+    await expect(slide.locator('.fm-p1-validation-split')).toBeVisible();
     await expect(slide.locator('.fm-p1-validation-banner')).toBeVisible();
     await expect(slide.locator('.fm-p1-funnel-wrap')).toBeVisible();
     await expect(slide.locator('.fm-p1-secondary-metrics')).toBeVisible();
+    await expect(slide.locator('.fm-p1-evidence-grid')).toBeVisible();
     await verifyNoHorizontalOverflow(page);
 
     if(viewport.width>900){
       const geometry=await slide.evaluate(node=>{
-        const metrics=node.querySelector('.fm-p1-metrics');
-        const banner=node.querySelector('.fm-p1-validation-banner');
-        const funnel=node.querySelector('.fm-p1-funnel-wrap');
-        const secondary=node.querySelector('.fm-p1-secondary-metrics');
-        const box=el=>el.getBoundingClientRect();
-        return {metrics:box(metrics),banner:box(banner),funnel:box(funnel),secondary:box(secondary)};
+        const split=node.querySelector('.fm-p1-validation-split').getBoundingClientRect();
+        const metrics=node.querySelector('.fm-p1-metrics').getBoundingClientRect();
+        const evidence=node.querySelector('.fm-p1-evidence-grid').getBoundingClientRect();
+        const secondary=node.querySelector('.fm-p1-secondary-metrics').getBoundingClientRect();
+        return {split,metrics,evidence,secondary};
       });
-      expect(Math.abs(geometry.banner.height-geometry.funnel.height)).toBeLessThanOrEqual(2);
+      expect(geometry.evidence.left).toBeGreaterThan(geometry.metrics.right);
+      expect(geometry.metrics.width).toBeGreaterThan(geometry.evidence.width);
       expect(geometry.secondary.width).toBeGreaterThanOrEqual(geometry.metrics.width-2);
+      expect(geometry.split.width).toBeGreaterThan(900);
     }
 
     await slide.screenshot({

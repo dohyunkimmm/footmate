@@ -113,23 +113,26 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await openCaseStudy(page,viewport);
     await expect(page.locator('.label')).toBeHidden();
 
-    // P2 · scan summaries and supporting cards remain secondary to the decision block.
+    // P2 · quiet source cards feed one explicit core problem without competing with the decision block.
     await showSection(page,1);
     const p2=await page.locator('.slide.on').evaluate(slide=>{
       const summary=slide.querySelector('.fm-next-review-summary>div');
-      const support=slide.querySelector('.fm-next-cs-grid.three>.fm-next-cs-card');
+      const source=slide.querySelector('.fm-p0-problem-sources>article');
+      const core=slide.querySelector('.fm-p0-problem-core');
       const quote=slide.querySelector('.fm-next-cs-quote');
       const style=el=>el?getComputedStyle(el):null;
       return {
         summaryBorder:style(summary)?.borderTopColor,
-        supportBorder:style(support)?.borderTopColor,
-        supportBg:style(support)?.backgroundColor,
+        sourceBorder:style(source)?.borderTopColor,
+        sourceBg:style(source)?.backgroundColor,
+        coreBorder:style(core)?.borderTopColor,
         quoteBorder:style(quote)?.borderTopColor
       };
     });
     expect(p2.summaryBorder).toBe('rgba(0, 0, 0, 0)');
-    expect(p2.supportBorder).toBe('rgba(0, 0, 0, 0)');
-    expect(p2.supportBg).not.toBe('rgb(255, 255, 255)');
+    expect(p2.sourceBorder).not.toBe('rgba(0, 0, 0, 0)');
+    expect(p2.sourceBg).not.toBe('rgb(255, 255, 255)');
+    expect(p2.coreBorder).not.toBe('rgba(0, 0, 0, 0)');
     expect(p2.quoteBorder).not.toBe('rgba(0, 0, 0, 0)');
 
     // P3 · on mobile, the 3 reviewer metadata items form one compact scan strip.
@@ -167,7 +170,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     const closing=page.locator('.slide.on .fm-p1-release-next');
     await expect(closing).toBeVisible();
-    await expect(closing.locator('a')).toHaveCount(0);
+    await expect(closing.locator('a')).toHaveCount(1);
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');
       const rows=[...final.querySelectorAll('.fm-cs-reasons>div')];
@@ -237,14 +240,14 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('미연동 · 미검증');
     await expect(page.locator('.slide.on .fm-p1-release-next>span')).toContainText('핵심 학습');
-    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(0);
+    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(1);
 
     if(name==='desktop'){
       // Product evidence uses two explicit scale levels with a shared caption rhythm.
       await showSection(page,5);
-      const secondary=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
-      await expect(secondary).toHaveAttribute('data-evidence-scale','secondary');
-      expect(await secondary.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(380);
+      const recommendation=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
+      await expect(recommendation).toHaveAttribute('data-evidence-scale','primary');
+      expect(await recommendation.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
 
       await showSection(page,6);
       const detail=page.locator('.slide.on .fm-evidence-figure.is-detail');

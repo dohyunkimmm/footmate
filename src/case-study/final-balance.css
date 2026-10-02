@@ -233,3 +233,28 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
     margin-top:3px!important;
   }
 }
+
+
+/* 01 Overview · stronger product proof, quieter role strip */
+@media(min-width:1181px) and (min-height:760px){
+  html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-visual{
+    transform:scale(1.045);
+    transform-origin:center right;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-proof{
+    gap:0!important;
+    overflow:hidden;
+    border-top:1px solid #e3e9e5;
+    border-bottom:1px solid #e3e9e5;
+    background:transparent!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-proof>div{
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-proof>div:not(:last-child){
+    border-right:1px solid #e3e9e5!important;
+  }
+}

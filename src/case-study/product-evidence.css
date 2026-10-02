@@ -22,13 +22,13 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption b{color:#263
 html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption span{text-align:right}
 
 /* Recommendation · actual product render as the visual anchor. */
-html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr)!important;gap:24px!important;align-items:center!important}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr)!important;gap:22px!important;align-items:center!important}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-reco-stage{padding:0!important;border:0!important;background:transparent!important}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation .fm-evidence-media{min-height:320px;padding:20px}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{height:min(43vh,380px);width:auto}
 
 /* Decision Detail · editorial sequence + actual product detail. */
-html[data-fm-next-case-study="true"] .fm-evidence-detail-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.65fr);gap:28px;align-items:center;margin-top:8px}
+html[data-fm-next-case-study="true"] .fm-evidence-detail-layout{display:grid;grid-template-columns:minmax(250px,.75fr) minmax(0,1.25fr);gap:24px;align-items:center;margin-top:8px}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order{
   counter-reset:fm-detail-step;display:grid!important;grid-template-columns:1fr!important;gap:0!important;width:100%;margin:0!important;padding:0!important;
   border:0!important;border-radius:0!important;background:transparent!important
@@ -47,7 +47,7 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail .fm-evidence-
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail img{height:min(47vh,430px);width:auto}
 
 /* Operations · flattened lifecycle + matchday product surface. */
-html[data-fm-next-case-study="true"] .fm-evidence-operations-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.65fr);gap:28px;align-items:center;margin-top:8px}
+html[data-fm-next-case-study="true"] .fm-evidence-operations-layout{display:grid;grid-template-columns:minmax(250px,.9fr) minmax(0,1.1fr);gap:24px;align-items:center;margin-top:8px}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states{display:grid!important;grid-template-columns:1fr!important;gap:0!important}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states>div{
   display:grid!important;grid-template-columns:minmax(80px,.34fr) minmax(0,.66fr)!important;gap:4px 18px!important;align-items:start!important;padding:14px 0!important;
@@ -61,7 +61,7 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations .fm-evide
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations img{height:min(47vh,430px);width:auto}
 
 /* Recovery · semantic map first, actual empty/failure states second. */
-html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:8px}
+html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media{padding:9px;border-radius:20px}
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{width:100%;height:178px;object-fit:cover;object-position:top;border-radius:15px;box-shadow:0 16px 36px rgba(21,54,35,.08)}
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-badge{top:10px;left:10px;padding:6px 8px;font-size:8px}
