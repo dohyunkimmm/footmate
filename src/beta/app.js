@@ -1,5 +1,5 @@
-import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase-beta.js';
-import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/beta-match-contract.js';
+import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
+import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
