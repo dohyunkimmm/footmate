@@ -57,7 +57,7 @@ jobs:
           production_smoke="$production"
           for file in $changed_files; do
             case "$file" in
-              tests/production-*.cjs|tests/e2e/v6-release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
+              tests/production-*.cjs|tests/e2e/release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
             esac
           done
 
@@ -92,7 +92,7 @@ jobs:
           fi
           git diff --check "$base" "$head"
       - name: Run documentation-facing connected platform contract
-        run: node tests/contracts/v5.1-connected-platform.contract.mjs
+        run: node tests/contracts/connected-platform.contract.mjs
 
   regression:
     name: Regression 36
@@ -108,17 +108,17 @@ jobs:
       - name: Check QA toolchain contract
         run: node scripts/check-qa-toolchain.cjs
       - name: Check v4.9 compatibility boundary
-        run: node scripts/check-v4.9-boundary.cjs
+        run: node scripts/check-app-boundary.cjs
       - name: Check v5.1.1 AI Match Assistant boundary
-        run: node scripts/check-v5.1-boundary.cjs
+        run: node scripts/check-ai-boundary.cjs
       - name: Check current performance budget
-        run: node scripts/check-v4.9-performance-budget.cjs
+        run: node scripts/check-app-performance-budget.cjs
       - name: Run v4.8 platform regression contracts
-        run: node tests/contracts/v4.8-platform.contract.mjs
+        run: node tests/contracts/platform.contract.mjs
       - name: Run v4.9 release candidate contracts
-        run: node tests/contracts/v4.9-release-candidate.contract.mjs
+        run: node tests/contracts/release-candidate.contract.mjs
       - name: Run v5.1.1 connected platform contracts
-        run: node tests/contracts/v5.1-connected-platform.contract.mjs
+        run: node tests/contracts/connected-platform.contract.mjs
       - name: Run beta backend foundation contracts
         run: node tests/contracts/beta-backend.contract.mjs
       - name: Run beta Must recovery contracts
@@ -132,11 +132,13 @@ jobs:
       - name: Run beta operator console contracts
         run: node tests/contracts/beta-operator-console.contract.mjs
       - name: Run v5.1.1 AI assistant contracts
-        run: node tests/contracts/v5.1-ai-assistant.contract.cjs
+        run: node tests/contracts/ai-assistant.contract.cjs
       - name: Run v5.2 real beta readiness contracts
-        run: node tests/contracts/v5.2-real-beta-readiness.contract.mjs
-      - name: Run v5.2 product completion contracts
-        run: node tests/contracts/v5.2-product-completion.contract.mjs
+        run: node tests/contracts/beta-readiness.contract.mjs
+      - name: Run product completion contracts
+        run: node tests/contracts/product-completion.contract.mjs
+      - name: Run release app contract
+        run: node tests/contracts/release-app.contract.mjs
       - name: Run beta transactional email contracts
         run: node tests/contracts/beta-transactional-email.contract.mjs
       - name: Run beta email reliability contracts
@@ -175,21 +177,21 @@ jobs:
           const fs=require('fs');
           const csstree=require('css-tree');
           const html=fs.readFileSync('app.html','utf8');
-          const design=fs.readFileSync('src/v4/design-system-v2.css','utf8');
+          const design=fs.readFileSync('src/app/design-system-v2.css','utf8');
           if(html.includes('id="fm-real-app-white-tone"'))throw new Error('white-first CSS must not return to inline HTML ownership');
           if(!design.includes('White-first Real App surface ownership'))throw new Error('white-first design-system ownership marker missing');
           if(!design.includes('FootMate Real App Visual Finish · P0–P2'))throw new Error('Real App finish ownership marker missing');
-          if(html.includes('/src/v4/real-app-visual-finish.css'))throw new Error('Real App finish must not add a standalone stylesheet request');
+          if(html.includes('/src/app/real-app-visual-finish.css'))throw new Error('Real App finish must not add a standalone stylesheet request');
           if(!design.includes('Visual Consistency v4')||!design.includes('--fm-v4-consistency:1'))throw new Error('visual consistency ownership missing');
           csstree.parse(design);
           console.log('PASS Real App CSS syntax and consolidated ownership');
           NODE
       - name: Check product completion JS syntax
-        run: node --check src/v5/ai-match-assistant.js && node --check src/v4/platform/presentation/real-app-card-polish.js && node --check src/v4/platform/presentation/p0-usability-trust.js && node --check src/v4/platform/presentation/p1-decision-clarity.js && node --check src/v6/release-app.js
+        run: node --check src/app/ai-match-assistant.js && node --check src/platform/presentation/real-app-card-polish.js && node --check src/platform/presentation/p0-usability-trust.js && node --check src/platform/presentation/p1-decision-clarity.js && node --check src/app/release-app.js
       - name: Run release browser, beta, AI, accessibility and visual gates
-        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs tests/e2e/v5.1-beta.spec.cjs tests/e2e/v5.1-beta-operator.spec.cjs tests/e2e/v5.2-real-beta-readiness.spec.cjs tests/e2e/v5.2-beta-email-reliability.spec.cjs tests/e2e/v5.3-beta-free-growth.spec.cjs tests/e2e/v5.3-beta-auth-mfa.spec.cjs tests/e2e/v5.3-beta-push-media.spec.cjs tests/e2e/v5.1-ai-assistant.spec.cjs tests/e2e/v4-discovery.spec.cjs tests/e2e/v4-decision.spec.cjs tests/e2e/v4-platform.spec.cjs tests/e2e/visual-p1-secondary-hierarchy.spec.cjs tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-p0-finish.spec.cjs tests/e2e/p0-usability-trust.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs
+        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs tests/e2e/beta-core.spec.cjs tests/e2e/beta-operator.spec.cjs tests/e2e/beta-readiness.spec.cjs tests/e2e/beta-email-reliability.spec.cjs tests/e2e/beta-free-growth.spec.cjs tests/e2e/beta-auth-mfa.spec.cjs tests/e2e/beta-push-media.spec.cjs tests/e2e/ai-assistant.spec.cjs tests/e2e/discovery.spec.cjs tests/e2e/decision.spec.cjs tests/e2e/platform.spec.cjs tests/e2e/visual-p1-secondary-hierarchy.spec.cjs tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-p0-finish.spec.cjs tests/e2e/p0-usability-trust.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/desktop-auth-horizontal-lock.spec.cjs tests/e2e/case-study-product-evidence.spec.cjs tests/e2e/case-study-card-rhythm.spec.cjs tests/e2e/case-study-p1-real-preview.spec.cjs tests/e2e/case-study-evidence-framing.spec.cjs tests/e2e/case-study-p12-copy-spacing.spec.cjs tests/e2e/case-study-final-balance.spec.cjs tests/e2e/case-study-detail-finish.spec.cjs
       - name: Run Release App Mobile Safari/WebKit gate
-        run: npx playwright test --project=webkit-mobile tests/e2e/v6-release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+        run: npx playwright test --project=webkit-mobile tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -223,10 +225,10 @@ jobs:
           exit 1
       - name: Run exact Production HTTP smoke
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: node tests/production-v5.1-smoke.cjs
+        run: node tests/production-smoke.cjs
       - name: Run exact Production AI inference
         env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: node tests/production-v5.1-ai.cjs
+        run: node tests/production-ai.cjs
       - name: Install Production browser dependencies
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
@@ -236,10 +238,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run exact Production Chromium smoke
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs tests/e2e/v5.2-beta-production.spec.cjs
+        run: npx playwright test tests/e2e/production-app.spec.cjs tests/e2e/beta-production-core.spec.cjs tests/e2e/beta-production-readiness.spec.cjs
       - name: Run exact Production v6 release journeys
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
       - name: Upload Production browser evidence
         if: always()
         uses: actions/upload-artifact@v6
