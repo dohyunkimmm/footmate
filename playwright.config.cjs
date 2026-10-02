@@ -28,7 +28,6 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /v5\.2-webkit-mobile\.spec\.cjs/,
       use: {
         ...devices['Desktop Chrome'],
         // Keep Skia's raster path independent of the CI runner CPU.
@@ -38,7 +37,7 @@ module.exports = defineConfig({
     },
     {
       name: 'webkit-mobile',
-      testMatch: /(?:v5\.2-webkit-mobile|v6-release-app)\.spec\.cjs/,
+      testMatch: /release-app\.spec\.cjs/,
       use: { ...devices['iPhone 13'] }
     }
   ]

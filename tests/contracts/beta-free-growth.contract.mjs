@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 const migration=fs.readFileSync('supabase/migrations/20260921143648_beta_free_growth.sql','utf8');
 const hotfix=fs.readFileSync('supabase/migrations/20260922035936_beta_push_cancel_hotfix.sql','utf8');
-const growth=fs.readFileSync('src/v5/beta-growth.js','utf8');
+const growth=fs.readFileSync('src/beta/growth.js','utf8');
 const html=fs.readFileSync('beta.html','utf8');
 
 for(const token of [
@@ -37,7 +37,7 @@ assert.ok(!hotfix.includes("where match_id=p_match_id and status='queued'"),'hot
 for(const token of ['realtime/v1/websocket','postgres_changes','Live catalog','join_beta_waitlist','submit_beta_match_feedback','/api/ai-match-assistant'])
   assert.ok(growth.includes(token),`missing browser growth contract: ${token}`);
 assert.ok(!growth.includes('Math.random'),'live recommendation must remain deterministic');
-assert.ok(html.includes('/src/v5/beta-growth.css?v=1'));
-assert.ok(html.includes("import('/src/v5/beta-growth.js?v=1')"));
+assert.ok(html.includes('/src/beta/growth.css?v=1'));
+assert.ok(html.includes("import('/src/beta/growth.js?v=1')"));
 
 console.log('beta free growth contracts: PASS');

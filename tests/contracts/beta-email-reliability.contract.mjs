@@ -6,8 +6,8 @@ const schedule=fs.readFileSync('supabase/migrations/20260921123605_beta_email_wo
 const userSender=fs.readFileSync('supabase/functions/send-beta-notification-email/index.ts','utf8');
 const worker=fs.readFileSync('supabase/functions/process-beta-email-outbox/index.ts','utf8');
 const webhook=fs.readFileSync('supabase/functions/resend-beta-email-webhook/index.ts','utf8');
-const client=fs.readFileSync('src/v5/infrastructure/supabase-beta-readiness.js','utf8');
-const operator=fs.readFileSync('src/v5/beta-operator-readiness.js','utf8');
+const client=fs.readFileSync('src/beta/infrastructure/supabase-readiness.js','utf8');
+const operator=fs.readFileSync('src/beta/operator-readiness.js','utf8');
 
 for(const column of ['email_next_attempt_at','email_claimed_at','email_claim_token','email_delivery_status','email_delivery_updated_at'])assert.match(migration,new RegExp(column));
 assert.match(migration,/email_status in \('pending','processing','sent','failed','skipped'\)/);

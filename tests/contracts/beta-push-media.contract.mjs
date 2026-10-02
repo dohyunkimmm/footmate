@@ -5,8 +5,8 @@ const migration=fs.readFileSync('supabase/migrations/20260922012426_beta_push_me
 const hotfix=fs.readFileSync('supabase/migrations/20260922035936_beta_push_cancel_hotfix.sql','utf8');
 const schedule=fs.readFileSync('supabase/migrations/20260922012607_beta_push_worker_schedule.sql','utf8');
 const worker=fs.readFileSync('supabase/functions/process-beta-push-outbox/index.ts','utf8');
-const push=fs.readFileSync('src/v5/beta-push.js','utf8');
-const media=fs.readFileSync('src/v5/beta-media.js','utf8');
+const push=fs.readFileSync('src/beta/push.js','utf8');
+const media=fs.readFileSync('src/beta/media.js','utf8');
 const sw=fs.readFileSync('beta-sw.js','utf8');
 const beta=fs.readFileSync('beta.html','utf8');
 const operator=fs.readFileSync('beta-operator.html','utf8');
@@ -43,10 +43,10 @@ for(const token of ['/storage/v1/object/beta-media/','profiles/${userId}/avatar.
 assert.ok(sw.includes("self.addEventListener('push'"));
 assert.ok(sw.includes("self.addEventListener('notificationclick'"));
 assert.ok(sw.includes('showNotification'));
-assert.ok(beta.includes("import('/src/v5/beta-push.js?v=1')"));
-assert.ok(beta.includes("import('/src/v5/beta-media.js?v=1')"));
-assert.ok(operator.includes('/src/v5/beta-media.js?v=1'));
-assert.ok(beta.includes('/src/v5/beta-enhancements.css?v=1'));
-assert.ok(operator.includes('/src/v5/beta-enhancements.css?v=1'));
+assert.ok(beta.includes("import('/src/beta/push.js?v=1')"));
+assert.ok(beta.includes("import('/src/beta/media.js?v=1')"));
+assert.ok(operator.includes('/src/beta/media.js?v=1'));
+assert.ok(beta.includes('/src/beta/enhancements.css?v=1'));
+assert.ok(operator.includes('/src/beta/enhancements.css?v=1'));
 
 console.log('beta web push + media contracts: PASS');

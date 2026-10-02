@@ -4,14 +4,14 @@ import assert from 'node:assert/strict';
 const migration=fs.readFileSync('supabase/migrations/20260921221321_beta_operator_mfa.sql','utf8');
 const beta=fs.readFileSync('beta.html','utf8');
 const operator=fs.readFileSync('beta-operator.html','utf8');
-const social=fs.readFileSync('src/v5/beta-social-auth.js','utf8');
-const socialBootstrap=fs.readFileSync('src/v5/beta-social-auth-bootstrap.js','utf8');
-const mfa=fs.readFileSync('src/v5/beta-operator-mfa.js','utf8');
-const operatorPolish=fs.readFileSync('src/v5/beta-operator-polish.js','utf8');
-const betaCss=fs.readFileSync('src/v5/beta.css','utf8');
-const authCss=fs.readFileSync('src/v5/beta-auth.css','utf8');
-const operatorCss=fs.readFileSync('src/v5/beta-operator.css','utf8');
-const enhancementCss=fs.readFileSync('src/v5/beta-enhancements.css','utf8');
+const social=fs.readFileSync('src/beta/social-auth.js','utf8');
+const socialBootstrap=fs.readFileSync('src/beta/social-auth-bootstrap.js','utf8');
+const mfa=fs.readFileSync('src/beta/operator-mfa.js','utf8');
+const operatorPolish=fs.readFileSync('src/beta/operator-polish.js','utf8');
+const betaCss=fs.readFileSync('src/beta/app.css','utf8');
+const authCss=fs.readFileSync('src/beta/auth.css','utf8');
+const operatorCss=fs.readFileSync('src/beta/operator.css','utf8');
+const enhancementCss=fs.readFileSync('src/beta/enhancements.css','utf8');
 
 for(const token of [
   'require_beta_operator_aal2',
@@ -38,8 +38,8 @@ assert.ok(migration.includes('MFA_GUARD_VERIFY_FAILED'),'migration must verify e
 assert.ok(migration.includes("position('require_beta_operator_aal2' in pg_get_functiondef(v_oid))=0"),'post-patch verification must inspect the live function definition');
 assert.ok(!migration.includes("E'\\\\nbegin"),'MFA patch must not double-escape newline sequences');
 
-assert.ok(beta.includes('/src/v5/beta-social-auth-bootstrap.js?v=1'));
-assert.ok(beta.includes("import('/src/v5/beta-social-auth.js?v=1')"));
+assert.ok(beta.includes('/src/beta/social-auth-bootstrap.js?v=1'));
+assert.ok(beta.includes("import('/src/beta/social-auth.js?v=1')"));
 assert.ok(social.includes('/auth/v1/settings'),'social buttons must reflect actually enabled providers');
 assert.ok(social.includes('/auth/v1/authorize'),'social auth must use Supabase OAuth authorize flow');
 assert.ok(social.includes('payload?.external?.google'));
@@ -49,12 +49,12 @@ assert.ok(socialBootstrap.includes("params.get('type')==='recovery'"),'social ca
 assert.ok(socialBootstrap.includes('friendlyAuthError'),'OAuth callback errors must be normalized before they reach the user');
 assert.ok(socialBootstrap.includes('소셜 로그인 연결을 완료하지 못했습니다.'),'technical OAuth exchange errors must have user-facing Korean copy');
 
-assert.ok(operator.includes('/src/v5/beta-operator-mfa.js?v=1'));
-assert.ok(!operator.includes('src="/src/v5/beta-operator.js?v=1"'),'base operator console must not load before MFA gate');
+assert.ok(operator.includes('/src/beta/operator-mfa.js?v=1'));
+assert.ok(!operator.includes('src="/src/beta/operator.js?v=1"'),'base operator console must not load before MFA gate');
 for(const token of ['/auth/v1/factors','/challenge','/verify','aal2','operatorMembership'])
   assert.ok(mfa.includes(token),`missing operator browser MFA contract: ${token}`);
-assert.ok(mfa.includes("await import('/src/v5/beta-operator.js?v=1')"),'operator console loads only after MFA decision');
-assert.ok(mfa.includes("await import('/src/v5/beta-operator-polish.js?v=1')"),'operator UX polish must load after the guarded console');
+assert.ok(mfa.includes("await import('/src/beta/operator.js?v=1')"),'operator console loads only after MFA decision');
+assert.ok(mfa.includes("await import('/src/beta/operator-polish.js?v=1')"),'operator UX polish must load after the guarded console');
 for(const token of ['qrImageSource','data:image/svg+xml;charset=utf-8','encodeURIComponent(raw.slice(svgStart))','설정 키 · 시간 기반(TOTP)'])
   assert.ok(mfa.includes(token),`missing safe MFA QR/fallback contract: ${token}`);
 assert.ok(!mfa.includes('src="${esc(enrollment?.totp?.qr_code'), 'raw TOTP QR response must never be rendered directly as an image URL');

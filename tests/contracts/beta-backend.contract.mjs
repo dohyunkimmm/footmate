@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_CONFIG_TIMEOUT_MS,BETA_REQUEST_TIMEOUT_MS} from '../../src/v5/infrastructure/supabase-beta.js';
-import {normalizeBetaMatch} from '../../src/v5/domain/beta-match-contract.js';
+import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_CONFIG_TIMEOUT_MS,BETA_REQUEST_TIMEOUT_MS} from '../../src/beta/infrastructure/supabase.js';
+import {normalizeBetaMatch} from '../../src/beta/domain/match-contract.js';
 
 function json(payload,status=200){
   return new Response(JSON.stringify(payload),{status,headers:{'content-type':'application/json'}});

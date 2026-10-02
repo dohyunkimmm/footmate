@@ -5,7 +5,7 @@ async function openCaseStudy(page,viewport){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyAdvancedPolish==='true');
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyDetailFinish==='true');
-  await page.waitForFunction(()=>[...document.styleSheets].some(sheet=>sheet.href?.includes('case-study-detail-finish.css')));
+  await page.waitForFunction(()=>[...document.styleSheets].some(sheet=>sheet.href?.includes('detail-finish.css')));
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 

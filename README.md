@@ -161,40 +161,40 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 
 - `api/ai-match-assistant.js` — AI Gateway, OIDC, provider fallback, request/time/cost guardrails
 - `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
-- `src/v5/ai-match-assistant.js` — AI UI/application bridge, Home Assistant entry/example execution, Discover handoff, browser timeout/fallback, AI state restoration
-- `src/v4/discovery.js` — Discover filter/sort/result-list ownership and persisted discovery state; AI state ownership은 갖지 않음
-- `src/v4/platform/presentation/real-app-flow-naturalness.js` — Real App first-use greeting, origin-preserving flow copy, MY saved-match destination, experience disclosure, Matchday/Return user-facing presentation layer
-- `src/v5/beta.js` — Closed Beta Auth / profile / match / participation / freshness / account-data UI state
-- `src/v5/beta-recovery-bootstrap.js` — recovery token bootstrap before base Beta Auth connection
-- `src/v5/beta-readiness.js` — account recovery / cancellation policy / self check-in / in-app notification UI extension
-- `src/v5/beta-growth.js` — Realtime / waitlist / live-match recommendation / attendance-feedback UI extension
-- `src/v5/beta-social-auth.js` — provider-aware Google/Kakao OAuth entrypoint
-- `src/v5/beta-push.js` + `beta-sw.js` — browser Web Push opt-in/subscription and service-worker notification surface
-- `src/v5/beta-media.js` — profile and operator match-image Supabase Storage adapter/UI
-- `src/v5/beta-operator.js` — allowlisted operator match / participant management UI state
-- `src/v5/beta-operator-mfa.js` — TOTP enrollment/challenge/verify gate before operator console load; raw SVG QR normalization + manual setup-key fallback
-- `src/v5/beta-operator-polish.js` — new-match policy defaults, picker bounds and narrow-screen Operator form polish
-- `src/v5/beta-operator-readiness.js` — operator policy / participant check-in / match completion UI extension
-- `src/v5/infrastructure/supabase-beta.js` — Supabase Auth / REST / RPC / account-deletion browser adapter
-- `src/v5/infrastructure/supabase-beta-readiness.js` — Supabase Auth recovery / readiness REST / RPC / transactional email dispatch adapter
-- `src/v5/domain/beta-match-contract.js` — connected match normalization contract
+- `src/app/ai-match-assistant.js` — AI UI/application bridge, Home Assistant entry/example execution, Discover handoff, browser timeout/fallback, AI state restoration
+- `src/app/discovery.js` — Discover filter/sort/result-list ownership and persisted discovery state; AI state ownership은 갖지 않음
+- `src/platform/presentation/real-app-flow-naturalness.js` — Real App first-use greeting, origin-preserving flow copy, MY saved-match destination, experience disclosure, Matchday/Return user-facing presentation layer
+- `src/beta/app.js` — Closed Beta Auth / profile / match / participation / freshness / account-data UI state
+- `src/beta/recovery-bootstrap.js` — recovery token bootstrap before base Beta Auth connection
+- `src/beta/readiness.js` — account recovery / cancellation policy / self check-in / in-app notification UI extension
+- `src/beta/growth.js` — Realtime / waitlist / live-match recommendation / attendance-feedback UI extension
+- `src/beta/social-auth.js` — provider-aware Google/Kakao OAuth entrypoint
+- `src/beta/push.js` + `beta-sw.js` — browser Web Push opt-in/subscription and service-worker notification surface
+- `src/beta/media.js` — profile and operator match-image Supabase Storage adapter/UI
+- `src/beta/operator.js` — allowlisted operator match / participant management UI state
+- `src/beta/operator-mfa.js` — TOTP enrollment/challenge/verify gate before operator console load; raw SVG QR normalization + manual setup-key fallback
+- `src/beta/operator-polish.js` — new-match policy defaults, picker bounds and narrow-screen Operator form polish
+- `src/beta/operator-readiness.js` — operator policy / participant check-in / match completion UI extension
+- `src/beta/infrastructure/supabase.js` — Supabase Auth / REST / RPC / account-deletion browser adapter
+- `src/beta/infrastructure/supabase-readiness.js` — Supabase Auth recovery / readiness REST / RPC / transactional email dispatch adapter
+- `src/beta/domain/match-contract.js` — connected match normalization contract
 - `supabase/functions/delete-account/` — authenticated user account deletion; privileged Auth admin operation stays server-side
 - `supabase/functions/process-beta-email-outbox/` + `resend-beta-email-webhook/` — server transactional email delivery/reconciliation
 - `supabase/functions/process-beta-push-outbox/` — server-driven Web Push outbox worker with bounded retry and stale-subscription cleanup
 - `supabase/migrations/` — profiles / operators / matches / match_slots / participation / notification / email+push outbox / waitlist / feedback / media / audit trail, RLS and atomic user/operator RPC ownership
-- `src/v5/domain/` — recommendation / participation / matchday / return consistency ownership
-- `src/v5/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
-- `src/v4/platform/domain/contracts.js` — version-neutral `footmate:*` canonical storage keys + `footmate:v4:*` legacy compatibility key contract
-- `src/v4/platform/infrastructure/storage.js` — legacy promotion, canonical-first reconciliation, dual-write rollback mirror, JSON repository ownership
-- `src/v4/platform/domain/recommendation.js` — deterministic recommendation score/reason/sort의 순수 domain Source of Truth
-- `src/v4/recommendation.js` — domain 결과를 Home / Discover / Detail UI와 연결하는 presentation bridge
-- `src/v4/data.js` — current `/app` sample match records and user-visible recommendation reasons
+- `src/domain/` — recommendation / participation / matchday / return consistency ownership
+- `src/platform/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
+- `src/platform/domain/contracts.js` — version-neutral `footmate:*` canonical storage keys + `footmate:v4:*` legacy compatibility key contract
+- `src/platform/infrastructure/storage.js` — legacy promotion, canonical-first reconciliation, dual-write rollback mirror, JSON repository ownership
+- `src/platform/domain/recommendation.js` — deterministic recommendation score/reason/sort의 순수 domain Source of Truth
+- `src/app/recommendation.js` — domain 결과를 Home / Discover / Detail UI와 연결하는 presentation bridge
+- `src/app/data.js` — current `/app` sample match records and user-visible recommendation reasons
 
 ## Release engineering
 
 버전 번호는 제품의 외부 이름이 아니라 개발·QA·배포 추적용 식별자로만 사용합니다.
 
-- Current Product release identifier: **v5.2.0** — root `package.json.version`이 public `/app` 및 `/demo`, `/next` compatibility alias의 release meta 기준이며 CI가 drift를 차단
+- Current Product release identifier: **v6.0.0** — root `package.json.version`이 public `/app` 및 `/demo`, `/next` compatibility alias의 release meta 기준이며 CI가 drift를 차단
 - Case Study release identifier는 별도 surface 계약으로 현재 **v5.1.1**을 유지하며 Product package version과 강제로 동기화하지 않습니다.
 - Component compatibility identifiers such as connected-platform / AI Assistant `v5.1.1` are preserved independently from the Product release
 - Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
