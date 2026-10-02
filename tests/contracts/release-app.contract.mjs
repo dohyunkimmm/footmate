@@ -7,7 +7,7 @@ const release=read('src/app/release-app.js');
 const styles=read('src/app/release-app.css');
 const bootstrap=read('src/platform/presentation/bootstrap.js');
 
-assert.match(bootstrap,/\.\.\/\.\.\/\.\.\/v6\/release-app\.js/,'release app layer must boot with the product');
+assert.match(bootstrap,/\.\.\/\.\.\/app\/release-app\.js/,'release app layer must boot with the product');
 assert.match(release,/RELEASE_APP_VERSION='6\.0\.0'/,'release app version marker missing');
 assert.match(release,/current\.route!==['"]schedule['"]/,'legacy Schedule route migration missing');
 assert.equal(migrateSession({schemaVersion:2,route:'schedule'}).state.route,'profile','Schedule must migrate into MY');
