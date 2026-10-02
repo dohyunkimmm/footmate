@@ -22,6 +22,12 @@
 - Production verification: exact Production에서 core 15 tests PASS + Release App journey 8 tests PASS. Home / Discover / Detail, free Join → Success → MY, legacy Schedule → MY migration, Matchday, Return lifecycle, 320 / 375 / 390 / 430px overflow/accessibility 계약을 확인.
 - QA hardening: Production release behavior gate가 Join 오류 복구와 Return 완료 → Discover handoff를 직접 실행하도록 확대하고, HTTP smoke의 lifecycle 구현 문자열 의존을 제거. 통합 QA workflow는 README/docs/markdown-only 변경에서 heavy browser/visual job을 skip하고 Release App contract는 유지.
 - Documentation sync: root README와 `RELEASE-APP.md`의 durable 제품 설명은 현재 상태와 충돌하지 않아 유지하고, 이 Release History의 current Production/runtime 사실만 #450 기준으로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. 이번 변경은 visual polish이므로 Notion sync 대상이 아니며, Case Study는 별도 프로젝트라 sync하지 않음.
+- Case Study P0/P1 visual hierarchy closure: PR #453 · runtime baseline `73fb999de4661bdb989c467b42a55d15f186aa87`. 13-section IA와 승인 카피·제품 사실·route는 유지하면서 02 Problem의 원인→핵심 문제 구조, 06/07/09 Product UI evidence 비중, 10 Recovery 2-up evidence, 12 Validation Metric/QA Evidence 분리, 01 Overview proof hierarchy와 13 final Real App CTA를 정리.
+- Final PR QA: FootMate QA run `37075858806` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Case Study 13-section desktop/mobile rough visual audit PASS · Mobile Safari/WebKit PASS.
+- Post-merge main QA: FootMate QA run `37076363576` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
+- Exact Vercel Production: deployment `dpl_Bnk4WZo7k3tH4JzRwSMQkVkJz4cH` · SHA `73fb999de4661bdb989c467b42a55d15f186aa87` · READY · official alias `footmate-black.vercel.app`.
+- Production verification: exact Production HTTP smoke PASS · AI inference PASS · Chromium Production smoke PASS · Release App journey PASS. Case Study visual 변경은 제품 도메인/상태/연동 계약을 변경하지 않음.
+- Documentation boundary: README의 13-section 서비스 기획 설명에 시각 구조 원칙만 최소 동기화. Closed Beta Runbook과 Notion은 운영/기능 계약 변경이 없어 유지.
 
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
