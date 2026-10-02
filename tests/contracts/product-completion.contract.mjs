@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {rankRecommendations} from '../../src/v4/platform/domain/recommendation.js';
-import {PERFORMANCE_BUDGET,RUNTIME_PERFORMANCE_BUDGET} from '../../src/v4/platform/domain/release-candidate.js';
+import {rankRecommendations} from '../../src/platform/domain/recommendation.js';
+import {PERFORMANCE_BUDGET,RUNTIME_PERFORMANCE_BUDGET} from '../../src/platform/domain/release-candidate.js';
 
 const read=async path=>readFile(new URL(`../../${path}`,import.meta.url),'utf8');
 const pkg=JSON.parse(await read('package.json'));
 const app=await read('app.html');
 const caseStudy=await read('index.html');
-const design=await read('src/v4/design-system-v2.css');
-const appJs=await read('src/v4/app.js');
-const decision=await read('src/v4/decision.js');
-const recommendation=await read('src/v4/recommendation.js');
+const design=await read('src/app/design-system-v2.css');
+const appJs=await read('src/app/app.js');
+const decision=await read('src/app/decision.js');
+const recommendation=await read('src/app/recommendation.js');
 const config=await read('playwright.config.cjs');
 const workflow=await read('.github/workflows/qa.yml');
 const production=await read('tests/e2e/v5.1-production.spec.cjs');
