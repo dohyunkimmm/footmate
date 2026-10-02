@@ -113,23 +113,26 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await openCaseStudy(page,viewport);
     await expect(page.locator('.label')).toBeHidden();
 
-    // P2 · scan summaries and supporting cards remain secondary to the decision block.
+    // P2 · quiet source cards feed one explicit core problem without competing with the decision block.
     await showSection(page,1);
     const p2=await page.locator('.slide.on').evaluate(slide=>{
       const summary=slide.querySelector('.fm-next-review-summary>div');
-      const support=slide.querySelector('.fm-next-cs-grid.three>.fm-next-cs-card');
+      const source=slide.querySelector('.fm-p0-problem-sources>article');
+      const core=slide.querySelector('.fm-p0-problem-core');
       const quote=slide.querySelector('.fm-next-cs-quote');
       const style=el=>el?getComputedStyle(el):null;
       return {
         summaryBorder:style(summary)?.borderTopColor,
-        supportBorder:style(support)?.borderTopColor,
-        supportBg:style(support)?.backgroundColor,
+        sourceBorder:style(source)?.borderTopColor,
+        sourceBg:style(source)?.backgroundColor,
+        coreBorder:style(core)?.borderTopColor,
         quoteBorder:style(quote)?.borderTopColor
       };
     });
     expect(p2.summaryBorder).toBe('rgba(0, 0, 0, 0)');
-    expect(p2.supportBorder).toBe('rgba(0, 0, 0, 0)');
-    expect(p2.supportBg).not.toBe('rgb(255, 255, 255)');
+    expect(p2.sourceBorder).not.toBe('rgba(0, 0, 0, 0)');
+    expect(p2.sourceBg).not.toBe('rgb(255, 255, 255)');
+    expect(p2.coreBorder).not.toBe('rgba(0, 0, 0, 0)');
     expect(p2.quoteBorder).not.toBe('rgba(0, 0, 0, 0)');
 
     // P3 · on mobile, the 3 reviewer metadata items form one compact scan strip.
