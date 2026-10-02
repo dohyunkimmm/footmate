@@ -1,5 +1,5 @@
-import {footmatePlatform} from './platform/application/platform.js';
-import {completeCheckin} from './platform/application/checkin.js';
+import {footmatePlatform} from '../platform/application/platform.js';
+import {completeCheckin} from '../platform/application/checkin.js';
 
 /* FootMate v4 account experience.
    External authentication remains simulated; the UI models the official sign-in / sign-up interaction. */
