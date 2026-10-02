@@ -266,7 +266,7 @@
     const authFlow=slides[7].querySelector('.fm-next-cs-auth-flow');
     if(authFlow&&!slides[7].querySelector('.fm-next-cs-state-line'))authFlow.insertAdjacentHTML('afterend','<div class="fm-next-cs-state-line"><span>보존 · 선택 경기와 로그인 후 복귀 위치</span></div>');
     decision(7,'.fm-next-cs-scope',[
-      ['Real App','Real App의 인증·결제는 시뮬레이션입니다.'],
+      ['Real App','Real App의 인증은 UX 시뮬레이션이며 참가 확인은 무료 흐름입니다.'],
       ['Closed Beta','Closed Beta의 인증·참가 경로는 Supabase에 실제 연결됩니다.'],
       ['검증 범위','Google/Kakao OAuth는 Production 실로그인까지 검증했습니다. 실제 PG는 미연동입니다.']]);
 
