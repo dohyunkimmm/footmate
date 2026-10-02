@@ -1,4 +1,4 @@
-import {MATCHES} from '../../data.js';
+import {MATCHES} from '../../app/data.js';
 import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
