@@ -1,4 +1,4 @@
-import {loadBetaBackendConfig} from './infrastructure/supabase-beta.js';
+import {loadBetaBackendConfig} from './infrastructure/supabase.js';
 
 const userRoot=document.getElementById('footmate-beta');
 const operatorRoot=document.getElementById('footmate-beta-operator');
