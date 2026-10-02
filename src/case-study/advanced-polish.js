@@ -74,7 +74,7 @@
 
   function markEvidenceScale(){
     const targets=[
-      ['.fm-evidence-figure.is-recommendation','secondary'],
+      ['.fm-evidence-figure.is-recommendation','primary'],
       ['.fm-evidence-figure.is-detail','primary'],
       ['.fm-evidence-figure.is-operations','primary']
     ];
