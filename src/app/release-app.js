@@ -1,5 +1,5 @@
-import {MATCHES,createState} from '../v4/data.js';
-import {footmatePlatform} from '../v4/platform/application/platform.js';
+import {MATCHES,createState} from './data.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const RELEASE_APP_VERSION='6.0.0';
@@ -22,7 +22,7 @@ function installStyles(){
   }
   const link=document.createElement('link');
   link.rel='stylesheet';
-  link.href='/src/v6/release-app.css?v=2';
+  link.href='/src/app/release-app.css?v=2';
   link.dataset.footmateV6Release='true';
   const ready=new Promise(resolve=>{
     link.addEventListener('load',()=>resolve(link),{once:true});
