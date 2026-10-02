@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {migrateSession} from '../../src/v4/platform/domain/contracts.js';
+import {migrateSession} from '../../src/platform/domain/contracts.js';
 
 const read=path=>fs.readFileSync(new URL(`../../${path}`,import.meta.url),'utf8');
-const release=read('src/v6/release-app.js');
-const styles=read('src/v6/release-app.css');
-const bootstrap=read('src/v4/platform/presentation/bootstrap.js');
+const release=read('src/app/release-app.js');
+const styles=read('src/app/release-app.css');
+const bootstrap=read('src/platform/presentation/bootstrap.js');
 
 assert.match(bootstrap,/\.\.\/\.\.\/\.\.\/v6\/release-app\.js/,'release app layer must boot with the product');
 assert.match(release,/RELEASE_APP_VERSION='6\.0\.0'/,'release app version marker missing');
