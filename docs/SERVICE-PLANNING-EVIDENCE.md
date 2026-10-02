@@ -12,7 +12,7 @@
 
 | 협의 대상 | 전달할 기준 | 현재 산출물 근거 |
 | --- | --- | --- |
-| 개발 | 입력·출력, 권한, 정원 동시성, 오류·재시도, 상태 소유권 | `src/v5/domain/`, `src/v5/infrastructure/`, `supabase/migrations/` |
+| 개발 | 입력·출력, 권한, 정원 동시성, 오류·재시도, 상태 소유권 | `src/domain/`, `src/v5/infrastructure/`, `supabase/migrations/` |
 | 디자인 | IA, 정상·로딩·빈 결과·오류·복구 화면, CTA 우선순위 | Case Study, `/app`, `/beta`, Browser E2E |
 | 운영 | 취소 마감, 포지션 정원, 대기열, 체크인, 알림 실패·복구 | `/beta/operator`, `docs/BETA-PILOT-RUNBOOK.md` |
 
