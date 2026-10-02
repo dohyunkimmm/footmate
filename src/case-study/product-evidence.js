@@ -3,7 +3,7 @@
    No new product facts, routes, IA, or runtime behavior. */
 (function(){
   const ROOT='html[data-fm-next-case-study="true"]';
-  const ASSET='/src/v5/evidence/';
+  const ASSET='/src/case-study/evidence/';
   const SOURCE='visual-baseline-c718e788';
 
   function section(role){
