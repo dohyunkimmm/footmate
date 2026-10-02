@@ -63,3 +63,4 @@ Case Study는 별도 프로젝트에서 관리한다. FootMate의 작은 visual 
 
 - [서비스 기획 근거](SERVICE-PLANNING-EVIDENCE.md): 역할·목표·우선순위·대안·8개 KPI 측정 설계와 검증 한계
 - [과업 기반 사용자 검증 근거](USER-TEST-EVIDENCE.md): 같은 교육과정을 수강한 교육생 6명의 iOS·Android 탐색·가입 과업, 반복 검증 방식과 해석 한계
+<!-- temporary docs-only CI routing verification; this branch will not be merged -->
