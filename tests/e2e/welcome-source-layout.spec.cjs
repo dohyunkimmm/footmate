@@ -45,10 +45,10 @@ async function welcomeGeometry(page){
 }
 
 test('Welcome presentation contract owns AI role copy while source layout remains stable',()=>{
-  const app=fs.readFileSync('src/v4/app.js','utf8');
-  const trust=fs.readFileSync('src/v4/platform/presentation/p0-usability-trust.js','utf8');
-  const personalization=fs.readFileSync('src/v4/personalization.js','utf8');
-  const css=fs.readFileSync('src/v4/personalization.css','utf8');
+  const app=fs.readFileSync('src/app/app.js','utf8');
+  const trust=fs.readFileSync('src/platform/presentation/p0-usability-trust.js','utf8');
+  const personalization=fs.readFileSync('src/app/personalization.js','utf8');
+  const css=fs.readFileSync('src/app/personalization.css','utf8');
   const html=fs.readFileSync('app.html','utf8');
   expect(app).toContain('class="fm-next-intro-copy" style="transform:translateY(-44px)"');
   expect(app).toContain('data-welcome-ai-copy');
@@ -58,9 +58,9 @@ test('Welcome presentation contract owns AI role copy while source layout remain
   expect(trust).toContain("rankingOwner:'deterministic recommendation engine'");
   expect(css).toContain('.fm-next-intro-copy{transform:translateY(-88px)!important}');
   expect(personalization).not.toContain("copy.style.transform='translateY(-44px)'");
-  expect(html).toContain('/src/v4/platform/presentation/bootstrap.js?v=490');
-  expect(html).toContain('/src/v4/app.js?v=494');
-  expect(html).toContain('/src/v4/personalization.js?v=493');
+  expect(html).toContain('/src/platform/presentation/bootstrap.js?v=490');
+  expect(html).toContain('/src/app/app.js?v=494');
+  expect(html).toContain('/src/app/personalization.js?v=493');
 });
 
 for(const path of ['/demo','/app']){
