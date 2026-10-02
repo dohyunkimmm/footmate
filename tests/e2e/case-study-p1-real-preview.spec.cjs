@@ -26,6 +26,8 @@ for(const [name,viewport] of [['desktop',{width:1440,height:900}],['mobile',{wid
     await expect(preview.locator('.fm-p1-real-ai')).toContainText('AI에게 원하는 경기를 검색해보세요.');
     await expect(preview.locator('.fm-p1-real-section-head')).toContainText('For You');
     await expect(preview.locator('.fm-p1-real-match')).toContainText('광교 웨스트파크');
+    await expect(preview.locator('.fm-p1-real-match-meta')).toContainText('샘플 일정 · 평일 21:30');
+    await expect(preview.locator('.fm-p1-real-match-meta')).not.toContainText('10월 1일');
     await expect(preview.locator('.fm-p1-real-nav')).toContainText('경기 찾기');
     await expect(page.locator('.fm-next-cover-note')).toContainText('최신 Real App 홈 프리뷰');
 

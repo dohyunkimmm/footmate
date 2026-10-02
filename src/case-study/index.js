@@ -1,5 +1,6 @@
 /* FootMate v4.0 · Matchday Companion Case Study */
 (function(){
+  const canonicalSourceIndexes=[0,1,2,3,5,6,7,8,10,11,12,14,15];
   const sections=[
     ['Overview','Matchday Companion'],
     ['Problem','판단이 오래 걸리는 경기 탐색'],
@@ -82,8 +83,8 @@
       `<div class="fm-next-cs-day-states"><div><small>탐색 중</small><b>지금 잘 맞는 경기</b></div><div><small>참가 확정</small><b>다가오는 경기</b></div><div class="is-focus"><small>경기 당일</small><b>경기까지 1시간 20분</b><p>길찾기 · 체크인 · 운영 도움</p></div><div><small>경기 후</small><b>오늘 경기, 어땠나요?</b></div></div>`,
       `<a class="fm-next-cs-link" href="/app?mode=evidence" target="_blank" rel="noopener">상태 시나리오 보기 <span>↗</span></a>`),
 
-    shell('11 · RECOVERY','막혔을 때는 오류 설명보다 다음 행동을 먼저 보여줍니다.','추천 결과가 없거나 자리가 마감되고, 결제가 실패하거나 경기 당일 문제가 생길 수 있습니다. 각 상황에서 사용자가 다시 진행할 수 있는 선택지를 바로 붙였습니다.',
-      `<div class="fm-next-cs-recovery"><div><b>추천 없음</b><span>조건 완화 · 지역/시간 수정</span></div><div><b>자리 마감</b><span>대기 등록 · 비슷한 경기 탐색</span></div><div><b>결제 실패</b><span>재시도 · 결제수단 변경</span></div><div><b>경기 당일 문제</b><span>체크인 재시도 · 운영 도움</span></div></div>`,
+    shell('11 · RECOVERY','막혔을 때는 오류 설명보다 다음 행동을 먼저 보여줍니다.','추천 결과가 없거나 자리가 마감되고, 참가 상태나 경기 당일 문제가 생길 수 있습니다. 각 상황에서 사용자가 다시 진행할 수 있는 선택지를 바로 붙였습니다.',
+      `<div class="fm-next-cs-recovery"><div><b>추천 없음</b><span>조건 완화 · 지역/시간 수정</span></div><div><b>자리 마감</b><span>대기 등록 · 비슷한 경기 탐색</span></div><div><b>참가 상태 문제</b><span>상태 확인 · 다시 참가</span></div><div><b>경기 당일 문제</b><span>체크인 재시도 · 운영 도움</span></div></div>`,
       `<div class="fm-next-cs-decision"><span>복구 원칙</span><b>무슨 일이 생겼는지 설명하는 데서 끝내지 않고, 사용자가 다음에 할 수 있는 행동까지 함께 보여줍니다.</b></div>`),
 
     shell('12 · IA / MODES','사용자에게 보여줄 화면과 리뷰어에게 보여줄 근거를 분리했습니다.','실제 앱 화면에는 사용에 필요한 정보만 남기고, 설계 의도와 상태 검증은 Guided와 Evidence 모드에서 따로 확인할 수 있게 했습니다.',
@@ -94,8 +95,8 @@
       `<div class="fm-next-cs-agent"><b>Context</b><i>→</i><b>Plan</b><i>→</i><b>Tools</b><i>→</i><b>Guardrail</b><i>→</i><b>Observe</b></div><div class="fm-next-cs-grid three">${card('상태 계약','setupComplete · selectedMatchId · signedIn · joinedMatchId · matchStage')}${card('데이터 품질','Completeness · Validity · Freshness · Consistency · Traceability')}${card('사람의 확인','인증·결제·운영 판단처럼 실제 실행이 필요한 지점은 자동화 범위와 분리합니다.')}</div>`,
       `<div class="fm-next-cs-scope"><span>현재 구현</span><b>규칙 · 샘플 데이터 · 브라우저 세션 상태 기반 인터랙티브 프로토타입</b><p>외부 AI 모델, 회원 DB, 실시간 정원, 실제 결제, 알림 backend는 연결하지 않았습니다.</p></div>`),
 
-    shell('14 · VALIDATION','새 디자인만 보는 것이 아니라, 16개 섹션과 핵심 흐름을 실제 브라우저에서 반복 검증합니다.','모바일 너비별 가로 넘침, 접근성, 콘솔 오류, 상태 유지와 Production 렌더링을 자동화된 릴리스 게이트로 확인합니다. 이번 편집 QA에는 줄바꿈과 구버전 문구 제거도 포함했습니다.',
-      `<div class="fm-next-cs-metrics">${metric('16','Case Study sections')}${metric('320–430','mobile widths')}${metric('A / AA','axe accessibility gate')}${metric('HTTP + Chromium','exact Production smoke')}</div><div class="fm-next-cs-grid three">${card('Guest-first','가입 전에 추천을 볼 수 있고 참가 시점에만 로그인이 나타나는지 확인합니다.')}${card('상태 연속성','선택 경기 → 로그인 → 결제 → 내 경기 흐름과 새로고침 복원을 확인합니다.')}${card('편집 품질','모바일 가로 넘침, 공식 v4 문구, CTA 경로와 주요 텍스트 래핑 계약을 확인합니다.')}</div>`,
+    shell('14 · VALIDATION','새 디자인만 보는 것이 아니라, 13개 섹션과 핵심 흐름을 실제 브라우저에서 반복 검증합니다.','모바일 너비별 가로 넘침, 접근성, 콘솔 오류, 상태 유지와 Production 렌더링을 자동화된 릴리스 게이트로 확인합니다. 이번 편집 QA에는 줄바꿈과 구버전 문구 제거도 포함했습니다.',
+      `<div class="fm-next-cs-metrics">${metric('13','Case Study sections')}${metric('320–430','mobile widths')}${metric('A / AA','axe accessibility gate')}${metric('HTTP + Chromium','exact Production smoke')}</div><div class="fm-next-cs-grid three">${card('Guest-first','가입 전에 추천을 볼 수 있고 참가 시점에만 로그인이 나타나는지 확인합니다.')}${card('상태 연속성','선택 경기 → 로그인 → 결제 → 내 경기 흐름과 새로고침 복원을 확인합니다.')}${card('편집 품질','모바일 가로 넘침, 공식 v4 문구, CTA 경로와 주요 텍스트 래핑 계약을 확인합니다.')}</div>`,
       `<div class="fm-next-cs-note">GitHub Actions의 브라우저 QA와 exact Production 검증은 구분해서 기록합니다.</div>`),
 
     shell('15 · OUTCOME / LIMITS','화면 수를 늘리기보다, 사용자가 다음 행동을 이해하기 쉽게 만들었습니다.','FootMate v4.0은 추천을 먼저 경험하고, 이유를 이해한 뒤 참가하고, 경기 당일까지 같은 맥락을 유지하는 데 집중합니다. Case Study도 기능 목록보다 이 의사결정 흐름을 따라가도록 정리했습니다.',
@@ -104,25 +105,28 @@
   ];
 
   function enhance(){
-    const slideNodes=[...document.querySelectorAll('.track .slide,.slide')].slice(0,16);
-    if(slideNodes.length<16||document.documentElement.dataset.fmNextStory==='true')return;
+    const slideNodes=[...document.querySelectorAll('.track .slide,.slide')].slice(0,13);
+    if(slideNodes.length<13||document.documentElement.dataset.fmNextStory==='true')return;
+    const canonicalSlides=canonicalSourceIndexes.map(index=>slides[index]);
+    const canonicalSections=canonicalSourceIndexes.map(index=>sections[index]);
     document.documentElement.dataset.fmNextStory='true';
     slideNodes.forEach((slide,index)=>{
       slide.classList.add('fm-next-story-slide');
       if(index===0)slide.classList.add('fm-next-cover-slide');
-      slide.innerHTML=slides[index];
+      slide.innerHTML=canonicalSlides[index];
     });
-    const toc=[...document.querySelectorAll('.toc-item')].slice(0,16);
+    const toc=[...document.querySelectorAll('.toc-item')].slice(0,13);
     toc.forEach((item,index)=>{
       const title=item.querySelector('.toc-t');
       const sub=item.querySelector('.toc-s');
-      if(title)title.textContent=sections[index][0];
-      if(sub)sub.textContent=sections[index][1];
+      if(title)title.textContent=canonicalSections[index][0];
+      if(sub)sub.textContent=canonicalSections[index][1];
     });
     const sub=document.querySelector('.sb-sub');
-    if(sub)sub.textContent='v4.0 · 16 sections';
+    if(sub)sub.textContent='AI-assisted discovery · 13 sections';
     const topTitle=document.querySelector('.topbar-title');
-    if(topTitle)topTitle.textContent='FootMate v4.0 · Matchday Companion Case Study';
+    if(topTitle)topTitle.textContent='FootMate · Product Case Study';
+    document.documentElement.dataset.footmateCaseStudyRelease='4.9.0';
     slideNodes[0]?.querySelector('[data-fm-next-cover-next]')?.addEventListener('click',()=>{
       if(typeof window.goTo==='function'){window.goTo(1);return;}
       const next=document.querySelector('.btn-next');

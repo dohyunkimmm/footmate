@@ -170,7 +170,7 @@
       <div class="fm-p0-recovery-head" aria-hidden="true"><span>문제</span><span>보존할 상태</span><span>다음 행동</span></div>
       ${recoveryRow('추천 없음','입력한 탐색 조건','지역·시간 수정 또는 조건 완화','search')}
       ${recoveryRow('자리 마감','선택 경기와 포지션','대기 등록 또는 비슷한 경기 탐색','capacity')}
-      ${recoveryRow('결제 실패 · 시뮬레이션','선택 경기와 참가 의도','재시도 또는 결제수단 변경','payment')}
+      ${recoveryRow('참가 상태 문제','선택 경기와 참가 의도','상태 확인 또는 다시 참가','participation')}
       ${recoveryRow('경기 당일 문제','참가·체크인 상태','체크인 재시도 또는 운영 도움','matchday')}`;
     return true;
   }

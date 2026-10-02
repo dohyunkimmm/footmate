@@ -28,7 +28,7 @@
       </section>
       <div class="fm-p1-real-section-head"><h3>For You</h3><span>전체 보기</span></div>
       <article class="fm-p1-real-match">
-        <div class="fm-p1-real-match-meta"><small>샘플 일정 · 10월 1일 · 21:30</small><b>✦ 추천 1순위</b></div>
+        <div class="fm-p1-real-match-meta"><small>샘플 일정 · 평일 21:30</small><b>✦ 추천 1순위</b></div>
         <h3>광교 웨스트파크</h3>
         <div class="fm-p1-real-match-bottom"><div><span class="is-fit">조건과 잘 맞아요</span><span>22분</span><span>MF 2자리</span></div><strong>13,000원</strong></div>
       </article>

@@ -178,7 +178,7 @@
     auth.querySelector('.fm-next-cs-state-line')?.remove();
     auth.querySelector('.fm-next-cs-auth-flow>.is-focus')?.classList.remove('is-focus');
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','인증·결제는 UX 시뮬레이션으로 구현했습니다.'],
+      ['Real App','인증은 UX 시뮬레이션이며 참가 확인은 무료 흐름으로 구현했습니다.'],
       ['Closed Beta','Supabase 인증·참가 경로를 실제 연결했습니다.'],
       ['상태 보존','로그인 전 선택한 경기와 복귀 위치를 유지해 같은 결정을 반복하지 않게 했습니다.'],
       ['검증 범위','Google/Kakao OAuth는 Production 실로그인까지 확인했습니다. 실제 PG는 연결하지 않았습니다.']
@@ -220,7 +220,7 @@
       '이 결과는 버그와 막힘을 찾기 위한 사용성 검증이며, 전환율 개선이나 시장 적합성을 입증한 Measured Result와는 구분합니다.'
     ));
     setHTML(release,'.fm-next-cs-outcomes',
-      '<div><b>Real App</b><p>'+lines('AI Gateway를 실제 연결했고 추천 엔진이 후보·순위·이유를 결정합니다.','경기 데이터는 샘플을 사용하며 인증·결제·정원·알림은 시뮬레이션입니다.')+'</p></div>'+
+      '<div><b>Real App</b><p>'+lines('AI Gateway를 실제 연결했고 추천 엔진이 후보·순위·이유를 결정합니다.','경기 데이터는 샘플을 사용하며 인증·정원·알림은 시뮬레이션이고 참가 확인은 무료 흐름입니다.')+'</p></div>'+
       '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소·체크인을 실제 연결했습니다.','Google/Kakao OAuth·이메일·Web Push·미디어도 실제 환경에서 검증했습니다.')+'</p></div>'+
       '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구는 연결하지 않았습니다.','수익성과 실제 이용 지표는 아직 검증하지 않았습니다.')+'</p></div>');
 
