@@ -105,7 +105,7 @@ for(const [name,viewport] of [
     expect(p13.focusRadius).toBe(16);
     expect(p13.closingRadius).toBe(16);
     expect(p13.focusBg).not.toBe(p13.quietBg);
-    expect(p13.hasCta).toBeFalsy();
+    expect(p13.hasCta).toBeTruthy();
     expect(p13.closingText).toContain('핵심 학습');
     // Chromium can resolve 22/44px minimums a fraction below the authored value after layout.
     // Keep a half-pixel tolerance while still verifying the intended pill geometry.
