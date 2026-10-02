@@ -1,4 +1,4 @@
-import {CONNECTED_PLATFORM_VERSION,DOMAIN_OWNERSHIP,JOURNEY_CONTRACT,evaluateJourneyConsistency} from '../domain/journey.js';
+import {CONNECTED_PLATFORM_VERSION,DOMAIN_OWNERSHIP,JOURNEY_CONTRACT,evaluateJourneyConsistency} from '../../domain/journey.js';
 import {createProviderRegistry} from '../infrastructure/providers.js';
 
 export function createConnectedMatchdayPlatform(options={}){
