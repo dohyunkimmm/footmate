@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {BETA_SIGNUP_PASSWORD_MIN_LENGTH,createSupabaseBetaClient} from '../../src/v5/infrastructure/supabase-beta.js';
+import {BETA_SIGNUP_PASSWORD_MIN_LENGTH,createSupabaseBetaClient} from '../../src/beta/infrastructure/supabase.js';
 
 assert.equal(BETA_SIGNUP_PASSWORD_MIN_LENGTH,8);
 
@@ -50,7 +50,7 @@ for(const required of [
   'beta_operation_events_participation_idx'
 ])assert.ok(indexes.includes(required),`missing audit FK index: ${required}`);
 
-const ui=await readFile(new URL('../../src/v5/beta.js',import.meta.url),'utf8');
+const ui=await readFile(new URL('../../src/beta/app.js',import.meta.url),'utf8');
 for(const required of [
   '계정·참가 데이터 삭제',
   '이 작업은 되돌릴 수 없습니다',
