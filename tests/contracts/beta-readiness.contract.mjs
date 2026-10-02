@@ -55,13 +55,13 @@ assert.match(operator,/현장 체크인/);
 assert.match(operator,/경기 종료 처리/);
 assert.match(operator,/stopImmediatePropagation/);
 
-assert.match(betaHtml,/beta-recovery-bootstrap\.js/);
-assert.ok(betaHtml.indexOf('beta-recovery-bootstrap.js')<betaHtml.indexOf('beta.js'));
+assert.match(betaHtml,/recovery-bootstrap\.js/);
+assert.ok(betaHtml.indexOf('recovery-bootstrap.js')<betaHtml.indexOf('app.js'));
 assert.match(betaHtml,/import\('\/src\/beta\/readiness\.js\?v=1'\)/);
 assert.match(betaHtml,/data-beta-state/);
 assert.match(operatorHtml,/data-operator-state/);
 if(operatorMfa){
-  assert.match(operatorHtml,/beta-operator-mfa\.js\?v=1/);
+  assert.match(operatorHtml,/operator-mfa\.js\?v=1/);
   assert.match(operatorMfa,/import\('\/src\/beta\/operator-readiness\.js\?v=1'\)/);
   assert.ok(operatorMfa.indexOf("import('/src/beta/operator.js?v=1')")<operatorMfa.indexOf("import('/src/beta/operator-readiness.js?v=1')"));
 }else{
