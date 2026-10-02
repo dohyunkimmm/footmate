@@ -1,5 +1,5 @@
-import {footmatePlatform} from './platform/application/platform.js';
-import {readCheckin,completeCheckin,checkinCopy} from './platform/application/checkin.js';
+import {footmatePlatform} from '../platform/application/platform.js';
+import {readCheckin,completeCheckin,checkinCopy} from '../platform/application/checkin.js';
 
 const MATCHDAY_VERSION='4.5.0';
 const MATCHDAY_STORAGE_KEY=footmatePlatform.storageKeys.matchday;
