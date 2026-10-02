@@ -8,9 +8,36 @@
     return document.querySelector(`${ROOT} .fm-next-story-slide[data-v5-content-role="${role}"]`);
   }
 
+  function visibleSection(index){
+    return [...document.querySelectorAll(`${ROOT} .slide:not([hidden])`)][index]||null;
+  }
+
   function mark(slide,name){
     if(!slide)return;
     slide.dataset.p0Visual=name;
+  }
+
+  function patchProblem(){
+    const slide=visibleSection(1);
+    const grid=slide?.querySelector('.fm-next-cs-grid.three');
+    const quote=slide?.querySelector('.fm-next-cs-quote');
+    if(!slide||!grid||!quote)return false;
+
+    mark(slide,'problem');
+    grid.classList.add('fm-p0-problem-map');
+    grid.setAttribute('aria-label','경기 선택 불확실성을 만드는 원인과 해결 흐름');
+    grid.innerHTML=`
+      <div class="fm-p0-problem-sources">
+        <article><small>01 · 정보 분산</small><b>조건을 따로 확인</b><p>시간 · 거리 · 레벨 · 포지션 · 남은 자리 · 가격을 다시 맞춰 봐야 함</p></article>
+        <article><small>02 · 가치 확인 전 장벽</small><b>로그인이 너무 일찍 등장</b><p>추천이 도움이 되는지 판단하기 전에 계정부터 요구</p></article>
+        <article><small>03 · 참가 후 단절</small><b>다음 행동이 흩어짐</b><p>일정 · 체크인 · 경기 후 평가가 서로 다른 기능처럼 느껴짐</p></article>
+      </div>
+      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>참가 결정의 불확실성</b><p>조건을 비교하는 데서 끝내지 않고, 추천 근거를 이해한 뒤 참가와 경기 당일까지 이어져야 합니다.</p></div>
+      <div class="fm-p0-problem-path" aria-label="문제 해결 흐름">
+        <span>조건 비교</span><i>→</i><span>추천 근거 확인</span><i>→</i><span>참가</span><i>→</i><span>경기 당일</span>
+      </div>`;
+    quote.classList.add('fm-p0-problem-decision');
+    return true;
   }
 
   function patchJourney(){
@@ -185,6 +212,7 @@
   function apply(){
     if(document.documentElement.dataset.fmCaseStudyP0Visuals==='true')return true;
     const ready=[
+      visibleSection(1),
       section('product-thesis-journey'),
       section('guest-first-decision'),
       section('recommendation-decision'),
@@ -193,7 +221,7 @@
     ].every(Boolean);
     if(!ready)return false;
 
-    const patched=[patchJourney(),patchGuestFirst(),patchRecommendation(),patchRecovery(),patchDomainAI()];
+    const patched=[patchProblem(),patchJourney(),patchGuestFirst(),patchRecommendation(),patchRecovery(),patchDomainAI()];
     if(!patched.every(Boolean))return false;
     document.documentElement.dataset.fmCaseStudyP0Visuals='true';
     return true;
