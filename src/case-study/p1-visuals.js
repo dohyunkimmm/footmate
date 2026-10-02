@@ -148,6 +148,15 @@
     [...qa.children].forEach((card,index)=>{
       if(!card.querySelector('.fm-p1-evidence-label'))card.insertAdjacentHTML('afterbegin',`<span class="fm-p1-evidence-label">${labels[index]||'EVIDENCE'}</span>`);
     });
+
+    let split=slide.querySelector('.fm-p1-validation-split');
+    if(!split){
+      split=document.createElement('div');
+      split.className='fm-p1-validation-split';
+      split.setAttribute('aria-label','Validation Metric과 제품 검증 evidence 분리');
+      metrics.parentNode.insertBefore(split,metrics);
+      split.append(metrics,qa);
+    }
     note.classList.add('fm-p1-validation-note');
     return true;
   }
