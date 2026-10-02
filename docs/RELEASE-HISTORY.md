@@ -2,14 +2,24 @@
 
 ## 6.0.0 — Unified Release App
 
+- Status: verified Release App lifecycle completion / recovery / visual QA closure.
 - Home / 경기 찾기 / MY 3-tab IA를 canonical navigation으로 유지하면서 joined-match ownership을 MY로 통합.
 - legacy `schedule` session은 MY로 migration.
-- Home은 discover / upcoming / matchday / postgame lifecycle의 다음 primary action을 제공.
-- Desktop Detail / Join / MY는 Auth에서 검증한 single-surface visual hierarchy로 정리.
-- `/app`의 simulated payment 사용자 UI를 제거하고 무료 참가 확인으로 전환; real PG 미연동 경계 유지.
+- Home은 discover / upcoming / matchday / postgame lifecycle의 다음 primary action을 제공하고, Return 저장 완료 후 완료 상태에서 `다음 경기 찾기`로 다시 연결.
+- `/app`의 simulated payment 사용자 UI를 제거하고 무료 참가 확인으로 전환; 참가 정보 유실·확정 오류는 오류 안내 + 재시도 + 경기 다시 선택으로 복구하며 real PG 미연동 경계 유지.
+- Desktop Detail / Join / MY는 Auth에서 검증한 single-surface hierarchy를 유지하고, MY major section은 현재 경기·경기 후 행동 → 저장 경기 → 내 정보 → 설정 순서의 spacing hierarchy로 정리.
 - Matchday와 postgame Return의 canonical surface를 MY로 통합.
+- Visual Regression: 390px Home lifecycle / Join / MY Matchday / MY postgame, 320px compact Join을 Ubuntu/Chromium approved baseline과 comparison-only `toHaveScreenshot()`으로 검증. MY Matchday visual fixture는 Playwright clock을 고정해 실행 시각 의존성을 제거.
+- Accessibility: 390px Detail / Join / MY axe 계약 + Mobile Safari/WebKit 회귀 검증.
 - Matching/ELO, deterministic recommendation, Discover filter/sort, save/compare ownership은 유지.
 - `/beta`와 `/beta/operator`의 Supabase connected capability는 별도 validation/operator surface로 유지.
+- Runtime PR: #442 · merged SHA `51e86c5cc1ab13c324d10d785bdf5de43d3e7c59`.
+- QA contract closure PR: #445 · current main SHA `667e11925d848d2504903e626018e470233931ea`; runtime/UI 변경 없이 stale Production smoke assertion과 non-deterministic Matchday visual fixture만 정정.
+- Current Product runtime on Production: Vercel deployment `dpl_BACmrVqQ3cLD7ibXn7RnVUdodS4t` · SHA `0ca50f5981addf88f72c6b6f118710fe78ebd9be` · READY. #445는 QA/test-only라 Production 재배포 대상이 아님.
+- Final main QA: Release App v6 QA run `36942958348` SUCCESS · Release App Contract PASS · Browser + Visual comparison PASS.
+- Final main QA: FootMate QA run `36942958379` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
+- Production verification: exact Production HTTP smoke PASS · AI inference PASS · Chromium smoke PASS · v6 Production journeys PASS.
+- Documentation sync: `RELEASE-APP-V6.md`는 lifecycle / recovery / visual / axe 계약과 일치하며, root README와 이 Release History를 동일한 durable 상태로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. Notion의 장기 제품 문서는 3-tab IA / Free Join / MY lifecycle / recovery / 경기 후 재탐색 연결을 이미 포함해 추가 변경하지 않음. Case Study는 별도 프로젝트이며 이번 QA/복구 보강만으로 추가 sync하지 않음.
 
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
