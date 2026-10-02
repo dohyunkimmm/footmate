@@ -13,10 +13,10 @@ const decision=await read('src/app/decision.js');
 const recommendation=await read('src/app/recommendation.js');
 const config=await read('playwright.config.cjs');
 const workflow=await read('.github/workflows/qa.yml');
-const production=await read('tests/e2e/v5.1-production.spec.cjs');
+const production=await read('tests/e2e/production-app.spec.cjs');
 
 const [releaseMajor,releaseMinor]=String(pkg.version).split('.').map(Number);
-assert.ok(releaseMajor>5||(releaseMajor===5&&releaseMinor>=2),'v5.2 compatibility requires product release >= 5.2');
+assert.ok(releaseMajor>5||(releaseMajor===5&&releaseMinor>=2),'product completion requires product release >= 5.2');
 assert.deepEqual(pkg.qaToolchain,{node:'24',playwright:'1.55.1',axeCorePlaywright:'4.10.2'});
 assert.ok(app.includes(`footmate-release\" content=\"${pkg.version}\"`));
 assert.ok(caseStudy.includes('footmate-case-study-release\" content=\"5.1.1\"'));
@@ -33,7 +33,7 @@ assert.ok(recommendation.includes("import {rankRecommendations} from './platform
 assert.equal(config.includes('retries: 0'),true);
 assert.ok(config.includes("name: 'webkit-mobile'"));
 assert.ok(workflow.includes('Run Release App Mobile Safari/WebKit gate'));
-assert.ok(workflow.includes('tests/e2e/v6-release-app.spec.cjs'));
+assert.ok(workflow.includes('tests/e2e/release-app.spec.cjs'));
 assert.ok(production.includes('data-product-detail'));
 assert.ok(PERFORMANCE_BUDGET.firstPartyCssBytes>0&&PERFORMANCE_BUDGET.firstPartyJsBytes>0);
 assert.deepEqual(RUNTIME_PERFORMANCE_BUDGET,{shellMaxWidthPx:560,maxHorizontalOverflowPx:1,screenReadyMs:4000});
@@ -46,4 +46,4 @@ const ranked=rankRecommendations(matches,{region:'수원 · 영통',position:'MF
 assert.deepEqual(ranked.map(item=>item.match.id),['near','far']);
 assert.equal(ranked[0].score,100);
 assert.equal(ranked[0].fit,'지금 가장 잘 맞아요');
-console.log('PASS v5.2 product completion contracts');
+console.log('PASS product completion contracts');
