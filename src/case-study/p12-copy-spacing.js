@@ -84,13 +84,13 @@
   if(!document.querySelector('link[data-fm-advanced-polish]')){
     const link=document.createElement('link');
     link.rel='stylesheet';
-    link.href='/src/v5/case-study-advanced-polish.css?v=1';
+    link.href='/src/case-study/advanced-polish.css?v=1';
     link.dataset.fmAdvancedPolish='true';
     document.head.appendChild(link);
   }
   if(!document.querySelector('script[data-fm-advanced-polish]')){
     const script=document.createElement('script');
-    script.src='/src/v5/case-study-advanced-polish.js?v=1';
+    script.src='/src/case-study/advanced-polish.js?v=1';
     script.defer=true;
     script.dataset.fmAdvancedPolish='true';
     document.body.appendChild(script);
@@ -122,7 +122,7 @@
 
   const link=document.createElement('link');
   link.rel='stylesheet';
-  link.href='/src/v5/case-study-detail-finish.css?v=1';
+  link.href='/src/case-study/detail-finish.css?v=1';
   link.dataset.fmDetailFinish='true';
   link.addEventListener('load',()=>{ensureDensityCompat();markReady();},{once:true});
   document.head.appendChild(link);
