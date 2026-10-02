@@ -1,5 +1,5 @@
 import {connectedMatchdayPlatform} from '../application/connected-platform.js';
-import {footmatePlatform} from '../../v4/platform/application/platform.js';
+import {footmatePlatform} from '../application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const entryParams=new URLSearchParams(location.search);
