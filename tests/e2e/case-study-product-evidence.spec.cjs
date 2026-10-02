@@ -4,6 +4,7 @@ async function openCaseStudy(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyPriorityFinish==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await expect(page.locator('.fm-next-story-slide[data-evidence-upgrade]')).toHaveCount(4);
 }
@@ -167,5 +168,81 @@ for(const [name,viewport] of [
         animations:'disabled'
       });
     }
+  });
+}
+
+
+for(const [name,viewport] of [
+  ['desktop',{width:1440,height:900}],
+  ['mobile',{width:390,height:844}]
+]){
+  test(`P0 P1 priority visual finish stays coherent on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await expect(page.locator('html')).toHaveAttribute('data-fm-case-study-priority-finish','true');
+
+    const priorities=await page.locator('.slide:not([hidden])').evaluateAll(nodes=>nodes.reduce((acc,node)=>{
+      acc[node.dataset.visualPriority]=(acc[node.dataset.visualPriority]||0)+1;
+      return acc;
+    },{}));
+    expect(priorities.p0).toBe(7);
+    expect(priorities.p1).toBe(6);
+
+    await showSection(page,0);
+    await expect(page.locator('.slide.on .fm-priority-proof-strip>div')).toHaveCount(3);
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,1);
+    await expect(page.locator('.slide.on .fm-priority-problem-core')).toContainText('경기 선택의 불확실성');
+    await expect(page.locator('.slide.on .fm-priority-problem-map>.fm-next-cs-card')).toHaveCount(3);
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,5);
+    await expect(page.locator('.slide.on .fm-priority-recommendation .fm-evidence-figure.is-recommendation')).toBeVisible();
+    if(viewport.width>900){
+      const height=await page.locator('.slide.on .fm-evidence-figure.is-recommendation img').evaluate(el=>Math.round(el.getBoundingClientRect().height));
+      expect(height).toBeGreaterThanOrEqual(420);
+    }
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,6);
+    await expect(page.locator('.slide.on .fm-next-cs-detail-order>span')).toHaveCount(5);
+    expect(await page.locator('.slide.on .fm-next-cs-detail-order>span').evaluateAll(nodes=>nodes.map(node=>node.dataset.decisionStep))).toEqual(['01','02','03','04','05']);
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,7);
+    await expect(page.locator('.slide.on .fm-priority-auth-flow .fm-p1-auth-frame')).toHaveCount(4);
+    await expect(page.locator('.slide.on .fm-priority-state-strip')).toContainText('선택 경기');
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,8);
+    await expect(page.locator('.slide.on .fm-priority-matchday-timeline>div')).toHaveCount(4);
+    await expect(page.locator('.slide.on .fm-evidence-figure.is-operations')).toBeVisible();
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,9);
+    await expect(page.locator('.slide.on .fm-priority-recovery-principle')).toContainText('원인 · 보존 상태 · 다음 행동');
+    await expect(page.locator('.slide.on .fm-priority-recovery-evidence .fm-evidence-figure')).toHaveCount(2);
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,10);
+    const ownerLabels=await page.locator('.slide.on .fm-p0-arch-node[data-owner-label]').evaluateAll(nodes=>nodes.map(node=>node.dataset.ownerLabel));
+    expect(ownerLabels).toEqual(['AI 해석','추천 엔진','사용자 확인']);
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,11);
+    await expect(page.locator('.slide.on .fm-priority-validation-pane')).toHaveCount(2);
+    await expect(page.locator('.slide.on .fm-priority-validation-pane.is-metric .fm-priority-pane-label')).toContainText('측정 예정');
+    await expect(page.locator('.slide.on .fm-priority-validation-pane.is-evidence .fm-priority-pane-label')).toContainText('현재 근거');
+    await verifyNoHorizontalOverflow(page);
+
+    await showSection(page,12);
+    await expect(page.locator('.slide.on .fm-priority-release-map>article')).toHaveCount(3);
+    await expect(page.locator('.slide.on .fm-priority-release-next')).toBeVisible();
+    await verifyNoHorizontalOverflow(page);
+
+    await page.locator('.slide.on').screenshot({
+      path:`test-results/case-study-priority-finish-${name}.png`,
+      animations:'disabled'
+    });
   });
 }
