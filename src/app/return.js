@@ -1,5 +1,5 @@
 import {MATCHES,createState} from './data.js';
-import {footmatePlatform} from './platform/application/platform.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const RETURN_VERSION='4.6.0';
 const RETURN_STORAGE_KEY=footmatePlatform.storageKeys.returnLoop;
