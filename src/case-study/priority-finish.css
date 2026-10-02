@@ -403,6 +403,9 @@ html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] 
 
 
 @media(min-width:901px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map{
+    row-gap:10px!important;
+  }
   html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-map{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
     gap:10px!important;
