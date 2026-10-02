@@ -5,6 +5,8 @@ async function openCaseStudy(page,viewport){
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+  await expect(page.locator('.track>.slide')).toHaveCount(13);
+  await expect(page.locator('.track>.slide[data-cs-hidden="true"]')).toHaveCount(0);
   await expect(page.locator('.fm-next-story-slide[data-evidence-upgrade]')).toHaveCount(4);
 }
 
@@ -136,6 +138,9 @@ for(const [name,viewport] of [
     const strip=slide.locator('.fm-evidence-recovery-strip');
     const figures=strip.locator('.fm-evidence-figure');
     await expect(strip).toHaveAttribute('aria-label','제품 복구 상태 대표 화면');
+    await expect(map).toContainText('참가 상태 문제');
+    await expect(map).toContainText('상태 확인 또는 다시 참가');
+    await expect(map).not.toContainText('결제 실패');
     await expect(figures).toHaveCount(2);
     await expect(figures.nth(0).locator('figcaption')).toContainText('탐색 결과 없음');
     await expect(figures.nth(1).locator('figcaption')).toContainText('참가 실패');
