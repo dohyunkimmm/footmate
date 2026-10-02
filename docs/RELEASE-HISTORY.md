@@ -13,14 +13,15 @@
 - Accessibility: 390px Detail / Join / MY axe 계약 + Mobile Safari/WebKit 회귀 검증.
 - Matching/ELO, deterministic recommendation, Discover filter/sort, save/compare ownership은 유지.
 - `/beta`와 `/beta/operator`의 Supabase connected capability는 별도 validation/operator surface로 유지.
-- Runtime PR: #442 · merged SHA `51e86c5cc1ab13c324d10d785bdf5de43d3e7c59`.
-- QA contract closure PR: #445 · current main SHA `667e11925d848d2504903e626018e470233931ea`; runtime/UI 변경 없이 stale Production smoke assertion과 non-deterministic Matchday visual fixture만 정정.
-- Current Product runtime on Production: Vercel deployment `dpl_BACmrVqQ3cLD7ibXn7RnVUdodS4t` · SHA `0ca50f5981addf88f72c6b6f118710fe78ebd9be` · READY. #445는 QA/test-only라 Production 재배포 대상이 아님.
-- Final main QA: Release App v6 QA run `36942958348` SUCCESS · Release App Contract PASS · Browser + Visual comparison PASS.
-- Final main QA: FootMate QA run `36942958379` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
-- Production verification: exact Production HTTP smoke PASS · AI inference PASS · Chromium smoke PASS · v6 Production journeys PASS.
+- Initial runtime PR: #442 · merged SHA `51e86c5cc1ab13c324d10d785bdf5de43d3e7c59`.
+- QA contract closure PR: #445 · runtime/UI 변경 없이 stale Production smoke assertion과 non-deterministic Matchday visual fixture만 정정.
+- Launch visual polish PR: #450 · product/runtime baseline `9edd52abab831a05f22f186c5c7de469129ba605`. 경기 후 평가 선택 상태, enabled 저장 CTA, 저장 완료 chip, 무료 참가 안내 warning의 색감만 최소 조정하고 기존 Home / MY 경기 카드와 disabled CTA의 승인 visual baseline은 유지.
+- Visual Regression: #450 PR QA에서 approved Ubuntu/Chromium baseline comparison PASS · baseline 교체 없음. 320 / 375 / 390 / 430px responsive, axe, Mobile Safari/WebKit gate PASS.
+- Post-merge main QA: FootMate QA run `36979890717` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
+- Exact Vercel Production: deployment `dpl_6niobRbCNHPPtjTQGT1dE6c8w2XJ` · SHA `9edd52abab831a05f22f186c5c7de469129ba605` · READY · official alias `footmate-black.vercel.app`.
+- Production verification: exact Production에서 core 15 tests PASS + Release App journey 8 tests PASS. Home / Discover / Detail, free Join → Success → MY, legacy Schedule → MY migration, Matchday, Return lifecycle, 320 / 375 / 390 / 430px overflow/accessibility 계약을 확인.
 - QA hardening: Production release behavior gate가 Join 오류 복구와 Return 완료 → Discover handoff를 직접 실행하도록 확대하고, HTTP smoke의 lifecycle 구현 문자열 의존을 제거. 통합 QA workflow는 README/docs/markdown-only 변경에서 heavy browser/visual job을 skip하고 Release App contract는 유지.
-- Documentation sync: `RELEASE-APP.md`는 lifecycle / recovery / visual / axe 계약과 일치하며, root README와 이 Release History를 동일한 durable 상태로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. Notion의 장기 제품 문서는 3-tab IA / Free Join / MY lifecycle / recovery / 경기 후 재탐색 연결을 이미 포함해 추가 변경하지 않음. Case Study는 별도 프로젝트이며 이번 QA/복구 보강만으로 추가 sync하지 않음.
+- Documentation sync: root README와 `RELEASE-APP.md`의 durable 제품 설명은 현재 상태와 충돌하지 않아 유지하고, 이 Release History의 current Production/runtime 사실만 #450 기준으로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. 이번 변경은 visual polish이므로 Notion sync 대상이 아니며, Case Study는 별도 프로젝트라 sync하지 않음.
 
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
