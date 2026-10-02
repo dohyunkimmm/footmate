@@ -45,7 +45,7 @@
 .fm-v6-join-error p{margin:5px 0 12px;font-size:12px;line-height:1.5;color:#795145}
 .fm-v6-join-error .fm-next-button{width:100%;min-height:40px}
 
-.fm-v6-return{margin:0 0 24px;padding:20px;border:1px solid rgba(17,78,55,.12);border-radius:22px;background:linear-gradient(180deg,#fff 0%,#fbfdfb 100%);box-shadow:0 12px 30px rgba(12,61,43,.05)}
+.fm-v6-return{margin:0 0 24px;padding:20px;border:1px solid var(--fm-v6-line);border-radius:22px;background:#fff}
 .fm-v6-return>small{color:#176445}
 .fm-v6-return h2{margin:6px 0 5px;font-size:21px;letter-spacing:-.04em}
 .fm-v6-return>p{margin:0 0 18px;color:var(--fm-v6-muted);font-size:12px;line-height:1.55}
