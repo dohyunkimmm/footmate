@@ -24,4 +24,4 @@ const legacy={route:'home',setupComplete:true,region:'수원 · 영통',position
 const rehearsal=rehearseSessionMigration(legacy);assert.equal(rehearsal.migration.toVersion,2);assert.equal(rehearsal.migration.state.schemaVersion,2);assert.equal(rehearsal.migration.state.legacyFlag,'preserve');assert.equal(rehearsal.rollbackMatches,true);assert.deepEqual(rehearsal.rolledBack,legacy);
 
 const gate=createReleaseCandidateGate({providers});assert.equal(gate.readyForV5,true);assert.equal(gate.providerMode,'mock-only');assert.equal(gate.externalProviders,false);assert.equal(gate.externalAnalytics,false);assert.equal(gate.rehearseMigration(legacy).rollbackMatches,true);
-console.log('PASS v4.9 release candidate contracts');
+console.log('PASS release candidate contracts');
