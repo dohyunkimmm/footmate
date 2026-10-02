@@ -1,5 +1,5 @@
 import {MATCHES,createState,joinedMatch,selectedMatch} from './data.js';
-import {footmatePlatform} from './platform/application/platform.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const params=new URLSearchParams(location.search);
