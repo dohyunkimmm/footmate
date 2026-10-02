@@ -239,7 +239,7 @@ jobs:
         run: npx playwright test tests/e2e/v5.1-production.spec.cjs tests/e2e/v5.1-beta-production.spec.cjs tests/e2e/v5.2-beta-production.spec.cjs
       - name: Run exact Production v6 release journeys
         env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+        run: npx playwright test --project=chromium tests/e2e/v6-release-app.spec.cjs --grep "Release App free Join failure is recoverable without leaving a stuck button|Home lifecycle closes Return and hands the next action back to Discover|Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
       - name: Upload Production browser evidence
         if: always()
         uses: actions/upload-artifact@v6
