@@ -19,6 +19,7 @@
 - Final main QA: Release App v6 QA run `36942958348` SUCCESS · Release App Contract PASS · Browser + Visual comparison PASS.
 - Final main QA: FootMate QA run `36942958379` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
 - Production verification: exact Production HTTP smoke PASS · AI inference PASS · Chromium smoke PASS · v6 Production journeys PASS.
+- QA hardening: Production release behavior gate가 Join 오류 복구와 Return 완료 → Discover handoff를 직접 실행하도록 확대하고, HTTP smoke의 lifecycle 구현 문자열 의존을 제거. 통합 QA workflow는 README/docs/markdown-only 변경에서 heavy browser/visual job을 skip하고 Release App contract는 유지.
 - Documentation sync: `RELEASE-APP.md`는 lifecycle / recovery / visual / axe 계약과 일치하며, root README와 이 Release History를 동일한 durable 상태로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. Notion의 장기 제품 문서는 3-tab IA / Free Join / MY lifecycle / recovery / 경기 후 재탐색 연결을 이미 포함해 추가 변경하지 않음. Case Study는 별도 프로젝트이며 이번 QA/복구 보강만으로 추가 sync하지 않음.
 
 
