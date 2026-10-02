@@ -19,7 +19,7 @@
 - Final main QA: Release App v6 QA run `36942958348` SUCCESS · Release App Contract PASS · Browser + Visual comparison PASS.
 - Final main QA: FootMate QA run `36942958379` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
 - Production verification: exact Production HTTP smoke PASS · AI inference PASS · Chromium smoke PASS · v6 Production journeys PASS.
-- Documentation sync: `RELEASE-APP-V6.md`는 lifecycle / recovery / visual / axe 계약과 일치하며, root README와 이 Release History를 동일한 durable 상태로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. Notion의 장기 제품 문서는 3-tab IA / Free Join / MY lifecycle / recovery / 경기 후 재탐색 연결을 이미 포함해 추가 변경하지 않음. Case Study는 별도 프로젝트이며 이번 QA/복구 보강만으로 추가 sync하지 않음.
+- Documentation sync: `RELEASE-APP.md`는 lifecycle / recovery / visual / axe 계약과 일치하며, root README와 이 Release History를 동일한 durable 상태로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. Notion의 장기 제품 문서는 3-tab IA / Free Join / MY lifecycle / recovery / 경기 후 재탐색 연결을 이미 포함해 추가 변경하지 않음. Case Study는 별도 프로젝트이며 이번 QA/복구 보강만으로 추가 sync하지 않음.
 
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
@@ -70,7 +70,7 @@
 - Dedup / role boundary: Home For You는 1–2개 compact match만 노출하고 동일 경기의 별도 중복 추천 section을 제거; Detail은 match decision, Join은 joined-match status, MY는 profile/settings 역할을 유지
 - Runtime PR: #269 · merged SHA `30edf47fa69dec7f2d72d68c4ff99096a3f91bee`
 - Product/runtime baseline: `30edf47fa69dec7f2d72d68c4ff99096a3f91bee`
-- State ownership: `src/v5/ai-match-assistant.js`가 AI query/constraints/Home→Discover handoff를 소유하고, `src/v4/discovery.js`는 discovery filter/sort/result-list state를 소유; deterministic recommendation ranking과 기존 domain boundary 유지
+- State ownership: `src/app/ai-match-assistant.js`가 AI query/constraints/Home→Discover handoff를 소유하고, `src/app/discovery.js`는 discovery filter/sort/result-list state를 소유; deterministic recommendation ranking과 기존 domain boundary 유지
 - Final post-merge QA: Real App White Surface QA #166 · run `36077898939` · SUCCESS; actual Ubuntu/Chromium `toHaveScreenshot()` comparison PASS
 - Main QA: FootMate QA #1298 · run `36077898926` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
@@ -122,7 +122,7 @@
 
 ## Real App Visual Finish P0–P2 closure · 2026-09-24
 
-- Scope: standalone Real App의 최종 visual ownership을 `src/v4/design-system-v2.css`로 통합하고, decision-support typography·surface/elevation·accent hierarchy·loading/empty/fallback/recovery state language·절제된 interaction motion을 정제
+- Scope: standalone Real App의 최종 visual ownership을 `src/app/design-system-v2.css`로 통합하고, decision-support typography·surface/elevation·accent hierarchy·loading/empty/fallback/recovery state language·절제된 interaction motion을 정제
 - Runtime PR: #252 · merged SHA `784ec086f9d84b16fcbf37abd4a776478827a980`
 - Product/runtime baseline: `784ec086f9d84b16fcbf37abd4a776478827a980`
 - Preserved boundary: Product 560px shell, IA·copy·routes·state machine·deterministic recommendation behavior, Portfolio/embed compatibility, v5.2.0 release identity, AI loading/fallback semantic visual contracts 유지
@@ -311,7 +311,7 @@
 - Docs / Production closure SHA: `73b5192983e9728379fa68f85a89b3a65de3f2aa` · #180 docs-only sync on top of runtime baseline; 이후 docs-only history update로 moving `main`이 바뀌어도 이 verified Production SHA는 별도로 유지
 - Exact Vercel Production: `dpl_GdJUrxmqmCyskwMWNeA1aPyFZ76S` · SHA `73b5192983e9728379fa68f85a89b3a65de3f2aa` · READY
 - Exact Production HTTP smoke: `/` 200 · `/beta/operator` 200 · PASS
-- Exact Production QR path: served `/src/v5/beta-operator-mfa.js`에서 raw `<svg>` TOTP 응답을 `data:image/svg+xml`로 normalize하며 QR 미사용 시 수동 TOTP 설정 키 fallback을 유지
+- Exact Production QR path: served `/src/beta/operator-mfa.js`에서 raw `<svg>` TOTP 응답을 `data:image/svg+xml`로 normalize하며 QR 미사용 시 수동 TOTP 설정 키 fallback을 유지
 - Render backup: 이번 closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
 ### Impact-aware CI closure · 2026-09-22
@@ -525,8 +525,8 @@
 - Scope: `/app` feature runtime의 browser persistence read/write ownership을 `footmatePlatform.session`과 `footmatePlatform.repositories.*`로 통일
 - Runtime PRs: #155 · #156 · #157
 - Module coverage: root `app.js`, discovery, decision, participation, matchday, return, personalization, interaction
-- Ownership boundary: feature runtime 8개 모듈은 direct `localStorage`와 `footmate:v4:*` key ownership을 갖지 않으며 `tests/contracts/v5.1-connected-platform.contract.mjs`가 이를 Regression gate에서 강제
-- Infrastructure boundary: `src/v4/platform/infrastructure/storage.js`가 canonical `footmate:*` provider, legacy promotion/reconciliation, rollback mirror와 browser compatibility bridge를 단독 소유
+- Ownership boundary: feature runtime 8개 모듈은 direct `localStorage`와 `footmate:v4:*` key ownership을 갖지 않으며 `tests/contracts/connected-platform.contract.mjs`가 이를 Regression gate에서 강제
+- Infrastructure boundary: `src/platform/infrastructure/storage.js`가 canonical `footmate:*` provider, legacy promotion/reconciliation, rollback mirror와 browser compatibility bridge를 단독 소유
 - Legacy compatibility: 기존 `footmate:v4:*` 9개 alias/mirror는 기존 사용자 상태 및 rollback 보호를 위해 유지; 이번 closure에서 삭제하지 않음
 - Product behavior boundary: route / IA / copy / session schema v2 / recommendation·discovery·decision·participation·matchday·return·personalization behavior 변경 없음
 - Final PR QA: PR #157 · FootMate QA #545 · run `35560477667` · PASS
