@@ -1,5 +1,5 @@
 import {MATCHES,createState} from './data.js';
-import {footmatePlatform} from './platform/application/platform.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const root=document.getElementById('footmate-next');
 const DECISION_VERSION='4.3.0';
