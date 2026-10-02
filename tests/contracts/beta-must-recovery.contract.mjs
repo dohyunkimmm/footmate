@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {createSupabaseBetaClient} from '../../src/v5/infrastructure/supabase-beta.js';
+import {createSupabaseBetaClient} from '../../src/beta/infrastructure/supabase.js';
 
 const hotfix=await readFile(new URL('../../supabase/migrations/20260921001021_cancel_participation_ambiguity_fix.sql',import.meta.url),'utf8');
 
