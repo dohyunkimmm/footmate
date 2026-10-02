@@ -167,7 +167,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     const closing=page.locator('.slide.on .fm-p1-release-next');
     await expect(closing).toBeVisible();
-    await expect(closing.locator('a')).toHaveCount(0);
+    await expect(closing.locator('a')).toHaveCount(1);
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');
       const rows=[...final.querySelectorAll('.fm-cs-reasons>div')];
@@ -237,14 +237,14 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('미연동 · 미검증');
     await expect(page.locator('.slide.on .fm-p1-release-next>span')).toContainText('핵심 학습');
-    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(0);
+    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(1);
 
     if(name==='desktop'){
       // Product evidence uses two explicit scale levels with a shared caption rhythm.
       await showSection(page,5);
-      const secondary=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
-      await expect(secondary).toHaveAttribute('data-evidence-scale','secondary');
-      expect(await secondary.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(380);
+      const recommendation=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
+      await expect(recommendation).toHaveAttribute('data-evidence-scale','primary');
+      expect(await recommendation.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
 
       await showSection(page,6);
       const detail=page.locator('.slide.on .fm-evidence-figure.is-detail');
