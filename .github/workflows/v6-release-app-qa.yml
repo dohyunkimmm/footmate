@@ -10,6 +10,41 @@ concurrency:
   group: footmate-v6-release-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  impact:
+    name: Release App Impact
+    runs-on: ubuntu-latest
+    outputs:
+      heavy: ${{ steps.impact.outputs.heavy }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - name: Determine Release App QA impact
+        id: impact
+        env:
+          EVENT_NAME: "${{ github.event_name }}"
+          PR_BASE_SHA: "${{ github.event.pull_request.base.sha }}"
+          PR_HEAD_SHA: "${{ github.event.pull_request.head.sha }}"
+          PUSH_BEFORE_SHA: "${{ github.event.before }}"
+          PUSH_HEAD_SHA: "${{ github.sha }}"
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+            head="$PR_HEAD_SHA"
+          else
+            base="$PUSH_BEFORE_SHA"
+            head="$PUSH_HEAD_SHA"
+          fi
+
+          changed_files="$(git diff --name-only "$base" "$head")"
+          heavy=false
+          for file in $changed_files; do
+            case "$file" in
+              README.md|docs/*|*.md) ;;
+              *) heavy=true ;;
+            esac
+          done
+          echo "heavy=$heavy" >> "$GITHUB_OUTPUT"
+
   contract:
     name: Release App Contract
     runs-on: ubuntu-latest
@@ -24,6 +59,8 @@ jobs:
 
   browser:
     name: Release App Browser + Visual
+    needs: impact
+    if: needs.impact.outputs.heavy == 'true'
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.55.1-noble
