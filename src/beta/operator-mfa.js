@@ -1,4 +1,4 @@
-import {loadBetaBackendConfig} from './infrastructure/supabase-beta.js';
+import {loadBetaBackendConfig} from './infrastructure/supabase.js';
 
 const root=document.getElementById('footmate-beta-operator');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -45,12 +45,12 @@ if(root){
     const rows=await request('/rest/v1/operators?select=user_id&limit=1');return Array.isArray(rows)?rows[0]||null:null;
   }
   async function launchConsole(){
-    await import('/src/v5/beta-operator.js?v=1');
+    await import('/src/beta/operator.js?v=1');
     const launchReadiness=async()=>{
       const status=root.querySelector('.fm-beta-status-card p');if(status)status.textContent='Closed Beta는 무료 경기 운영만 지원합니다. DB 기반 in-app·transactional email·Web Push와 media storage가 연결되어 있고 실제 PG는 연결하지 않습니다.';
       const footer=root.querySelector('.fm-beta-footer');if(footer)footer.textContent='Operator Console · Supabase connected · MFA protected · In-app + Transactional email + Web Push + Media connected · Payment = not connected';
-      const readiness=await import('/src/v5/beta-operator-readiness.js?v=1');
-      await import('/src/v5/beta-operator-polish.js?v=1');
+      const readiness=await import('/src/beta/operator-readiness.js?v=1');
+      await import('/src/beta/operator-polish.js?v=1');
       return readiness;
     };
     if(root.dataset.operatorState!=='booting')void launchReadiness();
