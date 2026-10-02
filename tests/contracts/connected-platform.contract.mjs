@@ -28,15 +28,15 @@ assert.equal(platform.architecture,'connected-capable');
 assert.equal(platform.connectionMode,'mock-only');
 assert.equal(platform.externalProductionFeatures,false);
 
-const v5Bootstrap=await readFile(new URL('../../src/platform/presentation/connected-bootstrap.js',import.meta.url),'utf8');
-assert.ok(v5Bootstrap.includes("import {footmatePlatform} from '../../v4/platform/application/platform.js';"),'v5 bootstrap must read browser state through platform ownership');
-assert.equal(v5Bootstrap.includes('localStorage.getItem'),false,'v5 bootstrap must not bypass the platform storage provider');
+const connectedBootstrap=await readFile(new URL('../../src/platform/presentation/connected-bootstrap.js',import.meta.url),'utf8');
+assert.ok(connectedBootstrap.includes("import {footmatePlatform} from '../application/platform.js';"),'connected bootstrap must read browser state through platform ownership');
+assert.equal(connectedBootstrap.includes('localStorage.getItem'),false,'connected bootstrap must not bypass the platform storage provider');
 for(const legacyKey of ['footmate:v4:session','footmate:v4:participation','footmate:v4:matchday','footmate:v4:return']){
-  assert.equal(v5Bootstrap.includes(legacyKey),false,`v5 bootstrap must not own legacy storage key ${legacyKey}`);
+  assert.equal(connectedBootstrap.includes(legacyKey),false,`connected bootstrap must not own legacy storage key ${legacyKey}`);
 }
 
 const rootApp=await readFile(new URL('../../src/app/app.js',import.meta.url),'utf8');
-assert.ok(rootApp.includes("import {footmatePlatform} from './platform/application/platform.js';"),'root app must import platform session ownership');
+assert.ok(rootApp.includes("import {footmatePlatform} from '../platform/application/platform.js';"),'root app must import platform session ownership');
 assert.ok(rootApp.includes('footmatePlatform.session.read()'),'root app must read through platform session service');
 assert.ok(rootApp.includes('footmatePlatform.session.write(state)'),'root app must persist through platform session service');
 assert.equal(/\blocalStorage\b/.test(rootApp),false,'root app must not access browser localStorage directly');
@@ -53,7 +53,7 @@ for(const [path,repositoryName] of [
   ['../../src/app/experience.js','interaction']
 ]){
   const source=await readFile(new URL(path,import.meta.url),'utf8');
-  assert.ok(source.includes("import {footmatePlatform} from './platform/application/platform.js';"),`${path} must import platform ownership`);
+  assert.ok(source.includes("import {footmatePlatform} from '../platform/application/platform.js';"),`${path} must import platform ownership`);
   assert.ok(source.includes(`footmatePlatform.repositories.${repositoryName}`),`${path} must use ${repositoryName} repository`);
   assert.equal(/\blocalStorage\b/.test(source),false,`${path} must not access browser localStorage directly`);
   assert.equal(source.includes('footmate:v4:'),false,`${path} must not own legacy storage keys`);
@@ -91,5 +91,5 @@ for(const stale of [
   'external analytics는 미연동입니다.'
 ])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
 
-console.log('PASS v5.1.1 connected platform contracts');
+console.log('PASS connected platform contracts');
 
