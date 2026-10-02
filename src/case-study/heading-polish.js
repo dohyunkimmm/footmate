@@ -18,14 +18,6 @@
     '13 · Release & Learnings'
   ];
 
-  function loadReaderPolish(){
-    if(document.querySelector('script[data-footmate-case-study-reader-polish]'))return;
-    const script=document.createElement('script');
-    script.src='/src/case-study/reader-polish.js?v=2';
-    script.dataset.footmateCaseStudyReaderPolish='true';
-    document.body.appendChild(script);
-  }
-
   function patch(){
     if(applied)return true;
     if(document.documentElement.dataset.footmateCaseStudyRelease!=='5.1.1'||
@@ -44,7 +36,6 @@
     document.title='FootMate · Case Study';
     document.documentElement.dataset.footmateCaseStudySectionLabelLanguage='en';
     document.documentElement.dataset.footmateCaseStudyHeadingLanguage='ko';
-    loadReaderPolish();
     applied=true;
     return true;
   }
