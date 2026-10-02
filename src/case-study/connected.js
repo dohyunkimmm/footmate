@@ -229,50 +229,50 @@
         'AI 자동 참가는 제외하고, 사용자가 최종 확인하는 HITL을 유지합니다.'));
 
     setRole(slides[4],'guest-first-decision');
-    title(5,'추천과 상세를 먼저 보여주고,','참가할 때 로그인을 요청합니다.');
-    lead(5,'가입 전에 자신에게 맞는 경기가 있는지 판단할 수 있도록 탐색과 상세를 열었습니다.',
+    title(4,'추천과 상세를 먼저 보여주고,','참가할 때 로그인을 요청합니다.');
+    lead(4,'가입 전에 자신에게 맞는 경기가 있는지 판단할 수 있도록 탐색과 상세를 열었습니다.',
       '계정이 필요한 시점을 참가 요청 직전으로 옮겨, 가치 확인과 인증의 순서를 정했습니다.');
     setHTML(slides[4],'.fm-next-cs-before-after',
       '<div><small>비교한 대안 · 가입 우선</small><b>'+lines('첫 화면 → 로그인 → 설문','추천 확인')+'</b><p>가치 확인 전에 계정 생성이 필요합니다.</p></div>'+
       '<div class="is-after"><small>채택한 흐름 · 탐색 우선</small><b>'+lines('조건 설정 → 추천 → 상세','참가 시 로그인')+'</b><p>추천을 확인한 뒤 가입 여부를 결정합니다.</p></div>');
-    decision(5,'.fm-next-cs-decision',[
+    decision(4,'.fm-next-cs-decision',[
       ['결정','가입 전 추천·상세 공개'],['이유','참가 의도가 생기기 전에 서비스 가치를 판단'],
       ['Trade-off','로그인 전에는 계정 기반 개인화와 기기 간 연속성을 제한']]);
 
     setRole(slides[5],'recommendation-decision');
-    title(6,'같은 조건을 다시 입력하지 않고,','추천 이유부터 확인하게 했습니다.');
-    lead(6,'저장한 프로필·선호 조건·최근 확인 이력으로 반복 탐색의 입력 부담을 줄였습니다.',
+    title(5,'같은 조건을 다시 입력하지 않고,','추천 이유부터 확인하게 했습니다.');
+    lead(5,'저장한 프로필·선호 조건·최근 확인 이력으로 반복 탐색의 입력 부담을 줄였습니다.',
       '추천 후보·순위·이유는 기존 추천 엔진이 결정하며, 사용자는 상세에서 근거를 확인합니다.');
     setHTML(slides[5],'.fm-next-cs-reco-card','<span>추천 표현 예시 · 수원 영통</span><h3>조건과 잘 맞아요</h3><div><b>생활권 일치</b><b>평일 저녁 선호</b><b>MF 자리 있음</b></div><strong>추천 1순위</strong>');
     setHTML(slides[5],'.fm-next-cs-stack','<p><b>1.</b> 저장 프로필</p><p><b>2.</b> 선호 지역·시간·경기 형식</p><p><b>3.</b> 최근 확인 이력</p><p><b>4.</b> 현재 경기 조건과 잔여 자리</p>');
-    decision(6,'.fm-next-cs-note',[
+    decision(5,'.fm-next-cs-note',[
       ['결정','최근 선호는 추천을 돕는 입력으로만 사용'],['이유','추천 순위와 이유를 추적할 수 있게 유지'],
       ['Trade-off','과거 선호와 오늘의 의도가 다를 수 있어 조건 수정을 허용']]);
 
     setRole(slides[6],'detail-decision');
-    title(7,'상세의 정보 순서와 행동을','참가 결정에 맞췄습니다.');
-    lead(7,'갈 수 있는 경기인지, 나와 맞는지, 어떤 조건으로 참가하는지 순서대로 확인하게 했습니다.',
+    title(6,'상세의 정보 순서와 행동을','참가 결정에 맞췄습니다.');
+    lead(6,'갈 수 있는 경기인지, 나와 맞는지, 어떤 조건으로 참가하는지 순서대로 확인하게 했습니다.',
       '저장과 최대 2경기 비교는 보조 행동으로 두고, 참가하기를 핵심 CTA로 유지합니다.');
     setHTML(slides[6],'.fm-next-cs-detail-order','<span>시간 · 장소</span><i>→</i><span>추천 이유</span><i>→</i><span>자리 · 포지션</span><i>→</i><span>시설 · 운영 · 준비물</span><i>→</i><span>취소 · 환불 기준</span>');
-    decision(7,'.fm-next-cs-sticky',[
+    decision(6,'.fm-next-cs-sticky',[
       ['핵심 행동','참가하기'],['보조 행동','저장 · 최대 2경기 비교'],
       ['Trade-off','비교 대상을 제한해 결정을 돕고, 취소·환불 기준은 참가 전에 확인']]);
 
     setRole(slides[7],'auth-participation');
-    title(8,'로그인 전에 고른 경기를','참가 완료까지 유지합니다.');
-    lead(8,'선택 경기와 돌아갈 목적지를 보존해 인증 후 같은 결정을 반복하지 않도록 했습니다.',
+    title(7,'로그인 전에 고른 경기를','참가 완료까지 유지합니다.');
+    lead(7,'선택 경기와 돌아갈 목적지를 보존해 인증 후 같은 결정을 반복하지 않도록 했습니다.',
       '참가 요청 결과는 완료·실패·취소로 구분하고, 상태에 맞는 다음 행동을 제공합니다.');
     setHTML(slides[7],'.fm-next-cs-auth-flow','<div><small>둘러보기</small><b>추천·상세 확인</b></div><i>→</i><div><small>참가 의도</small><b>참가하기</b></div><i>→</i><div class="is-focus"><small>인증</small><b>로그인</b></div><i>→</i><div><small>참가 상태</small><b>완료 | 실패 | 취소</b></div>');
     const authFlow=slides[7].querySelector('.fm-next-cs-auth-flow');
     if(authFlow&&!slides[7].querySelector('.fm-next-cs-state-line'))authFlow.insertAdjacentHTML('afterend','<div class="fm-next-cs-state-line"><span>보존 · 선택 경기와 로그인 후 복귀 위치</span></div>');
-    decision(8,'.fm-next-cs-scope',[
+    decision(7,'.fm-next-cs-scope',[
       ['Real App','Real App의 인증·결제는 시뮬레이션입니다.'],
       ['Closed Beta','Closed Beta의 인증·참가 경로는 Supabase에 실제 연결됩니다.'],
       ['검증 범위','Google/Kakao OAuth는 Production 실로그인까지 검증했습니다. 실제 PG는 미연동입니다.']]);
 
     setRole(slides[8],'matchday-return');
-    title(10,'참가 후에는 경기 당일과','다음 탐색을 홈의 중심에 둡니다.');
-    lead(10,'참가 예정 → 경기 당일 → 체크인 → 경기 후 상태에 따라 필요한 행동을 먼저 보여줍니다.',
+    title(8,'참가 후에는 경기 당일과','다음 탐색을 홈의 중심에 둡니다.');
+    lead(8,'참가 예정 → 경기 당일 → 체크인 → 경기 후 상태에 따라 필요한 행동을 먼저 보여줍니다.',
       '체감 난이도·참여 완료·반복 의도는 다음 추천의 보조 신호이며, 공개 평판 점수로 쓰지 않습니다.');
     setHTML(slides[8],'.fm-next-cs-day-states',
       '<div><small>탐색 중</small><b>지금 맞는 경기</b><p>조건 설정 · 추천 확인</p></div>'+
@@ -286,19 +286,19 @@
       ['변경과 복구','변경 이력(audit trail)을 남기고, 알림 실패와 참가 상태를 분리해 복구']])+'</div>');
 
     setRole(slides[9],'recovery-principle');
-    title(11,'실패해도 선택 맥락을 보존하고,','다시 진행할 행동을 제시합니다.');
-    lead(11,'오류마다 보존할 상태와 다시 시도할 행동을 함께 정의했습니다.',
+    title(9,'실패해도 선택 맥락을 보존하고,','다시 진행할 행동을 제시합니다.');
+    lead(9,'오류마다 보존할 상태와 다시 시도할 행동을 함께 정의했습니다.',
       '검색부터 경기 당일까지, 처음부터 다시 입력해야 하는 상황을 줄이는 것이 복구의 기준입니다.');
     setHTML(slides[9],'.fm-next-cs-recovery',
       '<div><b>추천 없음</b><span>'+lines('보존 · 입력한 탐색 조건','다음 · 지역·시간 수정 또는 조건 완화')+'</span></div>'+
       '<div><b>자리 마감</b><span>'+lines('보존 · 선택 경기와 포지션','다음 · 대기 등록 또는 비슷한 경기 탐색')+'</span></div>'+
-      '<div><b>결제 실패 · 시뮬레이션</b><span>'+lines('보존 · 선택 경기와 참가 의도','다음 · 재시도 또는 결제수단 변경')+'</span></div>'+
+      '<div><b>참가 상태 문제</b><span>'+lines('보존 · 선택 경기와 참가 의도','다음 · 상태 확인 또는 다시 참가')+'</span></div>'+
       '<div><b>경기 당일 문제</b><span>'+lines('보존 · 참가·체크인 상태','다음 · 체크인 재시도 또는 운영 도움')+'</span></div>');
     setHTML(slides[9],'.fm-next-cs-decision','<span>공통 복구 원칙</span><b>원인·보존할 상태·다음 행동을 함께 제시</b>');
 
     setRole(slides[10],'domain-ai-boundary');
-    title(12,'AI의 해석과 서비스의 판단을','명확한 책임으로 나눴습니다.');
-    lead(12,'AI는 자연어 조건을 해석하고, 추천 엔진은 후보·순위·이유를 결정합니다.',
+    title(10,'AI의 해석과 서비스의 판단을','명확한 책임으로 나눴습니다.');
+    lead(10,'AI는 자연어 조건을 해석하고, 추천 엔진은 후보·순위·이유를 결정합니다.',
       'Realtime은 변경 신호로만 사용합니다. 추가 조회 지연을 감수하고 서버 상태를 다시 읽습니다.');
     setHTML(slides[10],'.fm-next-cs-modes',
       '<div class="is-focus"><small>RECOMMENDATION</small><h3>추천 소유권</h3><p>'+lines('결정론적 추천 엔진이 후보·순위·이유를 결정합니다.','AI 해석 실패 시 fallback으로 탐색을 이어갑니다.')+'</p></div>'+
@@ -313,8 +313,8 @@
     slides[10].setAttribute('data-v5-ai-evidence','guardrailed');
 
     setRole(slides[11],'validation-evidence');
-    title(14,'서비스의 성공 지표와','제품 동작을 확인하는 QA를 구분합니다.');
-    lead(14,'아래는 검증할 지표(Validation Metric)이며, 측정 성과인 Measured Result가 아닙니다.',
+    title(11,'서비스의 성공 지표와','제품 동작을 확인하는 QA를 구분합니다.');
+    lead(11,'아래는 검증할 지표(Validation Metric)이며, 측정 성과인 Measured Result가 아닙니다.',
       '무료 Beta에서는 상세→참가 전환을 중심으로 실패·복구·재탐색을 함께 확인합니다.');
     setHTML(slides[11],'.fm-next-cs-metrics',[
       ['탐색 → 상세','상세 진입 세션','결과 노출 세션'],
@@ -334,8 +334,8 @@
     slides[11].setAttribute('data-v5-validation-evidence','acceptance');
 
     setRole(slides[12],'production-boundary');
-    title(15,'연동과 복구는 구현했고,','사용자 가치와 수익성 검증은 남았습니다.');
-    lead(15,'구현·배포 검증과 실제 이용 성과를 나눠 현재 범위를 공개합니다.',
+    title(12,'연동과 복구는 구현했고,','사용자 가치와 수익성 검증은 남았습니다.');
+    lead(12,'구현·배포 검증과 실제 이용 성과를 나눠 현재 범위를 공개합니다.',
       '외부 연동 성공만으로 참가 전환이나 재이용 효과가 입증되지는 않습니다.');
     setHTML(slides[12],'.fm-next-cs-outcomes',
       '<div><b>Real App</b><p>'+lines('AI Gateway 실연동 · 결정론적 추천','샘플 경기 데이터','인증·결제·정원·알림 시뮬레이션')+'</p></div>'+
