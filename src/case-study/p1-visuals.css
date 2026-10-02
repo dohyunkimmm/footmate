@@ -795,3 +795,44 @@ html[data-fm-next-case-study="true"] .fm-p1-release-next{
     min-height:0;
   }
 }
+
+
+/* 12 KPI & Validation · measurement definitions separated from QA evidence */
+html[data-fm-next-case-study="true"] .fm-p1-validation-split{
+  display:grid;
+  grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);
+  gap:14px;
+  align-items:start;
+  margin-top:12px;
+}
+html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-metrics{
+  grid-template-columns:1fr!important;
+  gap:8px!important;
+  margin-top:0!important;
+}
+html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-validation-banner{
+  grid-row:auto;
+  min-height:118px;
+}
+html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-secondary-metrics{
+  grid-column:auto;
+}
+html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-grid{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:8px!important;
+  margin-top:0!important;
+}
+html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-grid>.fm-next-cs-card{
+  min-height:0;
+  padding:30px 14px 12px!important;
+}
+html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-grid>.fm-next-cs-card h3{
+  margin-bottom:5px!important;
+}
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-p1-validation-split{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+}
