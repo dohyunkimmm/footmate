@@ -1,5 +1,5 @@
 import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
-import {rankRecommendations} from './platform/domain/recommendation.js';
+import {rankRecommendations} from '../platform/domain/recommendation.js';
 
 const root=document.getElementById('footmate-next');
 if(root){
