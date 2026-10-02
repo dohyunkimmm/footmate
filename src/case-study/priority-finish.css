@@ -1,0 +1,555 @@
+/* FootMate Case Study · P0/P1 final visual priority finish
+   Presentation-only overrides loaded after Detail Finish and Product Evidence. */
+
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"]{
+  --fm-priority-ink:#1c2d24;
+  --fm-priority-muted:#607168;
+  --fm-priority-line:#dde7e1;
+  --fm-priority-line-strong:#bed4c5;
+  --fm-priority-soft:#f6f9f7;
+  --fm-priority-focus:#edf7f0;
+  --fm-priority-accent:#188038;
+}
+
+/* 01 Overview · product proof first, role proof quieter */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-cover .fm-next-cover{
+  grid-template-columns:minmax(0,.92fr) minmax(430px,1.08fr)!important;
+  gap:48px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-cover-visual{
+  transform:scale(1.045);
+  transform-origin:center;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-proof-strip{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:0!important;
+  border-top:1px solid var(--fm-priority-line);
+  border-bottom:1px solid var(--fm-priority-line);
+  background:transparent!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-proof-strip>div{
+  min-height:72px;
+  padding:13px 16px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-proof-strip>div+div{
+  border-left:1px solid var(--fm-priority-line)!important;
+}
+
+/* 02 Problem · one core problem with three causes */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-map{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+  position:relative;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-core{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:2px 14px;
+  align-items:center;
+  padding:15px 18px;
+  border:1px solid var(--fm-priority-line-strong);
+  border-radius:16px;
+  background:var(--fm-priority-focus);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-core small{
+  grid-row:1 / span 2;
+  align-self:center;
+  color:var(--fm-priority-accent);
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.02em;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-core b{
+  color:var(--fm-priority-ink);
+  font-size:17px;
+  line-height:1.35;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-core span{
+  color:var(--fm-priority-muted);
+  font-size:11px;
+  line-height:1.45;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-map>.fm-next-cs-card{
+  position:relative;
+  min-height:118px;
+  padding:16px!important;
+  border:1px solid var(--fm-priority-line)!important;
+  background:#fff!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-map>.fm-next-cs-card:before{
+  content:"";
+  position:absolute;
+  top:-11px;
+  left:50%;
+  width:1px;
+  height:11px;
+  background:var(--fm-priority-line-strong);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-question{
+  margin-top:10px!important;
+  border-style:dashed!important;
+  background:#fbfcfb!important;
+}
+
+/* 03 Persona · scene first, sequence second */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-persona-scene{
+  grid-template-columns:minmax(300px,1fr) minmax(0,1.45fr)!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-persona-sequence{
+  border-color:transparent!important;
+  background:var(--fm-priority-soft)!important;
+}
+
+/* 04 Scope · journey is primary, priority map is clearly Now / Next / Out */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-journey{
+  margin-top:12px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-journey .fm-p0-journey-step{
+  border-color:var(--fm-priority-line)!important;
+  box-shadow:none!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-scope-map{
+  grid-template-columns:1.25fr 1fr .82fr!important;
+  align-items:start!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-scope-map [data-priority="now"]{
+  border-color:var(--fm-priority-line-strong)!important;
+  background:var(--fm-priority-focus)!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-scope-map [data-priority="next"]{
+  background:#fff!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-scope-map [data-priority="excluded"]{
+  opacity:.7;
+  background:#fafafa!important;
+}
+
+/* 05 Guest First · rejected route recedes, selected route owns the page */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-guest-contrast .is-before{
+  opacity:.58;
+  filter:saturate(.35);
+  background:#fafafa!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-guest-contrast .is-selected{
+  border-color:var(--fm-priority-line-strong)!important;
+  background:var(--fm-priority-focus)!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-guest-contrast .is-selected .fm-p0-route-step{
+  border-color:#d2e2d7!important;
+}
+
+/* 06 Recommendation · actual product UI is the hero */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation{
+  grid-template-columns:minmax(0,1.58fr) minmax(250px,.62fr)!important;
+  gap:22px!important;
+  align-items:center!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation .fm-p0-reco-stage{
+  min-height:450px;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation .fm-evidence-figure.is-recommendation img{
+  height:430px!important;
+  max-height:430px!important;
+  width:auto!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation-notes{
+  gap:7px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation-notes li{
+  padding:11px 12px!important;
+  border-color:transparent!important;
+  background:var(--fm-priority-soft)!important;
+}
+
+/* 07 Decision Detail · product proof + numbered decision order */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout{
+  grid-template-columns:minmax(0,.82fr) minmax(350px,1.18fr)!important;
+  gap:30px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout .fm-evidence-figure{
+  order:2;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout .fm-next-cs-detail-order{
+  order:1;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout .fm-next-cs-detail-order>span{
+  position:relative;
+  padding:13px 0!important;
+  font-weight:750;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout .fm-next-cs-detail-order>span:before{
+  background:var(--fm-priority-focus)!important;
+  color:var(--fm-priority-accent)!important;
+  border:1px solid var(--fm-priority-line-strong);
+}
+
+/* 08 Sign in · Join · four-screen sequence with persistent state strip */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-auth-flow .fm-p1-auth-screen{
+  min-height:158px;
+  border-color:var(--fm-priority-line)!important;
+  box-shadow:none!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-auth-flow .fm-p1-auth-frame.is-focus .fm-p1-auth-screen{
+  border-color:var(--fm-priority-line-strong)!important;
+  background:var(--fm-priority-focus)!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-state-strip>span{
+  width:min(100%,620px);
+  justify-content:center;
+  border-color:var(--fm-priority-line-strong)!important;
+  background:#f4faf6!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-auth-boundary{
+  opacity:.92;
+}
+
+/* 09 Operations · lifecycle becomes a timeline, product screen is primary proof */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-operations-layout{
+  grid-template-columns:minmax(0,.8fr) minmax(350px,1.2fr)!important;
+  gap:30px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-matchday-timeline{
+  position:relative;
+  padding-left:26px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-matchday-timeline:before{
+  content:"";
+  position:absolute;
+  left:7px;
+  top:20px;
+  bottom:20px;
+  width:1px;
+  background:var(--fm-priority-line-strong);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-matchday-timeline>div{
+  position:relative;
+  grid-template-columns:minmax(90px,.32fr) minmax(0,.68fr)!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-matchday-timeline>div:before{
+  content:"";
+  position:absolute;
+  left:-24px;
+  top:20px;
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  border:2px solid #fff;
+  background:#b5c4bb;
+  box-shadow:0 0 0 1px var(--fm-priority-line-strong);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-matchday-timeline>div.is-focus:before{
+  width:12px;
+  height:12px;
+  left:-25.5px;
+  background:var(--fm-priority-accent);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-operations-layout .fm-evidence-figure{
+  order:2;
+}
+
+/* 10 Recovery · principle → compact map → representative product states */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-principle{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:10px;
+  padding:12px 14px;
+  border:1px solid var(--fm-priority-line-strong);
+  border-radius:14px;
+  background:var(--fm-priority-focus);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-principle small{
+  color:var(--fm-priority-accent);
+  font-size:9px;
+  font-weight:850;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-principle b{
+  color:var(--fm-priority-ink);
+  font-size:12px;
+  line-height:1.4;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-map{
+  margin-top:9px!important;
+  row-gap:6px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-map .fm-p0-recovery-row{
+  min-height:42px!important;
+  padding-top:7px!important;
+  padding-bottom:7px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-evidence{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  overflow:visible!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-evidence .fm-evidence-media img{
+  height:210px!important;
+}
+
+/* 11 Domain & AI · responsibility bands, guardrails secondary */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map{
+  position:relative;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  gap:8px!important;
+  padding:30px 10px 10px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node{
+  position:relative;
+  min-height:112px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node[data-owner-label]:before{
+  content:attr(data-owner-label);
+  position:absolute;
+  top:-24px;
+  left:0;
+  color:var(--fm-priority-muted);
+  font-size:9px;
+  line-height:1;
+  font-weight:850;
+  letter-spacing:.02em;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node[data-owner="interpret"]{
+  background:#f7f9f8!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node[data-owner="decide"]{
+  border-color:var(--fm-priority-line-strong)!important;
+  background:var(--fm-priority-focus)!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node[data-owner="confirm"]{
+  background:#fff!important;
+  border-style:dashed!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-guardrails{
+  opacity:.82;
+}
+
+/* 12 KPI & Validation · measurement and evidence are visually separate */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-split{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);
+  gap:18px;
+  margin-top:10px;
+  align-items:start;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane{
+  min-width:0;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-pane-label{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:2px 10px;
+  align-items:baseline;
+  margin-bottom:9px;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-pane-label small{
+  grid-row:1 / span 2;
+  color:var(--fm-priority-accent);
+  font-size:9px;
+  font-weight:850;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-pane-label b{
+  color:var(--fm-priority-ink);
+  font-size:13px;
+  line-height:1.35;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-pane-label span{
+  color:var(--fm-priority-muted);
+  font-size:10px;
+  line-height:1.4;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-metric .fm-p1-metrics{
+  grid-template-columns:minmax(180px,.72fr) minmax(0,1.28fr)!important;
+  margin-top:0!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence{
+  padding-left:18px;
+  border-left:1px solid var(--fm-priority-line);
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence .fm-p1-evidence-grid{
+  grid-template-columns:1fr!important;
+  margin-top:0!important;
+  gap:8px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence .fm-next-cs-card{
+  min-height:0!important;
+  padding:28px 13px 11px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-note{
+  margin-top:10px!important;
+}
+
+/* 13 Release · three current boundaries + one clear next-step close */
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-release-map{
+  grid-template-columns:1fr 1.08fr .92fr!important;
+  gap:10px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-release-map>article{
+  min-height:0!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-release-next{
+  margin-top:12px!important;
+  border-color:var(--fm-priority-line-strong)!important;
+  background:var(--fm-priority-focus)!important;
+}
+
+/* compact desktop */
+@media(min-width:901px) and (max-height:820px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-cover-visual{transform:scale(1)}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation .fm-evidence-figure.is-recommendation img{height:350px!important;max-height:350px!important}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation .fm-p0-reco-stage{min-height:370px}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-evidence .fm-evidence-media img{height:160px!important}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node{min-height:96px!important}
+}
+
+/* tablet */
+@media(max-width:1180px) and (min-width:901px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-cover .fm-next-cover{
+    grid-template-columns:minmax(0,1fr) minmax(380px,1fr)!important;
+    gap:32px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation{
+    grid-template-columns:minmax(0,1.25fr) minmax(240px,.75fr)!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout,
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-operations-layout{
+    grid-template-columns:minmax(0,.9fr) minmax(300px,1.1fr)!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-split{
+    grid-template-columns:1fr;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence{
+    padding-left:0;
+    border-left:0;
+    border-top:1px solid var(--fm-priority-line);
+    padding-top:12px;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence .fm-p1-evidence-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
+/* mobile */
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-cover .fm-next-cover{
+    grid-template-columns:1fr!important;
+    gap:22px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-cover-visual{
+    transform:none;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-proof-strip{
+    grid-template-columns:1fr!important;
+    border-bottom:0;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-proof-strip>div{
+    min-height:0;
+    padding:10px 0!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-proof-strip>div+div{
+    border-left:0!important;
+    border-top:1px solid var(--fm-priority-line)!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-map{
+    grid-template-columns:1fr!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-core{
+    grid-column:auto;
+    grid-template-columns:1fr;
+    gap:4px;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-core small{grid-row:auto}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-problem-map>.fm-next-cs-card:before{display:none}
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-persona-scene{grid-template-columns:1fr!important}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-scope-map{grid-template-columns:1fr!important}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-guest-contrast{grid-template-columns:1fr!important}
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation,
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout,
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-operations-layout{
+    grid-template-columns:1fr!important;
+    gap:14px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation .fm-p0-reco-stage{min-height:0}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recommendation .fm-evidence-figure.is-recommendation img{
+    width:min(100%,320px)!important;
+    height:auto!important;
+    max-height:520px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-detail-layout .fm-evidence-figure,
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-operations-layout .fm-evidence-figure{
+    order:-1;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-auth-flow{
+    grid-template-columns:1fr!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-auth-flow .fm-p1-auth-screen{min-height:0}
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-state-strip>span{
+    width:100%;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-matchday-timeline{
+    padding-left:22px!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-principle{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:3px;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-evidence{
+    grid-template-columns:1fr!important;
+    overflow:visible!important;
+    padding:0!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-evidence .fm-evidence-figure{
+    width:100%!important;
+    scroll-snap-align:none!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-recovery-evidence .fm-evidence-media img{
+    width:100%!important;
+    height:auto!important;
+    max-height:460px;
+    object-fit:contain!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map{
+    grid-template-columns:1fr!important;
+    padding:10px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-owner-map .fm-p0-arch-node[data-owner-label]:before{
+    position:static;
+    content:attr(data-owner-label);
+    display:block;
+    margin-bottom:5px;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-split{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-metric .fm-p1-metrics{
+    grid-template-columns:1fr!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence{
+    padding:12px 0 0;
+    border-left:0;
+    border-top:1px solid var(--fm-priority-line);
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-validation-pane.is-evidence .fm-p1-evidence-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  html[data-fm-next-case-study="true"][data-fm-case-study-priority-finish="true"] .fm-priority-release-map{
+    grid-template-columns:1fr!important;
+  }
+}
