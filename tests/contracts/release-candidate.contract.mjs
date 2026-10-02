@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import {EVENT_NAMES,PLATFORM_VERSION,SESSION_SCHEMA_VERSION} from '../../src/v4/platform/domain/contracts.js';
-import {ACCESSIBILITY_CONTRACT,ANALYTICS_CONTRACT,EVENT_CATALOG,IA_CONTRACT,PERFORMANCE_BUDGET,PROVIDER_CONTRACTS,RELEASE_CANDIDATE_VERSION,rehearseSessionMigration} from '../../src/v4/platform/domain/release-candidate.js';
-import {createProviderMocks} from '../../src/v4/platform/infrastructure/provider-mocks.js';
-import {createReleaseCandidateGate} from '../../src/v4/platform/application/release-candidate.js';
+import {EVENT_NAMES,PLATFORM_VERSION,SESSION_SCHEMA_VERSION} from '../../src/platform/domain/contracts.js';
+import {ACCESSIBILITY_CONTRACT,ANALYTICS_CONTRACT,EVENT_CATALOG,IA_CONTRACT,PERFORMANCE_BUDGET,PROVIDER_CONTRACTS,RELEASE_CANDIDATE_VERSION,rehearseSessionMigration} from '../../src/platform/domain/release-candidate.js';
+import {createProviderMocks} from '../../src/platform/infrastructure/provider-mocks.js';
+import {createReleaseCandidateGate} from '../../src/platform/application/release-candidate.js';
 
 assert.equal(PLATFORM_VERSION,'4.9.0');
 assert.equal(RELEASE_CANDIDATE_VERSION,'4.9.0');
