@@ -1,5 +1,5 @@
-import {PROVIDER_CONTRACTS} from '../../v4/platform/domain/release-candidate.js';
-import {createProviderMocks} from '../../v4/platform/infrastructure/provider-mocks.js';
+import {PROVIDER_CONTRACTS} from '../domain/release-candidate.js';
+import {createProviderMocks} from './provider-mocks.js';
 
 const names=Object.freeze(Object.keys(PROVIDER_CONTRACTS));
 function inspectProvider(name,provider){
