@@ -22,6 +22,7 @@ const cssSources=[
 ];
 const jsSources=[
   'src/case-study/heading-polish.js',
+  'src/case-study/reader-polish.js',
   'src/case-study/service-planner-polish.js',
   'src/case-study/reviewer-polish.js',
   'src/case-study/lead-tighten.js',
