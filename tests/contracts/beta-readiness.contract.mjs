@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-// Branch protection keeps the historical required check name "Regression 36" while this file adds the v5.2 contract.
+// Branch protection keeps the historical required check name "Regression 36" while this file adds the current beta-readiness contract.
 const migration=fs.readFileSync('supabase/migrations/20260921051924_v5_2_real_beta_readiness.sql','utf8');
 const notificationIndexMigration=fs.readFileSync('supabase/migrations/20260921055744_v5_2_notification_fk_index.sql','utf8');
 const operatorCheckInFix=fs.readFileSync('supabase/migrations/20260921131551_operator_check_in_ambiguity_fix.sql','utf8');
@@ -57,15 +57,15 @@ assert.match(operator,/stopImmediatePropagation/);
 
 assert.match(betaHtml,/beta-recovery-bootstrap\.js/);
 assert.ok(betaHtml.indexOf('beta-recovery-bootstrap.js')<betaHtml.indexOf('beta.js'));
-assert.match(betaHtml,/import\('\/src\/v5\/beta-readiness\.js\?v=1'\)/);
+assert.match(betaHtml,/import\('\/src\/beta\/readiness\.js\?v=1'\)/);
 assert.match(betaHtml,/data-beta-state/);
 assert.match(operatorHtml,/data-operator-state/);
 if(operatorMfa){
   assert.match(operatorHtml,/beta-operator-mfa\.js\?v=1/);
-  assert.match(operatorMfa,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
+  assert.match(operatorMfa,/import\('\/src\/beta\/operator-readiness\.js\?v=1'\)/);
   assert.ok(operatorMfa.indexOf("import('/src/beta/operator.js?v=1')")<operatorMfa.indexOf("import('/src/beta/operator-readiness.js?v=1')"));
 }else{
-  assert.match(operatorHtml,/import\('\/src\/v5\/beta-operator-readiness\.js\?v=1'\)/);
+  assert.match(operatorHtml,/import\('\/src\/beta\/operator-readiness\.js\?v=1'\)/);
 }
 
-console.log('v5.2 real beta readiness contracts PASS');
+console.log('beta readiness contracts PASS');
