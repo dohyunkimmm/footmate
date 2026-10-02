@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {CONNECTED_PLATFORM_VERSION,DOMAIN_OWNERSHIP,JOURNEY_CONTRACT,evaluateJourneyConsistency} from '../../src/v5/domain/journey.js';
-import {createProviderRegistry} from '../../src/v5/infrastructure/providers.js';
-import {createConnectedMatchdayPlatform} from '../../src/v5/application/connected-platform.js';
+import {CONNECTED_PLATFORM_VERSION,DOMAIN_OWNERSHIP,JOURNEY_CONTRACT,evaluateJourneyConsistency} from '../../src/domain/journey.js';
+import {createProviderRegistry} from '../../src/platform/infrastructure/providers.js';
+import {createConnectedMatchdayPlatform} from '../../src/platform/application/connected-platform.js';
 
 assert.equal(CONNECTED_PLATFORM_VERSION,'5.1.1');
 assert.deepEqual(JOURNEY_CONTRACT,['Find','Decide','Join','Play','Return']);
@@ -28,14 +28,14 @@ assert.equal(platform.architecture,'connected-capable');
 assert.equal(platform.connectionMode,'mock-only');
 assert.equal(platform.externalProductionFeatures,false);
 
-const v5Bootstrap=await readFile(new URL('../../src/v5/presentation/bootstrap.js',import.meta.url),'utf8');
+const v5Bootstrap=await readFile(new URL('../../src/platform/presentation/connected-bootstrap.js',import.meta.url),'utf8');
 assert.ok(v5Bootstrap.includes("import {footmatePlatform} from '../../v4/platform/application/platform.js';"),'v5 bootstrap must read browser state through platform ownership');
 assert.equal(v5Bootstrap.includes('localStorage.getItem'),false,'v5 bootstrap must not bypass the platform storage provider');
 for(const legacyKey of ['footmate:v4:session','footmate:v4:participation','footmate:v4:matchday','footmate:v4:return']){
   assert.equal(v5Bootstrap.includes(legacyKey),false,`v5 bootstrap must not own legacy storage key ${legacyKey}`);
 }
 
-const rootApp=await readFile(new URL('../../src/v4/app.js',import.meta.url),'utf8');
+const rootApp=await readFile(new URL('../../src/app/app.js',import.meta.url),'utf8');
 assert.ok(rootApp.includes("import {footmatePlatform} from './platform/application/platform.js';"),'root app must import platform session ownership');
 assert.ok(rootApp.includes('footmatePlatform.session.read()'),'root app must read through platform session service');
 assert.ok(rootApp.includes('footmatePlatform.session.write(state)'),'root app must persist through platform session service');
@@ -44,13 +44,13 @@ assert.equal(rootApp.includes('NEXT_STORAGE_KEY'),false,'root app must not own t
 assert.equal(rootApp.includes('footmate:v4:'),false,'root app must not own legacy storage keys');
 
 for(const [path,repositoryName] of [
-  ['../../src/v4/discovery.js','discovery'],
-  ['../../src/v4/decision.js','decision'],
-  ['../../src/v4/participation.js','participation'],
-  ['../../src/v4/matchday.js','matchday'],
-  ['../../src/v4/return.js','returnLoop'],
-  ['../../src/v4/personalization.js','personalization'],
-  ['../../src/v4/experience.js','interaction']
+  ['../../src/app/discovery.js','discovery'],
+  ['../../src/app/decision.js','decision'],
+  ['../../src/app/participation.js','participation'],
+  ['../../src/app/matchday.js','matchday'],
+  ['../../src/app/return.js','returnLoop'],
+  ['../../src/app/personalization.js','personalization'],
+  ['../../src/app/experience.js','interaction']
 ]){
   const source=await readFile(new URL(path,import.meta.url),'utf8');
   assert.ok(source.includes("import {footmatePlatform} from './platform/application/platform.js';"),`${path} must import platform ownership`);
@@ -59,7 +59,7 @@ for(const [path,repositoryName] of [
   assert.equal(source.includes('footmate:v4:'),false,`${path} must not own legacy storage keys`);
 }
 
-const caseStudy=await readFile(new URL('../../src/v5/case-study-connected.js',import.meta.url),'utf8');
+const caseStudy=await readFile(new URL('../../src/case-study/connected.js',import.meta.url),'utf8');
 for(const required of [
   "['Overview','Role & Scope']",
   "['Scope & Priority','Value Before Scale']",
