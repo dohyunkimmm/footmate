@@ -1,5 +1,5 @@
-import {loadBetaBackendConfig} from './infrastructure/supabase-beta.js';
-import {createBetaReadinessClient} from './infrastructure/supabase-beta-readiness.js';
+import {loadBetaBackendConfig} from './infrastructure/supabase.js';
+import {createBetaReadinessClient} from './infrastructure/supabase-readiness.js';
 
 const root=document.getElementById('footmate-beta-operator');
 const SESSION_KEY='footmate:beta:auth:v1';
