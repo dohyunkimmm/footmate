@@ -7,7 +7,10 @@
   },
   "scripts": {
     "qa:release": "node scripts/check-release-version.cjs",
-    "qa:toolchain": "node scripts/check-qa-toolchain.cjs"
+    "qa:toolchain": "node scripts/check-qa-toolchain.cjs",
+    "build:case-study": "node scripts/build-case-study-bundle.cjs",
+    "sync:case-study-assets": "node scripts/sync-case-study-assets.cjs",
+    "qa:case-study-bundle": "node scripts/build-case-study-bundle.cjs --check && node scripts/sync-case-study-assets.cjs --check"
   },
   "qaToolchain": {
     "node": "24",
