@@ -219,6 +219,48 @@ for(const [name,viewport] of [
   });
 
   if(name==='desktop'){
+    test('Case Study card body copy stays short and phrase-like',async({page})=>{
+      await openCaseStudy(page,viewport);
+      const selectors=[
+        '.fm-p0-problem-core p',
+        '.fm-next-cs-card p',
+        '.fm-next-cs-quote dd',
+        '.fm-next-cs-jtbd p',
+        '.fm-next-cs-before-after p',
+        '.fm-next-cs-decision dd',
+        '.fm-next-cs-scope dd',
+        '.fm-next-cs-sticky dd',
+        '.fm-next-cs-note dd',
+        '.fm-next-cs-note:not(:has(dl))',
+        '.fm-next-cs-modes p',
+        '.fm-next-cs-day-states p',
+        '.fm-next-cs-recovery span',
+        '.fm-next-cs-outcomes p',
+        '.fm-p1-validation-banner p',
+        '.fm-p1-evidence-grid .fm-next-cs-card p',
+        '.fm-p1-release-next dd'
+      ];
+      const offenders=[];
+      for(let index=0;index<13;index+=1){
+        await showSection(page,index);
+        const texts=await page.locator('.slide.on').evaluate((slide,selectors)=>{
+          const seen=new Set();
+          const values=[];
+          selectors.forEach(selector=>{
+            slide.querySelectorAll(selector).forEach(node=>{
+              if(seen.has(node))return;
+              seen.add(node);
+              const text=(node.textContent||'').trim().replace(/\s+/g,' ');
+              if(text)values.push(text);
+            });
+          });
+          return values;
+        },selectors);
+        texts.filter(text=>/다\.$/.test(text)).forEach(text=>offenders.push({section:index+1,text}));
+      }
+      expect(offenders).toEqual([]);
+    });
+
     test('P3 Persona stacked cards keep equal spacing at the medium breakpoint',async({page})=>{
       const mediumViewport={width:1024,height:768};
       await openCaseStudy(page,mediumViewport);
