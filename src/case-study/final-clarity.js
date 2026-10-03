@@ -125,7 +125,7 @@
     const auth=slides[7];
     setText(auth,'.fm-next-story h2','선택한 경기를 계정 확인 뒤에도 이어갑니다.');
     setText(auth,'.fm-next-story-lead','선택 경기와 복귀 위치를 유지하고 로그인 뒤 무료 참가 확인으로 이어집니다.');
-    setSummary(auth,[['상태 보존','선택 경기 · 복귀 위치'],['계정','로그인'],['결과','무료 참가 확인 · MY']]);
+    setSummary(auth,[['진입점','참가하기 직전'],['계정','로그인'],['결과','무료 참가 확인 · MY']]);
     setHTML(auth,'.fm-next-cs-scope',rows([
       ['Real App','로그인 · 무료 참가 확인 · MY'],
       ['Closed Beta','Supabase 계정 · 참가 실연동'],
