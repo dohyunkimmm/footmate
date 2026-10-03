@@ -19,7 +19,7 @@
       closing.innerHTML=`
         <span>KEY LEARNING · 다음 검증으로 연결</span>
         <dl class="fm-cs-reasons">
-          <div><dt>배운 점</dt><dd>연결 성공뿐 아니라 실패·중복·상태 갱신을 함께 정의해야 운영 흐름이 이어집니다.</dd></div>
+          <div><dt>배운 점</dt><dd>연결 성공 + 실패·중복·상태 갱신까지 함께 정의</dd></div>
         </dl>
         <a href="/app" target="_blank" rel="noopener">Real App에서 흐름 확인 ↗</a>`;
       map.insertAdjacentElement('afterend',closing);
@@ -48,12 +48,12 @@
     setReasonValue(
       problem.querySelector('.fm-next-cs-quote'),
       '검증 범위',
-      '설계 가설 단계이며, 사용자 조사와 경쟁사 대비 우위는 Beta에서 확인합니다.'
+      '설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 확인'
     );
 
     const authScope=auth.querySelector('.fm-next-cs-scope');
-    setReasonValue(authScope,'Closed Beta','Supabase 계정과 참가 흐름을 실제로 연동했습니다.');
-    setReasonValue(authScope,'검증 범위','Google/Kakao OAuth는 Production에서 확인했고, 실제 PG 연동은 후속 범위입니다.');
+    setReasonValue(authScope,'Closed Beta','Supabase 계정·참가 흐름 실연동');
+    setReasonValue(authScope,'검증 범위','Google/Kakao OAuth Production 확인 · 실제 PG 후속 범위');
 
     lead.textContent='아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.';
     releaseLead.textContent='핵심 연결과 사용자 확인을 마치고, KPI·결제·수익성은 후속 검증으로 남겼습니다.';
