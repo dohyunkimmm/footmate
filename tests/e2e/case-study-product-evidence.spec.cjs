@@ -93,11 +93,14 @@ for(const [name,viewport] of [
       const labelStyle=getComputedStyle(card.querySelector('small'));
       const bodyStyle=getComputedStyle(card.querySelector('b'));
       const rect=card.getBoundingClientRect();
+      const wrapRect=node.getBoundingClientRect();
       return {
         marginTop:parseFloat(wrap.marginTop),
         marginBottom:parseFloat(wrap.marginBottom),
-        wrapWidth:node.getBoundingClientRect().width,
+        wrapWidth:wrapRect.width,
         width:rect.width,
+        leftGap:rect.left-wrapRect.left,
+        rightGap:wrapRect.right-rect.right,
         paddingTop:parseFloat(cardStyle.paddingTop),
         paddingRight:parseFloat(cardStyle.paddingRight),
         paddingBottom:parseFloat(cardStyle.paddingBottom),
@@ -120,6 +123,7 @@ for(const [name,viewport] of [
       expect(geometry.width).toBeGreaterThanOrEqual(320);
       expect(geometry.width).toBeLessThanOrEqual(420);
       expect(geometry.width).toBeLessThan(geometry.wrapWidth*0.7);
+      expect(Math.abs(geometry.leftGap-geometry.rightGap)).toBeLessThanOrEqual(1);
     }else{
       expect(Math.abs(geometry.width-geometry.wrapWidth)).toBeLessThanOrEqual(1);
     }
