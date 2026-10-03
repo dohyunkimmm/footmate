@@ -96,6 +96,7 @@ for(const [name,viewport] of [
       return {
         marginTop:parseFloat(wrap.marginTop),
         marginBottom:parseFloat(wrap.marginBottom),
+        wrapWidth:node.getBoundingClientRect().width,
         width:rect.width,
         paddingTop:parseFloat(cardStyle.paddingTop),
         paddingRight:parseFloat(cardStyle.paddingRight),
@@ -115,7 +116,13 @@ for(const [name,viewport] of [
     expect(geometry.radius).toBe(16);
     expect(geometry.labelFont).toBeGreaterThanOrEqual(10);
     expect(geometry.bodyFont).toBeGreaterThanOrEqual(13);
-    expect(geometry.width).toBeGreaterThan(viewport.width>900?500:300);
+    if(viewport.width>900){
+      expect(geometry.width).toBeGreaterThanOrEqual(320);
+      expect(geometry.width).toBeLessThanOrEqual(420);
+      expect(geometry.width).toBeLessThan(geometry.wrapWidth*0.7);
+    }else{
+      expect(Math.abs(geometry.width-geometry.wrapWidth)).toBeLessThanOrEqual(1);
+    }
     await verifyNoHorizontalOverflow(page);
     await slide.screenshot({
       path:`test-results/case-study-p8-state-preserve-${viewport.width}.png`,
