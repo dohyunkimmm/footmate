@@ -1459,6 +1459,19 @@ html[data-fm-next-case-study="true"] .fm-p1-release-next{
   html[data-fm-next-case-study="true"] .fm-p1-release-map li{padding:7px 8px}
 }
 
+/* P3 Persona · stacked lens cards keep one invariant vertical rhythm.
+   This section owns its spacing; shared card-rhythm must not create a different 1→2 / 2→3 gap. */
+@media(max-width:1120px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-lenses{
+    row-gap:10px!important;
+  }
+}
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-lenses{
+    row-gap:8px!important;
+  }
+}
+
 /* medium desktop/tablet */
 @media(max-width:1120px) and (min-width:901px){
   html[data-fm-next-case-study="true"] .fm-p1-persona-scene{
