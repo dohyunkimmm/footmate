@@ -68,8 +68,6 @@
 
     const finalLabel=document.querySelector(`${ROOT} .fm-p1-release-next>span`);
     if(finalLabel)finalLabel.textContent='핵심 학습 · 다음 검증으로 연결';
-    const finalLink=document.querySelector(`${ROOT} .fm-p1-release-next>a`);
-    if(finalLink)finalLink.textContent='Real App에서 흐름 확인 ↗';
   }
 
   function markEvidenceScale(){

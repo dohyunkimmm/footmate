@@ -20,8 +20,7 @@
         <span>KEY LEARNING · 다음 검증으로 연결</span>
         <dl class="fm-cs-reasons">
           <div><dt>배운 점</dt><dd>연결 성공 + 실패·중복·상태 갱신까지 함께 정의</dd></div>
-        </dl>
-        <a href="/app" target="_blank" rel="noopener">Real App에서 흐름 확인 ↗</a>`;
+        </dl>`;
       map.insertAdjacentElement('afterend',closing);
     }
     return closing.isConnected;
