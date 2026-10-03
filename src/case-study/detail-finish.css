@@ -367,7 +367,35 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 
 
 /* P8 / P12 spacing refinement */
-/* P8: align lower boundary cards with the shared card inset. */
+/* P8: promote the preserved-state bridge from a tiny pill to a readable decision card. */
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-preserve{
+  display:block!important;
+  margin:14px 0 16px!important;
+  padding:0!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-preserve>span{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  justify-content:start!important;
+  align-items:start!important;
+  gap:5px!important;
+  padding:14px 16px!important;
+  border-radius:16px!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-preserve small{
+  font-size:10px!important;
+  line-height:1.2!important;
+  font-weight:850!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-preserve b{
+  font-size:13px!important;
+  line-height:1.45!important;
+  font-weight:750!important;
+}
+html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-boundary{
+  margin-top:0!important;
+}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-boundary .fm-cs-reasons>div{
   padding:14px 16px!important;
 }
