@@ -181,7 +181,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     const closing=page.locator('.slide.on .fm-p1-release-next');
     await expect(closing).toBeVisible();
-    await expect(closing.locator('a')).toHaveCount(1);
+    await expect(closing.locator('a')).toHaveCount(0);
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');
       const rows=[...final.querySelectorAll('.fm-cs-reasons>div')];
@@ -261,7 +261,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await showSection(page,12);
     await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('미연동 · 미검증');
     await expect(page.locator('.slide.on .fm-p1-release-next>span')).toContainText('핵심 학습');
-    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(1);
+    await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(0);
 
     if(name==='desktop'){
       // Product evidence uses two explicit scale levels with a shared caption rhythm.
