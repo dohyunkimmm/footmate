@@ -102,8 +102,8 @@ for(const [name,viewport] of [
           bodyLineHeight:parseFloat(bodyStyle.lineHeight)
         };
       });
-      expect(rhythm.cardPaddingTop).toBeGreaterThanOrEqual(12);
-      expect(rhythm.cardPaddingTop).toBeLessThanOrEqual(14);
+      const expectedCardPadding=name==='mobile'?18:16;
+      expect(rhythm.cardPaddingTop).toBe(expectedCardPadding);
       expect(rhythm.labelPosition).toBe('static');
       expect(rhythm.labelMarginBottom).toBeGreaterThanOrEqual(7);
       expect(rhythm.labelMarginBottom).toBeLessThanOrEqual(8);
