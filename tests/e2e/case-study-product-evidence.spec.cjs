@@ -111,7 +111,7 @@ for(const [name,viewport] of [
       expect(geometry.evidence.left).toBeGreaterThan(geometry.metrics.right);
       expect(geometry.metrics.width).toBeGreaterThan(geometry.evidence.width);
       expect(geometry.core).toHaveLength(5);
-      expect(geometry.core.every(card=>card.top===14&&card.bottom===14&&card.left===16&&card.right===16)).toBeTruthy();
+      expect(geometry.core.every(card=>card.top===18&&card.bottom===18&&card.left===20&&card.right===20)).toBeTruthy();
       expect(geometry.split.width).toBeGreaterThan(900);
     }
 
