@@ -204,26 +204,28 @@ for(const [name,viewport] of [
     });
   });
 
-  test('P3 Persona stacked cards keep equal spacing at the medium breakpoint',async({page})=>{
-    const viewport={width:1024,height:768};
-    await openCaseStudy(page,viewport);
-    await showSection(page,2);
-    const lenses=page.locator('.slide.on .fm-p1-persona-lenses');
-    const geometry=await lenses.evaluate(node=>{
-      const cards=[...node.children].map(card=>card.getBoundingClientRect());
-      return {
-        rowGap:parseFloat(getComputedStyle(node).rowGap),
-        gaps:[
-          cards[1].top-cards[0].bottom,
-          cards[2].top-cards[1].bottom
-        ]
-      };
+  if(name==='desktop'){
+    test('P3 Persona stacked cards keep equal spacing at the medium breakpoint',async({page})=>{
+      const mediumViewport={width:1024,height:768};
+      await openCaseStudy(page,mediumViewport);
+      await showSection(page,2);
+      const lenses=page.locator('.slide.on .fm-p1-persona-lenses');
+      const geometry=await lenses.evaluate(node=>{
+        const cards=[...node.children].map(card=>card.getBoundingClientRect());
+        return {
+          rowGap:parseFloat(getComputedStyle(node).rowGap),
+          gaps:[
+            cards[1].top-cards[0].bottom,
+            cards[2].top-cards[1].bottom
+          ]
+        };
+      });
+      expect(geometry.rowGap).toBe(10);
+      expect(Math.abs(geometry.gaps[0]-geometry.gaps[1])).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(geometry.gaps[0]-10)).toBeLessThanOrEqual(0.5);
+      await verifyNoHorizontalOverflow(page);
     });
-    expect(geometry.rowGap).toBe(10);
-    expect(Math.abs(geometry.gaps[0]-geometry.gaps[1])).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(geometry.gaps[0]-10)).toBeLessThanOrEqual(0.5);
-    await verifyNoHorizontalOverflow(page);
-  });
+  }
 
   test(`all 13 Case Study sections rough visual audit on ${name}`,async({page})=>{
     test.setTimeout(90000);
