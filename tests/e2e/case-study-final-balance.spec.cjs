@@ -243,8 +243,18 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await expect(page.locator('.slide.on .fm-p1-validation-banner>span')).toHaveText('검증 지표');
     expect(await page.locator('.slide.on .fm-p1-evidence-label').allTextContents()).toEqual(['자동 QA','사람 검수','AI 보조 검수']);
     if(name==='mobile'){
-      const padding=await page.locator('.slide.on').evaluate(slide=>parseFloat(getComputedStyle(slide).paddingTop));
-      expect(padding).toBeLessThanOrEqual(28.5);
+      const spacing=await page.locator('.slide.on').evaluate(slide=>{
+        const style=getComputedStyle(slide);
+        const story=getComputedStyle(slide.querySelector('.fm-next-story'));
+        return {
+          paddingTop:parseFloat(style.paddingTop),
+          paddingLeft:parseFloat(style.paddingLeft),
+          storyGap:parseFloat(story.gap)
+        };
+      });
+      expect(spacing.paddingTop).toBeGreaterThanOrEqual(63.5);
+      expect(spacing.paddingLeft).toBeGreaterThanOrEqual(17.5);
+      expect(spacing.storyGap).toBeGreaterThanOrEqual(23.5);
     }
 
     // P13 · open boundary and learning label are localized without duplicating the Real App entry.
