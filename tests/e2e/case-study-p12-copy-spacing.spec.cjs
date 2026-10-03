@@ -34,8 +34,8 @@ for(const [name,viewport] of [
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[1]?.click());
     await page.waitForTimeout(120);
     const problem=page.locator('.slide.on');
-    await expect(problem).toContainText('설계 가설 단계이며, 사용자 조사와 경쟁사 대비 우위는 Beta에서 확인합니다.');
-    await expect(problem).not.toContainText('미입증');
+    await expect(problem).toContainText('설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 확인');
+    await expect(problem).not.toContainText('Beta에서 확인합니다.');
     await problem.screenshot({
       path:`test-results/case-study-copy-cleanup-p2-${viewport.width}.png`,
       animations:'disabled'
@@ -44,10 +44,10 @@ for(const [name,viewport] of [
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[7]?.click());
     await page.waitForTimeout(120);
     const auth=page.locator('.slide.on');
-    await expect(auth).toContainText('Supabase 계정과 참가 흐름을 실제로 연동했습니다.');
-    await expect(auth).toContainText('Google/Kakao OAuth는 Production에서 확인했고, 실제 PG 연동은 후속 범위입니다.');
-    await expect(auth).not.toContainText('실연동');
-    await expect(auth).not.toContainText('미연동');
+    await expect(auth).toContainText('Supabase 계정·참가 흐름 실연동');
+    await expect(auth).toContainText('Google/Kakao OAuth Production 확인 · 실제 PG 후속 범위');
+    await expect(auth).not.toContainText('실제로 연동했습니다.');
+    await expect(auth).not.toContainText('후속 범위입니다.');
     await auth.screenshot({
       path:`test-results/case-study-copy-cleanup-p8-${viewport.width}.png`,
       animations:'disabled'
