@@ -78,6 +78,51 @@ for(const [name,viewport] of [
     await verifyNoHorizontalOverflow(page);
   });
 
+  test(`P8 preserved-state decision reads as a full card on ${name}`,async({page})=>{
+    await openCaseStudy(page,viewport);
+    await showSection(page,7);
+    const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="auth-participation"]');
+    const preserve=slide.locator('.fm-p1-auth-preserve');
+    const card=preserve.locator(':scope>span');
+    await expect(card.locator('small')).toHaveText('상태 보존');
+    await expect(card.locator('b')).toHaveText('선택 경기 + 로그인 후 복귀 위치');
+    const geometry=await preserve.evaluate(node=>{
+      const wrap=getComputedStyle(node);
+      const card=node.querySelector(':scope>span');
+      const cardStyle=getComputedStyle(card);
+      const labelStyle=getComputedStyle(card.querySelector('small'));
+      const bodyStyle=getComputedStyle(card.querySelector('b'));
+      const rect=card.getBoundingClientRect();
+      return {
+        marginTop:parseFloat(wrap.marginTop),
+        marginBottom:parseFloat(wrap.marginBottom),
+        width:rect.width,
+        paddingTop:parseFloat(cardStyle.paddingTop),
+        paddingRight:parseFloat(cardStyle.paddingRight),
+        paddingBottom:parseFloat(cardStyle.paddingBottom),
+        paddingLeft:parseFloat(cardStyle.paddingLeft),
+        radius:parseFloat(cardStyle.borderTopLeftRadius),
+        labelFont:parseFloat(labelStyle.fontSize),
+        bodyFont:parseFloat(bodyStyle.fontSize)
+      };
+    });
+    expect(geometry.marginTop).toBe(14);
+    expect(geometry.marginBottom).toBe(16);
+    expect(geometry.paddingTop).toBe(14);
+    expect(geometry.paddingBottom).toBe(14);
+    expect(geometry.paddingLeft).toBe(16);
+    expect(geometry.paddingRight).toBe(16);
+    expect(geometry.radius).toBe(16);
+    expect(geometry.labelFont).toBeGreaterThanOrEqual(10);
+    expect(geometry.bodyFont).toBeGreaterThanOrEqual(13);
+    expect(geometry.width).toBeGreaterThan(viewport.width>900?500:300);
+    await verifyNoHorizontalOverflow(page);
+    await slide.screenshot({
+      path:`test-results/case-study-p8-state-preserve-${viewport.width}.png`,
+      animations:'disabled'
+    });
+  });
+
   test(`P12 KPI validation composition stays visually balanced on ${name}`,async({page})=>{
     await openCaseStudy(page,viewport);
     await showSection(page,11);
