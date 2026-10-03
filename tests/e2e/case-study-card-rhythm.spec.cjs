@@ -35,7 +35,7 @@ for(const [name,viewport,expected] of [
     await expectRowGap(page,'.fm-p1-auth-flow',10);
 
     await showSection(page,10);
-    await expectRowGap(page,'.fm-p0-arch-main',expected);
+    await expectRowGap(page,'.fm-p0-arch-main',10);
 
     await showSection(page,11);
     await expectRowGap(page,'.fm-p1-metrics',name==='desktop'?16:14);
