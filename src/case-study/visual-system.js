@@ -1293,7 +1293,7 @@
       </article>`;
 
     state.classList.add('fm-p1-auth-preserve');
-    state.innerHTML='<span><small>STATE PRESERVED</small><b>선택 경기 + 로그인 후 복귀 위치</b></span>';
+    state.innerHTML='<span><small>상태 보존</small><b>선택 경기 + 로그인 후 복귀 위치</b></span>';
 
     scope.classList.add('fm-p1-auth-boundary');
     scope.setAttribute('aria-label','Real App과 Closed Beta의 인증 및 참가 구현 경계');
