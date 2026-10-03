@@ -67,14 +67,14 @@ for(const required of [
   "['Domain & AI','Contracts & Guardrails']",
   "['Release & Learnings','Limits & Next Steps']",
   'if(slides.length!==13||!note)return false;',
-  'Real App의 인증은 UX 시뮬레이션이며 참가 확인은 무료 흐름입니다.',
-  'Closed Beta의 인증·참가 경로는 Supabase에 실제 연결됩니다.',
+  'UX 시뮬레이션 인증 · 무료 참가 확인',
+  'Supabase 인증·참가 경로 실연동',
   '결정론적 추천 엔진',
   'Google/Kakao OAuth',
   'Resend',
   'Web Push',
   'Storage',
-  '실제 PG와 외부 분석 도구는 미연동입니다.',
+  '실제 PG · 외부 분석 도구',
   '사람 검수 (Human QA)',
   'AI 보조 검수 (AI-assisted QA)'
 ])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
