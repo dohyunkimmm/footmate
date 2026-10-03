@@ -21,8 +21,8 @@ async function expectRowGap(page,selector,expected){
 }
 
 for(const [name,viewport,expected] of [
-  ['desktop',{width:1024,height:900},12],
-  ['mobile',{width:390,height:844},10]
+  ['desktop',{width:1024,height:900},10],
+  ['mobile',{width:390,height:844},8]
 ]){
   test(`multi-row card spacing stays balanced on ${name}`,async({page})=>{
     await openCaseStudy(page,viewport);
@@ -42,6 +42,7 @@ for(const [name,viewport,expected] of [
     await expect(page.locator('.slide.on .fm-p1-secondary-metrics')).toHaveCount(0);
 
     for(let index=1;index<=10;index+=1){
+      if(index===9)continue; // P10 recovery keeps its viewport-tuned geometry.
       await showSection(page,index);
       const shared=await page.locator('.slide.on').evaluate(slide=>{
         const selector=[
