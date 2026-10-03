@@ -180,7 +180,6 @@
     setHTML(auth,'.fm-next-cs-scope',rows([
       ['Real App','인증은 UX 시뮬레이션이며 참가 확인은 무료 흐름으로 구현했습니다.'],
       ['Closed Beta','Supabase 인증·참가 경로를 실제 연결했습니다.'],
-      ['상태 보존','로그인 전 선택한 경기와 복귀 위치를 유지해 같은 결정을 반복하지 않게 했습니다.'],
       ['검증 범위','Google/Kakao OAuth는 Production 실로그인까지 확인했습니다. 실제 PG는 연결하지 않았습니다.']
     ]));
 

@@ -86,7 +86,9 @@ for(const [name,viewport] of [
     await expect(slide.locator('.fm-p1-validation-split')).toBeVisible();
     await expect(slide.locator('.fm-p1-validation-banner')).toBeVisible();
     await expect(slide.locator('.fm-p1-funnel-wrap')).toBeVisible();
-    await expect(slide.locator('.fm-p1-secondary-metrics')).toBeVisible();
+    await expect(slide.locator('.fm-p1-funnel>div')).toHaveCount(3);
+    await expect(slide.locator('.fm-p1-funnel-ratios .fm-p1-ratio')).toHaveCount(2);
+    await expect(slide.locator('.fm-p1-secondary-metrics')).toHaveCount(0);
     await expect(slide.locator('.fm-p1-evidence-grid')).toBeVisible();
     await verifyNoHorizontalOverflow(page);
 
@@ -95,12 +97,21 @@ for(const [name,viewport] of [
         const split=node.querySelector('.fm-p1-validation-split').getBoundingClientRect();
         const metrics=node.querySelector('.fm-p1-metrics').getBoundingClientRect();
         const evidence=node.querySelector('.fm-p1-evidence-grid').getBoundingClientRect();
-        const secondary=node.querySelector('.fm-p1-secondary-metrics').getBoundingClientRect();
-        return {split,metrics,evidence,secondary};
+        const core=[...node.querySelectorAll('.fm-p1-funnel>div,.fm-p1-funnel-ratios .fm-p1-ratio')].map(card=>{
+          const style=getComputedStyle(card);
+          return {
+            top:parseFloat(style.paddingTop),
+            right:parseFloat(style.paddingRight),
+            bottom:parseFloat(style.paddingBottom),
+            left:parseFloat(style.paddingLeft)
+          };
+        });
+        return {split,metrics,evidence,core};
       });
       expect(geometry.evidence.left).toBeGreaterThan(geometry.metrics.right);
       expect(geometry.metrics.width).toBeGreaterThan(geometry.evidence.width);
-      expect(geometry.secondary.width).toBeGreaterThanOrEqual(geometry.metrics.width-2);
+      expect(geometry.core).toHaveLength(5);
+      expect(geometry.core.every(card=>card.top===14&&card.bottom===14&&card.left===16&&card.right===16)).toBeTruthy();
       expect(geometry.split.width).toBeGreaterThan(900);
     }
 

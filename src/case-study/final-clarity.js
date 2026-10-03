@@ -198,7 +198,7 @@
     const validation=slides[11];
     setText(validation,'.fm-next-story h2','성과 지표와 제품 동작 검증을 분리했습니다.');
     setText(validation,'.fm-next-story-lead','KPI는 Validation Metric이며 Measured Result가 아닙니다 — 제품 동작은 QA로 별도 확인');
-    setSummary(validation,[['KPI','전환 · 복구 · 재탐색'],['QA','Regression · E2E · axe · Smoke'],['준비','Baseline 확보 후']]);
+    validation.querySelector('.fm-next-review-summary')?.remove();
     const metricRules=[
       ['상세 진입 세션','결과 노출 세션'],
       ['참가 완료 사용자','상세 조회 사용자'],
@@ -212,10 +212,7 @@
       node.textContent=`${prefix}${rule[0]} ÷ ${rule[1]}`;
     });
     const note=validation.querySelector('.fm-next-cs-note');
-    if(note)note.innerHTML=rows([
-      ['추가 지표','결과 없음 · 참가 실패 · 체크인 완료 · AI 검색 사용률'],
-      ['측정 조건','외부 분석 도구 미연동 · 운영·테스트·시뮬레이션 제외 · 표본·기간·기준값 우선 확보']
-    ]);
+    if(note)note.textContent='전체 8개 지표의 계산·관찰 기준은 KPI 상세에서 확인합니다.';
     setText(validation,'.fm-next-kpi-table>div:last-child dd:nth-of-type(2)','connected-ai와 rules-fallback 분리 · 사용률과 품질 판단 분리');
 
     const release=slides[12];

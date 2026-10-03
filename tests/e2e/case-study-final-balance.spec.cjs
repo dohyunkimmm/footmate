@@ -44,7 +44,16 @@ for(const [name,viewport,expectedRecoveryGap] of [
         flow:flow&&{left:flow.left,right:flow.right,width:flow.width},
         boundary:boundary&&{left:boundary.left,right:boundary.right,width:boundary.width},
         paddingLeft:style&&parseFloat(style.paddingLeft),
-        paddingRight:style&&parseFloat(style.paddingRight)
+        paddingRight:style&&parseFloat(style.paddingRight),
+        cards:[...slide.querySelectorAll('.fm-p1-auth-boundary .fm-cs-reasons>div')].map(card=>{
+          const css=getComputedStyle(card);
+          return {
+            top:parseFloat(css.paddingTop),
+            right:parseFloat(css.paddingRight),
+            bottom:parseFloat(css.paddingBottom),
+            left:parseFloat(css.paddingLeft)
+          };
+        })
       };
     });
     expect(p8.flow).toBeTruthy();
@@ -53,6 +62,8 @@ for(const [name,viewport,expectedRecoveryGap] of [
     expect(Math.abs(p8.flow.right-p8.boundary.right)).toBeLessThanOrEqual(1);
     expect(p8.paddingLeft).toBe(0);
     expect(p8.paddingRight).toBe(0);
+    expect(p8.cards).toHaveLength(3);
+    expect(p8.cards.every(card=>card.top===14&&card.bottom===14&&card.left===16&&card.right===16)).toBeTruthy();
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p8.png`});
 
     // P10 · recovery rows follow the shared card rhythm. Desktop removes only the redundant recap,

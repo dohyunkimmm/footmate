@@ -39,7 +39,7 @@ for(const [name,viewport,expected] of [
 
     await showSection(page,11);
     await expectRowGap(page,'.fm-p1-metrics',expected);
-    await expectRowGap(page,'.fm-p1-secondary-metrics',expected);
+    await expect(page.locator('.slide.on .fm-p1-secondary-metrics')).toHaveCount(0);
 
     const overflow=await page.evaluate(()=>({
       viewport:window.innerWidth,

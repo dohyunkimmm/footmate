@@ -137,10 +137,7 @@
           ${ratio('상세 → 참가','참가 완료 사용자','상세 조회 사용자','primary')}
         </div>
       </div>
-      <div class="fm-p1-secondary-metrics">
-        ${ratio('실패 → 복구','복구 완료 흐름','복구 가능 실패 흐름','recovery')}
-        ${ratio('7일 내 재탐색','7일 내 재탐색 사용자','7일 관찰 완료 참가 사용자','return')}
-      </div>`;
+`;
 
     qa.classList.add('fm-p1-evidence-grid');
     qa.setAttribute('aria-label','Validation Metric과 구분되는 제품 검증 evidence');

@@ -135,17 +135,19 @@ for(const [name,viewport] of [
       expect(nav.pbarHeight).toBe(2);
     }else{
       // 8 · Late mobile sections keep the summary/content left and right edges aligned.
-      for(const index of [10,11,12]){
+      for(const index of [10,12]){
         await showSection(page,index);
         const geometry=await page.locator('.slide.on').evaluate(slide=>{
           const summary=slide.querySelector('.fm-next-review-summary')?.getBoundingClientRect();
-          const content=slide.querySelector('.fm-p0-architecture,.fm-p1-metrics,.fm-p1-release-map')?.getBoundingClientRect();
+          const content=slide.querySelector('.fm-p0-architecture,.fm-p1-release-map')?.getBoundingClientRect();
           return summary&&content?{left:Math.abs(summary.left-content.left),right:Math.abs(summary.right-content.right)}:null;
         });
         expect(geometry).toBeTruthy();
         expect(geometry.left).toBeLessThanOrEqual(1);
         expect(geometry.right).toBeLessThanOrEqual(1);
       }
+      await showSection(page,11);
+      await expect(page.locator('.slide.on .fm-next-review-summary')).toHaveCount(0);
     }
 
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-detail-finish-${name}.png`,animations:'disabled'});
