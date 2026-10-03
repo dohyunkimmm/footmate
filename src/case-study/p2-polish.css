@@ -57,6 +57,14 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p2-polish="true"]
   }
 }
 
+/* P3 Persona cards stack at <=1120px. Keep hover feedback visual-only there:
+   moving one card vertically makes the two adjacent gaps look different. */
+@media(max-width:1120px) and (hover:hover) and (pointer:fine){
+  html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-lenses>div:hover{
+    transform:none;
+  }
+}
+
 /* Keyboard focus stays visible across the dark shell and light story surfaces. */
 html[data-fm-next-case-study="true"] :is(.toc-item,.cs-button,.dot,.cs-mobile-head a):focus-visible{
   outline:2px solid #c9ef62;
