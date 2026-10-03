@@ -223,6 +223,18 @@ for(const [name,viewport] of [
       expect(geometry.rowGap).toBe(10);
       expect(Math.abs(geometry.gaps[0]-geometry.gaps[1])).toBeLessThanOrEqual(0.5);
       expect(Math.abs(geometry.gaps[0]-10)).toBeLessThanOrEqual(0.5);
+
+      await page.waitForTimeout(260);
+      await lenses.locator(':scope>div').nth(1).hover();
+      const hoverGaps=await lenses.evaluate(node=>{
+        const cards=[...node.children].map(card=>card.getBoundingClientRect());
+        return [
+          cards[1].top-cards[0].bottom,
+          cards[2].top-cards[1].bottom
+        ];
+      });
+      expect(Math.abs(hoverGaps[0]-hoverGaps[1])).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(hoverGaps[0]-10)).toBeLessThanOrEqual(0.5);
       await verifyNoHorizontalOverflow(page);
     });
   }
