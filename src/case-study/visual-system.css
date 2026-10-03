@@ -2151,7 +2151,7 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
    Horizontal gaps remain owned by each section so density and information grouping stay intact. */
 
 html[data-fm-next-case-study="true"]{
-  --fm-cs-card-row-gap:12px;
+  --fm-cs-card-row-gap:10px;
   --fm-cs-card-column-gap:12px;
 }
 
@@ -2193,7 +2193,7 @@ html[data-fm-next-case-study="true"] :is(
 
 @media(max-width:900px){
   html[data-fm-next-case-study="true"]{
-    --fm-cs-card-row-gap:10px;
+    --fm-cs-card-row-gap:8px;
     --fm-cs-card-column-gap:10px;
   }
 }
@@ -3479,7 +3479,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 /* Case Study card spacing audit
    Keep generic card families on one inset/gap system. Structural cards
    (funnel, architecture, release map, timelines) keep their own geometry. */
-html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="validation-evidence"]):not([data-v5-content-role="production-boundary"]) :is(
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="validation-evidence"]):not([data-v5-content-role="production-boundary"]):not([data-v5-content-role="recovery-principle"]) :is(
   .fm-next-cs-card,
   .fm-next-cs-quote,
   .fm-next-cs-jtbd,
@@ -3490,7 +3490,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 ){
   padding:16px 18px!important;
 }
-html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="recovery-principle"]) :is(
   .fm-next-cs-persona>div,
   .fm-next-cs-before-after>div,
   .fm-next-cs-modes>div,
@@ -3533,7 +3533,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 }
 
 @media(max-width:900px){
-  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="validation-evidence"]):not([data-v5-content-role="production-boundary"]) :is(
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="validation-evidence"]):not([data-v5-content-role="production-boundary"]):not([data-v5-content-role="recovery-principle"]) :is(
     .fm-next-cs-card,
     .fm-next-cs-quote,
     .fm-next-cs-jtbd,
@@ -3544,7 +3544,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   ){
     padding:14px 16px!important;
   }
-  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="recovery-principle"]) :is(
     .fm-next-cs-persona>div,
     .fm-next-cs-before-after>div,
     .fm-next-cs-modes>div,
