@@ -2151,7 +2151,8 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
    Horizontal gaps remain owned by each section so density and information grouping stay intact. */
 
 html[data-fm-next-case-study="true"]{
-  --fm-cs-card-row-gap:10px;
+  --fm-cs-card-row-gap:12px;
+  --fm-cs-card-column-gap:12px;
 }
 
 html[data-fm-next-case-study="true"] :is(
@@ -2179,9 +2180,21 @@ html[data-fm-next-case-study="true"] :is(
   row-gap:var(--fm-cs-card-row-gap)!important;
 }
 
+html[data-fm-next-case-study="true"] :is(
+  .fm-next-cs-grid,
+  .fm-next-cs-persona,
+  .fm-next-cs-modes,
+  .fm-next-cs-before-after,
+  .fm-next-cs-day-states,
+  .fm-next-cs-outcome
+){
+  column-gap:var(--fm-cs-card-column-gap)!important;
+}
+
 @media(max-width:900px){
   html[data-fm-next-case-study="true"]{
-    --fm-cs-card-row-gap:8px;
+    --fm-cs-card-row-gap:10px;
+    --fm-cs-card-column-gap:10px;
   }
 }
 
@@ -3460,5 +3473,101 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 @media(max-width:560px){
   html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"]{
     padding:64px 18px 58px!important;
+  }
+}
+
+/* Case Study card spacing audit
+   Keep generic card families on one inset/gap system. Structural cards
+   (funnel, architecture, release map, timelines) keep their own geometry. */
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="validation-evidence"]):not([data-v5-content-role="production-boundary"]) :is(
+  .fm-next-cs-card,
+  .fm-next-cs-quote,
+  .fm-next-cs-jtbd,
+  .fm-next-cs-decision,
+  .fm-next-cs-scope:not(.fm-p1-auth-boundary),
+  .fm-next-cs-sticky,
+  .fm-next-cs-note
+){
+  padding:16px 18px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+  .fm-next-cs-persona>div,
+  .fm-next-cs-before-after>div,
+  .fm-next-cs-modes>div,
+  .fm-next-cs-day-states>div,
+  .fm-next-cs-recovery>div,
+  .fm-next-cs-outcome>div
+){
+  padding:16px 18px!important;
+}
+
+/* Reviewer summaries are secondary cards, but no longer use cramped 7×8px insets. */
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary{
+  gap:10px!important;
+  margin:10px 0 12px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary>div{
+  padding:12px 14px!important;
+}
+
+/* P8 · align all four card lines:
+   summary / auth flow / preserved state / implementation boundary. */
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-flow{
+  gap:10px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-screen{
+  padding:30px 16px 16px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-preserve{
+  margin:14px 0!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-boundary{
+  margin-top:0!important;
+  padding:0!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-boundary .fm-cs-reasons{
+  gap:10px!important;
+}
+html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-boundary .fm-cs-reasons>div{
+  padding:14px 16px!important;
+}
+
+@media(max-width:900px){
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide):not([data-v5-content-role="validation-evidence"]):not([data-v5-content-role="production-boundary"]) :is(
+    .fm-next-cs-card,
+    .fm-next-cs-quote,
+    .fm-next-cs-jtbd,
+    .fm-next-cs-decision,
+    .fm-next-cs-scope:not(.fm-p1-auth-boundary),
+    .fm-next-cs-sticky,
+    .fm-next-cs-note
+  ){
+    padding:14px 16px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide) :is(
+    .fm-next-cs-persona>div,
+    .fm-next-cs-before-after>div,
+    .fm-next-cs-modes>div,
+    .fm-next-cs-day-states>div,
+    .fm-next-cs-recovery>div,
+    .fm-next-cs-outcome>div
+  ){
+    padding:14px 16px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary{
+    gap:8px!important;
+    margin:8px 0 10px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary>div{
+    padding:10px 12px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-flow{
+    gap:10px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-screen{
+    padding:28px 16px 16px!important;
+  }
+  html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-boundary .fm-cs-reasons{
+    gap:10px!important;
   }
 }
