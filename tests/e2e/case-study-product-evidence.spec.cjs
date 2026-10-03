@@ -127,7 +127,26 @@ for(const [name,viewport] of [
     const slide=page.locator('.slide.on.fm-next-story-slide');
     const context=slide.locator('.fm-p1-persona-context');
     await expect(context).toBeVisible();
-    await expect(slide.locator('.fm-p1-persona-lenses')).toBeVisible();
+    const lenses=slide.locator('.fm-p1-persona-lenses');
+    await expect(lenses).toBeVisible();
+    const lensGeometry=await lenses.evaluate(node=>{
+      const cards=[...node.children].map(card=>card.getBoundingClientRect());
+      const style=getComputedStyle(node);
+      return {
+        rowGap:parseFloat(style.rowGap),
+        columnGap:parseFloat(style.columnGap),
+        gaps:cards.length===3?[
+          cards[1].top-cards[0].bottom,
+          cards[2].top-cards[1].bottom
+        ]:[]
+      };
+    });
+    if(viewport.width<=900){
+      expect(lensGeometry.rowGap).toBe(8);
+      expect(lensGeometry.gaps).toHaveLength(2);
+      expect(Math.abs(lensGeometry.gaps[0]-lensGeometry.gaps[1])).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(lensGeometry.gaps[0]-8)).toBeLessThanOrEqual(0.5);
+    }
     const gap=await context.evaluate(node=>{
       const label=node.querySelector(':scope>span').getBoundingClientRect();
       const title=node.querySelector(':scope>b').getBoundingClientRect();
@@ -183,6 +202,27 @@ for(const [name,viewport] of [
       path:`test-results/case-study-p10-section-${viewport.width}.png`,
       animations:'disabled'
     });
+  });
+
+  test('P3 Persona stacked cards keep equal spacing at the medium breakpoint',async({page})=>{
+    const viewport={width:1024,height:768};
+    await openCaseStudy(page,viewport);
+    await showSection(page,2);
+    const lenses=page.locator('.slide.on .fm-p1-persona-lenses');
+    const geometry=await lenses.evaluate(node=>{
+      const cards=[...node.children].map(card=>card.getBoundingClientRect());
+      return {
+        rowGap:parseFloat(getComputedStyle(node).rowGap),
+        gaps:[
+          cards[1].top-cards[0].bottom,
+          cards[2].top-cards[1].bottom
+        ]
+      };
+    });
+    expect(geometry.rowGap).toBe(10);
+    expect(Math.abs(geometry.gaps[0]-geometry.gaps[1])).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(geometry.gaps[0]-10)).toBeLessThanOrEqual(0.5);
+    await verifyNoHorizontalOverflow(page);
   });
 
   test(`all 13 Case Study sections rough visual audit on ${name}`,async({page})=>{
