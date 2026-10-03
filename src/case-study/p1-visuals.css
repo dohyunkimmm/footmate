@@ -420,7 +420,7 @@ html[data-fm-next-case-study="true"] .fm-p1-funnel-wrap{
 }
 html[data-fm-next-case-study="true"] .fm-p1-funnel{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto minmax(0,.85fr) auto minmax(0,.7fr);
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);
   gap:8px;
   align-items:stretch;
 }
