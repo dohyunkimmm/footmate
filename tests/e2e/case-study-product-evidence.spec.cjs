@@ -97,7 +97,18 @@ for(const [name,viewport] of [
         const split=node.querySelector('.fm-p1-validation-split').getBoundingClientRect();
         const metrics=node.querySelector('.fm-p1-metrics').getBoundingClientRect();
         const evidence=node.querySelector('.fm-p1-evidence-grid').getBoundingClientRect();
-        const core=[...node.querySelectorAll('.fm-p1-funnel>div,.fm-p1-funnel-ratios .fm-p1-ratio')].map(card=>{
+        const funnel=[...node.querySelectorAll('.fm-p1-funnel>div')].map(card=>{
+          const style=getComputedStyle(card);
+          const rect=card.getBoundingClientRect();
+          return {
+            width:rect.width,
+            top:parseFloat(style.paddingTop),
+            right:parseFloat(style.paddingRight),
+            bottom:parseFloat(style.paddingBottom),
+            left:parseFloat(style.paddingLeft)
+          };
+        });
+        const ratios=[...node.querySelectorAll('.fm-p1-funnel-ratios .fm-p1-ratio')].map(card=>{
           const style=getComputedStyle(card);
           return {
             top:parseFloat(style.paddingTop),
@@ -106,12 +117,15 @@ for(const [name,viewport] of [
             left:parseFloat(style.paddingLeft)
           };
         });
-        return {split,metrics,evidence,core};
+        return {split,metrics,evidence,funnel,ratios};
       });
       expect(geometry.evidence.left).toBeGreaterThan(geometry.metrics.right);
       expect(geometry.metrics.width).toBeGreaterThan(geometry.evidence.width);
-      expect(geometry.core).toHaveLength(5);
-      expect(geometry.core.every(card=>card.top===18&&card.bottom===18&&card.left===20&&card.right===20)).toBeTruthy();
+      expect(geometry.funnel).toHaveLength(3);
+      expect(Math.max(...geometry.funnel.map(card=>card.width))-Math.min(...geometry.funnel.map(card=>card.width))).toBeLessThanOrEqual(1);
+      expect(geometry.funnel.every(card=>card.top===18&&card.bottom===18&&card.left===14&&card.right===14)).toBeTruthy();
+      expect(geometry.ratios).toHaveLength(2);
+      expect(geometry.ratios.every(card=>card.top===18&&card.bottom===18&&card.left===20&&card.right===20)).toBeTruthy();
       expect(geometry.split.width).toBeGreaterThan(900);
     }
 
