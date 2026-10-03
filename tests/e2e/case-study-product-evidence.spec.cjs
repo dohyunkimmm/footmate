@@ -82,6 +82,11 @@ for(const [name,viewport] of [
     await openCaseStudy(page,viewport);
     await showSection(page,7);
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="auth-participation"]');
+    const summary=slide.locator('.fm-next-review-summary>div');
+    await expect(summary).toHaveCount(3);
+    await expect(summary.nth(0)).toContainText('진입점');
+    await expect(summary.nth(0)).toContainText('참가하기 직전');
+    await expect(slide.locator('.fm-next-review-summary')).not.toContainText('상태 보존');
     const preserve=slide.locator('.fm-p1-auth-preserve');
     const card=preserve.locator(':scope>span');
     await expect(card.locator('small')).toHaveText('상태 보존');
