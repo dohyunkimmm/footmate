@@ -212,7 +212,7 @@
       node.textContent=`${prefix}${rule[0]} ÷ ${rule[1]}`;
     });
     const note=validation.querySelector('.fm-next-cs-note');
-    if(note)note.textContent='전체 8개 지표의 계산·관찰 기준은 KPI 상세에서 확인합니다.';
+    if(note)note.textContent='전체 8개 지표 계산·관찰 기준 → KPI 상세';
     setText(validation,'.fm-next-kpi-table>div:last-child dd:nth-of-type(2)','connected-ai와 rules-fallback 분리 · 사용률과 품질 판단 분리');
 
     const release=slides[12];

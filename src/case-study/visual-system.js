@@ -201,7 +201,7 @@
 
     // 02 · Problem & Goal — keep row values phrase-like unless they are explanatory sentences.
     const problem=slides[1];
-    setReasonCopy(problem,'.fm-next-cs-quote','검증 범위','사용자 조사나 경쟁사 우위가 입증된 결론은 아니며, Beta에서 가설을 확인합니다.');
+    setReasonCopy(problem,'.fm-next-cs-quote','검증 범위','설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 확인');
 
     // 03 · Persona/JTBD — describe the actual participant context without internal program jargon or invented timing.
     const persona=slides[2];
@@ -216,27 +216,27 @@
 
     // 05 · Guest First — decision values stay compact; reason and trade-off read as full sentences.
     const guest=slides[4];
-    setReasonCopy(guest,'.fm-next-cs-decision','이유','참가 의도가 생기기 전에 서비스 가치를 판단할 수 있게 했습니다.');
-    setReasonCopy(guest,'.fm-next-cs-decision','Trade-off','로그인 전에는 계정 기반 개인화와 기기 간 연속성이 제한됩니다.');
+    setReasonCopy(guest,'.fm-next-cs-decision','이유','참가 의도 전 서비스 가치 판단');
+    setReasonCopy(guest,'.fm-next-cs-decision','Trade-off','로그인 전 계정 기반 개인화·기기 간 연속성 제한');
 
     // 06 · Recommendation — explanatory rows use complete sentences consistently.
     const recommendation=slides[5];
-    setReasonCopy(recommendation,'.fm-next-cs-note','결정','개인화 정보는 추천을 돕는 입력으로 사용합니다.');
-    setReasonCopy(recommendation,'.fm-next-cs-note','품질 기준','추천 후보·순위·이유의 소유권은 결정론적 추천 엔진에 유지합니다.');
-    setReasonCopy(recommendation,'.fm-next-cs-note','Trade-off','과거 선호와 오늘의 의도가 다를 수 있어 조건 수정과 재탐색을 허용합니다.');
+    setReasonCopy(recommendation,'.fm-next-cs-note','결정','개인화 정보 → 추천 보조 입력');
+    setReasonCopy(recommendation,'.fm-next-cs-note','품질 기준','후보·순위·이유 → 결정론적 추천 엔진');
+    setReasonCopy(recommendation,'.fm-next-cs-note','Trade-off','오늘 의도 우선 · 조건 수정·재탐색 허용');
 
     // 07 · Decision Detail — action labels stay phrase-like; trade-off is a complete sentence.
     const detail=slides[6];
-    setReasonCopy(detail,'.fm-next-cs-sticky','Trade-off','비교 대상을 제한해 결정을 돕고, 취소·환불 기준은 참가 전에 확인하게 했습니다.');
+    setReasonCopy(detail,'.fm-next-cs-sticky','Trade-off','비교 대상 제한 · 취소·환불 기준 참가 전 확인');
 
     // 08 · Sign in / Join — remove the orphan state line and fold preservation into the evidence table.
     const auth=slides[7];
     auth.querySelector('.fm-next-cs-state-line')?.remove();
     auth.querySelector('.fm-next-cs-auth-flow>.is-focus')?.classList.remove('is-focus');
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','인증은 UX 시뮬레이션이며 참가 확인은 무료 흐름으로 구현했습니다.'],
-      ['Closed Beta','Supabase 인증·참가 경로를 실제 연결했습니다.'],
-      ['검증 범위','Google/Kakao OAuth는 Production 실로그인까지 확인했습니다. 실제 PG는 연결하지 않았습니다.']
+      ['Real App','UX 시뮬레이션 인증 · 무료 참가 확인'],
+      ['Closed Beta','Supabase 인증·참가 경로 실연동'],
+      ['검증 범위','Google/Kakao OAuth Production 실로그인 확인 · 실제 PG 미연동']
     ]));
 
     // 09 · Operations — the Case Study itself carries the state scenario; remove the legacy review-mode exit.
@@ -248,9 +248,9 @@
     const domain=slides[10];
     domain.querySelectorAll('.fm-next-cs-modes>.is-focus').forEach(node=>node.classList.remove('is-focus'));
     setHTML(domain,'.fm-next-cs-note',rows([
-      ['실제 연결','Vercel AI Gateway·Supabase·Resend·Web Push·Storage를 실제 연결했습니다.'],
-      ['미연동','실제 PG와 외부 분석 도구는 미연동입니다.'],
-      ['정의한 기준','API·데이터·권한·오류·재시도, IA·상태별 화면·CTA, 취소·정원·복구 정책을 문서화했습니다.']
+      ['실제 연결','Vercel AI Gateway · Supabase · Resend · Web Push · Storage'],
+      ['미연동','실제 PG · 외부 분석 도구'],
+      ['정의한 기준','API·데이터·권한·오류·재시도 · IA·상태별 화면·CTA · 취소·정원·복구 정책']
     ]));
 
     // 12 · KPI & Validation — replace statistical shorthand with a plain-language calculation rule.
@@ -275,9 +275,9 @@
       '이 결과는 버그와 막힘을 찾기 위한 사용성 검증이며, 전환율 개선이나 시장 적합성을 입증한 Measured Result와는 구분합니다.'
     ));
     setHTML(release,'.fm-next-cs-outcomes',
-      '<div><b>Real App</b><p>'+lines('AI Gateway를 실제 연결했고 추천 엔진이 후보·순위·이유를 결정합니다.','경기 데이터는 샘플을 사용하며 인증·정원·알림은 시뮬레이션이고 참가 확인은 무료 흐름입니다.')+'</p></div>'+
-      '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소·체크인을 실제 연결했습니다.','Google/Kakao OAuth·이메일·Web Push·미디어도 실제 환경에서 검증했습니다.')+'</p></div>'+
-      '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구는 연결하지 않았습니다.','수익성과 실제 이용 지표는 아직 검증하지 않았습니다.')+'</p></div>');
+      '<div><b>Real App</b><p>'+lines('AI Gateway 실연동 · 후보·순위·이유는 추천 엔진','샘플 경기 데이터 · 인증·정원·알림 시뮬레이션 · 무료 참가 확인')+'</p></div>'+
+      '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소·체크인 실연동','Google/Kakao OAuth · 이메일 · Web Push · 미디어 실제 환경 검증')+'</p></div>'+
+      '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구 미연동','수익성 · 실제 이용 지표 미검증')+'</p></div>');
 
     // Guardrail: the public Case Study should not expose the internal acronym.
     const shell=document.querySelector('.fm-cs-shell');
@@ -921,7 +921,7 @@
       node.textContent=`${prefix}${rule[0]} ÷ ${rule[1]}`;
     });
     const note=validation.querySelector('.fm-next-cs-note');
-    if(note)note.textContent='전체 8개 지표의 계산·관찰 기준은 KPI 상세에서 확인합니다.';
+    if(note)note.textContent='전체 8개 지표 계산·관찰 기준 → KPI 상세';
     setText(validation,'.fm-next-kpi-table>div:last-child dd:nth-of-type(2)','connected-ai와 rules-fallback 분리 · 사용률과 품질 판단 분리');
 
     const release=slides[12];
@@ -989,7 +989,7 @@
         <article><small>02 · 가치 확인 전 장벽</small><b>로그인이 너무 일찍 등장</b><p>추천이 도움이 되는지 판단하기 전에 계정부터 요구</p></article>
         <article><small>03 · 참가 후 단절</small><b>다음 행동이 흩어짐</b><p>일정 · 체크인 · 경기 후 평가가 서로 다른 기능처럼 느껴짐</p></article>
       </div>
-      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>참가 결정의 불확실성</b><p>조건을 비교하는 데서 끝내지 않고, 추천 근거를 이해한 뒤 참가와 경기 당일까지 이어져야 합니다.</p></div>
+      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>참가 결정의 불확실성</b><p>조건 비교 → 추천 근거 이해 → 참가 → 경기 당일까지 연결</p></div>
       <div class="fm-p0-problem-path" aria-label="문제 해결 흐름">
         <span>조건 비교</span><i>→</i><span>추천 근거 확인</span><i>→</i><span>참가</span><i>→</i><span>경기 당일</span>
       </div>`;
@@ -1606,7 +1606,7 @@
       closing.innerHTML=`
         <span>KEY LEARNING · 다음 검증으로 연결</span>
         <dl class="fm-cs-reasons">
-          <div><dt>배운 점</dt><dd>연결 성공뿐 아니라 실패·중복·상태 갱신을 함께 정의해야 운영 흐름이 이어집니다.</dd></div>
+          <div><dt>배운 점</dt><dd>연결 성공 + 실패·중복·상태 갱신까지 함께 정의</dd></div>
         </dl>
         <a href="/app" target="_blank" rel="noopener">Real App에서 흐름 확인 ↗</a>`;
       map.insertAdjacentElement('afterend',closing);
@@ -1635,12 +1635,12 @@
     setReasonValue(
       problem.querySelector('.fm-next-cs-quote'),
       '검증 범위',
-      '설계 가설 단계이며, 사용자 조사와 경쟁사 대비 우위는 Beta에서 확인합니다.'
+      '설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 확인'
     );
 
     const authScope=auth.querySelector('.fm-next-cs-scope');
-    setReasonValue(authScope,'Closed Beta','Supabase 계정과 참가 흐름을 실제로 연동했습니다.');
-    setReasonValue(authScope,'검증 범위','Google/Kakao OAuth는 Production에서 확인했고, 실제 PG 연동은 후속 범위입니다.');
+    setReasonValue(authScope,'Closed Beta','Supabase 계정·참가 흐름 실연동');
+    setReasonValue(authScope,'검증 범위','Google/Kakao OAuth Production 확인 · 실제 PG 후속 범위');
 
     lead.textContent='아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.';
     releaseLead.textContent='핵심 연결과 사용자 확인을 마치고, KPI·결제·수익성은 후속 검증으로 남겼습니다.';
