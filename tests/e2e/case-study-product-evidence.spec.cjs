@@ -119,10 +119,12 @@ for(const [name,viewport] of [
         });
         return {split,metrics,evidence,funnel,ratios};
       });
-      expect(geometry.evidence.left).toBeGreaterThan(geometry.metrics.right);
-      expect(geometry.metrics.width).toBeGreaterThan(geometry.evidence.width);
+      expect(Math.abs(geometry.evidence.left-geometry.metrics.left)).toBeLessThanOrEqual(1);
+      expect(Math.abs(geometry.evidence.right-geometry.metrics.right)).toBeLessThanOrEqual(1);
+      expect(geometry.evidence.top).toBeGreaterThan(geometry.metrics.bottom);
       expect(geometry.funnel).toHaveLength(3);
       expect(Math.max(...geometry.funnel.map(card=>card.width))-Math.min(...geometry.funnel.map(card=>card.width))).toBeLessThanOrEqual(1);
+      expect(Math.min(...geometry.funnel.map(card=>card.width))).toBeGreaterThan(170);
       expect(geometry.funnel.every(card=>card.top===18&&card.bottom===18&&card.left===14&&card.right===14)).toBeTruthy();
       expect(geometry.ratios).toHaveLength(2);
       expect(geometry.ratios.every(card=>card.top===18&&card.bottom===18&&card.left===20&&card.right===20)).toBeTruthy();
