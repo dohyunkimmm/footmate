@@ -116,7 +116,7 @@ for(const [name,viewport] of [
       };
     });
     expect(geometry.marginTop).toBe(14);
-    expect(geometry.marginBottom).toBe(16);
+    expect(geometry.marginBottom).toBe(14);
     expect(geometry.paddingTop).toBe(14);
     expect(geometry.paddingBottom).toBe(14);
     expect(geometry.paddingLeft).toBe(16);
@@ -124,6 +124,45 @@ for(const [name,viewport] of [
     expect(geometry.radius).toBe(16);
     expect(geometry.labelFont).toBeGreaterThanOrEqual(10);
     expect(geometry.bodyFont).toBeGreaterThanOrEqual(13);
+    const lineRhythm=await slide.evaluate(node=>{
+      const box=node=> {
+        const style=getComputedStyle(node);
+        return {
+          top:parseFloat(style.paddingTop),
+          right:parseFloat(style.paddingRight),
+          bottom:parseFloat(style.paddingBottom),
+          left:parseFloat(style.paddingLeft)
+        };
+      };
+      const summary=[...node.querySelectorAll('.fm-next-review-summary>div')].map(box);
+      const flow=node.querySelector('.fm-p1-auth-flow');
+      const screens=[...node.querySelectorAll('.fm-p1-auth-screen')].map(box);
+      const boundary=node.querySelector('.fm-p1-auth-boundary .fm-cs-reasons');
+      const boundaryCards=[...node.querySelectorAll('.fm-p1-auth-boundary .fm-cs-reasons>div')].map(box);
+      return {
+        summary,
+        summaryGap:parseFloat(getComputedStyle(node.querySelector('.fm-next-review-summary')).gap),
+        flowGap:parseFloat(getComputedStyle(flow).gap),
+        screens,
+        boundaryGap:parseFloat(getComputedStyle(boundary).gap),
+        boundaryCards
+      };
+    });
+    const summaryInset=name==='desktop'?{top:12,right:14,bottom:12,left:14}:{top:10,right:12,bottom:10,left:12};
+    expect(lineRhythm.summary).toHaveLength(3);
+    lineRhythm.summary.forEach(card=>expect(card).toEqual(summaryInset));
+    expect(lineRhythm.summaryGap).toBe(name==='desktop'?10:8);
+    expect(lineRhythm.flowGap).toBe(10);
+    expect(lineRhythm.screens).toHaveLength(4);
+    lineRhythm.screens.forEach(card=>expect(card).toEqual({
+      top:name==='desktop'?30:28,
+      right:16,
+      bottom:16,
+      left:16
+    }));
+    expect(lineRhythm.boundaryGap).toBe(10);
+    expect(lineRhythm.boundaryCards).toHaveLength(3);
+    lineRhythm.boundaryCards.forEach(card=>expect(card).toEqual({top:14,right:16,bottom:14,left:16}));
     if(viewport.width>900){
       expect(geometry.width).toBeGreaterThanOrEqual(320);
       expect(geometry.width).toBeLessThanOrEqual(420);
