@@ -813,8 +813,8 @@ html[data-fm-next-case-study="true"] .fm-p1-release-next{
 /* 12 KPI & Validation · measurement definitions separated from QA evidence */
 html[data-fm-next-case-study="true"] .fm-p1-validation-split{
   display:grid;
-  grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);
-  gap:14px;
+  grid-template-columns:1fr;
+  gap:18px;
   align-items:start;
   margin-top:12px;
 }
@@ -832,8 +832,8 @@ html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-secondary-me
 }
 html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-grid{
   display:grid!important;
-  grid-template-columns:1fr!important;
-  gap:8px!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
   margin-top:0!important;
 }
 html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-grid>.fm-next-cs-card{
@@ -847,5 +847,8 @@ html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-gri
   html[data-fm-next-case-study="true"] .fm-p1-validation-split{
     grid-template-columns:1fr;
     gap:10px;
+  }
+  html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-grid{
+    grid-template-columns:1fr!important;
   }
 }
