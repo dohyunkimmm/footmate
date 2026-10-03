@@ -1490,7 +1490,7 @@
   }
 
   function markP1Sequences(){
-    markGroup(document,'.fm-p1-persona-lenses>div',3);
+    markReveal(document.querySelector('.fm-p1-persona-lenses'),3);
     markGroup(document,'.fm-p1-jtbd-journey li',6);
     markGroup(document,'.fm-p1-auth-frame',3);
     markReveal(document.querySelector('.fm-p1-auth-preserve'),7);
