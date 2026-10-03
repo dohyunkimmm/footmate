@@ -3,7 +3,7 @@
    Horizontal gaps remain owned by each section so density and information grouping stay intact. */
 
 html[data-fm-next-case-study="true"]{
-  --fm-cs-card-row-gap:12px;
+  --fm-cs-card-row-gap:10px;
   --fm-cs-card-column-gap:12px;
 }
 
@@ -45,7 +45,7 @@ html[data-fm-next-case-study="true"] :is(
 
 @media(max-width:900px){
   html[data-fm-next-case-study="true"]{
-    --fm-cs-card-row-gap:10px;
+    --fm-cs-card-row-gap:8px;
     --fm-cs-card-column-gap:10px;
   }
 }
