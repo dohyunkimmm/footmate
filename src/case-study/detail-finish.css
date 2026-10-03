@@ -400,6 +400,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   margin-bottom:22px!important;
 }
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-validation-split{
+  grid-template-columns:1fr!important;
   gap:24px!important;
   margin-top:20px!important;
 }
@@ -449,6 +450,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-funnel-ratios .fm-p1-ratio>i{grid-area:divider}
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-funnel-ratios .fm-p1-ratio>span:nth-of-type(2){grid-area:denominator}
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
   gap:12px!important;
 }
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
@@ -507,6 +509,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
     display:none!important;
   }
   html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid{
+    grid-template-columns:1fr!important;
     gap:12px!important;
   }
   html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
