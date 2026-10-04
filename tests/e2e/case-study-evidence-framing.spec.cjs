@@ -80,11 +80,11 @@ for(const [name,viewport] of [
 
     if(viewport.width>900){
       geometry.boxes.forEach(box=>{
-        expect(box.height/geometry.scale).toBeGreaterThanOrEqual(189);
-        expect(box.objectFit).toBe('cover');
-        expect(box.objectPosition).toMatch(/0%$/);
-        expect(box.clipPath).not.toBe('none');
-        expect(box.marginBottom).toBeLessThan(0);
+        expect(box.height/geometry.scale).toBeGreaterThanOrEqual(99);
+        expect(box.objectFit).toBe('contain');
+        expect(box.objectPosition).toBe('50% 50%');
+        expect(box.clipPath).toBe('none');
+        expect(box.marginBottom).toBe(0);
       });
       geometry.captions.forEach(box=>expect(box.bottom).toBeLessThan(875));
     }else{

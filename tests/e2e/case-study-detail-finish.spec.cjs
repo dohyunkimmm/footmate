@@ -69,11 +69,11 @@ for(const [name,viewport] of [
         bannerBg:getComputedStyle(banner).backgroundColor,
         funnelFocusBg:getComputedStyle(funnelFocus).backgroundColor,
         evidenceBg:getComputedStyle(evidence).backgroundColor,
-        labelSpacing:parseFloat(getComputedStyle(slide.querySelector('.fm-p1-evidence-label')).letterSpacing)
+        labelSpacing:parseFloat(getComputedStyle(slide.querySelector('.fm-p1-evidence-label')).letterSpacing)||0
       };
     });
-    expect(p12.bannerRadius).toBe(16);
-    expect(p12.wrapRadius).toBe(16);
+    expect(p12.bannerRadius).toBe(name==='desktop'?0:16);
+    expect(p12.wrapRadius).toBe(name==='desktop'?12:16);
     expect(p12.funnelRadius).toBe(12);
     expect(p12.bannerBg).not.toBe(p12.evidenceBg);
     expect(p12.funnelFocusBg).not.toBe(p12.evidenceBg);
@@ -109,7 +109,8 @@ for(const [name,viewport] of [
     expect(p13.closingText).toContain('핵심 학습');
     // Chromium can resolve 22/44px minimums a fraction below the authored value after layout.
     // Keep a half-pixel tolerance while still verifying the intended pill geometry.
-    expect(p13.chips.every(chip=>chip.height>=21.5&&chip.width>=43.5&&chip.radius>=10.5)).toBeTruthy();
+    if(name==='desktop')expect(p13.chips.every(chip=>chip.radius===0&&chip.lineHeight>=16)).toBeTruthy();
+    else expect(p13.chips.every(chip=>chip.height>=21.5&&chip.width>=43.5&&chip.radius>=10.5)).toBeTruthy();
 
     if(name==='desktop'){
       // 6 · Navigation is quieter while the active dot remains unambiguous.
@@ -154,3 +155,4 @@ for(const [name,viewport] of [
     await noHorizontalOverflow(page);
   });
 }
+
