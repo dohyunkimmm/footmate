@@ -56,7 +56,11 @@ for(const [name,viewport] of [
       await showSection(page,index);
       const slide=page.locator('.slide.on.fm-next-story-slide');
       await expect(slide).toHaveAttribute('data-evidence-upgrade',key);
-      await verifyEvidenceImages(page);
+      if(key==='recommendation'){
+        const figure=slide.locator('.is-recommendation');
+        await expect(figure).toHaveAttribute('data-interactive-ready','true');
+        await expect(figure.locator('.fm-mock-match')).toHaveCount(2);
+      }else await verifyEvidenceImages(page);
       await verifyNoHorizontalOverflow(page);
       await page.screenshot({
         path:`test-results/case-study-evidence-${key}-${viewport.width}.png`,

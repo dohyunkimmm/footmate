@@ -57,7 +57,7 @@ jobs:
           production_smoke="$production"
           for file in $changed_files; do
             case "$file" in
-              tests/production-*.cjs|tests/e2e/release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
+              tests/production-*.cjs|tests/e2e/production-app.spec.cjs|tests/e2e/release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
             esac
           done
 
@@ -254,3 +254,4 @@ jobs:
           path: test-results/
           if-no-files-found: warn
           retention-days: 14
+

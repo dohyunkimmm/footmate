@@ -67,8 +67,8 @@
   {
     "nav": "Recommendations",
     "navDesc": "Preferences & Reasons",
-    "title": "추천 결과와 함께 선택의 이유를 제시했습니다.",
-    "desc": "저장된 선호를 활용하고, 현재 조건과 추천 근거를 확인하게 했습니다.",
+    "title": "조건을 바꾸면 추천 순위와 이유도 달라집니다.",
+    "desc": "현재 조건을 직접 바꾸고, 후보의 순위와 추천 이유를 확인하게 했습니다.",
     "keywords": [
       "선호 조건",
       "추천 이유",
@@ -149,14 +149,14 @@
     "layout": "validation"
   },
   {
-    "nav": "Release & Next Steps",
-    "navDesc": "Implementation & Limits",
-    "title": "구현한 범위와 다음에 검증할 가치를 정리했습니다.",
-    "desc": "제품·Beta 연결 범위를 구분하고, 이용 지표와 수익성은 후속 과제로 뒀습니다.",
+    "nav": "Learning & Next Decisions",
+    "navDesc": "Observe & Decide",
+    "title": "다음 검증에서 무엇을 바꿀지 정했습니다.",
+    "desc": "추천 이유·참가 동선·복구 행동을 관찰할 기준과 다음 수정 조건을 정의했습니다.",
     "keywords": [
-      "구현 범위",
-      "검증 한계",
-      "다음 과제"
+      "판단 도움",
+      "흐름의 막힘",
+      "다음 결정"
     ],
     "layout": "release"
   }
@@ -314,6 +314,7 @@
     [5,6,8].forEach(index=>{
       const figure=slides[index].querySelector('.fm-evidence-figure[data-evidence-scale="primary"]');if(!figure)return;
       const source=figure.querySelector('img');const caption=figure.querySelector('figcaption');
+      if(!source)return;
       const button=document.createElement('button');button.type='button';button.className='fm-screen-expand';button.textContent='화면 확대 ↗';button.setAttribute('aria-haspopup','dialog');
       button.addEventListener('click',()=>{
         dialog.querySelector('h2').textContent=caption.querySelector('b')?.textContent||'제품 화면';
@@ -402,9 +403,10 @@
       node.dataset.screenFormat='portrait';
     });
     refineCaseStudyCopy(slides);
+    window.installFootMateDecisionEvidence(slides);
     installEditorialInteractions(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.1';
+    html.dataset.footmateCaseStudyRelease='5.4.2';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;

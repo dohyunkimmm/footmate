@@ -21,7 +21,8 @@ const cssSources=[
   'src/case-study/detail-finish.css',
   'src/case-study/page-composition.css',
   'src/case-study/brand-redesign.css',
-  'src/case-study/editorial-update.css'
+  'src/case-study/editorial-update.css',
+  'src/case-study/decision-evidence.css'
 ];
 const jsSources=[
   'src/case-study/heading-polish.js',
@@ -38,6 +39,7 @@ const jsSources=[
   'src/case-study/p12-copy-spacing.js',
   'src/case-study/product-evidence.js',
   'src/case-study/advanced-polish.js',
+  'src/case-study/decision-evidence.js',
   'src/case-study/page-composition.js'
 ];
 

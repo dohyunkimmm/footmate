@@ -57,7 +57,7 @@ for(const [name,viewport] of [
     await page.waitForTimeout(120);
     const release=page.locator('.slide.on');
     const releaseLead=release.locator('.fm-next-story-lead');
-    await expect(releaseLead).toHaveText('제품·Beta 연결 범위를 구분하고, 이용 지표와 수익성은 후속 과제로 뒀습니다.');
+    await expect(releaseLead).toHaveText('추천 이유·참가 동선·복구 행동을 관찰할 기준과 다음 수정 조건을 정의했습니다.');
     await expect(releaseLead).not.toContainText('실제 이용자 KPI');
     await noHorizontalOverflow(page);
     await release.screenshot({
@@ -80,7 +80,7 @@ for(const [name,viewport] of [
 
     const cards=slide.locator('.fm-p1-evidence-grid>.fm-next-cs-card');
     await expect(cards).toHaveCount(3);
-    const expectedLabels=['자동 QA','사람 검수','AI 보조 검수'];
+    const expectedLabels=['사용자 과업','자동 QA','사람 검수'];
 
     for(let index=0;index<3;index+=1){
       const card=cards.nth(index);
