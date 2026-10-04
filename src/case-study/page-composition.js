@@ -80,7 +80,7 @@
       node.dataset.screenFormat='portrait';
     });
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.2.0';
+    html.dataset.footmateCaseStudyRelease='5.3.0';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;

@@ -127,7 +127,7 @@ for(const [name,viewport] of [
           pbarHeight:document.querySelector('.pbar').getBoundingClientRect().height
         };
       });
-      expect(nav.buttonRadius).toBe(12);
+      expect(nav.buttonRadius).toBe(8);
       expect(nav.buttonHeight).toBe(42);
       expect(nav.dotSize).toBe(6);
       expect(nav.activeBg).not.toBe(nav.dotBg);
