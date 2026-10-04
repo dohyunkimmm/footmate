@@ -128,10 +128,41 @@ test('decision evidence lets readers change real base-ranking inputs without wri
   await expect(second).toHaveAttribute('aria-pressed','true');
   await expect(figure.locator('.fm-mock-match').first()).toHaveAttribute('data-match-id','giheung-2000');
   await expect(figure.locator('.fm-mock-match').first()).toContainText('GK 1자리 남음');
+  await expect(figure.locator('.fm-mock-context small')).toContainText('비교 B');
+  await expect(figure.locator('.fm-mock-footer')).toContainText('기흥');
   await expect(figure.locator('figcaption')).toContainText('샘플 경기');
   expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(storage);
   expect(await page.locator('.slide.on').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
   await page.screenshot({path:'test-results/decision-evidence-p6-changed.png',animations:'disabled'});
+});
+
+test('implementation improvement records expose both evidence chains and restore reader focus',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmDecisionEvidence==='true');
+  await page.locator('.toc-item').nth(11).click();
+  const opener=page.getByRole('button',{name:'개선 사례 2건 보기',exact:true});await opener.click();
+  const dialog=page.getByRole('dialog',{name:'실제 수정과 검증을 연결했습니다.'});
+  await expect(dialog).toBeVisible();await expect(dialog.locator('ol>li')).toHaveCount(4);
+  await expect(dialog).toContainText('경기 정보가 없으면 참가 처리 중단');
+  await expect(dialog).toContainText('정보 유실 → 오류 → 정보 복원 → 참가 성공');
+  await expect(dialog.getByRole('link',{name:'실제 수정 기록 ↗'})).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
+  await page.keyboard.press('ArrowRight');await expect(page.locator('.slide.on')).toHaveAttribute('data-page-number','12');
+  await page.screenshot({path:'test-results/improvement-join-dialog.png',animations:'disabled'});
+  await dialog.getByRole('button',{name:'평가 후 다음 탐색',exact:true}).click();
+  await expect(dialog).toContainText('평가 저장 후에도 피드백 안내 유지');
+  await expect(dialog).toContainText('평가 저장 → Home 완료 → Discover 진입');
+  await expect(dialog).toContainText('사용자 관찰 결과와 이용 성과는 별도 검증');
+  await page.screenshot({path:'test-results/improvement-return-dialog.png',animations:'disabled'});
+  await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(opener).toBeFocused();
+  await page.locator('.toc-item').nth(8).click();await page.getByRole('button',{name:'평가 후 탐색 개선 보기',exact:true}).click();
+  await expect(dialog).toHaveAttribute('data-improvement-case','1');
+  await dialog.getByRole('button',{name:'개선 기록 닫기'}).click();
+  await page.locator('.toc-item').nth(9).click();await page.getByRole('button',{name:'수정 전후 · 재검증 보기',exact:true}).click();
+  await expect(dialog).toHaveAttribute('data-improvement-case','0');await page.keyboard.press('Escape');
+  expect(await page.locator('.slide.on').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+  await page.locator('.toc-item').nth(12).click();
+  await expect(page.locator('.slide.on')).toContainText('개인 고도화');
+  await expect(page.locator('.slide.on')).not.toContainText('이용 기준값 확보 후');
 });
 
 test('recovery mock shows retained choice and locked retry before success without making a join request',async({page})=>{

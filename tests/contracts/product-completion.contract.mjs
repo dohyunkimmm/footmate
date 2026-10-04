@@ -19,7 +19,7 @@ const [releaseMajor,releaseMinor]=String(pkg.version).split('.').map(Number);
 assert.ok(releaseMajor>5||(releaseMajor===5&&releaseMinor>=2),'product completion requires product release >= 5.2');
 assert.deepEqual(pkg.qaToolchain,{node:'24',playwright:'1.55.1',axeCorePlaywright:'4.10.2'});
 assert.ok(app.includes(`footmate-release\" content=\"${pkg.version}\"`));
-assert.ok(caseStudy.includes('footmate-case-study-release\" content=\"5.4.2\"'));
+assert.ok(caseStudy.includes('footmate-case-study-release\" content=\"5.4.3\"'));
 assert.ok(app.includes('theme-color\" content=\"#f7f8f7\"'));
 assert.equal(app.includes('id=\"fm-real-app-white-tone\"'),false);
 assert.equal(app.includes('id=\"fm-product-polish-compat\"'),false);
