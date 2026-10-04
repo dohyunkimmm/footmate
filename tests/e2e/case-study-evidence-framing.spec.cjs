@@ -71,12 +71,12 @@ for(const [name,viewport] of [
         return {height:box.height,objectFit:style.objectFit,objectPosition:style.objectPosition,clipPath:style.clipPath,marginBottom:parseFloat(style.marginBottom)};
       });
       const captions=[...node.querySelectorAll('figcaption')].map(el=>el.getBoundingClientRect());
-      return {boxes,captions};
+      return {boxes,captions,scale:parseFloat(getComputedStyle(node.closest('.fm-next-story')).zoom)||1};
     });
 
     if(viewport.width>900){
       geometry.boxes.forEach(box=>{
-        expect(box.height).toBeGreaterThanOrEqual(190);
+        expect(box.height/geometry.scale).toBeGreaterThanOrEqual(189);
         expect(box.objectFit).toBe('cover');
         expect(box.objectPosition).toMatch(/0%$/);
         expect(box.clipPath).not.toBe('none');

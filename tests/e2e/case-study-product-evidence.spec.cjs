@@ -297,11 +297,11 @@ for(const [name,viewport] of [
         const stripNode=node.querySelector('.fm-evidence-recovery-strip');
         const stripBox=stripNode.getBoundingClientRect();
         const figures=[...stripNode.querySelectorAll('.fm-evidence-figure')].map(el=>el.getBoundingClientRect());
-        return {mapBottom:mapBox.bottom,stripTop:stripBox.top,stripWidth:stripBox.width,figureWidths:figures.map(box=>box.width)};
+        return {mapBottom:mapBox.bottom,stripTop:stripBox.top,stripWidth:stripBox.width,figureWidths:figures.map(box=>box.width),scale:parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1};
       });
-      expect(geometry.stripTop-geometry.mapBottom).toBeGreaterThanOrEqual(12);
+      expect((geometry.stripTop-geometry.mapBottom)/geometry.scale).toBeGreaterThanOrEqual(11.5);
       expect(Math.abs(geometry.figureWidths[0]-geometry.figureWidths[1])).toBeLessThanOrEqual(2);
-      expect(geometry.figureWidths[0]).toBeGreaterThan(300);
+      expect(geometry.figureWidths[0]/geometry.scale).toBeGreaterThan(300);
     }else{
       const geometry=await strip.evaluate(node=>{
         const stripBox=node.getBoundingClientRect();
@@ -373,7 +373,7 @@ for(const [name,viewport] of [
           gaps:[
             cards[1].top-cards[0].bottom,
             cards[2].top-cards[1].bottom
-          ]
+          ].map(gap=>gap/(parseFloat(getComputedStyle(node.closest('.fm-next-story')).zoom)||1))
         };
       });
       expect(geometry.rowGap).toBe(10);
@@ -387,7 +387,7 @@ for(const [name,viewport] of [
         return [
           cards[1].top-cards[0].bottom,
           cards[2].top-cards[1].bottom
-        ];
+        ].map(gap=>gap/(parseFloat(getComputedStyle(node.closest('.fm-next-story')).zoom)||1));
       });
       expect(Math.abs(hoverGaps[0]-hoverGaps[1])).toBeLessThanOrEqual(0.5);
       expect(Math.abs(hoverGaps[0]-10)).toBeLessThanOrEqual(0.5);

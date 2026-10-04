@@ -24,6 +24,16 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
       expect(geometry.font).toBeGreaterThanOrEqual(24);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
       expect(overflow).toBeLessThanOrEqual(1);
+      if(viewport.width>900){
+        await expect.poll(()=>slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+        const bounds=await slide.evaluate(node=>{
+          const content=node.querySelector('.fm-next-story,.fm-next-cover').getBoundingClientRect();
+          const viewport=node.getBoundingClientRect();
+          return {top:content.top-viewport.top,bottom:viewport.bottom-content.bottom};
+        });
+        expect(bounds.top).toBeGreaterThanOrEqual(63);
+        expect(bounds.bottom).toBeGreaterThanOrEqual(63);
+      }
     }
     expect(errors).toEqual([]);
     // Verify the originals load; local layout checks with placeholders are not image QA.

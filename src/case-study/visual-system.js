@@ -2091,6 +2091,43 @@
     });
     html.dataset.fmPageComposition='true';
     html.dataset.footmateCaseStudyRelease='5.2.0';
+    // Desktop is a fixed slide: fit the complete composition inside the viewport.
+    const fitSlides=()=>{
+      const desktop=window.matchMedia('(min-width:901px)').matches;
+      slides.forEach(slide=>{
+        const content=slide.querySelector('.fm-next-story,.fm-next-cover');
+        if(!content)return;
+        content.style.zoom='';
+        content.style.removeProperty('width');
+        content.style.removeProperty('margin-inline');
+        if(!desktop||!slide.clientHeight)return;
+        const style=getComputedStyle(slide);
+        content.style.setProperty('width',`${slide.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)}px`,'important');
+        content.style.setProperty('margin-inline','auto','important');
+        const available=slide.clientHeight-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom);
+        const height=content.getBoundingClientRect().height;
+        if(height>available&&available>0){
+          let scale=Math.min(1,(available-2)/height);
+          content.style.zoom=String(scale);
+          for(let attempt=0;attempt<4;attempt++){
+            const actual=content.getBoundingClientRect().height;
+            if(actual<=available-1)break;
+            scale*=((available-2)/actual);
+            content.style.zoom=String(scale);
+          }
+        }
+        slide.scrollTop=0;
+      });
+    };
+    let frame;
+    const scheduleFit=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(fitSlides);};
+    window.addEventListener('resize',scheduleFit);
+    new MutationObserver(records=>{
+      if(records.some(record=>record.target.classList.contains('slide')))scheduleFit();
+    }).observe(document.querySelector('.track'),{subtree:true,attributes:true,attributeFilter:['class']});
+    document.querySelectorAll('img').forEach(img=>img.addEventListener('load',scheduleFit));
+    if(document.fonts)document.fonts.ready.then(scheduleFit);
+    scheduleFit();
     return true;
   }
   if(!apply()){
