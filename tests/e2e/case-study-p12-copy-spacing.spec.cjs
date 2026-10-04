@@ -34,8 +34,8 @@ for(const [name,viewport] of [
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[1]?.click());
     await page.waitForTimeout(120);
     const problem=page.locator('.slide.on');
-    await expect(problem).toContainText('설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 확인');
-    await expect(problem).not.toContainText('Beta에서 확인합니다.');
+    await expect(problem).toContainText('���� ���� �� ����� ���硤����� ���� ������ �� Beta Ȯ��');
+    await expect(problem).not.toContainText('Beta���� Ȯ���մϴ�.');
     await problem.screenshot({
       path:`test-results/case-study-copy-cleanup-p2-${viewport.width}.png`,
       animations:'disabled'
@@ -44,10 +44,10 @@ for(const [name,viewport] of [
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[7]?.click());
     await page.waitForTimeout(120);
     const auth=page.locator('.slide.on');
-    await expect(auth).toContainText('Supabase 계정·참가 흐름 실연동');
-    await expect(auth).toContainText('Google/Kakao OAuth Production 확인 · 실제 PG 후속 범위');
-    await expect(auth).not.toContainText('실제로 연동했습니다.');
-    await expect(auth).not.toContainText('후속 범위입니다.');
+    await expect(auth).toContainText('Supabase ���������� �帧 �ǿ���');
+    await expect(auth).toContainText('Google/Kakao OAuth Production Ȯ�� �� ���� PG �ļ� ����');
+    await expect(auth).not.toContainText('������ �����߽��ϴ�.');
+    await expect(auth).not.toContainText('�ļ� �����Դϴ�.');
     await auth.screenshot({
       path:`test-results/case-study-copy-cleanup-p8-${viewport.width}.png`,
       animations:'disabled'
@@ -57,8 +57,8 @@ for(const [name,viewport] of [
     await page.waitForTimeout(120);
     const release=page.locator('.slide.on');
     const releaseLead=release.locator('.fm-next-story-lead');
-    await expect(releaseLead).toHaveText('Real App과 Closed Beta의 연결 범위를 구분하고, 실제 이용 지표와 수익성은 다음 검증 과제로 남겼습니다.');
-    await expect(releaseLead).not.toContainText('실제 이용자 KPI');
+    await expect(releaseLead).toHaveText('��ǰ ȭ��� Closed Beta�� ���� ������ �����ϰ�, �̿� ��ǥ�� ���ͼ��� �ļ� ���� ������ ������ϴ�.');
+    await expect(releaseLead).not.toContainText('���� �̿��� KPI');
     await noHorizontalOverflow(page);
     await release.screenshot({
       path:`test-results/case-study-copy-cleanup-p13-${viewport.width}.png`,
@@ -71,16 +71,16 @@ for(const [name,viewport] of [
 
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="validation-evidence"]');
     const lead=slide.locator('.fm-next-story-lead');
-    await expect(lead).toHaveText('KPI는 측정 기준으로 정의하고, 자동 QA·사람 검수·AI 보조 검토는 제품 동작을 확인하는 근거로 분리했습니다.');
+    await expect(lead).toHaveText('KPI�� ��ꡤ���� ������ �����ϰ�, �ڵ� QA����� �˼���AI ���� �˼��� ��ǰ ������ �ٰŷ� �����߽��ϴ�.');
     await expect(lead).not.toContainText('Measured Result');
 
     const banner=slide.locator('.fm-p1-validation-banner');
-    await expect(banner.locator('b')).toHaveText('측정 전 기준 정의');
-    await expect(banner.locator('p')).toHaveText('목표치보다 분자 · 분모 · 제외 조건 · 기준값을 먼저 정의');
+    await expect(banner.locator('b')).toHaveText('���� �� ���� ����');
+    await expect(banner.locator('p')).toHaveText('��ǥġ���� ���� �� �и� �� ���� ���� �� ���ذ��� ���� ����');
 
     const cards=slide.locator('.fm-p1-evidence-grid>.fm-next-cs-card');
     await expect(cards).toHaveCount(3);
-    const expectedLabels=['자동 QA','사람 검수','AI 보조 검수'];
+    const expectedLabels=['�ڵ� QA','��� �˼�','AI ���� �˼�'];
 
     for(let index=0;index<3;index+=1){
       const card=cards.nth(index);

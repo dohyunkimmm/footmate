@@ -62,6 +62,7 @@
   }
 
   function handleKeydown(event){
+    if(document.querySelector('dialog[open]'))return;
     if(event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
     if(isEditingTarget(event.target))return;
     if(event.key==='ArrowRight'||event.key==='PageDown'){

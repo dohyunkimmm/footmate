@@ -20,7 +20,8 @@ const cssSources=[
   'src/case-study/advanced-polish.css',
   'src/case-study/detail-finish.css',
   'src/case-study/page-composition.css',
-  'src/case-study/brand-redesign.css'
+  'src/case-study/brand-redesign.css',
+  'src/case-study/editorial-update.css'
 ];
 const jsSources=[
   'src/case-study/heading-polish.js',
@@ -44,7 +45,7 @@ function read(file){
   return fs.readFileSync(path.join(root,file),'utf8').trimEnd();
 }
 function bundle(type,sources,footer){
-  const head='/* AUTO-GENERATED · FootMate Case Study '+type+' bundle\n'
+  const head='/* AUTO-GENERATED �� FootMate Case Study '+type+' bundle\n'
     +'   Run: node scripts/build-case-study-bundle.cjs\n'
     +'   Sources: '+sources.join(', ')+'\n'
     +'   Do not edit this generated file directly. */';
@@ -85,7 +86,7 @@ for(const [file,expected] of outputs){
   if(check){
     const actual=fs.existsSync(full)?fs.readFileSync(full,'utf8'):'';
     if(actual!==expected){
-      console.error('STALE '+file+' · run node scripts/build-case-study-bundle.cjs');
+      console.error('STALE '+file+' �� run node scripts/build-case-study-bundle.cjs');
       failed=true;
     }else{
       console.log('PASS '+file);

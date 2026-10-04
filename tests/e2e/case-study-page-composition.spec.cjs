@@ -69,3 +69,33 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
     }
   });
 }
+
+test('product enlargement preserves navigation and restores keyboard focus',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  for(const index of [5,6,8]){
+    await page.locator('.toc-item').nth(index).click();
+    const slide=page.locator('.slide.on');const opener=slide.locator('.fm-screen-expand');
+    const source=await slide.locator('.fm-evidence-figure[data-evidence-scale="primary"] img').evaluate(node=>node.currentSrc||node.src);
+    await opener.click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();
+    await expect(dialog.locator('img')).toHaveAttribute('src',source);
+    await page.keyboard.press('ArrowRight');await expect(slide).toHaveAttribute('data-page-number',String(index+1));
+    await dialog.getByRole('button',{name:'�ٽ� ����',exact:true}).click();
+    await expect(dialog).toHaveClass(/is-focus/);
+    await expect(dialog.getByRole('button',{name:'�ٽ� ����',exact:true})).toHaveAttribute('aria-pressed','true');
+    await dialog.getByRole('button',{name:'��ü ȭ��',exact:true}).click();await expect(dialog).not.toHaveClass(/is-focus/);
+    await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(opener).toBeFocused();
+  }
+});
+
+test('section labels match the table of contents and supplemental details remain available',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  const sections=await page.evaluate(()=>[...document.querySelectorAll('.toc-item')].map((toc,index)=>({title:toc.querySelector('.toc-t').textContent,kicker:document.querySelectorAll('.slide')[index].querySelector('.fm-next-cover-kicker,.fm-next-story-kicker').textContent})));
+  expect(sections).toHaveLength(13);for(const section of sections)expect(section.kicker).toContain(section.title);
+  await page.locator('.toc-item').nth(4).click();
+  const details=page.locator('.slide.on .fm-editorial-supplement');await expect(details).toHaveAttribute('open','');
+  await page.setViewportSize({width:390,height:844});await expect(details).not.toHaveAttribute('open','');
+  await details.locator('summary').click();await expect(details).toHaveAttribute('open','');
+  await expect(details.locator('.fm-next-story-aside')).toBeVisible();
+});
