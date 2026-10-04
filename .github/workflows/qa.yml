@@ -198,7 +198,7 @@ jobs:
         run: npx playwright test --project=webkit-mobile tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
       - name: Upload browser QA evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: browser-e2e-${{ github.run_id }}
           path: |
@@ -248,7 +248,7 @@ jobs:
         run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs --grep "Release App free Join failure is recoverable without leaving a stuck button|Home lifecycle closes Return and hands the next action back to Discover|Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
       - name: Upload Production browser evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: production-browser-${{ github.run_id }}
           path: test-results/
