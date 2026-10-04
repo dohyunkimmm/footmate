@@ -201,7 +201,7 @@ for(const [name,viewport] of [
           const style=getComputedStyle(card);
           const rect=card.getBoundingClientRect();
           return {
-            width:rect.width,
+            width:rect.width/(parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1),
             top:parseFloat(style.paddingTop),
             right:parseFloat(style.paddingRight),
             bottom:parseFloat(style.paddingBottom),

@@ -34,6 +34,6 @@ assert(api.includes('isJsonRequest(req)'),'JSON request guardrail missing');
 assert(api.includes('allowedByRateLimit(req)'),'rate-limit guardrail missing');
 assert(vercel.includes('"api/ai-match-assistant.js": {"maxDuration": 10}'),'Vercel function cost bound missing');
 assert(!data.includes('최근 경기 ELO 범위'),'current deterministic recommendation must not claim ELO ownership');
-assert(cs.includes('footmate-case-study-release\" content=\"5.3.0\"'),'Case Study must preserve its independent v5.3.0 release');
+assert(cs.includes('footmate-case-study-release\" content=\"5.4.0\"'),'Case Study must preserve its independent v5.4.0 release');
 assert(narrative.includes("data-v5-ai-evidence','guardrailed'"),'Case Study AI evidence missing');
 console.log('PASS AI Match Assistant resilience boundary');

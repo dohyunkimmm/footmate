@@ -20,7 +20,8 @@ const cssSources=[
   'src/case-study/advanced-polish.css',
   'src/case-study/detail-finish.css',
   'src/case-study/page-composition.css',
-  'src/case-study/brand-redesign.css'
+  'src/case-study/brand-redesign.css',
+  'src/case-study/editorial-update.css'
 ];
 const jsSources=[
   'src/case-study/heading-polish.js',

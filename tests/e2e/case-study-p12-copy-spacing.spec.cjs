@@ -57,7 +57,7 @@ for(const [name,viewport] of [
     await page.waitForTimeout(120);
     const release=page.locator('.slide.on');
     const releaseLead=release.locator('.fm-next-story-lead');
-    await expect(releaseLead).toHaveText('Real App과 Closed Beta의 연결 범위를 구분하고, 실제 이용 지표와 수익성은 다음 검증 과제로 남겼습니다.');
+    await expect(releaseLead).toHaveText('제품 화면과 Closed Beta의 실제 연결을 구분하고, 이용 지표와 수익성은 후속 검증 과제로 남겼습니다.');
     await expect(releaseLead).not.toContainText('실제 이용자 KPI');
     await noHorizontalOverflow(page);
     await release.screenshot({
@@ -71,7 +71,7 @@ for(const [name,viewport] of [
 
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="validation-evidence"]');
     const lead=slide.locator('.fm-next-story-lead');
-    await expect(lead).toHaveText('KPI는 측정 기준으로 정의하고, 자동 QA·사람 검수·AI 보조 검토는 제품 동작을 확인하는 근거로 분리했습니다.');
+    await expect(lead).toHaveText('KPI의 계산·관찰 기준을 정의하고, 자동 QA·사람 검수·AI 보조 검수는 제품 동작의 근거로 구분했습니다.');
     await expect(lead).not.toContainText('Measured Result');
 
     const banner=slide.locator('.fm-p1-validation-banner');
