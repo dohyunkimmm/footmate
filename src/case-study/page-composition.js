@@ -150,13 +150,13 @@
   },
   {
     "nav": "Learning & Next Decisions",
-    "navDesc": "Observe & Decide",
-    "title": "다음 검증에서 무엇을 바꿀지 정했습니다.",
-    "desc": "추천 이유·참가 동선·복구 행동을 관찰할 기준과 다음 수정 조건을 정의했습니다.",
+    "navDesc": "Refine & Verify",
+    "title": "개인 고도화에서 얻은 학습과 다음 기준을 정리했습니다.",
+    "desc": "실제 수정·재검증의 근거를 다음 설계와 품질 기준으로 연결했습니다.",
     "keywords": [
-      "판단 도움",
-      "흐름의 막힘",
-      "다음 결정"
+      "설계 일관성",
+      "흐름 완결성",
+      "재검증 근거"
     ],
     "layout": "release"
   }
@@ -406,7 +406,7 @@
     window.installFootMateDecisionEvidence(slides);
     installEditorialInteractions(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.2';
+    html.dataset.footmateCaseStudyRelease='5.4.3';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;

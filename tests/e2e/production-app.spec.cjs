@@ -35,8 +35,8 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   expect(health.provider).toBe('vercel-ai-gateway');
   expect(health.model).toBe('openai/gpt-5.4-mini');
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.4.2');
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.4.2');
+  await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.4.3');
+  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.4.3');
   await expect(page.locator('[data-v5-ai-evidence="guardrailed"]')).toHaveCount(1);
 });
 

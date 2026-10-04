@@ -57,7 +57,7 @@ for(const [name,viewport] of [
     await page.waitForTimeout(120);
     const release=page.locator('.slide.on');
     const releaseLead=release.locator('.fm-next-story-lead');
-    await expect(releaseLead).toHaveText('추천 이유·참가 동선·복구 행동을 관찰할 기준과 다음 수정 조건을 정의했습니다.');
+    await expect(releaseLead).toHaveText('실제 수정·재검증의 근거를 다음 설계와 품질 기준으로 연결했습니다.');
     await expect(releaseLead).not.toContainText('실제 이용자 KPI');
     await noHorizontalOverflow(page);
     await release.screenshot({

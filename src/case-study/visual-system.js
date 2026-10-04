@@ -2015,6 +2015,46 @@
   const SOURCE='https://github.com/dohyunkimmm/footmate/blob/main/';
   const link=(path,label)=>`<a class="fm-proof-link" href="${SOURCE}${path}" target="_blank" rel="noopener">${label} ↗</a>`;
   const rows=items=>'<dl class="fm-cs-reasons">'+items.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')+'</dl>';
+  const CASES=[
+    {label:'참가 실패 복구',title:'멈춘 버튼을 다시 선택할 수 있는 상태로 바꿨습니다.',steps:[
+      ['수정 전','경기 정보가 없으면 참가 처리 중단','버튼은 처리 중 상태에 남아 다음 행동 불가'],
+      ['원인','데이터 없음과 처리 오류의 복구 경로 누락','경기 존재 여부만 확인 · 버튼 상태 복원 누락'],
+      ['수정','오류 안내 · 재시도 · 경기 다시 선택','처리 중에는 잠금 · 실패하면 버튼 활성화'],
+      ['재검증','정보 유실 → 오류 → 정보 복원 → 참가 성공','자동 E2E에서 안내·활성 버튼·성공 화면 확인']
+    ]},
+    {label:'평가 후 다음 탐색',title:'저장 완료를 다음 경기 탐색으로 연결했습니다.',steps:[
+      ['수정 전','평가 저장 후에도 피드백 안내 유지','Home은 종료 후 상태만 보고 MY로 재안내'],
+      ['원인','저장 완료 여부와 화면 상태의 연결 누락','경기 종료 상태와 평가 완료 상태를 구분하지 않음'],
+      ['수정','완료 기록 확인 · 다음 경기 찾기로 전환','MY에서 저장 · Home에서 완료 안내와 탐색 진입'],
+      ['재검증','평가 저장 → Home 완료 → Discover 진입','자동 E2E에서 저장·완료 문구·다음 화면 확인']
+    ]}
+  ];
+  function improvementEvidence(slides){
+    const dialog=document.createElement('dialog');dialog.className='fm-improvement-dialog';dialog.setAttribute('aria-labelledby','fm-improvement-title');
+    dialog.innerHTML='<header><div><small>구현 개선 · 재검증 기록</small><h2 id="fm-improvement-title">실제 수정과 검증을 연결했습니다.</h2></div><button type="button" aria-label="개선 기록 닫기">닫기 ×</button></header><div class="fm-improvement-tabs" role="group" aria-label="개선 사례 선택"></div><div class="fm-improvement-content" aria-live="polite" aria-atomic="true"></div><footer><p>개발·QA에서 확인한 개선 사례 · 사용자 관찰 결과와 이용 성과는 별도 검증</p><a class="fm-proof-link" href="https://github.com/dohyunkimmm/footmate/pull/442" target="_blank" rel="noopener">실제 수정 기록 ↗</a>'+link('tests/e2e/release-app.spec.cjs','현재 재검증 계약')+'</footer>';
+    const tabs=dialog.querySelector('.fm-improvement-tabs');
+    CASES.forEach((item,i)=>{const button=document.createElement('button');button.type='button';button.textContent=item.label;button.dataset.improvementCase=String(i);button.addEventListener('click',()=>render(i));tabs.appendChild(button);});
+    const render=index=>{
+      dialog.dataset.improvementCase=String(index);
+      tabs.querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
+      dialog.querySelector('.fm-improvement-content').innerHTML='<h3>'+CASES[index].title+'</h3><ol>'+CASES[index].steps.map(([stage,title,copy],i)=>`<li><span>${String(i+1).padStart(2,'0')} · ${stage}</span><b>${title}</b><p>${copy}</p></li>`).join('')+'</ol>';
+    };
+    let opener;
+    dialog.querySelector('header>button').addEventListener('click',()=>dialog.close());
+    dialog.addEventListener('keydown',event=>event.stopPropagation());
+    dialog.addEventListener('close',()=>opener?.focus({preventScroll:true}));
+    dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();}});
+    document.body.appendChild(dialog);
+    const addButton=(host,label,index)=>{
+      const button=document.createElement('button');button.type='button';button.className='fm-improvement-open';button.textContent=label;button.setAttribute('aria-haspopup','dialog');
+      button.addEventListener('click',()=>{opener=button;render(index);dialog.showModal();});host.appendChild(button);
+    };
+    addButton(slides[9].querySelectorAll('.fm-evidence-recovery-strip figcaption')[1],'수정 전후 · 재검증 보기',0);
+    addButton(slides[11].querySelectorAll('.fm-p1-evidence-grid>.fm-next-cs-card')[1],'개선 사례 2건 보기',0);
+    const state=slides[8].querySelectorAll('.fm-next-cs-day-states>div')[3];
+    state.querySelector('p').textContent='평가 저장 → 완료 안내 → 다음 경기 탐색';
+    addButton(slides[8].querySelector('.fm-next-cs-note'),'평가 후 탐색 개선 보기',1);
+  }
   function recommendation(slide){
     const figure=slide.querySelector('.is-recommendation');
     figure.dataset.evidenceSource='shared-base-ranker-sample-data';
@@ -2055,6 +2095,8 @@
           footer.append(detail,price);card.append(meta,reasons,footer);host.appendChild(card);
         });
         figure.dataset.recommendationPreset=String(index);
+        const context=figure.querySelector('.fm-mock-context small');context.textContent=index===0?'비교 A · 수원 / 중급 / MF':'비교 B · 용인 / 초중급 / GK';
+        const footer=figure.querySelector('.fm-mock-footer');footer.querySelector('span').textContent='1순위 · '+ranked[0].match.place;footer.querySelector('b').textContent='조건 변경 → 순위·이유 재계산';
       };
       buttons.forEach(button=>button.addEventListener('click',()=>render(Number(button.dataset.recoPreset))));
       render(0);
@@ -2119,43 +2161,43 @@
   function validation(slide){
     const cards=slide.querySelectorAll('.fm-p1-evidence-grid>.fm-next-cs-card');
     const copy=[
-      ['사용자 과업','6명·8회 동선 검증','가입 전 탐색 · Kakao·Google·이메일 과업 · 개별 이슈 기록 미확정','docs/USER-TEST-EVIDENCE.md'],
+      ['사용자 과업','6명·8회 동선 검증','교육 단계의 탐색·가입 과업 확인 · 이후 개인 고도화와 구분','docs/USER-TEST-EVIDENCE.md'],
       ['자동 QA','동작·상태·복구 확인','회귀 테스트 · 브라우저 E2E · 접근성 · 화면 비교 · 참가 실패·재시도','tests/e2e/release-app.spec.cjs'],
       ['사람 검수','운영 환경의 연결 확인','실제 로그인 · 이메일 전달 · 브라우저·OS 알림 표시 · 사용자 효과와 구분','docs/SERVICE-PLANNING-EVIDENCE.md']
     ];
     cards.forEach((card,i)=>{card.querySelector('.fm-p1-evidence-label').textContent=copy[i][0];card.querySelector('h3').textContent=copy[i][1];card.querySelector('p').textContent=copy[i][2];card.insertAdjacentHTML('beforeend',link(copy[i][3],'근거'));});
-    slide.querySelector('.fm-next-cs-note').innerHTML='해석 경계 · 과업 수행·동작 QA와 이용 성과는 구분 · 이용 기준값 미확보';
+    slide.querySelector('.fm-next-cs-note').innerHTML='고도화 기준 · 설계 판단·구현 일치·실패 복구·재검증 · 이용 성과는 별도 측정';
   }
   function nextDecisions(slide){
-    const summary=[['추천 판단','이유 이해 · 후보 비교'],['참가 동선','인증 · 복귀 · 완료'],['복구 행동','재시도 · 대안 선택']];
+    const summary=[['추천 판단','조건 · 순위 · 이유 일치'],['참가 동선','선택 · 복귀 · 완료 연결'],['복구 행동','실패 · 재시도 · 대안 제공']];
     slide.querySelectorAll('.fm-next-review-summary>div').forEach((node,i)=>{node.querySelector('span').textContent=summary[i][0];node.querySelector('b').textContent=summary[i][1];});
     const definitions=[
-      ['real-app','추천 이유','판단에 도움이 되는가',[
-        ['구현 근거','조건에 따라 후보·순위·이유 변경'],['다음 관찰','이유를 보고 후보를 설명·비교하는지'],['제외 기준','QA 성공을 판단 도움으로 해석 금지'],['다음 판단','이유 이해가 낮으면 표현·정보 순서 수정']
+      ['real-app','추천 일관성','조건과 설명이 일치하는가',[
+        ['구현 근거','조건에 따라 후보·순위·이유 변경'],['품질 기준','같은 입력의 순위 재현 · 이유와 조건 일치'],['설계 학습','내부 점수보다 선택에 필요한 이유 제시'],['다음 판단','조건·이유 불일치 시 로직과 표현 함께 수정']
       ]],
-      ['closed-beta','참가 동선','어디서 흐름이 끊기는가',[
-        ['검증 근거','6명·8회 탐색·가입 과업 수행'],['다음 관찰','인증 전후 선택·복귀·참가 완료'],['제외 기준','운영·테스트 계정은 이용 지표에서 제외'],['다음 판단','막힌 단계의 상태 안내·복귀 경로 수정']
+      ['closed-beta','흐름 완결성','완료 후 다음 행동이 있는가',[
+        ['수정 근거','평가 저장 후에도 피드백 안내가 남던 흐름'],['개선 내용','완료 상태 구분 · 다음 경기 탐색 연결'],['품질 기준','저장 → 완료 안내 → Discover 자동 재검증'],['다음 판단','상태별 주 행동과 복귀 경로를 함께 점검']
       ]],
-      ['open-boundary','복구 행동','실패 후 스스로 이어가는가',[
-        ['동작 근거','무료 참가 오류·재시도 자동 QA'],['다음 관찰','안내 이해·재시도·대안 선택'],['다음 판단','상태 오해 시 안내·행동 우선순위 수정']
+      ['open-boundary','복구 행동','오류 후 다시 행동할 수 있는가',[
+        ['개선 내용','멈춘 버튼 → 오류 안내·재시도·다른 경기 선택'],['품질 기준','정보 유실 → 복원 → 참가 성공 자동 재검증'],['다음 판단','실패마다 보존 정보·다음 행동·검증 정의']
       ]]
     ];
     definitions.forEach(([zone,label,title,items])=>{
       const card=slide.querySelector(`[data-zone="${zone}"]`);card.querySelector('header small').textContent=label;card.querySelector('header b').textContent=title;
       card.querySelector('ul').innerHTML=items.map(([name,copy])=>`<li data-status="not-measured"><span>${name}</span><b>${copy}</b></li>`).join('');
     });
-    slide.querySelector('.fm-p1-release-map').setAttribute('aria-label','다음 검증의 관찰 기준과 수정 조건');
+    slide.querySelector('.fm-p1-release-map').setAttribute('aria-label','개인 고도화의 설계 학습과 다음 품질 기준');
     slide.querySelector('.fm-p1-release-next>span').textContent='핵심 학습 · 다음 결정';
-    slide.querySelector('.fm-p1-release-next dl').innerHTML=rows([['배운 점','연결 성공보다 선택·복귀·복구의 일관성'],['다음 기준','이용 기준값 확보 후 한 번에 하나의 가설 변경']]).replace(/^<dl[^>]*>|<\/dl>$/g,'');
+    slide.querySelector('.fm-p1-release-next dl').innerHTML=rows([['배운 점','성공 화면뿐 아니라 실패·완료 이후의 행동까지 설계'],['다음 기준','개인 고도화 · 설계 판단 → 구현 → 재검증 근거로 축적']]).replace(/^<dl[^>]*>|<\/dl>$/g,'');
   }
   window.installFootMateDecisionEvidence=function(slides){
     // Three representative decisions share one evidence chain: alternative → choice → limit.
     slides[4].querySelector('.fm-next-cs-decision').innerHTML='<span>핵심 결정 01 · 인증 시점</span>'+rows([
       ['대안','가입 먼저 · 가치 확인 전 계정 생성'],['선택','추천·상세 공개 · 참가 요청 직전 인증'],['제약','첫 추천은 지역·포지션·레벨 설정 필요 · 기기 간 연속성 제한']
     ])+link('docs/SERVICE-PLANNING-EVIDENCE.md','인증 시점 근거');
-    recommendation(slides[5]);recovery(slides[9]);architecture(slides[10]);validation(slides[11]);nextDecisions(slides[12]);
+    recommendation(slides[5]);recovery(slides[9]);architecture(slides[10]);validation(slides[11]);nextDecisions(slides[12]);improvementEvidence(slides);
     const proof=slides[0].querySelector('.fm-next-cover-proof>div:last-child');proof.querySelector('b').textContent='대표 결정 · 3가지';proof.querySelector('span').innerHTML='가치 확인 후 인증 · 이유로 추천 판단<br>선택을 보존한 실패 복구';
-    slides[2].querySelector('.fm-p1-jtbd-caveat').innerHTML='iOS 4명 · Android 2명 · 일부 복수 과업 · Persona 대표성은 미검증 '+link('docs/USER-TEST-EVIDENCE.md','과업 기록');
+    slides[2].querySelector('.fm-p1-jtbd-caveat').innerHTML='교육 단계 · iOS 4명 · Android 2명 · 일부 복수 과업 · 이후 개인 고도화와 구분 '+link('docs/USER-TEST-EVIDENCE.md','과업 기록');
     document.documentElement.dataset.fmDecisionEvidence='true';
   };
 })();
@@ -2313,13 +2355,13 @@
   },
   {
     "nav": "Learning & Next Decisions",
-    "navDesc": "Observe & Decide",
-    "title": "다음 검증에서 무엇을 바꿀지 정했습니다.",
-    "desc": "추천 이유·참가 동선·복구 행동을 관찰할 기준과 다음 수정 조건을 정의했습니다.",
+    "navDesc": "Refine & Verify",
+    "title": "개인 고도화에서 얻은 학습과 다음 기준을 정리했습니다.",
+    "desc": "실제 수정·재검증의 근거를 다음 설계와 품질 기준으로 연결했습니다.",
     "keywords": [
-      "판단 도움",
-      "흐름의 막힘",
-      "다음 결정"
+      "설계 일관성",
+      "흐름 완결성",
+      "재검증 근거"
     ],
     "layout": "release"
   }
@@ -2569,7 +2611,7 @@
     window.installFootMateDecisionEvidence(slides);
     installEditorialInteractions(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.2';
+    html.dataset.footmateCaseStudyRelease='5.4.3';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;
