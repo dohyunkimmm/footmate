@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
-      "*": false,
+      "**": false,
       "main": true
     }
   },
@@ -10,15 +10,38 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "functions": {
-    "api/ai-match-assistant.js": {"maxDuration": 10}
+    "api/ai-match-assistant.js": {
+      "maxDuration": 10
+    }
   },
   "rewrites": [
-    {"source":"/app","destination":"/app.html"},
-    {"source":"/beta/operator","destination":"/beta-operator.html"},
-    {"source":"/beta","destination":"/beta.html"},
-    {"source":"/demo","destination":"/app.html"},
-    {"source":"/demo.html","destination":"/app.html"},
-    {"source":"/next","destination":"/app.html"},
-    {"source":"/next.html","destination":"/app.html"}
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/beta/operator",
+      "destination": "/beta-operator.html"
+    },
+    {
+      "source": "/beta",
+      "destination": "/beta.html"
+    },
+    {
+      "source": "/demo",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/demo.html",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/next",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/next.html",
+      "destination": "/app.html"
+    }
   ]
 }
