@@ -232,7 +232,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     // P11 · system-like architecture tokens become reader-facing Korean micro labels.
     await showSection(page,10);
     const architectureLabels=await page.locator('.slide.on .fm-p0-arch-node small').allTextContents();
-    expect(architectureLabels).toEqual(['입력','AI 해석','구조화 조건','추천 엔진','추천 결과','사용자 확인']);
+    expect(architectureLabels).toEqual(['요청','해석','전달','판단','제시','확정']);
     if(name==='mobile'){
       const density=await page.locator('.slide.on').evaluate(slide=>({
         paddingTop:parseFloat(getComputedStyle(slide).paddingTop),

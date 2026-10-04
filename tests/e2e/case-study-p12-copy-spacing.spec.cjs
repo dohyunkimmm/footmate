@@ -34,7 +34,7 @@ for(const [name,viewport] of [
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[1]?.click());
     await page.waitForTimeout(120);
     const problem=page.locator('.slide.on');
-    await expect(problem).toContainText('설계 가설 · 사용자 조사·경쟁사 우위 미입증 · Beta 확인');
+    await expect(problem).toContainText('탐색·가입 과업 검증 · 문제 가설·경쟁사 우위는 미입증');
     await expect(problem).not.toContainText('Beta에서 확인합니다.');
     await problem.screenshot({
       path:`test-results/case-study-copy-cleanup-p2-${viewport.width}.png`,
@@ -44,8 +44,8 @@ for(const [name,viewport] of [
     await page.evaluate(()=>document.querySelectorAll('.toc-item')[7]?.click());
     await page.waitForTimeout(120);
     const auth=page.locator('.slide.on');
-    await expect(auth).toContainText('Supabase 계정·참가 흐름 실연동');
-    await expect(auth).toContainText('Google/Kakao OAuth Production 확인 · 실제 PG 후속 범위');
+    await expect(auth).toContainText('Supabase 계정·경기·참가 흐름 실제 연동');
+    await expect(auth).toContainText('운영 환경 로그인 확인 · 복귀 경로 보존 설계 · 실제 결제 미연동');
     await expect(auth).not.toContainText('실제로 연동했습니다.');
     await expect(auth).not.toContainText('후속 범위입니다.');
     await auth.screenshot({
@@ -71,7 +71,7 @@ for(const [name,viewport] of [
 
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="validation-evidence"]');
     const lead=slide.locator('.fm-next-story-lead');
-    await expect(lead).toHaveText('KPI는 측정 기준이며, QA·검수는 동작 확인 근거로 구분했습니다.');
+    await expect(lead).toHaveText('성과 지표는 측정 전이며, 제품 동작은 QA·검수로 확인했습니다.');
     await expect(lead).not.toContainText('Measured Result');
 
     const banner=slide.locator('.fm-p1-validation-banner');

@@ -283,7 +283,7 @@ for(const [name,viewport] of [
     const figures=strip.locator('.fm-evidence-figure');
     await expect(strip).toHaveAttribute('aria-label','제품 복구 상태 대표 화면');
     await expect(map).toContainText('참가 상태 문제');
-    await expect(map).toContainText('상태 확인 또는 다시 참가');
+    await expect(map).toContainText('참가 결과 확인 후 재시도 또는 경기 다시 선택');
     await expect(map).not.toContainText('결제 실패');
     await expect(figures).toHaveCount(2);
     await expect(figures.nth(0).locator('figcaption')).toContainText('탐색 결과 없음');
