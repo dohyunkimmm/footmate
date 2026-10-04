@@ -3,7 +3,7 @@
   "private": true,
   "version": "6.0.0",
   "dependencies": {
-    "@vercel/oidc": "3.8.8"
+    "@vercel/oidc": "3.8.9"
   },
   "scripts": {
     "qa:release": "node scripts/check-release-version.cjs",
