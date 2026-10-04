@@ -1,10 +1,10 @@
-/* AUTO-GENERATED �� FootMate Case Study visual CSS bundle
+/* AUTO-GENERATED · FootMate Case Study visual CSS bundle
    Run: node scripts/build-case-study-bundle.cjs
    Sources: src/case-study/p0-visuals.css, src/case-study/p1-visuals.css, src/case-study/p12-balance.css, src/case-study/p3-balance.css, src/case-study/p10-balance.css, src/case-study/p2-polish.css, src/case-study/p7-p9-balance.css, src/case-study/p6-clean-evidence.css, src/case-study/card-rhythm.css, src/case-study/p1-real-preview.css, src/case-study/evidence-framing.css, src/case-study/p12-copy-spacing.css, src/case-study/final-balance.css, src/case-study/product-evidence.css, src/case-study/advanced-polish.css, src/case-study/detail-finish.css, src/case-study/page-composition.css, src/case-study/brand-redesign.css
    Do not edit this generated file directly. */
 
 /* ===== src/case-study/p0-visuals.css ===== */
-/* FootMate Case Study �� P0 visual layouts
+/* FootMate Case Study · P0 visual layouts
    Five approved sections only: Journey, Guest First, Recommendation, Recovery, Domain & AI. */
 html[data-fm-next-case-study="true"]{
   --fm-p0-ink:#15231b;
@@ -31,7 +31,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p0-visual] :is(.f
   margin-top:18px!important;
 }
 
-/* 04 Scope & Priority �� product journey */
+/* 04 Scope & Priority · product journey */
 html[data-fm-next-case-study="true"] .fm-p0-journey{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr)!important;
@@ -124,7 +124,7 @@ html[data-fm-next-case-study="true"] .fm-p0-priority-card[data-priority="exclude
   color:#7f6b63;
 }
 
-/* 05 Guest First �� screen-flow comparison */
+/* 05 Guest First · screen-flow comparison */
 html[data-fm-next-case-study="true"] .fm-p0-guest-flow{
   display:grid!important;
   grid-template-columns:1fr 1fr!important;
@@ -213,7 +213,7 @@ html[data-fm-next-case-study="true"] .fm-p0-route.is-selected .fm-p0-route-step:
   box-shadow:0 5px 18px rgba(35,83,53,.06);
 }
 
-/* 06 Recommendation �� UI-first annotated surface */
+/* 06 Recommendation · UI-first annotated surface */
 html[data-fm-next-case-study="true"] .fm-p0-recommendation{
   display:grid!important;
   grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr)!important;
@@ -403,7 +403,7 @@ html[data-fm-next-case-study="true"] .fm-p0-annotations p{
   line-height:1.5;
 }
 
-/* 10 Recovery �� state-preserving recovery map */
+/* 10 Recovery · state-preserving recovery map */
 html[data-fm-next-case-study="true"] .fm-p0-recovery-map{
   display:grid!important;
   grid-template-columns:1fr!important;
@@ -467,7 +467,7 @@ html[data-fm-next-case-study="true"] .fm-p0-recovery-row[data-tone="payment"] .f
   background:#fdfaf8;
 }
 
-/* 11 Domain & AI �� architecture and guardrails */
+/* 11 Domain & AI · architecture and guardrails */
 html[data-fm-next-case-study="true"] .fm-p0-architecture{
   display:grid!important;
   grid-template-columns:1fr!important;
@@ -678,7 +678,7 @@ html[data-fm-next-case-study="true"] .fm-p0-arch-guardrails b{
 }
 
 
-/* 02 Problem & Goal �� causes �� core problem �� target flow */
+/* 02 Problem & Goal · causes → core problem → target flow */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p0-visual="problem"] .fm-next-story{
   gap:15px;
 }
@@ -801,7 +801,7 @@ html[data-fm-next-case-study="true"] .fm-p0-problem-decision{
 }
 
 /* ===== src/case-study/p1-visuals.css ===== */
-/* FootMate Case Study �� P1 visual layouts
+/* FootMate Case Study · P1 visual layouts
    Persona/JTBD, Sign in/Join, KPI/Validation, Release/Learnings only. */
 html[data-fm-next-case-study="true"]{
   --fm-p1-ink:var(--fm-p0-ink,#15231b);
@@ -825,7 +825,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual] :is(.f
   margin-top:16px!important;
 }
 
-/* 03 Persona �� JTBD */
+/* 03 Persona · JTBD */
 html[data-fm-next-case-study="true"] .fm-p1-persona-scene{
   display:grid!important;
   grid-template-columns:minmax(280px,.95fr) minmax(0,1.55fr)!important;
@@ -966,7 +966,7 @@ html[data-fm-next-case-study="true"] .fm-p1-jtbd-journey li{
   background:var(--fm-p1-soft);
 }
 html[data-fm-next-case-study="true"] .fm-p1-jtbd-journey li:not(:last-child):after{
-  content:"��";
+  content:"→";
   position:absolute;
   right:-8px;
   top:50%;
@@ -1025,7 +1025,7 @@ html[data-fm-next-case-study="true"] .fm-p1-jtbd-caveat{
   line-height:1.5!important;
 }
 
-/* 08 Sign in �� Join */
+/* 08 Sign in · Join */
 html[data-fm-next-case-study="true"] .fm-p1-auth-flow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr)!important;
@@ -1459,8 +1459,8 @@ html[data-fm-next-case-study="true"] .fm-p1-release-next{
   html[data-fm-next-case-study="true"] .fm-p1-release-map li{padding:7px 8px}
 }
 
-/* P3 Persona �� stacked lens cards keep one invariant vertical rhythm.
-   This section owns its spacing; shared card-rhythm must not create a different 1��2 / 2��3 gap. */
+/* P3 Persona · stacked lens cards keep one invariant vertical rhythm.
+   This section owns its spacing; shared card-rhythm must not create a different 1→2 / 2→3 gap. */
 @media(max-width:1120px){
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-lenses{
     row-gap:10px!important;
@@ -1547,7 +1547,7 @@ html[data-fm-next-case-study="true"] .fm-p1-release-next{
     grid-template-columns:1fr;
   }
   html[data-fm-next-case-study="true"] .fm-p1-jtbd-journey li:not(:last-child):after{
-    content:"��";
+    content:"↓";
     left:50%;
     right:auto;
     top:auto;
@@ -1613,7 +1613,7 @@ html[data-fm-next-case-study="true"] .fm-p1-release-next{
 }
 
 
-/* 12 KPI & Validation �� measurement definitions separated from QA evidence */
+/* 12 KPI & Validation · measurement definitions separated from QA evidence */
 html[data-fm-next-case-study="true"] .fm-p1-validation-split{
   display:grid;
   grid-template-columns:1fr;
@@ -1657,7 +1657,7 @@ html[data-fm-next-case-study="true"] .fm-p1-validation-split .fm-p1-evidence-gri
 }
 
 /* ===== src/case-study/p12-balance.css ===== */
-/* FootMate Case Study �� P12 KPI & Validation balance pass
+/* FootMate Case Study · P12 KPI & Validation balance pass
    Rough composition correction only: rebalance left validation card vs right funnel. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-metrics{
   grid-template-columns:minmax(260px,.9fr) minmax(0,1.6fr)!important;
@@ -1704,7 +1704,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 }
 
 /* ===== src/case-study/p3-balance.css ===== */
-/* FootMate Case Study �� P3 Persona balance pass
+/* FootMate Case Study · P3 Persona balance pass
    Rough composition correction: remove the oversized gap inside the Design Persona card. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="persona-jtbd"] .fm-p1-persona-scene{
   align-items:start!important;
@@ -1745,7 +1745,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="person
 }
 
 /* ===== src/case-study/p10-balance.css ===== */
-/* FootMate Case Study �� P10 Recovery balance pass
+/* FootMate Case Study · P10 Recovery balance pass
    Recruiter scan pass: keep the recovery map complete, remove the redundant summary row,
    and use two representative UI proofs with clearer separation. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-next-review-summary{
@@ -1792,7 +1792,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
 }
 
 /* ===== src/case-study/p2-polish.css ===== */
-/* FootMate Case Study �� P2 finishing polish
+/* FootMate Case Study · P2 finishing polish
    Restrained motion, visual cadence, focus states, and mobile simplification only. */
 html[data-fm-next-case-study="true"]{
   --fm-p2-ease:cubic-bezier(.22,.61,.36,1);
@@ -2071,7 +2071,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="releas
 }
 
 /* ===== src/case-study/p7-p9-balance.css ===== */
-/* FootMate Case Study �� P7/P9 evidence balance
+/* FootMate Case Study · P7/P9 evidence balance
    Desktop composition only. Keep copy, evidence, IA, and mobile stacking unchanged. */
 
 @media(min-width:901px){
@@ -2111,7 +2111,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-p1-visual="releas
 }
 
 /* ===== src/case-study/p6-clean-evidence.css ===== */
-/* FootMate Case Study �� P6 clean recommendation evidence
+/* FootMate Case Study · P6 clean recommendation evidence
    Crop the mask-free fixed-time Home validation capture to the centered 430px app shell.
    Presentation-only: preserve the existing evidence footprint and change no product behavior. */
 
@@ -2146,7 +2146,7 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{
 }
 
 /* ===== src/case-study/card-rhythm.css ===== */
-/* FootMate Case Study �� card row rhythm
+/* FootMate Case Study · card row rhythm
    Normalize vertical spacing only when card/grid compositions wrap into multiple rows.
    Horizontal gaps remain owned by each section so density and information grouping stay intact. */
 
@@ -2199,7 +2199,7 @@ html[data-fm-next-case-study="true"] :is(
 }
 
 /* ===== src/case-study/p1-real-preview.css ===== */
-/* FootMate Case Study �� P1 Real App home preview */
+/* FootMate Case Study · P1 Real App home preview */
 html[data-fm-next-case-study="true"] .fm-cs-static-preview.fm-cs-real-home-preview{
   height:auto!important;
   min-height:0!important;
@@ -2256,17 +2256,17 @@ html[data-fm-next-case-study="true"] .fm-next-cover-note strong{color:#137333}
 }
 
 /* ===== src/case-study/evidence-framing.css ===== */
-/* FootMate Case Study �� evidence framing cleanup
+/* FootMate Case Study · evidence framing cleanup
    P7/P9: stop the product proof at the logical sticky CTA / bottom-nav endpoint.
    P10: show complete recovery-state copy and action without making the section taller. */
 
-/* P7 Decision Detail �� hide the tiny next-content bleed below the sticky join CTA. */
+/* P7 Decision Detail · hide the tiny next-content bleed below the sticky join CTA. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="detail"] .fm-evidence-figure.is-detail img{
   clip-path:inset(0 0 14px 0 round 18px);
   margin-bottom:-14px;
 }
 
-/* P9 Operations �� stop the capture at the bottom navigation instead of showing the next row. */
+/* P9 Operations · stop the capture at the bottom navigation instead of showing the next row. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="operations"] .fm-evidence-figure.is-operations img{
   clip-path:inset(0 0 14px 0 round 18px);
   margin-bottom:-14px;
@@ -2335,8 +2335,8 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade=
 }
 
 /* ===== src/case-study/p12-copy-spacing.css ===== */
-/* FootMate Case Study �� P12 validation evidence card rhythm
-   Normalize label �� title �� body spacing without changing the outer P12 composition. */
+/* FootMate Case Study · P12 validation evidence card rhythm
+   Normalize label → title → body spacing without changing the outer P12 composition. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="validation-evidence"] .fm-p1-evidence-grid>.fm-next-cs-card{
   position:relative;
   padding:14px 16px!important;
@@ -2371,10 +2371,10 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 }
 
 /* ===== src/case-study/final-balance.css ===== */
-/* FootMate Case Study �� final balance pass
+/* FootMate Case Study · final balance pass
    Scope: final alignment, shared row rhythm, natural card height, whitespace density, and portfolio finish. */
 
-/* P8 Sign in �� Join
+/* P8 Sign in · Join
    The legacy high-specificity scope padding re-inset the lower boundary cards.
    Keep their visual edges aligned with the four-step auth flow above. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-next-story-aside .fm-next-cs-scope.fm-p1-auth-boundary{
@@ -2503,7 +2503,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 }
 
 @media(min-width:901px){
-  /* The compact "common recovery principle" card repeats the same problem �� preserve �� next-action
+  /* The compact "common recovery principle" card repeats the same problem → preserve → next-action
      structure already visible above. Remove only this redundant desktop recap so the two product proofs
      and their captions remain clear of the persistent navigation controls. Mobile keeps the recap. */
   html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-next-cs-decision{
@@ -2608,7 +2608,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 }
 
 
-/* 01 Overview �� stronger product proof, quieter role strip */
+/* 01 Overview · stronger product proof, quieter role strip */
 @media(min-width:1181px) and (min-height:760px){
   html[data-fm-next-case-study="true"] .fm-next-cover-slide .fm-next-cover-visual{
     transform:scale(1.045);
@@ -2633,7 +2633,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 }
 
 /* ===== src/case-study/product-evidence.css ===== */
-/* FootMate Case Study �� product evidence visual upgrade
+/* FootMate Case Study · product evidence visual upgrade
    Verified product visual baselines + editorial composition only.
    No new product facts, routes, IA, or runtime behavior. */
 html[data-fm-next-case-study="true"]{
@@ -2656,13 +2656,13 @@ html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption{display:flex
 html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption b{color:#263b30;font-size:10px;font-weight:850}
 html[data-fm-next-case-study="true"] .fm-evidence-figure figcaption span{text-align:right}
 
-/* Recommendation �� actual product render as the visual anchor. */
+/* Recommendation · actual product render as the visual anchor. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-recommendation{grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr)!important;gap:22px!important;align-items:center!important}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recommendation"] .fm-p0-reco-stage{padding:0!important;border:0!important;background:transparent!important}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation .fm-evidence-media{min-height:320px;padding:20px}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-recommendation img{height:min(43vh,380px);width:auto}
 
-/* Decision Detail �� editorial sequence + actual product detail. */
+/* Decision Detail · editorial sequence + actual product detail. */
 html[data-fm-next-case-study="true"] .fm-evidence-detail-layout{display:grid;grid-template-columns:minmax(250px,.75fr) minmax(0,1.25fr);gap:24px;align-items:center;margin-top:8px}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="detail-decision"][data-evidence-upgrade="detail"] .fm-evidence-detail-layout .fm-next-cs-detail-order{
   counter-reset:fm-detail-step;display:grid!important;grid-template-columns:1fr!important;gap:0!important;width:100%;margin:0!important;padding:0!important;
@@ -2681,7 +2681,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail .fm-evidence-media{padding:18px}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-detail img{height:min(47vh,430px);width:auto}
 
-/* Operations �� flattened lifecycle + matchday product surface. */
+/* Operations · flattened lifecycle + matchday product surface. */
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout{display:grid;grid-template-columns:minmax(250px,.9fr) minmax(0,1.1fr);gap:24px;align-items:center;margin-top:8px}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states{display:grid!important;grid-template-columns:1fr!important;gap:0!important}
 html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-day-states>div{
@@ -2695,7 +2695,7 @@ html[data-fm-next-case-study="true"] .fm-evidence-operations-layout .fm-next-cs-
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations .fm-evidence-media{padding:18px}
 html[data-fm-next-case-study="true"] .fm-evidence-figure.is-operations img{height:min(47vh,430px);width:auto}
 
-/* Recovery �� semantic map first, actual empty/failure states second. */
+/* Recovery · semantic map first, actual empty/failure states second. */
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media{padding:9px;border-radius:20px}
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-media img{width:100%;height:178px;object-fit:cover;object-position:top;border-radius:15px;box-shadow:0 16px 36px rgba(21,54,35,.08)}
@@ -2703,7 +2703,7 @@ html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip .fm-evidence-ba
 html[data-fm-next-case-study="true"] .fm-evidence-recovery-strip figcaption{margin-top:5px}
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade="recovery"] .fm-p0-recovery-map{box-shadow:none!important}
 
-/* Brand bridge �� product lime only on evidence / decisive state. */
+/* Brand bridge · product lime only on evidence / decisive state. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade] .fm-p0-match-footer strong{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:var(--fm-evidence-lime);color:var(--fm-evidence-lime-ink)}
 
 @media(min-width:901px) and (max-width:1180px){
@@ -2731,7 +2731,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-evidence-upgrade]
 }
 
 /* ===== src/case-study/advanced-polish.css ===== */
-/* FootMate Case Study �� advanced portfolio polish
+/* FootMate Case Study · advanced portfolio polish
    Scope: evidence scale rules, late-mobile density, navigation affordance,
    and final CTA emphasis. Cover and the base vertical section rhythm stay unchanged. */
 
@@ -2915,7 +2915,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 }
 
 /* ===== src/case-study/detail-finish.css ===== */
-/* FootMate Case Study �� detail finish
+/* FootMate Case Study · detail finish
    Scope: visual-only refinement for radius tokens, surface hierarchy, typography,
    status chips, internal alignment, navigation restraint, P13 ending, and mobile x-axis rhythm.
    No copy, IA, product behavior, KPI definition, or Cover composition changes. */
@@ -2935,7 +2935,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"]{
   --fm-detail-ink:#213129;
 }
 
-/* 1 �� Radius system: 12px inset / 16px card / pill status. */
+/* 1 · Radius system: 12px inset / 16px card / pill status. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary>div{
   border-radius:var(--fm-detail-radius-inner)!important;
 }
@@ -2972,7 +2972,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   border-radius:var(--fm-detail-radius-pill)!important;
 }
 
-/* 2 �� Surface hierarchy: neutral / secondary / focal without adding decorative shadow. */
+/* 2 · Surface hierarchy: neutral / secondary / focal without adding decorative shadow. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary>div{
   background:#f6f8f7!important;
   border-color:transparent!important;
@@ -3038,7 +3038,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   background:#fafafa!important;
 }
 
-/* 3 �� Optical typography: Korean micro labels use restrained tracking and one baseline. */
+/* 3 · Optical typography: Korean micro labels use restrained tracking and one baseline. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:not(.fm-next-cover-slide) .fm-next-story-kicker{
   line-height:1.3!important;
   letter-spacing:.055em!important;
@@ -3071,7 +3071,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   color:var(--fm-detail-muted)!important;
 }
 
-/* 4 �� Status chips: same height, padding and text baseline. */
+/* 4 · Status chips: same height, padding and text baseline. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-p1-release-map li>span{
   display:inline-flex!important;
   align-items:center!important;
@@ -3094,7 +3094,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   line-height:1!important;
 }
 
-/* 5 �� Internal alignment: consistent small��title��support rhythm in dense evidence cards. */
+/* 5 · Internal alignment: consistent small→title→support rhythm in dense evidence cards. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="domain-ai-boundary"] .fm-p0-arch-node{
   min-height:108px;
   padding:13px 12px!important;
@@ -3149,7 +3149,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   align-items:center!important;
 }
 
-/* 6 �� Navigation: quieter chrome, clearer active position. */
+/* 6 · Navigation: quieter chrome, clearer active position. */
 @media(min-width:901px){
   html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .cs-button{
     min-width:46px!important;
@@ -3187,7 +3187,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   }
 }
 
-/* 7 �� P13 ending: exact vertical centering and the same primary-button grammar. */
+/* 7 · P13 ending: exact vertical centering and the same primary-button grammar. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-next{
   min-height:70px;
   padding:13px 14px!important;
@@ -3211,7 +3211,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   line-height:1.2!important;
 }
 
-/* 8 �� Mobile x-axis: preserve density and make all late-section surfaces share one edge. */
+/* 8 · Mobile x-axis: preserve density and make all late-section surfaces share one edge. */
 @media(max-width:900px){
   html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide:is(
     [data-v5-content-role="domain-ai-boundary"],
@@ -3501,7 +3501,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   padding:16px 18px!important;
 }
 
-/* Reviewer summaries are secondary cards, but no longer use cramped 7��8px insets. */
+/* Reviewer summaries are secondary cards, but no longer use cramped 7×8px insets. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-review-summary{
   gap:10px!important;
   margin:10px 0 12px!important;
@@ -3510,7 +3510,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
   padding:12px 14px!important;
 }
 
-/* P8 �� align all four card lines:
+/* P8 · align all four card lines:
    summary / auth flow / preserved state / implementation boundary. */
 html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-slide[data-v5-content-role="auth-participation"] .fm-p1-auth-flow{
   gap:10px!important;
@@ -3573,7 +3573,7 @@ html[data-fm-next-case-study="true"][data-fm-case-study-advanced-polish="true"] 
 }
 
 /* ===== src/case-study/page-composition.css ===== */
-/* FootMate 5.2 �� shared spacing and page-specific composition.
+/* FootMate 5.2 · shared spacing and page-specific composition.
    Compact means fewer competing surfaces, never smaller essential text. */
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"]{
   --fm-page-inline:clamp(28px,4vw,56px);
@@ -3587,7 +3587,7 @@ html[data-fm-page-composition="true"] .fm-page-keywords{
   margin:0 0 14px;color:#607168;font-size:11px;line-height:1.5;font-weight:650;
 }
 html[data-fm-page-composition="true"] .fm-page-keywords span+span:before{
-  content:"��";margin-right:14px;color:#8c9b92;
+  content:"·";margin-right:14px;color:#8c9b92;
 }
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"] :is(.fm-next-story-kicker,.fm-next-cover-kicker){margin-bottom:8px!important}
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"] .fm-next-story h2{
@@ -3615,7 +3615,7 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"] .fm-next-r
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"] .fm-next-review-summary>div:first-child{padding-left:0!important}
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"] .fm-next-review-summary :is(span,b){font-size:12px!important;line-height:1.6!important}
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"] .fm-next-review-summary span{color:#607168!important}
-/* Card title �� description uses one rhythm on all pages. */
+/* Card title → description uses one rhythm on all pages. */
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"] .fm-next-story-slide :is(.fm-next-cs-card,.fm-next-cs-quote,.fm-next-cs-decision,.fm-next-cs-note){
   padding:var(--fm-page-card-inset)!important;border-radius:16px!important;
 }
