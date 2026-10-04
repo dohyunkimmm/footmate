@@ -46,11 +46,11 @@
     jtbd.classList.add('fm-p1-jtbd-journey');
     jtbd.setAttribute('aria-label','Persona 가설에서 Beta 관찰까지의 JTBD 흐름');
     jtbd.innerHTML=`
-      <div class="fm-p1-jtbd-head"><small>JTBD · 다음 관찰 질문</small><b>가설 → 화면 요구사항 → 관찰 항목 연결</b></div>
+      <div class="fm-p1-jtbd-head"><small>JTBD · 다음 관찰 질문</small><b>상황별로 필요한 화면과 확인할 항목 도출</b></div>
       <ol>
-        <li><span>01</span><div><small>SITUATION</small><b>갈 수 있는 경기 찾기</b><p>평일 저녁 · 30분 안쪽 이동</p></div></li>
-        <li><span>02</span><div><small>DECISION</small><b>맞는지 빠르게 판단</b><p>레벨 · 거리 · 포지션 · 남은 자리</p></div></li>
-        <li class="is-focus"><span>03</span><div><small>JOB</small><b>나와 잘 맞는 이유를 빠르게 이해</b><p>추천 이유 · 참가 조건 함께 확인</p></div></li>
+        <li><span>01</span><div><small>SITUATION</small><b>일정에 맞는 후보 찾기</b><p>평일 저녁 · 30분 안쪽 이동</p></div></li>
+        <li><span>02</span><div><small>DECISION</small><b>적합성 비교</b><p>각 정보가 선택에 미치는 영향 구분</p></div></li>
+        <li class="is-focus"><span>03</span><div><small>JOB</small><b>망설임 없이 결정할 근거</b><p>추천 이유 · 참가 조건 함께 확인</p></div></li>
         <li><span>04</span><div><small>OBSERVE IN BETA</small><b>어디서 망설이는지 관찰</b><p>먼저 보는 조건 · 부족하다고 느끼는 정보</p></div></li>
       </ol>
       <p class="fm-p1-jtbd-caveat">인터뷰 검증 전 가설 · Beta 관찰 후 Persona · 판단 기준 수정 전제</p>`;
@@ -84,11 +84,11 @@
     flow.classList.add('fm-p1-auth-flow');
     flow.setAttribute('aria-label','추천 확인부터 로그인과 참가 상태까지 선택 맥락을 보존하는 흐름');
     flow.innerHTML=`
-      ${authFrame('01','둘러보기','추천 · 상세 확인','로그인 전 경기 가치 · 참가 조건 확인')}
+      ${authFrame('01','둘러보기','추천 · 상세 확인','일정과 정원, 취소 기준을 먼저 검토')}
       <i aria-hidden="true">→</i>
       ${authFrame('02','참가 의도','참가하기','선택 경기 · 참가 의도 다음 단계로 전달')}
       <i aria-hidden="true">→</i>
-      ${authFrame('03','인증','로그인','인증 후에도 선택 경기 맥락 유지',true)}
+      ${authFrame('03','인증','로그인','계정 연결 후 원래 상세로 복귀',true)}
       <i aria-hidden="true">→</i>
       <article class="fm-p1-auth-frame fm-p1-auth-result">
         <span class="fm-p1-auth-no">04</span>

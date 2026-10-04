@@ -190,7 +190,7 @@ test('representative decisions expose source evidence and a distinct next-decisi
     expect(await slide.evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
     await page.screenshot({path:`test-results/decision-evidence-p${index+1}.png`,animations:'disabled'});
   }
-  await expect(page.locator('.slide.on')).toContainText('다음 판단');
+  await expect(page.locator('.slide.on')).toContainText('보완 조건');
   await expect(page.locator('.slide.on')).not.toContainText('아직 연결하거나 검증하지 않은 범위');
 });
 
@@ -241,4 +241,29 @@ test('desktop stories balance spare vertical space without growing the page',asy
     expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
     await page.screenshot({path:`test-results/vertical-balance-p${index+1}.png`,animations:'disabled'});
   }
+});
+
+test('final rendered copy keeps descriptions distinct and removes duplicate detail rationale',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmEditorialFinish==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(let index=0;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    const slide=page.locator('.slide.on');
+    const copy=await slide.evaluate(node=>{
+      const title=node.querySelector('.fm-next-story h2,.fm-next-cover h1').innerText.trim();
+      const description=node.querySelector('.fm-next-story-lead,.fm-next-cover-lead').innerText.trim();
+      // innerText excludes collapsed supplements and hidden labels; inspect the published text.
+      return {title,description,text:node.innerText};
+    });
+    expect(copy.title).not.toBe(copy.description);
+    expect(copy.description).toMatch(/습니다\.$/);
+    console.log('COPY_QA '+JSON.stringify({page:index+1,...copy}));
+  }
+  await page.locator('.toc-item').nth(6).click();
+  const comparison=await page.locator('.slide.on').innerText();
+  expect(comparison.split('최대 2경기의 거리·레벨·포지션 자리·참가비 비교').length-1).toBe(1);
+  await page.locator('.toc-item').nth(12).click();
+  const labels=await page.locator('.slide.on .fm-p1-release-map li>span').allTextContents();
+  expect(new Set(labels).size).toBe(labels.length);
 });

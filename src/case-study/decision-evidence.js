@@ -42,7 +42,7 @@
     addButton(slides[9].querySelectorAll('.fm-evidence-recovery-strip figcaption')[1],'수정 전후 · 재검증 보기',0);
     addButton(slides[11].querySelectorAll('.fm-p1-evidence-grid>.fm-next-cs-card')[1],'개선 사례 2건 보기',0);
     const state=slides[8].querySelectorAll('.fm-next-cs-day-states>div')[3];
-    state.querySelector('p').textContent='평가 저장 → 완료 안내 → 다음 경기 탐색';
+    state.querySelector('p').textContent='저장 여부에 따라 완료 안내와 탐색 버튼 표시';
     addButton(slides[8].querySelector('.fm-next-cs-note'),'평가 후 탐색 개선 보기',1);
   }
   function recommendation(slide){
@@ -94,14 +94,14 @@
     }).catch(()=>{host.textContent='추천 예시를 불러오지 못했어요. 새로고침해 다시 확인해 주세요.';figure.dataset.interactiveReady='error';});
     const note=slide.querySelector('.fm-next-cs-note');
     slide.querySelector('.fm-p0-annotations').innerHTML=[
-      ['현재 조건','지역·레벨·포지션 변경 → 후보·순위·이유 재계산'],
-      ['기억한 선호','저장 프로필·선호 조건·최근 이력은 추가 입력 · 현재 브라우저 기록'],
-      ['사용자 제어','해석 결과 확인 · 조건 수정·해제 · 다시 탐색']
+      ['현재 조건','오늘의 의도를 지역·레벨·포지션으로 전달'],
+      ['기억한 선호','프로필·선호·최근 이력은 현재 브라우저에 기록'],
+      ['사용자 제어','AI 해석이 맞지 않으면 수정하거나 해제']
     ].map(([title,copy],i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><div><b>${title}</b><p>${copy}</p></div></li>`).join('');
     note.innerHTML=rows([
-      ['대안','내부 점수만 제시 · 추천 이유 없이 목록 제공'],
-      ['선택','순위는 로직이 결정 · 조건 일치 이유는 화면에 제시'],
-      ['제약','샘플 경기 · 기본 추천 예시 · 개인화 기억은 별도 입력']
+      ['대안','내부 점수를 중심으로 목록 제공'],
+      ['선택','판단에 필요한 일치 항목을 먼저 노출'],
+      ['제약','샘플 데이터로 실행 · 개인화 기억은 별도 입력']
     ]);
   }
   function recovery(slide){
@@ -143,33 +143,33 @@
     });
     const copy=slide.querySelector('.fm-next-cs-note');
     copy.innerHTML=rows([
-      ['대안','AI가 후보·추천 순위까지 생성'],
-      ['선택','조건 해석만 AI · 경기 사실과 순위는 추천 로직'],
+      ['대안','자유 생성으로 사실·순위까지 구성'],
+      ['선택','검증 가능한 입력·출력 경계 고정'],
       ['제약','자동 참가 금지 · 연결 실패 시 규칙 기반 대체']
     ])+link('docs/SERVICE-PLANNING-EVIDENCE.md','책임 분리 근거');
   }
   function validation(slide){
     const cards=slide.querySelectorAll('.fm-p1-evidence-grid>.fm-next-cs-card');
     const copy=[
-      ['사용자 과업','6명·8회 동선 검증','교육 단계의 탐색·가입 과업 확인 · 이후 개인 고도화와 구분','docs/USER-TEST-EVIDENCE.md'],
-      ['자동 QA','동작·상태·복구 확인','회귀 테스트 · 브라우저 E2E · 접근성 · 화면 비교 · 참가 실패·재시도','tests/e2e/release-app.spec.cjs'],
-      ['사람 검수','운영 환경의 연결 확인','실제 로그인 · 이메일 전달 · 브라우저·OS 알림 표시 · 사용자 효과와 구분','docs/SERVICE-PLANNING-EVIDENCE.md']
+      ['사용자 과업','교육생 6명 · 가입 8회','수료 전 탐색·가입 동선 확인 · 대표성·전환 효과는 미검증','docs/USER-TEST-EVIDENCE.md'],
+      ['자동 QA','오류와 복원 경로','회귀 테스트 · 브라우저 E2E · 접근성 · 화면 비교 · 참가 실패·재시도','tests/e2e/release-app.spec.cjs'],
+      ['사람 검수','외부 서비스와 전달 결과','실제 로그인 · 이메일 전달 · 브라우저·OS 알림 표시 · 사용자 효과와 구분','docs/SERVICE-PLANNING-EVIDENCE.md']
     ];
     cards.forEach((card,i)=>{card.querySelector('.fm-p1-evidence-label').textContent=copy[i][0];card.querySelector('h3').textContent=copy[i][1];card.querySelector('p').textContent=copy[i][2];card.insertAdjacentHTML('beforeend',link(copy[i][3],'근거'));});
-    slide.querySelector('.fm-next-cs-note').innerHTML='고도화 기준 · 설계 판단·구현 일치·실패 복구·재검증 · 이용 성과는 별도 측정';
+    slide.querySelector('.fm-next-cs-note').innerHTML='이후 개인 고도화 · 설계와 구현의 일치, 중단 상황의 대응을 점검';
   }
   function nextDecisions(slide){
-    const summary=[['추천 판단','조건 · 순위 · 이유 일치'],['참가 동선','선택 · 복귀 · 완료 연결'],['복구 행동','실패 · 재시도 · 대안 제공']];
+    const summary=[['개선 근거','수정 사례 2건'],['점검 방식','구현과 자동 QA 대조'],['적용 범위','개인 프로젝트의 품질 관리']];
     slide.querySelectorAll('.fm-next-review-summary>div').forEach((node,i)=>{node.querySelector('span').textContent=summary[i][0];node.querySelector('b').textContent=summary[i][1];});
     const definitions=[
       ['real-app','추천 일관성','조건과 설명이 일치하는가',[
-        ['구현 근거','조건에 따라 후보·순위·이유 변경'],['품질 기준','같은 입력의 순위 재현 · 이유와 조건 일치'],['설계 학습','내부 점수보다 선택에 필요한 이유 제시'],['다음 판단','조건·이유 불일치 시 로직과 표현 함께 수정']
+        ['입력 반영','지역·레벨·포지션에 따라 후보 변경'],['재현성','같은 요청이면 동일한 순서'],['표현 원칙','내부 점수보다 선택에 필요한 이유 제시'],['보완 조건','근거와 입력이 어긋나면 로직·문구 함께 수정']
       ]],
       ['closed-beta','흐름 완결성','완료 후 다음 행동이 있는가',[
-        ['수정 근거','평가 저장 후에도 피드백 안내가 남던 흐름'],['개선 내용','완료 상태 구분 · 다음 경기 탐색 연결'],['품질 기준','저장 → 완료 안내 → Discover 자동 재검증'],['다음 판단','상태별 주 행동과 복귀 경로를 함께 점검']
+        ['발견한 문제','저장했어도 피드백 안내가 남음'],['수정 내용','완료 상태를 구분해 탐색 버튼 표시'],['검증 경로','저장 → Home 완료 → Discover 진입'],['점검 항목','종료 단계의 주 행동과 복귀 위치']
       ]],
       ['open-boundary','복구 행동','오류 후 다시 행동할 수 있는가',[
-        ['개선 내용','멈춘 버튼 → 오류 안내·재시도·다른 경기 선택'],['품질 기준','정보 유실 → 복원 → 참가 성공 자동 재검증'],['다음 판단','실패마다 보존 정보·다음 행동·검증 정의']
+        ['버튼 복원','멈춤 → 오류 안내·재시도·다른 경기 선택'],['확인 절차','정보 유실 → 복원 → 참가 성공'],['예외 정의','상황마다 남길 정보와 이어갈 조치 명시']
       ]]
     ];
     definitions.forEach(([zone,label,title,items])=>{
@@ -177,13 +177,13 @@
       card.querySelector('ul').innerHTML=items.map(([name,copy])=>`<li data-status="not-measured"><span>${name}</span><b>${copy}</b></li>`).join('');
     });
     slide.querySelector('.fm-p1-release-map').setAttribute('aria-label','개인 고도화의 설계 학습과 다음 품질 기준');
-    slide.querySelector('.fm-p1-release-next>span').textContent='핵심 학습 · 다음 결정';
-    slide.querySelector('.fm-p1-release-next dl').innerHTML=rows([['배운 점','성공 화면뿐 아니라 실패·완료 이후의 행동까지 설계'],['다음 기준','개인 고도화 · 설계 판단 → 구현 → 재검증 근거로 축적']]).replace(/^<dl[^>]*>|<\/dl>$/g,'');
+    slide.querySelector('.fm-p1-release-next>span').textContent='핵심 학습 · 이후 적용';
+    slide.querySelector('.fm-p1-release-next dl').innerHTML=rows([['배운 점','완료·실패 화면에서도 이어갈 조치를 함께 설계'],['축적 방식','설계 의도와 수정 기록, 자동 QA 결과를 대조']]).replace(/^<dl[^>]*>|<\/dl>$/g,'');
   }
   window.installFootMateDecisionEvidence=function(slides){
     // Three representative decisions share one evidence chain: alternative → choice → limit.
-    slides[4].querySelector('.fm-next-cs-decision').innerHTML='<span>핵심 결정 01 · 인증 시점</span>'+rows([
-      ['대안','가입 먼저 · 가치 확인 전 계정 생성'],['선택','추천·상세 공개 · 참가 요청 직전 인증'],['제약','첫 추천은 지역·포지션·레벨 설정 필요 · 기기 간 연속성 제한']
+    slides[4].querySelector('.fm-next-cs-decision').innerHTML='<span>핵심 결정 01 · 진입 장벽</span>'+rows([
+      ['대안','설문 기반 프로필 확보를 앞세움'],['선택','계정 없이도 후보를 살펴볼 수 있음'],['제약','지역·포지션·레벨 설정 필요 · 기기 간 연속성 제한']
     ])+link('docs/SERVICE-PLANNING-EVIDENCE.md','인증 시점 근거');
     recommendation(slides[5]);recovery(slides[9]);architecture(slides[10]);validation(slides[11]);nextDecisions(slides[12]);improvementEvidence(slides);
     const proof=slides[0].querySelector('.fm-next-cover-proof>div:last-child');proof.querySelector('b').textContent='대표 결정 · 3가지';proof.querySelector('span').innerHTML='가치 확인 후 인증 · 이유로 추천 판단<br>선택을 보존한 실패 복구';

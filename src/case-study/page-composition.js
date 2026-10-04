@@ -6,13 +6,13 @@
     "navDesc": "Experience & Role",
     "title": [
       "내 수준에 맞는 경기부터,",
-      "경기 당일과 다음 경기까지."
+      "참가 이후의 경험까지."
     ],
-    "desc": "탐색부터 참가 이후까지 화면·정책·검증 기준을 설계했습니다.",
+    "desc": "탐색의 편의와 운영의 안전성을 하나의 경험으로 설계했습니다.",
     "keywords": [
-      "자연어 탐색",
-      "추천 근거",
-      "담당 역할"
+      "풋살 서비스",
+      "전체 동선",
+      "단독 구축"
     ],
     "layout": "cover"
   },
@@ -20,11 +20,11 @@
     "nav": "Problem & Goal",
     "navDesc": "Friction & Design Goal",
     "title": "경기 선택의 불확실성을 줄이는 데 집중했습니다.",
-    "desc": "정보 분산·이른 로그인·참가 후 안내 단절을 해결 과제로 정의했습니다.",
+    "desc": "필요한 정보와 계정 생성 시점, 일정 안내를 개선 대상으로 정했습니다.",
     "keywords": [
-      "정보 분산",
-      "판단 부담",
-      "경험 단절"
+      "흩어진 정보",
+      "접근 장벽",
+      "운영 연결"
     ],
     "layout": "comparison"
   },
@@ -32,11 +32,11 @@
     "nav": "Persona & JTBD",
     "navDesc": "Assumptions & Tasks",
     "title": "사용자 가설을 구체적인 행동 과업으로 바꿨습니다.",
-    "desc": "퇴근 후 가까운 경기를 찾는 상황을 가정해 선택 기준을 도출했습니다.",
+    "desc": "과업 관찰과 가정의 범위를 구분하고, 화면에 필요한 요구사항을 정리했습니다.",
     "keywords": [
-      "사용자 가설",
-      "판단 기준",
-      "관찰 과업"
+      "이용 맥락",
+      "선택 요소",
+      "가정의 한계"
     ],
     "layout": "persona"
   },
@@ -44,11 +44,11 @@
     "nav": "Scope & Priorities",
     "navDesc": "Build Now & Validate Next",
     "title": "참가와 복구를 먼저, 확장 검증은 다음으로 뒀습니다.",
-    "desc": "판단 가치·실패 영향·검증 가능성으로 구현 우선순위를 정했습니다.",
+    "desc": "결정에 주는 도움과 오류의 영향을 기준으로 이번 범위를 정했습니다.",
     "keywords": [
-      "참가·복구",
-      "구현 우선순위",
-      "확장 범위"
+      "핵심 동선",
+      "운영 안전성",
+      "개발 범위"
     ],
     "layout": "journey"
   },
@@ -56,11 +56,11 @@
     "nav": "Guest Exploration",
     "navDesc": "Explore Before Sign-in",
     "title": "가치를 확인한 뒤에 로그인하도록 설계했습니다.",
-    "desc": "추천·상세는 공개하고, 참가 요청 직전에 인증을 배치했습니다.",
+    "desc": "계정을 먼저 요구하는 대안과 비교해, 처음 방문한 사람의 접근 순서를 정했습니다.",
     "keywords": [
-      "가입 전 탐색",
-      "가치 확인",
-      "인증 시점"
+      "공개 범위",
+      "초기 설정",
+      "진입 장벽"
     ],
     "layout": "comparison"
   },
@@ -68,11 +68,11 @@
     "nav": "Recommendations",
     "navDesc": "Preferences & Reasons",
     "title": "조건을 바꾸면 추천 순위와 이유도 달라집니다.",
-    "desc": "현재 조건을 직접 바꾸고, 후보의 순위와 추천 이유를 확인하게 했습니다.",
+    "desc": "점수만 보여주는 대신, 선택에 도움이 되는 근거와 조정 방법을 제시했습니다.",
     "keywords": [
-      "선호 조건",
-      "추천 이유",
-      "조건 수정"
+      "입력 반영",
+      "설명 가능성",
+      "직접 조정"
     ],
     "layout": "product"
   },
@@ -80,11 +80,11 @@
     "nav": "Match Details",
     "navDesc": "Information for Joining",
     "title": "참가 판단에 필요한 순서로 상세를 구성했습니다.",
-    "desc": "시간·장소·추천 이유·자리·취소 기준을 참가 결정 순서로 배치했습니다.",
+    "desc": "핵심 정보와 보조 도구를 화면 안에 모아, 두 후보의 차이를 살펴볼 수 있게 했습니다.",
     "keywords": [
-      "참가 판단",
-      "정보 순서",
-      "저장·비교"
+      "일정·이동",
+      "정원·정책",
+      "보조 도구"
     ],
     "layout": "product"
   },
@@ -92,11 +92,11 @@
     "nav": "Sign-in & Join",
     "navDesc": "Preserve Choice & Confirm",
     "title": "인증 과정에서도 선택한 경기를 유지합니다.",
-    "desc": "로그인 후 복귀 위치를 보존하고, 참가 결과에 따라 다음 행동을 안내합니다.",
+    "desc": "재입력을 막기 위해 복귀 경로를 기록하고, 완료·실패·취소를 구분했습니다.",
     "keywords": [
-      "선택 유지",
-      "참가 확인",
-      "결과 안내"
+      "복귀 경로",
+      "처리 상태",
+      "구현 경계"
     ],
     "layout": "flow"
   },
@@ -104,11 +104,11 @@
     "nav": "Matchday & Return",
     "navDesc": "Prepare, Check In & Return",
     "title": "참가 이후의 다음 행동을 MY에서 안내합니다.",
-    "desc": "참가 준비·이동·체크인·경기 후 피드백을 상태별로 연결했습니다.",
+    "desc": "예정·당일·종료 후로 나눠, 필요한 정보와 화면 진입점을 정했습니다.",
     "keywords": [
-      "참가 준비",
-      "체크인",
-      "경기 후 재탐색"
+      "일정 안내",
+      "출석 처리",
+      "완료 이후"
     ],
     "layout": "product"
   },
@@ -116,11 +116,11 @@
     "nav": "Recovery",
     "navDesc": "Preserve State & Retry",
     "title": "실패해도 선택을 보존하고 다시 이어갑니다.",
-    "desc": "예외 상황별로 유지할 상태와 재시도·대체 행동을 정의했습니다.",
+    "desc": "검색 결과 없음부터 당일 오류까지, 중단 지점별 대응을 정했습니다.",
     "keywords": [
-      "상태 보존",
-      "재시도",
-      "대체 경로"
+      "오류 분류",
+      "유지할 정보",
+      "후속 조치"
     ],
     "layout": "recovery"
   },
@@ -128,11 +128,11 @@
     "nav": "AI & Domain Rules",
     "navDesc": "Interpret, Rank & Confirm",
     "title": "해석·추천·확정의 책임을 분리했습니다.",
-    "desc": "AI는 조건 해석, 엔진은 추천 판단, 사용자는 참가 확정을 맡습니다.",
+    "desc": "생성 범위를 제한하고, 연결 오류에도 탐색을 이어갈 대안을 마련했습니다.",
     "keywords": [
-      "조건 해석",
-      "추천 판단",
-      "사용자 확인"
+      "처리 경계",
+      "사실 데이터",
+      "최종 승인"
     ],
     "layout": "architecture"
   },
@@ -140,10 +140,10 @@
     "nav": "Metrics & Validation",
     "navDesc": "Measurement & Verification",
     "title": "동작 검증과 사용자 성과를 구분했습니다.",
-    "desc": "성과 지표는 측정 전이며, 제품 동작은 QA·검수로 확인했습니다.",
+    "desc": "측정식·제외 조건을 먼저 정하고, 구현 근거는 확인 방법별로 제시했습니다.",
     "keywords": [
-      "측정 기준",
-      "동작 검증",
+      "관찰 단위",
+      "근거 구분",
       "성과 미측정"
     ],
     "layout": "validation"
@@ -152,11 +152,11 @@
     "nav": "Learning & Next Decisions",
     "navDesc": "Refine & Verify",
     "title": "개인 고도화에서 얻은 학습과 다음 기준을 정리했습니다.",
-    "desc": "실제 수정·재검증의 근거를 다음 설계와 품질 기준으로 연결했습니다.",
+    "desc": "입력의 일관성, 완료 이후의 연결, 오류 대응을 앞으로의 점검 항목으로 삼았습니다.",
     "keywords": [
-      "설계 일관성",
-      "흐름 완결성",
-      "재검증 근거"
+      "재현 가능성",
+      "완료 상태",
+      "대응 경로"
     ],
     "layout": "release"
   }
@@ -175,25 +175,30 @@
       '<div><b>핵심 결정 · 우선순위</b><span>참가 직전 인증 · AI 책임 분리<br>상태 보존 · 실패 복구 기준</span></div>');
     text(0,'.fm-next-cover-note strong','제품 홈 화면 미리보기');
     text(0,'.fm-next-cover-note span','자연어 탐색과 추천 확인 구조를 정적으로 재현했습니다.');
+    summary(1,[['가설','결정에 필요한 정보 부족'],['접근','흩어진 기능 연결'],['관찰 지표','전환 · 실패 · 재이용']]);
+    summary(4,[['공개','후보 목록 · 상세'],['계정 필요','요청 제출 단계'],['제한','기기 간 연속성']]);
+    summary(5,[['입력','프로필 · 선호 · 최근 이력'],['판단','규칙 기반 로직'],['제어','AI 해석 확인·해제']]);
+    summary(6,[['주 행동','참가하기'],['보조','최대 2경기 비교'],['정책','취소 조건 사전 확인']]);
+    summary(9,[['원칙','입력 맥락 유지'],['적용','탐색부터 당일까지'],['확인','정보 유실 후 복원']]);
     text(1,'.fm-p0-problem-core p','추천을 확인해도 참가에 필요한 정보가 부족하면 결정을 망설일 수 있음');
     html(1,'.fm-next-cs-quote','<span>대안 검토 · 설계 가설</span>'+rows([
       ['대안','목록·필터의 조건 비교 · 지도의 위치 확인 · 커뮤니티의 경험 정보'],
       ['선택 이유','추천 근거와 참가·당일 안내를 한 흐름으로 연결'],
       ['검증 범위','탐색·가입 과업 검증 · 문제 가설·경쟁사 우위는 미입증']
     ]));
-    summary(2,[['가정','평일 저녁 · 30분 안쪽 이동'],['판단 기준','시간 · 거리 · 레벨 · 포지션'],['수행한 검증','교육생 6명 · 가입 과업 8회']]);
-    text(2,'.fm-p1-persona-context p','평일 저녁 · 주 1~2회 · 30분 안쪽 이동을 가정한 설계용 Persona');
-    text(2,'.fm-p1-persona-lenses [data-kind="context"] p','퇴근 후 가능한 시간에 가까운 경기 탐색');
+    summary(2,[['대상','설계용 Persona'],['요구사항','적합성 · 정보 접근'],['수행 기록','교육생 6명 · 가입 과업 8회']]);
+    text(2,'.fm-p1-persona-context p','주 1~2회 운동 · 평일 저녁 · 30분 안쪽 이동');
+    text(2,'.fm-p1-persona-lenses [data-kind="context"] p','업무가 끝난 뒤 짧은 시간 안에 선택');
     text(2,'.fm-p1-jtbd-head small','JTBD · 가설과 관찰 계획');
-    text(2,'.fm-p1-jtbd-journey li:first-child p','이동 가능한 시간과 지역 확인');
+    text(2,'.fm-p1-jtbd-journey li:first-child p','일정과 생활권 설정');
     text(2,'.fm-p1-jtbd-caveat','iOS 4명 · Android 2명 · 일부 복수 과업 수행 · Persona 대표성은 미검증');
     summary(3,[['우선 구현','참가 · 복구'],['효과 검증','전환 · 재이용'],['제외','실제 결제 · AI 자동 확정']]);
     const priority=slides[3].querySelectorAll('.fm-p0-priority-label');
-    ['우선 구현 · 참가와 복구','구현 후 · 효과 검증','제외 · 이번 범위'].forEach((value,index)=>{if(priority[index])priority[index].textContent=value;});
+    ['01 · 먼저','02 · 이후','03 · 제외'].forEach((value,index)=>{if(priority[index])priority[index].textContent=value;});
     html(3,'.fm-next-story-aside .fm-next-cs-note',rows([
-      ['참가 우선','정원·취소·체크인 오류가 참가 결과에 직접 영향'],
-      ['무료 Beta','결제·정산보다 핵심 동선과 복구를 먼저 확인'],
-      ['후속 검증','구현한 대기열·알림·피드백의 전환·재이용 효과']
+      ['선정 근거','정원·취소·출석 오류가 결과에 직접 영향'],
+      ['개발 순서','결제·정산보다 중단 상황의 대응을 먼저 점검'],
+      ['후속 관찰','빈 자리 충원과 반복 이용의 변화']
     ]));
     html(4,'.fm-next-cs-decision',rows([
       ['인증 시점','추천·상세 확인 후 참가 요청 직전'],
@@ -213,17 +218,17 @@
       ['판단 기준','내부 점수는 정렬에 사용 · 조건 일치 이유로 선택 지원'],
       ['사용자 제어','현재 조건과 AI 해석 결과 확인 후 수정·재탐색']
     ]));
-    text(6,'.is-detail figcaption b','참가 판단을 위한 경기 상세');
+    text(6,'.is-detail figcaption b','경기 상세 · 기존 제품 화면');
     const detailSteps=slides[6].querySelectorAll('.fm-next-cs-detail-order>span');
     ['참가 가능한 일정과 이동 범위','조건에 맞는 이유','원하는 포지션의 참가 가능 여부','경기 전 준비와 운영 안내','참가 전 취소 조건 확인'].forEach((copy,index)=>{if(detailSteps[index]){const small=document.createElement('small');small.textContent=copy;detailSteps[index].appendChild(small);}});
-    const comparison=document.createElement('p');comparison.className='fm-cs-detail-rationale';comparison.textContent='최대 2경기의 거리·레벨·포지션 자리·참가비 비교 · 저장·비교는 보조, 참가하기는 핵심 행동';
+    const comparison=document.createElement('p');comparison.className='fm-cs-detail-rationale';comparison.textContent='두 후보의 차이를 살펴본 뒤 한 경기를 고르도록 비교 범위를 제한했습니다.';
     slides[6].querySelector('.fm-next-cs-detail-order')?.appendChild(comparison);
     html(6,'.fm-next-story-aside .fm-next-cs-note',rows([
-      ['정보 순서','시간·장소로 참가 가능 여부 확인 후 이유·자리·취소 기준 판단'],
+      ['배치 근거','일정·이동 → 적합성 → 운영 정책 순으로 확인'],
       ['비교 기준','최대 2경기의 거리·레벨·포지션 자리·참가비 비교'],
-      ['행동 우선','저장·비교는 보조 행동 · 참가하기는 핵심 행동']
+      ['행동 구분','참가하기를 주 행동으로 두고 나머지는 선택을 보조']
     ]));
-    text(7,'.fm-p1-auth-frame:nth-of-type(2) p','선택한 경기 정보를 로그인 후에도 유지');
+    text(7,'.fm-p1-auth-frame:nth-of-type(2) p','한 번 고른 대상을 재입력 없이 전달');
     html(7,'.fm-next-cs-scope',rows([
       ['Real App','Google·Kakao 인증 연결 · 무료 참가 결과는 브라우저 저장'],
       ['Closed Beta','Supabase 계정·경기·참가 흐름 실제 연동'],
@@ -250,11 +255,11 @@
       failure.querySelector('figcaption b').textContent='참가 실패 · 복구 설계';
       failure.querySelector('figcaption span').textContent='화면 캡처 아님 · 경기 정보 복원 후 재시도 성공을 자동 QA로 확인';
     }
-    html(9,'.fm-next-cs-decision','<span>자동 QA 사례 · 무료 참가 복구</span><b>경기 정보 유실 → 오류 안내·재시도 → 정상 경기 복원 후 참가 성공 확인</b>');
+    html(9,'.fm-next-cs-decision','<span>자동 QA 사례 · 무료 참가 복구</span><b>오류 안내·버튼 활성화·정상 완료를 자동 E2E에서 확인</b>');
     const arch=slides[10].querySelectorAll('.fm-p0-arch-node');
-    const archCopy=[['요청','자연어 입력'],['해석','검색 조건 추출'],['전달','시간·거리·가격·포지션'],['판단','규칙에 따른 후보·순위'],['제시','추천 이유와 경기 상태'],['확정','사용자의 참가 확인']];
+    const archCopy=[['요청','자연어 입력'],['해석','검색 조건 추출'],['전달','구조화된 입력'],['판단','규칙에 따른 후보·순위'],['제시','결과 표시'],['확정','사용자의 참가 확인']];
     archCopy.forEach(([label,title],index)=>{if(arch[index]){arch[index].querySelector('small').textContent=label;arch[index].querySelector('b').textContent=title;}});
-    if(arch[5])arch[5].querySelector('span').textContent='AI는 참가 확정을 자동 실행하지 않음';
+    if(arch[5])arch[5].querySelector('span').textContent='버튼 조작으로 요청 시작';
     const guards=slides[10].querySelectorAll('.fm-p0-arch-guardrails>div');
     [['AI 실패','대체 모델 후 규칙 기반 검색으로 전환'],['Beta 상태','변경 알림 수신 후 서버 상태 재조회'],['AI 처리 제한','경기 사실·가격·정원·순위 생성 금지']].forEach(([label,copy],index)=>{if(guards[index]){guards[index].querySelector('span').textContent=label;guards[index].querySelector('b').textContent=copy;}});
     html(10,'.fm-next-cs-note',rows([
@@ -373,9 +378,9 @@
     });
     // Card headings explain what is checked; labels identify the method.
     const cardCopy=[
-      [3,0,'참가 상태와 복구','인증·정원·취소·체크인 오류가 참가 결과에 미치는 영향부터 확인'],
-      [3,1,'구현한 운영과 후속 검증','대기열·알림·피드백 구현 · 빈 자리 충원과 재이용 효과는 후속 검증'],
-      [3,2,'현재 범위에서 제외','실제 결제·수익화 검증 유보 · 참가 확정은 사용자 확인으로 유지'],
+      [3,0,'오류 영향이 큰 동선','인증·정원·취소·체크인 문제부터 확인'],
+      [3,1,'운영 기능의 효과','대기열·알림·피드백 구현 · 빈 자리 충원과 재이용은 후속 관찰'],
+      [3,2,'결제와 자동 실행','실제 결제·수익화는 유보 · 최종 확정은 사용자가 수행'],
       [11,0,'자동화된 동작 확인',null],
       [11,1,'실제 연결과 표시 확인',null],
       [11,2,'설명과 구현의 일치 검토',null]
@@ -407,7 +412,7 @@
     installEditorialInteractions(slides);
     window.installFootMateEditorialFinish(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.5';
+    html.dataset.footmateCaseStudyRelease='5.4.6';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;
