@@ -2061,6 +2061,11 @@
       figure.dataset.interactiveReady='true';
     }).catch(()=>{host.textContent='추천 예시를 불러오지 못했어요. 새로고침해 다시 확인해 주세요.';figure.dataset.interactiveReady='error';});
     const note=slide.querySelector('.fm-next-cs-note');
+    slide.querySelector('.fm-p0-annotations').innerHTML=[
+      ['현재 조건','지역·레벨·포지션 변경 → 후보·순위·이유 재계산'],
+      ['기억한 선호','저장 프로필·선호 조건·최근 이력은 추가 입력 · 현재 브라우저 기록'],
+      ['사용자 제어','해석 결과 확인 · 조건 수정·해제 · 다시 탐색']
+    ].map(([title,copy],i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><div><b>${title}</b><p>${copy}</p></div></li>`).join('');
     note.innerHTML=rows([
       ['대안','내부 점수만 제시 · 추천 이유 없이 목록 제공'],
       ['선택','순위는 로직이 결정 · 조건 일치 이유는 화면에 제시'],
@@ -2122,6 +2127,8 @@
     slide.querySelector('.fm-next-cs-note').innerHTML='해석 경계 · 과업 수행·동작 QA와 이용 성과는 구분 · 이용 기준값 미확보';
   }
   function nextDecisions(slide){
+    const summary=[['추천 판단','이유 이해 · 후보 비교'],['참가 동선','인증 · 복귀 · 완료'],['복구 행동','재시도 · 대안 선택']];
+    slide.querySelectorAll('.fm-next-review-summary>div').forEach((node,i)=>{node.querySelector('span').textContent=summary[i][0];node.querySelector('b').textContent=summary[i][1];});
     const definitions=[
       ['real-app','추천 이유','판단에 도움이 되는가',[
         ['구현 근거','조건에 따라 후보·순위·이유 변경'],['다음 관찰','이유를 보고 후보를 설명·비교하는지'],['제외 기준','QA 성공을 판단 도움으로 해석 금지'],['다음 판단','이유 이해가 낮으면 표현·정보 순서 수정']
