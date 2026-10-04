@@ -19,18 +19,17 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 
 - Primary journey: **Find → Decide → Join → Play → Return**
 - Real App IA: **Home = lifecycle-aware next action → 경기 찾기/Discover = AI/search exploration + filter/sort → Detail = match decision → Join = free participation confirmation → MY = joined/saved matches + Matchday + Return + profile/settings**
-- Case Study: `/`
+- Case Study reference: `/` — read-only reference surface; current Case Study work is maintained separately and is not part of FootMate runtime/release QA.
 - Real App: `/app`
 - Closed Beta: `/beta` — Supabase Auth / Postgres / Realtime / capacity / participation / waitlist / reminders / feedback / in-app notification / transactional email / opt-in Web Push / media upload connected
 - Closed Beta Operator: `/beta/operator` — allowlisted + TOTP MFA operator match / participant / policy / check-in / completion / match media operations connected
-- Guided Case Study: `/app?mode=guided`
+- Guided review mode: `/app?mode=guided`
 - Evidence / Reviewer mode: `/app?mode=evidence`
 - Compatibility aliases: `/demo`, `/next` → current Real App
-- Case Study IA: **13 sections** — #228 기준 서비스 기획 서사 · 영문 section label · 한국어 story H2 · TOC 부제목 한 줄
 
 ## 서비스 기획 관점
 
-Case Study는 역할·서비스 목표·우선순위·Trade-off·운영 정책·KPI·회고를 현재 13개 섹션 안에서 연결합니다. Persona와 대안 비교는 설계 가설이며, KPI는 실제 성과가 아닌 Validation Metric입니다. 시각 구조는 문제 원인→핵심 문제, 실제 Product UI 근거, KPI 정의와 QA Evidence의 구분이 먼저 읽히도록 정리했습니다. 계산 기준·관찰 기간·제외 기준은 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)에서 확인할 수 있습니다.
+서비스 기획의 현재 근거는 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)와 [과업 기반 사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)를 Source of Truth로 사용합니다. 루트 `/`의 Case Study는 read-only reference surface이며, Case Study 자체의 신규 copy/layout/visual iteration은 별도 프로젝트에서 관리합니다. FootMate runtime/release QA는 `/app`, `/beta`, `/beta/operator`와 현재 evidence docs를 기준으로 합니다.
 
 ## Product decisions
 
@@ -195,7 +194,7 @@ Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 
 버전 번호는 제품의 외부 이름이 아니라 개발·QA·배포 추적용 식별자로만 사용합니다.
 
 - Current Product release identifier: **v6.0.0** — root `package.json.version`이 public `/app` 및 `/demo`, `/next` compatibility alias의 release meta 기준이며 CI가 drift를 차단
-- Case Study release identifier는 별도 surface 계약으로 현재 **v5.1.1**을 유지하며 Product package version과 강제로 동기화하지 않습니다.
+- Case Study reference surface는 별도 프로젝트에서 관리하며 Product package release와 version-coupling하지 않습니다. FootMate의 현재 release Source of Truth는 `/app` Product와 `docs/README.md`의 문서 경계입니다.
 - Component compatibility identifiers such as connected-platform / AI Assistant `v5.1.1` are preserved independently from the Product release
 - Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
 - Closed Beta pilot operations: `docs/BETA-PILOT-RUNBOOK.md`
