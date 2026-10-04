@@ -373,7 +373,7 @@ for(const [name,viewport] of [
           gaps:[
             cards[1].top-cards[0].bottom,
             cards[2].top-cards[1].bottom
-          ]
+          ].map(gap=>gap/(parseFloat(getComputedStyle(node.closest('.fm-next-story')).zoom)||1))
         };
       });
       expect(geometry.rowGap).toBe(10);
@@ -387,7 +387,7 @@ for(const [name,viewport] of [
         return [
           cards[1].top-cards[0].bottom,
           cards[2].top-cards[1].bottom
-        ];
+        ].map(gap=>gap/(parseFloat(getComputedStyle(node.closest('.fm-next-story')).zoom)||1));
       });
       expect(Math.abs(hoverGaps[0]-hoverGaps[1])).toBeLessThanOrEqual(0.5);
       expect(Math.abs(hoverGaps[0]-10)).toBeLessThanOrEqual(0.5);
