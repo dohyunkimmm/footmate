@@ -3825,8 +3825,8 @@ html[data-fm-page-composition="true"] .fm-screen-expand{margin-left:auto;padding
 .fm-screen-source{margin:12px 0 0;font-size:11px;line-height:1.5;color:#69756e}
 .fm-editorial-supplement>summary{cursor:pointer;list-style:none;font-size:13px;font-weight:750;color:#073d2d}
 .fm-editorial-supplement>summary::-webkit-details-marker{display:none}
-.fm-editorial-supplement>summary::after{content:'��';float:right}
-.fm-editorial-supplement[open]>summary::after{content:'?'}
+.fm-editorial-supplement>summary::after{content:'＋';float:right}
+.fm-editorial-supplement[open]>summary::after{content:'−'}
 @media(min-width:901px){
   html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-product-evidence="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story{margin-block:0!important}
   .fm-editorial-supplement{display:contents}

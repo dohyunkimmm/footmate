@@ -80,10 +80,10 @@ test('product enlargement preserves navigation and restores keyboard focus',asyn
     await opener.click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();
     await expect(dialog.locator('img')).toHaveAttribute('src',source);
     await page.keyboard.press('ArrowRight');await expect(slide).toHaveAttribute('data-page-number',String(index+1));
-    await dialog.getByRole('button',{name:'�ٽ� ����',exact:true}).click();
+    await dialog.getByRole('button',{name:'핵심 영역',exact:true}).click();
     await expect(dialog).toHaveClass(/is-focus/);
-    await expect(dialog.getByRole('button',{name:'�ٽ� ����',exact:true})).toHaveAttribute('aria-pressed','true');
-    await dialog.getByRole('button',{name:'��ü ȭ��',exact:true}).click();await expect(dialog).not.toHaveClass(/is-focus/);
+    await expect(dialog.getByRole('button',{name:'핵심 영역',exact:true})).toHaveAttribute('aria-pressed','true');
+    await dialog.getByRole('button',{name:'전체 화면',exact:true}).click();await expect(dialog).not.toHaveClass(/is-focus/);
     await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(opener).toBeFocused();
   }
 });
