@@ -214,6 +214,10 @@
       ['사용자 제어','현재 조건과 AI 해석 결과 확인 후 수정·재탐색']
     ]));
     text(6,'.is-detail figcaption b','참가 판단을 위한 경기 상세');
+    const detailSteps=slides[6].querySelectorAll('.fm-next-cs-detail-order>span');
+    ['참가 가능한 일정과 이동 범위','조건에 맞는 이유','원하는 포지션의 참가 가능 여부','경기 전 준비와 운영 안내','참가 전 취소 조건 확인'].forEach((copy,index)=>{if(detailSteps[index]){const small=document.createElement('small');small.textContent=copy;detailSteps[index].appendChild(small);}});
+    const comparison=document.createElement('p');comparison.className='fm-cs-detail-rationale';comparison.textContent='최대 2경기의 거리·레벨·포지션 자리·참가비 비교 · 저장·비교는 보조, 참가하기는 핵심 행동';
+    slides[6].querySelector('.fm-next-cs-detail-order')?.appendChild(comparison);
     html(6,'.fm-next-story-aside .fm-next-cs-note',rows([
       ['정보 순서','시간·장소로 참가 가능 여부 확인 후 이유·자리·취소 기준 판단'],
       ['비교 기준','최대 2경기의 거리·레벨·포지션 자리·참가비 비교'],
@@ -271,18 +275,15 @@
     }
     slides[12].querySelectorAll('[data-zone="closed-beta"] li span').forEach(node=>node.textContent='실제 연결');
     summary(12,[['Real App','AI·인증 연결 · 브라우저 기록'],['Closed Beta','참가·운영 · 실제 연결'],['다음 단계','이용 기준값 · 사용자 가치']]);
-    html(12,'.fm-p1-release-next dl',rows([
-      ['배운 점','정상 흐름과 함께 중복 요청·상태 갱신·실패 복구까지 정의'],
-      ['다음 질문','추천 이유가 참가 판단에 도움이 되는가'],
-      ['확인 방법','실제 Beta 이용 과업 관찰 · 이탈 구간과 기준값 확보']
-    ]).replace(/^<dl[^>]*>|<\/dl>$/g,''));
+    html(12,'.fm-p1-release-next dl','<div><dt>배운 점과 다음 검증</dt><dd>실패·중복 요청·상태 갱신까지 함께 정의<br>다음 검증 · 추천 이유의 판단 도움 → Beta 과업 관찰·이탈 구간·기준값 확보</dd></div>');
     // Reader-facing wording only: keep navigation and product identifiers intact.
     const walker=document.createTreeWalker(document.querySelector('.track'),NodeFilter.SHOW_TEXT);
     while(walker.nextNode()){
       const node=walker.currentNode;
       if(node.parentElement.closest('script,style,.fm-page-keywords,.fm-next-story-kicker,.fm-next-cover-kicker'))continue;
-      node.nodeValue=node.nodeValue.replace(/결정론적 추천 엔진/g,'규칙 기반 추천 엔진').replace(/audit trail/g,'변경 이력').replace(/운영 도움/g,'운영 문의').replace(/참여 이력/g,'참가 이력');
+      node.nodeValue=node.nodeValue.replace(/결정론적 추천 엔진/g,'규칙 기반 추천 엔진').replace(/audit trail/g,'변경 이력').replace(/운영 도움/g,'운영 문의').replace(/참여 이력/g,'참가 이력').replace(/실제 PG/g,'실제 결제').replace(/실연동/g,'실제 연결');
     }
+    text(11,'.fm-next-kpi-disclosure-label','성과 지표 · 측정 기준');
     document.documentElement.dataset.fmCaseStudyCopyReview='p0-p1-p2';
   }
 
