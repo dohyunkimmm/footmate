@@ -223,3 +223,22 @@ test('editorial composition enlarges dense-page reading text while retaining fix
   await page.locator('.toc-item').nth(5).click();await expect(page.locator('.slide.on .fm-editorial-decision')).toContainText('핵심 결정 02');
   const inset=await page.locator('.slide.on .fm-editorial-decision').evaluate(node=>parseFloat(getComputedStyle(node).paddingLeft));expect(inset).toBe(0);
 });
+
+test('desktop stories balance spare vertical space without growing the page',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmEditorialFinish==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(let index=1;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    const slide=page.locator('.slide.on');
+    await expect.poll(()=>slide.evaluate(node=>{
+      const content=node.querySelector('.fm-next-story').getBoundingClientRect();
+      const box=node.getBoundingClientRect();const style=getComputedStyle(node);
+      const top=content.top-box.top-parseFloat(style.paddingTop);
+      const bottom=box.bottom-content.bottom-parseFloat(style.paddingBottom);
+      return Math.abs(top-bottom);
+    }),{message:`page ${index+1} balances available space`}).toBeLessThanOrEqual(3);
+    expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+    await page.screenshot({path:`test-results/vertical-balance-p${index+1}.png`,animations:'disabled'});
+  }
+});
