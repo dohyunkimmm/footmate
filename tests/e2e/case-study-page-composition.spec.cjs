@@ -6,6 +6,25 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
     await page.setViewportSize(viewport);
     await page.goto('/',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+    const contrast=await page.evaluate(()=>{
+      const luminance=color=>{
+        const values=color.match(/[\d.]+/g).slice(0,3).map(Number).map(value=>{
+          const channel=value/255;return channel<=.04045?channel/12.92:((channel+.055)/1.055)**2.4;
+        });
+        return values[0]*.2126+values[1]*.7152+values[2]*.0722;
+      };
+      const ratio=(a,b)=>{const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
+      const navigation=document.querySelector(innerWidth>900?'.sidebar':'.cs-mobile-head');
+      const label=navigation.querySelector(innerWidth>900?'.sb-logo':'b');
+      const cover=document.querySelector('.fm-next-cover h1 .fm-next-cover-title-line');
+      return {
+        navigation:ratio(getComputedStyle(label).color,getComputedStyle(navigation).backgroundColor),
+        // Check the title against the brightest stop of the cover's pitch gradient.
+        cover:ratio(getComputedStyle(cover).color,'rgb(35, 97, 66)')
+      };
+    });
+    expect(contrast.navigation).toBeGreaterThanOrEqual(4.5);
+    expect(contrast.cover).toBeGreaterThanOrEqual(4.5);
     const slides=page.locator('.track>.slide');
     await expect(slides).toHaveCount(13);
     for(let index=0;index<13;index++){

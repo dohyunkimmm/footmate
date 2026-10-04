@@ -103,6 +103,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
       const cards=[...map.children].map(card=>({
         zone:card.dataset.zone,
         height:card.getBoundingClientRect().height,
+        clientHeight:card.clientHeight,
         scrollHeight:card.scrollHeight
       }));
       return {alignItems:style.alignItems,cards};
@@ -115,7 +116,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
       const open=p13.cards.find(card=>card.zone==='open-boundary');
       expect(open.height).toBeLessThan(real.height-20);
       expect(open.height).toBeLessThan(beta.height-20);
-      for(const card of p13.cards)expect(Math.abs(card.height-card.scrollHeight)).toBeLessThanOrEqual(3);
+      for(const card of p13.cards)expect(card.scrollHeight-card.clientHeight).toBeLessThanOrEqual(1);
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p13.png`});
 
