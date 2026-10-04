@@ -21,8 +21,12 @@ FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 �
 - [RELEASE-APP.md](RELEASE-APP.md) — current Release App v6 IA, state ownership, free Join, MY lifecycle, provider boundary와 QA contract
 - [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - [BETA-MEASUREMENT-READINESS.md](BETA-MEASUREMENT-READINESS.md) — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
-- [README.md](README.md) — 이 documentation index와 현재/역사 문서 경계
 
+## Evidence docs
+
+- [SERVICE-PLANNING-EVIDENCE.md](SERVICE-PLANNING-EVIDENCE.md) — 역할·목표·우선순위·대안·8개 KPI 측정 설계와 검증 한계
+- [USER-TEST-EVIDENCE.md](USER-TEST-EVIDENCE.md) — 같은 교육과정을 수강한 교육생 6명의 iOS·Android 탐색·가입 과업, 반복 검증 방식과 해석 한계
+- [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — Case Study copy QA 정정 기록
 
 ## Impact-aware QA
 
@@ -43,17 +47,4 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 Case Study는 별도 프로젝트에서 관리한다. FootMate의 작은 visual polish, spacing, density, copy, screenshot baseline 변화만으로는 Case Study sync 사유로 보지 않는다. 반대로 FootMate의 설명·기능 구조·핵심 flow·성과 근거·대표 화면이 materially 달라져 Case Study가 stale해지는 경우에는 Case Study 파일을 이 프로젝트에서 직접 수정하지 않고 `Case Study sync 필요`로 표시한다.
 
-
-
-
-- `archive/V4-ARCHITECTURE.md`
-- `archive/V4-RELEASE-CHECKLIST.md`
-- `archive/V4.1-V5.0-ROADMAP.md`
-- `archive/V4.8-ARCHITECTURE.md`
-- `archive/V4.9-V5-RELEASE-CANDIDATE.md`
-- `archive/V5.0-CONNECTED-MATCHDAY-PLATFORM.md`
-
 제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.
-
-- [서비스 기획 근거](SERVICE-PLANNING-EVIDENCE.md): 역할·목표·우선순위·대안·8개 KPI 측정 설계와 검증 한계
-- [과업 기반 사용자 검증 근거](USER-TEST-EVIDENCE.md): 같은 교육과정을 수강한 교육생 6명의 iOS·Android 탐색·가입 과업, 반복 검증 방식과 해석 한계
