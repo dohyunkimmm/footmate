@@ -29,7 +29,7 @@ for(const [name,viewport] of [['desktop',{width:1440,height:900}],['mobile',{wid
     await expect(preview.locator('.fm-p1-real-match-meta')).toContainText('샘플 일정 · 평일 21:30');
     await expect(preview.locator('.fm-p1-real-match-meta')).not.toContainText('10월 1일');
     await expect(preview.locator('.fm-p1-real-nav')).toContainText('경기 찾기');
-    await expect(page.locator('.fm-next-cover-note')).toContainText('최신 Real App 홈 프리뷰');
+    await expect(page.locator('.fm-next-cover-note')).toContainText('제품 홈 화면 미리보기');
 
     const geometry=await preview.evaluate(node=>{
       const box=node.getBoundingClientRect();

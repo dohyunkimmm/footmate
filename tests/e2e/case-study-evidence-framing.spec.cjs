@@ -61,7 +61,11 @@ for(const [name,viewport] of [
     const slide=page.locator('.slide.on.fm-next-story-slide');
     const strip=slide.locator('.fm-evidence-recovery-strip');
     const images=strip.locator('.fm-evidence-media img');
-    await expect(images).toHaveCount(2);
+    await expect(images).toHaveCount(1);
+    const schematic=strip.locator('.fm-cs-recovery-example');
+    await expect(schematic).toBeVisible();
+    await expect(schematic).toContainText('다시 시도 · 경기 다시 선택');
+    await expect(strip.locator('figcaption').nth(1)).toContainText('화면 캡처 아님');
 
     if(viewport.width>900)await slide.evaluate(node=>node.scrollTop=node.scrollHeight);
     const geometry=await strip.evaluate(node=>{
