@@ -90,7 +90,7 @@
         content.style.zoom='';
         content.style.removeProperty('width');
         content.style.removeProperty('margin-inline');
-        if(!desktop)return;
+        if(!desktop||!slide.clientHeight)return;
         const style=getComputedStyle(slide);
         content.style.setProperty('width',`${slide.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)}px`,'important');
         content.style.setProperty('margin-inline','auto','important');
@@ -112,6 +112,9 @@
     let frame;
     const scheduleFit=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(fitSlides);};
     window.addEventListener('resize',scheduleFit);
+    new MutationObserver(records=>{
+      if(records.some(record=>record.target.classList.contains('slide')))scheduleFit();
+    }).observe(document.querySelector('.track'),{subtree:true,attributes:true,attributeFilter:['class']});
     document.querySelectorAll('img').forEach(img=>img.addEventListener('load',scheduleFit));
     if(document.fonts)document.fonts.ready.then(scheduleFit);
     scheduleFit();
