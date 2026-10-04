@@ -73,7 +73,7 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
 test('product enlargement preserves navigation and restores keyboard focus',async({page})=>{
   await page.setViewportSize({width:1440,height:1000});
   await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
-  for(const index of [5,6,8]){
+  for(const index of [6,8]){
     await page.locator('.toc-item').nth(index).click();
     const slide=page.locator('.slide.on');const opener=slide.locator('.fm-screen-expand');
     const source=await slide.locator('.fm-evidence-figure[data-evidence-scale="primary"] img').evaluate(node=>node.currentSrc||node.src);
@@ -114,4 +114,51 @@ test('section labels match the table of contents and supplemental details remain
   await page.setViewportSize({width:390,height:844});await expect(details).not.toHaveAttribute('open','');
   await details.locator('summary').click();await expect(details).toHaveAttribute('open','');
   await expect(details.locator('.fm-next-story-aside')).toBeVisible();
+});
+
+test('decision evidence lets readers change real base-ranking inputs without writing product state',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmDecisionEvidence==='true');
+  await page.locator('.toc-item').nth(5).click();
+  const figure=page.locator('.slide.on .is-recommendation');
+  await expect(figure).toHaveAttribute('data-interactive-ready','true');
+  const storage=await page.evaluate(()=>JSON.stringify({...localStorage}));
+  await expect(figure.locator('.fm-mock-match').first()).toHaveAttribute('data-match-id','suwon-ingye-2000');
+  const second=figure.getByRole('button',{name:'용인 · 초중급 GK',exact:true});await second.click();
+  await expect(second).toHaveAttribute('aria-pressed','true');
+  await expect(figure.locator('.fm-mock-match').first()).toHaveAttribute('data-match-id','giheung-2000');
+  await expect(figure.locator('.fm-mock-match').first()).toContainText('GK 1자리 남음');
+  await expect(figure.locator('figcaption')).toContainText('샘플 경기');
+  expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(storage);
+  expect(await page.locator('.slide.on').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+  await page.screenshot({path:'test-results/decision-evidence-p6-changed.png',animations:'disabled'});
+});
+
+test('recovery mock shows retained choice and locked retry before success without making a join request',async({page})=>{
+  const requests=[];page.on('request',request=>{if(request.method()==='POST')requests.push(request.url());});
+  await page.setViewportSize({width:1440,height:900});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmDecisionEvidence==='true');
+  await page.locator('.toc-item').nth(9).click();
+  const demo=page.locator('.slide.on .fm-recovery-demo');const retained=await demo.locator('.fm-recovery-retained').textContent();
+  const retry=demo.locator('[data-recovery-action="retry"]');await retry.click();
+  await expect(retry).toBeDisabled();await expect(demo).toHaveAttribute('data-recovery-state','success');
+  await expect(demo.locator('.fm-recovery-message')).toContainText('MY');
+  expect(await demo.locator('.fm-recovery-retained').textContent()).toBe(retained);
+  await retry.click();await expect(demo).toHaveAttribute('data-recovery-state','failed');
+  await demo.getByRole('button',{name:'경기 다시 선택',exact:true}).click();
+  await expect(demo).toHaveAttribute('data-recovery-state','choose');expect(requests).toEqual([]);
+  await page.screenshot({path:'test-results/decision-evidence-p10-alternative.png',animations:'disabled'});
+});
+
+test('representative decisions expose source evidence and a distinct next-decision close',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmDecisionEvidence==='true');
+  for(const index of [4,5,9,10,11,12]){
+    await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
+    if(index!==12)await expect(slide.locator('.fm-proof-link').first()).toBeVisible();
+    expect(await slide.evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+    await page.screenshot({path:`test-results/decision-evidence-p${index+1}.png`,animations:'disabled'});
+  }
+  await expect(page.locator('.slide.on')).toContainText('다음 판단');
+  await expect(page.locator('.slide.on')).not.toContainText('아직 연결하거나 검증하지 않은 범위');
 });

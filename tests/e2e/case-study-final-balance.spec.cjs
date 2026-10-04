@@ -202,7 +202,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
         controls:controls&&{top:controls.top,bottom:controls.bottom}
       };
     });
-    expect(finish.visibleRows).toBe(1);
+    expect(finish.visibleRows).toBe(2);
     expect(finish.focusBg).not.toBe(finish.quietBg);
     if(name==='desktop'){
       expect(finish.controls).toBeTruthy();
@@ -232,7 +232,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     // P11 · system-like architecture tokens become reader-facing Korean micro labels.
     await showSection(page,10);
     const architectureLabels=await page.locator('.slide.on .fm-p0-arch-node small').allTextContents();
-    expect(architectureLabels).toEqual(['요청','해석','전달','판단','제시','확정']);
+    expect(architectureLabels).toEqual(['요청','확정','해석','전달','판단','제시']);
     if(name==='mobile'){
       const density=await page.locator('.slide.on').evaluate(slide=>({
         paddingTop:parseFloat(getComputedStyle(slide).paddingTop),
@@ -245,7 +245,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     // P12 · QA and funnel micro labels are localized while the structure stays intact.
     await showSection(page,11);
     await expect(page.locator('.slide.on .fm-p1-validation-banner>span')).toHaveText('검증 지표');
-    expect(await page.locator('.slide.on .fm-p1-evidence-label').allTextContents()).toEqual(['자동 QA','사람 검수','AI 보조 검수']);
+    expect(await page.locator('.slide.on .fm-p1-evidence-label').allTextContents()).toEqual(['사용자 과업','자동 QA','사람 검수']);
     if(name==='mobile'){
       const spacing=await page.locator('.slide.on').evaluate(slide=>{
         const style=getComputedStyle(slide);
@@ -263,7 +263,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
 
     // P13 · open boundary and learning label are localized without duplicating the Real App entry.
     await showSection(page,12);
-    await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('미연동 · 미검증');
+    await expect(page.locator('.slide.on [data-zone="open-boundary"] header small')).toHaveText('복구 행동');
     await expect(page.locator('.slide.on .fm-p1-release-next>span')).toContainText('핵심 학습');
     await expect(page.locator('.slide.on .fm-p1-release-next>a')).toHaveCount(0);
 
@@ -272,8 +272,9 @@ for(const [name,viewport,expectedRecoveryGap] of [
       await showSection(page,5);
       const recommendation=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
       await expect(recommendation).toHaveAttribute('data-evidence-scale','primary');
-      expect(await recommendation.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBeLessThanOrEqual(360);
-      expect(await recommendation.locator('img').evaluate(el=>getComputedStyle(el).objectFit)).toBe('contain');
+      await expect(recommendation).toHaveAttribute('data-interactive-ready','true');
+      expect(await recommendation.locator('.fm-decision-mock').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBeLessThanOrEqual(380);
+      await expect(recommendation.locator('.fm-mock-match')).toHaveCount(2);
 
       await showSection(page,6);
       const detail=page.locator('.slide.on .fm-evidence-figure.is-detail');
