@@ -2161,7 +2161,7 @@
   function validation(slide){
     const cards=slide.querySelectorAll('.fm-p1-evidence-grid>.fm-next-cs-card');
     const copy=[
-      ['사용자 과업','교육생 6명 · 가입 8회','수료 전 탐색·가입 동선 확인 · 대표성·전환 효과는 미검증','docs/USER-TEST-EVIDENCE.md'],
+      ['사용자 과업','교육생 6명 · 가입 과업 8회','수료 전 탐색·가입 동선 확인 · 대표성·전환 효과는 미검증','docs/USER-TEST-EVIDENCE.md'],
       ['자동 QA','오류와 복원 경로','회귀 테스트 · 브라우저 E2E · 접근성 · 화면 비교 · 참가 실패·재시도','tests/e2e/release-app.spec.cjs'],
       ['사람 검수','외부 서비스와 전달 결과','실제 로그인 · 이메일 전달 · 브라우저·OS 알림 표시 · 사용자 효과와 구분','docs/SERVICE-PLANNING-EVIDENCE.md']
     ];
