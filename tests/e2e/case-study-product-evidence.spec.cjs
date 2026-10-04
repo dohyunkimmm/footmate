@@ -73,7 +73,7 @@ for(const [name,viewport] of [
     const slide=page.locator('.slide.on.fm-next-story-slide');
     await expect(slide).toHaveAttribute('data-p0-visual','problem');
     await expect(slide.locator('.fm-p0-problem-sources>article')).toHaveCount(3);
-    await expect(slide.locator('.fm-p0-problem-core')).toContainText('���� ������ ��Ȯ�Ǽ�');
+    await expect(slide.locator('.fm-p0-problem-core')).toContainText('참가 결정의 불확실성');
     await expect(slide.locator('.fm-p0-problem-path>span')).toHaveCount(4);
     await verifyNoHorizontalOverflow(page);
   });
@@ -84,13 +84,13 @@ for(const [name,viewport] of [
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="auth-participation"]');
     const summary=slide.locator('.fm-next-review-summary>div');
     await expect(summary).toHaveCount(3);
-    await expect(summary.nth(0)).toContainText('������');
-    await expect(summary.nth(0)).toContainText('�����ϱ� ����');
-    await expect(slide.locator('.fm-next-review-summary')).not.toContainText('���� ����');
+    await expect(summary.nth(0)).toContainText('진입점');
+    await expect(summary.nth(0)).toContainText('참가하기 직전');
+    await expect(slide.locator('.fm-next-review-summary')).not.toContainText('상태 보존');
     const preserve=slide.locator('.fm-p1-auth-preserve');
     const card=preserve.locator(':scope>span');
-    await expect(card.locator('small')).toHaveText('���� ����');
-    await expect(card.locator('b')).toHaveText('���� ��� + �α��� �� ���� ��ġ');
+    await expect(card.locator('small')).toHaveText('상태 보존');
+    await expect(card.locator('b')).toHaveText('선택 경기 + 로그인 후 복귀 위치');
     const geometry=await preserve.evaluate(node=>{
       const wrap=getComputedStyle(node);
       const card=node.querySelector(':scope>span');
@@ -281,13 +281,13 @@ for(const [name,viewport] of [
     const map=slide.locator('.fm-p0-recovery-map');
     const strip=slide.locator('.fm-evidence-recovery-strip');
     const figures=strip.locator('.fm-evidence-figure');
-    await expect(strip).toHaveAttribute('aria-label','��ǰ ���� ���� ��ǥ ȭ��');
-    await expect(map).toContainText('���� ���� ����');
-    await expect(map).toContainText('���� Ȯ�� �Ǵ� �ٽ� ����');
-    await expect(map).not.toContainText('���� ����');
+    await expect(strip).toHaveAttribute('aria-label','제품 복구 상태 대표 화면');
+    await expect(map).toContainText('참가 상태 문제');
+    await expect(map).toContainText('상태 확인 또는 다시 참가');
+    await expect(map).not.toContainText('결제 실패');
     await expect(figures).toHaveCount(2);
-    await expect(figures.nth(0).locator('figcaption')).toContainText('Ž�� ��� ����');
-    await expect(figures.nth(1).locator('figcaption')).toContainText('���� ����');
+    await expect(figures.nth(0).locator('figcaption')).toContainText('탐색 결과 없음');
+    await expect(figures.nth(1).locator('figcaption')).toContainText('참가 실패');
     await verifyEvidenceImages(page);
     await verifyNoHorizontalOverflow(page);
 
@@ -356,7 +356,7 @@ for(const [name,viewport] of [
           });
           return values;
         },selectors);
-        texts.filter(text=>/��\.$/.test(text)).forEach(text=>offenders.push({section:index+1,text}));
+        texts.filter(text=>/다\.$/.test(text)).forEach(text=>offenders.push({section:index+1,text}));
       }
       expect(offenders).toEqual([]);
     });
