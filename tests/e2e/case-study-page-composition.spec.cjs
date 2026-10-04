@@ -88,6 +88,22 @@ test('product enlargement preserves navigation and restores keyboard focus',asyn
   }
 });
 
+test('all 13 page descriptions occupy one complete line on desktop',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(let index=0;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    const description=page.locator('.slide.on .fm-next-cover-lead,.slide.on .fm-next-story-lead');
+    const lines=await description.evaluate(node=>{
+      const range=document.createRange();range.selectNodeContents(node);
+      const rects=[...range.getClientRects()];const box=node.getBoundingClientRect();
+      return {count:new Set(rects.map(rect=>Math.round(rect.top))).size,complete:rects.every(rect=>rect.left>=box.left-1&&rect.right<=box.right+1)};
+    });
+    expect(lines.count,`page ${index+1}`).toBe(1);expect(lines.complete).toBeTruthy();
+  }
+});
+
 test('section labels match the table of contents and supplemental details remain available',async({page})=>{
   await page.setViewportSize({width:1440,height:1000});await page.goto('/');
   await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');

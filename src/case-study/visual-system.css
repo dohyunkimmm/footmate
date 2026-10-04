@@ -3828,6 +3828,7 @@ html[data-fm-page-composition="true"] .fm-screen-expand{margin-left:auto;padding
 .fm-editorial-supplement>summary::after{content:'＋';float:right}
 .fm-editorial-supplement[open]>summary::after{content:'−'}
 @media(min-width:901px){
+  html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-product-evidence="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story-lead{max-width:100%!important;text-wrap:pretty}
   html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-product-evidence="true"][data-fm-case-study-advanced-polish="true"] .fm-next-story{margin-block:0!important}
   .fm-editorial-supplement{display:contents}
   .fm-editorial-supplement>summary{display:none}
