@@ -18,7 +18,8 @@ const cssSources=[
   'src/case-study/final-balance.css',
   'src/case-study/product-evidence.css',
   'src/case-study/advanced-polish.css',
-  'src/case-study/detail-finish.css'
+  'src/case-study/detail-finish.css',
+  'src/case-study/page-composition.css'
 ];
 const jsSources=[
   'src/case-study/heading-polish.js',
@@ -34,7 +35,8 @@ const jsSources=[
   'src/case-study/p1-real-preview.js',
   'src/case-study/p12-copy-spacing.js',
   'src/case-study/product-evidence.js',
-  'src/case-study/advanced-polish.js'
+  'src/case-study/advanced-polish.js',
+  'src/case-study/page-composition.js'
 ];
 
 function read(file){

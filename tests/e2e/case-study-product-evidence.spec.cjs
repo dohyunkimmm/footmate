@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await expect(page.locator('.track>.slide')).toHaveCount(13);
   await expect(page.locator('.track>.slide[data-cs-hidden="true"]')).toHaveCount(0);
@@ -148,10 +148,10 @@ for(const [name,viewport] of [
         boundaryCards
       };
     });
-    const summaryInset=name==='desktop'?{top:12,right:14,bottom:12,left:14}:{top:10,right:12,bottom:10,left:12};
+    const summaryInset=index=>name==='desktop'?{top:0,right:12,bottom:0,left:index===0?0:12}:{top:0,right:0,bottom:0,left:0};
     expect(lineRhythm.summary).toHaveLength(3);
-    lineRhythm.summary.forEach(card=>expect(card).toEqual(summaryInset));
-    expect(lineRhythm.summaryGap).toBe(name==='desktop'?10:8);
+    lineRhythm.summary.forEach((card,index)=>expect(card).toEqual(summaryInset(index)));
+    expect(lineRhythm.summaryGap).toBe(name==='desktop'?12:8);
     expect(lineRhythm.flowGap).toBe(10);
     expect(lineRhythm.screens).toHaveLength(4);
     lineRhythm.screens.forEach(card=>expect(card).toEqual({

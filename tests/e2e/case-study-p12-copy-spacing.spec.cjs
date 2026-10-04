@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyP12CopySpacing==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
@@ -57,7 +57,7 @@ for(const [name,viewport] of [
     await page.waitForTimeout(120);
     const release=page.locator('.slide.on');
     const releaseLead=release.locator('.fm-next-story-lead');
-    await expect(releaseLead).toHaveText('핵심 연결과 사용자 확인을 마치고, KPI·결제·수익성은 후속 검증으로 남겼습니다.');
+    await expect(releaseLead).toHaveText('Real App과 Closed Beta의 연결 범위를 구분하고, 실제 이용 지표와 수익성은 다음 검증 과제로 남겼습니다.');
     await expect(releaseLead).not.toContainText('실제 이용자 KPI');
     await noHorizontalOverflow(page);
     await release.screenshot({
@@ -71,7 +71,7 @@ for(const [name,viewport] of [
 
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="validation-evidence"]');
     const lead=slide.locator('.fm-next-story-lead');
-    await expect(lead).toHaveText('아래 지표는 Beta에서 관찰할 Validation Metric으로, 아직 측정된 성과값이 아닙니다.');
+    await expect(lead).toHaveText('KPI는 측정 기준으로 정의하고, 자동 QA·사람 검수·AI 보조 검토는 제품 동작을 확인하는 근거로 분리했습니다.');
     await expect(lead).not.toContainText('Measured Result');
 
     const banner=slide.locator('.fm-p1-validation-banner');
@@ -107,7 +107,7 @@ for(const [name,viewport] of [
       expect(rhythm.labelPosition).toBe('static');
       expect(rhythm.labelMarginBottom).toBeGreaterThanOrEqual(7);
       expect(rhythm.labelMarginBottom).toBeLessThanOrEqual(8);
-      expect(rhythm.titleMarginBottom).toBe(7);
+      expect(rhythm.titleMarginBottom).toBe(8);
       expect(rhythm.bodyLineHeight/rhythm.bodyFontSize).toBeGreaterThanOrEqual(1.65);
       expect(rhythm.bodyLineHeight/rhythm.bodyFontSize).toBeLessThanOrEqual(1.71);
     }

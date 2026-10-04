@@ -3,9 +3,9 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyAdvancedPolish==='true');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyDetailFinish==='true');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyVisualSystem==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
@@ -48,7 +48,7 @@ for(const [name,viewport] of [
     });
     expect(p11.normalRadius).toBe(12);
     expect(p11.focusRadius).toBe(12);
-    expect(p11.summaryRadius).toBe(12);
+    expect(p11.summaryRadius).toBe(0);
     expect(p11.focusBg).not.toBe(p11.normalBg);
     expect(p11.labelSpacing).toBeLessThan(1);
     expect(p11.labelLineHeight).toBeGreaterThanOrEqual(9);

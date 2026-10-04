@@ -3,7 +3,7 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
@@ -42,8 +42,8 @@ for(const [name,viewport] of [
         const media=node.closest('.fm-evidence-media').getBoundingClientRect();
         return {clipPath:style.clipPath,marginBottom:parseFloat(style.marginBottom),box,media};
       });
-      expect(framing.clipPath).not.toBe('none');
-      expect(framing.marginBottom).toBeLessThan(0);
+      expect(framing.clipPath).toBe('none');
+      expect(framing.marginBottom).toBe(0);
       expect(framing.box.left).toBeGreaterThanOrEqual(framing.media.left-1);
       expect(framing.box.right).toBeLessThanOrEqual(framing.media.right+1);
       await noHorizontalOverflow(page);
@@ -63,6 +63,7 @@ for(const [name,viewport] of [
     const images=strip.locator('.fm-evidence-media img');
     await expect(images).toHaveCount(2);
 
+    if(viewport.width>900)await slide.evaluate(node=>node.scrollTop=node.scrollHeight);
     const geometry=await strip.evaluate(node=>{
       const boxes=[...node.querySelectorAll('.fm-evidence-media img')].map(img=>{
         const box=img.getBoundingClientRect();

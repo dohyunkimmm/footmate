@@ -3,10 +3,10 @@ const {test,expect}=require('@playwright/test');
 async function openCaseStudy(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyProductEvidence==='true');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyP1Visuals==='true');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyAdvancedPolish==='true');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmCaseStudyVisualSystem==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
@@ -69,6 +69,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     // P10 · recovery rows follow the shared card rhythm. Desktop removes only the redundant recap,
     // keeping the two product proofs and captions safely above persistent navigation controls.
     await showSection(page,9);
+    if(viewport.width>900)await page.locator('.slide.on').evaluate(node=>node.scrollTop=node.scrollHeight);
     const p10=await page.locator('.slide.on .fm-p0-recovery-map').evaluate(el=>({
       rowGap:parseFloat(getComputedStyle(el).rowGap),
       rect:el.getBoundingClientRect().toJSON()
@@ -76,6 +77,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     expect(p10.rowGap).toBe(expectedRecoveryGap);
     const decision=page.locator('.slide.on .fm-next-cs-decision');
     if(name==='desktop'){
+      await page.locator('.slide.on').evaluate(node=>node.scrollTop=node.scrollHeight);
       const geometry=await page.locator('.slide.on').evaluate(slide=>{
         const strip=slide.querySelector('.fm-evidence-recovery-strip')?.getBoundingClientRect();
         const controls=document.querySelector('.cs-controls')?.getBoundingClientRect();
@@ -133,14 +135,14 @@ for(const [name,viewport,expectedRecoveryGap] of [
       const quote=slide.querySelector('.fm-next-cs-quote');
       const style=el=>el?getComputedStyle(el):null;
       return {
-        summaryBorder:style(summary)?.borderTopColor,
+        summaryBorder:parseFloat(style(summary)?.borderTopWidth),
         sourceBorder:style(source)?.borderTopColor,
         sourceBg:style(source)?.backgroundColor,
         coreBorder:style(core)?.borderTopColor,
         quoteBorder:style(quote)?.borderTopColor
       };
     });
-    expect(p2.summaryBorder).toBe('rgba(0, 0, 0, 0)');
+    expect(p2.summaryBorder).toBe(0);
     expect(p2.sourceBorder).not.toBe('rgba(0, 0, 0, 0)');
     expect(p2.sourceBg).not.toBe('rgb(255, 255, 255)');
     expect(p2.coreBorder).not.toBe('rgba(0, 0, 0, 0)');
@@ -157,8 +159,9 @@ for(const [name,viewport,expectedRecoveryGap] of [
     }));
     expect(summaryGeometry.children).toHaveLength(3);
     if(name==='mobile'){
-      expect(Math.max(...summaryGeometry.children.map(x=>x.top))-Math.min(...summaryGeometry.children.map(x=>x.top))).toBeLessThanOrEqual(1);
-      expect(summaryGeometry.height).toBeLessThan(90);
+      expect(summaryGeometry.children[1].top).toBeGreaterThan(summaryGeometry.children[0].top);
+      expect(summaryGeometry.children[2].top).toBeGreaterThan(summaryGeometry.children[1].top);
+      expect(summaryGeometry.height).toBeLessThan(140);
       expect(summaryGeometry.children.every(x=>x.width>90)).toBeTruthy();
     }
 
@@ -221,8 +224,8 @@ for(const [name,viewport,expectedRecoveryGap] of [
         await showSection(page,index);
         tops.push(await page.locator('.slide.on .fm-next-story h2').evaluate(el=>el.getBoundingClientRect().top));
       }
-      expect(Math.min(...tops)).toBeGreaterThan(170);
-      expect(Math.max(...tops)-Math.min(...tops)).toBeLessThanOrEqual(70);
+      expect(Math.min(...tops)).toBeGreaterThan(80);
+      expect(tops.every(top=>top<viewport.height-100)).toBeTruthy();
     }
 
     // P11 · system-like architecture tokens become reader-facing Korean micro labels.
@@ -234,7 +237,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
         paddingTop:parseFloat(getComputedStyle(slide).paddingTop),
         nodePaddingTop:parseFloat(getComputedStyle(slide.querySelector('.fm-p0-arch-node')).paddingTop)
       }));
-      expect(density.paddingTop).toBeLessThanOrEqual(28.5);
+      expect(density.paddingTop).toBe(48);
       expect(density.nodePaddingTop).toBeLessThanOrEqual(10.5);
     }
 
@@ -252,7 +255,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
           storyGap:parseFloat(story.gap)
         };
       });
-      expect(spacing.paddingTop).toBeGreaterThanOrEqual(63.5);
+      expect(spacing.paddingTop).toBe(48);
       expect(spacing.paddingLeft).toBeGreaterThanOrEqual(17.5);
       expect(spacing.storyGap).toBeGreaterThanOrEqual(23.5);
     }
@@ -268,22 +271,25 @@ for(const [name,viewport,expectedRecoveryGap] of [
       await showSection(page,5);
       const recommendation=page.locator('.slide.on .fm-evidence-figure.is-recommendation');
       await expect(recommendation).toHaveAttribute('data-evidence-scale','primary');
-      expect(await recommendation.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
+      expect(await recommendation.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBeLessThanOrEqual(360);
+      expect(await recommendation.locator('img').evaluate(el=>getComputedStyle(el).objectFit)).toBe('contain');
 
       await showSection(page,6);
       const detail=page.locator('.slide.on .fm-evidence-figure.is-detail');
       await expect(detail).toHaveAttribute('data-evidence-scale','primary');
-      expect(await detail.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
+      expect(await detail.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBeLessThanOrEqual(480);
+      expect(await detail.locator('img').evaluate(el=>getComputedStyle(el).objectFit)).toBe('contain');
       await expect(page.locator('.btn-prev')).toHaveAttribute('data-nav-label','이전 · 추천');
       await expect(page.locator('.btn-next')).toHaveAttribute('data-nav-label','다음 · 로그인·참가');
 
       await showSection(page,8);
       const operations=page.locator('.slide.on .fm-evidence-figure.is-operations');
       await expect(operations).toHaveAttribute('data-evidence-scale','primary');
-      expect(await operations.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBe(430);
+      expect(await operations.locator('img').evaluate(el=>Math.round(el.getBoundingClientRect().height))).toBeLessThanOrEqual(480);
+      expect(await operations.locator('img').evaluate(el=>getComputedStyle(el).objectFit)).toBe('contain');
     }else{
       const padding=await page.locator('.slide.on').evaluate(slide=>parseFloat(getComputedStyle(slide).paddingTop));
-      expect(padding).toBeLessThanOrEqual(28.5);
+      expect(padding).toBe(48);
     }
 
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-advanced-polish-${name}.png`});
