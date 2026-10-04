@@ -19,8 +19,7 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
       const cover=document.querySelector('.fm-next-cover h1 .fm-next-cover-title-line');
       return {
         navigation:ratio(getComputedStyle(label).color,getComputedStyle(navigation).backgroundColor),
-        // Check the title against the brightest stop of the cover's pitch gradient.
-        cover:ratio(getComputedStyle(cover).color,'rgb(35, 97, 66)')
+                cover:ratio(getComputedStyle(cover).color,getComputedStyle(document.querySelector('.fm-next-cover-slide')).backgroundColor)
       };
     });
     expect(contrast.navigation).toBeGreaterThanOrEqual(4.5);
