@@ -407,7 +407,7 @@
     installEditorialInteractions(slides);
     window.installFootMateEditorialFinish(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.4';
+    html.dataset.footmateCaseStudyRelease='5.4.5';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;

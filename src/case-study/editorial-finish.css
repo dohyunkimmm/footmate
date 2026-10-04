@@ -2,6 +2,9 @@
 .fm-editorial-recovery-layout{display:contents}
 .fm-editorial-evidence-heading{display:none}
 @media(min-width:901px){
+/* Balance spare vertical space around the story; dense pages retain their safe fitting area. */
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"] .fm-next-story{margin-block:auto!important}
+
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"] .fm-next-story h2{font-size:32px!important;line-height:1.32!important;letter-spacing:-.035em!important;font-weight:760!important;margin-bottom:12px!important;text-wrap:pretty}
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"] .fm-next-story-lead{font-size:14px!important;line-height:1.7!important;color:#58695f!important}
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"] .fm-next-cover h1{font-weight:820!important;letter-spacing:-.045em!important}
