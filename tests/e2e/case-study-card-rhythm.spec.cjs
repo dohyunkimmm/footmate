@@ -52,7 +52,7 @@ for(const [name,viewport,expected] of [
           '.fm-next-cs-decision',
           '.fm-next-cs-scope:not(.fm-p1-auth-boundary)',
           '.fm-next-cs-sticky',
-          '.fm-next-cs-note'
+          '.fm-next-cs-note:not(.fm-editorial-decision)'
         ].join(',');
         return [...slide.querySelectorAll(selector)]
           .filter(node=>{
@@ -83,3 +83,4 @@ for(const [name,viewport,expected] of [
     expect(overflow.body).toBeLessThanOrEqual(overflow.viewport+1);
   });
 }
+

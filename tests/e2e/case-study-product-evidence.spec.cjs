@@ -223,15 +223,14 @@ for(const [name,viewport] of [
         });
         return {split,metrics,evidence,funnel,ratios};
       });
-      expect(Math.abs(geometry.evidence.left-geometry.metrics.left)).toBeLessThanOrEqual(1);
-      expect(Math.abs(geometry.evidence.right-geometry.metrics.right)).toBeLessThanOrEqual(1);
-      expect(geometry.evidence.top).toBeGreaterThan(geometry.metrics.bottom);
+      expect(geometry.evidence.left).toBeGreaterThan(geometry.metrics.right);
+      expect(Math.abs(geometry.evidence.top-geometry.metrics.top)).toBeLessThanOrEqual(1);
       expect(geometry.funnel).toHaveLength(3);
       expect(Math.max(...geometry.funnel.map(card=>card.width))-Math.min(...geometry.funnel.map(card=>card.width))).toBeLessThanOrEqual(1);
-      expect(Math.min(...geometry.funnel.map(card=>card.width))).toBeGreaterThan(170);
+      expect(Math.min(...geometry.funnel.map(card=>card.width))).toBeGreaterThan(110);
       expect(geometry.funnel.every(card=>card.top===18&&card.bottom===18&&card.left===14&&card.right===14)).toBeTruthy();
       expect(geometry.ratios).toHaveLength(2);
-      expect(geometry.ratios.every(card=>card.top===18&&card.bottom===18&&card.left===20&&card.right===20)).toBeTruthy();
+      expect(geometry.ratios.every(card=>card.top===14&&card.bottom===14&&card.left===14&&card.right===14)).toBeTruthy();
       expect(geometry.split.width).toBeGreaterThan(900);
     }
 
@@ -301,11 +300,12 @@ for(const [name,viewport] of [
         const stripNode=node.querySelector('.fm-evidence-recovery-strip');
         const stripBox=stripNode.getBoundingClientRect();
         const figures=[...stripNode.querySelectorAll('.fm-evidence-figure')].map(el=>el.getBoundingClientRect());
-        return {mapBottom:mapBox.bottom,stripTop:stripBox.top,stripWidth:stripBox.width,figureWidths:figures.map(box=>box.width),scale:parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1};
+        return {mapRight:mapBox.right,mapTop:mapBox.top,mapBottom:mapBox.bottom,stripLeft:stripBox.left,stripTop:stripBox.top,stripWidth:stripBox.width,figureWidths:figures.map(box=>box.width),scale:parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1};
       });
-      expect((geometry.stripTop-geometry.mapBottom)/geometry.scale).toBeGreaterThanOrEqual(11.5);
+      expect(geometry.stripLeft).toBeGreaterThan(geometry.mapRight);
+      expect(Math.abs(geometry.stripTop-geometry.mapTop)).toBeLessThanOrEqual(1);
       expect(Math.abs(geometry.figureWidths[0]-geometry.figureWidths[1])).toBeLessThanOrEqual(2);
-      expect(geometry.figureWidths[0]/geometry.scale).toBeGreaterThan(300);
+      expect(geometry.figureWidths[0]/geometry.scale).toBeGreaterThanOrEqual(299);
     }else{
       const geometry=await strip.evaluate(node=>{
         const stripBox=node.getBoundingClientRect();

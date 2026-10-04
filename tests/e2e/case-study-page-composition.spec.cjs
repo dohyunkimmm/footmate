@@ -193,3 +193,33 @@ test('representative decisions expose source evidence and a distinct next-decisi
   await expect(page.locator('.slide.on')).toContainText('다음 판단');
   await expect(page.locator('.slide.on')).not.toContainText('아직 연결하거나 검증하지 않은 범위');
 });
+
+test('editorial composition enlarges dense-page reading text while retaining fixed slides',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmEditorialFinish==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(const index of [1,2,4,5,8,9,10,11,12]){
+    await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
+    expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+    const title=await slide.locator('h2').evaluate(node=>({weight:getComputedStyle(node).fontWeight,size:parseFloat(getComputedStyle(node).fontSize)}));
+    expect(title.size).toBe(32);expect(title.weight).toBe('760');
+    await page.screenshot({path:`test-results/editorial-finish-p${index+1}.png`,animations:'disabled'});
+  }
+  await page.locator('.toc-item').nth(9).click();
+  const recovery=await page.locator('.slide.on').evaluate(node=>{
+    const map=node.querySelector('.fm-p0-recovery-map').getBoundingClientRect();const proof=node.querySelector('.fm-evidence-recovery-strip').getBoundingClientRect();
+    const text=node.querySelector('.fm-p0-recovery-row b');const size=parseFloat(getComputedStyle(text).fontSize);const scale=parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1;
+    return {mapRight:map.right,proofLeft:proof.left,textSize:size,renderedSize:size*scale};
+  });
+  expect(recovery.proofLeft).toBeGreaterThan(recovery.mapRight);expect(recovery.textSize).toBe(14);expect(recovery.renderedSize).toBeGreaterThanOrEqual(13);
+  await expect(page.locator('.slide.on')).toContainText('핵심 결정 03');
+  await page.locator('.toc-item').nth(11).click();
+  const validation=await page.locator('.slide.on').evaluate(node=>{
+    const metrics=node.querySelector('.fm-p1-metrics').getBoundingClientRect();const evidence=node.querySelector('.fm-p1-evidence-grid').getBoundingClientRect();
+    const body=node.querySelector('.fm-page-card-description');const size=parseFloat(getComputedStyle(body).fontSize);const scale=parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1;
+    return {metricsRight:metrics.right,evidenceLeft:evidence.left,textSize:size,renderedSize:size*scale};
+  });
+  expect(validation.evidenceLeft).toBeGreaterThan(validation.metricsRight);expect(validation.textSize).toBe(13);expect(validation.renderedSize).toBeGreaterThanOrEqual(12);
+  await page.locator('.toc-item').nth(5).click();await expect(page.locator('.slide.on .fm-editorial-decision')).toContainText('핵심 결정 02');
+  const inset=await page.locator('.slide.on .fm-editorial-decision').evaluate(node=>parseFloat(getComputedStyle(node).paddingLeft));expect(inset).toBe(0);
+});
