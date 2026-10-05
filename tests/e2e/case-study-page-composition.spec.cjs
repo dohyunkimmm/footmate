@@ -224,23 +224,33 @@ test('editorial composition enlarges dense-page reading text while retaining fix
   const inset=await page.locator('.slide.on .fm-editorial-decision').evaluate(node=>parseFloat(getComputedStyle(node).paddingLeft));expect(inset).toBe(0);
 });
 
-test('desktop stories balance spare vertical space without growing the page',async({page})=>{
+test('desktop stories limit title movement while keeping content above the controls',async({page})=>{
   await page.setViewportSize({width:1440,height:1000});await page.goto('/');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmEditorialFinish==='true');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmEvidenceDetails==='true');
   await page.evaluate(()=>document.fonts.ready);
+  const positions=[];
   for(let index=1;index<13;index++){
     await page.locator('.toc-item').nth(index).click();
     const slide=page.locator('.slide.on');
+    await slide.evaluate(async node=>{await Promise.all(node.getAnimations({subtree:true}).filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});
     await expect.poll(()=>slide.evaluate(node=>{
-      const content=node.querySelector('.fm-next-story').getBoundingClientRect();
+      const story=node.querySelector('.fm-next-story');const content=story.getBoundingClientRect();
       const box=node.getBoundingClientRect();const style=getComputedStyle(node);
-      const top=content.top-box.top-parseFloat(style.paddingTop);
-      const bottom=box.bottom-content.bottom-parseFloat(style.paddingBottom);
-      return Math.abs(top-bottom);
-    }),{message:`page ${index+1} balances available space`}).toBeLessThanOrEqual(3);
+      const paddingTop=parseFloat(style.paddingTop),paddingBottom=parseFloat(style.paddingBottom);
+      const available=node.clientHeight-paddingTop-paddingBottom;
+      const expected=Math.min(72,Math.max(0,(available-content.height)/2));
+      return Math.abs(content.top-box.top-paddingTop-expected);
+    }),{message:`page ${index+1} follows the bounded title rhythm`}).toBeLessThanOrEqual(3);
+    const bounds=await slide.evaluate(node=>{
+      const content=node.querySelector('.fm-next-story').getBoundingClientRect();const box=node.getBoundingClientRect();
+      return {top:content.top-box.top,bottom:box.bottom-content.bottom};
+    });
+    positions.push(bounds.top);
+    expect(bounds.top).toBeGreaterThanOrEqual(63);expect(bounds.bottom).toBeGreaterThanOrEqual(63);
     expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
     await page.screenshot({path:`test-results/vertical-balance-p${index+1}.png`,animations:'disabled'});
   }
+  expect(Math.max(...positions)-Math.min(...positions)).toBeLessThanOrEqual(75);
 });
 
 test('final rendered copy keeps descriptions distinct and removes duplicate detail rationale',async({page})=>{
@@ -300,4 +310,34 @@ test('desktop composition audit captures every section after entry motion settle
     console.log('SECTION_VISUAL_'+(index+1)+' '+screenshot.toString('base64'));
     console.log('SECTION_GEOMETRY_'+(index+1)+' '+JSON.stringify(await slide.evaluate(n=>[...n.querySelectorAll('.fm-next-story,.fm-next-story-scene,.fm-next-story-context,.fm-next-story-lenses,.fm-next-story-aside,.fm-evidence-figure')].map(e=>{const b=e.getBoundingClientRect();return {class:e.className,x:b.x,y:b.y,w:b.width,h:b.height};}))));
   }
+});
+
+test('inline evidence shows actual changes, readable source details and the execution sequence',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmEvidenceDetails==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(const index of [6,8]){
+    await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
+    const crop=slide.locator('.fm-focus-detail');await expect(crop).toBeVisible();
+    const source=slide.locator('.fm-evidence-figure[data-evidence-scale="primary"] img');
+    await expect.poll(()=>crop.locator('img').evaluate(n=>n.complete&&n.naturalWidth>0)).toBeTruthy();
+    expect(await crop.locator('img').getAttribute('src')).toBe(await source.getAttribute('src'));
+    const widths=await slide.evaluate(node=>({
+      detail:node.querySelector('.fm-focus-crop>img').getBoundingClientRect().width,
+      full:node.querySelector('.fm-evidence-figure[data-evidence-scale="primary"] img').getBoundingClientRect().width
+    }));
+    expect(widths.detail).toBeGreaterThan(widths.full*1.5);
+    await expect(crop).toContainText('기존 제품 화면');
+  }
+  await page.locator('.toc-item').nth(9).click();
+  await expect(page.locator('.slide.on .fm-inline-change')).toBeVisible();
+  await expect(page.locator('.slide.on .fm-inline-change')).toContainText('수정 전');
+  await expect(page.locator('.slide.on .fm-inline-change')).toContainText('버튼 복원');
+  await page.locator('.toc-item').nth(10).click();
+  expect(await page.locator('.slide.on .fm-processing-path>li>b').allTextContents()).toEqual(['입력','해석','추천','확인']);
+  await expect(page.locator('.slide.on .fm-owner-column')).toHaveCount(3);
+  await page.locator('.toc-item').nth(12).click();
+  await expect(page.locator('.slide.on .fm-change-before')).toContainText('수정 전');
+  await expect(page.locator('.slide.on .fm-change-after')).toContainText('다음 경기 찾기');
+  await expect(page.locator('.slide.on .fm-learning-proof')).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
 });

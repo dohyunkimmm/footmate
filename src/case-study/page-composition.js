@@ -420,6 +420,7 @@
         const content=slide.querySelector('.fm-next-story,.fm-next-cover');
         if(!content)return;
         content.style.zoom='';
+        content.style.removeProperty('--fm-story-offset');
         content.style.removeProperty('width');
         content.style.removeProperty('margin-inline');
         if(!desktop||!slide.clientHeight)return;
@@ -437,6 +438,10 @@
             scale*=((available-2)/actual);
             content.style.zoom=String(scale);
           }
+        }
+        if(slide.classList.contains('fm-next-story-slide')&&window.matchMedia('(min-width:1181px) and (min-height:760px)').matches){
+          const spare=Math.max(0,available-content.getBoundingClientRect().height);
+          content.style.setProperty('--fm-story-offset',Math.min(72,spare/2)+'px');
         }
         slide.scrollTop=0;
       });
