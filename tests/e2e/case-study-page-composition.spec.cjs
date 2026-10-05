@@ -280,7 +280,7 @@ test('desktop composition audit captures every section after entry motion settle
     await expect.poll(()=>slide.evaluate(n=>n.scrollHeight-n.clientHeight)).toBeLessThanOrEqual(1);
     if([9,11,12].includes(index)){
       const selectors=index===9?['.fm-p0-recovery-map','.fm-evidence-recovery-strip']:index===11?['.fm-p1-metrics','.fm-p1-evidence-grid']:['.fm-p1-release-map>article'];
-      const bounds=await slide.evaluate(selectors=>selectors.flatMap(selector=>[...document.querySelector('.slide.on').querySelectorAll(selector)].map(n=>{const b=n.getBoundingClientRect();return {top:b.top,bottom:b.bottom};})),selectors);
+      const bounds=await slide.evaluate((node,selectors)=>selectors.flatMap(selector=>[...document.querySelector('.slide.on').querySelectorAll(selector)].map(n=>{const b=n.getBoundingClientRect();return {top:b.top,bottom:b.bottom};})),selectors);
       console.log('BALANCED_EDGES_'+(index+1)+' '+JSON.stringify(bounds));
       expect.soft(Math.max(...bounds.map(b=>b.top))-Math.min(...bounds.map(b=>b.top))).toBeLessThanOrEqual(1);
       expect.soft(Math.max(...bounds.map(b=>b.bottom))-Math.min(...bounds.map(b=>b.bottom))).toBeLessThanOrEqual(1);

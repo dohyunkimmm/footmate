@@ -95,8 +95,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p10.png`});
 
-    // P13 · desktop release cards keep natural heights; the 3-row open-boundary card should
-    // end before the two 4-row cards instead of being stretched to their height.
+    // P13 · desktop cards share one height while retaining all content without inner overflow.
     await showSection(page,12);
     const p13=await page.locator('.slide.on .fm-p1-release-map').evaluate(map=>{
       const style=getComputedStyle(map);
@@ -110,12 +109,12 @@ for(const [name,viewport,expectedRecoveryGap] of [
     });
     expect(p13.cards).toHaveLength(3);
     if(name==='desktop'){
-      expect(p13.alignItems).toBe('start');
+      expect(p13.alignItems).toBe('stretch');
       const real=p13.cards.find(card=>card.zone==='real-app');
       const beta=p13.cards.find(card=>card.zone==='closed-beta');
       const open=p13.cards.find(card=>card.zone==='open-boundary');
-      expect(open.height).toBeLessThan(real.height-20);
-      expect(open.height).toBeLessThan(beta.height-20);
+      expect(Math.abs(open.height-real.height)).toBeLessThanOrEqual(1);
+      expect(Math.abs(open.height-beta.height)).toBeLessThanOrEqual(1);
       for(const card of p13.cards)expect(card.scrollHeight-card.clientHeight).toBeLessThanOrEqual(1);
     }
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-final-balance-${name}-p13.png`});
