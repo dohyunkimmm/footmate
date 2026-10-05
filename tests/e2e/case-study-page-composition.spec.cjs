@@ -267,3 +267,19 @@ test('final rendered copy keeps descriptions distinct and removes duplicate deta
   const labels=await page.locator('.slide.on .fm-p1-release-map li>span').allTextContents();
   expect(new Set(labels).size).toBe(labels.length);
 });
+
+
+test('desktop composition audit captures every section after entry motion settles',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(let index=1;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    const slide=page.locator('.slide.on');
+    await slide.evaluate(async node=>{await Promise.all(node.getAnimations({subtree:true}).filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});
+    await expect.poll(()=>slide.evaluate(n=>n.scrollHeight-n.clientHeight)).toBeLessThanOrEqual(1);
+    const screenshot=await page.screenshot({type:'jpeg',quality:65,animations:'disabled'});
+    console.log('SECTION_VISUAL_'+(index+1)+' '+screenshot.toString('base64'));
+    console.log('SECTION_GEOMETRY_'+(index+1)+' '+JSON.stringify(await slide.evaluate(n=>[...n.querySelectorAll('.fm-next-story,.fm-next-story-scene,.fm-next-story-context,.fm-next-story-lenses,.fm-next-story-aside,.fm-evidence-figure')].map(e=>{const b=e.getBoundingClientRect();return {class:e.className,x:b.x,y:b.y,w:b.width,h:b.height};}))));
+  }
+});
