@@ -414,3 +414,32 @@ for(const [name,viewport] of [
     }
   });
 }
+
+test('P3 persona introduction aligns with all three desktop lens cards',async({page})=>{
+  await openCaseStudy(page,{width:1440,height:1000});
+  await showSection(page,2);
+  const slide=page.locator('.slide.on');
+  await slide.evaluate(async node=>{
+    await Promise.all(node.getAnimations({subtree:true}).filter(animation=>animation.effect?.getTiming().iterations!==Infinity).map(animation=>animation.finished.catch(()=>{})));
+  });
+  const geometry=await slide.evaluate(node=>{
+    const cards=[node.querySelector('.fm-p1-persona-context'),...node.querySelectorAll('.fm-p1-persona-lenses>div')];
+    return cards.map(card=>{
+      const box=card.getBoundingClientRect();const style=getComputedStyle(card);
+      const label=card.querySelector(':scope>span,:scope>small').getBoundingClientRect();
+      const title=card.querySelector(':scope>b').getBoundingClientRect();
+      return {top:box.top,bottom:box.bottom,labelTop:label.top,titleTop:title.top,padding:parseFloat(style.paddingLeft),borderTop:parseFloat(style.borderTopWidth)};
+    });
+  });
+  console.log('P3_CARD_GEOMETRY '+JSON.stringify(geometry));
+  expect(geometry).toHaveLength(4);
+  for(const card of geometry){
+    expect(Math.abs(card.top-geometry[0].top)).toBeLessThanOrEqual(1);
+    expect(Math.abs(card.bottom-geometry[0].bottom)).toBeLessThanOrEqual(1);
+    expect(Math.abs(card.labelTop-geometry[0].labelTop)).toBeLessThanOrEqual(1);
+    expect(Math.abs(card.titleTop-geometry[0].titleTop)).toBeLessThanOrEqual(1);
+    expect(card.padding).toBe(16);expect(card.borderTop).toBe(3);
+  }
+  expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+  await page.screenshot({path:'test-results/p3-persona-balanced-desktop.png',animations:'disabled'});
+});
