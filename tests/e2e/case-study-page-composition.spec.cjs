@@ -539,3 +539,38 @@ for(const reducedMotion of ['no-preference','reduce']){
     if(reducedMotion==='reduce')expect(await changed.evaluate(node=>getComputedStyle(node).animationName)).toBe('none');
   });
 }
+
+for(const width of [1440,390,320]){
+  test('six reviewer upgrades retain context and show honest examples at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:900});
+    const errors=[];page.on('pageerror',error=>errors.push(error.message));
+    await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmPageUpgrades==='true');
+    await expect(page.locator('.fm-page-upgrade-open')).toHaveCount(6);
+    const before=await page.evaluate(()=>JSON.stringify({...localStorage}));
+    for(const [index,key] of [[2,'tasks'],[3,'priority'],[6,'compare'],[7,'join'],[8,'matchday'],[12,'next']]){
+      if(width>900)await page.locator('.toc-item').nth(index).click();
+      const opener=page.locator('.slide').nth(index).locator('.fm-page-upgrade-open');
+      await opener.click();const dialog=page.locator('#fm-page-upgrade-dialog');
+      await expect(dialog).toBeVisible();await expect(dialog).toHaveAttribute('data-page-upgrade',key);
+      if(key==='tasks'){await expect(dialog).toContainText('가입 전 탐색 · 2회');await expect(dialog).toContainText('개인별 오류 목록은 미확정');}
+      if(key==='priority'){await expect(dialog).toContainText('감수한 제약');await expect(dialog).toContainText('실제 PG는 미연동');}
+      if(key==='compare'){await expect(dialog.getByRole('table')).toBeVisible();await expect(dialog).toContainText('설명용 샘플');await expect(dialog).toContainText('MF 자리 있음');}
+      if(key==='next'){await expect(dialog).toContainText('앞으로 수행할 검증 계획');await expect(dialog).toContainText('같은 과업으로 재검증');}
+      if(key==='join'||key==='matchday'){
+        const controls=dialog.locator('.fm-upgrade-state-controls button');
+        for(let i=0;i<3;i++){
+          await controls.nth(i).click();await expect(controls.nth(i)).toHaveAttribute('aria-pressed','true');
+          await expect(dialog.locator('.fm-upgrade-state')).toHaveAttribute('data-example-state',String(i));
+          await expect(dialog.locator('.fm-upgrade-state')).toContainText('다음 행동');
+        }
+        await controls.first().focus();await page.keyboard.press('ArrowRight');
+        await expect(dialog).toBeVisible();
+        if(width>900)await expect(page.locator('.slide.on')).toHaveAttribute('data-page-number',String(index+1));
+      }
+      const geometry=await dialog.evaluate(node=>({overflow:node.scrollWidth-node.clientWidth,left:node.getBoundingClientRect().left,right:node.getBoundingClientRect().right,width:innerWidth}));
+      expect(geometry.overflow).toBeLessThanOrEqual(1);expect(geometry.left).toBeGreaterThanOrEqual(0);expect(geometry.right).toBeLessThanOrEqual(geometry.width);
+      await page.keyboard.press('Escape');await expect(dialog).toBeHidden();await expect(opener).toBeFocused();
+    }
+    expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(before);expect(errors).toEqual([]);
+  });
+}
