@@ -509,3 +509,33 @@ for(const width of [320,390]){
     await dialog.getByRole('button',{name:'근거 요약 닫기'}).click();await expect(dialog).not.toBeVisible();await expect(opener).toBeFocused();
   });
 }
+
+for(const reducedMotion of ['no-preference','reduce']){
+  test('reading and evidence motion respect '+reducedMotion,async({page})=>{
+    await page.setViewportSize({width:1440,height:900});
+    await page.emulateMedia({reducedMotion});
+    await page.goto('/#section-12');
+    await page.waitForFunction(()=>document.documentElement.dataset.fmEvidenceSummaries==='true');
+    const story=page.locator('.slide.on .fm-next-story');
+    const opener=page.locator('.slide.on button[data-evidence-summary="tasks"]');
+    const styles=await story.evaluate(node=>({animation:getComputedStyle(node).animationName,duration:getComputedStyle(node).animationDuration,transition:getComputedStyle(document.querySelector('.slide.on .fm-proof-link')).transitionDuration,progress:getComputedStyle(document.querySelector('.pbar-fill')).transitionDuration}));
+    if(reducedMotion==='reduce'){
+      expect(styles.animation).toBe('none');expect(styles.transition).toBe('0s');expect(styles.progress).toBe('0s');
+    }else{
+      expect(styles.animation).toBe('fm-reader-page-in');expect(styles.duration).toBe('0.18s');
+    }
+    await opener.click();const dialog=page.locator('#fm-evidence-summary-dialog');
+    await expect(dialog).toBeVisible();
+    const modal=await dialog.evaluate(node=>({animation:getComputedStyle(node).animationName,duration:getComputedStyle(node).animationDuration,backdrop:getComputedStyle(node,'::backdrop').animationName}));
+    expect(modal.animation).toBe(reducedMotion==='reduce'?'none':'fm-reader-dialog-in');
+    expect(modal.backdrop).toBe(reducedMotion==='reduce'?'none':'fm-reader-backdrop-in');
+    await expect(dialog).toContainText('교육생 6명');
+    await page.keyboard.press('Escape');await expect(opener).toBeFocused();
+    await page.locator('.toc-item').nth(5).click();
+    await page.waitForFunction(()=>document.querySelector('.slide.on .is-recommendation')?.dataset.interactiveReady==='true');
+    await page.locator('.slide.on [data-reco-preset="1"]').click();
+    const changed=page.locator('.slide.on .fm-reason-updated').first();
+    await expect(changed).toBeVisible();
+    if(reducedMotion==='reduce')expect(await changed.evaluate(node=>getComputedStyle(node).animationName)).toBe('none');
+  });
+}

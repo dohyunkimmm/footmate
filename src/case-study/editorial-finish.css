@@ -294,3 +294,20 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 }
 @keyframes fm-change-emphasis{from{box-shadow:inset 0 -2px 0 #527b61,0 0 0 2px #e3efc9}to{box-shadow:inset 0 -2px 0 #80a551}}
 @media(prefers-reduced-motion:reduce){html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-color-interaction-polish="true"] :is(.fm-rank-updated,.fm-reason-updated){animation:none!important;transition:none!important}}
+
+/* Brief reading feedback; no looping decoration or layout changes. */
+@keyframes fm-reader-page-in{from{opacity:.72}to{opacity:1}}
+@keyframes fm-reader-dialog-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fm-reader-backdrop-in{from{opacity:0}to{opacity:1}}
+html[data-fm-next-case-study="true"][data-fm-editorial-finish="true"]{
+  & .slide.on :is(.fm-next-cover,.fm-next-story){animation:fm-reader-page-in 180ms ease-out}
+  & :is(.fm-improvement-dialog,.fm-next-kpi-dialog)[open]{animation:fm-reader-dialog-in 160ms ease-out}
+  & :is(.fm-improvement-dialog,.fm-next-kpi-dialog)::backdrop{animation:fm-reader-backdrop-in 160ms ease-out}
+  & :is(.toc-item,.cs-button,.dot,.fm-proof-link,.fm-improvement-open,.fm-next-kpi-open,.fm-mock-presets button){transition:background-color 140ms ease,border-color 140ms ease,color 140ms ease,text-decoration-color 140ms ease}
+  & .fm-proof-link:is(:hover,:focus-visible){color:#173c2c;text-decoration-thickness:2px}
+  & .fm-next-kpi-open:is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:3px}
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-fm-next-case-study="true"] :is(.fm-cs-shell,.fm-cs-shell *,.fm-improvement-dialog,.fm-improvement-dialog *,.fm-next-kpi-dialog,.fm-next-kpi-dialog *){animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  html[data-fm-next-case-study="true"] :is(.fm-improvement-dialog,.fm-next-kpi-dialog)::backdrop{animation:none!important;transition:none!important}
+}
