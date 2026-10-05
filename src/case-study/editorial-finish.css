@@ -338,3 +338,5 @@ html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog ol{grid-template-co
 html[data-fm-next-case-study="true"] .fm-upgrade-state .fm-cs-reasons>div{grid-template-columns:1fr;gap:3px}
 html[data-fm-next-case-study="true"] .fm-upgrade-table :is(th,td){padding:8px 5px;font-size:13px}
 }
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog .fm-improvement-content li>p{font-size:14px;line-height:1.7}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog .fm-improvement-content li>b{font-size:16px}
