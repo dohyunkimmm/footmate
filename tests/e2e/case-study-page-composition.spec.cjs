@@ -285,6 +285,17 @@ test('desktop composition audit captures every section after entry motion settle
       expect.soft(Math.max(...bounds.map(b=>b.top))-Math.min(...bounds.map(b=>b.top))).toBeLessThanOrEqual(1);
       expect.soft(Math.max(...bounds.map(b=>b.bottom))-Math.min(...bounds.map(b=>b.bottom))).toBeLessThanOrEqual(1);
     }
+    if([2,3,7,10].includes(index)){
+      const details=await slide.evaluate((node,index)=>{
+        const box=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width};};
+        const main=box(node.querySelector('.fm-next-review-summary'));
+        const elements=index===2?[node.querySelector('.fm-p1-jtbd-journey>ol')]:index===3?[...node.querySelectorAll('.fm-next-story-aside .fm-next-cs-card')]:index===7?[node.querySelector('.fm-p1-auth-preserve>span')]:[node.querySelector('.fm-owner-grid')];
+        return {main,boxes:elements.map(box)};
+      },index);
+      console.log('EDITORIAL_EDGES_'+(index+1)+' '+JSON.stringify(details));
+      if(index===3){expect.soft(details.boxes).toHaveLength(3);expect.soft(Math.max(...details.boxes.map(b=>b.width))-Math.min(...details.boxes.map(b=>b.width))).toBeLessThanOrEqual(1);}
+      else {expect.soft(Math.abs(details.boxes[0].left-details.main.left)).toBeLessThanOrEqual(1);expect.soft(Math.abs(details.boxes[0].right-details.main.right)).toBeLessThanOrEqual(1);}
+    }
     const screenshot=await page.screenshot({type:'jpeg',quality:65,animations:'disabled'});
     console.log('SECTION_VISUAL_'+(index+1)+' '+screenshot.toString('base64'));
     console.log('SECTION_GEOMETRY_'+(index+1)+' '+JSON.stringify(await slide.evaluate(n=>[...n.querySelectorAll('.fm-next-story,.fm-next-story-scene,.fm-next-story-context,.fm-next-story-lenses,.fm-next-story-aside,.fm-evidence-figure')].map(e=>{const b=e.getBoundingClientRect();return {class:e.className,x:b.x,y:b.y,w:b.width,h:b.height};}))));

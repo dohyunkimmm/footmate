@@ -82,7 +82,7 @@ for(const [name,viewport] of [
     await verifyNoHorizontalOverflow(page);
   });
 
-  test(`P8 preserved-state decision reads as a full card on ${name}`,async({page})=>{
+  test(`P8 preserved-state decision follows the authentication composition on ${name}`,async({page})=>{
     await openCaseStudy(page,viewport);
     await showSection(page,7);
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="auth-participation"]');
@@ -119,13 +119,13 @@ for(const [name,viewport] of [
         bodyFont:parseFloat(bodyStyle.fontSize)
       };
     });
-    expect(geometry.marginTop).toBe(14);
+    expect(geometry.marginTop).toBe(name==='desktop'?12:14);
     expect(geometry.marginBottom).toBe(14);
-    expect(geometry.paddingTop).toBe(14);
-    expect(geometry.paddingBottom).toBe(14);
+    expect(geometry.paddingTop).toBe(name==='desktop'?12:14);
+    expect(geometry.paddingBottom).toBe(name==='desktop'?12:14);
     expect(geometry.paddingLeft).toBe(16);
     expect(geometry.paddingRight).toBe(16);
-    expect(geometry.radius).toBe(16);
+    expect(geometry.radius).toBe(name==='desktop'?0:16);
     expect(geometry.labelFont).toBeGreaterThanOrEqual(10);
     expect(geometry.bodyFont).toBeGreaterThanOrEqual(13);
     const lineRhythm=await slide.evaluate(node=>{
@@ -168,10 +168,9 @@ for(const [name,viewport] of [
     expect(lineRhythm.boundaryCards).toHaveLength(3);
     lineRhythm.boundaryCards.forEach(card=>expect(card).toEqual({top:14,right:16,bottom:14,left:16}));
     if(viewport.width>900){
-      expect(geometry.width).toBeGreaterThanOrEqual(320);
-      expect(geometry.width).toBeLessThanOrEqual(420);
-      expect(geometry.width).toBeLessThan(geometry.wrapWidth*0.7);
-      expect(Math.abs(geometry.leftGap-geometry.rightGap)).toBeLessThanOrEqual(1);
+      expect(Math.abs(geometry.width-geometry.wrapWidth)).toBeLessThanOrEqual(1);
+      expect(Math.abs(geometry.leftGap)).toBeLessThanOrEqual(1);
+      expect(Math.abs(geometry.rightGap)).toBeLessThanOrEqual(1);
     }else{
       expect(Math.abs(geometry.width-geometry.wrapWidth)).toBeLessThanOrEqual(1);
     }
