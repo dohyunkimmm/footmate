@@ -123,7 +123,7 @@
       if(sub)sub.textContent=canonicalSections[index][1];
     });
     const sub=document.querySelector('.sb-sub');
-    if(sub)sub.textContent='풋살 서비스 · 개인 프로젝트';
+    if(sub)sub.textContent='Futsal Platform · Personal Project';
     const topTitle=document.querySelector('.topbar-title');
     if(topTitle)topTitle.textContent='FootMate · Product Case Study';
     document.documentElement.dataset.footmateCaseStudyRelease='4.9.0';
