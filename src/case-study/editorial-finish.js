@@ -415,8 +415,11 @@
       const button=document.createElement('button');button.type='button';button.className='fm-proof-link fm-page-upgrade-open';button.textContent=label;
       button.dataset.pageUpgrade=key;button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls',dialog.id);
       button.addEventListener('click',()=>{opener=button;show(key);});
-      const disclosure=host.closest('details');if(disclosure)disclosure.after(button);else host.appendChild(button);
+      const disclosure=host.closest('details');if(disclosure)disclosure.after(button);else if(key==='join')host.after(button);else host.appendChild(button);
     });
+    const comparisonNote=slides[6].querySelector('.fm-cs-detail-rationale');
+    const comparisonButton=comparisonNote.querySelector('.fm-page-upgrade-open');
+    comparisonNote.replaceChildren(document.createTextNode('최대 2경기 · 거리·레벨·포지션·참가비 비교'),comparisonButton);
     const priorityNote=slides[3].querySelector('.fm-next-story-aside .fm-next-cs-note .fm-cs-reasons');
     if(priorityNote)priorityNote.innerHTML='<div><dt>비교한 대안</dt><dd>결제·정산 확장보다 참가·복구를 우선</dd></div><div><dt>선택 이유</dt><dd>정원·참가 결과 오류는 다음 행동을 중단시킴</dd></div><div><dt>감수한 제약</dt><dd>실제 결제·수익성 효과는 미검증</dd></div>';
     slides[12].querySelector('.fm-p1-release-next dl').innerHTML='<div><dt>다음 관찰</dt><dd>경기 2개 선택 이유 · 실패 후 재시도 · 평가 후 재탐색</dd></div><div><dt>결과에 따른 결정</dt><dd>막힌 지점의 정보·안내·복귀 위치 수정 → 동일 과업 재검증</dd></div>';
