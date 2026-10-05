@@ -113,7 +113,7 @@ for(const [name,viewport] of [
     else expect(p13.chips.every(chip=>chip.height>=21.5&&chip.width>=43.5&&chip.radius>=10.5)).toBeTruthy();
 
     if(name==='desktop'){
-      // 6 · Navigation is quieter while the active dot remains unambiguous.
+      // 6 · Two-line destination previews retain action radii and an unambiguous active dot.
       const nav=await page.evaluate(()=>{
         const button=document.querySelector('.cs-button');
         const dot=document.querySelector('.dot:not(.on)');
@@ -129,7 +129,7 @@ for(const [name,viewport] of [
         };
       });
       expect(nav.buttonRadius).toBe(8);
-      expect(nav.buttonHeight).toBe(42);
+      expect(nav.buttonHeight).toBe(52);
       expect(nav.dotSize).toBe(6);
       expect(nav.activeBg).not.toBe(nav.dotBg);
       expect(nav.activeTransform).not.toBe('none');
