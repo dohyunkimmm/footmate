@@ -330,6 +330,97 @@
     document.documentElement.dataset.fmEvidenceSummaries='true';
   }
 
+
+  // Reviewer explanations only: these examples never write product state.
+  function installPageUpgrades(slides){
+    const entries={
+      tasks:{title:'과업에서 요구사항으로 연결',intro:'확인된 수행 기록과 설계 적용을 연결했습니다. 개별 오류의 빈도·수정 인과는 미확정입니다.',rows:[
+        ['확인한 과업','가입 전 탐색 · 2회','조건 선택 → 추천·목록 → 상세 이동을 확인하는 과업입니다.'],
+        ['요구사항','계정 없이 후보와 상세 확인','가입 전 공개 범위를 설계했습니다. 과업 결과로 전환 효과가 입증된 것은 아닙니다.'],
+        ['확인한 과업','Kakao·Google·이메일 가입 · 각 2회','인증 방식별 상태 변화와 원래 흐름으로 복귀하는 과정을 확인했습니다.'],
+        ['요구사항과 한계','선택 경기·복귀 위치 보존','개인별 오류 목록은 미확정입니다. 특정 사용자 관찰이 모든 후속 수정을 발생시켰다고 해석하지 않습니다.']
+      ]},
+      priority:{title:'참가·복구를 먼저 정한 판단',intro:'현재 구현 범위를 설명하는 설계 판단입니다. 당시 정량 평가표나 사용자 성과 측정 결과는 아닙니다.',rows:[
+        ['비교한 대안','결제·정산부터 확장','수익화 경로를 먼저 구축하는 대안과 비교했습니다.'],
+        ['오류 영향','정원·참가 결과가 불명확하면 다음 행동 중단','참가 확정과 취소·출석 상태는 이용자가 진행할 수 있는지에 직접 영향을 줍니다.'],
+        ['선택 이유','무료 참가와 예외 복구부터 검증','선택 보존·결과 확인·재시도를 먼저 다뤄 핵심 흐름을 확인합니다.'],
+        ['감수한 제약','결제·수익성 검증은 후순위','실제 PG는 미연동이며, 유료 전환과 수익성을 입증하지 않습니다.']
+      ]},
+      compare:{title:'두 경기의 차이를 한 번에 확인',intro:'설명용 샘플입니다. 실시간 경기·정원 조회나 실제 비교 저장을 실행하지 않습니다.',rows:[
+        ['판단 기준','갈 수 있는 일정 → 이동 → 레벨 → 포지션','거리 하나로 결론 내리지 않고 참가 가능 조건을 함께 확인합니다.'],
+        ['저장과 비교의 역할','나중에 다시 볼 후보와 지금 판단할 후보 구분','저장은 후보 보관, 비교는 최대 2경기의 차이 확인을 돕습니다.']
+      ]},
+      join:{title:'참가 결과별로 이어갈 행동',intro:'설명용 상태 예시입니다. 로그인·참가 요청·취소를 실제 실행하지 않습니다.',states:[
+        ['완료','참가 경기 · 완료 기록','MY에서 일정과 준비 정보 확인','참가가 끝난 뒤에는 같은 요청을 반복하지 않고 내 경기로 이동합니다.'],
+        ['실패','선택 경기 · 참가 의도','참가 결과 확인 후 재시도 또는 경기 다시 선택','오류를 안내하고 버튼을 복원합니다. 재시도 전 현재 결과를 확인합니다.'],
+        ['취소','선택 경기 · 복귀 위치','상세로 돌아가 참가 여부 다시 판단','인증·참가 진행을 중단한 예시입니다. 확정된 참가의 운영상 취소와 구분합니다.']
+      ]},
+      matchday:{title:'상태가 바뀌면 다음 행동도 바뀜',intro:'설명용 상태 예시입니다. 실제 출석·평가 기록은 변경하지 않습니다.',states:[
+        ['예정','참가 경기 · 일정','MY에서 장소와 준비 정보 확인','홈은 다음 행동과 MY 진입을 안내하고, 참가 경기의 상세 상태는 MY에서 확인합니다.'],
+        ['당일','참가 경기 · 체크인 상태','체크인 또는 운영 문의','시작 20분 전부터 종료 전까지 체크인합니다. 실패 시 재시도와 운영 문의를 제공합니다.'],
+        ['종료 후','완료 경기 · 피드백 상태','평가 전이면 피드백, 저장 후면 다음 경기 찾기','완료 기록을 반영해 다음 행동을 바꿉니다. 체감 난이도와 재참가 의향은 추천의 보조 신호입니다.']
+      ]},
+      next:{title:'관찰 결과를 다음 결정으로 연결',intro:'앞으로 수행할 검증 계획입니다. 아직 관찰한 결과나 달성한 성과가 아닙니다.',rows:[
+        ['남은 질문','추천 이유가 참가 판단에 도움이 되는가','과업: 조건에 맞는 경기 2개를 비교하고 선택 이유와 망설인 정보를 설명하도록 요청합니다.'],
+        ['결과에 따른 결정','이유가 불명확하면 표현·정보 순서 수정','사용자가 선택 근거를 설명할 수 있는지 관찰하고, 누락된 정보와 조건 불일치를 구분합니다.'],
+        ['남은 질문','완료·실패 후 다음 행동을 찾을 수 있는가','과업: 참가 실패 후 다시 진행하고, 평가 저장 후 다음 경기를 찾도록 요청합니다.'],
+        ['결과에 따른 결정','막힌 지점의 안내·버튼·복귀 위치 수정','같은 과업으로 재검증합니다. 실제 이용 KPI는 운영·테스트 계정을 제외하고 기준값부터 확보합니다.']
+      ]}
+    };
+    const dialog=document.createElement('dialog');
+    dialog.id='fm-page-upgrade-dialog';dialog.className='fm-improvement-dialog fm-page-upgrade-dialog';
+    dialog.setAttribute('aria-labelledby','fm-page-upgrade-title');
+    dialog.innerHTML='<header><div><small>판단 과정과 설명 예시</small><h2 id="fm-page-upgrade-title"></h2></div><button type="button" aria-label="페이지 설명 닫기">닫기 ×</button></header><div class="fm-improvement-content"><p class="fm-upgrade-intro"></p><div class="fm-upgrade-example"></div><ol></ol></div><footer><p>설계 근거·구현 검증·실제 이용 성과를 구분해 읽어주세요.</p></footer>';
+    document.body.appendChild(dialog);
+    let opener;
+    dialog.querySelector('header button').addEventListener('click',()=>dialog.close());
+    dialog.addEventListener('keydown',event=>event.stopPropagation());
+    dialog.addEventListener('close',()=>opener?.focus({preventScroll:true}));
+    dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
+    const list=dialog.querySelector('ol'),example=dialog.querySelector('.fm-upgrade-example');
+    function show(key){
+      const entry=entries[key];dialog.dataset.pageUpgrade=key;
+      dialog.querySelector('h2').textContent=entry.title;dialog.querySelector('.fm-upgrade-intro').textContent=entry.intro;
+      list.replaceChildren();example.replaceChildren();list.hidden=!entry.rows;
+      (entry.rows||[]).forEach(([stage,title,copy])=>{
+        const li=document.createElement('li');const label=document.createElement('span'),b=document.createElement('b'),p=document.createElement('p');
+        label.textContent=stage;b.textContent=title;p.textContent=copy;li.append(label,b,p);list.appendChild(li);
+      });
+      if(key==='compare'){
+        example.innerHTML='<table class="fm-upgrade-table"><caption>참가 판단 비교 · 설명용 샘플</caption><thead><tr><th scope="col">항목</th><th scope="col">경기 A</th><th scope="col">경기 B</th></tr></thead><tbody><tr><th scope="row">일정</th><td>평일 20:00</td><td>평일 21:00</td></tr><tr><th scope="row">이동</th><td>15분</td><td>30분</td></tr><tr><th scope="row">레벨</th><td>중급</td><td>초중급</td></tr><tr><th scope="row">포지션</th><td>MF 자리 있음</td><td>GK 자리 있음</td></tr></tbody></table><p class="fm-upgrade-choice">중급 MF를 찾는다면 A의 조건부터 확인합니다. 이동·포지션이 다른 후보는 더 가깝다는 이유만으로 선택하지 않습니다.</p>';
+      }
+      if(entry.states){
+        const controls=document.createElement('div');controls.className='fm-upgrade-state-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','설명 상태 선택');
+        const panel=document.createElement('section');panel.className='fm-upgrade-state';panel.setAttribute('aria-live','polite');panel.setAttribute('aria-atomic','true');
+        const buttons=entry.states.map(([label],index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',()=>select(index));controls.appendChild(button);return button;});
+        function select(index){
+          buttons.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
+          const [label,retained,action,copy]=entry.states[index];panel.dataset.exampleState=String(index);
+          panel.replaceChildren();const h=document.createElement('h3'),dl=document.createElement('dl'),p=document.createElement('p');
+          h.textContent=label;dl.className='fm-cs-reasons';
+          [['유지하는 정보',retained],['다음 행동',action]].forEach(([name,value])=>{const row=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=value;row.append(dt,dd);dl.appendChild(row);});
+          p.textContent=copy;panel.append(h,dl,p);
+        }
+        example.append(controls,panel);select(0);
+      }
+      dialog.showModal();
+    }
+    [[2,'tasks','과업과 요구사항 연결 보기 ↗','.fm-p1-jtbd-caveat'],
+     [3,'priority','우선순위 판단 보기 ↗','.fm-next-story-aside .fm-next-cs-note'],
+     [6,'compare','두 경기 비교 예시 보기 ↗','.fm-cs-detail-rationale'],
+     [7,'join','참가 결과별 행동 보기 ↗','.fm-p1-auth-preserve'],
+     [8,'matchday','상태별 다음 행동 보기 ↗','.fm-page-product-notes'],
+     [12,'next','다음 검증과 결정 보기 ↗','.fm-p1-release-next']].forEach(([index,key,label,selector])=>{
+      const host=slides[index].querySelector(selector);if(!host)return;
+      const button=document.createElement('button');button.type='button';button.className='fm-proof-link fm-page-upgrade-open';button.textContent=label;
+      button.dataset.pageUpgrade=key;button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls',dialog.id);
+      button.addEventListener('click',()=>{opener=button;show(key);});host.appendChild(button);
+    });
+    slides[3].querySelector('.fm-next-story-aside .fm-next-cs-note .fm-cs-reasons').innerHTML='<div><dt>비교한 대안</dt><dd>결제·정산 확장보다 참가·복구를 우선</dd></div><div><dt>선택 이유</dt><dd>정원·참가 결과 오류는 다음 행동을 중단시킴</dd></div><div><dt>감수한 제약</dt><dd>실제 결제·수익성 효과는 미검증</dd></div>';
+    slides[12].querySelector('.fm-p1-release-next dl').innerHTML='<div><dt>다음 관찰</dt><dd>경기 2개 선택 이유 · 실패 후 재시도 · 평가 후 재탐색</dd></div><div><dt>결과에 따른 결정</dt><dd>막힌 지점의 정보·안내·복귀 위치 수정 → 동일 과업 재검증</dd></div>';
+    document.documentElement.dataset.fmPageUpgrades='true';
+  }
+
   window.installFootMateEditorialFinish=function(slides){
     const recovery=slides[9];
     const map=recovery.querySelector('.fm-p0-recovery-map');
@@ -357,6 +448,7 @@
     document.querySelectorAll('.slide a[href],.fm-improvement-dialog a[href]').forEach(pinEvidence);
     installNavigationPreview(slides);
     installEvidenceSummaries(slides);
+    installPageUpgrades(slides);
     document.documentElement.dataset.fmEditorialFinish='true';
   };
 })();
