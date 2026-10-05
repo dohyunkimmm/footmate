@@ -282,8 +282,8 @@ test('desktop composition audit captures every section after entry motion settle
       const selectors=index===9?['.fm-p0-recovery-map','.fm-evidence-recovery-strip']:index===11?['.fm-p1-metrics','.fm-p1-evidence-grid']:['.fm-p1-release-map>article'];
       const bounds=await slide.evaluate(selectors=>selectors.flatMap(selector=>[...document.querySelector('.slide.on').querySelectorAll(selector)].map(n=>{const b=n.getBoundingClientRect();return {top:b.top,bottom:b.bottom};})),selectors);
       console.log('BALANCED_EDGES_'+(index+1)+' '+JSON.stringify(bounds));
-      expect(Math.max(...bounds.map(b=>b.top))-Math.min(...bounds.map(b=>b.top))).toBeLessThanOrEqual(1);
-      expect(Math.max(...bounds.map(b=>b.bottom))-Math.min(...bounds.map(b=>b.bottom))).toBeLessThanOrEqual(1);
+      expect.soft(Math.max(...bounds.map(b=>b.top))-Math.min(...bounds.map(b=>b.top))).toBeLessThanOrEqual(1);
+      expect.soft(Math.max(...bounds.map(b=>b.bottom))-Math.min(...bounds.map(b=>b.bottom))).toBeLessThanOrEqual(1);
     }
     const screenshot=await page.screenshot({type:'jpeg',quality:65,animations:'disabled'});
     console.log('SECTION_VISUAL_'+(index+1)+' '+screenshot.toString('base64'));
