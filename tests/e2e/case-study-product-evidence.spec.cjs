@@ -419,6 +419,9 @@ test('P3 persona introduction aligns with all three desktop lens cards',async({p
   await openCaseStudy(page,{width:1440,height:1000});
   await showSection(page,2);
   const slide=page.locator('.slide.on');
+  await slide.evaluate(async node=>{
+    await Promise.all(node.getAnimations({subtree:true}).filter(animation=>animation.effect?.getTiming().iterations!==Infinity).map(animation=>animation.finished.catch(()=>{})));
+  });
   const geometry=await slide.evaluate(node=>{
     const cards=[node.querySelector('.fm-p1-persona-context'),...node.querySelectorAll('.fm-p1-persona-lenses>div')];
     return cards.map(card=>{
