@@ -1,5 +1,18 @@
 # FootMate Release History
 
+## 2026-10-05 — Case Study 근거 요약·읽기 효과 정리
+
+- Scope: 리뷰어용 Case Study `/`의 버튼 표기, 화면 안 근거 요약, 짧은 읽기 효과. Product package release 버전은 변경하지 않음.
+- p12 `8개 지표의 계산·관찰 기준 보기` 화살표를 다른 페이지와 같은 `↗`로 통일: PR #511 · merge `e234d03b086d86248f96f95fa09471d4d18b9ae7`.
+- GitHub으로 바로 이동하던 9개 근거 버튼에 8종의 화면 안 요약 추가. 상세 GitHub 자료는 팝업 하단에 유지: PR #512 · merge `fa23abf53c6149ad765d4bdfa40bcb116def8d97`.
+- 페이지 180ms, 팝업 160ms 표시 효과와 버튼 반응 추가. `prefers-reduced-motion`에서는 애니메이션·전환 비활성화: PR #513 · merge `0b1fe5e98c735b914da1c64b1c6256f609224737`.
+- QA: Regression 36, Browser E2E + axe 통과. 근거 요약 열기·닫기·Escape·포커스 복귀, 모바일 320/390px, reduced-motion 동작 검증.
+- Final PR QA: PR #513 · run `37265978676` · PASS.
+- Verified Production runtime: `0b1fe5e98c735b914da1c64b1c6256f609224737` · Vercel `dpl_HWD59FpMGAj4Zjd2KLUQK5nRG56Q` · READY · https://footmate-black.vercel.app/.
+- Sync verification: Production CSS와 main 생성 CSS 일치, 원본 `editorial-finish.css` 반영 확인.
+- Supersession: 중복 PR #509는 #511로 이미 반영되어 종료. 기존 PR·commit 기록은 보존.
+- Documentation cleanup: README의 Case Study 수정·QA 경계를 실제 관리 방식으로 정정. 이 문서 정리는 docs-only 변경이며 runtime 재배포를 요구하지 않음.
+
 ## 6.0.0 — Unified Release App
 
 - Status: verified Release App lifecycle completion / recovery / visual QA closure.
