@@ -2637,6 +2637,11 @@
           const [label,retained,action,copy]=entry.states[index];panel.dataset.exampleState=String(index);
           panel.replaceChildren();const h=document.createElement('h3'),dl=document.createElement('dl'),p=document.createElement('p');
           h.textContent=label;dl.className='fm-cs-reasons';
+          if(key==='ai'){
+            panel.dataset.stateTone=index===0?'success':'warning';
+            buttons.forEach((button,i)=>{button.dataset.stateTone=i===0?'success':'warning';});
+            const icon=document.createElement('span');icon.className='fm-upgrade-state-icon';icon.setAttribute('aria-hidden','true');icon.textContent=index===0?'✓':'!';h.prepend(icon);
+          }
           [['유지하는 정보',retained],['다음 행동',action]].forEach(([name,value])=>{const row=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=value;row.append(dt,dd);dl.appendChild(row);});
           p.textContent=copy;panel.append(h,dl,p);
         }
