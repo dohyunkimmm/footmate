@@ -428,6 +428,7 @@ test('P3 persona introduction aligns with all three desktop lens cards',async({p
       return {top:box.top,bottom:box.bottom,labelTop:label.top,titleTop:title.top,padding:parseFloat(style.paddingLeft),borderTop:parseFloat(style.borderTopWidth)};
     });
   });
+  console.log('P3_CARD_GEOMETRY '+JSON.stringify(geometry));
   expect(geometry).toHaveLength(4);
   for(const card of geometry){
     expect(Math.abs(card.top-geometry[0].top)).toBeLessThanOrEqual(1);
