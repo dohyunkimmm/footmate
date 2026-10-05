@@ -328,6 +328,11 @@ test('inline evidence shows actual changes, readable source details and the exec
     }));
     expect(widths.detail).toBeGreaterThan(widths.full*1.5);
     await expect(crop).toContainText('기존 제품 화면');
+    const readingScale=await slide.evaluate(node=>{
+      const story=node.querySelector('.fm-next-story');const scale=parseFloat(getComputedStyle(story).zoom)||1;
+      return {scale,title:parseFloat(getComputedStyle(node.querySelector('h2')).fontSize)*scale};
+    });
+    expect(readingScale.scale).toBeGreaterThanOrEqual(.95);expect(readingScale.title).toBeGreaterThanOrEqual(30);
   }
   await page.locator('.toc-item').nth(9).click();
   await expect(page.locator('.slide.on .fm-inline-change')).toBeVisible();
