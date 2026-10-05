@@ -2552,6 +2552,19 @@
   // Reviewer explanations only: these examples never write product state.
   function installPageUpgrades(slides){
     const entries={
+      alternatives:{title:'경기 탐색 대안을 비교한 기준',intro:'설계 관점의 대안 비교입니다. 특정 경쟁사의 조사 결과나 FootMate의 우위를 측정한 자료는 아닙니다.',rows:[
+        ['선택 기준','조건 비교와 참가 이후의 연결','후보를 찾는 기능뿐 아니라, 선택 이유와 참가 후 다음 행동을 같은 맥락에서 확인할 수 있는지 비교했습니다.'],
+        ['채택한 방향','조건 → 추천 근거 → 참가 → 경기 당일','목록·필터를 유지하면서 이유·참가 상태·다음 행동을 연결했습니다. 범위가 넓어져 상태와 예외를 함께 관리해야 하는 제약이 있습니다.']
+      ],alternatives:[
+        ['목록·필터','시간·레벨·포지션 조건으로 후보를 좁힐 때','조건 간 차이와 참가 이후 행동은 별도 확인 필요'],
+        ['지도 중심','위치와 이동 범위를 먼저 판단할 때','레벨·포지션 적합성과 참가 상태는 별도 확인 필요'],
+        ['커뮤니티 중심','경험담과 경기 분위기를 참고할 때','정보 시점·표현이 달라 같은 기준으로 비교하기 어려울 수 있음']
+      ]},
+      ai:{title:'AI 상태별로 탐색을 이어가는 방법',intro:'동일 요청: “수원에서 중급 MF 경기를 찾고 싶어요.” 설명용 상태 예시이며 실제 AI 호출·검색·참가를 실행하지 않습니다.',states:[
+        ['정상','입력 문장 · 확인한 지역·레벨·포지션','해석한 조건 확인 → 추천 이유 확인','AI는 문장을 조건으로 바꿉니다. 경기 후보·순위·이유는 추천 엔진이 결정하고, 참가 여부는 사용자가 확인합니다.'],
+        ['해석 실패','입력 문장 · 이미 선택한 조건','지역·레벨·포지션을 직접 확인·수정 → 재탐색','해석하지 못한 항목을 임의로 확정하지 않습니다. 직접 선택한 조건으로 규칙 기반 탐색을 이어갈 수 있습니다.'],
+        ['연결 실패','입력 문장 · 이미 선택한 조건','선택 조건 확인 → 규칙 기반 탐색','모델 대체 후에도 연결이 실패한 상황의 예시입니다. 자연어 이해 범위가 줄어들 수 있으며, 요청이 모두 해석됐다고 표시하지 않습니다.']
+      ]},
       tasks:{title:'과업에서 요구사항으로 연결',intro:'확인된 수행 기록과 설계 적용을 연결했습니다. 개별 오류의 빈도·수정 인과는 미확정입니다.',rows:[
         ['확인한 과업','가입 전 탐색 · 2회','조건 선택 → 추천·목록 → 상세 이동을 확인하는 과업입니다.'],
         ['요구사항','계정 없이 후보와 상세 확인','가입 전 공개 범위를 설계했습니다. 과업 결과로 전환 효과가 입증된 것은 아닙니다.'],
@@ -2604,6 +2617,14 @@
         const li=document.createElement('li');const label=document.createElement('span'),b=document.createElement('b'),p=document.createElement('p');
         label.textContent=stage;b.textContent=title;p.textContent=copy;li.append(label,b,p);list.appendChild(li);
       });
+      if(entry.alternatives){
+        const table=document.createElement('table');table.className='fm-upgrade-table';
+        table.innerHTML='<caption>설계 대안 비교</caption><thead><tr><th scope="col">대안</th><th scope="col">도움이 되는 상황</th><th scope="col">남는 확인</th></tr></thead><tbody></tbody>';
+        entry.alternatives.forEach(([name,benefit,limit])=>{
+          const row=document.createElement('tr'),heading=document.createElement('th');heading.scope='row';heading.textContent=name;row.appendChild(heading);
+          [benefit,limit].forEach(text=>{const cell=document.createElement('td');cell.textContent=text;row.appendChild(cell);});table.querySelector('tbody').appendChild(row);
+        });example.appendChild(table);
+      }
       if(key==='compare'){
         example.innerHTML='<table class="fm-upgrade-table"><caption>참가 판단 비교 · 설명용 샘플</caption><thead><tr><th scope="col">항목</th><th scope="col">경기 A</th><th scope="col">경기 B</th></tr></thead><tbody><tr><th scope="row">일정</th><td>평일 20:00</td><td>평일 21:00</td></tr><tr><th scope="row">이동</th><td>15분</td><td>30분</td></tr><tr><th scope="row">레벨</th><td>중급</td><td>초중급</td></tr><tr><th scope="row">포지션</th><td>MF 자리 있음</td><td>GK 자리 있음</td></tr></tbody></table><p class="fm-upgrade-choice">중급 MF를 찾는다면 A의 조건부터 확인합니다. 이동·포지션이 다른 후보는 더 가깝다는 이유만으로 선택하지 않습니다.</p>';
       }
@@ -2623,7 +2644,9 @@
       }
       dialog.showModal();
     }
-    [[2,'tasks','과업과 요구사항 연결 보기 ↗','.fm-p1-jtbd-caveat'],
+    [[1,'alternatives','탐색 대안과 선택 기준 보기 ↗','.fm-next-cs-quote'],
+     [10,'ai','AI 상태별 탐색 예시 보기 ↗','.fm-next-cs-note'],
+     [2,'tasks','과업과 요구사항 연결 보기 ↗','.fm-p1-jtbd-caveat'],
      [3,'priority','우선순위 판단 보기 ↗','.fm-next-story-aside'],
      [6,'compare','두 경기 비교 예시 보기 ↗','.fm-cs-detail-rationale'],
      [7,'join','참가 결과별 행동 보기 ↗','.fm-p1-auth-preserve'],
@@ -2642,6 +2665,32 @@
     if(priorityNote)priorityNote.innerHTML='<div><dt>비교한 대안</dt><dd>결제·정산 확장보다 참가·복구를 우선</dd></div><div><dt>선택 이유</dt><dd>정원·참가 결과 오류는 다음 행동을 중단시킴</dd></div><div><dt>감수한 제약</dt><dd>실제 결제·수익성 효과는 미검증</dd></div>';
     slides[12].querySelector('.fm-p1-release-next dl').innerHTML='<div><dt>다음 관찰</dt><dd>경기 2개 선택 이유 · 실패 후 재시도 · 평가 후 재탐색</dd></div><div><dt>결과에 따른 결정</dt><dd>막힌 지점의 정보·안내·복귀 위치 수정 → 동일 과업 재검증</dd></div>';
     document.documentElement.dataset.fmPageUpgrades='true';
+  }
+
+  // Use the existing lead space: conclusions stay visible without adding more cards.
+  function installReaderConclusions(slides){
+    const conclusions=[null,
+      '목록·필터로 후보를 좁히고, 선택 근거와 참가 이후 행동까지 연결했습니다.',
+      'Persona는 설계 가정이며, 교육생 6명의 탐색·가입 과업으로 동선을 확인했습니다.',
+      '참가·복구를 먼저 검증하고, 실제 결제와 수익성 검증은 뒤로 뒀습니다.',
+      '가입 전 추천·상세를 공개하고 참가 직전에 인증하도록 했습니다.',
+      '샘플 경기에서 조건 변경에 따른 추천 순위와 이유를 확인할 수 있게 했습니다.',
+      '일정·이동·레벨·포지션을 함께 비교하고, 참가 전에 운영 정책을 확인하게 했습니다.',
+      '선택을 유지한 무료 참가 확인과 실패·취소 후 다음 행동을 구분했습니다.',
+      'Home은 다음 행동을 안내하고, 경기 전후 흐름은 MY에서 이어가도록 했습니다.',
+      '참가 실패 시 오류를 안내하고 버튼을 복원해, 재시도하거나 다른 경기를 선택할 수 있게 했습니다.',
+      'AI 해석 실패 시 직접 조건을 확인하며, 추천 판단은 엔진이 맡도록 했습니다.',
+      '8개 KPI는 측정 전 기준으로 정의하고, QA의 동작 확인과 구분했습니다.',
+      '평가 후 재탐색을 수정·재검증했고, 이용자 KPI·수익성은 후속 과제로 남겼습니다.'
+    ];
+    slides.forEach((slide,index)=>{
+      const lead=slide.querySelector('.fm-next-story-lead');if(!lead||!conclusions[index])return;
+      lead.textContent=conclusions[index];lead.id='fm-reader-conclusion-'+String(index+1);lead.dataset.readerConclusion='true';
+      slide.querySelectorAll('.fm-evidence-summary-open,.fm-page-upgrade-open,.fm-improvement-open,.fm-next-kpi-open').forEach(button=>{
+        const ids=new Set((button.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean));ids.add(lead.id);button.setAttribute('aria-describedby',[...ids].join(' '));
+      });
+    });
+    document.documentElement.dataset.fmReaderConclusions='true';
   }
 
   window.installFootMateEditorialFinish=function(slides){
@@ -2672,6 +2721,7 @@
     installNavigationPreview(slides);
     installEvidenceSummaries(slides);
     installPageUpgrades(slides);
+    installReaderConclusions(slides);
     document.documentElement.dataset.fmEditorialFinish='true';
   };
 })();
