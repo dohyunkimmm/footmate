@@ -57,7 +57,7 @@ for(const [name,viewport] of [
     await page.waitForTimeout(120);
     const release=page.locator('.slide.on');
     const releaseLead=release.locator('.fm-next-story-lead');
-    await expect(releaseLead).toHaveText('입력의 일관성, 완료 이후의 연결, 오류 대응을 앞으로의 점검 항목으로 삼았습니다.');
+    await expect(releaseLead).toHaveText('평가 후 재탐색을 수정·재검증했고, 이용자 KPI·수익성은 후속 과제로 남겼습니다.');
     await expect(releaseLead).not.toContainText('실제 이용자 KPI');
     await noHorizontalOverflow(page);
     await release.screenshot({
@@ -71,7 +71,7 @@ for(const [name,viewport] of [
 
     const slide=page.locator('.slide.on.fm-next-story-slide[data-v5-content-role="validation-evidence"]');
     const lead=slide.locator('.fm-next-story-lead');
-    await expect(lead).toHaveText('측정식·제외 조건을 먼저 정하고, 구현 근거는 확인 방법별로 제시했습니다.');
+    await expect(lead).toHaveText('8개 KPI는 측정 전 기준으로 정의하고, QA의 동작 확인과 구분했습니다.');
     await expect(lead).not.toContainText('Measured Result');
 
     const banner=slide.locator('.fm-p1-validation-banner');
