@@ -270,7 +270,7 @@
     const qa=slides[11].querySelectorAll('.fm-next-cs-card');
     ['회귀 테스트 · 브라우저 E2E · 접근성 · 상태 복구 · 화면 비교 · 배포 후 동작 확인','운영 환경 로그인 · 이메일 전달 · 브라우저·OS 알림 표시 확인 · 전환 성과와 구분','중복·용어·설명과 구현의 일치 검토 · 자동 QA와 사람 검수의 통과 판정은 대체하지 않음'].forEach((copy,index)=>{if(qa[index])qa[index].querySelector('p').textContent=copy;});
     const note=slides[11].querySelector('.fm-next-cs-note');
-    if(note)note.innerHTML='과업 검증 · 교육생 6명 / 가입 과업 8회 · 개별 이슈 기록 미확정 · 전환 성과와 구분 <a href="https://github.com/dohyunkimmm/footmate/blob/main/docs/USER-TEST-EVIDENCE.md" target="_blank" rel="noopener">검증 근거 ↗</a>';
+    if(note)note.innerHTML='과업 검증 · 교육생 6명 / 가입 과업 8회 · 개별 이슈 기록 미확정 · 전환 성과와 구분 <a href="https://github.com/dohyunkimmm/footmate/blob/b97898d86a8e18450f9bac1ced51209f64545bee/docs/USER-TEST-EVIDENCE.md" target="_blank" rel="noopener">검증 근거 ↗</a>';
     const ratios=slides[11].querySelectorAll('.fm-p1-funnel-ratios .fm-p1-ratio');
     if(ratios[1]){const parts=ratios[1].querySelectorAll('span');if(parts[0])parts[0].innerHTML='<small>분자</small>참가 완료 사용자·경기 쌍';if(parts[1])parts[1].innerHTML='<small>분모</small>상세 조회 사용자·경기 쌍';}
     const app=slides[12].querySelector('[data-zone="real-app"]');
