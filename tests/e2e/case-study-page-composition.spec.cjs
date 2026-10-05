@@ -510,6 +510,52 @@ for(const width of [320,390]){
   });
 }
 
+for(const width of [1440,390,320]){
+  test('alternatives and AI states explain decisions before disclosure at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:900});
+    const errors=[];page.on('pageerror',error=>errors.push(error.message));
+    await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmReaderConclusions==='true');
+    const storage=await page.evaluate(()=>JSON.stringify({...localStorage}));
+    for(const [index,key] of [[1,'alternatives'],[10,'ai']]){
+      if(width>900)await page.locator('.toc-item').nth(index).click();
+      const slide=page.locator('.slide').nth(index),opener=slide.locator('[data-page-upgrade="'+key+'"]');
+      const lead=slide.locator('[data-reader-conclusion="true"]');
+      await lead.scrollIntoViewIfNeeded();await expect(lead).toBeVisible();
+      await expect(opener).toHaveAttribute('aria-describedby',await lead.getAttribute('id'));
+      await opener.click();const dialog=page.locator('#fm-page-upgrade-dialog');
+      await expect(dialog).toBeVisible();await expect(dialog).toHaveAttribute('data-page-upgrade',key);
+      if(key==='alternatives'){
+        await expect(dialog.getByRole('table')).toBeVisible();
+        await expect(dialog.locator('tbody tr')).toHaveCount(3);
+        await expect(dialog).toContainText('우위를 측정한 자료는 아닙니다');
+        await expect(dialog).toContainText('상태와 예외를 함께 관리');
+      }else{
+        const controls=dialog.locator('.fm-upgrade-state-controls button');
+        await expect(controls).toHaveText(['정상','해석 실패','연결 실패']);
+        for(let i=0;i<3;i++){
+          await controls.nth(i).click();await expect(controls.nth(i)).toHaveAttribute('aria-pressed','true');
+          await expect(dialog.locator('.fm-upgrade-state')).toHaveAttribute('data-example-state',String(i));
+          await expect(dialog).toContainText('수원에서 중급 MF');
+          await expect(dialog.locator('.fm-upgrade-state')).toContainText('입력 문장');
+        }
+        await expect(dialog).toContainText('자연어 이해 범위가 줄어들 수');
+        await controls.nth(1).focus();await page.keyboard.press('Enter');
+        await expect(controls.nth(1)).toHaveAttribute('aria-pressed','true');
+      }
+      const {default:AxeBuilder}=require('@axe-core/playwright');
+      const accessibility=await new AxeBuilder({page}).include('#fm-page-upgrade-dialog').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
+      expect(accessibility.violations).toEqual([]);
+      expect(await dialog.evaluate(n=>n.scrollWidth-n.clientWidth)).toBeLessThanOrEqual(1);
+      await page.keyboard.press('Escape');await expect(dialog).toBeHidden();await expect(opener).toBeFocused();
+    }
+    await expect(page.locator('[data-reader-conclusion="true"]')).toHaveCount(12);
+    const associations=await page.locator('.slide :is(.fm-evidence-summary-open,.fm-page-upgrade-open,.fm-improvement-open,.fm-next-kpi-open)').evaluateAll(buttons=>buttons.every(button=>{
+      const id=button.getAttribute('aria-describedby');return id&&document.getElementById(id)?.dataset.readerConclusion==='true';
+    }));expect(associations).toBe(true);
+    expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(storage);expect(errors).toEqual([]);
+  });
+}
+
 for(const reducedMotion of ['no-preference','reduce']){
   test('reading and evidence motion respect '+reducedMotion,async({page})=>{
     await page.setViewportSize({width:1440,height:900});
@@ -545,7 +591,7 @@ for(const width of [1440,390,320]){
     await page.setViewportSize({width,height:900});
     const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmPageUpgrades==='true');
-    await expect(page.locator('.fm-page-upgrade-open')).toHaveCount(6);
+    await expect(page.locator('.fm-page-upgrade-open')).toHaveCount(8);
     const before=await page.evaluate(()=>JSON.stringify({...localStorage}));
     for(const [index,key] of [[2,'tasks'],[3,'priority'],[6,'compare'],[7,'join'],[8,'matchday'],[12,'next']]){
       if(width>900)await page.locator('.toc-item').nth(index).click();
