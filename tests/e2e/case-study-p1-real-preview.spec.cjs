@@ -45,3 +45,31 @@ for(const [name,viewport] of [['desktop',{width:1440,height:900}],['mobile',{wid
     await page.locator('.slide.on').screenshot({path:`test-results/case-study-p1-real-preview-${viewport.width}.png`,animations:'disabled'});
   });
 }
+
+test('P1 centers editorial copy with the product UI and aligns proof descriptions',async({page})=>{
+  await openPreview(page,{width:1440,height:1000});
+  const slide=page.locator('.slide.on');
+  await slide.evaluate(async node=>{
+    await Promise.all(node.getAnimations({subtree:true}).filter(animation=>animation.effect?.getTiming().iterations!==Infinity).map(animation=>animation.finished.catch(()=>{})));
+  });
+  const geometry=await slide.evaluate(node=>{
+    const copy=node.querySelector('.fm-next-cover-copy').getBoundingClientRect();
+    const visual=node.querySelector('.fm-next-cover-visual').getBoundingClientRect();
+    const cards=[...node.querySelectorAll('.fm-next-cover-proof>div')].map(card=>{
+      const box=card.getBoundingClientRect();const description=card.querySelector('span').getBoundingClientRect();
+      return {top:box.top,bottom:box.bottom,descriptionTop:description.top};
+    });
+    return {copyCenter:(copy.top+copy.bottom)/2,visualCenter:(visual.top+visual.bottom)/2,copyRight:copy.right,visualLeft:visual.left,cards};
+  });
+  console.log('P1_COVER_GEOMETRY '+JSON.stringify(geometry));
+  expect(Math.abs(geometry.copyCenter-geometry.visualCenter)).toBeLessThanOrEqual(1);
+  expect(geometry.visualLeft-geometry.copyRight).toBeGreaterThanOrEqual(24);
+  for(const card of geometry.cards){
+    expect(Math.abs(card.top-geometry.cards[0].top)).toBeLessThanOrEqual(1);
+    expect(Math.abs(card.bottom-geometry.cards[0].bottom)).toBeLessThanOrEqual(1);
+    expect(Math.abs(card.descriptionTop-geometry.cards[0].descriptionTop)).toBeLessThanOrEqual(1);
+  }
+  expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+  const screenshot=await page.screenshot({type:'jpeg',quality:75,animations:'disabled'});
+  console.log('P1_COVER_VISUAL '+screenshot.toString('base64'));
+});
