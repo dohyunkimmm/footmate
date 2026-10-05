@@ -516,12 +516,22 @@ for(const width of [1440,390,320]){
     const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmReaderConclusions==='true');
     const storage=await page.evaluate(()=>JSON.stringify({...localStorage}));
+    const contrast=(a,b)=>{
+      const luminance=color=>{const values=color.match(/[\d.]+/g).slice(0,3).map(Number).map(value=>{const x=value/255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return values[0]*.2126+values[1]*.7152+values[2]*.0722;};
+      const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
+    };
+    if(width>900)await page.locator('.toc-item').nth(4).click();
+    const flowColors=await page.locator('.slide').nth(4).evaluate(n=>({chosen:getComputedStyle(n.querySelector('.fm-p0-route.is-selected')).backgroundColor,other:getComputedStyle(n.querySelector('.fm-p0-route:not(.is-selected)')).backgroundColor}));
+    expect(flowColors.chosen).not.toBe(flowColors.other);
     for(const [index,key] of [[1,'alternatives'],[10,'ai']]){
       if(width>900)await page.locator('.toc-item').nth(index).click();
       const slide=page.locator('.slide').nth(index),opener=slide.locator('[data-page-upgrade="'+key+'"]');
       const lead=slide.locator('[data-reader-conclusion="true"]');
       await lead.scrollIntoViewIfNeeded();await expect(lead).toBeVisible();
       await expect(opener).toHaveAttribute('aria-describedby',await lead.getAttribute('id'));
+      const buttonColors=await opener.evaluate(n=>{const s=getComputedStyle(n);return {ink:s.color,bg:s.backgroundColor,line:s.borderTopColor};});
+      expect(contrast(buttonColors.ink,buttonColors.bg)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(buttonColors.line,buttonColors.bg)).toBeGreaterThanOrEqual(3);
       await opener.click();const dialog=page.locator('#fm-page-upgrade-dialog');
       await expect(dialog).toBeVisible();await expect(dialog).toHaveAttribute('data-page-upgrade',key);
       if(key==='alternatives'){
@@ -535,6 +545,12 @@ for(const width of [1440,390,320]){
         for(let i=0;i<3;i++){
           await controls.nth(i).click();await expect(controls.nth(i)).toHaveAttribute('aria-pressed','true');
           await expect(dialog.locator('.fm-upgrade-state')).toHaveAttribute('data-example-state',String(i));
+          await expect(dialog.locator('.fm-upgrade-state')).toHaveAttribute('data-state-tone',i===0?'success':'warning');
+          await expect(dialog.locator('.fm-upgrade-state-icon')).toHaveText(i===0?'✓':'!');
+          const colors=await dialog.locator('.fm-upgrade-state').evaluate(n=>({ink:getComputedStyle(n.querySelector('h3')).color,bg:getComputedStyle(n).backgroundColor}));
+          expect(contrast(colors.ink,colors.bg)).toBeGreaterThanOrEqual(4.5);
+          const {default:AxeBuilder}=require('@axe-core/playwright');
+          expect((await new AxeBuilder({page}).include('#fm-page-upgrade-dialog').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
           await expect(dialog).toContainText('수원에서 중급 MF');
           await expect(dialog.locator('.fm-upgrade-state')).toContainText('입력 문장');
         }
@@ -549,6 +565,12 @@ for(const width of [1440,390,320]){
       await page.keyboard.press('Escape');await expect(dialog).toBeHidden();await expect(opener).toBeFocused();
     }
     await expect(page.locator('[data-reader-conclusion="true"]')).toHaveCount(12);
+    if(width>900)await page.locator('.toc-item').nth(11).click();
+    const measurement=page.locator('.slide').nth(11).locator('.fm-p1-validation-banner');
+    await expect(measurement).toContainText('측정 전 기준 정의');
+    const measurementColors=await measurement.evaluate(n=>({ink:getComputedStyle(n.querySelector('b')).color,bg:getComputedStyle(n).backgroundColor,stage:getComputedStyle(n.closest('.slide').querySelector('.fm-p1-funnel>.is-focus')).backgroundColor}));
+    expect(measurementColors.bg).not.toBe(measurementColors.stage);
+    expect(contrast(measurementColors.ink,measurementColors.bg)).toBeGreaterThanOrEqual(4.5);
     const associations=await page.locator('.slide :is(.fm-evidence-summary-open,.fm-page-upgrade-open,.fm-improvement-open,.fm-next-kpi-open)').evaluateAll(buttons=>buttons.every(button=>{
       const id=button.getAttribute('aria-describedby');return id&&document.getElementById(id)?.dataset.readerConclusion==='true';
     }));expect(associations).toBe(true);
