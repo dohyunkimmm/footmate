@@ -32,7 +32,7 @@
         <article><small>02 · 가치 확인 전 장벽</small><b>로그인이 너무 일찍 등장</b><p>추천이 도움이 되는지 판단하기 전에 계정부터 요구</p></article>
         <article><small>03 · 참가 후 단절</small><b>다음 행동이 흩어짐</b><p>일정 · 체크인 · 경기 후 평가가 서로 다른 기능처럼 느껴짐</p></article>
       </div>
-      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>참가 결정의 불확실성</b><p>조건 비교 → 추천 근거 이해 → 참가 → 경기 당일까지 연결</p></div>
+      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>판단 근거의 부족</b><p>조건 비교 → 추천 근거 이해 → 참가 → 경기 당일까지 연결</p></div>
       <div class="fm-p0-problem-path" aria-label="문제 해결 흐름">
         <span>조건 비교</span><i>→</i><span>추천 근거 확인</span><i>→</i><span>참가</span><i>→</i><span>경기 당일</span>
       </div>`;
@@ -50,11 +50,11 @@
     flow.classList.add('fm-p0-journey');
     flow.setAttribute('aria-label','FootMate 핵심 사용자 여정: 탐색, 결정, 참가, 경기, 재탐색');
     flow.innerHTML=[
-      ['01','탐색','Find','조건 설정 후 맞는 경기 탐색'],
-      ['02','결정','Decide','추천 이유 · 참가 조건 확인'],
-      ['03','참가','Join','선택 유지 후 로그인 · 참가'],
-      ['04','경기','Play','경기 당일 상태 · 체크인 확인'],
-      ['05','재탐색','Return','경기 후 신호를 다음 탐색에 연결']
+      ['01','탐색','Find','지역 · 시간 · 레벨 설정'],
+      ['02','결정','Decide','거리 · 적합성 · 자리 비교'],
+      ['03','참가','Join','계정 연결 후 요청 제출'],
+      ['04','경기','Play','준비 · 이동 · 출석 처리'],
+      ['05','재탐색','Return','피드백 저장 후 새 후보 확인']
     ].map(([no,ko,en,copy],index)=>`
       <div class="fm-p0-journey-step">
         <span class="fm-p0-step-no">${no}</span>
@@ -87,7 +87,7 @@
     comparison.setAttribute('aria-label','가입 우선 흐름과 탐색 우선 흐름 비교');
     comparison.innerHTML=`
       <article class="fm-p0-route is-before">
-        <header><span>비교한 대안</span><b>가입 우선</b><p>가치 확인 전 계정 생성 필요</p></header>
+        <header><span>비교한 대안</span><b>가입 우선</b><p>후보를 보기 전에 계정 생성 필요</p></header>
         <div class="fm-p0-route-steps">
           ${routeStep('01','첫 화면','진입')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
@@ -95,15 +95,15 @@
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
           ${routeStep('03','설문','조건 입력')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
-          ${routeStep('04','추천 확인','가치 확인')}
+          ${routeStep('04','추천 확인','결과 진입')}
         </div>
       </article>
       <article class="fm-p0-route is-selected">
-        <header><span>채택한 흐름</span><b>탐색 우선</b><p>추천 확인 후 참가 직전 로그인</p></header>
+        <header><span>채택한 흐름</span><b>탐색 우선</b><p>후보를 둘러본 뒤 계정 연결</p></header>
         <div class="fm-p0-route-steps">
           ${routeStep('01','조건 설정','탐색')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
-          ${routeStep('02','추천','가치 확인')}
+          ${routeStep('02','추천','후보 확인')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
           ${routeStep('03','상세','참가 판단')}
           <i class="fm-p0-route-arrow" aria-hidden="true">→</i>
@@ -195,9 +195,9 @@
         <i aria-hidden="true">→</i>
         ${architectureNode('CONTRACT','구조화 조건','시간 · 거리 · 가격 · 포지션')}
         <i aria-hidden="true">→</i>
-        ${architectureNode('RECOMMENDATION','추천 엔진','후보 · 순위 · 이유 결정',true)}
+        ${architectureNode('RECOMMENDATION','추천 엔진','같은 입력·데이터면 동일한 결과',true)}
         <i aria-hidden="true">→</i>
-        ${architectureNode('OUTPUT','추천 결과','이유와 현재 경기 상태 표시')}
+        ${architectureNode('OUTPUT','추천 결과','후보별 근거와 운영 정보 표시')}
         <i aria-hidden="true">→</i>
         ${architectureNode('HITL','사용자 확인','참가 · 결제는 최종 확인 후 실행')}
       </div>

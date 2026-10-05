@@ -6,9 +6,9 @@
     const strip=recovery.querySelector('.fm-evidence-recovery-strip');
     const layout=document.createElement('div');layout.className='fm-editorial-recovery-layout';
     map.before(layout);layout.append(map,strip);
-    const heading=document.createElement('h3');heading.className='fm-editorial-evidence-heading';heading.textContent='핵심 결정 03 · 실패 후 다음 행동';strip.prepend(heading);
+    const heading=document.createElement('h3');heading.className='fm-editorial-evidence-heading';heading.textContent='핵심 결정 03 · 중단 이후';strip.prepend(heading);
     const note=slides[5].querySelector('.fm-next-cs-note');
-    const label=document.createElement('span');label.className='fm-editorial-decision-label';label.textContent='핵심 결정 02 · 추천 이유';note.prepend(label);note.classList.add('fm-editorial-decision');
+    const label=document.createElement('span');label.className='fm-editorial-decision-label';label.textContent='핵심 결정 02 · 근거의 표현';note.prepend(label);note.classList.add('fm-editorial-decision');
     // Keep evidence actions together so one extra button cannot enlarge all three cards.
     slides[11].querySelectorAll('.fm-p1-evidence-grid>.fm-next-cs-card').forEach(card=>{
       const actions=document.createElement('div');actions.className='fm-editorial-evidence-actions';
