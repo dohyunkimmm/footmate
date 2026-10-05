@@ -989,7 +989,7 @@
         <article><small>02 · 가치 확인 전 장벽</small><b>로그인이 너무 일찍 등장</b><p>추천이 도움이 되는지 판단하기 전에 계정부터 요구</p></article>
         <article><small>03 · 참가 후 단절</small><b>다음 행동이 흩어짐</b><p>일정 · 체크인 · 경기 후 평가가 서로 다른 기능처럼 느껴짐</p></article>
       </div>
-      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>참가 결정의 불확실성</b><p>조건 비교 → 추천 근거 이해 → 참가 → 경기 당일까지 연결</p></div>
+      <div class="fm-p0-problem-core"><small>CORE PROBLEM</small><b>판단 근거의 부족</b><p>조건 비교 → 추천 근거 이해 → 참가 → 경기 당일까지 연결</p></div>
       <div class="fm-p0-problem-path" aria-label="문제 해결 흐름">
         <span>조건 비교</span><i>→</i><span>추천 근거 확인</span><i>→</i><span>참가</span><i>→</i><span>경기 당일</span>
       </div>`;
@@ -1152,7 +1152,7 @@
         <i aria-hidden="true">→</i>
         ${architectureNode('CONTRACT','구조화 조건','시간 · 거리 · 가격 · 포지션')}
         <i aria-hidden="true">→</i>
-        ${architectureNode('RECOMMENDATION','추천 엔진','후보 · 순위 · 이유 결정',true)}
+        ${architectureNode('RECOMMENDATION','추천 엔진','같은 입력·데이터면 동일한 결과',true)}
         <i aria-hidden="true">→</i>
         ${architectureNode('OUTPUT','추천 결과','후보별 근거와 운영 정보 표시')}
         <i aria-hidden="true">→</i>
@@ -2119,7 +2119,7 @@
     figure.dataset.evidenceKind='interactive-mock';
     figure.querySelector('.fm-evidence-media').innerHTML=`<div class="fm-cs-recovery-example fm-recovery-demo" data-recovery-state="failed">
       <span class="fm-recovery-state-label">참가 확인</span>
-      <div class="fm-recovery-message" aria-live="polite" aria-atomic="true"><b>참가를 확정하지 못했어요.</b><p>선택한 경기와 참가 의도를 유지했어요.</p></div>
+      <div class="fm-recovery-message" aria-live="polite" aria-atomic="true"><b>참가를 확정하지 못했어요.</b><p>요청 전 정보를 그대로 남겼어요.</p></div>
       <div class="fm-recovery-retained"><span>보존한 선택</span><b>수원 인계 · MF</b></div>
       <div class="fm-recovery-actions"><button type="button" data-recovery-action="retry">다시 시도</button><button type="button" data-recovery-action="choose">경기 다시 선택</button></div>
       <small class="fm-recovery-action-label">다시 시도 · 경기 다시 선택</small>
@@ -2130,7 +2130,7 @@
     let timer;
     const render=state=>{
       demo.dataset.recoveryState=state;
-      const message={failed:['참가를 확정하지 못했어요.','선택한 경기와 참가 의도를 유지했어요.'],checking:['참가 결과를 확인하고 있어요.','중복 참가를 막기 위해 버튼을 잠시 잠갔어요.'],success:['참가를 확정했어요.','다음 행동은 MY에서 이어가요.'],choose:['다른 경기를 선택해요.','탐색 조건을 유지하고 후보를 다시 확인해요.']}[state];
+      const message={failed:['참가를 확정하지 못했어요.','요청 전 정보를 그대로 남겼어요.'],checking:['참가 결과를 확인하고 있어요.','중복 참가를 막기 위해 버튼을 잠시 잠갔어요.'],success:['참가를 확정했어요.','다음 행동은 MY에서 이어가요.'],choose:['다른 경기를 선택해요.','탐색 조건을 유지하고 후보를 다시 확인해요.']}[state];
       demo.querySelector('.fm-recovery-message b').textContent=message[0];demo.querySelector('.fm-recovery-message p').textContent=message[1];
       const retry=demo.querySelector('[data-recovery-action="retry"]');retry.disabled=state==='checking';retry.textContent=state==='checking'?'확인 중…':state==='failed'?'다시 시도':'처음 상태로';
       demo.querySelector('[data-recovery-action="choose"]').disabled=state==='checking';
@@ -2146,7 +2146,7 @@
     const main=slide.querySelector('.fm-p0-arch-main');
     const nodes=[...main.querySelectorAll('.fm-p0-arch-node')];
     main.replaceChildren();main.classList.add('fm-owner-grid');main.setAttribute('aria-label','사용자, AI, 추천 로직의 책임 경계');
-    [['사용자','의도와 최종 결정',[0,5]],['AI','자연어를 검색 조건으로',[1,2]],['추천 로직','경기 데이터로 후보 판단',[3,4]]].forEach(([owner,reason,indexes],i)=>{
+    [['사용자','의도와 최종 결정',[0,5]],['AI','의도를 이해하는 단계',[1,2]],['추천 로직','경기 데이터로 후보 판단',[3,4]]].forEach(([owner,reason,indexes],i)=>{
       const group=document.createElement('section');group.className='fm-owner-column';group.dataset.owner=String(i);
       const header=document.createElement('header');const n=document.createElement('span');n.textContent=String(i+1).padStart(2,'0');const b=document.createElement('b');b.textContent=owner;const p=document.createElement('p');p.textContent=reason;header.append(n,b,p);group.appendChild(header);
       indexes.forEach(index=>group.appendChild(nodes[index]));main.appendChild(group);
@@ -2306,7 +2306,7 @@
     "nav": "Match Details",
     "navDesc": "Information for Joining",
     "title": "참가 판단에 필요한 순서로 상세를 구성했습니다.",
-    "desc": "핵심 정보와 보조 도구를 화면 안에 모아, 두 후보의 차이를 살펴볼 수 있게 했습니다.",
+    "desc": "운영 정책을 미리 보여주고, 저장·비교 도구로 선택을 보조하도록 했습니다.",
     "keywords": [
       "일정·이동",
       "정원·정책",
@@ -2415,7 +2415,7 @@
     summary(2,[['대상','설계용 Persona'],['요구사항','적합성 · 정보 접근'],['수행 기록','교육생 6명 · 가입 과업 8회']]);
     text(2,'.fm-p1-persona-context p','주 1~2회 운동 · 평일 저녁 · 30분 안쪽 이동');
     text(2,'.fm-p1-persona-lenses [data-kind="context"] p','업무가 끝난 뒤 짧은 시간 안에 선택');
-    text(2,'.fm-p1-jtbd-head small','JTBD · 가설과 관찰 계획');
+    text(2,'.fm-p1-jtbd-head small','JTBD · 설계 적용');
     text(2,'.fm-p1-jtbd-journey li:first-child p','일정과 생활권 설정');
     text(2,'.fm-p1-jtbd-caveat','iOS 4명 · Android 2명 · 일부 복수 과업 수행 · Persona 대표성은 미검증');
     summary(3,[['우선 구현','참가 · 복구'],['효과 검증','전환 · 재이용'],['제외','실제 결제 · AI 자동 확정']]);

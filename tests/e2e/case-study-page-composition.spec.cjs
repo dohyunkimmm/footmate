@@ -261,7 +261,7 @@ test('final rendered copy keeps descriptions distinct and removes duplicate deta
     console.log('COPY_QA '+JSON.stringify({page:index+1,...copy}));
   }
   await page.locator('.toc-item').nth(6).click();
-  const comparison=await page.locator('.slide.on').innerText();
+  const comparison=await page.locator('.slide.on').textContent();
   expect(comparison.split('최대 2경기의 거리·레벨·포지션 자리·참가비 비교').length-1).toBe(1);
   await page.locator('.toc-item').nth(12).click();
   const labels=await page.locator('.slide.on .fm-p1-release-map li>span').allTextContents();

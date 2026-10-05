@@ -109,7 +109,7 @@
     figure.dataset.evidenceKind='interactive-mock';
     figure.querySelector('.fm-evidence-media').innerHTML=`<div class="fm-cs-recovery-example fm-recovery-demo" data-recovery-state="failed">
       <span class="fm-recovery-state-label">참가 확인</span>
-      <div class="fm-recovery-message" aria-live="polite" aria-atomic="true"><b>참가를 확정하지 못했어요.</b><p>선택한 경기와 참가 의도를 유지했어요.</p></div>
+      <div class="fm-recovery-message" aria-live="polite" aria-atomic="true"><b>참가를 확정하지 못했어요.</b><p>요청 전 정보를 그대로 남겼어요.</p></div>
       <div class="fm-recovery-retained"><span>보존한 선택</span><b>수원 인계 · MF</b></div>
       <div class="fm-recovery-actions"><button type="button" data-recovery-action="retry">다시 시도</button><button type="button" data-recovery-action="choose">경기 다시 선택</button></div>
       <small class="fm-recovery-action-label">다시 시도 · 경기 다시 선택</small>
@@ -120,7 +120,7 @@
     let timer;
     const render=state=>{
       demo.dataset.recoveryState=state;
-      const message={failed:['참가를 확정하지 못했어요.','선택한 경기와 참가 의도를 유지했어요.'],checking:['참가 결과를 확인하고 있어요.','중복 참가를 막기 위해 버튼을 잠시 잠갔어요.'],success:['참가를 확정했어요.','다음 행동은 MY에서 이어가요.'],choose:['다른 경기를 선택해요.','탐색 조건을 유지하고 후보를 다시 확인해요.']}[state];
+      const message={failed:['참가를 확정하지 못했어요.','요청 전 정보를 그대로 남겼어요.'],checking:['참가 결과를 확인하고 있어요.','중복 참가를 막기 위해 버튼을 잠시 잠갔어요.'],success:['참가를 확정했어요.','다음 행동은 MY에서 이어가요.'],choose:['다른 경기를 선택해요.','탐색 조건을 유지하고 후보를 다시 확인해요.']}[state];
       demo.querySelector('.fm-recovery-message b').textContent=message[0];demo.querySelector('.fm-recovery-message p').textContent=message[1];
       const retry=demo.querySelector('[data-recovery-action="retry"]');retry.disabled=state==='checking';retry.textContent=state==='checking'?'확인 중…':state==='failed'?'다시 시도':'처음 상태로';
       demo.querySelector('[data-recovery-action="choose"]').disabled=state==='checking';
@@ -136,7 +136,7 @@
     const main=slide.querySelector('.fm-p0-arch-main');
     const nodes=[...main.querySelectorAll('.fm-p0-arch-node')];
     main.replaceChildren();main.classList.add('fm-owner-grid');main.setAttribute('aria-label','사용자, AI, 추천 로직의 책임 경계');
-    [['사용자','의도와 최종 결정',[0,5]],['AI','자연어를 검색 조건으로',[1,2]],['추천 로직','경기 데이터로 후보 판단',[3,4]]].forEach(([owner,reason,indexes],i)=>{
+    [['사용자','의도와 최종 결정',[0,5]],['AI','의도를 이해하는 단계',[1,2]],['추천 로직','경기 데이터로 후보 판단',[3,4]]].forEach(([owner,reason,indexes],i)=>{
       const group=document.createElement('section');group.className='fm-owner-column';group.dataset.owner=String(i);
       const header=document.createElement('header');const n=document.createElement('span');n.textContent=String(i+1).padStart(2,'0');const b=document.createElement('b');b.textContent=owner;const p=document.createElement('p');p.textContent=reason;header.append(n,b,p);group.appendChild(header);
       indexes.forEach(index=>group.appendChild(nodes[index]));main.appendChild(group);

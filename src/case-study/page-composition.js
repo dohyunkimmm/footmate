@@ -80,7 +80,7 @@
     "nav": "Match Details",
     "navDesc": "Information for Joining",
     "title": "참가 판단에 필요한 순서로 상세를 구성했습니다.",
-    "desc": "핵심 정보와 보조 도구를 화면 안에 모아, 두 후보의 차이를 살펴볼 수 있게 했습니다.",
+    "desc": "운영 정책을 미리 보여주고, 저장·비교 도구로 선택을 보조하도록 했습니다.",
     "keywords": [
       "일정·이동",
       "정원·정책",
@@ -189,7 +189,7 @@
     summary(2,[['대상','설계용 Persona'],['요구사항','적합성 · 정보 접근'],['수행 기록','교육생 6명 · 가입 과업 8회']]);
     text(2,'.fm-p1-persona-context p','주 1~2회 운동 · 평일 저녁 · 30분 안쪽 이동');
     text(2,'.fm-p1-persona-lenses [data-kind="context"] p','업무가 끝난 뒤 짧은 시간 안에 선택');
-    text(2,'.fm-p1-jtbd-head small','JTBD · 가설과 관찰 계획');
+    text(2,'.fm-p1-jtbd-head small','JTBD · 설계 적용');
     text(2,'.fm-p1-jtbd-journey li:first-child p','일정과 생활권 설정');
     text(2,'.fm-p1-jtbd-caveat','iOS 4명 · Android 2명 · 일부 복수 과업 수행 · Persona 대표성은 미검증');
     summary(3,[['우선 구현','참가 · 복구'],['효과 검증','전환 · 재이용'],['제외','실제 결제 · AI 자동 확정']]);

@@ -77,7 +77,7 @@ for(const [name,viewport] of [
     const slide=page.locator('.slide.on.fm-next-story-slide');
     await expect(slide).toHaveAttribute('data-p0-visual','problem');
     await expect(slide.locator('.fm-p0-problem-sources>article')).toHaveCount(3);
-    await expect(slide.locator('.fm-p0-problem-core')).toContainText('참가 결정의 불확실성');
+    await expect(slide.locator('.fm-p0-problem-core')).toContainText('판단 근거의 부족');
     await expect(slide.locator('.fm-p0-problem-path>span')).toHaveCount(4);
     await verifyNoHorizontalOverflow(page);
   });
