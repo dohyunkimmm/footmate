@@ -3910,6 +3910,12 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-decision-evidence="true"] .fm-next-story-slide .fm-p1-release-next .fm-cs-reasons>div>dt{display:block!important}
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-decision-evidence="true"] .fm-next-story-slide .fm-p1-release-next .fm-cs-reasons>div>dd{grid-column:2!important;width:auto!important}
 
+/* Evidence summaries stay in the Case Study; source links are secondary. */
+.fm-evidence-summary-open{font-family:inherit;border:0;background:none;padding:0;text-decoration:underline;text-align:left;cursor:pointer}
+.fm-evidence-summary-dialog .fm-evidence-summary-intro{font-size:16px;line-height:1.8;margin:20px 0}
+.fm-evidence-summary-dialog .fm-improvement-content li>span,.fm-evidence-summary-dialog .fm-improvement-content li>p,.fm-evidence-summary-dialog footer p,.fm-evidence-summary-dialog footer a,.fm-evidence-summary-dialog header>button{font-size:14px}
+.fm-evidence-summary-dialog .fm-improvement-content li>b{font-size:16px}
+
 /* ===== src/case-study/editorial-finish.css ===== */
 /* FootMate · canonical editorial scopes.
    Each scope preserves its original specificity and cascade order; edit existing rules here.
