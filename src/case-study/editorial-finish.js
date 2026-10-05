@@ -24,7 +24,13 @@
       const heading=document.createElement('b');heading.textContent=title;const note=document.createElement('span');note.textContent=copy;caption.append(label,heading,note);
       const window=document.createElement('div');window.className='fm-focus-crop';window.style.setProperty('--fm-focus-offset',offset+'px');window.style.setProperty('--fm-focus-height',height+'px');
       const image=document.createElement('img');image.src=source.getAttribute('src');image.alt=title+' 영역 확대';image.loading='lazy';image.decoding='async';window.appendChild(image);
-      figure.append(caption,window);host.prepend(figure);
+      figure.append(caption,window);
+      if(index===8)source.closest('figure').after(figure);else host.prepend(figure);
+    });
+    detail.querySelectorAll(':scope>span').forEach(step=>{
+      const description=step.querySelector('small');const title=document.createElement('b');
+      title.textContent=[...step.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE).map(n=>n.textContent).join('').trim();
+      step.replaceChildren(title,description);
     });
     const process=document.createElement('ol');process.className='fm-processing-path';process.setAttribute('aria-label','입력부터 사용자 확인까지의 처리 순서');
     [['입력','사용자가 의도 전달'],['해석','AI가 조건으로 변환'],['추천','규칙으로 후보·순위 결정'],['확인','사용자가 참가 요청']].forEach(([title,copy],i)=>{
