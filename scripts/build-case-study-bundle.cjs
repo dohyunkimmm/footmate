@@ -23,7 +23,8 @@ const cssSources=[
   'src/case-study/brand-redesign.css',
   'src/case-study/editorial-update.css',
   'src/case-study/decision-evidence.css',
-  'src/case-study/editorial-finish.css'
+  'src/case-study/editorial-finish.css',
+  'src/case-study/reader-review.css'
 ];
 const jsSources=[
   'src/case-study/heading-polish.js',
@@ -42,7 +43,8 @@ const jsSources=[
   'src/case-study/advanced-polish.js',
   'src/case-study/decision-evidence.js',
   'src/case-study/editorial-finish.js',
-  'src/case-study/page-composition.js'
+  'src/case-study/page-composition.js',
+  'src/case-study/reader-review.js'
 ];
 
 function read(file){
