@@ -2,7 +2,7 @@
    Recommendation uses the product's pure base ranker and sample data.
    Recovery is a local UI model; it never signs in, joins or writes product storage. */
 (function(){
-  const SOURCE='https://github.com/dohyunkimmm/footmate/blob/main/';
+  const SOURCE='https://github.com/dohyunkimmm/footmate/blob/b97898d86a8e18450f9bac1ced51209f64545bee/';
   const link=(path,label)=>`<a class="fm-proof-link" href="${SOURCE}${path}" target="_blank" rel="noopener">${label} ↗</a>`;
   const rows=items=>'<dl class="fm-cs-reasons">'+items.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')+'</dl>';
   const CASES=[
@@ -105,9 +105,9 @@
     }).catch(()=>{host.textContent='추천 예시를 불러오지 못했어요. 새로고침해 다시 확인해 주세요.';figure.dataset.interactiveReady='error';});
     const note=slide.querySelector('.fm-next-cs-note');
     slide.querySelector('.fm-p0-annotations').innerHTML=[
-      ['현재 조건','오늘의 의도를 지역·레벨·포지션으로 전달'],
-      ['기억한 선호','프로필·선호·최근 이력은 현재 브라우저에 기록'],
-      ['사용자 제어','AI 해석이 맞지 않으면 수정하거나 해제']
+      ['목업 입력','두 조건 예시로 기본 추천의 순위·이유를 비교'],
+      ['제품의 선호 기억','브라우저에 저장 · 이 목업의 비교에는 미적용'],
+      ['제품의 AI 제어','해석 결과를 수정·해제 · 이 목업은 직접 조건 비교']
     ].map(([title,copy],i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><div><b>${title}</b><p>${copy}</p></div></li>`).join('');
     note.innerHTML=rows([
       ['대안','내부 점수를 중심으로 목록 제공'],

@@ -31,7 +31,20 @@
     });
   }
 
-  function goTo(index){
+  function sectionFromUrl(){
+    const match=location.hash.match(/^#section-(\d{1,2})$/);
+    return match?clamp(Number(match[1])-1):0;
+  }
+
+  function syncSectionUrl(mode){
+    const hash='#section-'+String(current+1).padStart(2,'0');
+    if(location.hash===hash)return;
+    const method=mode==='push'?'pushState':'replaceState';
+    const state=history.state&&typeof history.state==='object'?history.state:{};
+    history[method]({...state,fmCaseStudySection:current+1},'',location.pathname+location.search+hash);
+  }
+
+  function goTo(index,options={}){
     const visibleSlides=slides();
     if(!visibleSlides.length)return;
     current=clamp(Number(index)||0);
@@ -51,6 +64,7 @@
     if(next)next.disabled=current===visibleSlides.length-1;
     if(count)count.textContent=`${String(current+1).padStart(2,'0')} / ${String(visibleSlides.length).padStart(2,'0')}`;
     if(bar)bar.style.width=`${((current+1)/visibleSlides.length)*100}%`;
+    if(options.history!==false)syncSectionUrl(options.history||'push');
   }
 
   function isEditingTarget(target){
@@ -65,6 +79,20 @@
     if(document.querySelector('dialog[open]'))return;
     if(event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
     if(isEditingTarget(event.target))return;
+    // Local examples own their arrow keys; reading controls still move between sections.
+    const group=event.target.closest?.('.fm-mock-presets,.fm-recovery-actions');
+    if(group&&['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){
+      const buttons=[...group.querySelectorAll('button:not(:disabled)')];
+      if(!buttons.length)return;
+      const index=buttons.indexOf(event.target.closest('button'));
+      const target=event.key==='Home'?0:event.key==='End'?buttons.length-1:
+        (index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+      event.preventDefault();
+      buttons[target].focus({preventScroll:true});
+      if(group.classList.contains('fm-mock-presets'))buttons[target].click();
+      return;
+    }
+    if(event.target.closest?.('.slide a,.slide button,.slide summary,.fm-next-cover-frame'))return;
     if(event.key==='ArrowRight'||event.key==='PageDown'){
       event.preventDefault();
       goTo(current+1);
@@ -109,7 +137,7 @@
 
   function refresh(){
     current=clamp(current);
-    goTo(current);
+    goTo(current,{history:'replace'});
     bindFrameKeyboard();
   }
 
@@ -137,5 +165,8 @@
 
   const observer=new MutationObserver(()=>bindFrameKeyboard());
   observer.observe(document.documentElement,{childList:true,subtree:true});
-  goTo(0);
+  const restore=()=>goTo(sectionFromUrl(),{history:'replace'});
+  window.addEventListener('popstate',restore);
+  window.addEventListener('hashchange',restore);
+  goTo(sectionFromUrl(),{history:'replace'});
 })();

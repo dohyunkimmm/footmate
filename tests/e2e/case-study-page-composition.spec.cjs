@@ -298,7 +298,7 @@ test('desktop composition audit captures every section after entry motion settle
     if([2,3,7,10].includes(index)){
       const details=await slide.evaluate((node,index)=>{
         const box=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width};};
-        const main=box(node.querySelector('.fm-next-review-summary'));
+        const main=box(node.querySelector(index===10?'.fm-processing-path':'.fm-next-review-summary'));
         const elements=index===2?[node.querySelector('.fm-p1-jtbd-journey>ol')]:index===3?[...node.querySelectorAll('.fm-next-story-aside .fm-next-cs-card')]:index===7?[node.querySelector('.fm-p1-auth-preserve>span')]:[node.querySelector('.fm-owner-grid')];
         return {main,boxes:elements.map(box)};
       },index);

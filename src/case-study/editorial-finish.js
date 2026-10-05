@@ -93,6 +93,16 @@
       card.querySelectorAll('.fm-proof-link,.fm-improvement-open').forEach(node=>actions.appendChild(node));card.appendChild(actions);
     });
     installEvidenceDetails(slides);
+    const empty=slides[9].querySelector('.fm-evidence-recovery-strip .fm-evidence-figure:first-of-type');
+    empty.dataset.evidenceCrop='empty-actions';
+    empty.querySelector('figcaption span').textContent='빈 상태 UI · 핵심 영역 확대';
+    empty.querySelector('img').alt='탐색 결과 없음 메시지와 조건 완화·필터 해제 버튼 확대';
+    // Freeze explanatory code/document evidence to the reviewed source snapshot.
+    const pinEvidence=link=>{
+      const prefix='https://github.com/dohyunkimmm/footmate/blob/main/';
+      if(link.href.startsWith(prefix))link.href=link.href.replace(prefix,'https://github.com/dohyunkimmm/footmate/blob/b97898d86a8e18450f9bac1ced51209f64545bee/');
+    };
+    document.querySelectorAll('.slide a[href],.fm-improvement-dialog a[href]').forEach(pinEvidence);
     installNavigationPreview(slides);
     document.documentElement.dataset.fmEditorialFinish='true';
   };
