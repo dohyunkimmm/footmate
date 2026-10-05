@@ -2075,25 +2075,36 @@
     const host=figure.querySelector('.fm-mock-results');
     const presets=[{region:'수원 · 인계',level:'중급',position:'MF'},{region:'용인 · 기흥',level:'초중급',position:'GK'}];
     const buttons=[...figure.querySelectorAll('[data-reco-preset]')];
+    let previous=[],feedbackTimer;
     Promise.all([import('/src/platform/domain/recommendation.js'),import('/src/app/data.js')]).then(([domain,data])=>{
       const render=index=>{
         buttons.forEach((button,i)=>{button.disabled=false;button.setAttribute('aria-pressed',String(i===index));});
         const ranked=domain.rankRecommendations(data.MATCHES,presets[index]).slice(0,2);
+        clearTimeout(feedbackTimer);
+        const prior=previous;previous=ranked.map(item=>({id:item.match.id,reasons:item.reasons.slice(0,3).map(r=>r.title)}));
         host.replaceChildren();
         ranked.forEach((item,i)=>{
           const card=document.createElement('article');card.className='fm-mock-match';card.dataset.matchId=item.match.id;
           const meta=document.createElement('div');meta.className='fm-mock-match-meta';
           const rank=document.createElement('span');rank.textContent=String(i+1).padStart(2,'0');
+          const priorIndex=prior.findIndex(entry=>entry.id===item.match.id);
+          if(prior.length&&priorIndex!==i){rank.classList.add('fm-rank-updated');card.dataset.recoChange='rank';}
           const venue=document.createElement('b');venue.textContent=item.match.place;
           const time=document.createElement('small');time.textContent=item.match.shortDate;
           meta.append(rank,venue,time);
           const reasons=document.createElement('div');reasons.className='fm-mock-reasons';
-          item.reasons.slice(0,3).forEach(reason=>{const chip=document.createElement('span');chip.textContent=reason.title;reasons.appendChild(chip);});
+          item.reasons.slice(0,3).forEach(reason=>{const chip=document.createElement('span');chip.textContent=reason.title;
+            if(prior.length&&!prior[priorIndex]?.reasons.includes(reason.title))chip.classList.add('fm-reason-updated');
+            reasons.appendChild(chip);});
           const footer=document.createElement('div');footer.className='fm-mock-match-bottom';
           const detail=document.createElement('span');detail.textContent=item.match.level+' · '+item.match.distance+' · '+item.spotLabel;
           const price=document.createElement('b');price.textContent=new Intl.NumberFormat('ko-KR').format(item.match.price)+'원';
           footer.append(detail,price);card.append(meta,reasons,footer);host.appendChild(card);
         });
+        if(prior.length)feedbackTimer=setTimeout(()=>{
+          host.querySelectorAll('[data-reco-change]').forEach(node=>delete node.dataset.recoChange);
+          host.querySelectorAll('.fm-rank-updated,.fm-reason-updated').forEach(node=>node.classList.remove('fm-rank-updated','fm-reason-updated'));
+        },1400);
         figure.dataset.recommendationPreset=String(index);
         const context=figure.querySelector('.fm-mock-context small');context.textContent=index===0?'비교 A · 수원 / 중급 / MF':'비교 B · 용인 / 초중급 / GK';
         const footer=figure.querySelector('.fm-mock-footer');footer.querySelector('span').textContent='1순위 · '+ranked[0].match.place;footer.querySelector('b').textContent='조건 변경 → 순위·이유 재계산';
@@ -2118,7 +2129,7 @@
     const figure=slide.querySelectorAll('.fm-evidence-recovery-strip .fm-evidence-figure')[1];
     figure.dataset.evidenceKind='interactive-mock';
     figure.querySelector('.fm-evidence-media').innerHTML=`<div class="fm-cs-recovery-example fm-recovery-demo" data-recovery-state="failed">
-      <span class="fm-recovery-state-label">참가 확인</span>
+      <span class="fm-recovery-state-label"><span class="fm-recovery-state-icon" aria-hidden="true">!</span><b>참가 실패</b></span>
       <div class="fm-recovery-message" aria-live="polite" aria-atomic="true"><b>참가를 확정하지 못했어요.</b><p>요청 전 정보를 그대로 남겼어요.</p></div>
       <div class="fm-recovery-retained"><span>보존한 선택</span><b>수원 인계 · MF</b></div>
       <div class="fm-recovery-actions"><button type="button" data-recovery-action="retry">다시 시도</button><button type="button" data-recovery-action="choose">경기 다시 선택</button></div>
@@ -2130,6 +2141,8 @@
     let timer;
     const render=state=>{
       demo.dataset.recoveryState=state;
+      const status={failed:['!','참가 실패'],checking:['…','결과 확인 중'],success:['✓','참가 완료'],choose:['↗','경기 다시 선택']}[state];
+      demo.querySelector('.fm-recovery-state-icon').textContent=status[0];demo.querySelector('.fm-recovery-state-label>b').textContent=status[1];
       const message={failed:['참가를 확정하지 못했어요.','요청 전 정보를 그대로 남겼어요.'],checking:['참가 결과를 확인하고 있어요.','중복 참가를 막기 위해 버튼을 잠시 잠갔어요.'],success:['참가를 확정했어요.','다음 행동은 MY에서 이어가요.'],choose:['다른 경기를 선택해요.','탐색 조건을 유지하고 후보를 다시 확인해요.']}[state];
       demo.querySelector('.fm-recovery-message b').textContent=message[0];demo.querySelector('.fm-recovery-message p').textContent=message[1];
       const retry=demo.querySelector('[data-recovery-action="retry"]');retry.disabled=state==='checking';retry.textContent=state==='checking'?'확인 중…':state==='failed'?'다시 시도':'처음 상태로';
@@ -2259,6 +2272,30 @@
     document.documentElement.dataset.fmEvidenceDetails='true';
   }
 
+
+  function installNavigationPreview(slides){
+    const names=[...document.querySelectorAll('.toc-item .toc-t')].map(node=>node.textContent);
+    const controls=[document.querySelector('.btn-prev'),document.querySelector('.btn-next')];
+    controls.forEach((button,i)=>{
+      const arrow=document.createElement('span');arrow.className='fm-control-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent=i?'→':'←';
+      const copy=document.createElement('span');copy.className='fm-control-destination';copy.id='fm-control-destination-'+i;
+      const label=document.createElement('small');const title=document.createElement('b');copy.append(label,title);
+      button.replaceChildren(arrow,copy);button.setAttribute('aria-describedby',copy.id);
+    });
+    const update=()=>{
+      const current=slides.findIndex(slide=>slide.classList.contains('on'));
+      controls.forEach((button,i)=>{
+        const target=current+(i?1:-1);const destination=button.querySelector('.fm-control-destination');
+        destination.querySelector('small').textContent=target<0?'첫 섹션':target>=slides.length?'마지막 섹션':i?'다음 섹션':'이전 섹션';
+        destination.querySelector('b').textContent=names[Math.max(0,Math.min(names.length-1,target))];
+      });
+    };
+    new MutationObserver(records=>{if(records.some(record=>record.target.classList.contains('slide')))update();})
+      .observe(document.querySelector('.track'),{subtree:true,attributes:true,attributeFilter:['class']});
+    update();
+    document.documentElement.dataset.fmColorInteractionPolish='true';
+  }
+
   window.installFootMateEditorialFinish=function(slides){
     const recovery=slides[9];
     const map=recovery.querySelector('.fm-p0-recovery-map');
@@ -2274,6 +2311,7 @@
       card.querySelectorAll('.fm-proof-link,.fm-improvement-open').forEach(node=>actions.appendChild(node));card.appendChild(actions);
     });
     installEvidenceDetails(slides);
+    installNavigationPreview(slides);
     document.documentElement.dataset.fmEditorialFinish='true';
   };
 })();

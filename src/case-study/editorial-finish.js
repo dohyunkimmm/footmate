@@ -54,6 +54,30 @@
     document.documentElement.dataset.fmEvidenceDetails='true';
   }
 
+
+  function installNavigationPreview(slides){
+    const names=[...document.querySelectorAll('.toc-item .toc-t')].map(node=>node.textContent);
+    const controls=[document.querySelector('.btn-prev'),document.querySelector('.btn-next')];
+    controls.forEach((button,i)=>{
+      const arrow=document.createElement('span');arrow.className='fm-control-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent=i?'→':'←';
+      const copy=document.createElement('span');copy.className='fm-control-destination';copy.id='fm-control-destination-'+i;
+      const label=document.createElement('small');const title=document.createElement('b');copy.append(label,title);
+      button.replaceChildren(arrow,copy);button.setAttribute('aria-describedby',copy.id);
+    });
+    const update=()=>{
+      const current=slides.findIndex(slide=>slide.classList.contains('on'));
+      controls.forEach((button,i)=>{
+        const target=current+(i?1:-1);const destination=button.querySelector('.fm-control-destination');
+        destination.querySelector('small').textContent=target<0?'첫 섹션':target>=slides.length?'마지막 섹션':i?'다음 섹션':'이전 섹션';
+        destination.querySelector('b').textContent=names[Math.max(0,Math.min(names.length-1,target))];
+      });
+    };
+    new MutationObserver(records=>{if(records.some(record=>record.target.classList.contains('slide')))update();})
+      .observe(document.querySelector('.track'),{subtree:true,attributes:true,attributeFilter:['class']});
+    update();
+    document.documentElement.dataset.fmColorInteractionPolish='true';
+  }
+
   window.installFootMateEditorialFinish=function(slides){
     const recovery=slides[9];
     const map=recovery.querySelector('.fm-p0-recovery-map');
@@ -69,6 +93,7 @@
       card.querySelectorAll('.fm-proof-link,.fm-improvement-open').forEach(node=>actions.appendChild(node));card.appendChild(actions);
     });
     installEvidenceDetails(slides);
+    installNavigationPreview(slides);
     document.documentElement.dataset.fmEditorialFinish='true';
   };
 })();

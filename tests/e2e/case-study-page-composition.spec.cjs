@@ -346,3 +346,43 @@ test('inline evidence shows actual changes, readable source details and the exec
   await expect(page.locator('.slide.on .fm-change-after')).toContainText('다음 경기 찾기');
   await expect(page.locator('.slide.on .fm-learning-proof')).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
 });
+
+test('color roles keep white pages and expose navigation destinations with local feedback',async({page})=>{
+  const posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
+  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmColorInteractionPolish==='true');
+  const storage=await page.evaluate(()=>JSON.stringify({...localStorage}));
+  for(let index=0;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    expect(await page.locator('.slide.on').evaluate(node=>getComputedStyle(node).backgroundColor)).toBe('rgb(255, 255, 255)');
+    expect(await page.locator('.slide.on').evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+    const label=page.locator('.btn-next .fm-control-destination');
+    await expect(label).toBeVisible();
+    if(index<12)expect(await label.locator('b').textContent()).toBe(await page.locator('.toc-t').nth(index+1).textContent());
+    else await expect(page.locator('.btn-next')).toBeDisabled();
+  }
+  await page.locator('.toc-item').nth(5).click();
+  const figure=page.locator('.slide.on .is-recommendation');
+  await expect(figure).toHaveAttribute('data-interactive-ready','true');
+  const quiet=await page.locator('.slide.on .fm-p0-annotations li>span').first().evaluate(n=>getComputedStyle(n).backgroundColor);
+  const selected=await figure.locator('[aria-pressed="true"]').evaluate(n=>getComputedStyle(n).backgroundColor);
+  expect(quiet).not.toBe(selected);
+  await figure.locator('[data-reco-preset="1"]').click();
+  await expect(figure.locator('.fm-rank-updated').first()).toBeVisible();
+  await expect(figure.locator('.fm-reason-updated').first()).toBeVisible();
+  const changed=await page.screenshot({type:'jpeg',quality:70,animations:'disabled'});console.log('COLOR_RECO_VISUAL '+changed.toString('base64'));
+  await expect(figure.locator('.fm-rank-updated')).toHaveCount(0);
+  await page.locator('.toc-item').nth(9).click();
+  const demo=page.locator('.slide.on .fm-recovery-demo');const status=demo.locator('.fm-recovery-state-label');
+  await expect(status).toContainText('참가 실패');await expect(status.locator('.fm-recovery-state-icon')).toHaveText('!');
+  const failed=await status.evaluate(n=>getComputedStyle(n).backgroundColor);
+  await demo.locator('[data-recovery-action="retry"]').click();
+  await expect(status).toContainText('결과 확인 중');await expect(demo.locator('[data-recovery-action="retry"]')).toBeDisabled();
+  await expect(status).toContainText('참가 완료');await expect(status.locator('.fm-recovery-state-icon')).toHaveText('✓');
+  expect(await status.evaluate(n=>getComputedStyle(n).backgroundColor)).not.toBe(failed);
+  const success=await page.screenshot({type:'jpeg',quality:70,animations:'disabled'});console.log('COLOR_RECOVERY_VISUAL '+success.toString('base64'));
+  expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(storage);expect(posts).toEqual([]);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.locator('.toc-item').nth(5).click();await figure.locator('[data-reco-preset="0"]').click();
+  expect(await figure.locator('.fm-rank-updated').first().evaluate(n=>getComputedStyle(n).animationName)).toBe('none');
+});
