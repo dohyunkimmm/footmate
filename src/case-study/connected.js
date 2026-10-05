@@ -145,7 +145,7 @@
       if(index<sectionMeta.length)dot.setAttribute('aria-label',`${index+1}번 섹션`);
     });
     const sub=document.querySelector('.sb-sub');
-    if(sub)sub.textContent='AI-assisted discovery · 13 sections';
+    if(sub)sub.textContent='풋살 서비스 · 개인 프로젝트';
     const topTitle=document.querySelector('.topbar-title');
     if(topTitle)topTitle.textContent='FootMate · Product Case Study';
   }
