@@ -145,7 +145,7 @@ test('implementation improvement records expose both evidence chains and restore
   await expect(dialog).toBeVisible();await expect(dialog.locator('ol>li')).toHaveCount(4);
   await expect(dialog).toContainText('경기 정보가 없으면 참가 처리 중단');
   await expect(dialog).toContainText('정보 유실 → 오류 → 정보 복원 → 참가 성공');
-  await expect(dialog.getByRole('link',{name:'실제 수정 기록 ↗'})).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
+  await expect(dialog.getByRole('link',{name:'상세 수정 자료 · GitHub ↗'})).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
   await page.keyboard.press('ArrowRight');await expect(page.locator('.slide.on')).toHaveAttribute('data-page-number','12');
   await page.screenshot({path:'test-results/improvement-join-dialog.png',animations:'disabled'});
   await dialog.getByRole('button',{name:'평가 후 다음 탐색',exact:true}).click();
@@ -344,7 +344,15 @@ test('inline evidence shows actual changes, readable source details and the exec
   await page.locator('.toc-item').nth(12).click();
   await expect(page.locator('.slide.on .fm-change-before')).toContainText('수정 전');
   await expect(page.locator('.slide.on .fm-change-after')).toContainText('다음 경기 찾기');
-  await expect(page.locator('.slide.on .fm-learning-proof')).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
+  const summaryOpener=page.locator('.slide.on .fm-learning-proof');
+  await expect(summaryOpener).toHaveAttribute('aria-haspopup','dialog');
+  await summaryOpener.click();
+  const summaryDialog=page.locator('#fm-evidence-summary-dialog');
+  await expect(summaryDialog).toBeVisible();
+  await expect(summaryDialog).toContainText('평가 저장 후에도 피드백 안내 유지');
+  await expect(summaryDialog.getByRole('link',{name:'상세 자료 · GitHub ↗'})).toHaveAttribute('href','https://github.com/dohyunkimmm/footmate/pull/442');
+  await page.keyboard.press('Escape');
+  await expect(summaryOpener).toBeFocused();
 });
 
 test('color roles keep white pages and expose navigation destinations with local feedback',async({page})=>{
@@ -467,3 +475,37 @@ test('readable evidence, compact architecture and pinned source links retain fix
   const title=await readerPatchActive(page).evaluate(n=>(parseFloat(getComputedStyle(n.querySelector('h2')).fontSize))*(parseFloat(getComputedStyle(n.querySelector('.fm-next-story')).zoom)||1));
   expect(title).toBeGreaterThanOrEqual(30);
 });
+
+test('all nine evidence actions show readable summaries without leaving the Case Study',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmEvidenceSummaries==='true');
+  await expect(page.locator('.slide .fm-evidence-summary-open')).toHaveCount(9);
+  await expect(page.locator('.slide a[href*="github.com"]')).toHaveCount(0);
+  const examples=[[2,'tasks'],[4,'auth'],[5,'recommendation'],[9,'recovery'],[10,'ownership'],[11,'tasks'],[11,'qa'],[11,'manual'],[12,'improvement']];
+  for(const [index,key] of examples){
+    await page.evaluate(index=>window.goTo(index),index);
+    const opener=page.locator('.slide.on button[data-evidence-summary="'+key+'"]');
+    const url=page.url();await opener.click();
+    const dialog=page.locator('#fm-evidence-summary-dialog');
+    await expect(dialog).toBeVisible();await expect(dialog).toHaveAttribute('data-evidence-summary',key);
+    await expect(dialog.locator('ol>li')).toHaveCount(4);
+    await expect(dialog.locator('h2')).not.toBeEmpty();
+    await expect(dialog.getByRole('link',{name:'상세 자료 · GitHub ↗'})).toHaveAttribute('href',/^https:\/\/github\.com\/dohyunkimmm\/footmate\//);
+    expect(page.url()).toBe(url);
+    await page.keyboard.press('ArrowRight');await expect(page.locator('.slide.on')).toHaveAttribute('data-page-number',String(index+1));
+    await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(opener).toBeFocused();
+  }
+});
+for(const width of [320,390]){
+  test('evidence summary remains readable and closes on mobile at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:844});
+    await page.goto('/#section-12');await page.waitForFunction(()=>document.documentElement.dataset.fmEvidenceSummaries==='true');
+    const opener=page.locator('.slide.on button[data-evidence-summary="tasks"]');await opener.click();
+    const dialog=page.locator('#fm-evidence-summary-dialog');
+    await expect(dialog).toContainText('교육생 6명');await expect(dialog).toContainText('일부 참여자는 복수 과업');
+    const geometry=await dialog.evaluate(node=>({overflow:node.scrollWidth-node.clientWidth,left:node.getBoundingClientRect().left,right:node.getBoundingClientRect().right,viewport:innerWidth,columns:getComputedStyle(node.querySelector('ol')).gridTemplateColumns.split(' ').length}));
+    expect(geometry.overflow).toBeLessThanOrEqual(1);expect(geometry.left).toBeGreaterThanOrEqual(0);expect(geometry.right).toBeLessThanOrEqual(geometry.viewport);expect(geometry.columns).toBe(1);
+    await page.screenshot({path:'test-results/evidence-summary-'+width+'.png',animations:'disabled'});
+    await dialog.getByRole('button',{name:'근거 요약 닫기'}).click();await expect(dialog).not.toBeVisible();await expect(opener).toBeFocused();
+  });
+}

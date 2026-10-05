@@ -2296,6 +2296,258 @@
     document.documentElement.dataset.fmColorInteractionPolish='true';
   }
 
+
+  function installEvidenceSummaries(slides){
+    const summaries={
+  "tasks": {
+    "title": "사용자 과업 검증",
+    "intro": "교육생 6명에게 구체적인 탐색·가입 행동을 요청해, 동선의 막힘과 상태 복귀를 확인했습니다.",
+    "items": [
+      [
+        "확인 대상",
+        "가입 전 탐색과 인증 후 복귀",
+        "iOS 4명·Android 2명에게 수준·포지션 조건을 나눠 과업을 요청했습니다."
+      ],
+      [
+        "확인 방법",
+        "가입 관련 과업 총 8회",
+        "가입 전 탐색·Kakao·Google·이메일을 각각 2회 요청했습니다. 일부 참여자는 복수 과업을 수행했습니다."
+      ],
+      [
+        "배운 점",
+        "구체적인 행동을 지정해 확인",
+        "동선을 지정해야 문제 구간을 지나며, 같은 조건으로 오류를 다시 확인하기 쉽습니다."
+      ],
+      [
+        "해석 한계",
+        "사용성 검증이며 이용 성과는 미측정",
+        "개인별 과업 매핑·상세 오류 목록은 미확정입니다. 전환율 개선이나 전체 이용자의 선호를 입증하지 않습니다."
+      ]
+    ]
+  },
+  "auth": {
+    "title": "로그인을 참가 직전에 요청한 이유",
+    "intro": "경기를 먼저 살펴보고 참가 의도가 생겼을 때 로그인하도록 순서를 정했습니다.",
+    "items": [
+      [
+        "비교한 대안",
+        "첫 화면에서 가입부터 요청",
+        "서비스가 자신에게 맞는지 확인하기 전에 계정 생성과 설문을 거쳐야 합니다."
+      ],
+      [
+        "선택한 흐름",
+        "조건 설정 → 추천 → 상세 → 참가 시 로그인",
+        "가입 전에도 후보와 추천 이유를 살펴보고, 참가할 때 인증하도록 설계했습니다."
+      ],
+      [
+        "설계 의도",
+        "가치를 확인한 뒤 가입 여부 판단",
+        "로그인 전에 고른 경기와 복귀 위치를 보존해 같은 선택을 반복하지 않도록 합니다."
+      ],
+      [
+        "한계",
+        "전환 효과는 아직 미검증",
+        "계정 기반 개인화와 기기 간 연속성에는 제약이 있습니다. 가입률 개선을 측정한 결과는 아닙니다."
+      ]
+    ]
+  },
+  "recommendation": {
+    "title": "추천 순위와 이유를 결정하는 기준",
+    "intro": "AI가 경기 사실이나 순위를 만들어내지 않도록, 조건 해석과 추천 판단을 분리했습니다.",
+    "items": [
+      [
+        "입력",
+        "지역·레벨·포지션 조건",
+        "페이지의 두 조건 예시를 바꾸면 같은 샘플 경기에서 순위와 추천 이유를 비교할 수 있습니다."
+      ],
+      [
+        "판단",
+        "기준 기반 추천 로직이 후보와 순위 결정",
+        "경기 데이터와 입력 조건을 대조합니다. 같은 입력은 같은 순서로 재현됩니다."
+      ],
+      [
+        "표현",
+        "점수보다 판단 가능한 이유 먼저",
+        "생활권·레벨·포지션처럼 경기 선택에 필요한 일치 항목을 보여줍니다."
+      ],
+      [
+        "한계",
+        "샘플 경기로 실행하는 추천 예시",
+        "이 목업은 개인화 기억이나 AI 조건 해석을 적용한 비교가 아닙니다. 실제 참가 효과도 미측정입니다."
+      ]
+    ]
+  },
+  "recovery": {
+    "title": "참가 실패 후 다시 진행할 수 있는지 확인",
+    "intro": "처리 중에 멈춘 버튼을 오류 안내와 재시도 가능한 상태로 바꾸고, 동일 동선을 자동 검증했습니다.",
+    "items": [
+      [
+        "수정 전",
+        "경기 정보가 없으면 처리 중에 멈춤",
+        "참가를 진행하지 못해도 버튼이 처리 중 상태에 남아 다음 행동을 할 수 없었습니다."
+      ],
+      [
+        "수정 후",
+        "오류 안내·버튼 복원·다른 경기 선택",
+        "실패 시 버튼을 다시 활성화하고 재시도와 경기 다시 선택을 제공합니다."
+      ],
+      [
+        "확인 방법",
+        "정보 유실 → 오류 → 정보 복원 → 참가 성공",
+        "자동 브라우저 검사로 안내 문구, 활성 버튼, 최종 성공 화면을 확인합니다."
+      ],
+      [
+        "해석 한계",
+        "동작 검증과 사용자 효과는 별도",
+        "페이지의 복구 화면은 UI 목업입니다. 복구 성공률이나 참가 전환 개선을 측정한 결과는 아닙니다."
+      ]
+    ]
+  },
+  "ownership": {
+    "title": "AI와 서비스의 책임을 나눈 이유",
+    "intro": "AI는 요청을 이해하고, 서비스는 실제 경기 데이터로 판단하며, 사용자는 참가를 최종 확인합니다.",
+    "items": [
+      [
+        "사용자",
+        "조건과 최종 참가 의사 결정",
+        "AI가 사용자를 대신해 참가를 확정하지 않도록 명시적 확인 단계를 둡니다."
+      ],
+      [
+        "AI",
+        "자연어 요청을 검색 조건으로 해석",
+        "경기 ID·가격·정원·날짜·순위를 생성하지 못하도록 입력과 출력 범위를 제한합니다."
+      ],
+      [
+        "서비스",
+        "후보·순위·추천 이유 결정",
+        "추천 로직이 실제 후보를 평가합니다. AI 연결이 실패하면 규칙 기반 탐색으로 이어갑니다."
+      ],
+      [
+        "한계",
+        "자유로운 자동화 범위 제한",
+        "대체 경로에서는 자연어 해석 범위가 줄어들 수 있습니다. 실제 결제는 미연동입니다."
+      ]
+    ]
+  },
+  "qa": {
+    "title": "자동 검사에서 확인하는 내용",
+    "intro": "자동 검사는 화면과 상태가 설계한 대로 이어지는지 확인합니다. 사용자 만족이나 전환 성과와 구분합니다.",
+    "items": [
+      [
+        "정상 흐름",
+        "탐색부터 경기 후 다음 탐색까지",
+        "경기 선택·참가·체크인·평가 저장 이후에 올바른 상태와 다음 행동이 표시되는지 확인합니다."
+      ],
+      [
+        "예외 흐름",
+        "참가 실패·재시도·정보 복원",
+        "정보 유실 시 오류를 알리고 버튼을 복원하며, 재시도 후 같은 경기의 참가를 완료하는지 확인합니다."
+      ],
+      [
+        "화면과 접근성",
+        "모바일 크기·키보드·화면 비교",
+        "브라우저 자동 검사로 화면 넘침, 조작 가능 여부, 승인된 화면과의 차이를 확인합니다."
+      ],
+      [
+        "해석 한계",
+        "구현 품질 확인이며 이용 성과는 아님",
+        "자동 검사 통과만으로 실제 이용자의 만족이나 참가 전환 개선을 입증하지 않습니다."
+      ]
+    ]
+  },
+  "manual": {
+    "title": "사람이 직접 확인한 외부 연결",
+    "intro": "자동 검사와 별도로, 실제 외부 서비스와 사용자 기기에서 전달 결과를 확인했습니다.",
+    "items": [
+      [
+        "로그인",
+        "Google·Kakao 실제 로그인",
+        "Closed Beta에서 인증을 진행하고 원래 이용 흐름으로 돌아오는 경로를 수동 확인했습니다."
+      ],
+      [
+        "이메일",
+        "참가 상태 안내의 최종 전달",
+        "참가·취소·체크인 안내가 실제 이메일 전달 완료까지 이어지는지 확인했습니다."
+      ],
+      [
+        "기기 알림",
+        "브라우저·운영체제에 알림 표시",
+        "알림에 동의한 기기에서 실제 표시를 확인했습니다. 이후 표시는 기기와 권한 설정에 영향을 받습니다."
+      ],
+      [
+        "해석 한계",
+        "연결 확인과 사용자 효과는 별도",
+        "외부 연결 성공이 서비스 만족이나 참가·재이용 효과를 의미하지는 않습니다."
+      ]
+    ]
+  },
+  "improvement": {
+    "title": "평가 저장 이후 다음 경기 탐색으로 연결",
+    "intro": "평가를 저장해도 피드백 안내가 남던 화면을, 완료 안내와 다음 경기 찾기로 바꿨습니다.",
+    "items": [
+      [
+        "수정 전",
+        "평가 저장 후에도 피드백 안내 유지",
+        "경기 종료 여부만 확인해, 이미 평가를 마친 사용자에게 다시 피드백을 안내했습니다."
+      ],
+      [
+        "원인",
+        "경기 종료와 평가 완료를 구분하지 않음",
+        "저장 완료 기록이 홈 화면의 다음 행동에 반영되지 않았습니다."
+      ],
+      [
+        "수정 후",
+        "완료 기록 확인 → 다음 경기 찾기",
+        "MY에서 평가를 저장하면 홈에서 완료 안내와 탐색 진입 버튼을 표시합니다."
+      ],
+      [
+        "재검증",
+        "평가 저장 → 홈 완료 → 경기 찾기 진입",
+        "자동 브라우저 검사에서 저장 상태·완료 문구·다음 화면을 확인했습니다. 재이용률 개선은 미측정입니다."
+      ]
+    ]
+  }
+};
+    const dialog=document.createElement('dialog');
+    dialog.className='fm-improvement-dialog fm-evidence-summary-dialog';
+    dialog.setAttribute('aria-labelledby','fm-evidence-summary-title');
+    dialog.innerHTML='<header><div><small>설계와 검증 근거</small><h2 id="fm-evidence-summary-title"></h2></div><button type="button" aria-label="근거 요약 닫기">닫기 ×</button></header><div class="fm-improvement-content"><p class="fm-evidence-summary-intro"></p><ol></ol></div><footer><p>기존 설계·검증 기록을 요약했습니다. 상세 자료는 선택적으로 확인할 수 있습니다.</p><a class="fm-proof-link" target="_blank" rel="noopener">상세 자료 · GitHub ↗</a></footer>';
+    let opener;
+    dialog.querySelector('header>button').addEventListener('click',()=>dialog.close());
+    dialog.addEventListener('keydown',event=>event.stopPropagation());
+    dialog.addEventListener('close',()=>opener?.focus({preventScroll:true}));
+    dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();}});
+    document.body.appendChild(dialog);
+    slides.forEach((slide,index)=>{
+      slide.querySelectorAll('a[href*="github.com/dohyunkimmm/footmate"]').forEach(anchor=>{
+        const url=anchor.href;
+        const key=url.includes('USER-TEST-EVIDENCE.md')?'tasks':index===4?'auth':index===5?'recommendation':index===9?'recovery':index===10?'ownership':url.includes('/pull/442')?'improvement':url.includes('release-app.spec.cjs')?'qa':index===11?'manual':null;
+        if(!key)return;
+        const button=document.createElement('button');
+        button.type='button';button.className=anchor.className+' fm-evidence-summary-open';
+        const labels={tasks:'과업 기록 보기 ↗',auth:'인증 시점 근거 보기 ↗',recommendation:'추천 기준 보기 ↗',recovery:'복구 검증 보기 ↗',ownership:'책임 분리 근거 보기 ↗',qa:'검증 근거 보기 ↗',manual:'검증 근거 보기 ↗',improvement:'수정 전후 보기 ↗'};
+        button.textContent=index===11?'검증 근거 보기 ↗':labels[key];button.dataset.evidenceSummary=key;
+        button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','fm-evidence-summary-dialog');
+        button.addEventListener('click',()=>{
+          opener=button;const entry=summaries[key];
+          dialog.dataset.evidenceSummary=key;
+          dialog.querySelector('h2').textContent=entry.title;
+          dialog.querySelector('.fm-evidence-summary-intro').textContent=entry.intro;
+          const list=dialog.querySelector('ol');list.replaceChildren();
+          entry.items.forEach(([stage,title,copy])=>{
+            const item=document.createElement('li'),label=document.createElement('span'),heading=document.createElement('b'),text=document.createElement('p');
+            label.textContent=stage;heading.textContent=title;text.textContent=copy;item.append(label,heading,text);list.appendChild(item);
+          });
+          dialog.querySelector('footer a').href=url;dialog.showModal();
+        });
+        anchor.replaceWith(button);
+      });
+    });
+    dialog.id='fm-evidence-summary-dialog';
+    document.querySelectorAll('.fm-improvement-dialog:not(.fm-evidence-summary-dialog) footer a').forEach((anchor,index)=>{anchor.textContent=index===0?'상세 수정 자료 · GitHub ↗':'상세 검증 자료 · GitHub ↗';});
+    document.documentElement.dataset.fmEvidenceSummaries='true';
+  }
+
   window.installFootMateEditorialFinish=function(slides){
     const recovery=slides[9];
     const map=recovery.querySelector('.fm-p0-recovery-map');
@@ -2322,6 +2574,7 @@
     };
     document.querySelectorAll('.slide a[href],.fm-improvement-dialog a[href]').forEach(pinEvidence);
     installNavigationPreview(slides);
+    installEvidenceSummaries(slides);
     document.documentElement.dataset.fmEditorialFinish='true';
   };
 })();
