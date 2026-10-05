@@ -221,11 +221,11 @@
     text(6,'.is-detail figcaption b','경기 상세 · 기존 제품 화면');
     const detailSteps=slides[6].querySelectorAll('.fm-next-cs-detail-order>span');
     ['참가 가능한 일정과 이동 범위','조건에 맞는 이유','원하는 포지션의 참가 가능 여부','경기 전 준비와 운영 안내','참가 전 취소 조건 확인'].forEach((copy,index)=>{if(detailSteps[index]){const small=document.createElement('small');small.textContent=copy;detailSteps[index].appendChild(small);}});
-    const comparison=document.createElement('p');comparison.className='fm-cs-detail-rationale';comparison.textContent='두 후보의 차이를 살펴본 뒤 한 경기를 고르도록 비교 범위를 제한했습니다.';
+    const comparison=document.createElement('p');comparison.className='fm-cs-detail-rationale';comparison.textContent='최대 2경기의 거리·레벨·포지션 자리·참가비 비교 · 대상 수를 제한해 선택을 보조';
     slides[6].querySelector('.fm-next-cs-detail-order')?.appendChild(comparison);
     html(6,'.fm-next-story-aside .fm-next-cs-note',rows([
       ['배치 근거','일정·이동 → 적합성 → 운영 정책 순으로 확인'],
-      ['비교 기준','최대 2경기의 거리·레벨·포지션 자리·참가비 비교'],
+      ['도구 역할','목록에서 가려진 차이를 한 화면에서 확인'],
       ['행동 구분','참가하기를 주 행동으로 두고 나머지는 선택을 보조']
     ]));
     text(7,'.fm-p1-auth-frame:nth-of-type(2) p','한 번 고른 대상을 재입력 없이 전달');
