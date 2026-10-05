@@ -307,7 +307,8 @@
         if(!key)return;
         const button=document.createElement('button');
         button.type='button';button.className=anchor.className+' fm-evidence-summary-open';
-        button.textContent=anchor.textContent;button.dataset.evidenceSummary=key;
+        const labels={tasks:'과업 기록 보기 ↗',auth:'인증 시점 근거 보기 ↗',recommendation:'추천 기준 보기 ↗',recovery:'복구 검증 보기 ↗',ownership:'책임 분리 근거 보기 ↗',qa:'검증 근거 보기 ↗',manual:'검증 근거 보기 ↗',improvement:'수정 전후 보기 ↗'};
+        button.textContent=index===11?'검증 근거 보기 ↗':labels[key];button.dataset.evidenceSummary=key;
         button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','fm-evidence-summary-dialog');
         button.addEventListener('click',()=>{
           opener=button;const entry=summaries[key];
