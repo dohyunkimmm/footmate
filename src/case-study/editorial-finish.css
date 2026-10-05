@@ -311,3 +311,30 @@ html[data-fm-next-case-study="true"][data-fm-editorial-finish="true"]{
   html[data-fm-next-case-study="true"] :is(.fm-cs-shell,.fm-cs-shell *,.fm-improvement-dialog,.fm-improvement-dialog *,.fm-next-kpi-dialog,.fm-next-kpi-dialog *){animation:none!important;transition:none!important;scroll-behavior:auto!important}
   html[data-fm-next-case-study="true"] :is(.fm-improvement-dialog,.fm-next-kpi-dialog)::backdrop{animation:none!important;transition:none!important}
 }
+
+/* Optional detail keeps the six existing page compositions compact. */
+html[data-fm-next-case-study="true"] .fm-page-upgrade-open{display:inline-flex;align-items:center;min-height:36px;margin-top:6px;padding:5px 8px;border:1px solid #c8d6cc;border-radius:8px;background:#fff;color:#24543f;font:inherit;font-size:12px;line-height:1.5;cursor:pointer;text-align:left;white-space:normal}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog{width:min(900px,calc(100vw - 24px))}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog .fm-upgrade-intro{margin:0 0 14px;font-size:14px;line-height:1.7;color:#43594a}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog .fm-upgrade-example{min-width:0;margin-bottom:12px}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog ol[hidden]{display:none!important}
+html[data-fm-next-case-study="true"] .fm-upgrade-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px;line-height:1.6}
+html[data-fm-next-case-study="true"] .fm-upgrade-table caption{text-align:left;padding-bottom:8px;font-weight:700}
+html[data-fm-next-case-study="true"] .fm-upgrade-table :is(th,td){padding:10px 8px;border:1px solid #d9e2dc;text-align:left;overflow-wrap:anywhere}
+html[data-fm-next-case-study="true"] .fm-upgrade-table th{background:#edf5ef;color:#173c2c}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog :is(.fm-upgrade-choice,.fm-upgrade-state p){font-size:14px;line-height:1.7}
+html[data-fm-next-case-study="true"] .fm-upgrade-state-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+html[data-fm-next-case-study="true"] .fm-upgrade-state-controls button{min-height:44px;padding:8px 14px;border:1px solid #c8d6cc;border-radius:8px;background:#fff;color:#24543f;font:inherit;font-size:14px;cursor:pointer}
+html[data-fm-next-case-study="true"] .fm-upgrade-state-controls button[aria-pressed="true"]{background:#073d2d;color:#fff;border-color:#073d2d}
+html[data-fm-next-case-study="true"] .fm-upgrade-state{padding:16px;border:1px solid #d9e2dc;border-radius:12px;background:#fbfdfc}
+html[data-fm-next-case-study="true"] .fm-upgrade-state h3{margin:0 0 12px;font-size:20px}
+html[data-fm-next-case-study="true"] .fm-upgrade-state .fm-cs-reasons{display:grid;gap:10px;margin:0}
+html[data-fm-next-case-study="true"] .fm-upgrade-state .fm-cs-reasons>div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px}
+html[data-fm-next-case-study="true"] .fm-upgrade-state :is(dt,dd){margin:0;font-size:14px;line-height:1.7}
+html[data-fm-next-case-study="true"] .fm-upgrade-state dt{font-weight:700}
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog :is(button,.fm-proof-link):focus-visible{outline:3px solid #24543f;outline-offset:3px}
+@media(max-width:600px){
+html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog ol{grid-template-columns:1fr!important}
+html[data-fm-next-case-study="true"] .fm-upgrade-state .fm-cs-reasons>div{grid-template-columns:1fr;gap:3px}
+html[data-fm-next-case-study="true"] .fm-upgrade-table :is(th,td){padding:8px 5px;font-size:13px}
+}
