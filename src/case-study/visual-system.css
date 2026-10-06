@@ -1,6 +1,6 @@
 /* AUTO-GENERATED · FootMate Case Study visual CSS bundle
    Run: node scripts/build-case-study-bundle.cjs
-   Sources: src/case-study/p0-visuals.css, src/case-study/p1-visuals.css, src/case-study/p12-balance.css, src/case-study/p3-balance.css, src/case-study/p10-balance.css, src/case-study/p2-polish.css, src/case-study/p7-p9-balance.css, src/case-study/p6-clean-evidence.css, src/case-study/card-rhythm.css, src/case-study/p1-real-preview.css, src/case-study/evidence-framing.css, src/case-study/p12-copy-spacing.css, src/case-study/final-balance.css, src/case-study/product-evidence.css, src/case-study/advanced-polish.css, src/case-study/detail-finish.css, src/case-study/page-composition.css, src/case-study/brand-redesign.css, src/case-study/editorial-update.css, src/case-study/decision-evidence.css, src/case-study/editorial-finish.css
+   Sources: src/case-study/p0-visuals.css, src/case-study/p1-visuals.css, src/case-study/p12-balance.css, src/case-study/p3-balance.css, src/case-study/p10-balance.css, src/case-study/p2-polish.css, src/case-study/p7-p9-balance.css, src/case-study/p6-clean-evidence.css, src/case-study/card-rhythm.css, src/case-study/p1-real-preview.css, src/case-study/evidence-framing.css, src/case-study/p12-copy-spacing.css, src/case-study/final-balance.css, src/case-study/product-evidence.css, src/case-study/advanced-polish.css, src/case-study/detail-finish.css, src/case-study/page-composition.css, src/case-study/brand-redesign.css, src/case-study/editorial-update.css, src/case-study/decision-evidence.css, src/case-study/editorial-finish.css, src/case-study/reader-review.css
    Do not edit this generated file directly. */
 
 /* ===== src/case-study/p0-visuals.css ===== */
@@ -4292,4 +4292,50 @@ html[data-fm-next-case-study="true"] .fm-page-upgrade-dialog[data-page-upgrade="
   & .fm-upgrade-state-controls button[aria-pressed="true"][data-state-tone="success"]{background:var(--fm-reader-action);color:var(--fm-reader-surface);border-color:var(--fm-reader-action)}
   & .fm-upgrade-state-controls button[aria-pressed="true"][data-state-tone="warning"]{background:var(--fm-reader-attention-bg);color:var(--fm-reader-attention-ink);border-color:var(--fm-reader-attention-ink)}
   & .fm-upgrade-state-icon{display:inline-block;margin-right:8px;font-size:inherit;font-weight:800}
+}
+
+/* ===== src/case-study/reader-review.css ===== */
+/* Visual review: readable supporting copy and explicit slide navigation. */
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"]{
+  --fm-reader-muted:#48564f;
+  & .fm-reader-guide{margin:18px 0 0;font-size:13px;line-height:1.6;color:var(--fm-reader-muted);word-break:keep-all}
+  & .fm-reader-progress{display:grid;justify-items:center;gap:7px;min-width:0}
+  & .fm-reader-position{font-size:12px;line-height:1.4;font-weight:650;color:var(--fm-reader-ink);text-align:center}
+  & .dots{gap:7px}
+  & .dot{width:8px;height:8px}
+  & .fm-next-story-lead{font-size:15px!important;color:var(--fm-reader-muted)!important}
+  & :is(.fm-p0-problem-sources p,.fm-p0-problem-core p,.fm-p0-journey-step p){font-size:13px!important;line-height:1.6!important;color:var(--fm-reader-muted)!important;word-break:keep-all;overflow-wrap:anywhere}
+  & .fm-next-story-slide :is(.fm-page-card-description,.fm-p1-persona-lenses p,.fm-p1-jtbd-journey li p,.fm-next-cs-journey p,.fm-p0-annotations p,.fm-owner-column .fm-p0-arch-node span){font-size:14px!important;line-height:1.65!important;color:var(--fm-reader-muted)!important;word-break:keep-all;overflow-wrap:anywhere}
+  & .fm-next-story-slide .fm-cs-reasons :is(dt,dd){font-size:14px!important;line-height:1.65!important}
+  & :is(.fm-page-keywords>span,.fm-next-review-summary span,.fm-focus-detail>figcaption>small,.fm-evidence-figure figcaption){font-size:12px!important;color:var(--fm-reader-muted)!important}
+  & .fm-next-story-slide .fm-page-upgrade-open{width:fit-content!important;max-width:100%;justify-self:start!important;align-self:start!important;font-size:13px!important;padding:8px 12px!important;min-height:40px;line-height:1.5}
+  & .fm-cs-detail-rationale .fm-page-upgrade-open{display:inline!important;padding:0!important;min-height:0!important;font-size:inherit!important}
+  & [data-page-layout="release"] .fm-p1-release-map li{grid-template-columns:1fr!important;align-items:start!important;gap:2px!important;padding:6px 0!important;text-align:left!important}
+  & [data-page-layout="release"] .fm-p1-release-map li>:is(span,b){text-align:left!important;justify-content:flex-start!important}
+  & [data-page-layout="release"] .fm-p1-release-map li>span{font-size:12px!important;color:var(--fm-reader-muted)!important;word-break:keep-all}
+  & [data-page-layout="release"] .fm-p1-release-map li>b{font-size:14px!important;line-height:1.6!important;word-break:keep-all}
+  & .fm-p1-release-next .fm-cs-reasons>div{grid-template-columns:112px minmax(0,1fr)!important;gap:12px!important}
+  & .fm-p1-release-next .fm-cs-reasons dt{word-break:keep-all}
+}
+@media(min-width:1181px) and (min-height:760px){
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"]{
+  & .fm-next-story-slide[data-page-number="7"] .fm-evidence-detail-layout{grid-template-columns:minmax(0,320px) minmax(0,1fr)!important;gap:28px!important;max-width:1048px!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-focus-crop{height:232px!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-focus-crop>img{width:420px!important;top:-495px!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-focus-detail{margin-bottom:12px!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-next-cs-detail-order>span{padding:6px 0!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-next-cs-detail-order>span>small{font-size:13px!important}
+  & .fm-next-story-slide[data-page-number="9"][data-page-layout="product"][data-evidence-upgrade="operations"] .fm-evidence-operations-layout{grid-template-columns:minmax(0,225px) minmax(0,440px) minmax(0,1fr)!important;gap:20px!important;max-width:1080px!important}
+  & .fm-next-story-slide[data-page-number="9"] .fm-focus-crop{height:272px!important}
+  & .fm-next-story-slide[data-page-number="9"] .fm-focus-crop>img{width:420px!important;top:-431px!important}
+  & .fm-next-story-slide[data-page-number="9"] .fm-next-cs-day-states p{font-size:13px!important;line-height:1.6!important}
+}
+}
+@media(max-width:900px){
+  html[data-fm-reader-review="true"] .fm-reader-guide{font-size:14px}
+  html[data-fm-reader-review="true"] .fm-reader-guide .fm-reader-guide-desktop{display:none}
+  html[data-fm-reader-review="true"] .fm-reader-guide .fm-reader-guide-mobile{display:inline}
+}
+@media(min-width:901px){
+  .fm-reader-guide-mobile{display:none}
 }

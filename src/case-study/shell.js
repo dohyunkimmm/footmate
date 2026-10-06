@@ -64,6 +64,15 @@
     if(next)next.disabled=current===visibleSlides.length-1;
     if(count)count.textContent=`${String(current+1).padStart(2,'0')} / ${String(visibleSlides.length).padStart(2,'0')}`;
     if(bar)bar.style.width=`${((current+1)/visibleSlides.length)*100}%`;
+    const position=document.querySelector('.fm-reader-position');
+    const sectionName=visibleToc[current]?.querySelector('.toc-t')?.textContent?.trim()||'';
+    if(position)position.textContent=`${String(current+1).padStart(2,'0')} / ${String(visibleSlides.length).padStart(2,'0')} · ${sectionName}`;
+    visibleDots.forEach((dot,i)=>{
+      const name=visibleToc[i]?.querySelector('.toc-t')?.textContent?.trim()||'';
+      dot.setAttribute('aria-label',`${i+1}번 섹션 · ${name}`);
+      dot.setAttribute('aria-current',i===current?'step':'false');
+      dot.title=`${String(i+1).padStart(2,'0')} · ${name}`;
+    });
     if(options.history!==false)syncSectionUrl(options.history||'push');
   }
 
