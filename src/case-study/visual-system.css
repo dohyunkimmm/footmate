@@ -4322,6 +4322,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .fm-next-story-slide[data-page-number="7"] .fm-evidence-detail-layout{grid-template-columns:minmax(0,320px) minmax(0,1fr)!important;gap:28px!important;max-width:1048px!important}
   & .fm-next-story-slide[data-page-number="7"] .fm-focus-crop{height:232px!important}
   & .fm-next-story-slide[data-page-number="7"] .fm-focus-crop>img{width:420px!important;top:-495px!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-focus-detail{margin-bottom:12px!important}
+  & .fm-next-story-slide[data-page-number="7"] .fm-next-cs-detail-order>span{padding:6px 0!important}
   & .fm-next-story-slide[data-page-number="7"] .fm-next-cs-detail-order>span>small{font-size:13px!important}
   & .fm-next-story-slide[data-page-number="9"][data-page-layout="product"][data-evidence-upgrade="operations"] .fm-evidence-operations-layout{grid-template-columns:minmax(0,225px) minmax(0,440px) minmax(0,1fr)!important;gap:20px!important;max-width:1080px!important}
   & .fm-next-story-slide[data-page-number="9"] .fm-focus-crop{height:272px!important}

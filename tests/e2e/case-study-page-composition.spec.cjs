@@ -219,7 +219,7 @@ test('editorial composition enlarges dense-page reading text while retaining fix
     const body=node.querySelector('.fm-page-card-description');const size=parseFloat(getComputedStyle(body).fontSize);const scale=parseFloat(getComputedStyle(node.querySelector('.fm-next-story')).zoom)||1;
     return {metricsRight:metrics.right,evidenceLeft:evidence.left,textSize:size,renderedSize:size*scale};
   });
-  expect(validation.evidenceLeft).toBeGreaterThan(validation.metricsRight);expect(validation.textSize).toBe(13);expect(validation.renderedSize).toBeGreaterThanOrEqual(12);
+  expect(validation.evidenceLeft).toBeGreaterThan(validation.metricsRight);expect(validation.textSize).toBeGreaterThanOrEqual(14);expect(validation.renderedSize).toBeGreaterThanOrEqual(13);
   await page.locator('.toc-item').nth(5).click();await expect(page.locator('.slide.on .fm-editorial-decision')).toContainText('핵심 결정 02');
   const inset=await page.locator('.slide.on .fm-editorial-decision').evaluate(node=>parseFloat(getComputedStyle(node).paddingLeft));expect(inset).toBe(0);
 });
