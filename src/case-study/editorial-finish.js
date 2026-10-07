@@ -433,7 +433,6 @@
     }
     [[1,'alternatives','탐색 대안과 선택 기준 보기 ↗','.fm-next-cs-quote'],
      [10,'ai','AI 상태별 탐색 예시 보기 ↗','.fm-next-cs-note'],
-     [2,'tasks','과업과 요구사항 연결 보기 ↗','.fm-p1-jtbd-caveat'],
      [3,'priority','우선순위 판단 보기 ↗','.fm-next-story-aside'],
      [6,'compare','두 경기 비교 예시 보기 ↗','.fm-cs-detail-rationale'],
      [7,'join','참가 결과별 행동 보기 ↗','.fm-p1-auth-preserve'],

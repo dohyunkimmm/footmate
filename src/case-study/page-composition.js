@@ -299,11 +299,11 @@
     const supplements=[[1,'.fm-next-story-aside','대안과 검증 범위'],[3,'.fm-next-story-aside','우선순위 판단 근거'],[4,'.fm-next-story-aside','인증 시점과 제약'],[5,'.fm-page-product-notes .fm-next-cs-note','추천 설계 원칙'],[7,'.fm-next-story-aside','구현·검증 범위'],[8,'.fm-page-product-notes .fm-next-cs-note','운영 정책과 복구'],[10,'.fm-next-story-aside','연결 범위와 설계 기준']];
     supplements.forEach(([index,selector,text])=>{
       const node=slides[index].querySelector(selector);if(!node)return;
-      const details=document.createElement('details');details.className='fm-editorial-supplement';details.open=desktop.matches;
+      const details=document.createElement('details');details.className='fm-editorial-supplement';details.open=false;
       const summary=document.createElement('summary');summary.textContent=text;
       node.before(details);details.append(summary,node);disclosures.push(details);
     });
-    desktop.addEventListener('change',()=>disclosures.forEach(node=>node.open=desktop.matches));
+    desktop.addEventListener('change',()=>disclosures.forEach(node=>node.open=false));
     slides.forEach(slide=>slide.querySelectorAll('details').forEach(node=>node.addEventListener('toggle',()=>window.dispatchEvent(new Event('resize')))));
 
     const dialog=document.createElement('dialog');dialog.className='fm-screen-dialog';dialog.setAttribute('aria-labelledby','fm-screen-dialog-title');

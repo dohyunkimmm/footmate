@@ -1,5 +1,30 @@
 const {test,expect}=require('@playwright/test');
 
+test('all sections fit a standard desktop and task evidence has one consistent action',async({page})=>{
+  await page.setViewportSize({width:1366,height:900});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
+  await page.evaluate(()=>document.fonts.ready);
+  for(let index=0;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+  }
+  await page.locator('.toc-item').nth(2).click();
+  const task=page.locator('.slide.on .fm-proof-link');await expect(task).toHaveCount(1);
+  await expect(page.locator('.slide.on .fm-page-upgrade-open')).toHaveCount(0);
+  const taskStyle=await task.evaluate(n=>({border:getComputedStyle(n).borderTopWidth,height:n.getBoundingClientRect().height}));
+  expect(taskStyle.border).toBe('1px');expect(taskStyle.height).toBeGreaterThanOrEqual(40);
+  await task.click();await expect(page.locator('#fm-evidence-summary-dialog')).toBeVisible();
+  await page.keyboard.press('Escape');await expect(task).toBeFocused();
+  await page.locator('.toc-item').nth(4).click();
+  const rationale=page.locator('.slide.on .fm-editorial-supplement');
+  await rationale.locator('summary').click();await expect(rationale.locator('.fm-next-story-aside')).toBeVisible();
+  await rationale.locator('summary').click();
+  await page.locator('.toc-item').nth(12).click();
+  await page.getByRole('button',{name:'다음 검증과 결정 보기 ↗',exact:true}).click();
+  await expect(page.locator('#fm-page-upgrade-dialog')).toContainText('같은 과업으로 재검증');
+});
+
 for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1366,height:768},{width:1280,height:720}]){
   test(`desktop QA keeps detail and metrics readable at ${viewport.width}x${viewport.height}`,async({page})=>{
     await page.setViewportSize(viewport);await page.goto('/');
@@ -53,7 +78,7 @@ async function expectReadableSection(slide){
       leadFont:parseFloat(getComputedStyle(node.querySelector('.fm-next-story-lead,.fm-next-cover-lead')).fontSize)};
   });
   expect(layout.horizontal).toBeLessThanOrEqual(1);
-  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('visible');expect(layout.documentOverflow).toBe('scroll');expect(layout.innerScroll).toBeLessThanOrEqual(1);expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
+  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('visible');expect(['auto','scroll']).toContain(layout.documentOverflow);expect(layout.innerScroll).toBeLessThanOrEqual(1);expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
 }
 
 test('PageDown reads the document without changing sections and resize preserves reading position',async({page})=>{
@@ -121,7 +146,7 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
           const viewport=node.getBoundingClientRect();
           return {top:content.top-viewport.top,bottom:viewport.bottom-content.bottom};
         });
-        expect(bounds.top).toBeGreaterThanOrEqual(27);
+        expect(bounds.top).toBeGreaterThanOrEqual(19);
         await expectReadableSection(slide);
       }
     }
@@ -182,7 +207,7 @@ test('section labels match the table of contents and supplemental details remain
   const sections=await page.evaluate(()=>[...document.querySelectorAll('.toc-item')].map((toc,index)=>({title:toc.querySelector('.toc-t').textContent,kicker:document.querySelectorAll('.slide')[index].querySelector('.fm-next-cover-kicker,.fm-next-story-kicker').textContent})));
   expect(sections).toHaveLength(13);for(const section of sections)expect(section.kicker).toContain(section.title);
   await page.locator('.toc-item').nth(4).click();
-  const details=page.locator('.slide.on .fm-editorial-supplement');await expect(details).toHaveAttribute('open','');
+  const details=page.locator('.slide.on .fm-editorial-supplement');await expect(details).not.toHaveAttribute('open','');
   await page.setViewportSize({width:390,height:844});await expect(details).not.toHaveAttribute('open','');
   await details.locator('summary').click();await expect(details).toHaveAttribute('open','');
   await expect(details.locator('.fm-next-story-aside')).toBeVisible();
@@ -235,7 +260,7 @@ test('implementation improvement records expose both evidence chains and restore
   await expect(dialog).toHaveAttribute('data-improvement-case','0');await page.keyboard.press('Escape');
   await expectReadableSection(page.locator('.slide.on'));
   await page.locator('.toc-item').nth(12).click();
-  await expect(page.locator('.slide.on')).toContainText('개인 고도화');
+  await expect(page.locator('.slide.on')).toContainText('설계 학습');
   await expect(page.locator('.slide.on')).not.toContainText('이용 기준값 확보 후');
 });
 
@@ -673,9 +698,9 @@ for(const width of [1440,390,320]){
     await page.setViewportSize({width,height:900});
     const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmPageUpgrades==='true');
-    await expect(page.locator('.fm-page-upgrade-open')).toHaveCount(8);
+    await expect(page.locator('.fm-page-upgrade-open')).toHaveCount(7);
     const before=await page.evaluate(()=>JSON.stringify({...localStorage}));
-    for(const [index,key] of [[2,'tasks'],[3,'priority'],[6,'compare'],[7,'join'],[8,'matchday'],[12,'next']]){
+    for(const [index,key] of [[3,'priority'],[6,'compare'],[7,'join'],[8,'matchday'],[12,'next']]){
       if(width>900)await page.locator('.toc-item').nth(index).click();
       const opener=page.locator('.slide').nth(index).locator('.fm-page-upgrade-open');
       await opener.click();const dialog=page.locator('#fm-page-upgrade-dialog');

@@ -10,7 +10,7 @@ async function expectReadableSection(slide){
       leadFont:parseFloat(getComputedStyle(node.querySelector('.fm-next-story-lead,.fm-next-cover-lead')).fontSize)};
   });
   expect(layout.horizontal).toBeLessThanOrEqual(1);
-  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('visible');expect(layout.documentOverflow).toBe('scroll');expect(layout.innerScroll).toBeLessThanOrEqual(1);expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
+  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('visible');expect(['auto','scroll']).toContain(layout.documentOverflow);expect(layout.innerScroll).toBeLessThanOrEqual(1);expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
 }
 
 
