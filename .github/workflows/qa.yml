@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: {node-version: '24', package-manager-cache: false}
       - name: Determine runtime and production impact
         id: impact
@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: {node-version: '24', package-manager-cache: false}
       - name: Check docs diff integrity
         env:
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: {node-version: '24', package-manager-cache: false}
       - name: Check global release identity
         run: node scripts/check-release-version.cjs
@@ -164,7 +164,7 @@ jobs:
       options: --ipc=host
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: {node-version: '24', package-manager-cache: false}
       - name: Install browser QA dependencies
         run: |
@@ -216,7 +216,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: {node-version: '24', package-manager-cache: false}
       - name: Wait for exact Vercel deployment
         if: needs.impact.outputs.production == 'true'
