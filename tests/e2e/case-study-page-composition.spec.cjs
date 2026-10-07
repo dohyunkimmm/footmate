@@ -16,8 +16,9 @@ for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1
         await dialog.getByRole('button',{name:'핵심 영역',exact:true}).click();
         await expect(dialog.locator('img')).toHaveAttribute('alt',index===6?/참가 결정 체크/:/체크인 시점/);
         const crop=await dialog.evaluate(d=>{
-          const img=d.querySelector('img'),image=img.getBoundingClientRect(),frame=d.querySelector('.fm-screen-viewport').getBoundingClientRect();
-          return {width:image.width,natural:img.naturalWidth,sourceTop:(frame.top-image.top)/image.width*390,sourceHeight:frame.height/image.width*390};
+          const img=d.querySelector('img'),image=img.getBoundingClientRect(),viewport=d.querySelector('.fm-screen-viewport'),frame=viewport.getBoundingClientRect();
+          // Crop coordinates are relative to the content box, excluding the frame border.
+          return {width:image.width,natural:img.naturalWidth,sourceTop:(frame.top+viewport.clientTop-image.top)/image.width*390,sourceHeight:viewport.clientHeight/image.width*390};
         });
         expect(crop.width).toBeLessThanOrEqual(crop.natural);
         expect(Math.abs(crop.sourceTop-(index===6?350:396))).toBeLessThan(2);
