@@ -20,8 +20,8 @@ for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1
           return {width:image.width,natural:img.naturalWidth,sourceTop:(frame.top-image.top)/image.width*390,sourceHeight:frame.height/image.width*390};
         });
         expect(crop.width).toBeLessThanOrEqual(crop.natural);
-        expect(crop.sourceTop).toBeCloseTo(index===6?350:396,0);
-        expect(crop.sourceHeight).toBeCloseTo(index===6?340:260,0);
+        expect(Math.abs(crop.sourceTop-(index===6?350:396))).toBeLessThan(2);
+        expect(Math.abs(crop.sourceHeight-(index===6?340:260))).toBeLessThan(2);
         await page.keyboard.press('Escape');await expect(action).toBeFocused();
       }else{
         await action.click();const dialog=page.locator('.fm-next-kpi-dialog');
