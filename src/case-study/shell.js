@@ -47,8 +47,11 @@
   function goTo(index,options={}){
     const visibleSlides=slides();
     if(!visibleSlides.length)return;
-    current=clamp(Number(index)||0);
+    const nextIndex=clamp(Number(index)||0);
+    const changed=nextIndex!==current;
+    current=nextIndex;
     const activeSlide=visibleSlides[current];
+    if(changed)activeSlide.scrollTop=0;
     allSlides().forEach(slide=>setSlideInteractive(slide,slide===activeSlide));
     const visibleToc=toc();
     allToc().forEach(item=>{item.classList.remove('on');item.setAttribute('aria-current','false')});

@@ -1,5 +1,60 @@
 const {test,expect}=require('@playwright/test');
 
+for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1366,height:768},{width:1280,height:720}]){
+  test(`desktop QA keeps detail and metrics readable at ${viewport.width}x${viewport.height}`,async({page})=>{
+    await page.setViewportSize(viewport);await page.goto('/');
+    await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
+    for(const index of [6,8,11]){
+      await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
+      await expectReadableSection(slide);
+      // Every bottom action is reachable; scrolling must not hide the fixed navigation.
+      const action=slide.locator(index===11?'.fm-next-kpi-open':'.fm-screen-expand');
+      await action.scrollIntoViewIfNeeded();await expect(action).toBeInViewport();
+      await expect(page.locator('.cs-controls')).toBeInViewport();
+      if(index!==11){
+        await action.click();const dialog=page.locator('.fm-screen-dialog');
+        await dialog.getByRole('button',{name:'핵심 영역',exact:true}).click();
+        await expect(dialog.locator('img')).toHaveAttribute('alt',index===6?/참가 결정 체크/:/체크인 시점/);
+        const crop=await dialog.evaluate(d=>{
+          const img=d.querySelector('img'),image=img.getBoundingClientRect(),frame=d.querySelector('.fm-screen-viewport').getBoundingClientRect();
+          return {width:image.width,natural:img.naturalWidth,sourceTop:(frame.top-image.top)/image.width*390,sourceHeight:frame.height/image.width*390};
+        });
+        expect(crop.width).toBeLessThanOrEqual(crop.natural);
+        expect(crop.sourceTop).toBeCloseTo(index===6?350:396,0);
+        expect(crop.sourceHeight).toBeCloseTo(index===6?340:260,0);
+        await page.keyboard.press('Escape');await expect(action).toBeFocused();
+      }else{
+        await action.click();const dialog=page.locator('.fm-next-kpi-dialog');
+        const cells=await dialog.locator('dt,dd').evaluateAll(nodes=>nodes.map(n=>({font:parseFloat(getComputedStyle(n).fontSize),overflow:n.scrollWidth-n.clientWidth})));
+        for(const cell of cells){expect(cell.font).toBeGreaterThanOrEqual(14);expect(cell.overflow).toBeLessThanOrEqual(1);}
+        await dialog.locator('dd').last().scrollIntoViewIfNeeded();await expect(dialog.locator('dd').last()).toBeInViewport();
+        await expect(dialog.getByRole('button',{name:'닫기',exact:true})).toBeInViewport();
+        await page.keyboard.press('Escape');await expect(action).toBeFocused();
+      }
+    }
+    await page.locator('.toc-item').nth(6).click();
+    await page.getByRole('button',{name:'두 경기 비교 예시 보기 ↗',exact:true}).click();
+    const table=page.locator('dialog[open] table');
+    expect(await table.evaluate(t=>t.scrollWidth-t.clientWidth)).toBeLessThanOrEqual(1);
+    const widths=await table.locator('thead th').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));
+    expect(widths[1]/widths[0]).toBeCloseTo(2,1);
+    await page.keyboard.press('Escape');
+  });
+}
+
+async function expectReadableSection(slide){
+  const layout=await slide.evaluate(node=>{
+    const story=node.querySelector('.fm-next-story,.fm-next-cover');
+    const desktop=innerWidth>900;
+    return {desktop,zoom:Number(getComputedStyle(story).zoom)||1,
+      overflow:getComputedStyle(node).overflowY,horizontal:node.scrollWidth-node.clientWidth,
+      leadFont:parseFloat(getComputedStyle(node.querySelector('.fm-next-story-lead,.fm-next-cover-lead')).fontSize)};
+  });
+  expect(layout.horizontal).toBeLessThanOrEqual(1);
+  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('auto');expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
+}
+
+
 for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:390,height:844},{width:320,height:740}]){
   test(`13 sections preserve readable composition at ${viewport.width}px`,async({page})=>{
     const errors=[];page.on('pageerror',error=>errors.push(error.message));
@@ -43,14 +98,14 @@ for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:3
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
       expect(overflow).toBeLessThanOrEqual(1);
       if(viewport.width>900){
-        await expect.poll(()=>slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+        await expectReadableSection(slide);
         const bounds=await slide.evaluate(node=>{
           const content=node.querySelector('.fm-next-story,.fm-next-cover').getBoundingClientRect();
           const viewport=node.getBoundingClientRect();
           return {top:content.top-viewport.top,bottom:viewport.bottom-content.bottom};
         });
-        expect(bounds.top).toBeGreaterThanOrEqual(63);
-        expect(bounds.bottom).toBeGreaterThanOrEqual(63);
+        expect(bounds.top).toBeGreaterThanOrEqual(27);
+        await expectReadableSection(slide);
       }
     }
     expect(errors).toEqual([]);
@@ -134,7 +189,7 @@ test('decision evidence lets readers change real base-ranking inputs without wri
   await expect(figure.locator('.fm-mock-footer')).toContainText('기흥');
   await expect(figure.locator('figcaption')).toContainText('샘플 경기');
   expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(storage);
-  expect(await page.locator('.slide.on').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+  await expectReadableSection(page.locator('.slide.on'));
   await page.screenshot({path:'test-results/decision-evidence-p6-changed.png',animations:'disabled'});
 });
 
@@ -161,7 +216,7 @@ test('implementation improvement records expose both evidence chains and restore
   await dialog.getByRole('button',{name:'개선 기록 닫기'}).click();
   await page.locator('.toc-item').nth(9).click();await page.getByRole('button',{name:'수정 전후 · 재검증 보기',exact:true}).click();
   await expect(dialog).toHaveAttribute('data-improvement-case','0');await page.keyboard.press('Escape');
-  expect(await page.locator('.slide.on').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+  await expectReadableSection(page.locator('.slide.on'));
   await page.locator('.toc-item').nth(12).click();
   await expect(page.locator('.slide.on')).toContainText('개인 고도화');
   await expect(page.locator('.slide.on')).not.toContainText('이용 기준값 확보 후');
@@ -189,20 +244,20 @@ test('representative decisions expose source evidence and a distinct next-decisi
   for(const index of [4,5,9,10,11,12]){
     await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
     if(index!==12)await expect(slide.locator('.fm-proof-link').first()).toBeVisible();
-    expect(await slide.evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+    await expectReadableSection(slide);
     await page.screenshot({path:`test-results/decision-evidence-p${index+1}.png`,animations:'disabled'});
   }
   await expect(page.locator('.slide.on')).toContainText('보완 조건');
   await expect(page.locator('.slide.on')).not.toContainText('아직 연결하거나 검증하지 않은 범위');
 });
 
-test('editorial composition enlarges dense-page reading text while retaining fixed slides',async({page})=>{
+test('editorial composition enlarges dense-page reading text with scrollable sections',async({page})=>{
   await page.setViewportSize({width:1440,height:900});await page.goto('/');
   await page.waitForFunction(()=>document.documentElement.dataset.fmEditorialFinish==='true');
   await page.evaluate(()=>document.fonts.ready);
   for(const index of [1,2,4,5,8,9,10,11,12]){
     await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
-    expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+    await expectReadableSection(slide);
     const title=await slide.locator('h2').evaluate(node=>({weight:getComputedStyle(node).fontWeight,size:parseFloat(getComputedStyle(node).fontSize)}));
     expect(title.size).toBe(32);expect(title.weight).toBe('760');
     await page.screenshot({path:`test-results/editorial-finish-p${index+1}.png`,animations:'disabled'});
@@ -226,33 +281,17 @@ test('editorial composition enlarges dense-page reading text while retaining fix
   const inset=await page.locator('.slide.on .fm-editorial-decision').evaluate(node=>parseFloat(getComputedStyle(node).paddingLeft));expect(inset).toBe(0);
 });
 
-test('desktop stories limit title movement while keeping content above the controls',async({page})=>{
-  await page.setViewportSize({width:1440,height:1000});await page.goto('/');
-  await page.waitForFunction(()=>document.documentElement.dataset.fmEvidenceDetails==='true');
-  await page.evaluate(()=>document.fonts.ready);
-  const positions=[];
-  for(let index=1;index<13;index++){
-    await page.locator('.toc-item').nth(index).click();
-    const slide=page.locator('.slide.on');
-    await slide.evaluate(async node=>{await Promise.all(node.getAnimations({subtree:true}).filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});
-    await expect.poll(()=>slide.evaluate(node=>{
-      const story=node.querySelector('.fm-next-story');const content=story.getBoundingClientRect();
-      const box=node.getBoundingClientRect();const style=getComputedStyle(node);
-      const paddingTop=parseFloat(style.paddingTop),paddingBottom=parseFloat(style.paddingBottom);
-      const available=node.clientHeight-paddingTop-paddingBottom;
-      const expected=Math.min(72,Math.max(0,(available-content.height)/2));
-      return Math.abs(content.top-box.top-paddingTop-expected);
-    }),{message:`page ${index+1} follows the bounded title rhythm`}).toBeLessThanOrEqual(3);
-    const bounds=await slide.evaluate(node=>{
-      const content=node.querySelector('.fm-next-story').getBoundingClientRect();const box=node.getBoundingClientRect();
-      return {top:content.top-box.top,bottom:box.bottom-content.bottom};
-    });
-    positions.push(bounds.top);
-    expect(bounds.top).toBeGreaterThanOrEqual(63);expect(bounds.bottom).toBeGreaterThanOrEqual(63);
-    expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
-    await page.screenshot({path:`test-results/vertical-balance-p${index+1}.png`,animations:'disabled'});
+test('desktop sections reserve navigation space and retain readable type',async({page})=>{
+  await page.setViewportSize({width:1366,height:768});await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
+  for(let index=0;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
+    await expectReadableSection(slide);
+    const bounds=await slide.evaluate(node=>({top:node.getBoundingClientRect().top,bottom:node.getBoundingClientRect().bottom,
+      controlsTop:document.querySelector('.cs-controls').getBoundingClientRect().top}));
+    expect(bounds.top).toBeGreaterThanOrEqual(54);
+    expect(bounds.bottom).toBeLessThanOrEqual(bounds.controlsTop);
   }
-  expect(Math.max(...positions)-Math.min(...positions)).toBeLessThanOrEqual(75);
 });
 
 test('final rendered copy keeps descriptions distinct and removes duplicate detail rationale',async({page})=>{
@@ -289,7 +328,7 @@ test('desktop composition audit captures every section after entry motion settle
     await page.locator('.toc-item').nth(index).click();
     const slide=page.locator('.slide.on');
     await slide.evaluate(async node=>{await Promise.all(node.getAnimations({subtree:true}).filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});
-    await expect.poll(()=>slide.evaluate(n=>n.scrollHeight-n.clientHeight)).toBeLessThanOrEqual(1);
+    await expectReadableSection(slide);
     if([9,11,12].includes(index)){
       const selectors=index===9?['.fm-p0-recovery-map','.fm-evidence-recovery-strip']:index===11?['.fm-p1-metrics','.fm-p1-evidence-grid']:['.fm-p1-release-map>article'];
       const bounds=await slide.evaluate((node,selectors)=>selectors.flatMap(selector=>[...document.querySelector('.slide.on').querySelectorAll(selector)].map(n=>{const b=n.getBoundingClientRect();return {top:b.top,bottom:b.bottom};})),selectors);
@@ -365,7 +404,7 @@ test('color roles keep white pages and expose navigation destinations with local
   for(let index=0;index<13;index++){
     await page.locator('.toc-item').nth(index).click();
     expect(await page.locator('.slide.on').evaluate(node=>getComputedStyle(node).backgroundColor)).toBe('rgb(255, 255, 255)');
-    expect(await page.locator('.slide.on').evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+    await expectReadableSection(page.locator('.slide.on'));
     const label=page.locator('.btn-next .fm-control-destination');
     await expect(label).toBeVisible();
     if(index<12)expect(await label.locator('b').textContent()).toBe(await page.locator('.toc-t').nth(index+1).textContent());
@@ -447,11 +486,11 @@ test('local examples own arrow keys and keep reading navigation separate',async(
   await expect(page).toHaveURL(/#section-11$/);
 });
 
-test('readable evidence, compact architecture and pinned source links retain fixed white pages',async({page})=>{
+test('readable evidence, compact architecture and pinned source links retain readable white pages',async({page})=>{
   await openReaderPatch(page);
   for(let i=0;i<13;i++){
     await page.locator('.toc-item').nth(i).click();
-    await expect.poll(()=>readerPatchActive(page).evaluate(n=>n.scrollHeight-n.clientHeight)).toBeLessThanOrEqual(1);
+    await expectReadableSection(readerPatchActive(page));
     expect(await readerPatchActive(page).evaluate(n=>getComputedStyle(n).backgroundColor)).toBe('rgb(255, 255, 255)');
     const codeLinks=await readerPatchActive(page).locator('a[href*="github.com/dohyunkimmm/footmate/blob/"]').evaluateAll(nodes=>nodes.map(n=>n.href));
     expect(codeLinks.every(href=>href.includes('/blob/'+patchSnapshot+'/'))).toBeTruthy();
