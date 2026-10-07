@@ -480,7 +480,7 @@ async function openReaderPatch(page,url='/'){
 }
 const readerPatchActive=page=>page.locator('.slide.on');
 
-test('section links survive reload, history and canonicalize section numbers',async({page})=>{
+test('section links preserve history, reset to Overview on reload and canonicalize section numbers',async({page})=>{
   await openReaderPatch(page,'/?review=1#section-06');
   await expect(readerPatchActive(page)).toHaveAttribute('data-page-number','6');
   await expect(page.locator('.toc-item.on .toc-t')).toHaveText('Recommendations');
@@ -489,7 +489,11 @@ test('section links survive reload, history and canonicalize section numbers',as
   await page.goBack();await expect(readerPatchActive(page)).toHaveAttribute('data-page-number','7');
   await expect(page.locator('.btn-next .fm-control-destination b')).toHaveText('Sign-in & Join');
   await page.goForward();await expect(readerPatchActive(page)).toHaveAttribute('data-page-number','8');
-  await page.reload();await expect(readerPatchActive(page)).toHaveAttribute('data-page-number','8');
+  await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+  await page.reload();await expect(readerPatchActive(page)).toHaveAttribute('data-page-number','1');
+  await expect(page).toHaveURL(/\?review=1#section-01$/);
+  await expect(page.locator('.topbar-count')).toHaveText('01 / 13');
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
   await page.evaluate(()=>{location.hash='section-99';});
   await expect(readerPatchActive(page)).toHaveAttribute('data-page-number','13');
   await expect(page).toHaveURL(/#section-13$/);await expect(page.locator('.btn-next')).toBeDisabled();
