@@ -4424,5 +4424,5 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 
 /* Balance the overview hero within the shared desktop reading area. */
 @media(min-width:901px){
-html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"] .fm-next-cover-slide{align-items:center!important}
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"] .fm-next-cover-slide[data-page-layout="cover"]{align-items:center!important}
 }
