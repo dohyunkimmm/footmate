@@ -76,3 +76,9 @@ html::-webkit-scrollbar{
   width:0;
   height:0;
 }
+
+/* Tighten P3 table rows without changing typography or other sections. */
+@media(min-width:1101px){
+  #section-03 .journey-map article>div{min-height:80px}
+  #section-03 .journey-map .opportunity{min-height:90px}
+}
