@@ -55,3 +55,27 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await page.locator('.toc-item').first().click();
   await expect(page.getByRole('link',{name:'제품 체험하기',exact:true})).toHaveAttribute('href','/demo');
 });
+
+test('body copy stays concise outside section intros, including collapsed details',async({page})=>{
+  await page.goto('/');
+  const audit=await page.locator('.slide').evaluateAll(slides=>slides.map(slide=>{
+    const nodes=[...slide.querySelectorAll('h2,h3,p,blockquote,li,summary,td,th,figcaption,.decision-path')]
+      .filter(node=>!node.closest('.section-head')&&!node.querySelector('h2,h3,p,li,td,th'));
+    const blocks=nodes.map(node=>node.textContent.trim()).filter(Boolean);
+    const sentences=blocks.filter(text=>/(?:습니다|합니다|입니다|싶다)[.!?]/.test(text));
+    const longLines=nodes.flatMap(node=>{
+      const copy=node.cloneNode(true);
+      copy.querySelectorAll('br').forEach(br=>br.replaceWith('\n'));
+      return copy.textContent.split('\n').map(line=>line.trim());
+    }).filter(line=>line.length>65);
+    const seen=new Set();
+    const duplicates=blocks.filter(text=>{if(seen.has(text))return true;seen.add(text);return false;});
+    return {section:slide.id,sentences,longLines,duplicates};
+  }));
+  expect(audit).toHaveLength(9);
+  for(const result of audit){
+    expect(result.sentences,result.section+' sentence endings').toEqual([]);
+    expect(result.longLines,result.section+' long body lines').toEqual([]);
+    expect(result.duplicates,result.section+' duplicate copy').toEqual([]);
+  }
+});

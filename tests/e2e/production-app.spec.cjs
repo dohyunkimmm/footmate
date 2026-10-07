@@ -39,8 +39,9 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await expect(page.locator('.toc-item')).toHaveCount(9);
   await page.locator('.toc-item').nth(3).click();
   await page.locator('.slide:visible summary').click();
-  await expect(page.locator('.slide:visible')).toContainText('경기 후보·순위·추천 이유는 기준 기반 로직이 결정합니다.');
-  await expect(page.locator('.slide:visible')).toContainText('참가를 자동 실행하지 않습니다.');
+  await expect(page.locator('.slide:visible')).toContainText('사용자 직접 확정 · 자동 실행 제외');
+  await page.locator('.toc-item').nth(5).click();
+  await expect(page.locator('.slide:visible')).toContainText('추천 로직 · 후보·순위·이유 결정');
 });
 
 test('v6.0.0 exact Production aliases stay current',async({page})=>{
