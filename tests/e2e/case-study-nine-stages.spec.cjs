@@ -94,11 +94,17 @@ async function typographyAudit(page){
       const size=parseFloat(css.fontSize),line=parseFloat(css.lineHeight);
       const label=describe(node)+' '+node.textContent.trim().slice(0,55);
       if(!Number.isFinite(size)||size<10)failures.push(label+': font below 10px');
+      const roleMinimum=node.matches('.journey-map p,td,th,.story-card p,.priority-card p,.decision-row p:not(.small-copy),.next-list p:not(.small-copy),.detail-body p')?13:
+        node.matches('.small-copy,.source-note,figcaption,.flow span,dt,dd')?12:
+        node.matches('.eyebrow')?11:10;
+      if(size<roleMinimum)failures.push(label+': role minimum '+roleMinimum+'px');
+
       if(!Number.isFinite(line)||line<size*1.3)failures.push(label+': line-height below 1.3');
       // Direct text only: nested paragraph/list boxes must not be counted twice.
       const rects=[];
-      for(const child of node.childNodes){
-        if(child.nodeType!==Node.TEXT_NODE||!child.textContent.trim())continue;
+      const textWalker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let child;
+      while((child=textWalker.nextNode())){
+        if(!child.textContent.trim()||child.parentElement.closest('.sr-only'))continue;
         const range=document.createRange();range.selectNodeContents(child);
         rects.push(...range.getClientRects());range.detach();
       }
@@ -117,6 +123,20 @@ async function typographyAudit(page){
       if(node.matches('h1,h2,h3')){
         const lines=[...new Set(rects.map(rect=>Math.round(rect.top)))];
         if(lines.length>3)review.push({label,lines:lines.length,reason:'long heading; manual review'});
+        const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);
+        const lineWidths=new Map();let child;
+        while((child=walker.nextNode())){
+          if(!child.textContent.trim())continue;
+          const range=document.createRange();range.selectNodeContents(child);
+          for(const rect of range.getClientRects()){
+            if(rect.width<1)continue;
+            const key=Math.round(rect.top),current=lineWidths.get(key)||{left:rect.left,right:rect.right};
+            current.left=Math.min(current.left,rect.left);current.right=Math.max(current.right,rect.right);lineWidths.set(key,current);
+          }
+        }
+        const actualLines=[...lineWidths.values()].map(rect=>rect.right-rect.left);
+        if(actualLines.length>1&&actualLines.at(-1)<Math.max(...actualLines)*.25)
+          review.push({label,lines:actualLines.length,reason:'short final heading line; manual review',widths:actualLines});
       }
     }
     const heading=getComputedStyle(slide.querySelector('.section-head h1'));
@@ -142,7 +162,16 @@ for(const fonts of ['normal','fallback']){
       expect(fontState.family).toContain('Inter');
       expect(fontState.family).toContain('Noto Sans KR');
       // A failed external font load is reported explicitly rather than confused with loaded-font coverage.
-      const coverage=fonts==='fallback'?'forced fallback':fontState.faces.some(face=>face.status==='loaded')?'webfont loaded':'webfont unavailable; fallback only';
+      const requiredFaces=await page.evaluate(async()=>{
+        const requirements=[['Inter','500','FootMate'],['Inter','700','FootMate'],['Inter','800','FootMate'],['Noto Sans KR','400','경기 참가'],['Noto Sans KR','700','경기 참가'],['Noto Sans KR','800','경기 참가']];
+        return Promise.all(requirements.map(async([family,weight,sample])=>{
+          let faces=[];try{faces=await document.fonts.load(weight+' 16px "'+family+'"',sample);}catch{}
+          return {family,weight,loaded:faces.length>0&&faces.every(face=>face.status==='loaded')};
+        }));
+      });
+      const coverage=fonts==='fallback'?'forced fallback':requiredFaces.every(face=>face.loaded)?'required webfonts loaded':'required webfonts unavailable; fallback coverage';
+      await testInfo.attach('required-font-coverage',{body:JSON.stringify({coverage,requiredFaces},null,2),contentType:'application/json'});
+      if(fonts==='fallback')expect(requiredFaces.every(face=>!face.loaded)).toBe(true);
       const audits=[];
       for(let i=0;i<9;i++){
         await page.locator('.toc-item').nth(i).click();
@@ -180,3 +209,123 @@ test('typography audit detects text clipping and invalid line height',async({pag
   expect(audit.failures.some(message=>message.includes('line-height'))).toBe(true);
   expect(audit.failures.some(message=>message.includes('clipped'))).toBe(true);
 });
+
+
+async function alignmentAudit(page){
+  return page.locator('.slide:visible').evaluate(slide=>{
+    const failures=[];
+    for(const grid of slide.querySelectorAll('.card-grid,.priority-grid,.ia-branches')){
+      const rows=new Map();
+      for(const card of grid.children){
+        const top=Math.round(card.getBoundingClientRect().top),items=rows.get(top)||[];
+        items.push(card);rows.set(top,items);
+      }
+      for(const cards of rows.values()){
+        if(cards.length<2)continue;
+        const headings=cards.map(card=>card.querySelector('h2,h3')).filter(Boolean);
+        const tops=headings.map(node=>node.getBoundingClientRect().top);
+        if(tops.length>1&&Math.max(...tops)-Math.min(...tops)>2)failures.push('card heading start positions differ');
+      }
+    }
+    if(innerWidth>1100&&slide.id==='section-03'){
+      const articles=[...slide.querySelectorAll('.journey-map article')];
+      for(let row=0;row<3;row++){
+        const boxes=articles.map(article=>article.querySelectorAll(':scope > div')[row].getBoundingClientRect());
+        for(const edge of ['top','bottom']){
+          const values=boxes.map(box=>box[edge]);
+          if(Math.max(...values)-Math.min(...values)>2)failures.push('journey row '+row+' '+edge+' boundaries differ');
+        }
+      }
+    }
+    return [...new Set(failures)];
+  });
+}
+async function typographyEvidence(page){
+  return page.locator('.slide:visible').evaluate(slide=>{
+    const result=[];
+    for(const node of slide.querySelectorAll('h1,h2,h3,p,td,th,figcaption')){
+      if(!node.getClientRects().length||node.classList.contains('sr-only'))continue;
+      const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT),tops=new Set();let text;
+      while((text=walker.nextNode())){
+        if(!text.textContent.trim())continue;
+        const range=document.createRange();range.selectNodeContents(text);
+        for(const rect of range.getClientRects())if(rect.width>0)tops.add(Math.round(rect.top));
+      }
+      const box=node.getBoundingClientRect(),style=getComputedStyle(node);
+      result.push({tag:node.tagName,text:node.textContent.trim(),lines:tops.size,height:box.height,size:parseFloat(style.fontSize)});
+    }
+    return result;
+  });
+}
+
+for(const width of [390,801,1101,1440]){
+  for(const mode of ['text-200-percent','user-text-spacing']){
+    test('typography adaptation '+mode+' at '+width+'px',async({page},testInfo)=>{
+      await page.setViewportSize({width,height:900});
+      await page.goto('/');await page.evaluate(()=>document.fonts.ready);
+      await page.addStyleTag({content:mode==='user-text-spacing'?
+        '.slide *{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.slide p{margin-bottom:2em!important}':''});
+      if(mode==='text-200-percent'){
+        await page.locator('.slide *').evaluateAll(nodes=>{
+          const values=nodes.map(node=>{const s=getComputedStyle(node);return {node,size:parseFloat(s.fontSize),line:parseFloat(s.lineHeight),tracking:parseFloat(s.letterSpacing)};});
+          for(const {node,size,line,tracking} of values){
+            node.style.setProperty('font-size',size*2+'px','important');
+            if(Number.isFinite(line))node.style.setProperty('line-height',line*2+'px','important');
+            if(Number.isFinite(tracking))node.style.setProperty('letter-spacing',tracking*2+'px','important');
+          }
+        });
+      }
+      const results=[];
+      for(let i=0;i<9;i++){
+        await page.locator('.toc-item').nth(i).click();
+        await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
+        const audit=await typographyAudit(page),alignment=await alignmentAudit(page);
+        results.push({audit,alignment});
+        expect(audit.failures,audit.section+' '+mode).toEqual([]);
+        expect(alignment,audit.section+' alignment '+mode).toEqual([]);
+        expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+        await expect(page.locator('.slide:visible h1')).toBeVisible();
+        // Controls stay usable even when the content grows beyond the viewport.
+        await page.locator('.btn-next').scrollIntoViewIfNeeded();
+        await expect(page.locator('.btn-next')).toBeVisible();
+      }
+      await testInfo.attach('adaptation-audit',{body:JSON.stringify({width,mode,results},null,2),contentType:'application/json'});
+    });
+  }
+}
+
+test('typography alignment audit detects a shifted journey row',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});await page.goto('/#section-03');
+  expect(await alignmentAudit(page)).toEqual([]);
+  await page.locator('#section-03 .journey-map article').nth(1).locator('.pain').evaluate(node=>node.style.transform='translateY(8px)');
+  expect((await alignmentAudit(page)).some(message=>message.includes('boundaries'))).toBe(true);
+});
+
+for(const width of [390,1440]){
+  test('webfont and fallback wrapping comparison at '+width+'px',async({browser},testInfo)=>{
+    const observations={};
+    for(const mode of ['webfont','fallback']){
+      const context=await browser.newContext({viewport:{width,height:900}});
+      const page=await context.newPage();
+      if(mode==='fallback')await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//,route=>route.abort());
+      await page.goto(testInfo.project.use.baseURL||'http://127.0.0.1:4173');
+      await page.evaluate(()=>document.fonts.ready);
+      observations[mode]=[];
+      for(let i=0;i<9;i++){
+        await page.locator('.toc-item').nth(i).click();
+        await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
+        observations[mode].push({section:i+1,blocks:await typographyEvidence(page),alignment:await alignmentAudit(page)});
+        await testInfo.attach('section-'+(i+1)+'-'+mode+'-'+width,{body:await page.locator('.slide:visible').screenshot({animations:'disabled'}),contentType:'image/png'});
+      }
+      await context.close();
+    }
+    const differences=[];
+    observations.webfont.forEach((section,i)=>section.blocks.forEach((block,j)=>{
+      const fallback=observations.fallback[i].blocks[j];
+      if(fallback&&(block.lines!==fallback.lines||Math.abs(block.height-fallback.height)>2))
+        differences.push({section:section.section,text:block.text,webfont:{lines:block.lines,height:block.height},fallback:{lines:fallback.lines,height:fallback.height},reason:'font-dependent wrapping; review'});
+    }));
+    await testInfo.attach('font-wrap-comparison',{body:JSON.stringify({width,observations,differences},null,2),contentType:'application/json'});
+    for(const sections of Object.values(observations))for(const section of sections)expect(section.alignment).toEqual([]);
+  });
+}
