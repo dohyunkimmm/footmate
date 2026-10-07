@@ -96,3 +96,12 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 @media(min-width:901px) and (max-width:1180px){
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"] .cs-controls{grid-template-columns:160px minmax(0,1fr) 160px!important;gap:12px!important}
 }
+
+/* Overview title scales against its own desktop column, keeping two authored lines. */
+@media(min-width:901px){
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"]{
+  & .fm-next-cover-copy{container-type:inline-size}
+  & .fm-next-cover h1{font-size:clamp(28px,8.4cqw,44px)!important;line-height:1.22!important}
+  & .fm-next-cover-title-line{display:block!important;white-space:nowrap!important}
+}
+}
