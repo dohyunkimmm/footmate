@@ -65,3 +65,14 @@
   .toc-n{padding-top:0}
   .sidebar-foot{margin:0}
 }
+
+/* Hide the page scrollbar while preserving native scrolling and content layout. */
+html{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+html::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
