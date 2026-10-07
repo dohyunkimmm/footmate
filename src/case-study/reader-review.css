@@ -51,6 +51,7 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & :is(.fm-next-story,.fm-next-cover){zoom:1!important;max-width:1080px!important;margin-block:0!important;transform:none!important}
   & .fm-next-story-slide :is(.fm-next-story-lead,.fm-page-card-description,.fm-p1-persona-lenses p,.fm-p1-jtbd-journey li p,.fm-next-cs-journey p,.fm-p0-annotations p,.fm-next-cs-day-states p,.fm-owner-column .fm-p0-arch-node span,.fm-next-cs-detail-order>span>small,.fm-cs-detail-rationale,.fm-cs-reasons dd){font-size:15px!important;line-height:1.7!important;word-break:keep-all;overflow-wrap:anywhere}
   & .fm-next-review-summary b{font-size:14px!important;line-height:1.6!important}
+  & .fm-next-cover-lead{font-size:15px!important;line-height:1.7!important}
 }
 }
 

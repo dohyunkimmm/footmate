@@ -54,6 +54,21 @@ async function expectReadableSection(slide){
   if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('auto');expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
 }
 
+test('PageDown reads long sections before advancing and resize preserves reading position',async({page})=>{
+  await page.setViewportSize({width:1280,height:720});await page.goto('/#section-09');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
+  await page.evaluate(()=>document.activeElement.blur());
+  const slide=page.locator('.slide.on');
+  await page.keyboard.press('PageDown');
+  await expect(slide).toHaveAttribute('data-page-number','9');
+  await expect.poll(()=>slide.evaluate(n=>n.scrollTop)).toBeGreaterThan(0);
+  const top=await slide.evaluate(n=>n.scrollTop);
+  await page.setViewportSize({width:1280,height:730});
+  await expect.poll(()=>slide.evaluate(n=>n.scrollTop)).toBeGreaterThanOrEqual(top-10);
+  await page.locator('.toc-item').nth(6).click();
+  await expect.poll(()=>page.locator('.slide.on').evaluate(n=>n.scrollTop)).toBe(0);
+});
+
 
 for(const viewport of [{width:1440,height:1000},{width:1280,height:720},{width:390,height:844},{width:320,height:740}]){
   test(`13 sections preserve readable composition at ${viewport.width}px`,async({page})=>{

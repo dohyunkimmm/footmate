@@ -105,6 +105,15 @@
       return;
     }
     if(event.target.closest?.('.slide a,.slide button,.slide summary,.fm-next-cover-frame'))return;
+    const active=slides()[current];
+    if(active&&window.matchMedia('(min-width:901px)').matches&&['PageDown','PageUp'].includes(event.key)){
+      const remaining=event.key==='PageDown'?active.scrollHeight-active.clientHeight-active.scrollTop:active.scrollTop;
+      if(remaining>1){
+        event.preventDefault();
+        active.scrollBy({top:(event.key==='PageDown'?1:-1)*active.clientHeight*.85});
+        return;
+      }
+    }
     if(event.key==='ArrowRight'||event.key==='PageDown'){
       event.preventDefault();
       goTo(current+1);
