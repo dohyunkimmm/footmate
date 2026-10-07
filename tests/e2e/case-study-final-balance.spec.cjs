@@ -69,7 +69,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     // P10 · recovery rows follow the shared card rhythm. Desktop removes only the redundant recap,
     // keeping the two product proofs and captions safely above persistent navigation controls.
     await showSection(page,9);
-    if(viewport.width>900)await page.locator('.slide.on').evaluate(node=>node.scrollTop=node.scrollHeight);
+    if(viewport.width>900)await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
     const p10=await page.locator('.slide.on .fm-p0-recovery-map').evaluate(el=>({
       rowGap:parseFloat(getComputedStyle(el).rowGap),
       rect:el.getBoundingClientRect().toJSON()
@@ -77,7 +77,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     expect(p10.rowGap).toBe(expectedRecoveryGap);
     const decision=page.locator('.slide.on .fm-next-cs-decision');
     if(name==='desktop'){
-      await page.locator('.slide.on').evaluate(node=>node.scrollTop=node.scrollHeight);
+      await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
       const geometry=await page.locator('.slide.on').evaluate(slide=>{
         const strip=slide.querySelector('.fm-evidence-recovery-strip')?.getBoundingClientRect();
         const controls=document.querySelector('.cs-controls')?.getBoundingClientRect();
@@ -187,6 +187,7 @@ for(const [name,viewport,expectedRecoveryGap] of [
     await expect(closing.locator('a')).toHaveCount(0);
     // Scroll the readable section so its closing summary is reachable on both layouts.
     await closing.scrollIntoViewIfNeeded();
+    if(name==='desktop')await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
     await expect(closing).toBeInViewport();
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');

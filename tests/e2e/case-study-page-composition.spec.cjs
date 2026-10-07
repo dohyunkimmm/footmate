@@ -48,26 +48,27 @@ async function expectReadableSection(slide){
     const story=node.querySelector('.fm-next-story,.fm-next-cover');
     const desktop=innerWidth>900;
     return {desktop,zoom:Number(getComputedStyle(story).zoom)||1,
+      documentOverflow:getComputedStyle(document.documentElement).overflowY,innerScroll:node.scrollHeight-node.clientHeight,
       overflow:getComputedStyle(node).overflowY,horizontal:node.scrollWidth-node.clientWidth,
       leadFont:parseFloat(getComputedStyle(node.querySelector('.fm-next-story-lead,.fm-next-cover-lead')).fontSize)};
   });
   expect(layout.horizontal).toBeLessThanOrEqual(1);
-  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('auto');expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
+  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('visible');expect(layout.documentOverflow).toBe('scroll');expect(layout.innerScroll).toBeLessThanOrEqual(1);expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
 }
 
-test('PageDown reads long sections before advancing and resize preserves reading position',async({page})=>{
+test('PageDown reads the document without changing sections and resize preserves reading position',async({page})=>{
   await page.setViewportSize({width:1280,height:720});await page.goto('/#section-09');
   await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
   await page.evaluate(()=>document.activeElement.blur());
   const slide=page.locator('.slide.on');
   await page.keyboard.press('PageDown');
   await expect(slide).toHaveAttribute('data-page-number','9');
-  await expect.poll(()=>slide.evaluate(n=>n.scrollTop)).toBeGreaterThan(0);
-  const top=await slide.evaluate(n=>n.scrollTop);
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBeGreaterThan(0);
+  const top=await page.evaluate(()=>window.scrollY);
   await page.setViewportSize({width:1280,height:730});
-  await expect.poll(()=>slide.evaluate(n=>n.scrollTop)).toBeGreaterThanOrEqual(top-10);
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBeGreaterThanOrEqual(top-10);
   await page.locator('.toc-item').nth(6).click();
-  await expect.poll(()=>page.locator('.slide.on').evaluate(n=>n.scrollTop)).toBe(0);
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
 });
 
 
@@ -303,10 +304,12 @@ test('desktop sections reserve navigation space and retain readable type',async(
   for(let index=0;index<13;index++){
     await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
     await expectReadableSection(slide);
-    const bounds=await slide.evaluate(node=>({top:node.getBoundingClientRect().top,bottom:node.getBoundingClientRect().bottom,
+    expect(await slide.evaluate(node=>node.getBoundingClientRect().top)).toBeGreaterThanOrEqual(54);
+    await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+    const bounds=await slide.evaluate(node=>({bottom:node.getBoundingClientRect().bottom,
       controlsTop:document.querySelector('.cs-controls').getBoundingClientRect().top}));
-    expect(bounds.top).toBeGreaterThanOrEqual(54);
     expect(bounds.bottom).toBeLessThanOrEqual(bounds.controlsTop);
+    await expect(page.locator('.cs-controls')).toBeInViewport();
   }
 });
 

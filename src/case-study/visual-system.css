@@ -4395,7 +4395,7 @@ html[data-fm-next-case-study="true"][data-fm-reader-review="true"]{
 /* PC-first: one document scroller and a shared reading canvas for every section. */
 @media(min-width:901px){
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"]{
-  height:auto!important;min-height:100%;overflow-x:clip!important;overflow-y:scroll!important;scrollbar-gutter:stable;
+  height:auto!important;min-height:100%;overflow-x:clip!important;overflow-y:scroll!important;scrollbar-gutter:stable;scroll-padding-block:70px 100px;
   & body{height:auto!important;min-height:100dvh;overflow:visible!important}
   & .fm-cs-shell{width:100%!important;max-width:none!important;height:auto!important;min-height:100dvh;grid-template-columns:232px minmax(0,1fr)!important;align-items:start}
   & .sidebar{position:sticky!important;top:0;height:100dvh!important;max-height:100dvh;overflow-x:hidden!important;overflow-y:auto!important}

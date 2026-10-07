@@ -5,11 +5,12 @@ async function expectReadableSection(slide){
     const story=node.querySelector('.fm-next-story,.fm-next-cover');
     const desktop=innerWidth>900;
     return {desktop,zoom:Number(getComputedStyle(story).zoom)||1,
+      documentOverflow:getComputedStyle(document.documentElement).overflowY,innerScroll:node.scrollHeight-node.clientHeight,
       overflow:getComputedStyle(node).overflowY,horizontal:node.scrollWidth-node.clientWidth,
       leadFont:parseFloat(getComputedStyle(node.querySelector('.fm-next-story-lead,.fm-next-cover-lead')).fontSize)};
   });
   expect(layout.horizontal).toBeLessThanOrEqual(1);
-  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('auto');expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
+  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('visible');expect(layout.documentOverflow).toBe('scroll');expect(layout.innerScroll).toBeLessThanOrEqual(1);expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
 }
 
 
