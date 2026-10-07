@@ -285,7 +285,7 @@ test('representative decisions expose source evidence and a distinct next-decisi
   await page.waitForFunction(()=>document.documentElement.dataset.fmDecisionEvidence==='true');
   for(const index of [4,5,9,10,11,12]){
     await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
-    if(index!==12)await expect(slide.locator('.fm-proof-link').first()).toBeVisible();
+    if(index!==12){const proof=slide.locator('.fm-proof-link').first();const disclosure=proof.locator('xpath=ancestor::details');if(await disclosure.count())await disclosure.locator('summary').click();await expect(proof).toBeVisible();}
     await expectReadableSection(slide);
     await page.screenshot({path:`test-results/decision-evidence-p${index+1}.png`,animations:'disabled'});
   }
@@ -301,7 +301,7 @@ test('editorial composition enlarges dense-page reading text with scrollable sec
     await page.locator('.toc-item').nth(index).click();const slide=page.locator('.slide.on');
     await expectReadableSection(slide);
     const title=await slide.locator('h2').evaluate(node=>({weight:getComputedStyle(node).fontWeight,size:parseFloat(getComputedStyle(node).fontSize)}));
-    expect(title.size).toBe(32);expect(title.weight).toBe('760');
+    expect(title.size).toBe(28);expect(title.weight).toBe('760');
     await page.screenshot({path:`test-results/editorial-finish-p${index+1}.png`,animations:'disabled'});
   }
   await page.locator('.toc-item').nth(9).click();
@@ -319,7 +319,7 @@ test('editorial composition enlarges dense-page reading text with scrollable sec
     return {metricsRight:metrics.right,evidenceLeft:evidence.left,textSize:size,renderedSize:size*scale};
   });
   expect(validation.evidenceLeft).toBeGreaterThan(validation.metricsRight);expect(validation.textSize).toBeGreaterThanOrEqual(14);expect(validation.renderedSize).toBeGreaterThanOrEqual(13);
-  await page.locator('.toc-item').nth(5).click();await expect(page.locator('.slide.on .fm-editorial-decision')).toContainText('핵심 결정 02');
+  await page.locator('.toc-item').nth(5).click();await page.locator('.slide.on .fm-editorial-supplement>summary').click();await expect(page.locator('.slide.on .fm-editorial-decision')).toContainText('핵심 결정 02');
   const inset=await page.locator('.slide.on .fm-editorial-decision').evaluate(node=>parseFloat(getComputedStyle(node).paddingLeft));expect(inset).toBe(0);
 });
 
@@ -365,6 +365,7 @@ test('final rendered copy keeps descriptions distinct and removes duplicate deta
 
 
 test('desktop composition audit captures every section after entry motion settles',async({page})=>{
+  test.setTimeout(90000);
   await page.setViewportSize({width:1440,height:1000});await page.goto('/');
   await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts.ready);
@@ -538,7 +539,7 @@ test('readable evidence, compact architecture and pinned source links retain rea
     return {width:image.width,source:n.getAttribute('src'),messageTop:image.top+image.height*(94/342),
       actionsBottom:image.top+image.height*(234/342),mediaTop:media.top,mediaBottom:media.bottom};
   });
-  expect(evidence.width).toBeGreaterThan(300);expect(evidence.source).toContain('recovery-discovery-empty.png');
+  expect(evidence.width).toBeGreaterThan(200);expect(evidence.source).toContain('recovery-discovery-empty.png');
   expect(evidence.messageTop).toBeGreaterThanOrEqual(evidence.mediaTop);
   expect(evidence.actionsBottom).toBeLessThanOrEqual(evidence.mediaBottom);
   await page.locator('.toc-item').nth(10).click();

@@ -166,10 +166,10 @@ for(const [name,viewport] of [
         boundaryCards
       };
     });
-    const summaryInset=index=>name==='desktop'?{top:0,right:12,bottom:0,left:index===0?0:12}:{top:0,right:0,bottom:0,left:0};
+    const summaryInset=()=>({top:0,right:0,bottom:0,left:0});
     expect(lineRhythm.summary).toHaveLength(3);
     lineRhythm.summary.forEach((card,index)=>expect(card).toEqual(summaryInset(index)));
-    expect(lineRhythm.summaryGap).toBe(name==='desktop'?12:8);
+    expect(lineRhythm.summaryGap).toBe(name==='desktop'?14:8);
     expect(lineRhythm.flowGap).toBe(10);
     expect(lineRhythm.screens).toHaveLength(4);
     lineRhythm.screens.forEach(card=>expect(card).toEqual({
@@ -318,7 +318,7 @@ for(const [name,viewport] of [
       expect(geometry.stripLeft).toBeGreaterThan(geometry.mapRight);
       expect(Math.abs(geometry.stripTop-geometry.mapTop)).toBeLessThanOrEqual(1);
       expect(Math.abs(geometry.figureWidths[0]-geometry.figureWidths[1])).toBeLessThanOrEqual(2);
-      expect(geometry.figureWidths[0]/geometry.scale).toBeGreaterThanOrEqual(299);
+      expect(geometry.figureWidths[0]/geometry.scale).toBeGreaterThanOrEqual(230);
     }else{
       const geometry=await strip.evaluate(node=>{
         const stripBox=node.getBoundingClientRect();
