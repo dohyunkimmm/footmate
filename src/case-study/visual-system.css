@@ -4061,7 +4061,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"]{
   & .fm-next-cover{align-items:center!important}
   & .fm-next-cover-slide .fm-next-cover-copy,& .fm-next-cover-slide .fm-next-cover-visual{transform:none!important;align-self:center!important}
-  & .fm-next-cover-slide .fm-next-cover-frame{width:360px!important;max-width:100%!important;min-width:0!important}
+  & .fm-next-cover{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  & .fm-next-cover-slide .fm-next-cover-frame{width:600px!important;max-width:100%!important;min-width:0!important}
   & .fm-next-cover-slide .fm-next-cover-proof>div{padding:12px 13px!important}
   & .fm-next-cover-slide .fm-next-cover-proof b{min-height:36px!important;margin:0 0 8px!important;font-size:12px!important;line-height:1.5!important}
   & .fm-next-cover-slide .fm-next-cover-proof span{font-size:12px!important;line-height:1.6!important}
