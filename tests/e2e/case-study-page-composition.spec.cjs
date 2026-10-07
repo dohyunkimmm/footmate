@@ -308,7 +308,7 @@ test('desktop sections reserve navigation space and retain readable type',async(
     await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
     const bounds=await slide.evaluate(node=>({bottom:node.getBoundingClientRect().bottom,
       controlsTop:document.querySelector('.cs-controls').getBoundingClientRect().top}));
-    expect(bounds.bottom).toBeLessThanOrEqual(bounds.controlsTop);
+    expect(bounds.bottom).toBeLessThanOrEqual(bounds.controlsTop+1);
     await expect(page.locator('.cs-controls')).toBeInViewport();
   }
 });

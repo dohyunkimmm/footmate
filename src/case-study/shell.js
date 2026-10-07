@@ -53,7 +53,6 @@
     const activeSlide=visibleSlides[current];
     if(changed){
       activeSlide.scrollTop=0;
-      window.scrollTo({top:0,left:0,behavior:'instant'});
     }
     allSlides().forEach(slide=>setSlideInteractive(slide,slide===activeSlide));
     const visibleToc=toc();
@@ -80,6 +79,13 @@
       dot.title=`${String(i+1).padStart(2,'0')} · ${name}`;
     });
     if(options.history!==false)syncSectionUrl(options.history||'push');
+    if(changed){
+      // Reset after the newly active section determines document height.
+      window.scrollTo({top:0,left:0,behavior:'instant'});
+      requestAnimationFrame(()=>{
+        if(current===nextIndex)window.scrollTo({top:0,left:0,behavior:'instant'});
+      });
+    }
   }
 
   function isEditingTarget(target){
