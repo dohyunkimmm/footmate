@@ -15,8 +15,8 @@ if(!matches.length)throw new Error('No Case Study versioned assets found');
 const assetFiles=matches.map(match=>match[1]);
 const cssFiles=assetFiles.filter(file=>file.endsWith('.css'));
 const jsFiles=assetFiles.filter(file=>file.endsWith('.js'));
-if(cssFiles.length!==10||jsFiles.length!==4)throw new Error('Case Study runtime asset consolidation drift: expected 10 CSS / 4 JS');
-if(!assetFiles.includes('/src/case-study/visual-system.css')||!assetFiles.includes('/src/case-study/visual-system.js')){
+if(cssFiles.length!==11||jsFiles.length!==2)throw new Error('Case Study runtime asset consolidation drift: expected 11 CSS / 2 JS');
+if(!assetFiles.includes('/src/case-study/visual-system.css')||!assetFiles.includes('/src/case-study/concise.js')){
   throw new Error('Case Study consolidated visual bundle missing');
 }
 const forbiddenRuntimeAssets=[
@@ -38,9 +38,9 @@ const forbiddenRuntimeAssets=[
 ];
 const staleRuntime=forbiddenRuntimeAssets.filter(file=>assetFiles.includes(file));
 if(staleRuntime.length)throw new Error('Legacy Case Study runtime assets returned: '+staleRuntime.join(', '));
-const slideCount=(html.match(/<section class="slide(?: on)?"><\/section>/g)||[]).length;
-if(slideCount!==13||/data-cs-hidden="true"/.test(html)){
-  throw new Error('Case Study DOM must contain exactly 13 canonical slides and no hidden legacy slide slots');
+const slideCount=(html.match(/<section class="slide(?: [^"]*)?"[^>]*>/g)||[]).length;
+if(slideCount!==7||/data-cs-hidden="true"/.test(html)){
+  throw new Error('Case Study DOM must contain exactly 7 canonical slides and no hidden legacy slide slots');
 }
 const updated=html.replace(assetPattern,function(_all,file){return file+'?v='+version;});
 const check=process.argv.includes('--check');
