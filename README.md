@@ -8,7 +8,7 @@
 - Legacy `schedule` state migrates to MY.
 - `/app` Join is an explicit **free participation confirmation**; real PG is not connected. 참가 정보 유실·확정 오류는 오류 안내, 재시도, 경기 다시 선택으로 복구합니다.
 - `/beta` and `/beta/operator` remain the Supabase-connected validation/operator surfaces and are not presented as if merged into `/app`.
-- Desktop Detail / Join / MY follow the single-surface visual system validated on Auth.
+- Desktop review at 960px+ keeps the 560px app canvas and adds an adjacent service/experience context panel; Detail / Join / MY keep the single-surface hierarchy inside the app canvas.
 
 
 FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에게 맞는지 이해한 뒤 참가·경기 당일·경기 후까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
@@ -55,7 +55,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 ## Implemented experience
 
 - Home AI Match Assistant entry — `오늘, 어떤 경기에서 뛸까요?` 질문과 실행 가능한 example suggestion을 제공하고, 실행 결과를 Discover로 handoff
-- Home personalization — For You를 1–2개 compact match로 제한하고 동일 경기의 중복 추천 section을 만들지 않음
+- Home personalization — desktop은 `내 조건에 맞는 추천`, mobile은 `For You`로 맥락을 맞추고 1–2개 compact match로 제한하며 동일 경기의 중복 추천 section을 만들지 않음
 - Discover result exploration — Home의 자연어/structured constraints를 이어받아 조건 summary/edit, filter/sort, zero-result recovery와 전체 결과 탐색을 제공하며 full Assistant를 중복 mount하지 않음
 - Home → Discover → Detail 선택 동안 AI/discovery state와 selected match identity를 일관되게 유지
 - fresh setup 완료 직후에는 일회성 완료 안내를 제공하고 이후 재방문 greeting과 구분
@@ -93,8 +93,8 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Real / Guided / Evidence mode 분리
 - responsive 320 / 375 / 390 / 430px
 - `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
-- `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
-- desktop Real App shell: stable max 560px composition; unrequested 1040px expansion is not part of the Product contract
+- `/app` active Auth v3: Google/Kakao only; 활성 provider는 Supabase OAuth의 외부 로그인 화면으로 이동할 수 있고, signup/recovery처럼 social action이 없는 panel에는 provider status를 노출하지 않음. actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
+- desktop Real App review composition: app canvas는 560px을 유지하고 960px+에서는 서비스 여정·샘플 데이터·무료 참가 경계를 설명하는 review context를 옆에 배치하며, 결합된 composition 기준으로 horizontal overflow를 막음
 - Browser E2E + axe accessibility regression — v6 390px Detail / Join / MY axe 계약 포함
 - Mobile Safari/WebKit 자동 gate — 320 / 375 / 390 / 430px에서 overflow, fixed navigation, Detail/focus contract 검증
 - Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. v6는 390px Home lifecycle / Join / MY Matchday / MY postgame과 320px compact Join을 승인 baseline으로 비교하며, 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
@@ -106,7 +106,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 - Vercel AI Gateway: **connected and Production-verified**
 - `/app` recommendation ranking: **deterministic runtime logic**
 - `/app` match catalog / capacity / participant composition: **sample records**
-- `/app` auth / capacity / notification providers: **deterministic mock**
+- `/app` core auth/session, capacity, notification state: **browser-local / deterministic mock**; Google/Kakao social entrypoint는 활성 provider가 있을 때 Supabase OAuth authorize/user 확인 경로를 사용
 - `/app` Join: **browser-local free participation confirmation**; real PG 미연동
 - `/app` persistence: **browser local state** — `footmate:*` canonical keys를 primary로 사용하고 기존 `footmate:v4:*` 9개 key는 migration/rollback compatibility mirror로 유지
 - `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
@@ -136,7 +136,7 @@ runtime-impacting 변경의 자동 release gate는 다음을 포함합니다. do
 - responsive 320 / 375 / 390 / 430px
 - `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
 - `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
-- desktop Real App shell: stable max 560px composition; unrequested 1040px expansion is not part of the Product contract
+- desktop Real App review composition: 560px app canvas + 960px 이상에서의 adjacent review context, 1366/1440/1920px no-overflow/readability 계약
 - Deep Link / State Consistency / persistence restoration
 - Closed Beta backend config / Auth / join / cancel / reload recovery
 - Closed Beta password recovery / signup verification resend / recovery-link password update
