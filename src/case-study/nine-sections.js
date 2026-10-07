@@ -39,7 +39,7 @@
         ['Could','검증 후 고도화','추천 입력 · 조건 해석 · 재탐색 개선','착수 기준 · 실제 이용 중 막힘 확인'],
         ["Won’t · 이번 범위",'유보한 확장','실제 결제 · 수익화 검증 · AI의 자동 참가 확정','현재 범위 · 무료 참가 · 사용자 최종 확정']
       ].map(([label,title,features,why])=>`<article class="priority-card"><span class="priority-tag">${label}</span><h2>${title}</h2><p>${features}</p><p class="priority-reason">${why}</p></article>`).join('')}</div>` +
-      note('현재 우선순위 분류 · 과거 회의·정량 점수 근거 없음<br>Should 기능 구현 완료 · 효과 검증 전') +
+      note('현재 우선순위 분류 · 과거 회의·정량 점수 근거 없음<br>Should 기능 구현 완료') +
       `<details><summary>현재 구현 범위와 Trade-off</summary><div class="detail-body"><p><strong>샘플 앱 /app</strong><br>AI·Google/Kakao 인증 실제 연결<br>경기·잔여 자리 샘플 · 참가·체크인·피드백 브라우저 기록</p><p><strong>Closed Beta /beta</strong><br>로그인·경기·정원·참가·취소·대기·체크인·알림 서버 연동<br>결제·외부 분석 도구 미연동</p><p><strong>참가 결정</strong><br>사용자 직접 확정 · 자동 실행 제외</p></div></details>`},
     {name:'IA & UX Flow', sub:'Structure & Recovery', html:
       head('05','IA & UX FLOW','세 개의 탭으로 찾고,<br>하나의 참가 흐름으로 이어집니다.','메뉴는 정보의 위치를, UX Flow는 과업의 순서와 예외 경로를 설명합니다.') +
