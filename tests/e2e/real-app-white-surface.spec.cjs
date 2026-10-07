@@ -20,6 +20,7 @@ function failures(page){
 
 async function openCleanApp(page,viewport){
   const errs=failures(page);
+  await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());

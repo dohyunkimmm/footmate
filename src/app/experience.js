@@ -26,6 +26,11 @@ import {completeCheckin} from '../platform/application/checkin.js';
         <div class="fm-auth-title"><h1>${title}</h1><p>${subtitle}</p></div>
         ${body}
       </div>`;
+    // Panels share one scroll container; a new form starts at its own heading.
+    const heading=screen.querySelector('.fm-auth-title h1');
+    heading?.setAttribute('tabindex','-1');
+    heading?.focus({preventScroll:true});
+    screen.scrollTo({top:0,left:0,behavior:'instant'});
   }
 
   function loginBody(place){

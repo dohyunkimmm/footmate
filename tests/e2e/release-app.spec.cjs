@@ -33,6 +33,8 @@ async function waitForFonts(page){
 
 async function openCleanApp(page,viewport={width:1440,height:900}){
   const errs=failures(page);
+  // Stabilize display dates without changing session or participation timestamps.
+  if(!productionSmoke)await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());

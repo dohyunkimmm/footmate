@@ -148,6 +148,11 @@ function ensureProviderButton(auth,provider){
 }
 function decorateAuth(){
   if(!root||entryMode!=='real')return;const auth=root.querySelector('[data-screen="auth"]');if(!auth)return;
+  // Signup and recovery panels have no social-login action to explain.
+  if(!auth.querySelector('.fm-auth-sso,.fm-next-social-list')){
+    auth.querySelector('[data-release-auth-status]')?.remove();
+    return;
+  }
   auth.querySelectorAll('.fm-next-social--apple,.fm-auth-provider--apple,.fm-auth-provider--naver,[data-provider="apple"],[data-provider="naver"]').forEach(button=>button.remove());
   ['kakao','google'].forEach(provider=>{
     const button=ensureProviderButton(auth,provider);if(!button)return;

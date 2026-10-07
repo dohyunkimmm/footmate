@@ -47,7 +47,8 @@ export function recommendationFor(match,state){
 
   if(match.distanceMin<=15)reasons.push({kind:'clock',title:'이동 부담이 적어요',detail:`약 ${match.distanceMin}분 거리로 빠르게 이동할 수 있습니다.`});
 
-  return {match,score,exactRegion,slotCount,fit:fitLabel(score),spotLabel:slotCount>0?`${state.position} ${slotCount}자리`:match.spot,reasons};
+  const fit=gap>1?'경기 강도 차이 확인':fitLabel(score);
+  return {match,score,exactRegion,slotCount,fit,spotLabel:slotCount>0?`${state.position} ${slotCount}자리`:match.spot,reasons};
 }
 
 export function rankRecommendations(matches,state){
