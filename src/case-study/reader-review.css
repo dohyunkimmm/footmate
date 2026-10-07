@@ -186,7 +186,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .fm-cs-shell{width:calc(100% - 48px)!important;max-width:1280px!important;margin-inline:auto!important;grid-template-columns:200px minmax(0,1fr)!important}
   & .sidebar{border-left:1px solid var(--fm-reader-line)}
   & .topbar,& .cs-controls,& .pbar{left:calc(max(24px,(100vw - 1280px)/2) + 200px)!important;right:max(24px,(100vw - 1280px)/2)!important}
-  & .toc-item{padding:9px 12px!important;gap:7px!important}
+  & .toc{flex:1 0 auto!important;grid-template-rows:repeat(13,minmax(max-content,1fr))!important}
+  & .toc-item{padding:9px 12px!important;gap:7px!important;align-content:center!important}
   & .toc-t{font-size:11px!important}
   & .toc-s{font-size:10px!important;line-height:1.5!important}
   & .sb-brand{padding-inline:16px!important}

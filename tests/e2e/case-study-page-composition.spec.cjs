@@ -726,6 +726,14 @@ test('all thirteen pages center their content in the desktop reading canvas',asy
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/');
   await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
+  const sidebar=await page.locator('.sidebar').evaluate(node=>({
+    bottom:node.getBoundingClientRect().bottom,
+    last:node.querySelector('.toc-item:last-child').getBoundingClientRect().bottom,
+    padding:parseFloat(getComputedStyle(node).paddingBottom),
+    overflow:node.scrollHeight-node.clientHeight
+  }));
+  expect(Math.abs(sidebar.bottom-sidebar.padding-sidebar.last)).toBeLessThanOrEqual(1);
+  expect(sidebar.overflow).toBeLessThanOrEqual(1);
   for(let index=0;index<13;index++){
     await page.locator('.toc-item').nth(index).click();
     const geometry=await page.locator('.slide.on').evaluate(slide=>{
