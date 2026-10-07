@@ -4429,7 +4429,7 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 /* Desktop pages use the available width instead of a narrow, vertically stacked canvas. */
 @media(min-width:1181px){
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"]{
-  overflow-y:auto!important;
+  overflow-y:auto!important;overflow-anchor:none;
   --fm-page-inline:clamp(32px,3vw,64px);
   --fm-page-gap:24px;
   & .fm-next-story{max-width:1440px!important;gap:24px!important}

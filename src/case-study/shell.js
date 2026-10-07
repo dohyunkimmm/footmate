@@ -83,7 +83,12 @@
       // Reset after the newly active section determines document height.
       window.scrollTo({top:0,left:0,behavior:'instant'});
       requestAnimationFrame(()=>{
-        if(current===nextIndex)window.scrollTo({top:0,left:0,behavior:'instant'});
+        if(current!==nextIndex)return;
+        window.scrollTo({top:0,left:0,behavior:'instant'});
+        // The composition observer fits the new section on the following frame.
+        requestAnimationFrame(()=>{
+          if(current===nextIndex)window.scrollTo({top:0,left:0,behavior:'instant'});
+        });
       });
     }
   }
