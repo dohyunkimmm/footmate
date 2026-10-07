@@ -76,3 +76,15 @@ html::-webkit-scrollbar{
   width:0;
   height:0;
 }
+
+/* Tighten P3 table rows without changing typography or other sections. */
+@media(min-width:1101px){
+  #section-03 .journey-map article>div{min-height:80px}
+  #section-03 .journey-map .opportunity{min-height:90px}
+}
+
+/* Remove repeated spacing in P9 while retaining the existing text sizes. */
+@media(min-width:801px){
+  #section-09 .next-list li{padding:16px 0}
+  #section-09 .next-list p{margin-top:8px}
+}
