@@ -75,3 +75,24 @@ html[data-fm-next-case-study="true"][data-fm-reader-review="true"]{
 @media(max-width:900px){
   html[data-fm-next-case-study="true"][data-fm-reader-review="true"] .fm-next-kpi-table>div{grid-template-columns:1fr}
 }
+
+/* PC-first: one document scroller and a shared reading canvas for every section. */
+@media(min-width:901px){
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"]{
+  height:auto!important;min-height:100%;overflow-x:clip!important;overflow-y:scroll!important;scrollbar-gutter:stable;scroll-padding-block:70px 100px;
+  & body{height:auto!important;min-height:100dvh;overflow:visible!important}
+  & .fm-cs-shell{width:100%!important;max-width:none!important;height:auto!important;min-height:100dvh;grid-template-columns:232px minmax(0,1fr)!important;align-items:start}
+  & .sidebar{position:sticky!important;top:0;height:100dvh!important;max-height:100dvh;overflow-x:hidden!important;overflow-y:auto!important}
+  & .viewer{height:auto!important;min-height:100dvh;overflow:visible!important}
+  & .topbar{position:fixed!important;left:232px!important;right:0!important;top:0!important;height:54px!important;background:#fff!important;border-bottom:1px solid var(--fm-reader-line);padding-inline:28px!important}
+  & .track{position:relative!important;inset:auto!important;height:auto!important;min-height:100dvh;padding-block:54px 84px!important;overflow:visible!important;overflow-anchor:none}
+  & :is(.fm-next-story-slide[data-page-layout],.fm-next-cover-slide){height:auto!important;min-height:calc(100dvh - 138px)!important;max-height:none!important;padding:28px var(--fm-page-inline) 32px!important;overflow:visible!important;scrollbar-gutter:auto;align-items:flex-start!important}
+  & .slide:not(.on){display:none!important}
+  & :is(.fm-next-story,.fm-next-cover){width:100%!important;height:auto!important;max-height:none!important;max-width:1080px!important;margin-inline:auto!important;overflow:visible!important;zoom:1!important;transform:none!important}
+  & .cs-controls{position:fixed!important;left:232px!important;right:0!important;bottom:0!important;height:84px!important;padding:16px 28px!important;background:#fff!important;border-top:1px solid var(--fm-reader-line);grid-template-columns:226px minmax(0,1fr) 226px!important;gap:16px!important}
+  & .pbar{position:fixed!important;left:232px!important;right:0!important;bottom:0!important}
+}
+}
+@media(min-width:901px) and (max-width:1180px){
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"] .cs-controls{grid-template-columns:160px minmax(0,1fr) 160px!important;gap:12px!important}
+}
