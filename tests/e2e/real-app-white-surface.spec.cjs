@@ -20,6 +20,8 @@ function failures(page){
 
 async function openCleanApp(page,viewport){
   const errs=failures(page);
+  // Sample schedules depend on today; keep dates at the approved baseline day.
+  await page.clock.setFixedTime(new Date('2026-10-01T12:00:00Z'));
   await page.setViewportSize(viewport);
   await page.goto('/app',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
