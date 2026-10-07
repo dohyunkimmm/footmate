@@ -248,19 +248,25 @@ function configureHome(screen){
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="home"],.fm-ai-card[data-ai-assistant]');
   if(assistant){
     assistant.hidden=false;assistant.dataset.iaRole='primary-assistant';
+    let scope=assistant.querySelector('[data-desktop-ai-scope]');
+    if(!scope){scope=document.createElement('p');scope.className='fm-desktop-ai-scope';scope.dataset.desktopAiScope='true';assistant.querySelector('.fm-ai-form')?.before(scope)}
+    const profile=readState();
+    text(scope,`기본 추천 프로필: ${profile.region} · ${profile.position} · ${profile.level}. 아래 추천은 이 프로필 기준이며, AI 검색 조건은 경기 찾기에서 별도로 적용합니다.`);
     assistant.querySelectorAll('[data-ai-example]').forEach(example=>{example.hidden=false;example.classList.add('fm-ia-suggestion');if(!example.hasAttribute('aria-pressed'))example.setAttribute('aria-pressed','false');example.style.minHeight='44px'});
     assistant.querySelector('.fm-ai-examples')?.setAttribute('aria-label','바로 실행할 AI 경기 검색 예시');
     const conditions=assistant.querySelector('[data-ai-conditions]');
     if(conditions){
-      conditions.style.flexWrap='nowrap';
+      const desktop=matchMedia('(min-width:960px)').matches;
+      conditions.setAttribute('aria-label','최근 AI 검색 조건');
+      conditions.style.flexWrap=desktop?'wrap':'nowrap';
       conditions.style.gap='4px';
       conditions.style.overflow='hidden';
       const chips=[...conditions.querySelectorAll('span')];
-      chips.forEach(chip=>{chip.hidden=false;chip.style.padding='5px 5px';chip.style.fontSize='9px';chip.style.whiteSpace='nowrap';chip.style.flex='0 0 auto'});
+      chips.forEach(chip=>{chip.hidden=false;chip.style.padding=desktop?'6px 9px':'5px 5px';chip.style.fontSize=desktop?'13px':'9px';chip.style.whiteSpace='nowrap';chip.style.flex='0 0 auto'});
       requestAnimationFrame(()=>{
         const current=[...conditions.querySelectorAll('span')];
         current.forEach(chip=>{chip.hidden=false});
-        if(current.length===6&&conditions.scrollWidth>conditions.clientWidth)current[2].hidden=true;
+        if(!desktop&&current.length===6&&conditions.scrollWidth>conditions.clientWidth)current[2].hidden=true;
       });
     }
     observeHome(assistant);
@@ -273,9 +279,13 @@ function configureHome(screen){
     context.classList.toggle('fm-ia-selection-summary',!generic);
   }
   const head=screen.querySelector(':scope > .fm-next-section-head');
-  text(head?.querySelector('h2'),'For You');
+  text(head?.querySelector('h2'),matchMedia('(min-width:960px)').matches?'내 조건에 맞는 추천':'For You');
   text(head?.querySelector('p'),'내 설정을 기준으로 고른 추천 경기예요.');
   const headAction=head?.querySelector('[data-action="nav-discover"]');
+  if(matchMedia('(min-width:960px)').matches){
+    text(context?.querySelector('[data-action="nav-discover"]'),'경기 목록 보기');
+    text(headAction,'추천 전체 보기');
+  }
   if(headAction)headAction.hidden=true;
   const list=screen.querySelector(':scope > .fm-next-list');
   if(list){list.dataset.iaRole='personalized-recommendations';list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1))}

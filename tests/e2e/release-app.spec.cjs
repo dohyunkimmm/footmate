@@ -4,6 +4,34 @@ const AxeBuilder=require('@axe-core/playwright').default;
 const shot={animations:'disabled',caret:'hide',maxDiffPixels:50};
 const productionSmoke=['1','true','yes'].includes(String(process.env.PRODUCTION_SMOKE||'').toLowerCase());
 
+test('desktop review surface explains the sample and remains readable on laptops',async({page})=>{
+  const errs=await openCleanApp(page,{width:1366,height:768});
+  const context=page.getByRole('complementary',{name:'FootMate 서비스와 체험 안내'});
+  await expect(context).toBeVisible();
+  await expect(context).toContainText('풋살');
+  await expect(context).toContainText('실제 결제는 발생하지 않습니다');
+  for(const width of [1366,1440,1920]){
+    await page.setViewportSize({width,height:900});
+    await expectNoHorizontalOverflow(page);
+    expect((await page.locator('.fm-next-app').boundingBox()).width).toBe(560);
+  }
+  await setupToHome(page);
+  await expect(page.locator('[data-desktop-ai-scope]')).toContainText('기본 추천 프로필');
+  await expect(page.getByRole('heading',{name:'내 조건에 맞는 추천'})).toBeVisible();
+  await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
+  await page.getByRole('button',{name:'필터 열기'}).click();
+  await page.getByRole('combobox',{name:'날짜',exact:true}).selectOption('tomorrow');
+  await page.getByRole('combobox',{name:'시간',exact:true}).selectOption('21plus');
+  await page.getByRole('combobox',{name:'가격',exact:true}).selectOption('11000');
+  await page.getByRole('button',{name:'결과 보기'}).click();
+  await expect(page.locator('.fm-discovery-count')).toHaveText('0개 경기');
+  await expect(page.locator('[data-personalization-explanation]')).not.toBeVisible();
+  await page.getByRole('button',{name:'조건 넓히기'}).press('Tab');
+  expect(await page.evaluate(()=>getComputedStyle(document.activeElement).outlineColor)).toBe('rgb(23, 100, 69)');
+  await expectAxeClean(page,'#footmate-next');
+  expect(errs).toEqual([]);
+});
+
 function failures(page){
   const items=[];
   page.on('pageerror',error=>items.push(`pageerror: ${error.message}`));
