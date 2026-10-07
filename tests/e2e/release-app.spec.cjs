@@ -18,7 +18,10 @@ test('desktop review surface explains the sample and remains readable on laptops
   await setupToHome(page);
   await expect(page.locator('[data-desktop-ai-scope]')).toContainText('기본 추천 프로필');
   await expect(page.getByRole('heading',{name:'내 조건에 맞는 추천'})).toBeVisible();
+  await openDetail(page);
+  await page.getByRole('button',{name:'이전 화면',exact:true}).click();
   await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
+  await expect(page.locator('[data-personalization-explanation]')).toBeVisible();
   await page.getByRole('button',{name:'필터 열기'}).click();
   await page.getByRole('combobox',{name:'날짜',exact:true}).selectOption('tomorrow');
   await page.getByRole('combobox',{name:'시간',exact:true}).selectOption('21plus');
