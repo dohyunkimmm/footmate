@@ -2,7 +2,7 @@ const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 const titles=['Overview & Problem','Persona & JTBD','Journey Map','Scope & Priorities','IA & UX Flow','Design Decisions & Demo','Validation & Metrics','Reflection','Next Steps'];
 
-for(const width of [1440,800,390,320]){
+for(const width of [1920,1440,800,390,320]){
   test(`nine-stage navigation, evidence and layout at ${width}px`,async({page})=>{
     await page.setViewportSize({width,height:900});
     const errors=[];page.on('pageerror',error=>errors.push(error.message));

@@ -80,10 +80,12 @@
       note('향후 검증 계획입니다. 관찰된 성과나 확정된 일정으로 제시하지 않습니다. 2차 IA는 실제 막힘과 이탈 근거를 확인한 뒤 수정합니다.') +
       `<div class="demo-panel"><div><span class="eyebrow">FOOTMATE / PROJECT</span><h2>설계에서 구현까지 확인하기</h2><p>샘플 앱 · 코드와 문서 · 검증 근거</p></div><div class="demo-actions"><a class="primary-link" href="/demo">제품 체험하기 ↗</a><a class="secondary-link" href="https://github.com/dohyunkimmm/footmate" target="_blank" rel="noopener">GitHub 보기 ↗</a></div></div>` + evidence('BETA-MEASUREMENT-READINESS.md','다음 측정의 준비 조건')}
   ];
+  const labels = ['프로젝트','사용자','사용자 여정','우선순위','구조와 흐름','설계와 데모','검증과 지표','회고','다음 단계'];
+  const icons = ['◈','◎','↗','✓','▦','▷','▥','✎','→'];
   const toc = document.querySelector('.toc');
   const track = document.querySelector('.track');
   const dots = document.querySelector('.dots');
-  toc.innerHTML = sections.map((s,i) => `<button class="toc-item" type="button" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-copy"><span class="toc-t">${s.name}</span><span class="toc-s">${s.sub}</span></span></button>`).join('');
+  toc.innerHTML = sections.map((s,i) => `<button class="toc-item" type="button" data-index="${i}"><span class="toc-icon" aria-hidden="true">${icons[i]}</span><span class="toc-copy"><span class="toc-t">${labels[i]}</span><span class="toc-s">${String(i+1).padStart(2,'0')}</span></span></button>`).join('');
   track.innerHTML = sections.map((s,i) => `<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-label="${s.name}" hidden>${s.html}</section>`).join('');
   dots.innerHTML = sections.map((s,i) => `<button class="dot" type="button" data-index="${i}" aria-label="${i+1}번 섹션 · ${s.name}"></button>`).join('');
   const slides = [...track.children];
@@ -98,6 +100,10 @@
     dots.querySelectorAll('button').forEach((button,i) => { button.classList.toggle('on',i===current); if(i===current)button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current'); });
     const position = `${String(current+1).padStart(2,'0')} / 09`;
     document.querySelector('.topbar-count').textContent = position;
+    document.querySelector('.current-section-name').textContent = sections[current].name;
+    document.querySelector('.rail-current').textContent = labels[current] + ' · ' + sections[current].name;
+    document.querySelector('.rail-position').textContent = position;
+    document.querySelector('.rail-progress span').style.width = ((current+1)/9*100) + '%';
     document.querySelector('.reader-position').textContent = `${position} · ${sections[current].name}`;
     document.querySelector('.pbar-fill').style.width = `${(current+1)/9*100}%`;
     prev.disabled = current===0; next.disabled = current===8;
@@ -116,6 +122,22 @@
     if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing||event.target.closest('input,textarea,select,[contenteditable],summary,a,.table-wrap'))return;
     if(event.key==='ArrowRight'||event.key==='ArrowLeft') { event.preventDefault(); goTo(current+(event.key==='ArrowRight'?1:-1)); }
   });
+  const searchForm = document.querySelector('.section-search');
+  const searchInput = document.querySelector('#section-query');
+  const searchResults = document.querySelector('.search-results');
+  function searchSections() {
+    const query = searchInput.value.trim().toLocaleLowerCase();
+    searchResults.replaceChildren();
+    searchResults.hidden = !query;
+    if(!query) return;
+    const matches = sections.map((s,i)=>({s,i})).filter(({s,i})=>(labels[i]+' '+s.name+' '+slides[i].textContent).toLocaleLowerCase().includes(query));
+    if(!matches.length) { searchResults.textContent = '일치하는 섹션이 없습니다. 다른 검색어를 입력해 주세요.'; return; }
+    matches.forEach(({s,i})=>{ const b=document.createElement('button'); b.type='button'; b.textContent=labels[i]+' · '+s.name; b.addEventListener('click',()=>{goTo(i);searchResults.hidden=true;}); searchResults.append(b); });
+  }
+  searchForm.addEventListener('submit',event=>{event.preventDefault();searchSections();});
+  searchInput.addEventListener('input',searchSections);
+  searchInput.addEventListener('keydown',event=>{if(event.key==='Escape')searchResults.hidden=true;});
+  document.addEventListener('click',event=>{if(!searchForm.contains(event.target))searchResults.hidden=true;});
   window.goTo = goTo;
   // Preserve the existing product behavior: refresh starts at Overview;
   // direct links and browser history retain their requested section.
@@ -123,4 +145,5 @@
   if(reloaded)history.scrollRestoration='manual';
   goTo(reloaded?0:fromUrl(),{historyMode:'replace',focus:false});
   if(reloaded)window.scrollTo({top:0,behavior:'instant'});
+  window.addEventListener('load',()=>window.scrollTo({top:0,behavior:'instant'}),{once:true});
 })();
