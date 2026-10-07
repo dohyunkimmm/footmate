@@ -208,5 +208,12 @@
   const restore=()=>goTo(sectionFromUrl(),{history:'replace'});
   window.addEventListener('popstate',restore);
   window.addEventListener('hashchange',restore);
-  goTo(sectionFromUrl(),{history:'replace'});
+  // A reload starts the case study at Overview; direct links and history keep their section.
+  const isReload=performance.getEntriesByType('navigation')[0]?.type==='reload';
+  if(isReload)history.scrollRestoration='manual';
+  goTo(isReload?0:sectionFromUrl(),{history:'replace'});
+  if(isReload){
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));
+  }
 })();
