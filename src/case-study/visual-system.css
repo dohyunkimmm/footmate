@@ -4415,8 +4415,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .track{position:relative!important;inset:auto!important;height:auto!important;min-height:100dvh;padding-block:54px 84px!important;overflow:visible!important;overflow-anchor:none}
   & :is(.fm-next-story-slide[data-page-layout],.fm-next-cover-slide){height:auto!important;min-height:calc(100dvh - 138px)!important;max-height:none!important;padding:28px var(--fm-page-inline) 32px!important;overflow:visible!important;scrollbar-gutter:auto;align-items:flex-start!important}
   & .slide:not(.on){display:none!important}
-  /* Center the shorter cover in the reading canvas; tall content still grows and scrolls. */
-  & .fm-next-cover-slide{justify-content:center!important}
+  /* Center every page in the reading canvas; tall content still grows and scrolls. */
+  & :is(.fm-next-story-slide[data-page-layout],.fm-next-cover-slide){justify-content:center!important}
   & :is(.fm-next-story,.fm-next-cover){width:100%!important;height:auto!important;max-height:none!important;max-width:1080px!important;margin-inline:auto!important;overflow:visible!important;zoom:1!important;transform:none!important}
   & .cs-controls{position:fixed!important;left:232px!important;right:0!important;bottom:0!important;height:84px!important;padding:16px 28px!important;background:#fff!important;border-top:1px solid var(--fm-reader-line);grid-template-columns:226px minmax(0,1fr) 226px!important;gap:16px!important}
   & .pbar{position:fixed!important;left:232px!important;right:0!important;bottom:0!important}
@@ -4502,7 +4502,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .fm-cs-shell{width:calc(100% - 48px)!important;max-width:1280px!important;margin-inline:auto!important;grid-template-columns:200px minmax(0,1fr)!important}
   & .sidebar{border-left:1px solid var(--fm-reader-line)}
   & .topbar,& .cs-controls,& .pbar{left:calc(max(24px,(100vw - 1280px)/2) + 200px)!important;right:max(24px,(100vw - 1280px)/2)!important}
-  & .toc-item{padding:9px 12px!important;gap:7px!important}
+  & .toc{flex:1 0 auto!important;grid-template-rows:repeat(13,minmax(max-content,1fr))!important}
+  & .toc-item{padding:9px 12px!important;gap:7px!important;align-content:center!important}
   & .toc-t{font-size:11px!important}
   & .toc-s{font-size:10px!important;line-height:1.5!important}
   & .sb-brand{padding-inline:16px!important}
