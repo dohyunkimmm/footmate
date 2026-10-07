@@ -161,6 +161,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .fm-editorial-supplement{display:block!important;grid-column:1 / -1!important;margin:0!important}
   & .fm-editorial-supplement:has(>summary:only-child){display:none!important}
   & .fm-editorial-supplement>summary{display:block!important;width:fit-content;min-height:40px;box-sizing:border-box;padding:9px 14px;border:1px solid #6f8778;border-radius:8px;background:#edf4ee;color:#073d2d;font-size:13px;line-height:1.5}
+  & .fm-next-story-slide[data-page-number="4"] .fm-editorial-supplement{display:contents!important}
+  & .fm-next-story-slide[data-page-number="4"] .fm-editorial-supplement>summary{display:none!important}
   & .fm-editorial-supplement>summary::after{margin-left:14px}
   & .fm-editorial-supplement[open]>summary{margin-bottom:16px}
   & .fm-p1-validation-split{grid-template-columns:minmax(0,1.1fr) minmax(0,1.2fr)!important;gap:32px!important}

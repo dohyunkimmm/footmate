@@ -365,14 +365,15 @@ test('final rendered copy keeps descriptions distinct and removes duplicate deta
 
 
 test('desktop composition audit captures every section after entry motion settles',async({page})=>{
-  test.setTimeout(90000);
+  test.setTimeout(60000);
+  await page.emulateMedia({reducedMotion:'reduce'});
   await page.setViewportSize({width:1440,height:1000});await page.goto('/');
   await page.waitForFunction(()=>document.documentElement.dataset.fmPageComposition==='true');
   await page.evaluate(()=>document.fonts.ready);
   for(let index=1;index<13;index++){
     await page.locator('.toc-item').nth(index).click();
     const slide=page.locator('.slide.on');
-    await slide.evaluate(async node=>{await Promise.all(node.getAnimations({subtree:true}).filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});
+    // Capture stable layout; animation behavior has separate reduced-motion coverage.
     await expectReadableSection(slide);
     if([9,11,12].includes(index)){
       const selectors=index===9?['.fm-p0-recovery-map','.fm-evidence-recovery-strip']:index===11?['.fm-p1-metrics','.fm-p1-evidence-grid']:['.fm-p1-release-map>article'];
