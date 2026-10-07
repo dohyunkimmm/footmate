@@ -91,6 +91,8 @@
     if(!note.querySelector('.fm-next-kpi-open'))note.insertAdjacentHTML('beforeend',' <button class="fm-next-kpi-open" type="button">8개 지표의 계산·관찰 기준 보기 ↗</button>');
     validation.querySelector('.fm-next-kpi-dialog')?.remove();validation.insertAdjacentHTML('beforeend',kpiDialogHTML());
     const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=note.querySelector('.fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
+    // Mobile exposes all sections; the modal must not inherit an inactive slide's aria-hidden.
+    if(dialog)document.body.append(dialog);
     open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',()=>dialog?.close());dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
   }
 

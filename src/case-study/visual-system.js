@@ -499,6 +499,8 @@
     if(!note.querySelector('.fm-next-kpi-open'))note.insertAdjacentHTML('beforeend',' <button class="fm-next-kpi-open" type="button">8개 지표의 계산·관찰 기준 보기 ↗</button>');
     validation.querySelector('.fm-next-kpi-dialog')?.remove();validation.insertAdjacentHTML('beforeend',kpiDialogHTML());
     const dialog=validation.querySelector('.fm-next-kpi-dialog'),open=note.querySelector('.fm-next-kpi-open'),close=dialog?.querySelector('.fm-next-kpi-close');
+    // Mobile exposes all sections; the modal must not inherit an inactive slide's aria-hidden.
+    if(dialog)document.body.append(dialog);
     open?.addEventListener('click',()=>dialog?.showModal());close?.addEventListener('click',()=>dialog?.close());dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
   }
 
@@ -3057,7 +3059,10 @@
     dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)close();}});
     dialog.addEventListener('keydown',event=>{event.stopPropagation();});
     dialog.querySelectorAll('[data-screen-mode]').forEach(button=>button.addEventListener('click',()=>{
-      dialog.classList.toggle('is-focus',button.dataset.screenMode==='focus');
+      const focus=button.dataset.screenMode==='focus';
+      dialog.classList.toggle('is-focus',focus);
+      const image=dialog.querySelector('img');
+      image.alt=focus?dialog.dataset.focusAlt:dialog.dataset.fullAlt;
       dialog.querySelectorAll('[data-screen-mode]').forEach(node=>node.setAttribute('aria-pressed',String(node===button)));
     }));
     [5,6,8].forEach(index=>{
@@ -3068,6 +3073,13 @@
       button.addEventListener('click',()=>{
         dialog.querySelector('h2').textContent=caption.querySelector('b')?.textContent||'제품 화면';
         const image=dialog.querySelector('img');image.src=source.currentSrc||source.src;image.alt=source.alt;
+        dialog.dataset.fullAlt=source.alt;
+        dialog.dataset.focusAlt=index===6?'참가 결정 체크 · 생활권, 남은 자리, 경기 강도':index===8?'경기 전후 안내 · 참가 확정, 체크인 시점, 경기 후 행동':source.alt;
+        // Crop coordinates refer to the versioned 390 × 844 source image.
+        // Keep its native resolution rather than stretching a low-resolution capture.
+        const crop=index===6?{top:350,height:340}:index===8?{top:396,height:260}:{top:0,height:390};
+        dialog.style.setProperty('--fm-screen-crop-top',String(crop.top));
+        dialog.style.setProperty('--fm-screen-crop-height',String(crop.height));
         dialog.classList.remove('is-focus');dialog.querySelectorAll('[data-screen-mode]').forEach(node=>node.setAttribute('aria-pressed',String(node.dataset.screenMode==='full')));
         dialog.showModal();
       });caption.append(button);
@@ -3156,8 +3168,8 @@
     installEditorialInteractions(slides);
     window.installFootMateEditorialFinish(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.6';
-    // Desktop is a fixed slide: fit the complete composition inside the viewport.
+    html.dataset.footmateCaseStudyRelease='5.4.7';
+    // Preserve readable type. Long desktop sections scroll inside the viewer.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;
       slides.forEach(slide=>{
@@ -3173,21 +3185,10 @@
         content.style.setProperty('margin-inline','auto','important');
         const available=slide.clientHeight-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom);
         const height=content.getBoundingClientRect().height;
-        if(height>available&&available>0){
-          let scale=Math.min(1,(available-2)/height);
-          content.style.zoom=String(scale);
-          for(let attempt=0;attempt<4;attempt++){
-            const actual=content.getBoundingClientRect().height;
-            if(actual<=available-1)break;
-            scale*=((available-2)/actual);
-            content.style.zoom=String(scale);
-          }
-        }
         if(slide.classList.contains('fm-next-story-slide')&&window.matchMedia('(min-width:1181px) and (min-height:760px)').matches){
           const spare=Math.max(0,available-content.getBoundingClientRect().height);
           content.style.setProperty('--fm-story-offset',Math.min(72,spare/2)+'px');
         }
-        slide.scrollTop=0;
       });
     };
     let frame;
@@ -3216,7 +3217,7 @@
     if(!document.querySelector('.fm-reader-guide')){
       const guide=document.createElement('p');guide.className='fm-reader-guide';
       const desktop=document.createElement('span');desktop.className='fm-reader-guide-desktop';
-      desktop.textContent='13개 섹션 · 왼쪽 목차 또는 아래 이전·다음 버튼으로 읽어보세요.';
+      desktop.textContent='13개 섹션 · 왼쪽 목차 또는 아래 이전·다음 버튼으로 이동하고, 긴 내용은 아래로 스크롤해 읽어보세요.';
       const mobile=document.createElement('span');mobile.className='fm-reader-guide-mobile';
       mobile.textContent='아래로 스크롤하며 13개 섹션을 읽어보세요.';
       guide.append(desktop,mobile);cover.before(guide);

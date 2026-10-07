@@ -1,5 +1,18 @@
 const {test,expect}=require('@playwright/test');
 
+async function expectReadableSection(slide){
+  const layout=await slide.evaluate(node=>{
+    const story=node.querySelector('.fm-next-story,.fm-next-cover');
+    const desktop=innerWidth>900;
+    return {desktop,zoom:Number(getComputedStyle(story).zoom)||1,
+      overflow:getComputedStyle(node).overflowY,horizontal:node.scrollWidth-node.clientWidth,
+      leadFont:parseFloat(getComputedStyle(node.querySelector('.fm-next-story-lead,.fm-next-cover-lead')).fontSize)};
+  });
+  expect(layout.horizontal).toBeLessThanOrEqual(1);
+  if(layout.desktop){expect(layout.zoom).toBe(1);expect(layout.overflow).toBe('auto');expect(layout.leadFont).toBeGreaterThanOrEqual(15);}
+}
+
+
 async function openPreview(page,viewport){
   await page.setViewportSize(viewport);
   await page.goto('/',{waitUntil:'domcontentloaded'});
@@ -73,7 +86,7 @@ test('P1 centers editorial copy with the product UI and aligns proof description
     expect(Math.abs(card.bottom-geometry.cards[0].bottom)).toBeLessThanOrEqual(1);
     expect(Math.abs(card.descriptionTop-geometry.cards[0].descriptionTop)).toBeLessThanOrEqual(1);
   }
-  expect(await slide.evaluate(node=>node.scrollHeight-node.clientHeight)).toBeLessThanOrEqual(1);
+  await expectReadableSection(slide);
   const screenshot=await page.screenshot({type:'jpeg',quality:75,animations:'disabled'});
   console.log('P1_COVER_VISUAL '+screenshot.toString('base64'));
 });

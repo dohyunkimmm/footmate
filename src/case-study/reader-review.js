@@ -6,7 +6,7 @@
     if(!document.querySelector('.fm-reader-guide')){
       const guide=document.createElement('p');guide.className='fm-reader-guide';
       const desktop=document.createElement('span');desktop.className='fm-reader-guide-desktop';
-      desktop.textContent='13개 섹션 · 왼쪽 목차 또는 아래 이전·다음 버튼으로 읽어보세요.';
+      desktop.textContent='13개 섹션 · 왼쪽 목차 또는 아래 이전·다음 버튼으로 이동하고, 긴 내용은 아래로 스크롤해 읽어보세요.';
       const mobile=document.createElement('span');mobile.className='fm-reader-guide-mobile';
       mobile.textContent='아래로 스크롤하며 13개 섹션을 읽어보세요.';
       guide.append(desktop,mobile);cover.before(guide);

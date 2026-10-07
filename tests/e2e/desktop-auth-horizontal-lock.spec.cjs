@@ -27,6 +27,7 @@ async function openDesktopAuth(page){
   await page.getByRole('button',{name:'참가하기'}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
   await expect(page.locator('[data-screen="auth"]')).toHaveClass(/fm-next-auth-v3/);
+  await expect(page.locator('.fm-next-stage .fm-desktop-context')).toBeVisible();
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
 }
 
