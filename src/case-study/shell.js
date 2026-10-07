@@ -5,6 +5,9 @@
   const bar=document.querySelector('.pbar-fill');
   const focusableSelector='a[href],button,input,select,textarea,iframe,[tabindex]';
   let current=0;
+  let scrollResetEpoch=0;
+  let scrollResetTimer;
+  function cancelScrollReset(){scrollResetEpoch+=1;clearTimeout(scrollResetTimer);}
 
   function allSlides(){return [...document.querySelectorAll('.track .slide')]}
   function slides(){return allSlides().filter(slide=>!slide.hidden&&slide.dataset.csHidden!=='true')}
@@ -81,15 +84,19 @@
     if(options.history!==false)syncSectionUrl(options.history||'push');
     if(changed){
       // Reset after the newly active section determines document height.
+      cancelScrollReset();
+      const epoch=scrollResetEpoch;
+      const reset=()=>{if(current===nextIndex&&scrollResetEpoch===epoch)window.scrollTo({top:0,left:0,behavior:'instant'});};
       window.scrollTo({top:0,left:0,behavior:'instant'});
       requestAnimationFrame(()=>{
-        if(current!==nextIndex)return;
-        window.scrollTo({top:0,left:0,behavior:'instant'});
+        if(current!==nextIndex||scrollResetEpoch!==epoch)return;
+        reset();
         // The composition observer fits the new section on the following frame.
-        requestAnimationFrame(()=>{
-          if(current===nextIndex)window.scrollTo({top:0,left:0,behavior:'instant'});
-        });
+        requestAnimationFrame(reset);
       });
+      // A native PageDown already in flight can finish after the layout frames.
+      // Fresh reading input cancels this final reset instead of losing its scroll.
+      scrollResetTimer=setTimeout(reset,250);
     }
   }
 
@@ -190,6 +197,11 @@
   prev?.addEventListener('click',()=>goTo(current-1));
   next?.addEventListener('click',()=>goTo(current+1));
   window.addEventListener('keydown',handleKeydown,{capture:true});
+  window.addEventListener('wheel',cancelScrollReset,{capture:true,passive:true});
+  window.addEventListener('touchstart',cancelScrollReset,{capture:true,passive:true});
+  window.addEventListener('keydown',event=>{
+    if(['PageDown','PageUp','ArrowDown','ArrowUp',' '].includes(event.key))cancelScrollReset();
+  },{capture:true});
 
   const observer=new MutationObserver(()=>bindFrameKeyboard());
   observer.observe(document.documentElement,{childList:true,subtree:true});
