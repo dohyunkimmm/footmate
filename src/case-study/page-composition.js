@@ -67,11 +67,11 @@
   {
     "nav": "Recommendations",
     "navDesc": "Preferences & Reasons",
-    "title": "조건을 바꾸면 추천 순위와 이유도 달라집니다.",
-    "desc": "점수만 보여주는 대신, 선택에 도움이 되는 근거와 조정 방법을 제시했습니다.",
+    "title": "추천이 높아도 불리한 차이는 숨기지 않습니다.",
+    "desc": "점수보다 선택 근거를 우선하고, 레벨 차이가 크면 경기 강도 확인을 명시했습니다.",
     "keywords": [
-      "입력 반영",
-      "설명 가능성",
+      "선택 근거",
+      "강도 차이",
       "직접 조정"
     ],
     "layout": "product"
@@ -209,13 +209,13 @@
     const annotations=slides[5].querySelectorAll('.fm-p0-annotations li');
     [
       ['저장 프로필','지역·레벨·포지션을 다음 탐색의 시작 조건으로 사용'],
-      ['선호 지역 · 시간 · 경기 형식','선호 조건 일치를 추천 점수에 추가 반영'],
+      ['선호 지역 · 시간 · 경기 형식','선호 조건 일치를 추천 정렬 신호에 반영'],
       ['최근 확인 이력','확인한 경기를 추천의 보조 신호로 반영'],
       ['현재 조건 · 추천 이유','AI 조건 확인·수정·해제 · 추천 로직이 후보·순위 결정']
     ].forEach(([title,copy],index)=>{const node=annotations[index];if(node){node.querySelector('b').textContent=title;node.querySelector('p').textContent=copy;}});
     html(5,'.fm-next-cs-note',rows([
       ['저장 범위','현재 브라우저 · 회원 DB·기기 간 동기화 미연동'],
-      ['판단 기준','내부 점수는 정렬에 사용 · 조건 일치 이유로 선택 지원'],
+      ['판단 기준','내부 점수는 정렬에 사용 · 레벨 차이가 크면 경기 강도 차이 확인을 명시'],
       ['사용자 제어','현재 조건과 AI 해석 결과 확인 후 수정·재탐색']
     ]));
     text(6,'.is-detail figcaption b','경기 상세 · 기존 제품 화면');
@@ -412,7 +412,7 @@
     installEditorialInteractions(slides);
     window.installFootMateEditorialFinish(slides);
     html.dataset.fmPageComposition='true';
-    html.dataset.footmateCaseStudyRelease='5.4.6';
+    html.dataset.footmateCaseStudyRelease='5.4.7';
     // Desktop is a fixed slide: fit the complete composition inside the viewport.
     const fitSlides=()=>{
       const desktop=window.matchMedia('(min-width:901px)').matches;
