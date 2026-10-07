@@ -117,5 +117,10 @@
     if(event.key==='ArrowRight'||event.key==='ArrowLeft') { event.preventDefault(); goTo(current+(event.key==='ArrowRight'?1:-1)); }
   });
   window.goTo = goTo;
-  goTo(fromUrl(),{historyMode:'replace',focus:false});
+  // Preserve the existing product behavior: refresh starts at Overview;
+  // direct links and browser history retain their requested section.
+  const reloaded = performance.getEntriesByType('navigation')[0]?.type==='reload';
+  if(reloaded)history.scrollRestoration='manual';
+  goTo(reloaded?0:fromUrl(),{historyMode:'replace',focus:false});
+  if(reloaded)window.scrollTo({top:0,behavior:'instant'});
 })();
