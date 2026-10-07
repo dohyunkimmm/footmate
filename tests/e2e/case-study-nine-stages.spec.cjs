@@ -263,8 +263,8 @@ for(const width of [390,801,1101,1440]){
     test('typography adaptation '+mode+' at '+width+'px',async({page},testInfo)=>{
       await page.setViewportSize({width,height:900});
       await page.goto('/');await page.evaluate(()=>document.fonts.ready);
-      await page.addStyleTag({content:mode==='user-text-spacing'?
-        '.slide *{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.slide p{margin-bottom:2em!important}':''});
+      if(mode==='user-text-spacing')await page.addStyleTag({content:
+        '.slide *{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.slide p{margin-bottom:2em!important}'});
       if(mode==='text-200-percent'){
         await page.locator('.slide *').evaluateAll(nodes=>{
           const values=nodes.map(node=>{const s=getComputedStyle(node);return {node,size:parseFloat(s.fontSize),line:parseFloat(s.lineHeight),tracking:parseFloat(s.letterSpacing)};});
