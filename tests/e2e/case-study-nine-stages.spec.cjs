@@ -49,6 +49,9 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page.locator('.slide:visible')).toContainText('실제 이용자 기준값과 목표치는 아직 없습니다.');
   await page.getByText('8개 KPI의 계산·관찰 기준',{exact:true}).click();
   await expect(page.locator('.slide:visible details tbody tr')).toHaveCount(8);
+  await page.reload();
+  await expect(page).toHaveURL(/#section-01$/);
+  await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
   await expect(page.getByRole('link',{name:'제품 직접 체험하기',exact:true})).toHaveAttribute('href','/demo');
 });
