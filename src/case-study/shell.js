@@ -19,10 +19,10 @@
 
   function setSlideInteractive(slide,isActive){
     slide.classList.toggle('on',isActive);
-    const isReadable=isActive||window.matchMedia('(max-width:900px)').matches;
-    slide.setAttribute('aria-hidden',isReadable?'false':'true');
+
+    slide.setAttribute('aria-hidden',isActive?'false':'true');
     slide.querySelectorAll(focusableSelector).forEach(element=>{
-      if(isReadable){
+      if(isActive){
         if(element.dataset.fmCaseStudyTabindex==='none')element.removeAttribute('tabindex');
         else if(element.dataset.fmCaseStudyTabindex!==undefined)element.setAttribute('tabindex',element.dataset.fmCaseStudyTabindex);
         delete element.dataset.fmCaseStudyTabindex;
@@ -179,7 +179,7 @@
 
   window.goTo=goTo;
   window.refreshCaseStudyNavigation=refresh;
-  window.matchMedia('(max-width:900px)').addEventListener('change',refresh);
+
   document.documentElement.dataset.fmNextCaseStudy='true';
   injectStoryAlignment();
 
