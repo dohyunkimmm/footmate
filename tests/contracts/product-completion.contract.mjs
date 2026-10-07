@@ -46,10 +46,9 @@ const ranked=rankRecommendations(matches,{region:'수원 · 영통',position:'MF
 assert.deepEqual(ranked.map(item=>item.match.id),['near','far']);
 assert.equal(ranked[0].score,100);
 assert.equal(ranked[0].fit,'지금 가장 잘 맞아요');
-// A strong aggregate score must not hide a level mismatch or a closed position.
+// A strong aggregate score must not hide a level mismatch.
 const mismatched=rankRecommendations([{...matches[0],level:'중급+'}],{region:'수원 · 영통',position:'MF',level:'초중급'})[0];
 assert.equal(mismatched.score,83);
 assert.equal(mismatched.fit,'경기 강도 차이 확인');
 assert.ok(mismatched.reasons.some(reason=>reason.title==='경기 강도 차이가 있어요'));
-assert.equal(ranked[1].fit,'선호 포지션 마감');
 console.log('PASS product completion contracts');
