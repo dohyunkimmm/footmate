@@ -185,8 +185,8 @@ for(const [name,viewport,expectedRecoveryGap] of [
     const closing=page.locator('.slide.on .fm-p1-release-next');
     await expect(closing).toBeVisible();
     await expect(closing.locator('a')).toHaveCount(0);
-    // Desktop sections retain readable type and scroll within the fixed navigation.
-    if(name==='desktop')await closing.scrollIntoViewIfNeeded();
+    // Scroll the readable section so its closing summary is reachable on both layouts.
+    await closing.scrollIntoViewIfNeeded();
     await expect(closing).toBeInViewport();
     const finish=await page.locator('.slide.on').evaluate(slide=>{
       const final=slide.querySelector('.fm-p1-release-next');
