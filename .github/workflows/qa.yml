@@ -19,7 +19,7 @@ jobs:
       production: ${{ steps.impact.outputs.production }}
       production_smoke: ${{ steps.impact.outputs.production_smoke }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with: {fetch-depth: 0}
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
@@ -71,7 +71,7 @@ jobs:
     if: needs.impact.outputs.runtime == 'false'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with: {fetch-depth: 0}
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
@@ -102,7 +102,7 @@ jobs:
     if: needs.impact.outputs.runtime == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Check global release identity
@@ -163,7 +163,7 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.55.1-noble
       options: --ipc=host
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Install browser QA dependencies
@@ -215,7 +215,7 @@ jobs:
     if: github.event_name == 'push' && needs.impact.outputs.production_smoke == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v5
         with: {node-version: '24', package-manager-cache: false}
       - name: Wait for exact Vercel deployment
