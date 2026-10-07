@@ -2663,7 +2663,6 @@
     }
     [[1,'alternatives','탐색 대안과 선택 기준 보기 ↗','.fm-next-cs-quote'],
      [10,'ai','AI 상태별 탐색 예시 보기 ↗','.fm-next-cs-note'],
-     [2,'tasks','과업과 요구사항 연결 보기 ↗','.fm-p1-jtbd-caveat'],
      [3,'priority','우선순위 판단 보기 ↗','.fm-next-story-aside'],
      [6,'compare','두 경기 비교 예시 보기 ↗','.fm-cs-detail-rationale'],
      [7,'join','참가 결과별 행동 보기 ↗','.fm-p1-auth-preserve'],
@@ -3045,11 +3044,11 @@
     const supplements=[[1,'.fm-next-story-aside','대안과 검증 범위'],[3,'.fm-next-story-aside','우선순위 판단 근거'],[4,'.fm-next-story-aside','인증 시점과 제약'],[5,'.fm-page-product-notes .fm-next-cs-note','추천 설계 원칙'],[7,'.fm-next-story-aside','구현·검증 범위'],[8,'.fm-page-product-notes .fm-next-cs-note','운영 정책과 복구'],[10,'.fm-next-story-aside','연결 범위와 설계 기준']];
     supplements.forEach(([index,selector,text])=>{
       const node=slides[index].querySelector(selector);if(!node)return;
-      const details=document.createElement('details');details.className='fm-editorial-supplement';details.open=desktop.matches;
+      const details=document.createElement('details');details.className='fm-editorial-supplement';details.open=index===3&&desktop.matches;
       const summary=document.createElement('summary');summary.textContent=text;
       node.before(details);details.append(summary,node);disclosures.push(details);
     });
-    desktop.addEventListener('change',()=>disclosures.forEach(node=>node.open=desktop.matches));
+    desktop.addEventListener('change',()=>disclosures.forEach(node=>node.open=node.closest('.slide')?.dataset.pageNumber==='4'&&desktop.matches));
     slides.forEach(slide=>slide.querySelectorAll('details').forEach(node=>node.addEventListener('toggle',()=>window.dispatchEvent(new Event('resize')))));
 
     const dialog=document.createElement('dialog');dialog.className='fm-screen-dialog';dialog.setAttribute('aria-labelledby','fm-screen-dialog-title');
@@ -3214,6 +3213,44 @@
     if(document.documentElement.dataset.fmEvidenceDetails!=='true'||document.documentElement.dataset.fmPageUpgrades!=='true')return false;
     const cover=document.querySelector('.fm-next-cover-flow');
     if(!cover)return false;
+    const detail=document.querySelector('.fm-evidence-detail-layout');
+    const focus=detail?.querySelector('.fm-next-cs-detail-order .fm-focus-detail');
+    if(focus)detail.insertBefore(focus,detail.firstChild);
+    const problem=document.querySelector('.fm-p0-problem-map');
+    const problemContext=document.querySelector('.fm-next-story-slide[data-page-number="2"] .fm-next-story-aside');
+    if(problem&&problemContext){problemContext.classList.add('fm-reader-problem-context');problem.appendChild(problemContext);}
+    const architecture=document.querySelector('.fm-p0-architecture');
+    const boundary=document.querySelector('.fm-next-story-slide[data-page-number="11"] .fm-next-story-aside .fm-next-cs-note');
+    if(architecture&&boundary){
+      boundary.classList.add('fm-reader-boundary-context');
+      architecture.parentElement.appendChild(boundary);
+      const example=architecture.closest('.fm-next-story')?.querySelector(':scope>.fm-page-upgrade-open');
+      if(example)boundary.appendChild(example);
+    }
+    const alternatives=problem?.closest('.fm-next-story')?.querySelector(':scope>.fm-page-upgrade-open');
+    if(alternatives&&problemContext)problemContext.appendChild(alternatives);
+    const metricsSlide=document.querySelector('.fm-next-story-slide[data-page-number="12"]');
+    const metricsNote=metricsSlide?.querySelector('.fm-next-story-aside .fm-p1-validation-note');
+    const metricActions=metricsSlide?.querySelector('.fm-next-kpi-disclosure-row');
+    if(metricsNote&&metricActions)metricActions.appendChild(metricsNote);
+    const learningTitle=document.querySelector('.fm-next-story-slide[data-page-number="13"] h2 .fm-page-title-line');
+    if(learningTitle)learningTitle.textContent='설계 학습과 다음 검증 기준을 정리했습니다.';
+    const next=document.querySelector('.fm-p1-release-next');
+    const nextRecord=next?.querySelector('dl');
+    const nextButton=next?.querySelector('[data-page-upgrade="next"]');
+    if(nextRecord&&nextButton){
+      const summary=document.createElement('p');summary.className='fm-reader-next-summary';
+      summary.textContent='경기 비교 · 실패 후 재시도 · 평가 후 재탐색';
+      nextRecord.replaceWith(summary);
+      const learningProof=document.querySelector('.fm-p1-release-map .fm-proof-link');
+      if(learningProof)next.insertBefore(learningProof,nextButton);
+      nextButton.addEventListener('click',()=>{
+        const content=document.querySelector('#fm-page-upgrade-dialog .fm-improvement-content');
+        if(content&&!content.querySelector('.fm-reader-next-record')){
+          const record=nextRecord.cloneNode(true);record.classList.add('fm-reader-next-record');content.appendChild(record);
+        }
+      });
+    }
     if(!document.querySelector('.fm-reader-guide')){
       const guide=document.createElement('p');guide.className='fm-reader-guide';
       const desktop=document.createElement('span');desktop.className='fm-reader-guide-desktop';

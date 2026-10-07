@@ -205,7 +205,8 @@ for(const [name,viewport,expectedRecoveryGap] of [
         controls:controls&&{top:controls.top,bottom:controls.bottom}
       };
     });
-    expect(finish.visibleRows).toBe(2);
+    await expect(closing.locator('.fm-reader-next-summary')).toContainText('경기 비교');
+    await expect(closing.getByRole('button',{name:'다음 검증과 결정 보기 ↗',exact:true})).toBeVisible();
     expect(finish.focusBg).not.toBe(finish.quietBg);
     if(name==='desktop'){
       expect(finish.controls).toBeTruthy();
