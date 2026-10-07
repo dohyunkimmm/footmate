@@ -160,7 +160,7 @@ html::-webkit-scrollbar{
 .next-list li:nth-child(n+3) .eyebrow{color:var(--muted)}
 @media(min-width:801px){
   #section-01 .overview-grid{grid-template-columns:1fr 1fr}
-  #section-01 .product-figure img{height:430px;object-fit:contain}
+  #section-01 .product-figure img{height:430px;object-fit:cover}
   .ia-branches{margin-top:34px}
   .ia-root:after{content:'';position:absolute;width:1px;height:18px;background:var(--cs-border-strong);top:100%;left:50%}
   .ia-branches:before{content:'';position:absolute;left:calc((100% - 32px)/6);right:calc((100% - 32px)/6);top:-17px;border-top:1px solid var(--cs-border-strong)}
