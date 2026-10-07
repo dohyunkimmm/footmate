@@ -120,6 +120,8 @@ test('decision evidence lets readers change real base-ranking inputs without wri
   await page.setViewportSize({width:1440,height:900});await page.goto('/');
   await page.waitForFunction(()=>document.documentElement.dataset.fmDecisionEvidence==='true');
   await page.locator('.toc-item').nth(5).click();
+  await expect(page.locator('.slide.on')).toContainText('추천이 높아도 불리한 차이는 숨기지 않습니다.');
+  await expect(page.locator('.slide.on')).toContainText('경기 강도 차이 확인');
   const figure=page.locator('.slide.on .is-recommendation');
   await expect(figure).toHaveAttribute('data-interactive-ready','true');
   const storage=await page.evaluate(()=>JSON.stringify({...localStorage}));

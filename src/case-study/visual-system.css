@@ -2210,6 +2210,18 @@ html[data-fm-next-case-study="true"] .fm-cs-static-preview.fm-cs-real-home-previ
   overflow:hidden!important;
   gap:0;
 }
+html[data-fm-next-case-study="true"] .fm-p1-real-review-shell{display:grid;grid-template-columns:minmax(150px,.72fr) minmax(0,1.28fr);gap:12px;align-items:stretch}
+html[data-fm-next-case-study="true"] .fm-p1-real-context{display:flex;flex-direction:column;min-width:0;padding:14px;border-radius:19px;background:#123f31;color:#fff}
+html[data-fm-next-case-study="true"] .fm-p1-real-context>small{color:#c9ff5c;font:800 8.5px/1.2 Inter,sans-serif;letter-spacing:.08em}
+html[data-fm-next-case-study="true"] .fm-p1-real-context>h3{margin:8px 0 12px;color:#fff;font-size:14px;line-height:1.38;letter-spacing:-.035em}
+html[data-fm-next-case-study="true"] .fm-p1-real-context ol{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+html[data-fm-next-case-study="true"] .fm-p1-real-context li{display:grid;grid-template-columns:42px minmax(0,1fr);gap:6px;align-items:baseline}
+html[data-fm-next-case-study="true"] .fm-p1-real-context li b{color:#c9ff5c;font-size:9px}
+html[data-fm-next-case-study="true"] .fm-p1-real-context li span{color:#e7f1ec;font-size:8.5px;line-height:1.35}
+html[data-fm-next-case-study="true"] .fm-p1-real-boundary{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 7px;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.16)}
+html[data-fm-next-case-study="true"] .fm-p1-real-boundary span{color:#b8c9c1;font-size:7.5px;font-weight:800}
+html[data-fm-next-case-study="true"] .fm-p1-real-boundary b{color:#fff;font-size:8px;font-weight:700}
+html[data-fm-next-case-study="true"] .fm-p1-real-app{min-width:0}
 html[data-fm-next-case-study="true"] .fm-p1-real-top{display:flex;align-items:center;min-height:34px;padding:0 2px 8px}
 html[data-fm-next-case-study="true"] .fm-p1-real-brand{display:flex;align-items:center;gap:8px}
 html[data-fm-next-case-study="true"] .fm-p1-real-logo-mark{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;background:#c9ff5c;color:#173d2d;font:900 15px/1 Inter,sans-serif;box-shadow:inset 0 0 0 1px rgba(23,61,45,.08)}
@@ -2245,6 +2257,12 @@ html[data-fm-next-case-study="true"] .fm-p1-real-nav .is-on{color:#174a34}
 html[data-fm-next-case-study="true"] .fm-next-cover-note strong{color:#137333}
 @media(max-width:900px){
   html[data-fm-next-case-study="true"] .fm-cs-static-preview.fm-cs-real-home-preview{padding:14px!important}
+  html[data-fm-next-case-study="true"] .fm-p1-real-review-shell{grid-template-columns:1fr}
+  html[data-fm-next-case-study="true"] .fm-p1-real-context{padding:12px}
+  html[data-fm-next-case-study="true"] .fm-p1-real-context>h3{margin-bottom:9px;font-size:13px}
+  html[data-fm-next-case-study="true"] .fm-p1-real-context ol{grid-template-columns:repeat(3,1fr);gap:6px}
+  html[data-fm-next-case-study="true"] .fm-p1-real-context li{display:flex;flex-direction:column;gap:2px}
+  html[data-fm-next-case-study="true"] .fm-p1-real-boundary{margin-top:10px}
   html[data-fm-next-case-study="true"] .fm-p1-real-logo-mark{width:30px;height:30px;font-size:16px}
   html[data-fm-next-case-study="true"] .fm-p1-real-segment{min-height:62px}
   html[data-fm-next-case-study="true"] .fm-p1-real-ai{padding:14px}
@@ -4043,7 +4061,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
 html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"]{
   & .fm-next-cover{align-items:center!important}
   & .fm-next-cover-slide .fm-next-cover-copy,& .fm-next-cover-slide .fm-next-cover-visual{transform:none!important;align-self:center!important}
-  & .fm-next-cover-slide .fm-next-cover-frame{width:360px!important;max-width:100%!important;min-width:0!important}
+  & .fm-next-cover{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  & .fm-next-cover-slide .fm-next-cover-frame{width:600px!important;max-width:100%!important;min-width:0!important}
   & .fm-next-cover-slide .fm-next-cover-proof>div{padding:12px 13px!important}
   & .fm-next-cover-slide .fm-next-cover-proof b{min-height:36px!important;margin:0 0 8px!important;font-size:12px!important;line-height:1.5!important}
   & .fm-next-cover-slide .fm-next-cover-proof span{font-size:12px!important;line-height:1.6!important}
