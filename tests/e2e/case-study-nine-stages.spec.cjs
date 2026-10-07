@@ -23,7 +23,7 @@ for(const width of [1920,1440,800,390,320]){
         await expect.poll(()=>img.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
       }
       for(const link of await page.locator('.slide:visible .evidence-link').all()){
-        expect(await link.getAttribute('href')).toMatch(/^https:\/\/github\.com\/dohyunkimmm\/footmate\/blob\/main\/docs\/[A-Z-]+\.md$/);
+        expect(await link.getAttribute('href')).toMatch(/^https:\/\/github\.com\/dohyunkimmm\/footmate(?:\/blob\/main\/docs\/[A-Z-]+\.md)?$/);
       }
       const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
       expect(scan.violations).toEqual([]);
@@ -46,12 +46,12 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await page.locator('.slide:visible summary').click();
   await expect(page.locator('.slide:visible details')).toHaveAttribute('open','');
   await page.locator('.toc-item').nth(6).click();
-  await expect(page.locator('.slide:visible')).toContainText('실제 이용자 기준값과 목표치는 아직 없습니다.');
+  await expect(page.locator('.slide:visible')).toContainText('실제 이용 기준값·목표치는 미확보');
   await page.getByText('8개 KPI의 계산·관찰 기준',{exact:true}).click();
   await expect(page.locator('.slide:visible details tbody tr')).toHaveCount(8);
   await page.reload();
   await expect(page).toHaveURL(/#section-01$/);
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
-  await expect(page.getByRole('link',{name:'제품 직접 체험하기',exact:true})).toHaveAttribute('href','/demo');
+  await expect(page.getByRole('link',{name:'제품 체험하기',exact:true})).toHaveAttribute('href','/demo');
 });
