@@ -12,7 +12,7 @@ async function get(path){const response=await fetch(base+path,{redirect:'follow'
   a(!caseScript.includes('Live interaction'),'Case Study Live interaction removed');
   a(!caseScript.includes('/app?embed=1'),'Case Study embedded app removed');
   a(caseScript.includes('href="/demo"'),'Case Study Product CTA route');
-  a(caseScript.includes('제품 직접 체험하기'),'Case Study Product CTA copy');
+  a(caseScript.includes('제품 체험하기'),'Case Study Product CTA copy');
   // Verify the changed Case Study assets themselves, not only the product release marker.
   const {readFileSync}=require('node:fs');
   const {resolve}=require('node:path');
