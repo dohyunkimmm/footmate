@@ -105,3 +105,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .fm-next-cover-title-line{display:block!important;white-space:nowrap!important}
 }
 }
+
+/* Balance the overview hero within the shared desktop reading area. */
+@media(min-width:901px){
+html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-case-study-advanced-polish="true"][data-fm-case-study-product-evidence="true"][data-fm-editorial-finish="true"][data-fm-evidence-details="true"][data-fm-reader-review="true"] .fm-next-cover-slide{align-items:center!important}
+}
