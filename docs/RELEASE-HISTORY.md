@@ -8,7 +8,7 @@
 - Desktop QA: 1366 / 1440 / 1920px에서 560px app canvas, review context, horizontal lock을 검증하고 변경된 1440px release surfaces를 comparison-only Playwright visual baseline으로 확인.
 - Post-merge main QA: #519 SHA run `37561830190` SUCCESS · #520 SHA run `37566932913` SUCCESS.
 - GitHub commit status에서 두 SHA의 Vercel deployment status가 success임을 확인. 이 항목은 별도 수동 Production smoke 또는 exact deployment runtime 검증을 새로 주장하지 않는다.
-- Documentation sync: README와 `RELEASE-APP.md`의 desktop composition, social-auth boundary, mismatch/zero-result 안내를 현재 Product 상태에 맞게 최소 동기화. Closed Beta 운영 절차는 변경하지 않음.
+- Documentation sync: README와 `RELEASE-APP.md`의 desktop composition, social-auth boundary, mismatch/zero-result 안내를 현재 Product 상태에 맞게 최소 동기화. Notion의 `FootMate Service Flow · Data Quality`, `FootMate 기능정의서 · AI Agent Workflow`, `FootMate AI 기능 확장 PRD`도 같은 장기 제품 사실로 동기화했고, 공개 포트폴리오 본문은 현재 경계와 충돌하지 않아 유지. Closed Beta 운영 절차는 변경하지 않음.
 
 ## 2026-10-05 — Case Study 근거 요약·읽기 효과 정리
 
