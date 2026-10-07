@@ -1,5 +1,15 @@
 # FootMate Release History
 
+## 2026-10-07 — Release App 검토 가독성·탐색 안내 정리
+
+- Scope: Product release 버전은 유지하면서 desktop reviewer context, Home/Discover 설명, Auth panel 전환, recommendation mismatch 안내와 visual fixture 안정성을 현재 구현에 맞게 정리.
+- PR #519 · merge `31aa165f6dc59514bf2d42273ed26d347b13c16d`: Auth panel이 새 form으로 바뀔 때 heading에 focus하고 scrollTop을 0으로 복원. AI 검색 예시의 시간 표현을 `20시 이후`로 명확히 하고, 레벨 차이가 2단계 이상인 추천은 총점이 높아도 `경기 강도 차이 확인`으로 표시. social action이 없는 signup/recovery panel에는 provider status를 제거. visual fixture 날짜 표시는 고정하되 app clock/참가 timestamp는 고정하지 않음.
+- PR #520 · merge `2fb385fbfd62e4437ecc1646e5b695d61358b486`: 960px+ desktop에 서비스 여정과 샘플/무료 참가 경계를 설명하는 review context를 추가하고 560px app canvas와 함께 읽히도록 composition을 조정. Home에 기본 추천 프로필 범위를 명시하고 desktop 추천/필터 label과 AI condition chip 가독성을 개선. Discover 결과가 0개일 때 personalization explanation을 숨겨 현재 결과와 상충하는 안내를 제거.
+- Desktop QA: 1366 / 1440 / 1920px에서 560px app canvas, review context, horizontal lock을 검증하고 변경된 1440px release surfaces를 comparison-only Playwright visual baseline으로 확인.
+- Post-merge main QA: #519 SHA run `37561830190` SUCCESS · #520 SHA run `37566932913` SUCCESS.
+- GitHub commit status에서 두 SHA의 Vercel deployment status가 success임을 확인. 이 항목은 별도 수동 Production smoke 또는 exact deployment runtime 검증을 새로 주장하지 않는다.
+- Documentation sync: README와 `RELEASE-APP.md`의 desktop composition, social-auth boundary, mismatch/zero-result 안내를 현재 Product 상태에 맞게 최소 동기화. Closed Beta 운영 절차는 변경하지 않음.
+
 ## 2026-10-05 — Case Study 근거 요약·읽기 효과 정리
 
 - Scope: 리뷰어용 Case Study `/`의 버튼 표기, 화면 안 근거 요약, 짧은 읽기 효과. Product package release 버전은 변경하지 않음.
