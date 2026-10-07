@@ -329,3 +329,23 @@ for(const width of [390,1440]){
     for(const sections of Object.values(observations))for(const section of sections)expect(section.alignment).toEqual([]);
   });
 }
+
+test('visual evidence, scope and mobile reading cues stay coherent',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#section-06');
+  await expect(page.locator('#section-06 img[src*="recovery-participation-failure"]')).toHaveCount(0);
+  await expect(page.locator('.recovery-diagram')).toContainText('현재 복구 흐름 · 구조 요약');
+  await expect(page.locator('.recovery-diagram')).not.toContainText('결제');
+  await page.getByRole('button',{name:'다음 섹션',exact:true}).click();
+  await expect(page.locator('#qa-table-hint')).toBeVisible();
+  await expect(page.locator('#section-07 .table-wrap').first()).toHaveAttribute('aria-describedby','qa-table-hint');
+  const active=await page.locator('.toc-item.on').evaluate(node=>{
+    const b=node.getBoundingClientRect(),parent=node.parentElement.getBoundingClientRect();
+    return b.left>=parent.left-1&&b.right<=parent.right+1;
+  });
+  expect(active).toBe(true);
+  await page.locator('#section-07 summary').click();
+  await expect(page.locator('#kpi-table-hint')).toBeVisible();
+  await page.locator('.toc-item').nth(4).click();
+  await expect(page.locator('.flow-number')).toHaveText(['01','02','03','04','05','06']);
+});
