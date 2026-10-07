@@ -24,7 +24,11 @@ for(const [name,viewport] of [['desktop',{width:1440,height:900}],['mobile',{wid
     await expect(preview.locator('.fm-p1-real-segment')).toContainText('조건 바꾸기');
     await expect(preview.locator('.fm-p1-real-ai')).toContainText('AI MATCH ASSISTANT');
     await expect(preview.locator('.fm-p1-real-ai')).toContainText('AI에게 원하는 경기를 검색해보세요.');
-    await expect(preview.locator('.fm-p1-real-section-head')).toContainText('For You');
+    await expect(preview.locator('.fm-p1-real-ai-form')).toContainText('20시 이후');
+    await expect(preview.locator('.fm-p1-real-context')).toContainText('Find');
+    await expect(preview.locator('.fm-p1-real-context')).toContainText('샘플');
+    await expect(preview.locator('.fm-p1-real-context')).toContainText('무료 참가 확인');
+    await expect(preview.locator('.fm-p1-real-section-head')).toContainText('내 조건에 맞는 추천');
     await expect(preview.locator('.fm-p1-real-match')).toContainText('광교 웨스트파크');
     await expect(preview.locator('.fm-p1-real-match-meta')).toContainText('샘플 일정 · 평일 21:30');
     await expect(preview.locator('.fm-p1-real-match-meta')).not.toContainText('10월 1일');
@@ -37,7 +41,7 @@ for(const [name,viewport] of [['desktop',{width:1440,height:900}],['mobile',{wid
       const match=node.querySelector('.fm-p1-real-match').getBoundingClientRect();
       return {height:box.height,width:box.width,aiBottom:ai.bottom,matchTop:match.top};
     });
-    expect(geometry.height).toBeLessThanOrEqual(viewport.width>900?510:590);
+    expect(geometry.height).toBeLessThanOrEqual(viewport.width>900?510:760);
     expect(geometry.width).toBeGreaterThan(300);
     expect(geometry.matchTop-geometry.aiBottom).toBeGreaterThanOrEqual(8);
     await noHorizontalOverflow(page);
