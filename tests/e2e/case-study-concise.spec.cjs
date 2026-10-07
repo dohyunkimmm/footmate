@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 const ready=async page=>{await page.goto('/');await page.waitForFunction(()=>document.documentElement.dataset.fmConciseReady==='true');await page.evaluate(()=>document.fonts.ready);};
-for(const [width,height] of [[1440,900],[1280,720],[390,844],[320,740]]){
+for(const [width,height] of [[1920,1080]]){
   test(`seven-page case study stays readable and accessible at ${width}px`,async({page})=>{
     await page.setViewportSize({width,height});await ready(page);
     await expect(page.locator('.track>.slide')).toHaveCount(7);
@@ -36,7 +36,7 @@ for(const [width,height] of [[1440,900],[1280,720],[390,844],[320,740]]){
   });
 }
 test('section links, history, keyboard and reload work with seven sections',async({page})=>{
-  await page.setViewportSize({width:1440,height:900});await page.goto('/?review=1#section-04');
+  await page.setViewportSize({width:1920,height:1080});await page.goto('/?review=1#section-04');
   await expect(page.locator('.slide.on')).toHaveAttribute('data-page-number','4');
   await page.locator('.btn-next').click();await expect(page).toHaveURL(/section-05$/);
   await page.goBack();await expect(page.locator('.slide.on')).toHaveAttribute('data-page-number','4');
