@@ -399,7 +399,7 @@
       aside.remove();
     });
     const coverNote=slides[0].querySelector('.fm-next-cover-note');
-    if(coverNote)coverNote.innerHTML='<strong>최신 Real App 홈 프리뷰</strong><span>자연어 탐색에서 추천 확인까지, 홈 구조를 정적으로 재현했습니다.</span>';
+    if(coverNote)coverNote.innerHTML='<strong>제품 홈 화면 미리보기</strong><span>데스크톱에서는 앱 화면과 서비스 여정·샘플 체험 경계를 한 화면에서 함께 설명합니다.</span>';
     // Source images are existing, versioned visual baselines, not newly captured live screens.
     document.querySelectorAll('.fm-evidence-figure:not(.is-recovery) figcaption span').forEach(node=>{
       node.textContent='제품 화면 · 기존 시각 기준';
