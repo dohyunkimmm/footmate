@@ -119,3 +119,6 @@ html::-webkit-scrollbar{
     .priority-tag{justify-self:start;align-self:start}
   }
 }
+
+/* Preserve normal Korean word grouping, but allow long words to wrap when text grows. */
+.slide{overflow-wrap:anywhere}
