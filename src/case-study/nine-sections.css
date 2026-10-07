@@ -122,3 +122,61 @@ html::-webkit-scrollbar{
 
 /* Preserve normal Korean word grouping, but allow long words to wrap when text grows. */
 .slide{overflow-wrap:anywhere}
+
+/* Visual roles: primary action, supporting evidence, and deferred scope. */
+:root{--cs-support:#e8f0ec;--cs-deferred:#f6f7f6;--cs-border-strong:#afc4b8}
+#section-01 .product-figure{background:linear-gradient(145deg,#eef4ef,#fafcf9)}
+#section-02 .jtbd-panel{display:flex;flex-direction:column;justify-content:center}
+#section-02 .jtbd-panel blockquote{margin-top:18px}
+.journey-map .pain{background:#fafbf9}
+.journey-map .pain .eyebrow{color:#675c3f}
+.journey-map .opportunity .eyebrow{color:var(--green)}
+.priority-card:first-child{border-color:var(--cs-border-strong)}
+.priority-card:nth-child(2) .priority-tag{background:var(--cs-support);color:var(--green)}
+.priority-card:nth-child(3) .priority-tag{background:#fff;border:1px solid var(--cs-border-strong);color:var(--green)}
+.priority-card:nth-child(4){background:var(--cs-deferred);border-style:dashed}
+.priority-card:nth-child(4) .priority-tag{background:#e8ece9;color:#4d5d54}
+.ia-root{position:relative}
+.ia-branches{position:relative}
+.flow-guide{margin:0 0 14px}
+.flow .flow-number{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--green);margin:0 0 6px}
+#section-05 .card-grid .eyebrow{letter-spacing:0}
+#section-06 .decision-row{align-items:start}
+#section-06 .decision-row>div{padding-top:20px}
+.recovery-diagram{background:var(--soft);border:1px solid var(--cs-border-strong);border-radius:14px;padding:22px}
+.recovery-diagram h3{margin-top:12px}
+.recovery-diagram p{font-size:13px}
+.recovery-diagram ol{list-style:none;margin:20px 0 0;padding:0}
+.recovery-diagram li{border-top:1px solid var(--line);padding:14px 0;margin:0}
+.recovery-diagram li strong{display:block;font-size:13px}
+.recovery-diagram li span{display:block;font-size:12px;color:var(--muted);margin-top:6px;line-height:1.8}
+.recovery-diagram figcaption{font-size:12px;color:var(--muted);margin-top:12px}
+#section-07 .story-card:nth-child(2){background:#fff;border-color:var(--cs-border-strong)}
+#section-07 .story-card:nth-child(3){background:var(--cs-deferred);border-style:dashed}
+#section-07 .story-card:nth-child(3) .eyebrow{color:#675c3f}
+.table-scroll-hint{display:none;font-size:13px}
+.next-list h2{margin-top:5px}
+.next-list li:nth-child(-n+2) .next-number{background:var(--green);color:#fff}
+.next-list li:nth-child(n+3) .eyebrow{color:var(--muted)}
+@media(min-width:801px){
+  #section-01 .overview-grid{grid-template-columns:1fr 1fr}
+  #section-01 .product-figure img{height:430px;object-fit:cover}
+  .ia-branches{margin-top:34px}
+  .ia-root:after{content:'';position:absolute;width:1px;height:18px;background:var(--cs-border-strong);top:100%;left:50%}
+  .ia-branches:before{content:'';position:absolute;left:calc((100% - 32px)/6);right:calc((100% - 32px)/6);top:-17px;border-top:1px solid var(--cs-border-strong)}
+  .ia-branches article{position:relative;overflow:visible}
+  .ia-branches article:before{content:'';position:absolute;left:50%;top:-17px;height:17px;border-left:1px solid var(--cs-border-strong)}
+  .ia-branches h3{border-radius:11px 11px 0 0}
+}
+@media(max-width:800px){
+  .table-scroll-hint{display:block;margin:0 0 10px}
+  #section-06 .decision-row>div{padding-top:0}
+  .recovery-diagram{width:min(360px,100%);margin:0 auto}
+  .recovery-diagram p{font-size:14px}
+  .ia-root:after{content:'';display:block;position:absolute;left:50%;top:100%;height:11px;border-left:1px solid var(--cs-border-strong)}
+  .ia-branches{border-left:1px solid var(--cs-border-strong);padding-left:16px}
+  .ia-branches:before{content:'';position:absolute;left:0;right:50%;top:-11px;border-top:1px solid var(--cs-border-strong)}
+  .ia-branches:after{content:'';position:absolute;left:-1px;top:-11px;height:11px;border-left:1px solid var(--cs-border-strong)}
+  .ia-branches article{position:relative;overflow:visible}
+  .ia-branches article:before{content:'';position:absolute;left:-17px;top:25px;width:16px;border-top:1px solid var(--cs-border-strong)}
+}
