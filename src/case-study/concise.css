@@ -44,21 +44,6 @@ html[data-fm-concise="true"]{
   & .dot:before{content:'';position:absolute;inset:-10px}
   & .dots{gap:16px!important}
 }
-@media(min-width:901px) and (max-height:800px){html[data-fm-concise="true"]{
-  & .fm-concise-slide{padding-top:24px!important;padding-bottom:24px!important}
-  & .fm-concise-screen{max-width:220px}
-  & .fm-concise-panel{padding:24px}
-}}
-@media(max-width:900px){html[data-fm-concise="true"]{
-  & .fm-concise-slide{padding:64px 22px!important;min-height:auto!important}
-  & .fm-concise-layout{grid-template-columns:1fr;gap:32px}
-  & .fm-concise-copy h2{font-size:32px;line-height:1.4;margin:16px 0 20px}
-  & .fm-concise-lead{font-size:15px;max-width:none}
-  & .fm-concise-note{max-width:none;margin-top:20px}
-  & .fm-concise-panel{padding:24px;max-width:460px}
-  & .fm-concise-screen{max-width:260px}
-  & .fm-concise-visual{width:100%}
-}}
 @media(prefers-reduced-motion:reduce){html[data-fm-concise="true"] *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 /* Match the shared reader skin's specificity when replacing its thirteen rows. */
 @media(min-width:901px){
