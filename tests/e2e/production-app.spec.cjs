@@ -35,9 +35,12 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   expect(health.provider).toBe('vercel-ai-gateway');
   expect(health.model).toBe('openai/gpt-5.4-mini');
   await page.goto('/',{waitUntil:'domcontentloaded'});
-  await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.4.7');
-  await page.waitForFunction(()=>document.documentElement.dataset.footmateCaseStudyRelease==='5.4.7');
-  await expect(page.locator('[data-v5-ai-evidence="guardrailed"]')).toHaveCount(1);
+  await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.5.0');
+  await expect(page.locator('.toc-item')).toHaveCount(9);
+  await page.locator('.toc-item').nth(3).click();
+  await page.locator('.slide:visible summary').click();
+  await expect(page.locator('.slide:visible')).toContainText('경기 후보·순위·추천 이유는 기준 기반 로직이 결정합니다.');
+  await expect(page.locator('.slide:visible')).toContainText('참가를 자동 실행하지 않습니다.');
 });
 
 test('v6.0.0 exact Production aliases stay current',async({page})=>{
@@ -143,4 +146,3 @@ const checkin=require('./helpers/checkin.cjs');
 test('Production shared check-in completion',async({page})=>checkin.persistence(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
 test('Production check-in eligibility and migration',async({page})=>checkin.gates(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
 test('Production check-in storage recovery',async({page})=>checkin.recovery(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
-
