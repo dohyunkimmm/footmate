@@ -60,6 +60,7 @@ async function desktopHorizontalState(page){
       auth:rect(auth),
       app:rect(app),
       stage:rect(stage)
+      ,context:rect(stage.querySelector('.fm-desktop-context'))
     };
   });
 }
@@ -74,7 +75,7 @@ function expectDesktopLocked(state){
   expect(state.pageScrollLeft).toBe(0);
   expect(['hidden','clip']).toContain(state.authOverflowX);
   expect(state.authOverscrollX).toBe('none');
-  expect(Math.abs((state.app.left+state.app.right)/2-state.viewport/2)).toBeLessThanOrEqual(1);
+  expect(Math.abs((state.context.left+state.app.right)/2-state.viewport/2)).toBeLessThanOrEqual(1);
   expect(state.authScrollHeight).toBeLessThanOrEqual(state.authClientHeight+1);
   expect(state.authBackground).toBe('rgb(255, 255, 255)');
   expect(state.cardBackground).toBe('rgba(0, 0, 0, 0)');

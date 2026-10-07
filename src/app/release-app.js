@@ -11,6 +11,16 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&
 let scheduled=false;
 let patching=false;
 
+function desktopContext(){
+  const stage=root.querySelector('.fm-next-stage');
+  if(!stage||stage.querySelector('.fm-desktop-context'))return;
+  const context=document.createElement('aside');
+  context.className='fm-desktop-context';
+  context.setAttribute('aria-label','FootMate 서비스와 체험 안내');
+  context.innerHTML=`<span class="fm-desktop-eyebrow">FootMate · 풋살 경기 탐색</span><h2>내 실력에 맞는 경기,<br>선택부터 경기 당일까지.</h2><p>지역·실력·포지션에 맞는 풋살 경기를 비교하고, 참가 후 경기 당일의 준비까지 이어가세요.</p><ol><li><b>내 플레이 설정</b><span>지역, 포지션, 경기 강도를 선택해요.</span></li><li><b>추천과 AI 검색</b><span>추천 이유를 확인하고 원하는 조건으로 좁혀요.</span></li><li><b>상세와 내 경기</b><span>자리와 준비물을 비교하고 참가 흐름을 살펴봐요.</span></li></ol><div class="fm-desktop-boundary"><b>로그인 없이 둘러볼 수 있는 체험</b><p>경기·참가비·잔여 자리는 샘플 정보입니다. 참가 흐름은 무료 체험이며 실제 결제는 발생하지 않습니다. 소셜 로그인은 외부 인증 화면으로 이동할 수 있습니다.</p></div>`;
+  stage.prepend(context);
+}
+
 function installStyles(){
   const existing=document.querySelector('link[data-footmate-v6-release]');
   if(existing){
@@ -102,7 +112,7 @@ function patchDetail(screen){
     const kicker=document.createElement('div');
     kicker.dataset.v6DetailKicker='true';
     kicker.className='fm-v6-detail-kicker';
-    kicker.textContent='MATCH DECISION';
+    kicker.textContent=matchMedia('(min-width:960px)').matches?'경기 참가 정보':'MATCH DECISION';
     hero.prepend(kicker);
   }
   screen.querySelectorAll('[data-product-checkin]').forEach(node=>node.dataset.v6Secondary='true');
@@ -298,6 +308,7 @@ function apply(){
     root.dataset.releaseAppVersion=RELEASE_APP_VERSION;
     const screen=root.querySelector('[data-screen]');
     if(!screen)return;
+    desktopContext();
     if(screen.dataset.screen==='home')patchHome(screen);
     if(screen.dataset.screen==='detail')patchDetail(screen);
     if(screen.dataset.screen==='checkout')patchCheckout(screen);
@@ -325,6 +336,7 @@ function exposeReady(link){
 
 if(isReal()){
   const styleReady=installStyles();
+  window.addEventListener('resize',schedule);
   migrateLegacyRoute();
   document.addEventListener('click',event=>{
     const joinButton=event.target.closest?.('[data-v6-free-join],[data-screen="checkout"] [data-action="confirm-payment"]');

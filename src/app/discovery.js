@@ -256,7 +256,7 @@ function openFilters(screen,trigger){
   backdrop.className='fm-discovery-sheet-backdrop';
   backdrop.dataset.discoverySheet='true';
   backdrop.innerHTML=`<section class="fm-discovery-sheet" role="dialog" aria-modal="true" aria-labelledby="fm-discovery-title">
-    <div class="fm-discovery-sheet-head"><div><small>DISCOVERY FILTERS</small><h2 id="fm-discovery-title">경기 조건 좁히기</h2></div><button type="button" class="fm-discovery-close" data-discovery-action="close-filters" aria-label="필터 닫기">×</button></div>
+    <div class="fm-discovery-sheet-head"><div><small>${matchMedia('(min-width:960px)').matches?'검색 필터':'DISCOVERY FILTERS'}</small><h2 id="fm-discovery-title">경기 조건 좁히기</h2></div><button type="button" class="fm-discovery-close" data-discovery-action="close-filters" aria-label="필터 닫기">×</button></div>
     <p class="fm-discovery-sheet-copy">추천 기준은 유지하고, 지금 가능한 경기만 빠르게 좁혀보세요.</p>
     <p class="fm-discovery-draft-status" data-p1-discovery-draft-status role="status" aria-live="polite" data-dirty="false">현재 적용된 조건입니다.</p>
     <div class="fm-discovery-fields">

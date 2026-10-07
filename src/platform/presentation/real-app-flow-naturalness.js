@@ -133,7 +133,7 @@ function patchCompareDialog(){
 function openExperienceDialog(){
   document.querySelector('[data-flow-dialog="experience"]')?.remove();
   const overlay=document.createElement('div');overlay.className='fm-flow-info-backdrop';overlay.dataset.flowDialog='experience';
-  overlay.innerHTML='<section class="fm-flow-info-dialog" role="dialog" aria-modal="true" aria-labelledby="fm-flow-info-title"><h2 id="fm-flow-info-title">체험 버전 안내</h2><p>경기, 잔여 자리, 시설 정보는 체험용 데이터예요. 로그인·결제·체크인 등 외부 서비스는 실제 계정이나 금액과 연결되지 않습니다.</p><p>선택한 조건과 진행 상태는 이 브라우저에만 저장돼요.</p><div class="fm-flow-info-actions"><button type="button" data-flow-action="close-info">닫기</button><button type="button" data-flow-action="confirm-reset">체험 데이터 초기화</button></div></section>';
+  overlay.innerHTML='<section class="fm-flow-info-dialog" role="dialog" aria-modal="true" aria-labelledby="fm-flow-info-title"><h2 id="fm-flow-info-title">체험 버전 안내</h2><p>경기·참가비·잔여 자리·시설은 샘플 정보예요. 참가 흐름은 무료 체험이며 실제 결제는 발생하지 않습니다.</p><p>소셜 로그인은 외부 인증 화면으로 이동할 수 있어요. 이 체험의 선택 조건과 진행 상태는 이 브라우저에만 저장돼요.</p><div class="fm-flow-info-actions"><button type="button" data-flow-action="close-info">닫기</button><button type="button" data-flow-action="confirm-reset">체험 데이터 초기화</button></div></section>';
   document.body.append(overlay);requestAnimationFrame(()=>overlay.querySelector('[data-flow-action="close-info"]')?.focus());
 }
 

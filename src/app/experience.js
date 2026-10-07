@@ -102,7 +102,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
       shell('비밀번호 찾기','가입한 아이디 또는 이메일을 입력해주세요.',helperBody('find-password'),screen,{backToLogin:true});
       return;
     }
-    shell('로그인 후 더 많은 경기를 즐겨보세요.','참가를 확정하면 결제 단계로 바로 이어집니다.',loginBody(place),screen);
+    shell('로그인 후 더 많은 경기를 즐겨보세요.','로그인 후 무료 체험 참가를 이어갈 수 있어요. 실제 결제는 없어요.',loginBody(place),screen);
   }
 
   function wire(screen){
