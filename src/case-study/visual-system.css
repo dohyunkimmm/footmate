@@ -4415,8 +4415,8 @@ html[data-fm-next-case-study="true"][data-fm-page-composition="true"][data-fm-ca
   & .track{position:relative!important;inset:auto!important;height:auto!important;min-height:100dvh;padding-block:54px 84px!important;overflow:visible!important;overflow-anchor:none}
   & :is(.fm-next-story-slide[data-page-layout],.fm-next-cover-slide){height:auto!important;min-height:calc(100dvh - 138px)!important;max-height:none!important;padding:28px var(--fm-page-inline) 32px!important;overflow:visible!important;scrollbar-gutter:auto;align-items:flex-start!important}
   & .slide:not(.on){display:none!important}
-  /* Center the shorter cover in the reading canvas; tall content still grows and scrolls. */
-  & .fm-next-cover-slide{justify-content:center!important}
+  /* Center every page in the reading canvas; tall content still grows and scrolls. */
+  & :is(.fm-next-story-slide[data-page-layout],.fm-next-cover-slide){justify-content:center!important}
   & :is(.fm-next-story,.fm-next-cover){width:100%!important;height:auto!important;max-height:none!important;max-width:1080px!important;margin-inline:auto!important;overflow:visible!important;zoom:1!important;transform:none!important}
   & .cs-controls{position:fixed!important;left:232px!important;right:0!important;bottom:0!important;height:84px!important;padding:16px 28px!important;background:#fff!important;border-top:1px solid var(--fm-reader-line);grid-template-columns:226px minmax(0,1fr) 226px!important;gap:16px!important}
   & .pbar{position:fixed!important;left:232px!important;right:0!important;bottom:0!important}

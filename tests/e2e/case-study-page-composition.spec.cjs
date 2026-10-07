@@ -720,3 +720,21 @@ for(const width of [1440,390,320]){
     expect(await page.evaluate(()=>JSON.stringify({...localStorage}))).toBe(before);expect(errors).toEqual([]);
   });
 }
+
+test('all thirteen pages center their content in the desktop reading canvas',async({page})=>{
+  await page.setViewportSize({width:1440,height:1000});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.goto('/');
+  await page.waitForFunction(()=>document.documentElement.dataset.fmReaderReview==='true');
+  for(let index=0;index<13;index++){
+    await page.locator('.toc-item').nth(index).click();
+    const geometry=await page.locator('.slide.on').evaluate(slide=>{
+      const content=slide.querySelector('.fm-next-story,.fm-next-cover');
+      const frame=slide.getBoundingClientRect(),body=content.getBoundingClientRect();
+      return {upper:body.top-frame.top,lower:frame.bottom-body.bottom,overflow:document.documentElement.scrollHeight-innerHeight};
+    });
+    expect(Math.abs(geometry.upper-geometry.lower),'page '+(index+1)+' balanced vertical margins').toBeLessThanOrEqual(1);
+    expect(geometry.upper).toBeGreaterThanOrEqual(19);
+    expect(geometry.overflow).toBeLessThanOrEqual(1);
+  }
+});
