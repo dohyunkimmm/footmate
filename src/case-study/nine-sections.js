@@ -60,9 +60,9 @@
     {name:'Validation & Metrics', sub:'Evidence & Measurement', html:
       head('07','VALIDATION & METRICS','확인한 동작과,<br>앞으로 측정할 성과를 구분했습니다.','과업 기반 사용성 검증, 개발·배포 QA, 제품 KPI를 서로 다른 근거로 관리합니다.') +
       grid(card('USER TASKS','교육생 6명 · 과업 8회','iOS 4명 / Android 2명. 가입 전 탐색·Kakao·Google·이메일 가입 관련 과업을 수행했습니다.'),card('PRODUCT QA','상태·복구·접근성 확인','회귀·브라우저 E2E·axe·반응형·화면 비교·Mobile Safari/WebKit·배포 후 기본 동작을 검증했습니다.'),card('PRODUCT METRICS','8개 KPI · 측정 전 정의','계산 기준·분모·관찰 기간·제외 조건을 정의했습니다. 실제 이용자 기준값과 목표치는 아직 없습니다.')) +
-      `<h2 class="block-title">개선·재검증 사례 · 개발 QA 근거</h2><div class="table-wrap"><table><caption class="sr-only">개발 QA에서 확인한 개선과 재검증 기록</caption><thead><tr><th scope="col">확인한 문제</th><th scope="col">수정</th><th scope="col">재검증 근거</th></tr></thead><tbody><tr><th scope="row">첫 추천까지 스크롤 부담</th><td>상단 여백·카드 밀도 조정</td><td>2026.09.24 · 390×844 첫 카드 노출, 601px 넘침 확인</td></tr><tr><th scope="row">참가 오류 후 복귀</th><td>오류 안내·재시도·경기 다시 선택</td><td>6.0.0 · 배포 핵심 동작 15개·앱 흐름 8개 QA 기록</td></tr><tr><th scope="row">필터 초기 색 대비</th><td>조작 전에도 대비 스타일 적용</td><td>2026.10.01 · E2E·axe·화면 비교·WebKit 기록</td></tr></tbody></table></div>` +
+      `<h2 class="block-title">개선·재검증 사례 · 개발 QA 근거</h2><div class="table-wrap" tabindex="0" role="region" aria-label="개선·재검증 사례 표"><table><caption class="sr-only">개발 QA에서 확인한 개선과 재검증 기록</caption><thead><tr><th scope="col">확인한 문제</th><th scope="col">수정</th><th scope="col">재검증 근거</th></tr></thead><tbody><tr><th scope="row">첫 추천까지 스크롤 부담</th><td>상단 여백·카드 밀도 조정</td><td>2026.09.24 · 390×844 첫 카드 노출, 601px 넘침 확인</td></tr><tr><th scope="row">참가 오류 후 복귀</th><td>오류 안내·재시도·경기 다시 선택</td><td>6.0.0 · 배포 핵심 동작 15개·앱 흐름 8개 QA 기록</td></tr><tr><th scope="row">필터 초기 색 대비</th><td>조작 전에도 대비 스타일 적용</td><td>2026.10.01 · E2E·axe·화면 비교·WebKit 기록</td></tr></tbody></table></div>` +
       note('위 사례는 개발·배포 QA 기록입니다. 교육생 6명의 개별 발견 문제에서 직접 도출된 수정이라고 연결하지 않습니다. 과업 성공률·소요 시간·만족도 개선 수치는 확정된 기록이 없습니다.') +
-      `<details><summary>8개 KPI의 계산·관찰 기준</summary><div class="detail-body"><div class="table-wrap"><table><thead><tr><th scope="col">지표</th><th scope="col">계산</th><th scope="col">관찰 기준</th></tr></thead><tbody>${[
+      `<details><summary>8개 KPI의 계산·관찰 기준</summary><div class="detail-body"><div class="table-wrap" tabindex="0" role="region" aria-label="KPI 계산·관찰 기준 표"><table><thead><tr><th scope="col">지표</th><th scope="col">계산</th><th scope="col">관찰 기준</th></tr></thead><tbody>${[
         ['상세 진입률','상세 진입 세션 ÷ 결과 노출 세션','결과 1개 이상 · 세션당 1회'],['참가 전환율','참가 완료 쌍 ÷ 상세 조회 사용자·경기 쌍','동일 경기 · 조회 후 24시간'],['결과 없음 비율','결과 0개 검색 ÷ 정상 처리 검색','네트워크·서버 오류 제외'],['참가 실패율','실패·미해결 흐름 ÷ 확정 요청 흐름','24시간 관찰 · 사용자 취소 분리'],['복구 성공률','목적 완료 흐름 ÷ 복구 가능한 실패 흐름','24시간 이내 · 대안 선택 별도'],['체크인 완료율','체크인 완료 쌍 ÷ 종료 경기 확정 참가 쌍','취소 제외 · 노쇼 포함'],['7일 내 재탐색률','재탐색 사용자 ÷ 7일 관찰 완료 참가 사용자','첫 완료 경기 기준 · 중복 제거'],['AI 검색 사용률','AI 요청 세션 ÷ AI 진입점 노출 세션','연결 AI와 규칙 복구 결과 분리']
       ].map(([a,b,c])=>`<tr><th scope="row">${a}</th><td>${b}</td><td>${c}</td></tr>`).join('')}</tbody></table></div><p>실제 무료 Beta 이용자를 대상으로 운영·테스트 계정·자동 QA·샘플 앱을 제외합니다. 분모가 0이면 N/A로 기록합니다. 외부 분석 도구는 미연동이며, 첫 유효 측정값은 개선 성과가 아닌 기준값입니다.</p></div></details>` + evidence('USER-TEST-EVIDENCE.md','사용자 과업 원본') + evidence('RELEASE-HISTORY.md','QA·개선 이력') + evidence('BETA-MEASUREMENT-READINESS.md','Beta 측정 준비 기준')},
     {name:'Reflection', sub:'Learning & Limits', html:
@@ -113,7 +113,7 @@
   window.addEventListener('popstate', () => goTo(fromUrl(),{historyMode:null}));
   window.addEventListener('hashchange', () => goTo(fromUrl(),{historyMode:'replace'}));
   window.addEventListener('keydown', event => {
-    if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing||event.target.closest('input,textarea,select,[contenteditable],summary,a'))return;
+    if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing||event.target.closest('input,textarea,select,[contenteditable],summary,a,.table-wrap'))return;
     if(event.key==='ArrowRight'||event.key==='ArrowLeft') { event.preventDefault(); goTo(current+(event.key==='ArrowRight'?1:-1)); }
   });
   window.goTo = goTo;
