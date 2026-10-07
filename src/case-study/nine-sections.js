@@ -29,7 +29,7 @@
         ['04','Play · 경기','당일 준비하고 출석','시간·체크인·변경 안내 재확인','MY · 당일 상태 · 체크인'],
         ['05','Return · 재탐색','경기 경험을 다음 선택에 반영','경기 후 피드백과 다음 탐색이 분리됨','피드백 · 다음 추천']
       ].map(([n,t,a,p,o])=>`<article><span class="journey-number">${n}</span><h2>${t}</h2><div><span class="eyebrow">사용자 행동</span><p>${a}</p></div><div class="pain"><span class="eyebrow">막힘 · 가설</span><p>${p}</p></div><div class="opportunity"><span class="eyebrow">설계 대응</span><p>${o}</p></div></article>`).join('')}</div>` +
-      `<div class="callout"><strong>공통 원칙 · 선택과 진행 맥락 보존</strong><p>결과 없음·인증 취소·참가 실패·당일 변경<br>각 상황에 맞는 재탐색·재시도·현황 안내</p></div>` +
+      `<div class="callout"><strong>공통 원칙 · 선택과 진행 맥락 보존</strong><p>결과 없음·인증 취소·참가 실패·당일 변경 시, 상황에 맞는 재탐색·재시도·현황 안내</p></div>` +
       note('현재 제품 기반의 예상 여정 · 감정 조사·점수화 미실시')},
     {name:'Scope & Priorities', sub:'MVP & Trade-offs', html:
       head('04','SCOPE & PRIORITIES','참가와 복구를 먼저,<br>확장 검증은 다음으로.','사용자 판단 가치, 실패의 영향, 검증 가능성을 기준으로 무료 Beta의 범위를 정했습니다.') +
