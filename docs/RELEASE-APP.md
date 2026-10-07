@@ -18,7 +18,7 @@ FootMate v6는 `/app`을 개별 기능 데모가 아니라 **Find → Decide →
 
 ## State ownership
 
-- Matching / deterministic recommendation ownership은 기존 domain을 유지한다.
+- Matching / deterministic recommendation ownership은 기존 domain을 유지한다. 레벨 차이가 2단계 이상이면 높은 총점이 있어도 사용자-facing fit을 `경기 강도 차이 확인`으로 표시해 mismatch를 숨기지 않는다.
 - Discovery filter/sort와 AI handoff ownership은 기존 모듈을 유지한다.
 - 참가 확정은 `/app`의 browser-local participation state에 `amount: 0`, `paymentMethod: none`으로 저장한다.
 - Matchday와 Return state는 기존 repositories를 재사용하되 사용자-facing canonical surface는 MY로 통합한다.
@@ -33,6 +33,7 @@ v6는 UX와 IA를 통합하지만 연결 범위를 과장하지 않는다.
 - `/app` recommendation: deterministic runtime logic
 - `/app` match/capacity/participant data: sample records
 - `/app` participation persistence: browser local state
+- `/app` Google/Kakao social auth entrypoint: 활성 provider가 있을 때 Supabase OAuth authorize/user 확인 경로를 사용하며 외부 로그인 화면으로 이동할 수 있음; signup/recovery panel에는 social-provider status를 노출하지 않음
 - `/app` Release join: free participation confirmation; real PG 없음
 - `/beta`: Supabase Auth, match data, participation/cancel/check-in, Realtime, notification/email/Web Push/media 등 connected validation surface
 - `/beta/operator`: allowlisted + TOTP MFA connected operator surface
@@ -45,10 +46,11 @@ Auth PC 개선에서 검증한 원칙을 Release App 전체에 적용한다.
 
 **한 화면 = 하나의 연속 canvas, 의미 있는 object만 card.**
 
+- Desktop 960px+ review surface는 560px app canvas를 유지한 채 왼쪽에 서비스 여정·샘플 데이터·무료 참가 경계를 설명하는 context panel을 추가한다. 1366/1440/1920px에서 결합된 composition의 가독성과 horizontal lock을 유지한다.
 - Desktop Detail, Join, MY는 section마다 카드가 반복되는 구조를 줄이고 divider/spacing 중심으로 hierarchy를 만든다.
 - MY의 major hierarchy는 **현재 경기·경기 후 행동 → 저장 경기 → 내 정보 → 설정** 순서를 spacing으로 구분하고, 같은 레벨의 새 card를 추가하지 않는다.
 - 경기 카드, lifecycle focal object처럼 실제 독립 object는 card를 유지한다.
-- Home/Discover의 AI focal hierarchy는 유지한다.
+- Home/Discover의 AI focal hierarchy는 유지한다. Desktop Home은 기본 추천 프로필과 추천 범위를 명시하고, Discover zero-result에서는 현재 결과와 모순되는 personalization explanation을 숨긴다.
 - 모바일의 기존 안정 layout은 불필요하게 평탄화하지 않는다.
 
 ## Recovery states
@@ -72,6 +74,9 @@ v6 runtime 변경은 다음을 모두 통과해야 한다.
 - Release App architecture contract
 - Regression suite
 - Browser E2E + axe
+- Desktop 1366 / 1440 / 1920px review context readability + 560px app canvas + horizontal lock contract
+- Auth panel 전환 시 heading focus + scrollTop 0 contract
+- recommendation level mismatch label + Discover zero-result explanation suppression contract
 - changed surface Playwright `toHaveScreenshot()` comparison
 - Desktop Detail / Join / MY visual contract
 - Mobile 390px Home lifecycle / Join / MY Matchday / MY postgame visual contract
