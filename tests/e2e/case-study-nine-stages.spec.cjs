@@ -141,7 +141,7 @@ async function typographyAudit(page){
     }
     const heading=getComputedStyle(slide.querySelector('.section-head h1'));
     return {section:slide.id,failures:[...new Set(failures)],review,
-      body:[...slide.querySelectorAll('.lead,.story-card p,.priority-card p,.decision-row p,.next-list p:not(.small-copy)')].filter(node=>node.getClientRects().length).map(node=>{const style=getComputedStyle(node);return {selector:describe(node),lead:node.matches('.lead'),size:parseFloat(style.fontSize),line:parseFloat(style.lineHeight)};}),
+      body:[...slide.querySelectorAll('.lead,.story-card p,.priority-card p,.decision-row p,.next-list p:not(.small-copy)')].filter(node=>node.getClientRects().length).map(node=>{const style=getComputedStyle(node);return {selector:describe(node),lead:node.matches('.lead'),readableBody:node.matches('.story-card p,.priority-card p,.decision-row p:not(.small-copy)'),size:parseFloat(style.fontSize),line:parseFloat(style.lineHeight)};}),
       heading:{size:parseFloat(heading.fontSize),weight:heading.fontWeight,line:parseFloat(heading.lineHeight),tracking:parseFloat(heading.letterSpacing)}};
   });
 }
@@ -180,7 +180,7 @@ for(const fonts of ['normal','fallback']){
         const result=await typographyAudit(page);audits.push(result);
         await testInfo.attach(result.section+'-typography',{body:JSON.stringify({width,coverage,fontState,result},null,2),contentType:'application/json'});
         for(const body of result.body){
-          expect(body.size,result.section+' '+body.selector+' body size').toBe(body.lead?14:width>800?13:14);
+          expect(body.size,result.section+' '+body.selector+' body size').toBe(body.lead?14:width>800?(body.readableBody?14:13):14);
           expect(body.line/body.size,result.section+' '+body.selector+' body leading').toBeGreaterThanOrEqual(1.7);
         }
         expect(result.failures,result.section+' text geometry').toEqual([]);
