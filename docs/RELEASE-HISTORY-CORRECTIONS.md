@@ -1,5 +1,7 @@
 # FootMate Release History Corrections
 
+> **현재와 과거의 적용 범위** · 아래 2026-09-25 Case Study 정정 항목은 당시 13단계 승인 이력이며, `Current baseline` 등의 표현도 그 기록 당시 기준입니다. 현재 공개 9단계의 구조·QA는 [CASE-STUDY-NINE-STAGES.md](CASE-STUDY-NINE-STAGES.md), [CASE-STUDY-TYPOGRAPHY-QA.md](CASE-STUDY-TYPOGRAPHY-QA.md), [CASE-STUDY-VISUAL-QA.md](CASE-STUDY-VISUAL-QA.md) 및 [RELEASE-HISTORY.md](RELEASE-HISTORY.md)의 2026-10-08 항목이 우선합니다. 과거 사실과 정정 관계는 아래에 그대로 보존합니다.
+
 이 문서는 기존 `RELEASE-HISTORY.md`의 durable 이력을 삭제하지 않고, 이후 검증에서 범위 해석이나 승인 기준이 정정된 경우 **현재 적용되는 supersession**을 기록한다. 이 문서와 기존 Release History가 충돌하면 여기의 더 최신 correction이 현재 기준이다.
 
 ## Case Study repetition polish · final clarity closure · 2026-09-25
