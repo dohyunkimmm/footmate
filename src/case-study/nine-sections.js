@@ -99,7 +99,7 @@
   const imageDialog=document.createElement('dialog');
   imageDialog.className='image-dialog';
   imageDialog.setAttribute('aria-labelledby','image-dialog-title');
-  imageDialog.innerHTML='<div class="image-dialog-header"><h2 id="image-dialog-title">화면 확대</h2><button type="button" class="image-dialog-close" autofocus>닫기 ×</button></div><div class="image-dialog-body"><img alt=""></div>';
+  imageDialog.innerHTML='<div class="image-dialog-header"><h2 id="image-dialog-title">화면 확대</h2><button type="button" class="image-dialog-close" autofocus>닫기 ×</button></div><div class="image-dialog-body" tabindex="0" role="region" aria-label="확대 이미지"><img alt=""></div>';
   document.body.appendChild(imageDialog);
   imageDialog.querySelector('.image-dialog-close').addEventListener('click',()=>imageDialog.close());
   document.addEventListener('click',event=>{

@@ -362,6 +362,11 @@ test('evidence images expand without changing section and restore keyboard focus
   await expect(page).toHaveURL(/#section-06$/);
   const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
   expect(scan.violations).toEqual([]);
+  await page.keyboard.press('Tab');
+  const imageRegion=dialog.getByRole('region',{name:'확대 이미지',exact:true});
+  await expect(imageRegion).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(()=>imageRegion.evaluate(node=>node.scrollTop)).toBeGreaterThan(0);
   await page.keyboard.press('Escape');
   await expect(dialog).not.toBeVisible();
   await expect(preview).toBeFocused();
