@@ -188,3 +188,4 @@ html::-webkit-scrollbar{
 /* Supporting cards grow with their content rather than forced body breaks. */
 .card-grid>.story-card{padding:16px 20px}
 .priority-card{padding:18px 20px}
+.copy-unit{display:inline-block;max-width:100%;vertical-align:top}
