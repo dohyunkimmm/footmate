@@ -1,0 +1,44 @@
+name: Temporary FootMate Typography Snapshot Refresh
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-qa-snapshots.yml'
+permissions:
+  contents: write
+jobs:
+  refresh:
+    if: github.head_ref == 'fix/typography-qa-01-08-20261008'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/typography-qa-01-08-20261008
+          persist-credentials: true
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install pinned browser QA dependencies
+        run: |
+          npm install --no-save --ignore-scripts '@playwright/test@1.55.1' '@axe-core/playwright@4.10.2' css-tree@3.1.0
+      - name: Update only typography-affected visual assertions
+        run: |
+          npx playwright test --project=chromium tests/e2e/real-app-white-surface.spec.cjs tests/e2e/release-app.spec.cjs --grep '390px Home uses|390px Discover uses|Home lifecycle closes Return|Release App mobile changed surfaces' --update-snapshots
+      - name: Commit the four reviewed screenshots
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-home-390-chromium-linux.png \
+            tests/e2e/real-app-white-surface.spec.cjs-snapshots/real-app-white-discover-390-chromium-linux.png \
+            tests/e2e/release-app.spec.cjs-snapshots/v6-release-home-upcoming-1440-chromium-linux.png \
+            tests/e2e/release-app.spec.cjs-snapshots/v6-release-home-upcoming-390-chromium-linux.png
+          git diff --cached --stat
+          test "$(git diff --cached --name-only | wc -l)" -eq 4
+          git commit -m 'test(visual): accept typography QA card metadata snapshots'
+          git push origin HEAD:fix/typography-qa-01-08-20261008
