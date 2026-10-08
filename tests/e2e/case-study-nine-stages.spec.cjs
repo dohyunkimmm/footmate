@@ -389,3 +389,21 @@ test('mobile QA records expose complete problem, change and verification without
   await page.locator('#section-07 summary').click();
   expect(await page.locator('#section-07 .detail-body .table-wrap').evaluate(node=>node.clientWidth)).toBeGreaterThanOrEqual(280);
 });
+
+test('Typography QA: Case Study navigation, evidence hint and responsive headings',async({page})=>{
+  await page.setViewportSize({width:320,height:900});
+  await page.goto('/');
+  await expect(page.locator('.toc-t').first()).toHaveCSS('font-size','13px');
+  await expect(page.locator('body')).toHaveCSS('font-family',/Noto Sans KR/);
+  await expect(page.locator('.slide:visible h1 br.cs-title-break')).toHaveCSS('display','none');
+  await page.locator('.toc-item').nth(6).click();
+  await page.getByText('8개 KPI의 계산·관찰 기준',{exact:true}).click();
+  await expect(page.locator('#kpi-table-hint')).toBeVisible();
+  await page.setViewportSize({width:1440,height:900});
+  await expect(page.locator('.toc-s').first()).toHaveCSS('font-size','12px');
+  await expect(page.locator('#kpi-table-hint')).toBeHidden();
+  await page.locator('.toc-item').nth(2).click();
+  await expect(page.locator('#section-03 .journey-map p').first()).toHaveCSS('font-size','14px');
+  await page.locator('.toc-item').first().click();
+  await expect(page.locator('#section-01 .story-card p').first()).toHaveCSS('font-size','14px');
+});
