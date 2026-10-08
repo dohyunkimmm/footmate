@@ -9,7 +9,7 @@
   const head = (n, label, title, lead) => `<header class="section-head"><span class="eyebrow">${n} / ${label}</span><h1 tabindex="-1">${title}</h1><p class="lead">${lead}</p></header>`;
   const note = text => `<p class="source-note">${text}</p>`;
   const steps = items => `<ol class="flow">${items.map(([title, body], index) => `<li><span class="flow-number" aria-hidden="true">${String(index+1).padStart(2,'0')}</span><strong>${title}</strong><span>${body}</span></li>`).join('')}</ol>`;
-  const image = (file, alt, caption) => `<figure class="product-figure"><img src="/src/case-study/evidence/${file}" alt="${alt}" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
+  const image = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/src/case-study/evidence/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/src/case-study/evidence/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption} <span class="image-view-hint" aria-hidden="true">· 확대 보기 ↗</span></figcaption></figure>`;
   const sections = [
     {name:'Overview & Problem', sub:'Project & Design Goal', html:
       head('01','OVERVIEW & PROBLEM','내 수준에 맞는 경기부터,<br>참가 이후의 경험까지.','경기 조건을 해석하고, 추천 이유로 판단을 돕고, 참가부터 경기 후까지 연결하는 풋살 서비스를 설계·구축했습니다.') +
@@ -58,13 +58,13 @@
     {name:'Validation & Metrics', sub:'Evidence & Measurement', html:
       head('07','VALIDATION & METRICS','확인한 동작과,<br>앞으로 측정할 성과를 구분했습니다.','과업 기반 사용성 검증, 개발·배포 QA, 제품 KPI를 서로 다른 근거로 관리합니다.') +
       grid(card('USER TASKS · 과업 기록','교육생 6명 · 과업 8회','<span class="copy-unit">iOS 4명 · Android 2명</span> / <span class="copy-unit">비회원 탐색 · 소셜·이메일 가입</span>'),card('PRODUCT QA · 동작 점검','상태·복구·접근성 확인','<span class="copy-unit">주요 흐름 · 오류 복구 · 가독성</span> / <span class="copy-unit">화면 크기별 표시 · 모바일 Safari</span>'),card('PRODUCT METRICS · 측정 준비','8개 KPI · 측정 전 정의','계산·관찰·제외 기준 정리 · 실제 이용 기준값·목표치는 미확보')) +
-      `<h2 class="block-title">개선·재검증 사례 · 개발 QA 근거</h2><p class="table-scroll-hint small-copy" id="qa-table-hint">표가 잘리면 좌우로 스크롤해 점검 항목 확인 ↔</p><div class="table-wrap" tabindex="0" role="region" aria-label="개선·재검증 사례 표" aria-describedby="qa-table-hint"><table><caption class="sr-only">개발 QA에서 확인한 개선과 재검증 기록</caption><thead><tr><th scope="col">발견 문제</th><th scope="col">수정</th><th scope="col">점검 항목</th></tr></thead><tbody><tr><th scope="row">첫 추천까지 스크롤 부담</th><td>상단 여백·카드 밀도 조정</td><td>모바일 첫 화면의 추천 카드 노출·스크롤 범위 점검</td></tr><tr><th scope="row">참가 오류 후 복귀</th><td>오류 안내·재시도·경기 다시 선택</td><td>배포 핵심 동작 15개 · 앱 흐름 8개 점검</td></tr><tr><th scope="row">필터 초기 색 대비</th><td>기본 상태에도 구분 색상 적용</td><td>색상 구분·화면 표시·모바일 Safari 동작 점검</td></tr></tbody></table></div>` +
+      `<h2 class="block-title">개선·재검증 사례 · 개발 QA 근거</h2><p class="table-scroll-hint small-copy" id="qa-table-hint">발견 문제 → 수정 → 점검 내용 순서로 확인</p><div class="table-wrap qa-evidence-table" tabindex="0" role="region" aria-label="개선·재검증 사례 표" aria-describedby="qa-table-hint"><table><caption class="sr-only">개발 QA에서 확인한 개선과 재검증 기록</caption><thead><tr><th scope="col">발견 문제</th><th scope="col">수정</th><th scope="col">점검 항목</th></tr></thead><tbody><tr><th scope="row">첫 추천까지 스크롤 부담</th><td>상단 여백·카드 밀도 조정</td><td>모바일 첫 화면의 추천 카드 노출·스크롤 범위 점검</td></tr><tr><th scope="row">참가 오류 후 복귀</th><td>오류 안내·재시도·경기 다시 선택</td><td>배포 핵심 동작 15개 · 앱 흐름 8개 점검</td></tr><tr><th scope="row">필터 초기 색 대비</th><td>기본 상태에도 구분 색상 적용</td><td>색상 구분·화면 표시·모바일 Safari 동작 점검</td></tr></tbody></table></div>` +
       note('개발·배포 점검 사례 · 교육생 과업 결과와 별도<br>성공률·시간·만족도 개선 수치 미확정') +
       `<details><summary>8개 KPI의 계산·관찰 기준</summary><div class="detail-body"><p class="table-scroll-hint small-copy" id="kpi-table-hint">좌우 스크롤로 지표·계산·관찰 기준 확인 ↔</p><div class="table-wrap" tabindex="0" role="region" aria-label="KPI 계산·관찰 기준 표" aria-describedby="kpi-table-hint"><table><thead><tr><th scope="col">지표</th><th scope="col">계산</th><th scope="col">관찰 기준</th></tr></thead><tbody>${[
         ['상세 진입률','상세 진입 세션 ÷ 결과 노출 세션','결과 1개 이상 · 세션당 1회'],['참가 전환율','참가 완료 쌍 ÷ 상세 조회 사용자·경기 쌍','동일 경기 · 조회 후 24시간'],['결과 없음 비율','결과 0개 검색 ÷ 정상 처리 검색','네트워크·서버 오류 제외'],['참가 실패율','실패·미해결 흐름 ÷ 확정 요청 흐름','24시간 관찰 · 사용자 취소 분리'],['복구 성공률','목적 완료 흐름 ÷ 복구 가능한 실패 흐름','24시간 이내 · 대안 선택 별도'],['체크인 완료율','체크인 완료 쌍 ÷ 종료 경기 확정 참가 쌍','취소 제외 · 노쇼 포함'],['7일 내 재탐색률','재탐색 사용자 ÷ 7일 관찰 완료 참가 사용자','첫 완료 경기 기준 · 중복 제거'],['AI 검색 사용률','AI 요청 세션 ÷ AI 진입점 노출 세션','연결 AI와 규칙 복구 결과 분리']
       ].map(([a,b,c])=>`<tr><th scope="row">${a}</th><td>${b}</td><td>${c}</td></tr>`).join('')}</tbody></table></div><p>대상 · 실제 무료 Beta 이용자<br>제외 · 운영·테스트 계정·자동 점검·샘플 앱<br>분모 0 · N/A 처리 · 첫 유효값은 개선 전 기준값</p></div></details>`},
     {name:'Reflection', sub:'Learning & Limits', html:
-      head('08','REFLECTION','연결 성공 이후의 상태까지,<br>설계해야 경험이 완성됩니다.','탐색·인증·참가를 연결하면서, 정상 경로뿐 아니라 중단·복구·운영 상태를 함께 정의해야 한다는 점을 배웠습니다.') +
+      head('08','REFLECTION','성공 이후의 상태까지,<br>설계해야 경험이 완성됩니다.','탐색·인증·참가를 연결하면서, 정상 경로뿐 아니라 중단·복구·운영 상태를 함께 정의해야 한다는 점을 배웠습니다.') +
       grid(card('KEEP','판단과 실행의 책임 분리','<span class="copy-unit">AI · 조건 해석</span> / <span class="copy-unit">추천 로직 · 후보 선정</span> / <span class="copy-unit">사용자 · 참가 확정</span>'),card('LEARNED','검증 행동 구체화','인증·복귀·상태 유지 확인 · 동일 조건에서 오류 재현'),card('LEARNED','실패도 사용자 흐름의 일부','중복 요청·정원 마감·알림 실패 확인 · 참가 상태와 알림 결과 분리')) +
       `<div class="split reflection-bottom"><article class="story-card"><span class="eyebrow">LIMITS</span><h2>근거의 한계</h2><ul><li>Persona·문제 정의 · 설계 가설</li><li>6명 과업 검증 · 시장 대표성 한계</li><li>개인별 발견 → 수정 → 재검증 연결 미확정</li><li>전환·재이용 개선 · 수익성 미검증</li></ul></article><article class="closing-note"><span class="eyebrow">NEXT DESIGN PRINCIPLE</span><h2>기능보다 흐름,<br>판단마다 근거</h2><p>문제 → 과업 → 상태·예외 → 수정 → 같은 조건에서 재검증</p></article></div>`},
     {name:'Next Steps', sub:'What to Validate Next', html:
@@ -84,12 +84,41 @@
   toc.innerHTML = sections.map((s,i) => `<button class="toc-item" type="button" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-copy"><span class="toc-t">${s.name}</span><span class="toc-s">${s.sub}</span></span></button>`).join('');
   track.innerHTML = sections.map((s,i) => `<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-label="${s.name}" hidden>${s.html}</section>`).join('');
   dots.innerHTML = sections.map((s,i) => `<button class="dot" type="button" data-index="${i}" aria-label="${i+1}번 섹션 · ${s.name}"></button>`).join('');
+  // Keep native table semantics when mobile rows switch to a vertical reading layout.
+  const qaTable=track.querySelector('.qa-evidence-table table');
+  qaTable.setAttribute('role','table');
+  qaTable.querySelectorAll('thead,tbody').forEach(group=>group.setAttribute('role','rowgroup'));
+  qaTable.querySelectorAll('tr').forEach(row=>row.setAttribute('role','row'));
+  qaTable.querySelectorAll('th').forEach(cell=>cell.setAttribute('role',cell.scope==='row'?'rowheader':'columnheader'));
+  const qaLabels=[...qaTable.querySelectorAll('thead th')].map(cell=>cell.textContent.trim());
+  qaTable.querySelectorAll('tbody tr').forEach(row=>row.querySelectorAll('td').forEach((cell,index)=>{
+    cell.dataset.label=qaLabels[index+1];
+    cell.setAttribute('role','cell');
+    cell.setAttribute('aria-label',qaLabels[index+1]+' · '+cell.textContent.trim());
+  }));
+  const imageDialog=document.createElement('dialog');
+  imageDialog.className='image-dialog';
+  imageDialog.setAttribute('aria-labelledby','image-dialog-title');
+  imageDialog.innerHTML='<div class="image-dialog-header"><h2 id="image-dialog-title">화면 확대</h2><button type="button" class="image-dialog-close" autofocus>닫기 ×</button></div><div class="image-dialog-body"><img alt=""></div>';
+  document.body.appendChild(imageDialog);
+  imageDialog.querySelector('.image-dialog-close').addEventListener('click',()=>imageDialog.close());
+  document.addEventListener('click',event=>{
+    const preview=event.target.closest('.evidence-preview');
+    if(!preview)return;
+    imageDialog.querySelector('h2').textContent=preview.dataset.imageTitle;
+    const expanded=imageDialog.querySelector('img');
+    expanded.src=preview.dataset.image;
+    expanded.alt=preview.dataset.imageTitle;
+    imageDialog.showModal();
+    imageDialog.querySelector('.image-dialog-body').scrollTop=0;
+  });
   const slides = [...track.children];
   const prev = document.querySelector('.btn-prev');
   const next = document.querySelector('.btn-next');
   let current = 0;
   function fromUrl() { const match = location.hash.match(/^#section-(\d{1,2})$/); return match ? Number(match[1])-1 : 0; }
   function goTo(index, {historyMode='push', focus=true}={}) {
+    if(imageDialog.open)imageDialog.close();
     current = Math.max(0, Math.min(sections.length-1, Number(index)||0));
     slides.forEach((slide,i) => { slide.hidden = i!==current; slide.classList.toggle('on',i===current); });
     toc.querySelectorAll('button').forEach((button,i) => { button.classList.toggle('on',i===current); if(i===current)button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current'); });
@@ -112,6 +141,7 @@
   window.addEventListener('popstate', () => goTo(fromUrl(),{historyMode:null}));
   window.addEventListener('hashchange', () => goTo(fromUrl(),{historyMode:'replace'}));
   window.addEventListener('keydown', event => {
+    if(imageDialog.open)return;
     if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing||event.target.closest('input,textarea,select,[contenteditable],summary,a,.table-wrap'))return;
     if(event.key==='ArrowRight'||event.key==='ArrowLeft') { event.preventDefault(); goTo(current+(event.key==='ArrowRight'?1:-1)); }
   });

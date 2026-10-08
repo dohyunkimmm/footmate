@@ -349,3 +349,38 @@ test('visual evidence, scope and mobile reading cues stay coherent',async({page}
   await page.locator('.toc-item').nth(4).click();
   await expect(page.locator('.flow-number')).toHaveText(['01','02','03','04','05','06']);
 });
+
+test('evidence images expand without changing section and restore keyboard focus',async({page})=>{
+  await page.goto('/#section-06');
+  const preview=page.locator('#section-06 .evidence-preview').first();
+  await preview.click();
+  const dialog=page.getByRole('dialog',{name:'조건 설정과 추천이 보이는 홈 화면',exact:true});
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('img')).toHaveAttribute('src',await preview.getAttribute('data-image'));
+  await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(page).toHaveURL(/#section-06$/);
+  const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
+  expect(scan.violations).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(preview).toBeFocused();
+  await preview.press('Enter');
+  await expect(dialog).toBeVisible();
+  await page.getByRole('button',{name:'닫기 ×',exact:true}).click();
+  await expect(preview).toBeFocused();
+});
+
+test('mobile QA records expose complete problem, change and verification without horizontal scrolling',async({page})=>{
+  await page.setViewportSize({width:320,height:844});
+  await page.goto('/#section-07');
+  const records=page.locator('.qa-evidence-table');
+  await expect(records.locator('tbody tr')).toHaveCount(3);
+  await expect(records.getByRole('cell',{name:'점검 항목 · 모바일 첫 화면의 추천 카드 노출·스크롤 범위 점검',exact:true})).toBeVisible();
+  const geometry=await records.evaluate(node=>({width:node.clientWidth,scroll:node.scrollWidth,rows:[...node.querySelectorAll('tbody tr')].map(row=>row.getBoundingClientRect().top)}));
+  expect(geometry.scroll).toBeLessThanOrEqual(geometry.width+1);
+  expect(geometry.rows[1]).toBeGreaterThan(geometry.rows[0]);
+  expect(geometry.rows[2]).toBeGreaterThan(geometry.rows[1]);
+  await page.locator('#section-07 summary').click();
+  expect(await page.locator('#section-07 .detail-body .table-wrap').evaluate(node=>node.clientWidth)).toBeGreaterThanOrEqual(280);
+});

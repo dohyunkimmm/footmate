@@ -189,3 +189,42 @@ html::-webkit-scrollbar{
 .card-grid>.story-card{padding:16px 20px}
 .priority-card{padding:18px 20px}
 .copy-unit{display:inline-block;max-width:100%;vertical-align:top}
+
+/* Compact evidence previews retain a full-resolution, keyboard-accessible reading view. */
+.evidence-preview{display:block;width:100%;padding:0;border:0;border-radius:10px;background:transparent;line-height:0;cursor:zoom-in}
+.image-view-hint{white-space:nowrap;color:var(--green);font-weight:700}
+.image-dialog{width:min(760px,calc(100% - 32px));max-height:90svh;padding:0;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--text)}
+.image-dialog::backdrop{background:rgba(8,30,22,.68)}
+.image-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.image-dialog-header h2{font-size:18px;line-height:1.5}
+.image-dialog-close{flex-shrink:0;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--green)}
+.image-dialog-body{max-height:calc(90svh - 100px);overflow:auto;padding:20px;background:var(--soft)}
+.image-dialog-body img{display:block;width:min(520px,100%);height:auto;margin:auto}
+@media(min-width:801px){
+  #section-06 .decision-row{align-items:center;padding:22px 0}
+  #section-06 .decision-row>div{padding-top:0}
+  #section-06 .product-figure img{height:280px;object-fit:cover}
+  #section-06 .recovery-diagram{padding:18px}
+  #section-06 .recovery-diagram ol{margin-top:14px}
+  #section-06 .recovery-diagram li{padding:10px 0}
+  #section-06 .recovery-diagram li span{margin-top:4px}
+}
+@media(max-width:800px){
+  /* One existing record per block: no nested cards or side-to-side comparison required. */
+  .qa-evidence-table{border:0;border-radius:0;overflow:visible}
+  .qa-evidence-table table,.qa-evidence-table tbody{display:block;width:100%}
+  .qa-evidence-table thead{display:none}
+  .qa-evidence-table tr{display:block;border-top:1px solid var(--line);padding:16px 0}
+  .qa-evidence-table tbody th{display:block;min-width:0;padding:0;border:0;font-size:14px;line-height:1.8;background:transparent}
+  .qa-evidence-table td{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;min-width:0;padding:8px 0 0;border:0;font-size:14px;line-height:1.8}
+  .qa-evidence-table td:before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:700}
+  #section-07 .detail-body{padding:16px 0}
+  .image-dialog-header{padding:12px;gap:12px}
+  .image-dialog-header h2{font-size:16px}
+  .image-dialog-body{padding:12px}
+}
+
+/* Home evidence includes a wide presentation backdrop; crop that backdrop, retain the full phone. */
+.image-dialog-body img[src*="recommendation-home"]{aspect-ratio:1/2;object-fit:cover}
+
+html:has(.image-dialog[open]){overflow:hidden}
