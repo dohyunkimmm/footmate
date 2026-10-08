@@ -678,7 +678,7 @@ color:var(--fm-product-ink);
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-next-tag{min-height:25px;padding:3px 8px;font-size:10px}
 .fm-next-page[data-mode="real"] [data-screen="home"] .fm-next-match-tags .fm-next-tag:nth-child(n+3){display:none}
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-footer{align-items:center}
-.fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-footer small{display:none}
+.fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-footer small{display:block}
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-next-match-footer b{color:var(--fm-product-muted);font-size:11px;font-weight:600}
 .fm-next-page[data-mode="real"] :is([data-screen="home"],[data-screen="discover"]) .fm-next-price{color:var(--fm-product-ink);font-size:16px}
 
@@ -1430,7 +1430,7 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app:
 .fm-desktop-boundary p{font-size:13px;line-height:1.8;color:#52665b;word-break:keep-all}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"]{--fm-focus-ring:#176445}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] :focus-visible{outline:3px solid #176445!important;outline-offset:3px}
-html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app .fm-next-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app .fm-next-list{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app .fm-discovery-empty{grid-column:1/-1}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app .fm-next-match-card{margin:0;min-width:0}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app :is(.fm-next-match-date,.fm-next-tag,.fm-personalization-reason,.fm-next-match-footer small){font-size:13px!important;line-height:1.6}
@@ -1445,3 +1445,6 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-auth-card
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] :is(.fm-auth-title p,.fm-auth-field label,.fm-auth-check,.fm-auth-help button){font-size:13px}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen="discover"][data-discovery-result-count="0"] [data-personalization-explanation]{display:none}
 }
+
+/* Typography QA 01–08 · readable AI labels and example suggestions. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(.fm-ai-kicker,.fm-ai-mode,.fm-ai-examples button,.fm-ai-guardrail){font-size:12px}
