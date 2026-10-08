@@ -10,7 +10,7 @@
 - Closed Beta Operator `/beta/operator` — allowlisted + TOTP MFA 운영자 경로
 - Guided `/app?mode=guided` — 설명이 포함된 리뷰 흐름
 - Evidence `/app?mode=evidence` — 구현·검증 근거 확인용 흐름
-- Case Study `/` — 리뷰어용 설명 화면. 명시적인 Case Study 수정 요청은 이 저장소의 `src/case-study`와 생성 bundle에서 반영하고 해당 화면을 QA
+- Case Study `/` — 리뷰어용 9단계 설명 화면. 현재 `src/case-study/nine-sections.{js,css}`에서 직접 로드하며 해당 E2E·접근성·수동 시각 QA로 검증한다. 이전 13단계 생성 bundle은 현재 페이지에 연결되지 않는다.
 
 ## Current release engineering docs
 
@@ -29,14 +29,19 @@ FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 �
 - [CASE-STUDY-NINE-STAGES.md](CASE-STUDY-NINE-STAGES.md) — 현재 9단계 구성, 화면·근거 구분과 이동 검증 기준
 - [CASE-STUDY-TYPOGRAPHY-QA.md](CASE-STUDY-TYPOGRAPHY-QA.md) — 현재 9단계 글자 크기·행 정렬·대체 폰트·텍스트 확대 QA
 - [CASE-STUDY-VISUAL-QA.md](CASE-STUDY-VISUAL-QA.md) — 현재 9단계 시각 위계·이미지 확대·모바일 근거 읽기 QA
-- [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — Case Study copy QA 정정 기록
+- [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — 과거 13단계 Case Study copy QA 정정 이력(현재 9단계 acceptance 아님)
+
+## Historical Case Study references
+
+- [CASE-STUDY-5.2-COMPOSITION.md](CASE-STUDY-5.2-COMPOSITION.md) — 이전 13단계 페이지 구성·로컬 검증 기록. 현재 9단계의 표시·QA 기준으로 사용하지 않는다.
+- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md)의 이전 Case Study 항목 역시 당시 승인 사실로만 해석한다. 현재 기준은 위 9단계 문서와 `RELEASE-HISTORY.md`의 2026-10-08 기록을 우선한다.
 
 ## Impact-aware QA
 
 GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 - runtime/product 변경: `Regression 36` + `Browser E2E + axe`를 실행하고, `main` push에서 필요한 `Production Smoke`까지 수행한다.
-- UI/UX/layout 변경: 변경된 FootMate surface 자체의 Playwright `toHaveScreenshot()` actual comparison을 추가로 통과해야 하며 baseline 생성만으로 PASS 처리하지 않는다.
+- UI/UX/layout 변경: 승인된 픽셀 기준을 보유한 Product 화면은 Playwright `toHaveScreenshot()`으로 실제 화면과 비교하고, baseline 생성만으로 PASS 처리하지 않는다. 현재 9단계 Case Study는 전용 E2E·geometry·axe와 캡처 수동 검토로 검증하며, 캡처만으로 픽셀 baseline 통과를 주장하지 않는다.
 - docs/workflow-only 변경: `Change Impact`가 non-runtime으로 분류하면 `Docs-only QA`에서 `git diff --check`와 documentation-facing connected-platform contract를 실행하고 무거운 Regression/Browser E2E/Production Smoke는 skip한다.
 - `queued` / `in_progress`는 실패나 stuck을 의미하지 않으며, 실제 failure/cancel/timeout 또는 progress 정지 근거가 있을 때만 이상 상태로 판단한다.
 
