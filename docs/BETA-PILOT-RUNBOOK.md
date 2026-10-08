@@ -151,6 +151,6 @@ Pilot 변경은 변경 영향에 맞춰 다음 순서를 따른다.
 - runtime / UI / domain / deployment 영향 변경: `branch → PR → Regression 36 / Browser E2E + axe → merge → 필요한 Supabase migration/Edge Function 적용 → Vercel Production verification → 실제 Beta path verification → 문서 sync`
 - docs / workflow-only non-runtime 변경: `branch → PR → Change Impact → Docs-only QA (git diff --check + connected-platform contract) → merge → 문서 consistency 확인`; runtime Regression / Browser E2E / Production Smoke는 영향이 없으면 skip한다.
 
-최종 runtime 또는 수동 Production QA가 확정된 뒤에는 README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 순으로 동기화하고, 서로 상충하는 `pending` / `미검증` / `별도 확인 대상` 문구가 남지 않았는지 검색한 뒤 완료 처리한다.
+최종 runtime 또는 수동 Production QA가 확정된 뒤에는 [docs/README.md](README.md)의 공통 sync-up 순서를 따른다: README → Release History/Correction → Runbook(운영 절차 변경 시) → Notion(장기 제품 사실 변경 시) → Case Study(설명·핵심 흐름·근거에 실질적 변경이 있을 때) → 상충하는 `pending` / `미검증` / `별도 확인 대상` 문구 검색 → QA/merge. 단순한 Beta 운영·시각 수정만으로 Case Study를 중복 업데이트하지 않는다.
 
 Render는 backup/alternate deployment이며 모든 변경의 완료 조건이 아니다.

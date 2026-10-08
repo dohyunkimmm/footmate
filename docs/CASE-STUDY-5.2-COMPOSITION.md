@@ -1,5 +1,7 @@
 # FootMate Case Study 5.2 · 페이지 구성 검토
 
+> **과거 기준 문서 (13단계)** · 아래 내용은 당시의 구성·로컬 검증 이력으로 보존합니다. 현재 공개 Case Study는 9단계(5.5.0)이며, 표시·접근성·QA 기준은 [9단계 구성](CASE-STUDY-NINE-STAGES.md), [시각 QA](CASE-STUDY-VISUAL-QA.md), [타이포그래피 QA](CASE-STUDY-TYPOGRAPHY-QA.md)를 우선합니다. 이 기록의 13개 페이지·원본 이미지·구버전 소스는 현재 런타임 검증 사실이 아닙니다.
+
 기준 소스: `b20efca837842d9719ddbdbf7695799488e52641`의 Case Study 5.1.1.
 수정 범위: 공개 Case Study의 제목·설명·키워드, 페이지 구성, 카드 위계, 여백과 제품 화면 표현.
 
