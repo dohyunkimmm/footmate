@@ -29,7 +29,7 @@ FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에
 
 ## 서비스 기획 관점
 
-서비스 기획의 현재 근거는 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)와 [과업 기반 사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)를 Source of Truth로 사용합니다. 루트 `/`의 Case Study는 리뷰어용 설명 화면이며, 명시적으로 요청한 copy/layout/visual 변경은 이 저장소에서 원본·생성 bundle과 해당 화면의 QA를 함께 관리합니다. Product release QA는 `/app`, `/beta`, `/beta/operator`와 현재 evidence docs를 기준으로 하며, Case Study 변경도 영향에 맞는 QA를 통과해야 합니다.
+서비스 기획의 현재 근거는 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)와 [과업 기반 사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)를 Source of Truth로 사용합니다. 루트 `/`의 Case Study는 리뷰어용 설명 화면이며, 명시적으로 요청한 copy/layout/visual 변경은 현재 9단계 원본(`src/case-study/nine-sections.js`, `nine-sections.css`)과 해당 화면의 QA를 함께 관리합니다. 과거 13단계 생성 bundle은 현재 화면에서 로드하지 않습니다. Product release QA는 `/app`, `/beta`, `/beta/operator`와 현재 evidence docs를 기준으로 하며, Case Study 변경도 영향에 맞는 QA를 통과해야 합니다.
 
 ## Product decisions
 
