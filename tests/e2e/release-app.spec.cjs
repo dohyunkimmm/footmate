@@ -137,6 +137,9 @@ test('Release App flattens desktop Detail into one decision surface',async({page
 });
 
 test('Release App replaces simulated payment with free join and hands ownership to MY',async({page})=>{
+  // Match-day copy in these desktop baselines was captured on October 7.
+  // Fix Date only; animation frames and application timers continue normally.
+  if(!productionSmoke)await page.clock.setFixedTime(new Date('2026-10-07T12:00:00Z'));
   const errs=await openCleanApp(page);
   await setupToHome(page);await openDetail(page);await reachJoin(page);
   const join=page.locator('[data-screen="checkout"]');
@@ -206,6 +209,9 @@ test('legacy Schedule state migrates into canonical MY ownership',async({page})=
 });
 
 test('Home lifecycle closes Return and hands the next action back to Discover',async({page})=>{
+  // Match-day copy in these desktop baselines was captured on October 7.
+  // Fix Date only; animation frames and application timers continue normally.
+  if(!productionSmoke)await page.clock.setFixedTime(new Date('2026-10-07T12:00:00Z'));
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
