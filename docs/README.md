@@ -26,6 +26,9 @@ FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 �
 
 - [SERVICE-PLANNING-EVIDENCE.md](SERVICE-PLANNING-EVIDENCE.md) — 역할·목표·우선순위·대안·8개 KPI 측정 설계와 검증 한계
 - [USER-TEST-EVIDENCE.md](USER-TEST-EVIDENCE.md) — 같은 교육과정을 수강한 교육생 6명의 iOS·Android 탐색·가입 과업, 반복 검증 방식과 해석 한계
+- [CASE-STUDY-NINE-STAGES.md](CASE-STUDY-NINE-STAGES.md) — 현재 9단계 구성, 화면·근거 구분과 이동 검증 기준
+- [CASE-STUDY-TYPOGRAPHY-QA.md](CASE-STUDY-TYPOGRAPHY-QA.md) — 현재 9단계 글자 크기·행 정렬·대체 폰트·텍스트 확대 QA
+- [CASE-STUDY-VISUAL-QA.md](CASE-STUDY-VISUAL-QA.md) — 현재 9단계 시각 위계·이미지 확대·모바일 근거 읽기 QA
 - [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — Case Study copy QA 정정 기록
 
 ## Impact-aware QA
