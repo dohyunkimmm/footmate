@@ -56,11 +56,12 @@
 }
 .skip-link:not(:focus){clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden}
 
-/* Center compact desktop contents between the brand and footer. */
+/* Balance desktop navigation across the space between the brand and footer. */
 @media(min-width:801px){
   .sidebar{display:flex;flex-direction:column}
   .sb-brand,.sidebar-foot{flex-shrink:0}
-  .toc{display:grid;flex:0 0 auto;grid-template-rows:repeat(9,minmax(58px,auto));align-content:start;padding:8px 0;margin-block:auto}
+  /* Grow rows from 58px to 68px and gaps from 0 to 9px as viewport height allows. */
+  .toc{display:grid;flex:0 0 auto;grid-template-rows:repeat(9,minmax(clamp(58px,calc(19.6px + 5svh),68px),auto));row-gap:clamp(0px,calc(-38.4px + 5svh),9px);align-content:start;padding:8px 0;margin-block:auto}
   .toc-item{align-items:center;padding-top:10px;padding-bottom:10px}
   .toc-n{padding-top:0}
   .sidebar-foot{margin:0}
