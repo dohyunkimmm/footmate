@@ -75,6 +75,27 @@ async function openCleanApp(page,viewport={width:1440,height:900}){
   return errs;
 }
 
+// Only normalize rendered date copy for the two desktop MY baselines.
+// Real clocks, authentication expiry, participation and check-in timestamps remain live.
+async function stabilizeDesktopMyDateCopy(page){
+  const patches=[
+    ['**/src/app/matchday.js*',
+      "new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric'}).format(new Date(value.startsAt))",
+      "new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric'}).format(new Date('2026-10-09T12:00:00Z'))"],
+    ['**/src/platform/application/checkin.js*',
+      ".format(new Date(time));",
+      ".format((()=>{const displayDate=new Date(time);displayDate.setFullYear(2026,9,9);return displayDate})());"]
+  ];
+  for(const [url,from,to] of patches){
+    await page.route(url,async route=>{
+      const response=await route.fetch();
+      const source=await response.text();
+      expect(source).toContain(from);
+      await route.fulfill({response,body:source.replace(from,to)});
+    });
+  }
+}
+
 async function chooseDefault(page){
   const setup=page.locator('[data-screen="setup"]');
   const chosen=setup.locator('[data-action="choose-setup"][aria-pressed="true"]');
@@ -137,6 +158,7 @@ test('Release App flattens desktop Detail into one decision surface',async({page
 });
 
 test('Release App replaces simulated payment with free join and hands ownership to MY',async({page})=>{
+  if(!productionSmoke)await stabilizeDesktopMyDateCopy(page);
   const errs=await openCleanApp(page);
   await setupToHome(page);await openDetail(page);await reachJoin(page);
   const join=page.locator('[data-screen="checkout"]');
@@ -206,6 +228,7 @@ test('legacy Schedule state migrates into canonical MY ownership',async({page})=
 });
 
 test('Home lifecycle closes Return and hands the next action back to Discover',async({page})=>{
+  if(!productionSmoke)await stabilizeDesktopMyDateCopy(page);
   const errs=await openCleanApp(page);
   await setupToHome(page);
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
