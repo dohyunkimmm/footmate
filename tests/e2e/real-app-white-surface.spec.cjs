@@ -204,3 +204,21 @@ for(const width of [320,375,390,430]){
     expect(errs).toEqual([]);
   });
 }
+
+test('Typography QA: match metadata stays visible in a single reading column and AI labels are readable',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  const grid=page.locator('[data-screen="home"] .fm-next-list').first();
+  const metadata=grid.locator('.fm-next-match-footer small').first();
+  await expect(metadata).toBeVisible();
+  const countColumns=()=>grid.evaluate(node=>getComputedStyle(node).gridTemplateColumns.trim().split(/\\s+/).length);
+  expect(await countColumns()).toBe(1);
+  expect(parseFloat(await metadata.evaluate(node=>getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(12);
+  const kicker=page.locator('[data-screen="home"] .fm-ai-kicker').first();
+  if(await kicker.count())await expect(kicker).toHaveCSS('font-size','12px');
+  await page.setViewportSize({width:1440,height:900});
+  expect(await countColumns()).toBe(1);
+  await expect(grid.locator('.fm-next-match-footer small').first()).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
