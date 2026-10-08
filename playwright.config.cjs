@@ -4,9 +4,8 @@ const externalBaseURL = process.env.BASE_URL || '';
 
 module.exports = defineConfig({
   testDir: './tests/e2e',
-  // Superseded 13-slide visual snapshots remain as historical fixtures.
-  // The nine-stage acceptance suite owns the current Case Study layout.
-  testIgnore: /case-study-(card-rhythm|detail-finish|evidence-framing|final-balance|p1-real-preview|p12-copy-spacing|page-composition|product-evidence)\.spec\.cjs/,
+  // Retired 13-section specs are preserved in Git history, not this test tree.
+  // Current nine-stage acceptance is covered by case-study-nine-stages.spec.cjs.
   timeout: 30_000,
   expect: { timeout: 7_000 },
   fullyParallel: false,
