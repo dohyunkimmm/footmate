@@ -56,14 +56,14 @@
 }
 .skip-link:not(:focus){clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden}
 
-/* Let the desktop contents use the available height, with a footer at the bottom. */
+/* Keep desktop contents compact, with a footer at the bottom. */
 @media(min-width:801px){
   .sidebar{display:flex;flex-direction:column}
   .sb-brand,.sidebar-foot{flex-shrink:0}
-  .toc{display:grid;flex:1 0 auto;grid-template-rows:repeat(9,minmax(64px,1fr));padding:12px 0}
-  .toc-item{align-items:center}
+  .toc{display:grid;flex:0 0 auto;grid-template-rows:repeat(9,minmax(58px,auto));align-content:start;padding:8px 0}
+  .toc-item{align-items:center;padding-top:10px;padding-bottom:10px}
   .toc-n{padding-top:0}
-  .sidebar-foot{margin:0}
+  .sidebar-foot{margin:auto 0 0}
 }
 
 /* Hide the page scrollbar while preserving native scrolling and content layout. */
