@@ -1,5 +1,7 @@
 # FootMate Case Study Copy QA Corrections
 
+> **과거 13단계 카피 수정 이력** · 아래 `현재 baseline` 표현은 각 항목이 작성된 2026-09-25 시점 기준입니다. 현재 공개 9단계 Case Study는 [9단계 문서](CASE-STUDY-NINE-STAGES.md)와 [2026-10-08 릴리스 이력](RELEASE-HISTORY.md)을 우선합니다. 인용된 `archive/CASE-STUDY-COPY-QA.md`는 현재 작업 트리에 없으며 Git 과거 이력의 참조입니다.
+
 이 문서는 `archive/CASE-STUDY-COPY-QA.md`의 이후 Case Study 카피 변경을 기록한다. 기존 기록과 충돌하면 이 문서의 더 최신 항목을 현재 기준으로 사용한다.
 
 ## 2026-09-25 · 02–13 repetition polish · final clarity closure
