@@ -1,5 +1,16 @@
 # FootMate Release History
 
+## 2026-10-08 — Case Study 9단계 가독성·근거 확인·모바일 QA 정리
+
+- Scope: 리뷰어용 Case Study `/`의 9단계 표시·근거 확인·접근성 개선. Product Release App v6 기능·버전, Closed Beta 운영 절차와 사용자 성과 근거는 변경하지 않음.
+- PR #541 · merge `34a0a4facaae25ea21e2d364592a98b03ee847c7`: 9단계 타이포그래피·가로폭·접근성 QA 보강, 운영 CTA 검사 문구를 승인 문구에 맞게 정정.
+- PR #542–#544 · merge `45de258` / `fef3b53` / `f2c9696`: 기본 세로 스크롤은 유지하며 스크롤바 숨김. P3 Journey Map과 P9 여백 축소 후 P3의 줄바꿈 행 경계 정렬 보정.
+- PR #545–#546 · merge `a795e5cc` / `290ad105`: 표·Journey Map의 읽기 크기 및 행·카드 정렬 개선. 대체 폰트, 텍스트 200% 확대·간격 설정 QA 강화. 우선순위·IA·예외 흐름과 근거 표시를 명확히 하고, 오래된 결제 실패 이미지는 실제 캡처로 오인되지 않는 복구 흐름 요약으로 대체.
+- PR #547 · merge `c2939c78`: P3–P9 보조 카드의 강제 줄바꿈과 불필요한 여백 정리. Desktop MY 시각 테스트 2개의 표시 날짜만 안정화하며 실제 앱 시계·인증·참가 시간과 기존 이미지 기준은 유지.
+- PR #548 · merge `c5e991212ba6770d7b104e1ba93f72494f5f80c3`: P1/P6 근거 이미지를 이름 있는 확대 대화상자로 확인하고 키보드 스크롤·Escape·포커스 복귀를 지원. P6 미리보기 밀도 개선, P7 모바일 QA 기록을 발견 문제·수정·점검 항목까지 세로로 표시, P8 제목 및 KPI 표 주변 여백 정리.
+- Final main QA: SHA `c5e991212ba6770d7b104e1ba93f72494f5f80c3` · GitHub Actions run `37732608702` SUCCESS (Change Impact / Regression 36 / Browser E2E + axe / Production Smoke). 해당 SHA의 GitHub Vercel commit status는 success. 별도 수동 Production 전체 동작 확인이나 배포 파일 대조까지 수행했다고 주장하지 않음.
+- Documentation sync: 9단계 문서 색인과 Case Study 시각 QA 검토 기준을 동기화. 실제 제품·Beta 기능/정책 및 장기 제품 사실은 바뀌지 않아 README, Release App, Beta Runbook, Notion의 기존 내용은 유지.
+
 ## 2026-10-07 — Release App 검토 가독성·탐색 안내 정리
 
 - Scope: Product release 버전은 유지하면서 desktop reviewer context, Home/Discover 설명, Auth panel 전환, recommendation mismatch 안내와 visual fixture 안정성을 현재 구현에 맞게 정리.
