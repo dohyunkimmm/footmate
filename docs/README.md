@@ -53,6 +53,6 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 완료 사실이 새로 확정되면 과거 문서의 `별도 확인 대상`, `미검증`, `pending` 같은 표현과 충돌하지 않는지 반드시 다시 검색한다. 제품/배포 사실과 절차 문서가 모두 일치하기 전에는 최종 sync-up 완료로 표현하지 않는다. 과거 Release History 자체를 보존해야 하는 경우에는 `RELEASE-HISTORY-CORRECTIONS.md`에 supersession을 명시해 현재 해석을 분리한다.
 
-Case Study는 Product package release와 version-coupling하지 않는다. FootMate의 작은 visual polish, spacing, density, copy, screenshot baseline 변화만으로는 Case Study sync 사유로 보지 않는다. FootMate의 설명·기능 구조·핵심 flow·성과 근거·대표 화면이 materially 달라지면 Case Study sync 필요 여부를 점검한다. 사용자가 Case Study 수정을 명시적으로 요청한 경우에는 이 저장소의 원본과 생성 bundle을 함께 수정하고, 변경된 `/` 화면의 동작·접근성·모바일 표시를 검증한다.
+Case Study는 Product package release와 version-coupling하지 않는다. FootMate의 작은 visual polish, spacing, density, copy, screenshot baseline 변화만으로는 Case Study sync 사유로 보지 않는다. FootMate의 설명·기능 구조·핵심 flow·성과 근거·대표 화면이 materially 달라지면 Case Study sync 필요 여부를 점검한다. 사용자가 Case Study 수정을 명시적으로 요청한 경우에는 현재 9단계 원본(`src/case-study/nine-sections.js`, `nine-sections.css`)을 수정하고, 변경된 `/` 화면의 동작·접근성·모바일 표시를 검증한다. 과거 13단계 생성 bundle은 현재 `/`에서 로드하지 않으며, 기존 CI 의존성을 정리하기 전에는 별도 변경 대상으로 취급한다.
 
 제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.
