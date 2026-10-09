@@ -109,6 +109,8 @@ jobs:
         run: node scripts/check-release-version.cjs
       - name: Check QA toolchain contract
         run: node scripts/check-qa-toolchain.cjs
+      - name: Check Vercel preview build selection contract
+        run: node --test tests/contracts/vercel-preview-deployment.contract.cjs
       - name: Check Case Study bundle and asset versions
         run: node scripts/build-case-study-bundle.cjs --check && node scripts/sync-case-study-assets.cjs --check
       - name: Check app compatibility boundary
@@ -192,12 +194,25 @@ jobs:
           NODE
       - name: Check product completion JS syntax
         run: node --check src/app/ai-match-assistant.js && node --check src/platform/presentation/real-app-card-polish.js && node --check src/platform/presentation/p0-usability-trust.js && node --check src/platform/presentation/p1-decision-clarity.js && node --check src/app/release-app.js
+      - name: Check QA test paths, typography test syntax and report contract
+        run: |
+          node scripts/check-qa-test-paths.cjs
+          node --check tests/e2e/helpers/typography-audit.cjs
+          node --check tests/e2e/typography-real-app.spec.cjs
+          node --check scripts/typography-qa-report.cjs
+          node --test tests/contracts/typography-report.contract.cjs
       - name: Run nine-stage Case Study navigation, responsive and accessibility gate
         run: npx playwright test --project=chromium tests/e2e/case-study-nine-stages.spec.cjs
       - name: Run release browser, beta, AI, accessibility and visual gates
-        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs tests/e2e/beta-core.spec.cjs tests/e2e/beta-operator.spec.cjs tests/e2e/beta-readiness.spec.cjs tests/e2e/beta-email-reliability.spec.cjs tests/e2e/beta-free-growth.spec.cjs tests/e2e/beta-auth-mfa.spec.cjs tests/e2e/beta-push-media.spec.cjs tests/e2e/ai-assistant.spec.cjs tests/e2e/discovery.spec.cjs tests/e2e/decision.spec.cjs tests/e2e/platform.spec.cjs tests/e2e/visual-p1-secondary-hierarchy.spec.cjs tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-p0-finish.spec.cjs tests/e2e/p0-usability-trust.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/desktop-auth-horizontal-lock.spec.cjs tests/e2e/case-study-page-composition.spec.cjs tests/e2e/case-study-product-evidence.spec.cjs tests/e2e/case-study-card-rhythm.spec.cjs tests/e2e/case-study-p1-real-preview.spec.cjs tests/e2e/case-study-evidence-framing.spec.cjs tests/e2e/case-study-p12-copy-spacing.spec.cjs tests/e2e/case-study-final-balance.spec.cjs tests/e2e/case-study-detail-finish.spec.cjs
-      - name: Run Release App Mobile Safari/WebKit gate
-        run: npx playwright test --project=webkit-mobile tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs tests/e2e/beta-core.spec.cjs tests/e2e/beta-operator.spec.cjs tests/e2e/beta-readiness.spec.cjs tests/e2e/beta-email-reliability.spec.cjs tests/e2e/beta-free-growth.spec.cjs tests/e2e/beta-auth-mfa.spec.cjs tests/e2e/beta-push-media.spec.cjs tests/e2e/ai-assistant.spec.cjs tests/e2e/discovery.spec.cjs tests/e2e/decision.spec.cjs tests/e2e/platform.spec.cjs tests/e2e/visual-p1-secondary-hierarchy.spec.cjs tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-p0-finish.spec.cjs tests/e2e/p0-usability-trust.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/desktop-auth-horizontal-lock.spec.cjs tests/e2e/typography-real-app.spec.cjs
+      - name: Build typography QA JSON and Markdown evidence
+        if: always()
+        run: node scripts/typography-qa-report.cjs
+      - name: Run Release App Mobile Safari/WebKit gate without clearing Chromium evidence
+        run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+      - name: Recheck saved typography PNG integrity before artifact upload
+        if: always()
+        run: node scripts/typography-qa-report.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -206,6 +221,8 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            verification/typography-qa-summary.json
+            verification/typography-qa-summary.md
           if-no-files-found: warn
           retention-days: 14
 

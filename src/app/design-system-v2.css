@@ -1452,3 +1452,15 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen=
    these designated AI labels and example suggestions are exactly 12px at all widths. */
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"] :is(.fm-ai-kicker,.fm-ai-examples button),
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="discover"] :is(.fm-ai-kicker,.fm-ai-mode,.fm-ai-examples button,.fm-ai-guardrail){font-size:12px!important}
+
+
+/* Typography QA v2: preserve Korean phrase boundaries, wrap only unbreakable text. */
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app .fm-next-match-place{
+  word-break:keep-all;
+  overflow-wrap:break-word;
+  white-space:normal;
+}
+html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app :is(.fm-ai-guardrail,.fm-next-detail-section>p,.fm-v6-join-error p){
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
