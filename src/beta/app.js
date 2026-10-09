@@ -1,5 +1,6 @@
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
+import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
 
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -121,9 +122,19 @@ if(root){
       <div class="fm-beta-panel-head"><div><h3>내 참가</h3><p>Supabase에 저장된 현재 참가 상태입니다.</p></div></div>
       ${confirmed.length?confirmed.map(item=>{
         const match=matches.find(candidate=>candidate.id===item.match_id);
-        return `<div class="fm-beta-participation"><strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p><div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
+        return `<div class="fm-beta-participation"><strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
       }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>경기를 고른 뒤 포지션 자리까지 확인하고 참가할 수 있어요.</div>`}
     </div>`;
+  }
+
+  function attendanceLinks(match,joined){
+    const directions=betaDirectionsUrl(match);
+    const calendar=joined?betaCalendarUrl(match):null;
+    if(!directions&&!calendar)return '';
+    return `<nav class="fm-beta-attendance-links" aria-label="경기 장소·일정 편의 기능">
+      ${directions?`<a href="${esc(directions)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.place)} 지도에서 검색, 새 창">지도에서 위치 확인 ↗</a>`:''}
+      ${calendar?`<a href="${esc(calendar)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.title)} Google 캘린더 일정 초안 열기, 새 창">일정에 추가 ↗</a>`:''}
+    </nav>`;
   }
 
   function renderMatch(match){
@@ -147,6 +158,7 @@ if(root){
       <div class="fm-beta-match-top"><div><h3>${esc(match.title)}</h3><div class="fm-beta-match-place">${esc(match.place)}${match.area?` · ${esc(match.area)}`:''}</div></div><span class="fm-beta-badge">${esc(availability)}</span></div>
       <div class="fm-beta-meta"><span>${esc(formatStart(match.startsAt))}</span><span>${esc(match.level)}</span><span>${esc(match.format||'경기')}</span><span>${esc(match.surface||'구장')}</span><span>${match.durationMin}분</span></div>
       <div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${item}</b><span>${Number(match.positionSlots[item]||0)}자리</span></div>`).join('')}</div>
+      ${attendanceLinks(match,Boolean(joined))}
       <div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'Beta 무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
     </article>`;
   }
