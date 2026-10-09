@@ -78,10 +78,10 @@ test('Vercel preview deploy includes runtime changes even when final commit only
   }
 });
 
-test('Preview branch opt-in retains main-only default for all other branches',()=>{
+test('Only main is allowed to deploy after the temporary typography preview exception is closed',()=>{
   const config=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../vercel.json'),'utf8'));
   assert.equal(config.git.deploymentEnabled.main,true);
   assert.equal(config.git.deploymentEnabled['*'],false);
-  assert.equal(config.git.deploymentEnabled['feat/typography-qa-p0-p2-20261009'],true);
+  assert.equal(config.git.deploymentEnabled['feat/typography-qa-p0-p2-20261009'],undefined);
   assert.equal(config.ignoreCommand,'node scripts/vercel-ignore-build.cjs');
 });
