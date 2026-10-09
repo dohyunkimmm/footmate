@@ -62,7 +62,7 @@ function completeSuite(){
   return [
     ...[320,375,390,430,560,699,700,960,1366,1440,1920].map(width=>example('normal',width)),
     ...[390,1440].flatMap(width=>['fallback','journey','text-200-percent','user-text-spacing'].map(mode=>example(mode,width))),
-    ...[320,390].map(width=>example('korean-line-break',width)),
+    ...[320,375,390].map(width=>example('korean-line-break',width)),
     example('negative-control',390)
   ];
 }
@@ -87,7 +87,7 @@ test('report separates gate failures, diagnostics and editorial review; failure 
     assert.equal(report.fontComparisons.length,1);
     assert.equal(report.fontComparisons[0].fallback.lines,3);
     assert.ok(report.missingScenarios.includes('normal@320'));
-    assert.equal(report.expectedScenarios,22);
+    assert.equal(report.expectedScenarios,23);
     assert.match(markdown,/수동 검토/);
     assert.match(markdown,/short final line/);
   });
@@ -97,14 +97,14 @@ test('complete typography evidence is the only successful release gate',()=>{
   const cases=completeSuite();
   fixture(cases,({result,report})=>{
     assert.equal(result.status,0,result.stderr);
-    assert.equal(report.totalCases,22);
+    assert.equal(report.totalCases,23);
     assert.equal(report.gateStatus,'no-reported-issues');
-    assert.equal(report.expectedScenarios,22);
+    assert.equal(report.expectedScenarios,23);
     assert.deepEqual(report.missingScenarios,[]);
     assert.deepEqual(report.invalidEvidence,[]);
-    assert.equal(report.screenshotCount,53);
-    assert.equal(report.verifiedScreenshotCount,53);
-    assert.equal(report.screenshotManifest.length,53);
+    assert.equal(report.screenshotCount,56);
+    assert.equal(report.verifiedScreenshotCount,56);
+    assert.equal(report.screenshotManifest.length,56);
     assert.equal(report.visualReviewStatus,'pending-human-review');
   });
 });
@@ -161,7 +161,7 @@ test('PNG metadata without a physical screenshot fails the release gate',()=>{
   fixture(completeSuite(),({result,report})=>{
     assert.equal(result.status,1);
     assert.equal(report.gateStatus,'failed');
-    assert.equal(report.verifiedScreenshotCount,52);
+    assert.equal(report.verifiedScreenshotCount,55);
     assert.ok(report.invalidEvidence.some(issue=>/screenshot PNG invalid.*welcome/.test(issue)));
   },input=>fs.unlinkSync(path.join(input,'case-0','typography-normal-320-welcome.png')));
 });
