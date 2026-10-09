@@ -2,6 +2,7 @@
 
 const fs=require('node:fs');
 const path=require('node:path');
+const {createHash}=require('node:crypto');
 
 /*
  * Read-only browser audit shared by Real App typography scenarios.
@@ -98,7 +99,12 @@ async function inspectTypography(page,selector){
       }
       if(style.textOverflow==='ellipsis'||parseInt(style.webkitLineClamp,10)>0)
         review.push({id,reason:'intentional truncation; confirm important information is available'});
-      samples.push({id,fontSize,lineHeight:Number.isFinite(lineHeight)?lineHeight:null,fontFamily:style.fontFamily,lines:lineWidths.length,width:Math.round(bounds.width),height:Math.round(bounds.height)});
+      // Style tokens give reviewers a reproducible typography hierarchy record;
+      // pixel-level suitability and Korean meaning still need human judgement.
+      samples.push({id,fontSize,lineHeight:Number.isFinite(lineHeight)?lineHeight:null,
+        fontFamily:style.fontFamily,fontWeight:style.fontWeight,color:style.color,
+        letterSpacing:style.letterSpacing,textAlign:style.textAlign,
+        lines:lineWidths.length,width:Math.round(bounds.width),height:Math.round(bounds.height)});
     }
     return {root:rootSelector,viewport:innerWidth,screen:root.getAttribute('data-screen'),issues:[...new Set(issues)],review,
       samples,fonts:[...document.fonts].filter(face=>face.status==='loaded').map(face=>({family:face.family,weight:face.weight})),
@@ -141,8 +147,14 @@ async function applyAdaptation(page,mode){
 
 async function captureTypographyScreen(page,testInfo,{mode,width,screen}){
   const name='typography-'+mode+'-'+width+'-'+screen+'.png';
-  await testInfo.attach(name,{body:await page.screenshot({animations:'disabled'}),contentType:'image/png'});
-  return {screen,name};
+  // Preserve the original PNG in the test output directory; Playwright's
+  // attached copy alone is not discoverable via typography-qa.json.
+  const file=testInfo.outputPath(name);
+  await page.screenshot({path:file,animations:'disabled'});
+  const body=fs.readFileSync(file);
+  await testInfo.attach(name,{path:file,contentType:'image/png'});
+  return {screen,name,path:name,bytes:body.length,
+    sha256:createHash('sha256').update(body).digest('hex')};
 }
 
 async function recordEvidence(page,testInfo,data){
