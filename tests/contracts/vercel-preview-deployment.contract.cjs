@@ -49,9 +49,28 @@ test('Vercel preview deploy includes runtime changes even when final commit only
     const explicitFiles=run(cwd,{FOOTMATE_VERCEL_CHANGED_FILES:'docs/qa.md'});
     assert.equal(explicitFiles.status,0,explicitFiles.stderr);
 
-    // Missing origin/main must BUILD, not incorrectly return 'skip'.
+    // Real Vercel checkouts may lack origin/main: fetch both branch refs.
     git(cwd,'update-ref','-d','refs/remotes/origin/main');
-    const missingBase=run(cwd);
+    const fetchedBase=run(cwd);
+    assert.equal(fetchedBase.status,1,fetchedBase.stderr);
+    assert.match(fetchedBase.stdout,/src\/app\/app\.css/);
+    assert.doesNotMatch(fetchedBase.stderr,/Failing open/);
+
+    // A docs-only PR can correctly skip once the missing refs are fetched.
+    git(cwd,'checkout','main');
+    git(cwd,'checkout','-b','feat/docs-only');
+    fs.mkdirSync(path.join(cwd,'docs'),{recursive:true});
+    fs.writeFileSync(path.join(cwd,'docs','guide.md'),'documentation only\n');
+    git(cwd,'add','.');git(cwd,'commit','-m','docs-only preview');
+    git(cwd,'update-ref','-d','refs/remotes/origin/main');
+    const docsOnly=run(cwd,{VERCEL_GIT_COMMIT_REF:'feat/docs-only'});
+    assert.equal(docsOnly.status,0,docsOnly.stderr);
+    assert.match(docsOnly.stdout,/Docs\/QA-only change/);
+
+    // With no usable remote, fail open (build) instead of silently skipping.
+    git(cwd,'update-ref','-d','refs/remotes/origin/main');
+    git(cwd,'remote','remove','origin');
+    const missingBase=run(cwd,{VERCEL_GIT_COMMIT_REF:'feat/docs-only'});
     assert.equal(missingBase.status,1);
     assert.match(missingBase.stderr,/Failing open/);
   } finally {
