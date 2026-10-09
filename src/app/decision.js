@@ -103,8 +103,8 @@ function decisionSections(match,session){
   return `<section class="fm-next-detail-section fm-decision-section" data-decision-section="fit">
     <div class="fm-next-section-head"><div><h2>참가 결정 체크</h2><p>추천 점수 대신 실제로 확인할 조건을 한 번 더 정리했어요.</p></div></div>
     ${reasonBreakdown(match,session)}
-    ${String(recommendationRow(match,session)?.fit||match.fit).includes('차이')?'<p class="fm-decision-fit-warning" role="note">추천 순위가 높아도 경기 강도는 내 설정과 다를 수 있어요. 레벨을 다시 확인한 뒤 결정하세요.</p>':''}
-    <p class="fm-decision-trust-note" role="note"><b>무료 참가 체험 · 실제 청구 0원</b><span>화면의 참가비·잔여 자리·환불 정책은 샘플 경기 정보이며, 이 체험에서 결제되지 않습니다.</span></p>
+    ${String(recommendationRow(match,session)?.fit||match.fit).includes('차이')?'<p class="fm-next-inline-note fm-decision-fit-warning" role="note">추천 순위가 높아도 경기 강도는 내 설정과 다를 수 있어요. 레벨을 다시 확인한 뒤 결정하세요.</p>':''}
+    <p class="fm-next-inline-note fm-decision-trust-note" role="note" style="display:grid;gap:4px;margin:16px 0;padding:14px;border-radius:14px;background:var(--fm-lime-soft);color:var(--fm-pitch);line-height:1.55"><b>무료 참가 체험 · 실제 청구 0원</b><span>화면의 참가비·잔여 자리·환불 정책은 샘플 경기 정보이며, 이 체험에서 결제되지 않습니다.</span></p>
   </section>
   <section class="fm-next-detail-section fm-decision-section" data-decision-section="capacity">
     <div class="fm-next-section-head"><div><h2>자리와 포지션</h2><p>실시간 정원이 아닌 현재 샘플 경기 데이터 기준입니다.</p></div></div>
@@ -114,8 +114,8 @@ function decisionSections(match,session){
   </section>
   <section class="fm-next-detail-section fm-decision-section" data-decision-section="venue">
     <div class="fm-next-section-head"><div><h2>시설 · 운영 · 준비물</h2><p>참가 전에 현장에서 필요한 조건을 확인하세요.</p></div></div>
-    <details class="fm-decision-optional" ${matchMedia('(min-width:700px)').matches?'open':''}>
-      <summary>시설·준비물 상세 ${matchMedia('(min-width:700px)').matches?'':'펼쳐 보기'}</summary>
+    <details class="fm-decision-optional" style="margin-top:12px" ${matchMedia('(min-width:700px)').matches?'open':''}>
+      <summary style="min-height:44px;cursor:pointer;font-weight:800">시설·준비물 상세 ${matchMedia('(min-width:700px)').matches?'':'펼쳐 보기'}</summary>
       <div class="fm-decision-optional-body"><div class="fm-decision-info-list">
       <div><span>${icon('place')}</span><div><small>코트</small><b>${escapeHtml(venueInfo.court)}</b></div></div>
       <div><span>${icon('check')}</span><div><small>준비물</small><b>${escapeHtml(venueInfo.gear)}</b></div></div>
