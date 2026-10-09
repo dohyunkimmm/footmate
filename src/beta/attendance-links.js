@@ -10,7 +10,7 @@ export function betaDirectionsUrl(match){
 }
 
 function calendarUtc(value){
-  const ms=Date.parse(value);
+  const ms=typeof value==='number'?value:Date.parse(value);
   if(!Number.isFinite(ms))return null;
   return new Date(ms).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
 }
