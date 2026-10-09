@@ -6,7 +6,7 @@
   const evidence = (file, label) => `<a class="evidence-link" href="${repo}${file}" target="_blank" rel="noopener">${label} <span aria-hidden="true">↗</span></a>`;
   const card = (label, title, body) => `<article class="story-card"><span class="eyebrow">${label}</span><h3>${title}</h3><p>${body}</p></article>`;
   const grid = (...items) => `<div class="card-grid">${items.join('')}</div>`;
-  const head = (n, label, title, lead) => `<header class="section-head"><span class="eyebrow">${n} / ${label}</span><h1 tabindex="-1">${title}</h1><p class="lead">${lead}</p></header>`;
+  const head = (n, label, title, lead) => `<header class="section-head"><span class="eyebrow">${n} / ${label}</span><h1 tabindex="-1">${title.replaceAll('<br>', '<br class="cs-title-break"> ')}</h1><p class="lead">${lead}</p></header>`;
   const note = text => `<p class="source-note">${text}</p>`;
   const steps = items => `<ol class="flow">${items.map(([title, body], index) => `<li><span class="flow-number" aria-hidden="true">${String(index+1).padStart(2,'0')}</span><strong>${title}</strong><span>${body}</span></li>`).join('')}</ol>`;
   const image = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/src/case-study/evidence/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/src/case-study/evidence/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption} <span class="image-view-hint" aria-hidden="true">· 확대 보기 ↗</span></figcaption></figure>`;
