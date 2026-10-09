@@ -5,16 +5,3 @@
 [data-mode=real] [data-screen=discover] .fm-next-icon-button[data-action=edit-setup]::before{display:none}
 
 .fm-next-page[data-mode=real] [data-screen=discover] :is(.fm-next-match-card,.fm-next-list)[hidden]{display:none!important}
-
-
-/* P1 inline core-condition editing; retains existing advanced filters and sorting. */
-.fm-discovery-quick-edit{margin:12px 0 4px;border:1px solid rgba(20,55,40,.13);border-radius:14px;background:#f8faf7}
-.fm-discovery-quick-edit>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:10px 14px;color:#1c4c34;font-size:13px;font-weight:800;cursor:pointer;list-style:none}
-.fm-discovery-quick-edit>summary::-webkit-details-marker{display:none}
-.fm-discovery-quick-edit>summary::after{content:'수정';font-size:11px;color:#597165}
-.fm-discovery-quick-edit[open]>summary::after{content:'접기'}
-.fm-discovery-quick-edit summary:focus-visible{outline:3px solid #39765a;outline-offset:3px;border-radius:12px}
-.fm-discovery-quick-fields{display:grid;gap:12px;padding:4px 14px 14px}
-.fm-discovery-quick-fields label{display:grid;gap:6px;font-size:12px;font-weight:800;color:#40584a}
-.fm-discovery-quick-fields select{min-height:44px;min-width:0;width:100%;border:1px solid #cbd8cf;border-radius:11px;padding:8px 12px;background:#fff;color:#132c21;font:inherit;font-size:14px}
-.fm-discovery-quick-fields button{min-height:44px;margin-top:4px}
