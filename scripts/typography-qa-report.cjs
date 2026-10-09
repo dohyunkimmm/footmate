@@ -140,6 +140,18 @@ if(!fontComparisons.length)lines.push('기록된 동일 텍스트의 줄 수·�
 else for(const item of fontComparisons.slice(0,60))
   lines.push('- '+item.width+'px / '+item.screen+' / '+item.id+': '+
     item.normal.lines+'줄 → '+item.fallback.lines+'줄; 높이 '+item.normal.height+'px → '+item.fallback.height+'px');
+lines.push('','## 자동 감지 상세','');
+let detailedIssues=0;
+for(const item of cases){
+  for(const issue of item.issues){
+    lines.push('- '+item.mode+' / '+item.width+'px: '+issue+
+      (diagnosticCases.includes(item)?' (diagnostic only)':' (release gate)'));
+    detailedIssues++;
+    if(detailedIssues>=60)break;
+  }
+  if(detailedIssues>=60)break;
+}
+if(!detailedIssues)lines.push('감지된 텍스트/가로 넘침 문제가 없습니다.');
 if(missingScenarios.length)lines.push('','## 수집되지 않은 시나리오','',...missingScenarios.map(key=>'- '+key));
 if(invalidEvidence.length)lines.push('','## 유효하지 않은 증거','',...invalidEvidence.map(issue=>'- '+issue));
 lines.push('','## 수동 검토 대상','');

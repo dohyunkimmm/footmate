@@ -41,7 +41,11 @@ function example(mode,width){
       screen,issues:[],review:[],documentOverflow:false,
       samples:[{id:'h1 경기',lines:2,height:40}]
     })),
-    screenshots:checks.map(screen=>({screen,name:'typography-'+mode+'-'+width+'-'+screen})),
+    screenshots:checks.map(screen=>({screen,name:'typography-'+mode+'-'+width+'-'+screen}))
+      .concat(mode==='korean-line-break'?[
+        {screen:'home-long-token',name:'typography-korean-'+width+'-token'},
+        {screen:'home-mixed',name:'typography-korean-'+width+'-mixed'}
+      ]:[]),
     ...(mode==='negative-control'?{detectedIssues:['clipped text in its own element']}: {})
   };
 }
