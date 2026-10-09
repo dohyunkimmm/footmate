@@ -3,22 +3,46 @@
   "git": {
     "deploymentEnabled": {
       "*": false,
-      "main": true
+      "main": true,
+      "feat/typography-qa-p0-p2-20261009": true
     }
   },
   "ignoreCommand": "node scripts/vercel-ignore-build.cjs",
   "cleanUrls": false,
   "trailingSlash": false,
   "functions": {
-    "api/ai-match-assistant.js": {"maxDuration": 10}
+    "api/ai-match-assistant.js": {
+      "maxDuration": 10
+    }
   },
   "rewrites": [
-    {"source":"/app","destination":"/app.html"},
-    {"source":"/beta/operator","destination":"/beta-operator.html"},
-    {"source":"/beta","destination":"/beta.html"},
-    {"source":"/demo","destination":"/app.html"},
-    {"source":"/demo.html","destination":"/app.html"},
-    {"source":"/next","destination":"/app.html"},
-    {"source":"/next.html","destination":"/app.html"}
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/beta/operator",
+      "destination": "/beta-operator.html"
+    },
+    {
+      "source": "/beta",
+      "destination": "/beta.html"
+    },
+    {
+      "source": "/demo",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/demo.html",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/next",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/next.html",
+      "destination": "/app.html"
+    }
   ]
 }

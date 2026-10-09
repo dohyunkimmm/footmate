@@ -109,6 +109,8 @@ jobs:
         run: node scripts/check-release-version.cjs
       - name: Check QA toolchain contract
         run: node scripts/check-qa-toolchain.cjs
+      - name: Check Vercel preview build selection contract
+        run: node --test tests/contracts/vercel-preview-deployment.contract.cjs
       - name: Check Case Study bundle and asset versions
         run: node scripts/build-case-study-bundle.cjs --check && node scripts/sync-case-study-assets.cjs --check
       - name: Check app compatibility boundary

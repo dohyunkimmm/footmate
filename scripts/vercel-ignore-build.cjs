@@ -25,7 +25,21 @@ function readChangedFiles() {
       .filter(Boolean);
   }
 
-  const output = execFileSync('git', ['diff', '--name-only', 'HEAD^', 'HEAD'], {
+  // Preview builds must consider the whole PR, not only the last commit.
+  // A docs-only tip may still contain CSS/app changes since main.
+  const branch = process.env.VERCEL_GIT_COMMIT_REF;
+  const preview = Boolean(branch && branch !== 'main');
+  let start = 'HEAD^';
+  if (preview) {
+    // Vercel's checkout can omit origin/main. In that case the caller
+    // fails open (build), rather than incorrectly suppressing a preview.
+    start = execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
+    if (!start) throw new Error('Cannot determine preview merge base');
+  }
+  const output = execFileSync('git', ['diff', '--name-only', start, 'HEAD'], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
