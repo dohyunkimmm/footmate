@@ -3,8 +3,7 @@
   "git": {
     "deploymentEnabled": {
       "*": false,
-      "main": true,
-      "feat/typography-qa-p0-p2-20261009": true
+      "main": true
     }
   },
   "ignoreCommand": "node scripts/vercel-ignore-build.cjs",
