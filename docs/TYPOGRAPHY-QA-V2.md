@@ -31,6 +31,8 @@
 - 각 Playwright 시나리오에서 typography-qa.json, 스크린샷, 실패 trace를 기록한다.
 - node scripts/typography-qa-report.cjs 는 verification/typography-qa-summary.json 및 verification/typography-qa-summary.md 를 생성한다.
 - 브라우저 QA GitHub Actions 아티팩트에 집계와 개별 증거를 포함한다.
+- 일반/대체폰트의 같은 문구를 화면 폭별로 비교해 줄 수·높이 변화 목록을 생성한다.
+- 사전에 정의된 14개 검사 시나리오의 증거가 모자라면 보고서를 incomplete로 표시한다. 일부 테스트만 수행해도 전체 통과로 표기하지 않는다.
 - node --test tests/contracts/typography-report.contract.cjs 가 보고서 집계·진단 구분을 확인한다.
 
 ## 실행
