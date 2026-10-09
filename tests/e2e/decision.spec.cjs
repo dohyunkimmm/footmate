@@ -76,3 +76,18 @@ test('v4.3 decision detail stays mobile-safe and accessible',async({page})=>{
   result=await new AxeBuilder({page}).include('[data-decision-dialog="compare"]').withTags(['wcag2a','wcag2aa']).analyze();
   expect(result.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([]);expect(errs).toEqual([]);
 });
+
+
+test('P0/P1 sample charges are explicit and secondary venue details expand without hiding refund policy',async({page})=>{
+  const errs=await detail(page);
+  const trust=page.locator('.fm-decision-trust-note');
+  await expect(trust).toBeVisible();
+  await expect(trust).toContainText('실제 청구 0원');
+  const facility=page.locator('[data-decision-section="venue"] details');
+  await expect(facility).not.toHaveAttribute('open','');
+  await expect(page.getByRole('heading',{name:'취소 · 환불 기준'})).toBeVisible();
+  await facility.locator('summary').click();
+  await expect(facility).toHaveAttribute('open','');
+  await expect(facility.locator('.fm-decision-info-list')).toBeVisible();
+  expect(errs).toEqual([]);
+});
