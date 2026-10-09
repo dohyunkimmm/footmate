@@ -46,7 +46,7 @@ assert.ok(sw.includes('showNotification'));
 assert.ok(beta.includes("import('/src/beta/push.js?v=1')"));
 assert.ok(beta.includes("import('/src/beta/media.js?v=1')"));
 assert.ok(operator.includes('/src/beta/media.js?v=1'));
-assert.ok(beta.includes('/src/beta/enhancements.css?v=1'));
+assert.ok(beta.includes('/src/beta/enhancements.css?v=512'));
 assert.ok(operator.includes('/src/beta/enhancements.css?v=1'));
 
 console.log('beta web push + media contracts: PASS');
