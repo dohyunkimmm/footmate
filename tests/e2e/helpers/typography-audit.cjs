@@ -53,13 +53,23 @@ async function inspectTypography(page,selector){
       const clippedX=/hidden|clip/.test(style.overflowX);
       const clippedY=/hidden|clip/.test(style.overflowY);
       const clippingAncestors=[];
+      let withinHorizontalScroller=false,withinVerticalScroller=false;
       for(let ancestor=node.parentElement;ancestor;ancestor=ancestor.parentElement){
         const parentStyle=getComputedStyle(ancestor);
         const clipX=/^(hidden|clip)$/.test(parentStyle.overflowX);
         const clipY=/^(hidden|clip)$/.test(parentStyle.overflowY);
-        if(clipX||clipY)clippingAncestors.push({
-          name:describe(ancestor),rect:ancestor.getBoundingClientRect(),clipX,clipY
-        });
+        // Text extending beyond a horizontal chip scroller is expected and
+        // reachable via scrolling; it must not be mistaken for hidden-card
+        // clipping. Hidden/clip ancestors outside a real scroller remain gated.
+        if((clipX&&!withinHorizontalScroller)||(clipY&&!withinVerticalScroller))
+          clippingAncestors.push({
+            name:describe(ancestor),rect:ancestor.getBoundingClientRect(),
+            clipX:clipX&&!withinHorizontalScroller,clipY:clipY&&!withinVerticalScroller
+          });
+        if(/^(auto|scroll)$/.test(parentStyle.overflowX)&&ancestor.scrollWidth>ancestor.clientWidth+2)
+          withinHorizontalScroller=true;
+        if(/^(auto|scroll)$/.test(parentStyle.overflowY)&&ancestor.scrollHeight>ancestor.clientHeight+2)
+          withinVerticalScroller=true;
         if(ancestor===root)break;
       }
       for(const rect of rects){
