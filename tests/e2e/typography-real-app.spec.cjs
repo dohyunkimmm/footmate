@@ -49,7 +49,7 @@ async function auditAndCapture(page,testInfo,selector,mode,width,screenshots){
   return result;
 }
 
-for(const width of [320,390,430,560,699,700,960,1440]){
+for(const width of [320,375,390,430,560,699,700,960,1366,1440,1920]){
   test('Real App typography baseline '+width+'px',async({page},testInfo)=>{
     await openCleanApp(page,width);
     const fonts=await fontCoverage(page);
@@ -131,7 +131,7 @@ for(const width of [390,1440]){
   });
 }
 
-for(const width of [320,390]){
+for(const width of [320,375,390]){
   test('Real App Korean and mixed-script long card copy wraps safely at '+width+'px',async({page},testInfo)=>{
     await openCleanApp(page,width);
     await toHome(page);
