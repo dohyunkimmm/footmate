@@ -208,8 +208,11 @@ jobs:
       - name: Build typography QA JSON and Markdown evidence
         if: always()
         run: node scripts/typography-qa-report.cjs
-      - name: Run Release App Mobile Safari/WebKit gate
-        run: npx playwright test --project=webkit-mobile tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+      - name: Run Release App Mobile Safari/WebKit gate without clearing Chromium evidence
+        run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+      - name: Recheck saved typography PNG integrity before artifact upload
+        if: always()
+        run: node scripts/typography-qa-report.cjs
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v6
