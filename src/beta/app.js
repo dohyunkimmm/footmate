@@ -1,6 +1,7 @@
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
+import {emitBetaMeasurement} from './measurement-events.js';
 
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -132,8 +133,8 @@ if(root){
     const calendar=joined?betaCalendarUrl(match):null;
     if(!directions&&!calendar)return '';
     return `<nav class="fm-beta-attendance-links" aria-label="경기 장소·일정 편의 기능">
-      ${directions?`<a href="${esc(directions)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.place)} 지도에서 검색, 새 창">지도에서 위치 확인 ↗</a>`:''}
-      ${calendar?`<a href="${esc(calendar)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.title)} Google 캘린더 일정 초안 열기, 새 창">일정에 추가 ↗</a>`:''}
+      ${directions?`<a href="${esc(directions)}" data-beta-measure="directions_opened" data-match-id="${esc(match.id)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.place)} 지도에서 검색, 새 창">지도에서 위치 확인 ↗</a>`:''}
+      ${calendar?`<a href="${esc(calendar)}" data-beta-measure="calendar_opened" data-match-id="${esc(match.id)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.title)} Google 캘린더 일정 초안 열기, 새 창">일정에 추가 ↗</a>`:''}
     </nav>`;
   }
 
@@ -239,7 +240,10 @@ if(root){
       backendState='connected';
       await Promise.all([loadMatches(),restoreAuth()]);
       if(session&&!profile)await loadPrivate();
-      if(!matchesError)lastSyncedAt=Date.now();
+      if(!matchesError){
+        lastSyncedAt=Date.now();
+        emitBetaMeasurement('match_list_available');
+      }
       setNotice(null);
     }catch(error){
       backendState='error';
@@ -281,6 +285,8 @@ if(root){
   });
 
   root.addEventListener('click',event=>{
+    const utility=event.target.closest('[data-beta-measure]');
+    if(utility){emitBetaMeasurement(utility.dataset.betaMeasure,{matchId:utility.dataset.matchId});return;}
     const target=event.target.closest('[data-action]');
     if(!target)return;
     const action=target.dataset.action;
@@ -304,11 +310,19 @@ if(root){
     }
     if(action==='join'){
       const matchId=target.dataset.matchId;
+      const flowId=crypto.randomUUID();
+      emitBetaMeasurement('join_attempt',{matchId,flowId});
       run(async()=>{
-        if(!profile?.position)throw new Error('프로필에서 선호 포지션을 먼저 설정해주세요.');
-        await client.participation.join({accessToken:session.accessToken,matchId,position:profile.position});
-        await refreshData();
-        setNotice(`${profile.position} 포지션으로 참가가 확정됐습니다.`,'success');
+        try{
+          if(!profile?.position)throw new Error('프로필에서 선호 포지션을 먼저 설정해주세요.');
+          await client.participation.join({accessToken:session.accessToken,matchId,position:profile.position});
+          emitBetaMeasurement('join_succeeded',{matchId,flowId});
+          await refreshData();
+          setNotice(`${profile.position} 포지션으로 참가가 확정됐습니다.`,'success');
+        }catch(error){
+          emitBetaMeasurement('join_failed',{matchId,flowId});
+          throw error;
+        }
       });return;
     }
     if(action==='cancel'){
