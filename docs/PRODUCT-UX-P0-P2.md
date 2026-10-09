@@ -7,6 +7,7 @@ This change preserves the v6 Find → Decide → Join → Play → Return lifecy
 ### P0 — Trust and measurement foundation
 
 - Real App /app Decision Detail explicitly distinguishes **sample price, capacity and prototype refund policy** from **zero charge for the free join demonstration**, before the primary action.
+- Closed Beta footer no longer falsely labels notifications disconnected: actual email and opt-in Push availability is qualified by operating setup and user consent; PG remains unavailable.
 - An explicitly mismatched recommendation gets a human-readable caution even if it is ranked highly.
 - Connected Beta emits a strictly allowlisted browser `footmate:beta:measurement` CustomEvent for: `match_list_available`, `join_attempt`, `join_succeeded`, `join_failed`, `directions_opened`, and `calendar_opened`. Attempt and outcome share a flow ID; these events exclude login credentials, email addresses and auth tokens.
 - **This is not a production analytics ingestion pipeline:** events are browser-local, nonpersistent, and cohort is `unclassified`. There is no automatic collection into Supabase. Baseline and conversion claims are prohibited until verified pilot cohort classification, consent/privacy review, secure RLS-backed ingestion, deduplication and numerator/denominator QA are implemented.
