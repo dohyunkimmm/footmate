@@ -1,5 +1,7 @@
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
+import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
+import {emitBetaMeasurement} from './measurement-events.js';
 
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -121,9 +123,19 @@ if(root){
       <div class="fm-beta-panel-head"><div><h3>내 참가</h3><p>Supabase에 저장된 현재 참가 상태입니다.</p></div></div>
       ${confirmed.length?confirmed.map(item=>{
         const match=matches.find(candidate=>candidate.id===item.match_id);
-        return `<div class="fm-beta-participation"><strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p><div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
+        return `<div class="fm-beta-participation"><strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
       }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>경기를 고른 뒤 포지션 자리까지 확인하고 참가할 수 있어요.</div>`}
     </div>`;
+  }
+
+  function attendanceLinks(match,joined){
+    const directions=betaDirectionsUrl(match);
+    const calendar=joined?betaCalendarUrl(match):null;
+    if(!directions&&!calendar)return '';
+    return `<nav class="fm-beta-attendance-links" aria-label="경기 장소·일정 편의 기능">
+      ${directions?`<a href="${esc(directions)}" data-beta-measure="directions_opened" data-match-id="${esc(match.id)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.place)} 지도에서 검색, 새 창">지도에서 위치 확인 ↗</a>`:''}
+      ${calendar?`<a href="${esc(calendar)}" data-beta-measure="calendar_opened" data-match-id="${esc(match.id)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(match.title)} Google 캘린더 일정 초안 열기, 새 창">일정에 추가 ↗</a>`:''}
+    </nav>`;
   }
 
   function renderMatch(match){
@@ -147,6 +159,7 @@ if(root){
       <div class="fm-beta-match-top"><div><h3>${esc(match.title)}</h3><div class="fm-beta-match-place">${esc(match.place)}${match.area?` · ${esc(match.area)}`:''}</div></div><span class="fm-beta-badge">${esc(availability)}</span></div>
       <div class="fm-beta-meta"><span>${esc(formatStart(match.startsAt))}</span><span>${esc(match.level)}</span><span>${esc(match.format||'경기')}</span><span>${esc(match.surface||'구장')}</span><span>${match.durationMin}분</span></div>
       <div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${item}</b><span>${Number(match.positionSlots[item]||0)}자리</span></div>`).join('')}</div>
+      ${attendanceLinks(match,Boolean(joined))}
       <div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'Beta 무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
     </article>`;
   }
@@ -166,7 +179,7 @@ if(root){
       <section class="fm-beta-hero"><div class="fm-beta-hero-copy"><span class="fm-beta-eyebrow">Closed Beta · 실제 참가 데이터</span><h1>찾고,<br>자리 확인하고,<br>실제로 참가.</h1><p>이 경로는 sample catalog가 아니라 Supabase의 실제 경기·회원·참가 상태를 사용합니다. Beta 기간에는 결제 없이 무료 참가만 허용됩니다.</p></div><div class="fm-beta-status-card"><div><small>현재 연결 상태</small><strong>${connected?'Live backend':'연결 확인 중'}</strong></div><p>${session&&user?'로그인된 계정의 프로필과 참가 기록을 복구했습니다.':'경기 조회는 공개되어 있고, 참가하려면 이메일 계정으로 로그인합니다.'}</p></div></section>
       ${notice?`<div class="fm-beta-note" data-tone="${esc(notice.tone)}" style="margin-bottom:18px">${esc(notice.message)}</div>`:''}
       ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>Closed Beta backend에 연결할 수 없습니다.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside>${renderAuth()}${renderParticipation()}</aside><section><div class="fm-beta-panel"><div class="fm-beta-panel-head"><div><h2>실제 경기</h2><p>공개된 경기와 포지션별 잔여 자리를 DB에서 직접 읽습니다. · ${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
-      <footer class="fm-beta-footer">Closed Beta · Auth / Match / Capacity / Participation = Supabase connected · Payment / Notification = not connected</footer>
+      <footer class="fm-beta-footer">Closed Beta · 인증·경기·참가 상태 Supabase 연결 · 무료 참가/실제 PG 없음 · 이메일·Push는 별도 설정과 동의에 따라 제공</footer>
     </div>`;
   }
 
@@ -227,7 +240,10 @@ if(root){
       backendState='connected';
       await Promise.all([loadMatches(),restoreAuth()]);
       if(session&&!profile)await loadPrivate();
-      if(!matchesError)lastSyncedAt=Date.now();
+      if(!matchesError){
+        lastSyncedAt=Date.now();
+        emitBetaMeasurement('match_list_available');
+      }
       setNotice(null);
     }catch(error){
       backendState='error';
@@ -269,6 +285,8 @@ if(root){
   });
 
   root.addEventListener('click',event=>{
+    const utility=event.target.closest('[data-beta-measure]');
+    if(utility){emitBetaMeasurement(utility.dataset.betaMeasure,{matchId:utility.dataset.matchId});return;}
     const target=event.target.closest('[data-action]');
     if(!target)return;
     const action=target.dataset.action;
@@ -292,11 +310,19 @@ if(root){
     }
     if(action==='join'){
       const matchId=target.dataset.matchId;
+      const flowId=crypto.randomUUID();
+      emitBetaMeasurement('join_attempt',{matchId,flowId});
       run(async()=>{
-        if(!profile?.position)throw new Error('프로필에서 선호 포지션을 먼저 설정해주세요.');
-        await client.participation.join({accessToken:session.accessToken,matchId,position:profile.position});
-        await refreshData();
-        setNotice(`${profile.position} 포지션으로 참가가 확정됐습니다.`,'success');
+        try{
+          if(!profile?.position)throw new Error('프로필에서 선호 포지션을 먼저 설정해주세요.');
+          await client.participation.join({accessToken:session.accessToken,matchId,position:profile.position});
+          emitBetaMeasurement('join_succeeded',{matchId,flowId});
+          await refreshData();
+          setNotice(`${profile.position} 포지션으로 참가가 확정됐습니다.`,'success');
+        }catch(error){
+          emitBetaMeasurement('join_failed',{matchId,flowId});
+          throw error;
+        }
       });return;
     }
     if(action==='cancel'){

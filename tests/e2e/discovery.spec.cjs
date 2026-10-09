@@ -115,3 +115,24 @@ test('v4.2 mobile filter sheet is keyboard accessible and has no serious axe iss
   await expect(page.getByRole('button',{name:'필터 열기'})).toBeFocused();
   expect(errs).toEqual([]);
 });
+
+
+test('P1 core conditions update recommendation context without removing advanced filters',async({page})=>{
+  const errs=await openDiscover(page);
+  await page.getByRole('button',{name:'필터 열기'}).click();
+  await page.getByLabel('시간').selectOption('19');
+  await page.getByRole('button',{name:'결과 보기'}).click();
+  await page.getByRole('button',{name:'기본 추천 조건 수정'}).click();
+  await page.locator('[data-quick-condition="region"]').selectOption('서울 · 강남');
+  await page.locator('[data-quick-condition="position"]').selectOption('GK');
+  await page.locator('[data-quick-condition="level"]').selectOption('중급+');
+  await page.getByRole('button',{name:'이 조건으로 다시 찾기'}).click();
+  await expect(page.locator('[data-screen="discover"] [aria-label="현재 검색 조건"]')).toContainText('서울 · 강남');
+  await expect(page.locator('[data-screen="discover"] [aria-label="현재 검색 조건"]')).toContainText('GK');
+  await expect(page.locator('[data-screen="discover"] [aria-label="현재 검색 조건"]')).toContainText(/고급|중급\+/);
+  expect(new URL(page.url()).searchParams.get('d_time')).toBe('19');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="discover"] [aria-label="현재 검색 조건"]')).toContainText('서울 · 강남');
+  expect(new URL(page.url()).searchParams.get('d_time')).toBe('19');
+  expect(errs).toEqual([]);
+});

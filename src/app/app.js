@@ -238,12 +238,19 @@ function homeView(){
   </section>`;
 }
 
+function quickDiscoveryConditions(){
+  if(mode!=='real'||!discoverQuickEditing)return '';
+  const options=setupSteps.map(step=>`<label style="display:grid;gap:6px;font-weight:800;font-size:12px"><span>${step.key==='region'?'지역':step.key==='position'?'포지션':'경기 강도'}</span><select data-quick-condition="${step.key}" aria-label="${step.title}" style="min-height:44px;width:100%;min-width:0;border:1px solid var(--fm-line-strong);border-radius:12px;padding:8px;background:#fff;color:var(--fm-pitch)">${step.options.map(option=>`<option value="${option[0]}" ${state[step.key]===option[0]?'selected':''} >${setupDisplayValue(step.key,option[0])} · ${option[1]}</option>`).join('')}</select></label>`).join('');
+  return `<details open class="fm-discovery-quick-edit" data-discovery-quick-edit style="margin:12px 0;padding:12px;border:1px solid var(--fm-line);border-radius:14px"><summary style="min-height:44px;cursor:pointer;font-weight:800">기본 조건 바로 수정</summary><div class="fm-discovery-quick-fields" style="display:grid;gap:12px">${options}<button type="button" class="fm-next-button fm-next-button--primary" data-action="apply-discover-conditions">이 조건으로 다시 찾기</button></div></details>`;
+}
+
 function discoverView(){
   return `<section class="fm-next-screen" data-screen="discover">
     ${topbar({showBrandTagline:false,actionHtml:mode==='real'?`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="기본 추천 조건 수정" style="width:auto;padding:0 10px;font-size:12px;white-space:nowrap">기본 조건</button>`:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
     <div class="fm-next-section">
       <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>
       <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
+      ${quickDiscoveryConditions()}
       <div class="fm-next-list">${MATCHES.map((match,index)=>matchCard(match,index)).join('')}</div>
     </div>
     ${nav('discover')}
@@ -332,9 +339,11 @@ function currentView(){
 }
 
 let renderedRoute=null;
+let discoverQuickEditing=false;
 function render(){
   const routeChanged=renderedRoute!==state.route;
   renderedRoute=state.route;
+  if(routeChanged&&state.route!=='discover')discoverQuickEditing=false;
   root.innerHTML=`<div class="fm-next-page" data-mode="${mode}">${guide()}<div class="fm-next-stage"><div class="fm-next-app" data-embed="${embed}">${currentView()}</div></div><span class="fm-next-mode-pill">${mode==='evidence'?'Evidence mode':'Guided mode'}</span></div><div class="fm-next-toast" role="status" aria-live="polite"></div>`;
   const activeScreen=root.querySelector('[data-screen]');
   if(activeScreen){
@@ -393,6 +402,23 @@ root.addEventListener('click',event=>{
     if(!state[data.key])return;
     if(step<setupSteps.length-1){setState({setupStep:step+1});}
     else finishSetup();
+    return;
+  }
+  if(action==='apply-discover-conditions'){
+    const container=target.closest('[data-screen="discover"]');
+    const changes={};
+    for(const step of setupSteps){
+      const value=container?.querySelector(`[data-quick-condition="${step.key}"]`)?.value;
+      if(!step.options.some(option=>option[0]===value))return;
+      changes[step.key]=value;
+    }
+    discoverQuickEditing=false;
+    setState(changes);
+    return;
+  }
+  if(action==='edit-setup'&&mode==='real'&&state.route==='discover'){
+    discoverQuickEditing=!discoverQuickEditing;
+    render();
     return;
   }
   if(action==='edit-setup'){const origin=mode==='real'?{route:state.route,scrollTop:root.querySelector('[data-screen]')?.scrollTop||0,region:state.region,position:state.position,level:state.level}:null;setState({route:'setup',setupStep:0,setupOrigin:origin});return;}
