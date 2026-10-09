@@ -122,6 +122,20 @@ for(const width of [390,1440]){
   });
 }
 
+test('Real App Korean card copy keeps word boundaries with long-token fallback',async({page},testInfo)=>{
+  await openCleanApp(page,390);
+  await toHome(page);
+  const name=page.locator('[data-screen="home"] .fm-next-match-place').first();
+  await expect(name).toBeVisible();
+  await expect(name).toHaveCSS('word-break','keep-all');
+  await expect(name).toHaveCSS('overflow-wrap','break-word');
+  await expect(name).toHaveCSS('white-space','normal');
+  const audit=await auditRoute(page,'[data-screen="home"]');
+  await recordEvidence(page,testInfo,{surface:'Real App',width:390,mode:'korean-line-break',audits:[audit],status:'editorial flags require human review'});
+  expect(audit.samples.some(item=>item.id.includes('fm-next-match-place'))).toBe(true);
+  expect(audit.documentOverflow).toBe(false);
+});
+
 test('Real App typography negative control identifies clipped Korean card text',async({page},testInfo)=>{
   await openCleanApp(page,390);
   await toHome(page);
