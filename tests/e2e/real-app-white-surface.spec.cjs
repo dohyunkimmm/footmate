@@ -222,3 +222,41 @@ test('Typography QA: match metadata stays visible in a single reading column and
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
+
+test('Typography QA: AI microcopy specificity survives mobile and desktop cascade',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await page.evaluate(()=>{
+    const app=document.querySelector('.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"])');
+    if(!app)throw new Error('Real App shell missing');
+    const probe=document.createElement('div');
+    probe.setAttribute('data-typography-qa-probe','');
+    probe.innerHTML=`
+      <div class="fm-ai-card" data-product-ai="home">
+        <span class="fm-ai-kicker">Home AI</span>
+        <div class="fm-ai-examples"><button type="button">Example</button></div>
+      </div>
+      <div class="fm-ai-card" data-product-ai="discover">
+        <span class="fm-ai-kicker">Discover AI</span>
+        <span class="fm-ai-mode">Mode</span>
+        <div class="fm-ai-examples"><button type="button">Example</button></div>
+        <span class="fm-ai-guardrail">Guardrail</span>
+      </div>`;
+    app.appendChild(probe);
+  });
+  const probe=page.locator('[data-typography-qa-probe]');
+  const selectors=[
+    '[data-product-ai="home"] .fm-ai-kicker',
+    '[data-product-ai="home"] .fm-ai-examples button',
+    '[data-product-ai="discover"] .fm-ai-kicker',
+    '[data-product-ai="discover"] .fm-ai-mode',
+    '[data-product-ai="discover"] .fm-ai-examples button',
+    '[data-product-ai="discover"] .fm-ai-guardrail'
+  ];
+  for(const selector of selectors)await expect(probe.locator(selector)).toHaveCSS('font-size','12px');
+  await page.setViewportSize({width:1440,height:900});
+  for(const selector of selectors){
+    const size=await probe.locator(selector).evaluate(node=>parseFloat(getComputedStyle(node).fontSize));
+    expect(size,selector).toBeGreaterThanOrEqual(12);
+  }
+  expect(errs).toEqual([]);
+});
