@@ -36,20 +36,46 @@ for(const filename of collect(input)){
   cases.push({
     test:data.test,project:data.project,surface:data.surface,mode:data.mode,width:data.width,
     screens:audits.map(item=>item.screen),issues,review:reviews,
+    audits:audits.map(item=>({screen:item.screen,samples:item.samples||[]})),
     fonts:data.fonts||null,status:data.status||null,
     evidence:path.relative(process.cwd(),filename)
   });
 }
 cases.sort((a,b)=>a.mode.localeCompare(b.mode)||Number(a.width)-Number(b.width)||a.test.localeCompare(b.test));
-const gateCases=cases.filter(item=>['normal','fallback','journey'].includes(item.mode));
+const gateCases=cases.filter(item=>['normal','fallback','journey','korean-line-break'].includes(item.mode));
 const diagnosticCases=cases.filter(item=>['text-200-percent','user-text-spacing'].includes(item.mode));
 const totalIssues=gateCases.reduce((sum,item)=>sum+item.issues.length,0);
+const expected=[...([320,390,960,1440].map(width=>'normal@'+width)),
+  ...([390,1440].flatMap(width=>['fallback@'+width,'journey@'+width,'text-200-percent@'+width,'user-text-spacing@'+width])),
+  'korean-line-break@390','negative-control@390'];
+const completed=new Set(cases.map(item=>item.mode+'@'+item.width));
+const missingScenarios=expected.filter(key=>!completed.has(key));
+const fontComparisons=[];
+for(const fallback of cases.filter(item=>item.mode==='fallback')){
+  const normal=cases.find(item=>item.mode==='normal'&&item.width===fallback.width);
+  if(!normal)continue;
+  for(const area of fallback.audits){
+    const previous=normal.audits.find(item=>item.screen===area.screen);
+    if(!previous)continue;
+    const byId=new Map(previous.samples.map(sample=>[sample.id,sample]));
+    for(const after of area.samples){
+      const before=byId.get(after.id);
+      if(!before)continue;
+      if(before.lines!==after.lines||Math.abs(before.height-after.height)>2)
+        fontComparisons.push({width:fallback.width,screen:area.screen,id:after.id,
+          normal:{lines:before.lines,height:before.height},
+          fallback:{lines:after.lines,height:after.height},
+          reason:'font-dependent wrapping/height; manual review'});
+    }
+  }
+}
 const report={
   schema:1,generatedAt:new Date().toISOString(),
   repository:'dohyunkimmm/footmate',commit:process.env.GITHUB_SHA||null,
   source:'Playwright local evidence, not Production certification',
   totalCases:cases.length,gateCases:gateCases.length,diagnosticCases:diagnosticCases.length,
-  gateIssues:totalIssues,gateStatus:gateCases.length===0?'not-run':totalIssues>0?'failed':'no-reported-issues',
+  gateIssues:totalIssues,gateStatus:gateCases.length===0?'not-run':totalIssues>0?'failed':missingScenarios.length?'incomplete':'no-reported-issues',
+  expectedScenarios:expected.length,missingScenarios,fontComparisons,
   manualReviewCount:cases.reduce((sum,item)=>sum+item.review.length,0),
   warning:'Simulated text-only enlargement and text spacing are diagnostic. Screenshots and Korean wrapping require manual review.',
   cases
@@ -65,6 +91,8 @@ const lines=[
   '- 자동 검사 시나리오: '+report.gateCases+'개; 진단 시나리오: '+report.diagnosticCases+'개',
   '- 자동 검사 감지 항목: '+report.gateIssues+'개; 수동 검토 표식: '+report.manualReviewCount+'개',
   '- 자동 검사 상태: '+report.gateStatus,
+  '- 계획된 시나리오: '+report.expectedScenarios+'개; 증거 누락: '+report.missingScenarios.length+'개',
+  '- 일반/대체폰트 줄 수·높이 차이: '+report.fontComparisons.length+'개',
   '',
   '> 화면 구성의 품질, 한국어 의미 단위 줄바꿈, 실제 브라우저 확대의 WCAG 적합성을 인증하지 않습니다.',
   '> 진단 결과는 문제를 숨기지 않고 기록하되, 검증되지 않은 항목을 통과로 표시하지 않습니다.',
@@ -77,6 +105,12 @@ for(const item of cases){
     item.issues.length+' | '+item.review.length+' | '+escapeCell(item.fonts?.coverage||'기록 없음')+' |');
 }
 if(!cases.length)lines.push('| - | 미실행 | 증거 파일 없음 | - | - | - |');
+lines.push('','## 일반/대체폰트 차이','');
+if(!fontComparisons.length)lines.push('기록된 동일 텍스트의 줄 수·높이 차이가 없습니다. 글꼴이 실제 로딩됐는지는 각 화면의 폰트 상태를 확인해야 합니다.');
+else for(const item of fontComparisons.slice(0,60))
+  lines.push('- '+item.width+'px / '+item.screen+' / '+item.id+': '+
+    item.normal.lines+'줄 → '+item.fallback.lines+'줄; 높이 '+item.normal.height+'px → '+item.fallback.height+'px');
+if(missingScenarios.length)lines.push('','## 수집되지 않은 시나리오','',...missingScenarios.map(key=>'- '+key));
 lines.push('','## 수동 검토 대상','');
 let count=0;
 for(const item of cases){
