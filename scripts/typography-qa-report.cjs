@@ -8,6 +8,7 @@
  */
 const fs=require('node:fs');
 const path=require('node:path');
+const {createHash}=require('node:crypto');
 const input=path.resolve(process.argv[2]||'test-results/playwright');
 const output=path.resolve(process.argv[3]||'verification');
 function collect(directory){
@@ -50,7 +51,8 @@ cases.sort((a,b)=>a.mode.localeCompare(b.mode)||Number(a.width)-Number(b.width)|
 const gateCases=cases.filter(item=>['normal','fallback','journey','korean-line-break'].includes(item.mode));
 const diagnosticCases=cases.filter(item=>['text-200-percent','user-text-spacing'].includes(item.mode));
 const totalIssues=gateCases.reduce((sum,item)=>sum+item.issues.length,0);
-const expected=[...([320,390,430,560,699,700,960,1440].map(width=>'normal@'+width)),
+const diagnosticIssues=diagnosticCases.reduce((sum,item)=>sum+item.issues.length,0);
+const expected=[...([320,375,390,430,560,699,700,960,1366,1440,1920].map(width=>'normal@'+width)),
   ...([390,1440].flatMap(width=>['fallback@'+width,'journey@'+width,'text-200-percent@'+width,'user-text-spacing@'+width])),
   'korean-line-break@320','korean-line-break@390','negative-control@390'];
 const completed=new Set(cases.map(item=>item.mode+'@'+item.width));
@@ -64,6 +66,9 @@ const requiredScreens={
   'korean-line-break':['home']
 };
 const invalidEvidence=[];
+let verifiedScreenshotCount=0;
+const screenshotManifest=[];
+const pngSignature=Buffer.from('89504e470d0a1a0a','hex');
 for(const item of cases){
   const key=item.mode+'@'+item.width;
   for(const screen of requiredScreens[item.mode]||[]){
@@ -72,6 +77,44 @@ for(const item of cases){
       invalidEvidence.push(key+': missing typography samples for '+screen);
     if(!item.screenshots.some(shot=>shot.screen===screen))
       invalidEvidence.push(key+': missing screenshot for '+screen);
+  }
+  // Every declared screenshot must exist as a real PNG next to the JSON
+  // evidence. Refuse absolute paths, traversal and symlinks; validate the
+  // actual image bytes instead of trusting an attachment name or count.
+  if(!Array.isArray(item.screenshots)){
+    invalidEvidence.push(key+': screenshots must be an array');
+    item.screenshots=[];
+  }
+  const declared=new Set();
+  for(const shot of item.screenshots){
+    const basename=typeof shot?.path==='string'?shot.path:'';
+    if(!shot||typeof shot.screen!=='string'||typeof shot.name!=='string'||
+       !/^typography-[a-z0-9-]+-[0-9]+-[a-z0-9-]+\.png$/.test(basename)||
+       shot.name!==basename||declared.has(basename)||
+       !Number.isSafeInteger(shot.bytes)||shot.bytes<33||
+       typeof shot.sha256!=='string'||!/^[a-f0-9]{64}$/.test(shot.sha256)){
+      invalidEvidence.push(key+': malformed screenshot metadata for '+(shot?.screen||'unknown'));
+      continue;
+    }
+    declared.add(basename);
+    // Evidence paths are relative to the per-test typography-qa.json.
+    const caseDirectory=path.dirname(path.resolve(process.cwd(),item.evidence));
+    const file=path.join(caseDirectory,basename);
+    try{
+      const stat=fs.lstatSync(file);
+      if(!stat.isFile()||stat.isSymbolicLink())throw new Error('not a regular file');
+      const body=fs.readFileSync(file);
+      if(body.length!==shot.bytes||!body.subarray(0,8).equals(pngSignature))
+        throw new Error('PNG signature or byte length mismatch');
+      if(createHash('sha256').update(body).digest('hex')!==shot.sha256)
+        throw new Error('SHA-256 mismatch');
+      verifiedScreenshotCount++;
+      screenshotManifest.push({scenario:key,screen:shot.screen,
+        file:path.relative(process.cwd(),file),bytes:shot.bytes,sha256:shot.sha256,
+        visualReview:'pending-human-review'});
+    }catch(error){
+      invalidEvidence.push(key+': screenshot PNG invalid for '+shot.screen+': '+error.message);
+    }
   }
   if(item.mode==='negative-control'&&!item.detectedIssues.some(issue=>/clipped text|invalid line-height/.test(issue)))
     invalidEvidence.push(key+': negative control did not detect clipping');
@@ -102,9 +145,10 @@ const report={
   repository:'dohyunkimmm/footmate',commit:process.env.GITHUB_SHA||null,
   source:'Playwright local evidence, not Production certification',
   totalCases:cases.length,gateCases:gateCases.length,diagnosticCases:diagnosticCases.length,
-  gateIssues:totalIssues,gateStatus:gateCases.length===0?'not-run':totalIssues>0||invalidEvidence.length?'failed':missingScenarios.length?'incomplete':'no-reported-issues',
+  gateIssues:totalIssues,diagnosticIssues,gateStatus:gateCases.length===0?'not-run':totalIssues>0||invalidEvidence.length?'failed':missingScenarios.length?'incomplete':'no-reported-issues',
   expectedScenarios:expected.length,missingScenarios,invalidEvidence,fontComparisons,
   screenshotCount:cases.reduce((sum,item)=>sum+item.screenshots.length,0),
+  verifiedScreenshotCount,screenshotManifest,visualReviewStatus:'pending-human-review',
   manualReviewCount:cases.reduce((sum,item)=>sum+item.review.length,0),
   warning:'Simulated text-only enlargement and text spacing are diagnostic. Screenshots and Korean wrapping require manual review.',
   cases
@@ -118,10 +162,11 @@ const lines=[
   '',
   '- 대상 커밋: '+(report.commit||'로컬/미제공'),
   '- 자동 검사 시나리오: '+report.gateCases+'개; 진단 시나리오: '+report.diagnosticCases+'개',
-  '- 자동 검사 감지 항목: '+report.gateIssues+'개; 수동 검토 표식: '+report.manualReviewCount+'개',
+  '- 자동 검사 감지 항목: '+report.gateIssues+'개; 진단 감지 항목: '+report.diagnosticIssues+'개; 수동 검토 표식: '+report.manualReviewCount+'개',
   '- 자동 검사 상태: '+report.gateStatus,
   '- 계획된 시나리오: '+report.expectedScenarios+'개; 증거 누락: '+report.missingScenarios.length+'개',
-  '- 화면별 스크린샷: '+report.screenshotCount+'개; 잘못된 증거: '+report.invalidEvidence.length+'건',
+  '- 선언된 PNG: '+report.screenshotCount+'개; 실제 파일·SHA-256 검증: '+report.verifiedScreenshotCount+'개; 잘못된 증거: '+report.invalidEvidence.length+'건',
+  '- 시각적 적합성 판정: '+report.visualReviewStatus+' (육안 검토 전 자동 통과 판정 금지)',
   '- 일반/대체폰트 줄 수·높이 차이: '+report.fontComparisons.length+'개',
   '',
   '> 화면 구성의 품질, 한국어 의미 단위 줄바꿈, 실제 브라우저 확대의 WCAG 적합성을 인증하지 않습니다.',
@@ -154,6 +199,18 @@ for(const item of cases){
 if(!detailedIssues)lines.push('감지된 텍스트/가로 넘침 문제가 없습니다.');
 if(missingScenarios.length)lines.push('','## 수집되지 않은 시나리오','',...missingScenarios.map(key=>'- '+key));
 if(invalidEvidence.length)lines.push('','## 유효하지 않은 증거','',...invalidEvidence.map(issue=>'- '+issue));
+lines.push('','## 시각 품질 검토 프로토콜','',
+  '현재 상태: **수동 검토 미완료**. 자동 파일 무결성 검사는 시각적 품질 합격과 별개입니다.',
+  '1. 320/375/390/430px 한국어 문장·영문 혼합/긴 토큰의 의미 단위와 잘림을 확인합니다.',
+  '2. 1366/1440/1920px 제목·본문·보조문구의 크기·굵기·밀도·강조 순서를 확인합니다.',
+  '3. 폰트 정상/차단 상태 및 200% 텍스트·간격 진단 PNG를 비교하고 수동 판단을 기록합니다.',
+  '4. 화면별 스타일 토큰(fontSize, fontWeight, color, letterSpacing 등)은 JSON cases[].audits[].samples에 보관합니다.',
+  '',
+  '| 시나리오 | 화면 | 실제 PNG 경로 | 크기(B) | SHA-256(앞 12자) | 육안 검토 |',
+  '| --- | --- | --- | ---: | --- | --- |');
+for(const shot of screenshotManifest)
+  lines.push('| '+escapeCell(shot.scenario)+' | '+escapeCell(shot.screen)+' | '+escapeCell(shot.file)+
+    ' | '+shot.bytes+' | '+shot.sha256.slice(0,12)+' | 미완료 |');
 lines.push('','## 수동 검토 대상','');
 let count=0;
 for(const item of cases){
@@ -167,5 +224,5 @@ for(const item of cases){
 if(!count)lines.push('현재 기록된 제목 고립 행·말줄임 검토 표식이 없습니다. 실제 육안 검토 완료를 뜻하지 않습니다.');
 lines.push('','## 증거','', '각 테스트의 typography-qa.json, 스크린샷, Playwright trace는 CI browser-e2e 아티팩트에 포함됩니다.');
 fs.writeFileSync(mdPath,lines.join('\n')+'\n');
-console.log('Typography QA report: '+cases.length+' cases, '+totalIssues+' gate issues, '+report.manualReviewCount+' review flags, '+invalidEvidence.length+' evidence defects, status '+report.gateStatus+' -> '+mdPath);
+console.log('Typography QA report: '+cases.length+' cases, '+totalIssues+' gate issues, '+diagnosticIssues+' diagnostic issues, '+verifiedScreenshotCount+'/'+report.screenshotCount+' PNGs verified, '+invalidEvidence.length+' evidence defects, status '+report.gateStatus+' -> '+mdPath);
 if(report.gateStatus!=='no-reported-issues')process.exitCode=1;
