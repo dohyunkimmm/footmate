@@ -179,7 +179,7 @@ if(root){
       <section class="fm-beta-hero"><div class="fm-beta-hero-copy"><span class="fm-beta-eyebrow">Closed Beta · 실제 참가 데이터</span><h1>찾고,<br>자리 확인하고,<br>실제로 참가.</h1><p>이 경로는 sample catalog가 아니라 Supabase의 실제 경기·회원·참가 상태를 사용합니다. Beta 기간에는 결제 없이 무료 참가만 허용됩니다.</p></div><div class="fm-beta-status-card"><div><small>현재 연결 상태</small><strong>${connected?'Live backend':'연결 확인 중'}</strong></div><p>${session&&user?'로그인된 계정의 프로필과 참가 기록을 복구했습니다.':'경기 조회는 공개되어 있고, 참가하려면 이메일 계정으로 로그인합니다.'}</p></div></section>
       ${notice?`<div class="fm-beta-note" data-tone="${esc(notice.tone)}" style="margin-bottom:18px">${esc(notice.message)}</div>`:''}
       ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>Closed Beta backend에 연결할 수 없습니다.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside>${renderAuth()}${renderParticipation()}</aside><section><div class="fm-beta-panel"><div class="fm-beta-panel-head"><div><h2>실제 경기</h2><p>공개된 경기와 포지션별 잔여 자리를 DB에서 직접 읽습니다. · ${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
-      <footer class="fm-beta-footer">Closed Beta · Auth / Match / Capacity / Participation = Supabase connected · Payment / Notification = not connected</footer>
+      <footer class="fm-beta-footer">Closed Beta · 인증·경기·참가 상태 Supabase 연결 · 무료 참가/실제 PG 없음 · 이메일·Push는 별도 설정과 동의에 따라 제공</footer>
     </div>`;
   }
 
