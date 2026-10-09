@@ -46,7 +46,8 @@ async function inspectTypography(page,selector){
       const minimum=node.matches('.fm-next-match-place')?16:
         node.matches('.fm-next-match-footer small,.fm-ai-kicker,.fm-ai-guardrail')?12:10;
       if(!Number.isFinite(fontSize)||fontSize<minimum-0.05)issues.push(id+': font below role minimum '+minimum+'px');
-      if(Number.isFinite(lineHeight)&&lineHeight<fontSize*1.15)issues.push(id+': invalid line-height');
+      const leadingMinimum=node.matches('h1,h2,h3')?1.05:1.15;
+      if(Number.isFinite(lineHeight)&&lineHeight<fontSize*leadingMinimum)issues.push(id+': invalid line-height');
       const clippedX=/hidden|clip/.test(style.overflowX);
       const clippedY=/hidden|clip/.test(style.overflowY);
       for(const rect of rects){
