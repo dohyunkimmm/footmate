@@ -5,17 +5,26 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
+const {createHash}=require('node:crypto');
+const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/ZAAAAABJRU5ErkJggg==','base64');
+const digest=createHash('sha256').update(png).digest('hex');
 const {spawnSync}=require('node:child_process');
 const script=path.resolve(__dirname,'../../scripts/typography-qa-report.cjs');
 
-function fixture(cases,assertReport){
+function fixture(cases,assertReport,mutateFiles){
   const directory=fs.mkdtempSync(path.join(os.tmpdir(),'footmate-type-qa-'));
   try{
     const input=path.join(directory,'input'),output=path.join(directory,'output');
     for(const [index,data] of cases.entries()){
       const dir=path.join(input,'case-'+index);fs.mkdirSync(dir,{recursive:true});
-      fs.writeFileSync(path.join(dir,'typography-qa.json'),JSON.stringify(data));
+      const screenshots=data.screenshots.map(shot=>{
+        const name=shot.name;
+        fs.writeFileSync(path.join(dir,name),png);
+        return {...shot,path:name,bytes:png.length,sha256:digest};
+      });
+      fs.writeFileSync(path.join(dir,'typography-qa.json'),JSON.stringify({...data,screenshots}));
     }
+    mutateFiles?.(input);
     const result=spawnSync(process.execPath,[script,input,output],{encoding:'utf8'});
     const report=JSON.parse(fs.readFileSync(path.join(output,'typography-qa-summary.json'),'utf8'));
     const markdown=fs.readFileSync(path.join(output,'typography-qa-summary.md'),'utf8');
@@ -41,17 +50,17 @@ function example(mode,width){
       screen,issues:[],review:[],documentOverflow:false,
       samples:[{id:'h1 경기',lines:2,height:40}]
     })),
-    screenshots:checks.map(screen=>({screen,name:'typography-'+mode+'-'+width+'-'+screen}))
+    screenshots:checks.map(screen=>({screen,name:'typography-'+mode+'-'+width+'-'+screen+'.png'}))
       .concat(mode==='korean-line-break'?[
-        {screen:'home-long-token',name:'typography-korean-'+width+'-token'},
-        {screen:'home-mixed',name:'typography-korean-'+width+'-mixed'}
+        {screen:'home-long-token',name:'typography-korean-line-break-'+width+'-home-long-token.png'},
+        {screen:'home-mixed',name:'typography-korean-line-break-'+width+'-home-mixed.png'}
       ]:[]),
     ...(mode==='negative-control'?{detectedIssues:['clipped text in its own element']}: {})
   };
 }
 function completeSuite(){
   return [
-    ...[320,390,430,560,699,700,960,1440].map(width=>example('normal',width)),
+    ...[320,375,390,430,560,699,700,960,1366,1440,1920].map(width=>example('normal',width)),
     ...[390,1440].flatMap(width=>['fallback','journey','text-200-percent','user-text-spacing'].map(mode=>example(mode,width))),
     ...[320,390].map(width=>example('korean-line-break',width)),
     example('negative-control',390)
@@ -78,7 +87,7 @@ test('report separates gate failures, diagnostics and editorial review; failure 
     assert.equal(report.fontComparisons.length,1);
     assert.equal(report.fontComparisons[0].fallback.lines,3);
     assert.ok(report.missingScenarios.includes('normal@320'));
-    assert.equal(report.expectedScenarios,19);
+    assert.equal(report.expectedScenarios,22);
     assert.match(markdown,/수동 검토/);
     assert.match(markdown,/short final line/);
   });
@@ -88,12 +97,15 @@ test('complete typography evidence is the only successful release gate',()=>{
   const cases=completeSuite();
   fixture(cases,({result,report})=>{
     assert.equal(result.status,0,result.stderr);
-    assert.equal(report.totalCases,19);
+    assert.equal(report.totalCases,22);
     assert.equal(report.gateStatus,'no-reported-issues');
-    assert.equal(report.expectedScenarios,19);
+    assert.equal(report.expectedScenarios,22);
     assert.deepEqual(report.missingScenarios,[]);
     assert.deepEqual(report.invalidEvidence,[]);
-    assert.equal(report.screenshotCount,44);
+    assert.equal(report.screenshotCount,53);
+    assert.equal(report.verifiedScreenshotCount,53);
+    assert.equal(report.screenshotManifest.length,53);
+    assert.equal(report.visualReviewStatus,'pending-human-review');
   });
 });
 
@@ -142,5 +154,54 @@ test('diagnostic-only clipping remains visible without failing the release gate'
     assert.equal(report.gateIssues,0);
     assert.equal(report.gateStatus,'no-reported-issues');
     assert.ok(report.cases.some(item=>item.mode==='user-text-spacing'&&item.issues.length===1));
+  });
+});
+
+test('PNG metadata without a physical screenshot fails the release gate',()=>{
+  fixture(completeSuite(),({result,report})=>{
+    assert.equal(result.status,1);
+    assert.equal(report.gateStatus,'failed');
+    assert.equal(report.verifiedScreenshotCount,52);
+    assert.ok(report.invalidEvidence.some(issue=>/screenshot PNG invalid.*welcome/.test(issue)));
+  },input=>fs.unlinkSync(path.join(input,'case-0','typography-normal-320-welcome.png')));
+});
+
+test('corrupted PNG bytes or a false digest cannot pass the evidence gate',()=>{
+  fixture(completeSuite(),({result,report})=>{
+    assert.equal(result.status,1);
+    assert.equal(report.gateStatus,'failed');
+    assert.ok(report.invalidEvidence.some(issue=>/PNG signature or byte length mismatch/.test(issue)));
+  },input=>fs.writeFileSync(path.join(input,'case-0','typography-normal-320-home.png'),'not a PNG'));
+
+  fixture(completeSuite(),({result,report})=>{
+    assert.equal(result.status,1);
+    assert.equal(report.gateStatus,'failed');
+    assert.ok(report.invalidEvidence.some(issue=>/SHA-256 mismatch/.test(issue)));
+  },input=>{
+    const filename=path.join(input,'case-0','typography-qa.json');
+    const data=JSON.parse(fs.readFileSync(filename,'utf8'));
+    data.screenshots[0].sha256='0'.repeat(64);
+    fs.writeFileSync(filename,JSON.stringify(data));
+  });
+});
+
+test('PNG traversal and symlink attempts fail closed',()=>{
+  fixture(completeSuite(),({result,report})=>{
+    assert.equal(result.status,1);
+    assert.ok(report.invalidEvidence.some(issue=>/malformed screenshot metadata/.test(issue)));
+  },input=>{
+    const filename=path.join(input,'case-0','typography-qa.json');
+    const data=JSON.parse(fs.readFileSync(filename,'utf8'));
+    data.screenshots[0].path='../typography-normal-320-welcome.png';
+    fs.writeFileSync(filename,JSON.stringify(data));
+  });
+
+  fixture(completeSuite(),({result,report})=>{
+    assert.equal(result.status,1);
+    assert.ok(report.invalidEvidence.some(issue=>/not a regular file/.test(issue)));
+  },input=>{
+    const file=path.join(input,'case-0','typography-normal-320-welcome.png');
+    fs.unlinkSync(file);
+    fs.symlinkSync(path.join(input,'case-0','typography-normal-320-home.png'),file);
   });
 });
