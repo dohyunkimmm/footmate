@@ -254,9 +254,6 @@ test('Typography QA: AI microcopy specificity survives mobile and desktop cascad
   ];
   for(const selector of selectors)await expect(probe.locator(selector)).toHaveCSS('font-size','12px');
   await page.setViewportSize({width:1440,height:900});
-  for(const selector of selectors){
-    const size=await probe.locator(selector).evaluate(node=>parseFloat(getComputedStyle(node).fontSize));
-    expect(size,selector).toBeGreaterThanOrEqual(12);
-  }
+  for(const selector of selectors)await expect(probe.locator(selector)).toHaveCSS('font-size','12px');
   expect(errs).toEqual([]);
 });
