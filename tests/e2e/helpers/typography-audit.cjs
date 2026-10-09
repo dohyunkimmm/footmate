@@ -52,11 +52,34 @@ async function inspectTypography(page,selector){
       if(Number.isFinite(lineHeight)&&lineHeight<fontSize*leadingMinimum)issues.push(id+': invalid line-height');
       const clippedX=/hidden|clip/.test(style.overflowX);
       const clippedY=/hidden|clip/.test(style.overflowY);
+      const clippingAncestors=[];
+      for(let ancestor=node.parentElement;ancestor;ancestor=ancestor.parentElement){
+        const parentStyle=getComputedStyle(ancestor);
+        const clipX=/^(hidden|clip)$/.test(parentStyle.overflowX);
+        const clipY=/^(hidden|clip)$/.test(parentStyle.overflowY);
+        if(clipX||clipY)clippingAncestors.push({
+          name:describe(ancestor),rect:ancestor.getBoundingClientRect(),clipX,clipY
+        });
+        if(ancestor===root)break;
+      }
       for(const rect of rects){
         if((clippedX&&(rect.left<bounds.left-2||rect.right>bounds.right+2))||
            (clippedY&&(rect.top<bounds.top-2||rect.bottom>bounds.bottom+2))){
           issues.push(id+': clipped text in its own element');
           break;
+        }
+        for(const ancestor of clippingAncestors){
+          const limit=ancestor.rect;
+          // Ignore entirely offscreen carousel entries, but flag partially
+          // visible text that overflows an ancestor's hidden/clip bounds.
+          const intersects=bounds.right>limit.left+2&&bounds.left<limit.right-2&&
+            bounds.bottom>limit.top+2&&bounds.top<limit.bottom-2;
+          if(!intersects)continue;
+          if((ancestor.clipX&&(rect.left<limit.left-2||rect.right>limit.right+2))||
+             (ancestor.clipY&&(rect.top<limit.top-2||rect.bottom>limit.bottom+2))){
+            issues.push(id+': clipped by ancestor '+ancestor.name);
+            break;
+          }
         }
       }
       if((node.matches('h1,h2,h3')||node.classList.contains('fm-next-match-place'))&&lineWidths.length>1){
@@ -106,15 +129,17 @@ async function applyAdaptation(page,mode){
   throw new Error('Unknown typography adaptation: '+mode);
 }
 
-async function recordEvidence(page,testInfo,data,{screenshot=false}={}){
+async function captureTypographyScreen(page,testInfo,{mode,width,screen}){
+  const name='typography-'+mode+'-'+width+'-'+screen+'.png';
+  await testInfo.attach(name,{body:await page.screenshot({animations:'disabled'}),contentType:'image/png'});
+  return {screen,name};
+}
+
+async function recordEvidence(page,testInfo,data){
   const file=testInfo.outputPath('typography-qa.json');
   fs.mkdirSync(path.dirname(file),{recursive:true});
   fs.writeFileSync(file,JSON.stringify({schema:1,test:testInfo.title,project:testInfo.project.name,...data},null,2)+'\n');
   await testInfo.attach('typography-qa',{path:file,contentType:'application/json'});
-  if(screenshot){
-    const fileName='typography-'+String(data.mode||'normal')+'.png';
-    await testInfo.attach('typography-screen',{body:await page.screenshot({animations:'disabled'}),contentType:'image/png',name:fileName});
-  }
 }
 
-module.exports={inspectTypography,fontCoverage,applyAdaptation,recordEvidence};
+module.exports={inspectTypography,fontCoverage,applyAdaptation,captureTypographyScreen,recordEvidence};
