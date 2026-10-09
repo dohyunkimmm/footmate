@@ -89,7 +89,7 @@ test('complete typography evidence is the only successful release gate',()=>{
     assert.equal(report.expectedScenarios,19);
     assert.deepEqual(report.missingScenarios,[]);
     assert.deepEqual(report.invalidEvidence,[]);
-    assert.equal(report.screenshotCount,39);
+    assert.equal(report.screenshotCount,44);
   });
 });
 
