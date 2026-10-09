@@ -76,17 +76,3 @@
 @media(min-width:700px){
   .fm-decision-dialog-backdrop{place-items:center}
 }
-
-
-/* P0 trust statement and P1 accessible, progressive venue details. */
-.fm-decision-trust-note{display:grid;gap:4px;margin:16px 0 0;padding:14px 16px;border:1px solid rgba(23,100,69,.20);border-radius:14px;background:#f2f9e6;color:#173c2c;line-height:1.55}
-.fm-decision-trust-note b{font-size:14px}
-.fm-decision-trust-note span{font-size:12px}
-.fm-decision-fit-warning{margin:12px 0 0;padding:10px 12px;border-left:3px solid #9e7526;background:#fff8e8;color:#76540b;font-size:13px;line-height:1.6}
-.fm-decision-optional{min-width:0}
-.fm-decision-optional summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-weight:800;color:#124531;list-style:none}
-.fm-decision-optional summary::-webkit-details-marker{display:none}
-.fm-decision-optional summary::after{content:'+';font-size:22px;font-weight:500}
-.fm-decision-optional[open] summary::after{content:'−'}
-.fm-decision-optional summary:focus-visible{outline:3px solid #39765a;outline-offset:3px;border-radius:8px}
-.fm-decision-optional-body{padding-top:12px}
