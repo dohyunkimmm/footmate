@@ -240,8 +240,8 @@ function homeView(){
 
 function quickDiscoveryConditions(){
   if(mode!=='real')return '';
-  const options=setupSteps.map(step=>`<label><span>${step.key==='region'?'지역':step.key==='position'?'포지션':'경기 강도'}</span><select data-quick-condition="${step.key}" aria-label="${step.title}">${step.options.map(option=>`<option value="${option[0]}" ${state[step.key]===option[0]?'selected':''}>${option[0]} · ${option[1]}</option>`).join('')}</select></label>`).join('');
-  return `<details class="fm-discovery-quick-edit" data-discovery-quick-edit><summary>기본 조건 바로 수정</summary><div class="fm-discovery-quick-fields">${options}<button type="button" class="fm-next-button fm-next-button--primary" data-action="apply-discover-conditions">이 조건으로 다시 찾기</button></div></details>`;
+  const options=setupSteps.map(step=>`<label style="display:grid;gap:6px;font-weight:800;font-size:12px"><span>${step.key==='region'?'지역':step.key==='position'?'포지션':'경기 강도'}</span><select data-quick-condition="${step.key}" aria-label="${step.title}" style="min-height:44px;width:100%;min-width:0;border:1px solid var(--fm-line-strong);border-radius:12px;padding:8px;background:#fff;color:var(--fm-pitch)">${step.options.map(option=>`<option value="${option[0]}" ${state[step.key]===option[0]?'selected':''}>${option[0]} · ${option[1]}</option>`).join('')}</select></label>`).join('');
+  return `<details class="fm-discovery-quick-edit" data-discovery-quick-edit style="margin:12px 0;padding:12px;border:1px solid var(--fm-line);border-radius:14px"><summary style="min-height:44px;cursor:pointer;font-weight:800">기본 조건 바로 수정</summary><div class="fm-discovery-quick-fields" style="display:grid;gap:12px">${options}<button type="button" class="fm-next-button fm-next-button--primary" data-action="apply-discover-conditions">이 조건으로 다시 찾기</button></div></details>`;
 }
 
 function discoverView(){
