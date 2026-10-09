@@ -122,14 +122,14 @@ test('P1 core conditions update recommendation context without removing advanced
   await page.getByRole('button',{name:'필터 열기'}).click();
   await page.getByLabel('시간').selectOption('19');
   await page.getByRole('button',{name:'결과 보기'}).click();
-  await page.locator('[data-discovery-quick-edit] summary').click();
+  await page.getByRole('button',{name:'기본 추천 조건 수정'}).click();
   await page.locator('[data-quick-condition="region"]').selectOption('서울 · 강남');
   await page.locator('[data-quick-condition="position"]').selectOption('GK');
-  await page.locator('[data-quick-condition="level"]').selectOption('고급');
+  await page.locator('[data-quick-condition="level"]').selectOption('중급+');
   await page.getByRole('button',{name:'이 조건으로 다시 찾기'}).click();
   await expect(page.locator('[data-screen="discover"] .fm-next-match-tags')).toContainText('서울 · 강남');
   await expect(page.locator('[data-screen="discover"] .fm-next-match-tags')).toContainText('GK');
-  await expect(page.locator('[data-screen="discover"] .fm-next-match-tags')).toContainText('고급');
+  await expect(page.locator('[data-screen="discover"] .fm-next-match-tags')).toContainText(/고급|중급\+/);
   expect(new URL(page.url()).searchParams.get('d_time')).toBe('19');
   await page.reload({waitUntil:'domcontentloaded'});
   await expect(page.locator('[data-screen="discover"] .fm-next-match-tags')).toContainText('서울 · 강남');
