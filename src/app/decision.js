@@ -122,7 +122,8 @@ function decisionSections(match,session){
       <div><span>${icon('users')}</span><div><small>편의시설</small><b>${escapeHtml(venueInfo.amenities)}</b></div></div>
       <div><span>${icon('shield')}</span><div><small>운영 안내</small><b>${escapeHtml(venueInfo.rule)}</b></div></div>
     </div>
-    <p class="fm-decision-disclosure">시설·운영 정보는 서비스 기획 검증용 샘플 데이터입니다.</p></div></details>
+    </div></details>
+    <p class="fm-decision-disclosure">시설·운영 정보는 서비스 기획 검증용 샘플 데이터입니다.</p>
   </section>
   <section class="fm-next-detail-section fm-decision-section" data-decision-section="refund">
     <div class="fm-next-section-head"><div><h2>취소 · 환불 기준</h2><p>아래는 샘플 경기의 정책 예시이며 실제 결제·환불은 발생하지 않습니다.</p></div></div>
