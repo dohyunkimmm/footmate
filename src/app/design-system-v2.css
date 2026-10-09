@@ -1448,3 +1448,7 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-screen=
 
 /* Typography QA 01–08 · readable AI labels and example suggestions. */
 .fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) :is(.fm-ai-kicker,.fm-ai-mode,.fm-ai-examples button,.fm-ai-guardrail){font-size:12px}
+/* Match more specific Home/Discover styles above, which otherwise retain 11px.
+   Leave >=960px 13px !important desktop labels in place for legibility. */
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="home"] :is(.fm-ai-kicker,.fm-ai-examples button),
+.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"]) .fm-ai-card[data-product-ai="discover"] :is(.fm-ai-kicker,.fm-ai-mode,.fm-ai-examples button,.fm-ai-guardrail){font-size:12px}
