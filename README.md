@@ -1,207 +1,55 @@
-# FootMate — AI-assisted Futsal Match Discovery
+# FootMate
 
-## Release App v6
+**내 수준에 맞는 풋살 경기를 찾고, 참가부터 경기 후까지 이어지는 경험을 설계한 서비스 기획 프로젝트입니다.**
 
-- Canonical IA: **Home / 경기 찾기 / MY**
-- Home is lifecycle-aware: discovery → upcoming → matchday → postgame → Return 완료 후 다음 경기 탐색으로 다시 연결됩니다.
-- MY is the canonical owner of joined matches, saved matches, Matchday, Return, profile and settings.
-- Legacy `schedule` state migrates to MY.
-- `/app` Join is an explicit **free participation confirmation**; real PG is not connected. 참가 정보 유실·확정 오류는 오류 안내, 재시도, 경기 다시 선택으로 복구합니다.
-- `/beta` and `/beta/operator` remain the Supabase-connected validation/operator surfaces and are not presented as if merged into `/app`.
-- Desktop review at 960px+ keeps the 560px app canvas and adds an adjacent service/experience context panel; Detail / Join / MY keep the single-surface hierarchy inside the app canvas.
+자연어로 경기 조건을 입력하면 AI가 요청을 해석하고, 규칙 기반 추천 엔진이 경기 후보와 추천 이유를 제공합니다. 탐색부터 참가 결정, 경기 당일, 경기 후 피드백까지 하나의 흐름으로 연결합니다.
 
+**사용자 여정:** `Find → Decide → Join → Play → Return`
 
-FootMate는 **내 수준에 맞는 풋살 경기를 빠르게 찾고, 왜 나에게 맞는지 이해한 뒤 참가·경기 당일·경기 후까지 이어지는 경험**을 검증하는 인터랙티브 서비스 기획 프로젝트입니다.
+## 화면 구성
 
-현재 제품은 자연어 경기 탐색을 실제 AI inference와 연결하되, 경기 후보·순위·추천 이유는 deterministic recommendation engine이 계속 소유하도록 설계했습니다. AI 연결이 느리거나 실패해도 rules fallback으로 탐색을 이어가며, Release App의 참가 확정은 사용자가 직접 확인합니다. 사용자-facing Join은 무료 참가 확인이며 실제 PG는 연결되지 않았습니다.
+| 경로 | 설명 |
+| --- | --- |
+| `/` | 문제 정의·설계·검증 근거를 소개하는 Case Study |
+| `/app` | 현재 Release App: **Home / 경기 찾기 / MY** |
+| `/beta` | Supabase에 연결된 실제 데이터 기반 Closed Beta |
+| `/beta/operator` | 허용된 운영자만 접근하는 TOTP MFA 운영 화면 |
 
-## Product at a glance
+`/app?mode=guided`는 안내형 체험, `/app?mode=evidence`는 구현·검증 근거 확인용입니다.
 
-- Primary journey: **Find → Decide → Join → Play → Return**
-- Real App IA: **Home = lifecycle-aware next action → 경기 찾기/Discover = AI/search exploration + filter/sort → Detail = match decision → Join = free participation confirmation → MY = joined/saved matches + Matchday + Return + profile/settings**
-- Case Study reference: `/` — reviewer-facing explanation surface; explicitly requested changes are maintained in this repository and verified with Case Study QA.
-- Real App: `/app`
-- Closed Beta: `/beta` — Supabase Auth / Postgres / Realtime / capacity / participation / waitlist / reminders / feedback / in-app notification / transactional email / opt-in Web Push / media upload connected
-- Closed Beta Operator: `/beta/operator` — allowlisted + TOTP MFA operator match / participant / policy / check-in / completion / match media operations connected
-- Guided review mode: `/app?mode=guided`
-- Evidence / Reviewer mode: `/app?mode=evidence`
-- Compatibility aliases: `/demo`, `/next` → current Real App
+## 주요 경험
 
-## 서비스 기획 관점
+- **경기 탐색:** 자연어 검색, 조건 필터·정렬, 적합한 경기 추천과 이유 제공
+- **참가 결정:** 경기 상세 확인, 저장·비교, 로그인 후 무료 참가 확인
+- **경기 당일:** 참가 일정 확인, 체크인과 변경·취소 상황 대응
+- **경기 후:** 피드백을 다음 추천에 반영하고 새로운 경기 탐색으로 연결
 
-서비스 기획의 현재 근거는 [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md)와 [과업 기반 사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)를 Source of Truth로 사용합니다. 루트 `/`의 Case Study는 리뷰어용 설명 화면이며, 명시적으로 요청한 copy/layout/visual 변경은 현재 9단계 원본(`src/case-study/nine-sections.js`, `nine-sections.css`)과 해당 화면의 QA를 함께 관리합니다. 과거 13단계 생성 bundle은 현재 화면에서 로드하지 않습니다. Product release QA는 `/app`, `/beta`, `/beta/operator`와 현재 evidence docs를 기준으로 하며, Case Study 변경도 영향에 맞는 QA를 통과해야 합니다.
-
-## Product decisions
-
-- **Value before account** — 추천과 경기 상세을 먼저 확인하고 참가 의도가 생겼을 때 로그인합니다.
-- **Reason before score** — 내부 적합도는 정렬에 사용하되 사용자는 생활권·레벨·포지션·거리처럼 판단 가능한 이유를 먼저 봅니다.
-- **AI interprets, deterministic engine ranks** — AI는 자연어를 검색 조건으로 바꾸고 실제 경기 후보·순위·추천 이유는 recommendation engine이 결정합니다.
-- **Entry and results are separate surfaces** — Home은 AI 조건 입력과 짧은 개인화 추천에 집중하고, 실제 결과 탐색·조건 수정·filter/sort·전체 목록은 Discover가 소유합니다.
-- **Release participation** — 로그인 후 무료 참가 확인 → 성공 → MY로 이어집니다. 참가 정보 유실·확정 오류는 stuck 상태가 아니라 재시도 또는 경기 다시 선택으로 복구하며, 기존 payment pending/retry 모델은 compatibility 검증에만 남고 Release App의 사용자-facing Join에서는 노출하지 않습니다.
-- **State-aware Matchday** — upcoming → matchday → checked-in과 late·update·cancel recovery를 분리합니다.
-- **Return loop** — 경기 후 체감 난이도·완료·반복 의도를 다음 추천의 보조 신호로 사용하고, 저장 완료 후 Home lifecycle을 완료 상태로 닫아 `다음 경기 찾기`로 연결합니다.
-- **HITL for irreversible actions** — AI는 경기 탐색을 돕지만 참가 확정을 자동 실행하지 않습니다.
-
-## AI Agent Workflow
+## AI 설계 원칙
 
 `Context → Plan → Tools → Guardrail → Observe`
 
-- **Context** — 현재 region / position / level browser state와 사용자의 자연어 요청
-- **Plan** — 지역·포지션·레벨·최대 가격·최대 이동 시간·시작 시간 조건으로 구조화
-- **Tools** — Vercel AI Gateway + deterministic recommendation ranking + sample match catalog
-- **Guardrail** — AI가 경기 ID·가격·잔여 자리·주소·순위·날짜를 생성하지 못하도록 validation을 적용하고 Join 확정은 HITL로 유지
-- **Observe** — connected-ai / rules-fallback, 실제 사용 model, fallback 여부와 마지막 검색 조건을 추적
+AI는 자연어 요청을 지역·레벨·포지션 등의 **검색 조건으로 해석**합니다. 실제 경기 목록·정렬·추천 이유는 **결정론적 추천 엔진**이 담당하며, AI 연결에 실패해도 규칙 기반 탐색으로 전환합니다. 참가 확정은 사용자가 직접 수행합니다.
 
-## Implemented experience
+## 구현 및 연동 범위
 
-- Home AI Match Assistant entry — `오늘, 어떤 경기에서 뛸까요?` 질문과 실행 가능한 example suggestion을 제공하고, 실행 결과를 Discover로 handoff
-- Home personalization — desktop은 `내 조건에 맞는 추천`, mobile은 `For You`로 맥락을 맞추고 1–2개 compact match로 제한하며 동일 경기의 중복 추천 section을 만들지 않음
-- Discover result exploration — Home의 자연어/structured constraints를 이어받아 조건 summary/edit, filter/sort, zero-result recovery와 전체 결과 탐색을 제공하며 full Assistant를 중복 mount하지 않음
-- Home → Discover → Detail 선택 동안 AI/discovery state와 selected match identity를 일관되게 유지
-- fresh setup 완료 직후에는 일회성 완료 안내를 제공하고 이후 재방문 greeting과 구분
-- Detail 뒤로가기는 Home/Discover 등 실제 진입 surface를 복원
-- MY에서 저장한 경기를 다시 열 수 있고, 체험 버전의 sample/mock/browser-local 경계는 `체험 버전 안내`에서 필요할 때 확인
-- 자연어 경기 탐색 → structured constraints
-- AI connected path + provider fallback + browser rules fallback
-- deterministic recommendation ranking과 human-readable recommendation reason
-- Discovery filter/sort, zero-result recovery, URL/session persistence
-- Decision Detail, save, 최대 2경기 compare
-- Sign in / free Join confirmation / success / MY handoff + 참가 정보 유실·확정 오류의 retry / 경기 다시 선택 recovery; legacy payment pending/retry paths remain compatibility-only regression coverage
-- Checkout·Matchday·postgame Return의 기술/프로토타입 표현은 사용자 판단에 필요한 상태·행동 중심 문구로 정리하고 실제 외부 연동 경계는 별도 안내에서 유지
-- Matchday check-in과 운영 상태 복구
-- postgame Return과 browser-local personalization + Return 저장 완료 후 Home `다음 경기 찾기` handoff
-- Closed Beta email/password Auth, profile persistence, live match read, position-aware join/cancel, reload session recovery
-- Closed Beta Google/Kakao OAuth entrypoint — Supabase에서 실제 provider가 활성화된 경우에만 노출; Production 실로그인 수동 QA 완료
-- Closed Beta password recovery, recovery-link password update, signup verification email resend
-- Closed Beta per-match cancellation cutoff with database-enforced join/cancel boundary
-- Closed Beta Realtime change signal + authoritative REST refresh for match/capacity/participation/notification/waitlist/feedback
-- Closed Beta position-aware waitlist + cancellation transaction 내 FIFO 자동 승급
-- Closed Beta 24h / 2h pre-match reminder generation through the existing notification outbox
-- Closed Beta real-match AI constraint interpretation + deterministic ranking over actual Supabase match records
-- Closed Beta attendance history + completed-match feedback
-- Closed Beta connected self check-in and DB-backed in-app operation notifications
-- Closed Beta participant transactional email outbox + server worker + Resend final-delivery webhook
-- Closed Beta browser Web Push opt-in + server-driven push outbox worker; Production 브라우저/OS 알림 표시까지 수동 QA 완료
-- Closed Beta profile avatar + AAL2 operator match/venue image upload through Supabase Storage `beta-media`
-- Closed Beta participant join / user cancellation / operator cancellation / check-in transactional email actual Production delivery verified
-- Closed Beta operator TOTP MFA; operator-only RLS and SECURITY DEFINER RPC require `aal2`; raw Supabase SVG QR와 수동 설정 키 fallback 모두 지원
-- Closed Beta operator match create/edit/cancel, MF/FW/DF/GK capacity allocation, participant cancel/capacity recovery
-- Closed Beta operator cancellation/check-in policy management, participant on-site check-in, match completion
-- Closed Beta request timeout / offline recovery / stale-tab refresh / last-sync state
-- Closed Beta account deletion with authenticated server-side Edge Function and local-session cleanup
-- Closed Beta minimal operation audit trail without email/name payloads, extended through check-in and match completion
-- Real / Guided / Evidence mode 분리
-- responsive 320 / 375 / 390 / 430px
-- `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
-- `/app` active Auth v3: Google/Kakao only; 활성 provider는 Supabase OAuth의 외부 로그인 화면으로 이동할 수 있고, signup/recovery처럼 social action이 없는 panel에는 provider status를 노출하지 않음. actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
-- desktop Real App review composition: app canvas는 560px을 유지하고 960px+에서는 서비스 여정·샘플 데이터·무료 참가 경계를 설명하는 review context를 옆에 배치하며, 결합된 composition 기준으로 horizontal overflow를 막음
-- Browser E2E + axe accessibility regression — v6 390px Detail / Join / MY axe 계약 포함
-- Mobile Safari/WebKit 자동 gate — 320 / 375 / 390 / 430px에서 overflow, fixed navigation, Detail/focus contract 검증
-- Playwright screenshot visual regression — Ubuntu/Chromium baseline에서 changed Product surfaces를 `toHaveScreenshot()`으로 실제 비교하고, 알려진 runner anti-alias 편차는 소수 pixel의 bounded allowance로 제한합니다. v6는 390px Home lifecycle / Join / MY Matchday / MY postgame과 320px compact Join을 승인 baseline으로 비교하며, 1440px Real App은 max 560px shell과 1-column density, center/overflow geometry contract를 별도로 검증합니다
+| 영역 | 현재 상태 |
+| --- | --- |
+| AI 검색 | Vercel AI Gateway 연결 및 운영 환경 검증; 추천 순위는 규칙 기반 엔진에서 결정 |
+| Release App `/app` | 샘플 경기 데이터와 브라우저 내 상태 저장을 사용하는 체험 환경. 실제 결제·경기 참가 확정은 연동되지 않음 |
+| Closed Beta `/beta` | Supabase 인증·경기·포지션별 정원·참가/취소·대기열·체크인·피드백 연동 |
+| Beta 알림·미디어 | Resend 이메일, 동의 기반 Web Push, Supabase Storage 연동 |
+| 운영자 `/beta/operator` | 허용 계정 및 TOTP MFA 기반 경기·참가자·운영 정책 관리 |
 
-## Production / integration boundary
+`/app`의 Google/Kakao 로그인 진입점은 활성화된 OAuth 제공자에 한해 실제 인증 화면으로 연결될 수 있습니다. **실제 결제(PG)와 외부 분석 도구는 미연동** 상태입니다. `/app`과 `/beta`는 서로 다른 구현 범위입니다.
 
-현재 실제 연결과 simulation 경계를 다음처럼 구분합니다.
+## 기술과 검증
 
-- Vercel AI Gateway: **connected and Production-verified**
-- `/app` recommendation ranking: **deterministic runtime logic**
-- `/app` match catalog / capacity / participant composition: **sample records**
-- `/app` core auth/session, capacity, notification state: **browser-local / deterministic mock**; Google/Kakao social entrypoint는 활성 provider가 있을 때 Supabase OAuth authorize/user 확인 경로를 사용
-- `/app` Join: **browser-local free participation confirmation**; real PG 미연동
-- `/app` persistence: **browser local state** — `footmate:*` canonical keys를 primary로 사용하고 기존 `footmate:v4:*` 9개 key는 migration/rollback compatibility mirror로 유지
-- `/beta` Auth / member profile / match catalog / position capacity / participation: **Supabase connected**
-- `/beta` Realtime / waitlist / reminder / feedback / real-match recommendation loop: **Supabase connected**; Realtime event는 change signal로만 사용하고 authoritative row는 REST에서 다시 읽음
-- `/beta` account recovery / signup verification resend: **Supabase Auth connected**
-- `/beta` Google/Kakao OAuth: **provider-aware Supabase OAuth connected**; 활성화된 provider만 버튼을 노출하며 Google/Kakao Production 실로그인을 2026-09-22 수동 검증
-- `/beta` join / cancel / check-in: **database transaction + row lock/RLS**, free-participation only; 경기별 취소 마감·체크인 오픈 정책을 DB에서 강제
-- `/beta` operation notification: **Supabase DB-backed in-app notification connected**
-- `/beta` transactional email: **Supabase notification outbox + server worker + Resend connected**; join / user cancel / operator cancel / check-in은 실제 Production `delivered`까지 검증
-- `/beta` browser Web Push: **Service Worker + subscription RLS + server outbox worker + pg_cron connected**; 사용자의 명시적 브라우저 권한 승인 이후 활성화되며 Production 브라우저/OS 표시 수동 QA까지 완료. 서버 `sent`는 push service acceptance 상태로 별도 추적
-- `/beta` media: **Supabase Storage `beta-media` connected**; profile avatar는 own-folder RLS, match/venue image는 operator `aal2` RLS
-- `/beta` account deletion: **authenticated Supabase Edge Function**, privileged Auth deletion remains server-side
-- `/beta` operation traceability: **operator-readable DB audit trail** with user/match UUID and event/time only; email/name are not stored in audit payloads
-- `/beta/operator`: **Supabase connected + TOTP MFA** — explicit `public.operators` allowlist, AAL2 RLS/RPC, atomic match / participant RPC, policy/check-in/completion/media operations, browser service-role credentials 없음
-- real PG / external analytics: **미연동**; OAuth provider는 외부 credential/config에 의존하고 Web Push의 향후 기기별 표시는 사용자 브라우저/OS 권한에 의존
-- Render: static backup / alternate deployment이며 Vercel serverless AI inference parity를 의미하지 않습니다.
+- **기술:** JavaScript, Vercel AI Gateway, Supabase(Auth·Postgres·Realtime·Storage), Resend, Web Push
+- **검증:** 회귀 테스트, Playwright 브라우저 E2E·시각 회귀, axe 접근성, 모바일 WebKit
+- **릴리스:** 제품 식별자 `v6.0.0`. 코드 변경은 영향에 맞는 QA와 배포 검증을 거치며, 문서만 변경할 때는 경량 QA를 적용합니다.
 
-## Release readiness
+## 자세한 문서
 
-FootMate는 기능 수를 계속 늘리는 대신 현재 사용자 여정의 완결성과 복구 가능성을 release 기준으로 관리합니다.
-
-runtime-impacting 변경의 자동 release gate는 다음을 포함합니다. docs/workflow-only non-runtime 변경은 `Change Impact` 판정 후 `Docs-only QA`에서 `git diff --check`와 connected-platform contract를 실행하고, 영향이 없는 Regression / Browser E2E / Production Smoke는 skip합니다.
-
-- Regression suite
-- Browser E2E + axe
-- Playwright screenshot visual regression — approved Ubuntu/Chromium baseline과 actual render를 비교하고 mismatch 시 expected / actual / diff evidence를 남김; changed Real App surfaces와 1440px max 560px shell·center·overflow geometry를 함께 검증
-- responsive 320 / 375 / 390 / 430px
-- `/app` setup display terminology: `공격수` / `초급` / `고급` while canonical compatibility values stay internal
-- `/app` active Auth v3: Google/Kakao only, actual previous-route back behavior, readable team-message simulation boundary, checked-in → postgame → next-match continuation
-- desktop Real App review composition: 560px app canvas + 960px 이상에서의 adjacent review context, 1366/1440/1920px no-overflow/readability 계약
-- Deep Link / State Consistency / persistence restoration
-- Closed Beta backend config / Auth / join / cancel / reload recovery
-- Closed Beta password recovery / signup verification resend / recovery-link password update
-- Closed Beta network timeout / offline / duplicate-action boundary / stale-tab refresh
-- Closed Beta cancellation cutoff / connected check-in / in-app notification / match completion
-- Closed Beta transactional email outbox / Edge Function / Resend integration contract
-- Closed Beta Realtime / reminder / waitlist / real-match recommendation / feedback contracts
-- Closed Beta social OAuth provider-awareness / operator TOTP MFA + AAL2 boundary
-- Closed Beta Web Push subscription/outbox/service-worker and media Storage/RLS contracts
-- Closed Beta account deletion contract and audit traceability
-- Closed Beta operator allowlist / match create-edit-cancel / participant cancel / capacity recovery / policy / check-in / completion
-- Supabase RLS / RPC security boundary
-- AI connected / provider fallback / browser fallback / timeout recovery
-- exact Production HTTP / AI inference / Chromium smoke
-- Vercel exact SHA verification
-- 필요한 경우 Render backup verification
-
-Closed Beta는 결제 없는 실제 참가 검증을 우선합니다. 사용자 `/beta`와 allowlisted 운영자 `/beta/operator`의 Auth·경기·포지션 정원·참가/취소·체크인·경기 종료 경로는 Supabase에 연결되어 있습니다. 참가 상태 transactional email은 Resend final-delivery webhook까지 연결되어 있고, Web Push는 사용자가 명시적으로 알림 권한을 승인한 기기에서 opt-in 방식으로 동작합니다. 운영자 계정은 self-service가 아니라 명시적 allowlist provisioning을 거치며 TOTP MFA(AAL2)를 통과해야 운영자 전용 데이터와 RPC에 접근할 수 있습니다. 실제 PG는 별도 release scope입니다. 2026-09-22 기준 Google/Kakao Production 실로그인과 Web Push 브라우저/OS 알림 표시를 수동 검증했고, raw SVG MFA QR 렌더링과 320/375/390/430px Operator/Beta UI는 자동 Browser E2E + axe로 검증합니다. 2026-09-21 사용자 수동 검증 기준 실제 iPhone / Android 물리기기 QA, 수동 접근성 QA, disposable 실제 Beta 계정 UI E2E도 PASS했으며 자동 gate 결과와 구분해 release history에 기록합니다.
-
-## Architecture
-
-- `api/ai-match-assistant.js` — AI Gateway, OIDC, provider fallback, request/time/cost guardrails
-- `api/beta-config.js` — browser-safe Supabase URL / publishable key config boundary
-- `src/app/ai-match-assistant.js` — AI UI/application bridge, Home Assistant entry/example execution, Discover handoff, browser timeout/fallback, AI state restoration
-- `src/app/discovery.js` — Discover filter/sort/result-list ownership and persisted discovery state; AI state ownership은 갖지 않음
-- `src/platform/presentation/real-app-flow-naturalness.js` — Real App first-use greeting, origin-preserving flow copy, MY saved-match destination, experience disclosure, Matchday/Return user-facing presentation layer
-- `src/beta/app.js` — Closed Beta Auth / profile / match / participation / freshness / account-data UI state
-- `src/beta/recovery-bootstrap.js` — recovery token bootstrap before base Beta Auth connection
-- `src/beta/readiness.js` — account recovery / cancellation policy / self check-in / in-app notification UI extension
-- `src/beta/growth.js` — Realtime / waitlist / live-match recommendation / attendance-feedback UI extension
-- `src/beta/social-auth.js` — provider-aware Google/Kakao OAuth entrypoint
-- `src/beta/push.js` + `beta-sw.js` — browser Web Push opt-in/subscription and service-worker notification surface
-- `src/beta/media.js` — profile and operator match-image Supabase Storage adapter/UI
-- `src/beta/operator.js` — allowlisted operator match / participant management UI state
-- `src/beta/operator-mfa.js` — TOTP enrollment/challenge/verify gate before operator console load; raw SVG QR normalization + manual setup-key fallback
-- `src/beta/operator-polish.js` — new-match policy defaults, picker bounds and narrow-screen Operator form polish
-- `src/beta/operator-readiness.js` — operator policy / participant check-in / match completion UI extension
-- `src/beta/infrastructure/supabase.js` — Supabase Auth / REST / RPC / account-deletion browser adapter
-- `src/beta/infrastructure/supabase-readiness.js` — Supabase Auth recovery / readiness REST / RPC / transactional email dispatch adapter
-- `src/beta/domain/match-contract.js` — connected match normalization contract
-- `supabase/functions/delete-account/` — authenticated user account deletion; privileged Auth admin operation stays server-side
-- `supabase/functions/process-beta-email-outbox/` + `resend-beta-email-webhook/` — server transactional email delivery/reconciliation
-- `supabase/functions/process-beta-push-outbox/` — server-driven Web Push outbox worker with bounded retry and stale-subscription cleanup
-- `supabase/migrations/` — profiles / operators / matches / match_slots / participation / notification / email+push outbox / waitlist / feedback / media / audit trail, RLS and atomic user/operator RPC ownership
-- `src/domain/` — recommendation / participation / matchday / return consistency ownership
-- `src/platform/infrastructure/providers.js` — `/app` auth/payment/capacity/notification provider registry
-- `src/platform/domain/contracts.js` — version-neutral `footmate:*` canonical storage keys + `footmate:v4:*` legacy compatibility key contract
-- `src/platform/infrastructure/storage.js` — legacy promotion, canonical-first reconciliation, dual-write rollback mirror, JSON repository ownership
-- `src/platform/domain/recommendation.js` — deterministic recommendation score/reason/sort의 순수 domain Source of Truth
-- `src/app/recommendation.js` — domain 결과를 Home / Discover / Detail UI와 연결하는 presentation bridge
-- `src/app/data.js` — current `/app` sample match records and user-visible recommendation reasons
-
-## Release engineering
-
-버전 번호는 제품의 외부 이름이 아니라 개발·QA·배포 추적용 식별자로만 사용합니다.
-
-- Current Product release identifier: **v6.0.0** — root `package.json.version`이 public `/app` 및 `/demo`, `/next` compatibility alias의 release meta 기준이며 CI가 drift를 차단
-- Case Study reference surface의 명시적 변경은 이 저장소에서 관리하며 Product package release와 version-coupling하지 않습니다. FootMate의 현재 release Source of Truth는 `/app` Product와 `docs/README.md`의 문서 경계입니다.
-- Component compatibility identifiers such as connected-platform / AI Assistant `v5.1.1` are preserved independently from the Product release
-- Detailed release history and exact SHA/deployment facts: `docs/RELEASE-HISTORY.md`
-- Closed Beta pilot operations: `docs/BETA-PILOT-RUNBOOK.md`
-- Documentation index: `docs/README.md`
-- Browser QA ownership: current `v5.1` component suites + `v5.2` Product/WebKit/Beta readiness + `v5.3` Beta growth/auth/push-media suites + 필요한 granular `v4` compatibility suites
-- QA determinism: Playwright retry 0; Chromium visual/accessibility gate와 Mobile WebKit gate를 분리해 flaky retry가 critical failure를 숨기지 않음
-- Performance budgets: first-party request/CSS/JS/HTML byte budget + max 560px shell / horizontal overflow / screen-ready runtime budget
-- QA scope: runtime-impacting 변경은 full Regression / Browser E2E + axe / 필요한 Production verification을 유지하고, docs/workflow-only non-runtime 변경은 lightweight Docs-only QA를 사용
-- Release flow: `branch → PR → impact-aware GitHub Actions QA → merge → runtime 영향 시 exact Vercel Production verification → durable release history sync`
-- Final sync-up: `최종 runtime/수동 QA 확정 → README → Release History → Runbook(절차 변경 시) → Notion 관련 페이지 → 상충하는 pending/미검증 문구 검색 → QA/merge`
+- [문서 전체 목록](docs/README.md) · [Release App 상세](docs/RELEASE-APP.md)
+- [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md) · [사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)
+- [릴리스·QA 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
