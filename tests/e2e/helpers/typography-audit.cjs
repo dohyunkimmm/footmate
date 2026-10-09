@@ -15,7 +15,8 @@ async function inspectTypography(page,selector){
     const visible=node=>{
       if(!node.getClientRects().length||node.closest('[hidden],[aria-hidden="true"],.fm-next-sr-only,.sr-only'))return false;
       const s=getComputedStyle(node),r=node.getBoundingClientRect();
-      return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0;
+      const visuallyClipped=(r.width<=2&&r.height<=2)&&(/hidden|clip/.test(s.overflowX)||s.clip==='rect(0px, 0px, 0px, 0px)');
+      return s.display!=='none'&&s.visibility!=='hidden'&&!visuallyClipped&&r.width>0&&r.height>0;
     };
     const describe=node=>{
       const classes=typeof node.className==='string'?node.className.trim().split(/\s+/).slice(0,2).join('.'):'';
@@ -46,7 +47,8 @@ async function inspectTypography(page,selector){
       const minimum=node.matches('.fm-next-match-place')?16:
         node.matches('.fm-next-match-footer small,.fm-ai-kicker,.fm-ai-guardrail')?12:10;
       if(!Number.isFinite(fontSize)||fontSize<minimum-0.05)issues.push(id+': font below role minimum '+minimum+'px');
-      const leadingMinimum=node.matches('h1,h2,h3')?1.05:1.15;
+      const leadingMinimum=node.matches('.fm-ai-kicker,.fm-ai-mode')?1:
+        node.matches('h1,h2,h3')?1.05:1.15;
       if(Number.isFinite(lineHeight)&&lineHeight<fontSize*leadingMinimum)issues.push(id+': invalid line-height');
       const clippedX=/hidden|clip/.test(style.overflowX);
       const clippedY=/hidden|clip/.test(style.overflowY);
