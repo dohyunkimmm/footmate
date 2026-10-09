@@ -104,7 +104,7 @@ function decisionSections(match,session){
     <div class="fm-next-section-head"><div><h2>참가 결정 체크</h2><p>추천 점수 대신 실제로 확인할 조건을 한 번 더 정리했어요.</p></div></div>
     ${reasonBreakdown(match,session)}
     ${String(recommendationRow(match,session)?.fit||match.fit).includes('차이')?'<p class="fm-next-inline-note fm-decision-fit-warning" role="note">추천 순위가 높아도 경기 강도는 내 설정과 다를 수 있어요. 레벨을 다시 확인한 뒤 결정하세요.</p>':''}
-    <p class="fm-next-inline-note fm-decision-trust-note" role="note" style="display:grid;gap:4px;margin:16px 0;padding:14px;border-radius:14px;background:var(--fm-lime-soft);color:var(--fm-pitch);line-height:1.55"><b>무료 참가 체험 · 실제 청구 0원</b><span>화면의 참가비·잔여 자리·환불 정책은 샘플 경기 정보이며, 이 체험에서 결제되지 않습니다.</span></p>
+    ${matchMedia('(max-width:959px)').matches?'<p class="fm-next-inline-note fm-decision-trust-note" role="note" style="display:grid;gap:4px;margin:16px 0;padding:14px;border-radius:14px;background:var(--fm-lime-soft);color:var(--fm-pitch);line-height:1.55"><b>무료 참가 체험 · 실제 청구 0원</b><span>화면의 참가비·잔여 자리·환불 정책은 샘플 경기 정보이며, 이 체험에서 결제되지 않습니다.</span></p>':''}
   </section>
   <section class="fm-next-detail-section fm-decision-section" data-decision-section="capacity">
     <div class="fm-next-section-head"><div><h2>자리와 포지션</h2><p>실시간 정원이 아닌 현재 샘플 경기 데이터 기준입니다.</p></div></div>
