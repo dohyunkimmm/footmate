@@ -201,6 +201,7 @@ jobs:
           node --check tests/e2e/typography-real-app.spec.cjs
           node --check scripts/typography-qa-report.cjs
           node --test tests/contracts/typography-report.contract.cjs
+          node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Run nine-stage Case Study navigation, responsive and accessibility gate
         run: npx playwright test --project=chromium tests/e2e/case-study-nine-stages.spec.cjs
       - name: Run release browser, beta, AI, accessibility and visual gates
