@@ -41,7 +41,8 @@ for(const filename of collect(input)){
   cases.push({
     test:data.test,project:data.project,surface:data.surface,mode:data.mode,width:data.width,
     screens:audits.map(item=>item.screen),issues,review:reviews,
-    screenshots:data.screenshots||[],detectedIssues:data.detectedIssues||[],
+    screenshots:Array.isArray(data.screenshots)?data.screenshots:[],
+    screenshotSchemaValid:data.screenshots==null||Array.isArray(data.screenshots),detectedIssues:data.detectedIssues||[],
     audits:audits.map(item=>({screen:item.screen,samples:item.samples||[]})),
     fonts:data.fonts||null,status:data.status||null,
     evidence:path.relative(process.cwd(),filename)
@@ -54,7 +55,7 @@ const totalIssues=gateCases.reduce((sum,item)=>sum+item.issues.length,0);
 const diagnosticIssues=diagnosticCases.reduce((sum,item)=>sum+item.issues.length,0);
 const expected=[...([320,375,390,430,560,699,700,960,1366,1440,1920].map(width=>'normal@'+width)),
   ...([390,1440].flatMap(width=>['fallback@'+width,'journey@'+width,'text-200-percent@'+width,'user-text-spacing@'+width])),
-  'korean-line-break@320','korean-line-break@390','negative-control@390'];
+  'korean-line-break@320','korean-line-break@375','korean-line-break@390','negative-control@390'];
 const completed=new Set(cases.map(item=>item.mode+'@'+item.width));
 const missingScenarios=expected.filter(key=>!completed.has(key));
 const requiredScreens={
@@ -71,11 +72,12 @@ const screenshotManifest=[];
 const pngSignature=Buffer.from('89504e470d0a1a0a','hex');
 for(const item of cases){
   const key=item.mode+'@'+item.width;
+  if(!item.screenshotSchemaValid)invalidEvidence.push(key+': screenshots must be an array');
   for(const screen of requiredScreens[item.mode]||[]){
     const audit=item.audits.find(entry=>entry.screen===screen);
     if(!audit||!Array.isArray(audit.samples)||audit.samples.length===0)
       invalidEvidence.push(key+': missing typography samples for '+screen);
-    if(!item.screenshots.some(shot=>shot.screen===screen))
+    if(!item.screenshots.some(shot=>shot&&shot.screen===screen))
       invalidEvidence.push(key+': missing screenshot for '+screen);
   }
   // Every declared screenshot must exist as a real PNG next to the JSON
