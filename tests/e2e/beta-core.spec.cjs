@@ -59,6 +59,9 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await expect(page.getByText('Supabase Connected',{exact:true})).toBeVisible();
   await expect(page.getByText('영통 금요일 저녁 경기')).toBeVisible();
   await expect(page.getByRole('button',{name:'로그인 후 참가'})).toBeVisible();
+  await expect(page.locator('.fm-beta-match a[href^="https://www.google.com/maps/search/"]')).toBeVisible();
+  await expect(page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]')).toHaveCount(0);
+  await page.evaluate(()=>{window.__betaQaEvents=[];window.addEventListener('footmate:beta:measurement',e=>window.__betaQaEvents.push(e.detail));});
   expect(await serious(page)).toEqual([]);
 
   await page.getByLabel('이메일').fill('beta@example.com');
@@ -70,6 +73,13 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await page.getByRole('button',{name:'MF로 참가'}).click();
   await expect(page.getByText('MF 포지션으로 참가가 확정됐습니다.')).toBeVisible();
   expect(backend.isJoined()).toBe(true);
+  await expect(page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]')).toBeVisible();
+  const calendar=await page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]').getAttribute('href');
+  expect(new URL(calendar).searchParams.get('dates')).toBe('20990925T110000Z/20990925T122000Z');
+  const measure=await page.evaluate(()=>window.__betaQaEvents||[]);
+  expect(measure.map(item=>item.event)).toEqual(['join_attempt','join_succeeded']);
+  expect(measure[0].flowId).toBe(measure[1].flowId);
+  expect(measure[0].cohort).toBe('unclassified');
   await expect(page.getByRole('button',{name:'참가 취소'})).toBeVisible();
 
   await page.reload({waitUntil:'domcontentloaded'});
