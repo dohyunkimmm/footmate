@@ -44,6 +44,7 @@ test('P1 core conditions use actual setup field options and preserve existing ad
   const discovery=fs.readFileSync(path.join(root,'src/app/discovery.js'),'utf8');
   assert.match(app,/data-quick-condition/);
   assert.match(app,/data-action="apply-discover-conditions"/);
+  assert.match(app,/discoverQuickEditing/);
   assert.match(app,/step\.options\.some\(option=>option\[0\]===value\)/);
   assert.match(discovery,/data-discovery-action="remove-filter"/);
   assert.match(discovery,/function persist\(\)/);
