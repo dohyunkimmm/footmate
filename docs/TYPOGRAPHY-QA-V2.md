@@ -67,7 +67,7 @@ Playwright 도구와 서버 설정은 현재 playwright.config.cjs 및 package.j
 
 - GitHub PR 브랜치의 마지막 커밋만 보지 않고 main 분기점 기준 전체 파일 변경을 검사한다.
 - Vercel의 얕은 checkout에 origin/main이 없으면 제한된 Git fetch로 main과 현재 PR 브랜치 이력을 가져와 비교한다. 네트워크/이력 복구에 실패하면 배포를 생략하지 않고 빌드한다.
-- vercel.json의 `feat/typography-qa-p0-p2-20261009` 배포 예외는 **PR #559를 main에 병합한 이후** 후속 패치로 제거해야 한다. PR 미병합 중에는 Preview 확인을 위해 유지한다. Git 커밋 서명 검증 보안은 끄지 않는다.
+- 최종 CI 증빙 검증 후 `vercel.json`의 임시 `feat/typography-qa-p0-p2-20261009` 배포 예외를 **병합 전에 제거**하여 `main`만 자동 배포할 수 있도록 복원했다. 최신 Preview는 GitHub API 작성 unsigned 커밋이 Vercel Verified Commits 정책에 걸려 취소되었으며, 보안 정책을 끄지 않는다. 배포 합격은 GitHub가 서명한 squash merge 후 정확한 Production SHA에서 별도로 확인한다.
 
 ## P0–P2 추가 검증 및 승인 체크리스트
 
