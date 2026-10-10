@@ -71,5 +71,3 @@
 @media(prefers-reduced-motion:reduce){
   .fm-auth-primary,.fm-auth-provider{transition:none!important}
 }
-
-.fm-join-position{padding:16px}.fm-join-position-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fm-join-position-options button{min-height:44px;border-radius:12px}.fm-join-position-options [aria-pressed=true]{outline:2px solid #17623d}
