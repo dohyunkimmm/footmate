@@ -65,3 +65,19 @@ test('P2 utility links require confirmed participation for calendar actions',()=
   assert.match(app,/attendanceLinks\(match,Boolean\(joined\)\)/);
   assert.match(app,/rel="noopener noreferrer"/);
 });
+
+
+test('Real App P0/P1 visual copy preserves demo boundaries and top-rank caution',()=>{
+  const release=fs.readFileSync(path.join(root,'src/app/release-app.js'),'utf8');
+  const recommendation=fs.readFileSync(path.join(root,'src/app/recommendation.js'),'utf8');
+  const discovery=fs.readFileSync(path.join(root,'src/app/discovery.js'),'utf8');
+  const app=fs.readFileSync(path.join(root,'src/app/app.js'),'utf8');
+  assert.match(release,/샘플 참가비/);
+  assert.match(release,/무료 체험 · 청구액/);
+  assert.match(release,/실제 청구 0원/);
+  assert.match(recommendation,/조건 확장/);
+  assert.match(discovery,/조건 확장/);
+  assert.match(recommendation,/fm-next-price-sample/);
+  assert.match(discovery,/fm-next-price-sample/);
+  assert.match(app,/fm-next-base-label/);
+});
