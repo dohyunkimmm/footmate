@@ -19,11 +19,12 @@ const AI_FALLBACK_COPY='AI 장애나 지연 시 기존 rules-based 검색으로 
 
 if(isFreshEntry){
   const current=footmatePlatform.session.read()||{};
-  footmatePlatform.session.write({...current,route:'welcome',setupStep:0});
+  const nextRoute=current.joinedMatchId?'profile':current.setupComplete?'home':'welcome';
+  footmatePlatform.session.write({...current,route:nextRoute,setupStep:nextRoute==='welcome'?0:current.setupStep});
   sessionStorage.removeItem(HISTORY_KEY);
   sessionStorage.removeItem(LAST_ROUTE_KEY);
-}
-document.documentElement.dataset.footmateFreshEntry=isFreshEntry?'reset':'preserved';
+  document.documentElement.dataset.footmateFreshEntry=nextRoute==='welcome'?'reset':'returned';
+}else document.documentElement.dataset.footmateFreshEntry='preserved';
 document.documentElement.dataset.footmateV5Version=connectedMatchdayPlatform.version;
 document.documentElement.dataset.footmateReleaseFlowReview=FLOW_REVIEW_VERSION;
 if(root){
