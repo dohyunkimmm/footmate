@@ -344,7 +344,7 @@ test('visual evidence, scope and mobile reading cues stay coherent',async({page}
     return b.left>=parent.left-1&&b.right<=parent.right+1;
   });
   expect(active).toBe(true);
-  await page.locator('#section-07 summary').click();
+  await page.locator('#section-07 details summary').filter({hasText:'8개 KPI'}).click();
   await expect(page.locator('#kpi-table-hint')).toBeVisible();
   await page.locator('.toc-item').nth(4).click();
   await expect(page.locator('.flow-number')).toHaveText(['01','02','03','04','05','06']);
@@ -386,7 +386,7 @@ test('mobile QA records expose complete problem, change and verification without
   expect(geometry.scroll).toBeLessThanOrEqual(geometry.width+1);
   expect(geometry.rows[1]).toBeGreaterThan(geometry.rows[0]);
   expect(geometry.rows[2]).toBeGreaterThan(geometry.rows[1]);
-  await page.locator('#section-07 summary').click();
+  await page.locator('#section-07 details summary').filter({hasText:'8개 KPI'}).click();
   expect(await page.locator('#section-07 .detail-body .table-wrap').evaluate(node=>node.clientWidth)).toBeGreaterThanOrEqual(280);
 });
 
@@ -440,7 +440,9 @@ for(const width of [320,390,1440]){
     await expect(page.locator('#section-07 .portfolio-method-details')).toContainText('개인별 발견·버그 빈도·수정 인과 미확정');
     await expect(page.locator('#section-07 .qa-evidence-table tbody tr')).toHaveCount(3);
     await page.locator('#section-07 details summary').filter({hasText:'8개 KPI'}).click();
-    await expect(page.locator('#section-07 #kpi-table-hint')).toBeVisible();
+    await expect(page.locator('#section-07 details:has(summary:has-text("8개 KPI")) table tbody tr')).toHaveCount(8);
+    if(width<=800)await expect(page.locator('#section-07 #kpi-table-hint')).toBeVisible();
+    else await expect(page.locator('#section-07 #kpi-table-hint')).toBeHidden();
     await page.locator('#section-07 .portfolio-optional-sources summary').click();
     await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-link')).toHaveCount(3);
     await page.locator('.toc-item').nth(8).click();
