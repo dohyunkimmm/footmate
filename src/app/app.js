@@ -274,7 +274,7 @@ function joinPositionChoices(match){
     <div class="fm-join-position-options" role="group" aria-label="참가 가능한 포지션">
     ${['MF','FW','DF','GK'].map(position=>{
       const count=Number(match.positionSlots?.[position]||0);
-      return `<button type="button" data-action="choose-join-position" data-position="${position}" aria-pressed="${chosen===position}" ${count===0?'disabled':''}>${position} · ${count===0?'마감':count+'자리'}${chosen===position?' · 선택됨':''}</button>`;
+      return `<button type="button" class="fm-next-button fm-next-button--${chosen===position?'lime':'secondary'}" data-action="choose-join-position" data-position="${position}" aria-pressed="${chosen===position}" ${count===0?'disabled':''}>${position} · ${count===0?'마감':count+'자리'}${chosen===position?' · 선택됨':''}</button>`;
     }).join('')}</div><p class="fm-join-position-note">샘플 경기 · 실제 자리 예약·결제는 발생하지 않습니다.</p>
   </section>`;
 }
