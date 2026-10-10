@@ -333,3 +333,36 @@ test('Release App keeps Matchday operations inside MY',async({page})=>{
   await expectAxeClean(page,'[data-screen="profile"]');
   expect(errs).toEqual([]);
 });
+
+
+test('Real App P0 trust copy distinguishes sample prices from actual zero charge',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await expect(page.locator('[data-screen="home"] .fm-next-price-sample').first()).toHaveText('샘플');
+  await openDetail(page);
+  const detail=page.locator('[data-screen="detail"]');
+  await expect(detail.locator('.fm-next-detail-summary small').last()).toHaveText('샘플 참가비');
+  await expect(detail.locator('.fm-next-sticky-price')).toContainText('무료 체험 · 청구액');
+  await expect(detail.locator('.fm-next-sticky-price b')).toHaveText('0원');
+  await expect(detail.locator('.fm-decision-trust-note')).toContainText('실제 청구 0원');
+  await reachJoin(page);
+  await expect(page.locator('[data-screen="checkout"] [data-v6-free-copy]')).toContainText('실제 청구 0원');
+  expect(errs).toEqual([]);
+});
+
+test('Real App P1 labels widened recommendations and base discovery filters',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await seedSession(page,{route:'home',region:'수원 · 영통',position:'FW',level:'입문'});
+  await expect(page.locator('[data-screen="home"] .fm-next-match-card').first().locator('.fm-next-fit-badge')).toHaveText(/조건 확장/);
+  await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
+  const discover=page.locator('[data-screen="discover"]');
+  await expect(discover.locator('.fm-next-base-label')).toHaveText('기본 추천');
+  await expect(discover.locator('.fm-discovery-default-copy')).toContainText('추가 필터 없음');
+  await expect(discover.locator('.fm-next-price-sample').first()).toHaveText('샘플');
+  for(const width of [320,375,390,430]){
+    await page.setViewportSize({width,height:844});
+    await expectNoHorizontalOverflow(page);
+  }
+  expect(errs).toEqual([]);
+});
