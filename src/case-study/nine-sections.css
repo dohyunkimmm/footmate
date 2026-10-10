@@ -266,7 +266,7 @@ html:has(.image-dialog[open]){overflow:hidden}
 .validation-source-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
 .validation-source-keys span{font-size:12px;line-height:1.75;border:1px solid var(--line);border-radius:10px;padding:12px 13px;min-width:0}
 .validation-source-keys b{color:var(--green)}
-.validation-doc-links .evidence-link{margin:3px 14px 0 0;font-size:12px}
+.validation-doc-links .evidence-record{margin:3px 12px 0 0;font-size:12px}
 @media(max-width:1100px){.decision-proof{grid-template-columns:1fr}}
 @media(max-width:800px){
   .sidebar{position:sticky;top:0;z-index:30;background:#fff;box-shadow:0 2px 8px rgba(12,45,27,.06)}
@@ -290,7 +290,7 @@ html:has(.image-dialog[open]){overflow:hidden}
 .portfolio-method-details .detail-body,.portfolio-optional-sources .detail-body{padding:12px 24px 24px}
 .portfolio-method-details .detail-body>p,.portfolio-optional-sources .detail-body>p{font-size:14px;line-height:1.85}
 .portfolio-optional-sources .validation-doc-links{display:flex;flex-wrap:wrap;column-gap:12px;row-gap:5px;margin-top:10px}
-.portfolio-optional-sources .evidence-link{font-size:13px;line-height:1.65;margin:8px 16px 0 0}
+.portfolio-optional-sources .evidence-record{display:inline-flex;align-items:center;min-width:0;font-size:13px;line-height:1.65;margin:8px 12px 0 0;padding:7px 11px;background:var(--soft);border:1px solid var(--line);border-radius:9px;color:var(--text);font-weight:600;overflow-wrap:anywhere}
 @media(max-width:800px){
   .portfolio-task-grid{grid-template-columns:1fr}
   .portfolio-method-details .detail-body,.portfolio-optional-sources .detail-body{padding:12px 16px 20px}
