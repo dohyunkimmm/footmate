@@ -41,12 +41,10 @@ function readChangedFiles() {
       start = execFileSync('git', ['merge-base','HEAD','refs/remotes/origin/main'],gitOptions).trim();
     } catch {
       // Vercel's Git checkout can omit its "origin" remote entirely.
-      // Use this repository's fixed public read-only URL for its explicitly
-      // approved typography branch, never a URL built from user input.
-      const remote=branch==='feat/typography-qa-p0-p2-20261009'
-        ? 'https://github.com/dohyunkimmm/footmate.git' : 'origin';
+      // Only use the configured origin remote; if missing, fail open (build)
+      // instead of keeping a one-off preview branch fallback.
       execFileSync('git', [
-        'fetch','--quiet','--no-tags','--depth=100',remote,
+        'fetch','--quiet','--no-tags','--depth=100','origin',
         '+refs/heads/main:refs/remotes/origin/main',
         '+refs/heads/'+branch+':refs/remotes/origin/'+branch
       ],gitOptions);
