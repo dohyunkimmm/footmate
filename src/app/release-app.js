@@ -128,8 +128,15 @@ function patchDetail(screen){
   screen.querySelectorAll('[data-product-checkin]').forEach(node=>node.dataset.v6Secondary='true');
 }
 
+function approvedJoinPosition(match){
+  const current=session();
+  const selected=current.selectedJoinPosition;
+  const position=selected===null?null:selected||current.position;
+  return position&&Number(match?.positionSlots?.[position]||0)>0?position:null;
+}
 function commitFreeJoin(match){
-  if(!match)return false;
+  const position=approvedJoinPosition(match);
+  if(!match||!position)return false;
   const now=Date.now();
   const confirmationId=`FM-${now.toString(36).toUpperCase()}`;
   footmatePlatform.events.record('join.started',{matchId:match.id,paymentMethod:'none',attemptNumber:1,release:RELEASE_APP_VERSION});
@@ -138,6 +145,7 @@ function commitFreeJoin(match){
     version:RELEASE_APP_VERSION,
     status:'success',
     matchId:match.id,
+    position,
     amount:0,
     paymentMethod:'none',
     policySnapshot:{refund24h:'무료 참가',operatorCancel:'운영 취소 시 별도 결제 환불 없음'},
@@ -149,7 +157,7 @@ function commitFreeJoin(match){
     updatedAt:now
   });
   footmatePlatform.repositories.matchday.write({matchId:match.id,status:'upcoming',checkinSchema:1,startsAt:match.startsAt,checkinComplete:false,checkedInAt:null});
-  patchSession({selectedMatchId:match.id,joinedMatchId:match.id,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
+  patchSession({selectedMatchId:match.id,joinedMatchId:match.id,joinedJoinPosition:position,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
   footmatePlatform.events.record('join.completed',{matchId:match.id,confirmationId,paymentMethod:'none',release:RELEASE_APP_VERSION},{dedupeKey:`join.completed:${confirmationId}`});
   location.reload();
   return true;
@@ -188,6 +196,10 @@ function beginFreeJoin(joinButton){
     setJoinError(screen,'참가 정보를 다시 불러오지 못했어요. 다시 시도하거나 경기를 다시 선택해 주세요.');
     return;
   }
+  if(!approvedJoinPosition(match)){
+    setJoinError(screen,'선택한 포지션에 남은 자리가 없습니다. 경기 상세로 돌아가 참가할 포지션을 직접 선택해주세요.');
+    return;
+  }
   try{
     commitFreeJoin(match);
   }catch{
@@ -222,10 +234,12 @@ function patchCheckout(screen){
   if(confirm){
     const state=screen.dataset.v6JoinState;
     confirm.dataset.v6FreeJoin='true';
-    confirm.disabled=state==='processing';
+    const match=matchById(session().selectedMatchId);
+    const role=approvedJoinPosition(match);
+    confirm.disabled=state==='processing'||!role;
     if(state==='processing')confirm.setAttribute('aria-busy','true');
     else confirm.removeAttribute('aria-busy');
-    const label=state==='processing'?'참가 확정 중…':state==='error'?'다시 시도':'무료로 참가 확정';
+    const label=state==='processing'?'참가 확정 중…':!role?'포지션 선택 후 참가':state==='error'?'다시 시도':'무료로 참가 확정';
     if(confirm.textContent!==label)confirm.textContent=label;
   }
   screen.querySelectorAll('[data-participation-panel]').forEach(node=>node.dataset.v6LegacyPayment='true');
