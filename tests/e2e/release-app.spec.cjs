@@ -437,6 +437,29 @@ test('Real App labels legacy local sessions safely and separates explicit OAuth 
   expect(errs).toEqual([]);
 });
 
+test('Demo social login hands off to Closed Beta before provider OAuth and never transfers sample match',async({page})=>{
+  // Stub ONLY public provider settings: no user token, provider auth, or Beta mutation.
+  const authOrigin='https://footmate-qa-auth.invalid';
+  await page.route('**/api/beta-config',route=>route.fulfill({
+    status:200,contentType:'application/json',
+    body:JSON.stringify({connected:true,url:authOrigin,publishableKey:'qa-publishable'})
+  }));
+  await page.route(authOrigin+'/auth/v1/settings',route=>route.fulfill({
+    status:200,contentType:'application/json',
+    headers:{'access-control-allow-origin':'*'},
+    body:JSON.stringify({external:{google:true,kakao:true}})
+  }));
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);await openDetail(page);
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.locator('.fm-release-auth-status')).toContainText('실제 Google·Kakao 로그인은 Closed Beta에서 진행합니다');
+  await expect(page.locator('.fm-release-auth-status')).toContainText('샘플 경기 선택은 실제 계정으로 이전되지 않습니다');
+  await expect(page.getByRole('button',{name:'Closed Beta에서 Kakao 로그인'})).toBeVisible();
+  await page.getByRole('button',{name:'Closed Beta에서 Google 로그인'}).click();
+  await expect(page).toHaveURL(/\\/beta$/);
+  expect(errs).toEqual([]);
+});
+
 test('Flow P2 preserves postgame feedback and hides completed match from next search',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
