@@ -182,7 +182,7 @@ test('P1 keeps the checkout boundary adjacent to the Checkout CTA',async({page})
   const note=page.locator('[data-p1-checkout-boundary]');
   const confirm=page.locator('[data-action="confirm-payment"],[data-participation-submit]').first();
   await expect(note).toBeVisible();
-  await expect(note).toHaveText('체험 결제 · 실제 청구 없음');
+  await expect(note).toHaveText('무료 참가 체험 · 실제 청구 0원');
   await expect(confirm).toBeVisible();
   const adjacent=await note.evaluate(node=>node.nextElementSibling?.matches('[data-action="confirm-payment"],[data-participation-submit]')||false);
   expect(adjacent).toBe(true);

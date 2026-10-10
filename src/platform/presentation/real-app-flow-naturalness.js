@@ -100,7 +100,7 @@ function wireAuth(screen){
   button.dataset.flowAuthWired='true';button.addEventListener('click',event=>{if(button.dataset.flowAuthBypass==='true'||event.defaultPrevented)return;event.preventDefault();event.stopPropagation();beginAccountAuth(button);});
 }
 
-function patchCheckout(screen){userCopy(screen.querySelector('[data-p1-checkout-boundary]'),'체험 결제 · 실제 청구 없음');}
+function patchCheckout(screen){userCopy(screen.querySelector('[data-p1-checkout-boundary]'),'무료 참가 체험 · 실제 청구 0원');}
 function patchMatchday(scope){
   scope.querySelectorAll('.fm-matchday-kicker').forEach(node=>userCopy(node,'오늘 경기'));
   scope.querySelectorAll('.fm-matchday-boundary').forEach(node=>{if(/backend|프로토타입|simulation|외부 서비스/i.test(node.textContent))userCopy(node,'실시간 위치·지도·팀 채팅·알림 외부 서비스는 연결하지 않았습니다.');});

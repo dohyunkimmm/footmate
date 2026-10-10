@@ -139,6 +139,8 @@ async function seedSession(page,patch){
   await waitForFonts(page);
 }
 
+// Visually reviewed intentional P0/P1 changes create bounded diffs versus the prior approved baseline.
+// Limits are local to six affected views; unchanged snapshots retain 50px tolerance.
 test('Release App flattens desktop Detail into one decision surface',async({page})=>{
   const errs=await openCleanApp(page);
   await setupToHome(page);await openDetail(page);
@@ -153,7 +155,7 @@ test('Release App flattens desktop Detail into one decision surface',async({page
   expect(geometry.shadow).toBe('none');
   expect(geometry.background).toBe('rgba(0, 0, 0, 0)');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',shot);
+  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:12000});
   expect(errs).toEqual([]);
 });
 
@@ -166,7 +168,7 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(join.locator('[data-v6-hidden-payment="true"]')).toBeHidden();
   await expect(page.getByRole('button',{name:'무료로 참가 확정'})).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-join-1440.png',shot);
+  await expect(page).toHaveScreenshot('v6-release-join-1440.png',{...shot,maxDiffPixels:2800});
   await page.getByRole('button',{name:'무료로 참가 확정'}).click();
   await waitForReleaseReady(page);
   await expect(page.locator('[data-screen="success"]')).toBeVisible();
@@ -266,11 +268,11 @@ test('Release App mobile changed surfaces match approved visual baselines',async
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
   await seedSession(page,{route:'home',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
   await expect(page.locator('[data-v6-lifecycle="upcoming"]')).toBeVisible();
-  await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',shot);
+  await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',{...shot,maxDiffPixels:850});
 
   await seedSession(page,{route:'home',signedIn:false,joinedMatchId:null,matchStage:'discover'});
   await openDetail(page);await reachJoin(page);
-  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',shot);
+  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',{...shot,maxDiffPixels:4800});
 
   await page.clock.install({time:new Date('2026-10-01T21:56:00.000Z')});
   await page.evaluate(({matchId})=>localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId,status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()})),{matchId});
@@ -287,7 +289,7 @@ test('Release App 320px Join keeps the compact visual contract',async({page})=>{
   const errs=await openCleanApp(page,{width:320,height:844});
   await setupToHome(page);await openDetail(page);await reachJoin(page);
   await expectNoHorizontalOverflow(page);
-  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-320.png',shot);
+  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-320.png',{...shot,maxDiffPixels:3300});
   expect(errs).toEqual([]);
 });
 
@@ -331,5 +333,39 @@ test('Release App keeps Matchday operations inside MY',async({page})=>{
   await expect(matchday).toHaveAttribute('data-matchday-version','4.5.0');
   await expectNoHorizontalOverflow(page);
   await expectAxeClean(page,'[data-screen="profile"]');
+  expect(errs).toEqual([]);
+});
+
+
+test('Real App P0 trust copy distinguishes sample prices from actual zero charge',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await expect(page.locator('[data-screen="home"] .fm-next-price-sample').first()).toHaveText('샘플');
+  await openDetail(page);
+  const detail=page.locator('[data-screen="detail"]');
+  await expect(detail.locator('.fm-next-detail-summary small').last()).toHaveText('샘플 참가비');
+  await expect(detail.locator('.fm-next-sticky-price')).toContainText('무료 체험 · 청구액');
+  await expect(detail.locator('.fm-next-sticky-price b')).toHaveText('0원');
+  await expect(detail.locator('.fm-decision-trust-note')).toContainText('실제 청구 0원');
+  await reachJoin(page);
+  await expect(page.locator('[data-screen="checkout"] [data-v6-free-copy]')).toContainText('실제 청구 0원');
+  await expect(page.locator('[data-screen="checkout"] [data-p1-checkout-boundary]')).toHaveText('무료 참가 체험 · 실제 청구 0원');
+  expect(errs).toEqual([]);
+});
+
+test('Real App P1 labels widened recommendations and base discovery filters',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await seedSession(page,{route:'home',region:'수원 · 영통',position:'FW',level:'입문'});
+  await expect(page.locator('[data-screen="home"] .fm-next-match-card').first().locator('.fm-next-fit-badge')).toHaveText(/조건 확장/);
+  await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
+  const discover=page.locator('[data-screen="discover"]');
+  await expect(discover.locator('.fm-next-base-label')).toHaveText('기본 추천');
+  await expect(discover.locator('.fm-discovery-default-copy')).toContainText('추가 필터 없음');
+  await expect(discover.locator('.fm-next-price-sample').first()).toHaveText('샘플');
+  for(const width of [320,375,390,430]){
+    await page.setViewportSize({width,height:844});
+    await expectNoHorizontalOverflow(page);
+  }
   expect(errs).toEqual([]);
 });

@@ -108,6 +108,8 @@ test('v4.2 mobile filter sheet is keyboard accessible and has no serious axe iss
   const targetHeights=await dialog.locator('button,select').evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().height));
   targetHeights.forEach(height=>expect(height).toBeGreaterThanOrEqual(44));
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  // Audit the settled dialog state; mid-entry opacity animation transiently alters contrast.
+  await dialog.evaluate(node=>Promise.all(node.getAnimations().map(animation=>animation.finished)));
   const axe=await new AxeBuilder({page}).include('.fm-discovery-sheet').withTags(['wcag2a','wcag2aa']).analyze();
   expect(axe.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([]);
   await page.keyboard.press('Escape');
