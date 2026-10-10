@@ -446,7 +446,7 @@ for(const width of [320,390,1440]){
     await page.locator('.toc-item').nth(8).click();
     await expect(page.locator('#section-09 .next-list li')).toHaveCount(4);
     await expect(page.locator('#section-09 .technical-resources')).toContainText('GitHub 구현·검증 원문');
-    await expect(page.locator('#section-09 .technical-resources .evidence-link')).toHaveCount(4);
+    await expect(page.locator('#section-09 .technical-resources .evidence-link')).toHaveCount(5);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
