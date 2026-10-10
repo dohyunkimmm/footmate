@@ -10,7 +10,7 @@
 - Post-merge CI: [run 38050777170](https://github.com/dohyunkimmm/footmate/actions/runs/38050777170) completed/success. Regression / Chromium browser+axe / typography / Mobile WebKit PASS, Production Smoke Chromium **15 + 추가 8** PASS.
 - Exact Production: Vercel `dpl_4zT1HeEfDv5jiwdTWckKvm1rbNQo` target production READY, alias `footmate-black.vercel.app` 및 SHA `ddccd383d045ec5aee1340e339a486aff256c9b3`를 main과 대조. 운영 `/app`에서 신규 Setup → Home, 재방문 Home·MY, AI 레벨 수정·시간 완화, Return 완료 경기 제외, 390px 가로 넘침 없음 확인.
 - Boundaries: `/app`은 샘플 경기·브라우저 로컬 무료 참가/체험 계정이며 실제 PG·실제 환불 실행·기기 간 동기화·외부 analytics 미연동. 실제 브라우저 200% 배율 및 **이번 변경 이후의** 물리 기기 수동 QA는 미검증. 실사용 KPI 개선률 주장 없음.
-- Documentation sync: README / Release App / Product UX / docs index, Notion의 내부 PRD·Service Flow·AI Workflow를 별도 docs-only PR에서 맞추며, 해당 PR 및 Notion 반영 기록으로 완료 확인.
+- Documentation sync: [docs-only PR #578](https://github.com/dohyunkimmm/footmate/pull/578)에서 README / Release App / Product UX / docs index와 본 이력을 업데이트. Notion 내부 PRD·Service Flow·AI Workflow를 같은 기준으로 갱신하고 재조회로 저장 확인. 별도 docs-only PR/QA 병합 결과는 PR #578에서 추적.
 
 ## 2026-10-10 — Interactive Demo / Closed Beta 안내 및 포트폴리오 공개 검증 완료
 
