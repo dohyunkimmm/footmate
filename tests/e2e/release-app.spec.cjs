@@ -477,8 +477,15 @@ test('P0 blocks sold-out MF role and requires explicit FW selection before local
   await page.getByRole('button',{name:'로그인',exact:true}).click();
   await expect(page.locator('[data-screen="checkout"] .fm-next-checkout-meta')).toContainText('FW 1자리');
   expect(await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__?.read()?.position)).toBe('FW');
+  await expect(page.getByRole('button',{name:'무료로 참가 확정'})).toBeEnabled();
+  await page.getByRole('button',{name:'무료로 참가 확정'}).click();
+  await expect(page.locator('[data-screen="success"]')).toBeVisible();
+  await expect(page.locator('.fm-next-ticket-time')).toContainText('FW 참가 확정');
+  await page.getByRole('button',{name:'내 경기 보기'}).click();
+  await expect(page.locator('[data-screen="profile"] [data-my-matches]')).toContainText('참가 포지션 FW');
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')||'{}').joinedJoinPosition)).toBe('FW');
   await page.reload({waitUntil:'domcontentloaded'});
-  await expect(page.locator('[data-screen="checkout"] .fm-next-checkout-meta')).toContainText('FW 1자리');
+  await expect(page.locator('[data-screen="profile"] [data-my-matches]')).toContainText('참가 포지션 FW');
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
