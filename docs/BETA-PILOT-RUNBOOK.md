@@ -13,6 +13,13 @@
 
 ## 2. Pilot 시작 전 체크
 
+**계정·인증 경계**
+- `/demo` / `/app`은 브라우저-로컬 체험이고, Google/Kakao 실제 인증은 `/beta`에서 수행한다. 샘플 참가 기록은 Beta 계정으로 이전하지 않는다.
+- `/beta` OAuth 제공자 진입과 인증 완료(세션 유효성)를 별도 검증한다. 공급자 로그인 페이지 도달만으로 인증 성공이라고 판단하지 않는다.
+- `public.join_beta_waitlist`, `public.cancel_beta_waitlist`, `public.submit_beta_match_feedback`는 `PUBLIC/anon` EXECUTE를 철회하고 `authenticated/service_role`에만 허용한다. 익명 RPC는 401/403으로 차단하고, 운영자 MFA 및 기존 RLS는 유지한다.
+- Supabase Free 플랜에는 유출 비밀번호 차단(Leaked Password Protection)이 제공되지 않는다. 유료 플랜 전환 시 Supabase Authentication → Email provider 보안 설정에서 활성화하고 Security Advisor를 재검증한다. 전환 전에는 충분히 긴 비밀번호, MFA 등 현재 이용 가능한 보호 조치를 유지한다.
+- `pg_net`의 extension-in-public 경고 및 일부 `SECURITY DEFINER` 경고는 실제 의존성·권한 확인 후 별도 변경한다. 설정/스키마를 검증 없이 이동하거나 함수의 definer 속성을 제거하지 않는다.
+
 1. 운영자 계정이 `public.operators` allowlist에 등록되어 있고 TOTP MFA(AAL2)를 통과할 수 있는지 확인한다.
 2. 경기 장소·주소·시작 시간·레벨·포지션별 정원을 실제 정보로 입력한다.
 3. 공개(`open`) 전 사용자 취소 마감과 체크인 오픈 시간을 확인한다. 새 경기 폼은 시작 시간 기준 취소 마감 -2h, 체크인 오픈 -1h를 기본값으로 제안하지만 운영 정책에 맞게 수정할 수 있다.
