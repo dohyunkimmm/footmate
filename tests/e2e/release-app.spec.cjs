@@ -347,6 +347,7 @@ test('Real App P0 trust copy distinguishes sample prices from actual zero charge
   await expect(detail.locator('.fm-decision-trust-note')).toContainText('실제 청구 0원');
   await reachJoin(page);
   await expect(page.locator('[data-screen="checkout"] [data-v6-free-copy]')).toContainText('실제 청구 0원');
+  await expect(page.locator('[data-screen="checkout"] [data-p1-checkout-boundary]')).toHaveText('무료 참가 체험 · 실제 청구 0원');
   expect(errs).toEqual([]);
 });
 
