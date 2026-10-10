@@ -1,4 +1,5 @@
 import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const VERSION='5.1.1';
 const AI_STORAGE_KEY='footmate:v5.1:ai';
@@ -202,6 +203,13 @@ const readSessionJson=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'
 const writeSessionJson=(key,value)=>{try{sessionStorage.setItem(key,JSON.stringify(value))}catch{}};
 const snapshot=()=>readSessionJson(SNAPSHOT_KEY);
 const scopeActive=()=>Boolean(snapshot()?.result)&&sessionStorage.getItem(SCOPE_KEY)==='1';
+function finishedMatchId(){
+  if(document.documentElement.dataset.footmateSurface!=='real')return null;
+  const session=footmatePlatform.session.read()||{};
+  if(session.matchStage!=='postgame'||!session.joinedMatchId)return null;
+  const completed=footmatePlatform.repositories.returnLoop.read({})?.history||[];
+  return completed.some(item=>item.matchId===session.joinedMatchId&&item.completed)?session.joinedMatchId:null;
+}
 const setScope=active=>sessionStorage.setItem(SCOPE_KEY,active?'1':'0');
 const text=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value};
 const hidden=(node,value)=>{if(node&&node.hidden!==value)node.hidden=value};
@@ -302,8 +310,7 @@ function configureHome(screen){
   const list=screen.querySelector(':scope > .fm-next-list');
   if(list){
     list.dataset.iaRole='personalized-recommendations';
-    const lifecycle=window.__FOOTMATE_RELEASE_APP__?.readLifecycle?.();
-    const completedId=lifecycle?.kind==='complete'?lifecycle.match?.id:null;
+    const completedId=finishedMatchId();
     list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1||Boolean(completedId&&node.dataset.matchId===completedId)));
   }
   if(sessionStorage.getItem(FOCUS_KEY)==='1'){
@@ -341,8 +348,7 @@ function configureDiscover(screen){
   const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
   const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState(),Infinity).map(entry=>entry.match.id)):null;
   const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
-  const lifecycle=window.__FOOTMATE_RELEASE_APP__?.readLifecycle?.();
-  const completedId=lifecycle?.kind==='complete'?lifecycle.match?.id:null;
+  const completedId=finishedMatchId();
   cards.forEach(node=>{
     const matches=(!allowed||allowed.has(node.dataset.matchId))&&(!completedId||node.dataset.matchId!==completedId);
     hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++;
