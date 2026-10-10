@@ -71,3 +71,6 @@
 @media(prefers-reduced-motion:reduce){
   .fm-auth-primary,.fm-auth-provider{transition:none!important}
 }
+
+/* Position selection must be explicit when the preferred role has sold out. */
+.fm-join-position{margin:16px 16px 120px;padding:18px!important;background:var(--fm-surface,#fff);border:1px solid var(--fm-line,#dfe7df);border-radius:18px}.fm-join-position h2{margin:0 0 8px;font-size:19px}.fm-join-position-note{margin:8px 0 14px;font-size:13px;line-height:1.6;color:var(--fm-muted,#4d6459)}.fm-join-position-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fm-join-position-options button{min-height:48px;padding:10px;border-radius:12px;border:1px solid var(--fm-line,#ccd9ce);background:#fff;color:var(--fm-ink,#153a25);font:inherit;font-weight:700;cursor:pointer}.fm-join-position-options button[aria-pressed="true"]{border:2px solid #247a46;background:#e9f7e8}.fm-join-position-options button:disabled{opacity:.46;cursor:not-allowed}.fm-join-position-options button:focus-visible{outline:3px solid #246cce;outline-offset:2px}
