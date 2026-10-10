@@ -422,12 +422,14 @@ test('Flow P1 edits interpreted AI level and progressively relaxes empty results
 
 test('Real App labels legacy local sessions safely and separates explicit OAuth sessions',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
-  await setupToHome(page);await openDetail(page);
+  await setupToHome(page);
+  const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
+  await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
   await expect(page.locator('.fm-auth-context')).toContainText('실제 회원 계정이 생성되지 않습니다');
   await page.getByRole('button',{name:'회원가입'}).click();
   await expect(page.locator('.fm-auth-title')).toContainText('서버 회원가입·인증 이메일 발송은 하지 않습니다');
-  await seedSession(page,{setupComplete:true,route:'profile',signedIn:true});
+  await seedSession(page,{setupComplete:true,route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
   await expect(page.locator('[data-screen="profile"] .fm-next-profile-head p')).toHaveText('체험 계정 · 이 브라우저에만 저장');
   await seedSession(page,{route:'profile',signedIn:true,authExperience:'oauth'});
   await expect(page.locator('[data-screen="profile"] .fm-next-profile-head p')).toHaveText('계정 연결됨');
