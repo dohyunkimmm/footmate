@@ -444,7 +444,7 @@ root.addEventListener('click',event=>{
   if(action==='show-route'){toast('길찾기 연결은 실제 서비스 연동 단계에서 제공됩니다.');return;}
   if(action==='team-chat'){toast('팀 메시지 화면은 다음 상세 설계 범위에서 연결됩니다.');return;}
   if(action==='rate-match'){toast('경기 평가 플로우를 준비 중입니다.');return;}
-  if(action==='show-policy'){toast('경기 24시간 전까지 전액 환불됩니다.');return;}
+  if(action==='show-policy'){toast(mode==='real'?'무료 참가 체험입니다. 실제 결제·환불이나 참가 취소 처리는 발생하지 않습니다.':'경기 24시간 전까지 전액 환불됩니다.');return;}
   if(action==='reset-flow'){resetFlow();return;}
   if(action==='open-real'){location.href='/app';return;}
   if(action==='scenario-discover'){
