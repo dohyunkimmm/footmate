@@ -125,9 +125,15 @@ async function profileSettings(page,capture=async()=>{}){
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')).region)).toBe('서울 · 강남');
   await page.locator('[data-screen="profile"] .fm-next-nav [data-action="nav-discover"]').click();
-  await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
-  await page.locator('[data-action="back-welcome"]').click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
+  // Real App P1 edits base conditions inline in Discover, without revisiting setup.
+  const quickEdit=page.locator('[data-screen="discover"] [data-discovery-quick-edit]');
+  await expect(quickEdit).toBeVisible();
+  await quickEdit.locator('[data-quick-condition="region"]').selectOption('수원 · 영통');
+  await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
+  await expect(quickEdit).toHaveCount(0);
+  await expect(page.locator('[data-screen="discover"] [aria-label="현재 검색 조건"]')).toContainText('서울 · 강남');
   await expect(page.getByRole('button',{name:'필터 열기',exact:true})).toBeVisible();
 }
 
