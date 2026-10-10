@@ -446,7 +446,7 @@ test('Demo social login hands off to Closed Beta before provider OAuth and never
   }));
   await page.route(authOrigin+'/auth/v1/settings',route=>route.fulfill({
     status:200,contentType:'application/json',
-    headers:{'access-control-allow-origin':'*'},
+    headers:{'access-control-allow-origin':'*','access-control-allow-headers':'apikey, accept, content-type','access-control-allow-methods':'GET, OPTIONS'},
     body:JSON.stringify({external:{google:true,kakao:true}})
   }));
   const errs=await openCleanApp(page,{width:390,height:844});
