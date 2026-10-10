@@ -35,7 +35,7 @@ FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 �
 ## Historical Case Study references
 
 - [CASE-STUDY-5.2-COMPOSITION.md](CASE-STUDY-5.2-COMPOSITION.md) — 이전 13단계 페이지 구성·로컬 검증 기록. 현재 9단계의 표시·QA 기준으로 사용하지 않는다.
-- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md)의 이전 Case Study 항목 역시 당시 승인 사실로만 해석한다. 현재 기준은 위 9단계 문서와 `RELEASE-HISTORY.md`의 2026-10-08 기록을 우선한다.
+- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md)의 이전 Case Study 항목 역시 당시 승인 사실로만 해석한다. 현재 기준은 위 9단계 문서와 `RELEASE-HISTORY.md`의 최신 9단계 Case Study 검증 기록을 우선한다.
 
 ## Impact-aware QA
 
