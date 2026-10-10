@@ -78,6 +78,22 @@ test('Vercel preview deploy includes runtime changes even when final commit only
   }
 });
 
+test('Preview selection does not depend on a retired one-off branch',()=>{
+  const source=fs.readFileSync(script,'utf8');
+  assert.doesNotMatch(source,/feat\/typography-qa-p0-p2-20261009/);
+  assert.match(source,/Failing open so Production deployment is not accidentally skipped/);
+});
+
+test('Workflow and Dependabot configuration changes must receive full regression QA',()=>{
+  const workflow=fs.readFileSync(path.resolve(__dirname,'../../.github/workflows/qa.yml'),'utf8');
+  const classification=workflow.match(/runtime=false[\s\S]*?for file in \$changed_files; do([\s\S]*?)\n\s+done/);
+  assert.ok(classification,'CI change-impact classification missing');
+  assert.match(classification[1],/README\.md\|docs\/\*/);
+  assert.match(classification[1],/\.github\/pull_request_template\.md/);
+  assert.doesNotMatch(classification[1],/\.github\/\*(?:\||\))/,'broad .github glob would incorrectly skip full QA');
+  assert.match(workflow,/Validate npm lockfile against a clean install[\s\S]*?npm ci --ignore-scripts --no-audit --no-fund/);
+});
+
 test('Only main is allowed to deploy after the temporary typography preview exception is closed',()=>{
   const config=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../vercel.json'),'utf8'));
   assert.equal(config.git.deploymentEnabled.main,true);
