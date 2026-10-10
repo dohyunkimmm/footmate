@@ -57,7 +57,7 @@ jobs:
           production_smoke="$production"
           for file in $changed_files; do
             case "$file" in
-              tests/production-*.cjs|tests/e2e/production-app.spec.cjs|tests/e2e/release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
+              tests/production-*.cjs|tests/e2e/production-app.spec.cjs|tests/e2e/helpers/priority-ux.cjs|tests/e2e/release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
             esac
           done
 
@@ -229,8 +229,17 @@ jobs:
 
   production_smoke:
     name: Production Smoke
-    needs: [impact, regression, browser_e2e]
-    if: github.event_name == 'push' && needs.impact.outputs.production_smoke == 'true'
+    needs: [impact, regression, browser_e2e, docs_only]
+    # Re-run against the existing Production deployment when only QA changes.
+    # Do not suppress the smoke because the runtime jobs were intentionally skipped.
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      needs.impact.result == 'success' &&
+      needs.impact.outputs.production_smoke == 'true' &&
+      (needs.regression.result == 'success' || needs.regression.result == 'skipped') &&
+      (needs.browser_e2e.result == 'success' || needs.browser_e2e.result == 'skipped') &&
+      (needs.docs_only.result == 'success' || needs.docs_only.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
