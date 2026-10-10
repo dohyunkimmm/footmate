@@ -300,7 +300,12 @@ function configureHome(screen){
   }
   if(headAction)headAction.hidden=true;
   const list=screen.querySelector(':scope > .fm-next-list');
-  if(list){list.dataset.iaRole='personalized-recommendations';list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1))}
+  if(list){
+    list.dataset.iaRole='personalized-recommendations';
+    const lifecycle=window.__FOOTMATE_RELEASE_APP__?.readLifecycle?.();
+    const completedId=lifecycle?.kind==='complete'?lifecycle.match?.id:null;
+    list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1||Boolean(completedId&&node.dataset.matchId===completedId)));
+  }
   if(sessionStorage.getItem(FOCUS_KEY)==='1'){
     sessionStorage.removeItem(FOCUS_KEY);
     requestAnimationFrame(()=>{assistant?.scrollIntoView({block:'start',behavior:'smooth'});assistant?.querySelector('[data-ai-input]')?.focus({preventScroll:true})});
@@ -336,9 +341,14 @@ function configureDiscover(screen){
   const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
   const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState(),Infinity).map(entry=>entry.match.id)):null;
   const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
-  cards.forEach(node=>{const matches=!allowed||allowed.has(node.dataset.matchId);hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++});
+  const lifecycle=window.__FOOTMATE_RELEASE_APP__?.readLifecycle?.();
+  const completedId=lifecycle?.kind==='complete'?lifecycle.match?.id:null;
+  cards.forEach(node=>{
+    const matches=(!allowed||allowed.has(node.dataset.matchId))&&(!completedId||node.dataset.matchId!==completedId);
+    hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++;
+  });
   const empty=ensureEmpty(screen);hidden(empty,!(active&&saved?.result&&visible===0));hidden(screen.querySelector('.fm-next-list'),Boolean(active&&saved?.result&&visible===0));
-  text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${cards.length}개 경기`);
+  text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${visible}개 경기`);
   ensureSummary(screen,saved,active,visible===0);
 }
 function enhance(){
