@@ -16,6 +16,14 @@ FootMate v6는 `/app`을 개별 기능 데모가 아니라 **Find → Decide →
 
 기존 `schedule` route는 호환성 입력으로만 받아 `profile`/MY로 migration한다.
 
+## Re-entry / AI recovery / MY continuation · 2026-10-10
+
+- **P0 / 재방문:** 일반 `/app` direct entry는 기존 `footmate:session` 상태를 우선합니다. 신규(`setupComplete=false`, 참가 기록 없음)만 Welcome/Setup, 설정 완료(`setupComplete=true`, 참가 기록 없음)는 Home, `joinedMatchId`가 있거나 legacy `schedule` 상태면 MY(`profile`)에서 이어집니다. `?resume=1` 등 내부 복귀 요청은 저장 경로를 유지합니다. `처음부터 다시 보기`는 별도 명시적 초기화입니다.
+- **P0 / 샘플 신뢰:** 참가 화면은 샘플 경기 가격·잔여 자리·정책 예시와 **무료 참가 체험의 실제 청구액 0원**을 구분합니다. MY의 취소·환불 안내는 실제 취소 실행이나 환불이 발생하는 연결 서비스로 표현하지 않습니다. 비밀번호 방식 로컬 체험 로그인은 `체험 계정 · 이 브라우저에만 저장`으로 표시하고 실제 Google/Kakao OAuth와 구분합니다.
+- **P1 / AI 조건 정정:** Home 자연어 요청을 구조화해 Discover로 넘긴 뒤 사용자가 **해석된 경기 레벨**을 직접 수정할 수 있습니다. UI의 `초급` 표기는 내부 canonical `초중급`과 다를 수 있으므로 사용자 표시와 저장된 조건을 구분합니다. AI 결과 0개라면 시간(`afterTime`) → 가격(`maxPrice`) → 거리(`maxDistanceMin`) → 포지션(`position`) → 지역(`region`) 순서로 존재하는 조건을 하나씩 완화할 수 있습니다. 레벨은 별도 직접 정정합니다. 실제 경기 후보와 순위·추천 이유는 deterministic runtime이 계속 소유합니다.
+- **P2 / MY·다음 경기:** MY의 현재 경기 상태는 유지하되 중복되는 `참가 확정 → 경기 당일 → 경기 후` 보조 설명은 펼침 영역으로 정리합니다. postgame 피드백이 기존 return history에 `completed: true`로 저장되고 `matchStage: postgame`이면 같은 `joinedMatchId`는 후속 Home 추천/Discover 결과에서 표시하지 않습니다. 저장된 경기 기록이나 기존 추천 로직 자체를 삭제·변경하지 않습니다.
+- **상태·경계:** `footmate:session`, `footmate:v5.1:ai`, `footmate:v5.2:discover-ai-snapshot`, `footmate:return`과 기존 domain/repository ownership을 재사용합니다. `/beta`, `/beta/operator`, Case Study, 실제 PG, 서버 간 계정 동기화는 이번 변경 범위가 아닙니다.
+
 ## State ownership
 
 - Matching / deterministic recommendation ownership은 기존 domain을 유지한다. 레벨 차이가 2단계 이상이면 높은 총점이 있어도 사용자-facing fit을 `경기 강도 차이 확인`으로 표시해 mismatch를 숨기지 않는다.
@@ -68,6 +76,10 @@ Auth PC 개선에서 검증한 원칙을 Release App 전체에 적용한다.
 - Guided/Evidence, `/beta`, `/beta/operator`는 별도 surface로 유지
 
 ## Release QA contract
+
+2026-10-10 P0–P2 flow update verified: [PR #577](https://github.com/dohyunkimmm/footmate/pull/577), main squash `ddccd383d045ec5aee1340e339a486aff256c9b3`, [pre-merge QA](https://github.com/dohyunkimmm/footmate/actions/runs/38050395821) SUCCESS, [post-merge QA](https://github.com/dohyunkimmm/footmate/actions/runs/38050777170) SUCCESS, Production `dpl_4zT1HeEfDv5jiwdTWckKvm1rbNQo` READY. Post-merge Production Smoke Chromium 15 + 추가 8 cases PASS. 재방문 Home/MY, AI 조건 정정·완화, Return 완료 경기 제외를 실제 배포 브라우저에서 확인했고 모바일 390px 가로 넘침 없음.
+
+기존 QA 조건에 **신규/재방문 분기, 레거시 Schedule 이관, AI 레벨 정정/제로결과 완화, MY 체험 계정 표시·단계 접기, postgame 완료 경기 재추천 제외**를 추가합니다. 실제 브라우저 200% 배율 및 신규 실물 기기 수동 QA는 이 PR의 검증 완료 주장에 포함하지 않습니다.
 
 v6 runtime 변경은 다음을 모두 통과해야 한다.
 

@@ -1,5 +1,17 @@
 # FootMate Release History
 
+## 2026-10-10 — Release App P0–P2 flow 개선·운영 검증 완료
+
+- Scope: `/app` 신규/재방문 routing을 canonical session에 따라 Welcome/Setup → Home 또는 MY로 복귀. 기존 legacy `schedule` → MY 호환 유지; 명시적 체험 초기화는 별도 기능.
+- P1 AI: Discover에서 AI 해석 레벨 정정과 AI 결과 0개 시 `afterTime → maxPrice → maxDistanceMin → position → region` 한 단계 완화 제공. 후보·순위·추천 이유의 deterministic ownership 유지.
+- P2 MY: 진행 단계 중복 안내를 접기, 로컬 로그인은 `체험 계정`으로 명시, 샘플 취소·환불 안내 수정. 완료된 postgame Return 기록을 갖는 참가 경기는 이후 Home/Discover 추천에서 제외. 다음 경기 CTA와 기존 local records 유지.
+- PR: [#577](https://github.com/dohyunkimmm/footmate/pull/577) squash merged `ddccd383d045ec5aee1340e339a486aff256c9b3` to main. `/beta`, `/beta/operator`, Case Study, 실제 PG/서버 연결 경계 불변.
+- Pre-merge CI: [run 38050395821](https://github.com/dohyunkimmm/footmate/actions/runs/38050395821) completed/success: Regression 36, Chromium Browser E2E + axe, screenshot visual regression, typography, Mobile WebKit PASS; 특정 변경 화면 diff 검토 후 bounded tolerance 적용, PNG baseline 일괄 갱신 없음.
+- Post-merge CI: [run 38050777170](https://github.com/dohyunkimmm/footmate/actions/runs/38050777170) completed/success. Regression / Chromium browser+axe / typography / Mobile WebKit PASS, Production Smoke Chromium **15 + 추가 8** PASS.
+- Exact Production: Vercel `dpl_4zT1HeEfDv5jiwdTWckKvm1rbNQo` target production READY, alias `footmate-black.vercel.app` 및 SHA `ddccd383d045ec5aee1340e339a486aff256c9b3`를 main과 대조. 운영 `/app`에서 신규 Setup → Home, 재방문 Home·MY, AI 레벨 수정·시간 완화, Return 완료 경기 제외, 390px 가로 넘침 없음 확인.
+- Boundaries: `/app`은 샘플 경기·브라우저 로컬 무료 참가/체험 계정이며 실제 PG·실제 환불 실행·기기 간 동기화·외부 analytics 미연동. 실제 브라우저 200% 배율 및 **이번 변경 이후의** 물리 기기 수동 QA는 미검증. 실사용 KPI 개선률 주장 없음.
+- Documentation sync: [docs-only PR #578](https://github.com/dohyunkimmm/footmate/pull/578)에서 README / Release App / Product UX / docs index와 본 이력을 업데이트. Notion 내부 PRD·Service Flow·AI Workflow를 같은 기준으로 갱신하고 재조회로 저장 확인. 별도 docs-only PR/QA 병합 결과는 PR #578에서 추적.
+
 ## 2026-10-10 — Interactive Demo / Closed Beta 안내 및 포트폴리오 공개 검증 완료
 
 - Scope: 현재 9단계 Case Study의 01에서 **Interactive Demo**(`/demo`: 샘플 경기 데이터, 실제 참가·결제 없음)와 **Closed Beta**(`/beta`: Supabase 서버 연결, 무료 참가·실제 결제 없음)로 이동하는 CTA를 구분. 430px 이하에서는 CTA를 세로 정렬. 9개 섹션·JTBD/IA/KPI·제품 및 Beta 서버 로직은 유지.

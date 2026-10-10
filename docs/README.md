@@ -19,9 +19,18 @@ FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 �
 
 - [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
 - [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
-- [RELEASE-APP.md](RELEASE-APP.md) — current Release App v6 IA, state ownership, free Join, MY lifecycle, provider boundary와 QA contract
+- [RELEASE-APP.md](RELEASE-APP.md) — current Release App v6 IA, 재방문 Home/MY 복귀, AI 조건 정정·제로결과 완화, 무료 참가, MY/Return 및 QA contract
+- [PRODUCT-UX-P0-P2.md](PRODUCT-UX-P0-P2.md) — P0–P2 신뢰·탐색·MY 개선 수용 기준, 구현/검증 증거, Beta 기능 경계
 - [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - [BETA-MEASUREMENT-READINESS.md](BETA-MEASUREMENT-READINESS.md) — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
+
+## Release App 내부 Notion 기준
+
+- [FootMate AI 기능 확장 PRD](https://app.notion.com/p/3cf21460c9348184bfbad953b0a1b305) — 현재 Release App P0–P2 수용 기준과 운영 검증 상태. 이전 배포 실패 기록은 당시의 이력으로 보존
+- [FootMate Service Flow · Data Quality](https://app.notion.com/p/3cf21460c934815c89bed8f7ee337092) — 신규/재방문 분기, 상태·데이터 소유권, AI 조건 수정·제로결과 완화, MY/Return 일관성
+- [FootMate 기능정의서 · AI Agent Workflow](https://app.notion.com/p/3cf21460c934815799a4fd44af094cee) — AI inference의 조건 소유권과 deterministic search 경계
+
+위 3개 비공개 내부 문서는 PR #577 운영 반영 결과를 기준으로 2026-10-10 동기화했으며, GitHub의 [문서 동기화 PR #578](https://github.com/dohyunkimmm/footmate/pull/578)에서 변경 검증을 추적합니다. 장기 제품 계약은 Notion, 정확한 릴리스 커밋·QA·배포 이력은 GitHub [RELEASE-HISTORY.md](RELEASE-HISTORY.md)를 기준으로 합니다.
 
 ## Evidence docs
 
