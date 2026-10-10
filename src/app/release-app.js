@@ -236,7 +236,7 @@ function patchCheckout(screen){
     confirm.dataset.v6FreeJoin='true';
     const match=matchById(session().selectedMatchId);
     const role=approvedJoinPosition(match);
-    confirm.disabled=state==='processing'||!role;
+    confirm.disabled=state==='processing'||(!role&&state!=='error');
     if(state==='processing')confirm.setAttribute('aria-busy','true');
     else confirm.removeAttribute('aria-busy');
     const label=state==='processing'?'참가 확정 중…':!role?'포지션 선택 후 참가':state==='error'?'다시 시도':'무료로 참가 확정';
