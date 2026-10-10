@@ -115,6 +115,16 @@ function patchDetail(screen){
     kicker.textContent=matchMedia('(min-width:960px)').matches?'경기 참가 정보':'MATCH DECISION';
     hero.prepend(kicker);
   }
+  const summaryPrice=hero?.querySelector('.fm-next-detail-summary>div:last-child small');
+  if(summaryPrice&&summaryPrice.textContent!=='샘플 참가비')summaryPrice.textContent='샘플 참가비';
+  const stickyPrice=screen.querySelector('.fm-next-sticky-price');
+  if(stickyPrice){
+    const label=stickyPrice.querySelector('small');
+    const amount=stickyPrice.querySelector('b');
+    if(label&&label.textContent!=='무료 체험 · 청구액')label.textContent='무료 체험 · 청구액';
+    if(amount&&amount.textContent!=='0원')amount.textContent='0원';
+    stickyPrice.setAttribute('aria-label','무료 참가 체험, 실제 청구액 0원');
+  }
   screen.querySelectorAll('[data-product-checkin]').forEach(node=>node.dataset.v6Secondary='true');
 }
 
@@ -193,7 +203,7 @@ function patchCheckout(screen){
   const summary=screen.querySelector('.fm-next-checkout-summary');
   if(summary){
     const small=summary.querySelector('small');
-    if(small&&!summary.querySelector('[data-v6-join-badge]'))small.insertAdjacentHTML('beforebegin','<span data-v6-join-badge class="fm-v6-join-badge">FREE JOIN</span>');
+    if(small&&!summary.querySelector('[data-v6-join-badge]'))small.insertAdjacentHTML('beforebegin','<span data-v6-join-badge class="fm-v6-join-badge">무료 참가 체험</span>');
   }
   [...screen.querySelectorAll('.fm-next-detail-section')].forEach(section=>{
     const heading=section.querySelector('h2')?.textContent?.trim();
@@ -202,7 +212,7 @@ function patchCheckout(screen){
       section.dataset.v6JoinSummary='true';
       const h2=section.querySelector('h2');if(h2&&h2.textContent!=='참가 정보')h2.textContent='참가 정보';
       section.querySelectorAll('.fm-next-pay-row').forEach(row=>row.remove());
-      if(!section.querySelector('[data-v6-free-copy]'))section.insertAdjacentHTML('beforeend','<div data-v6-free-copy class="fm-v6-free-copy"><b>무료 참가</b><span>이번 Release에서는 결제 정보 없이 참가를 확정합니다.</span></div>');
+      if(!section.querySelector('[data-v6-free-copy]'))section.insertAdjacentHTML('beforeend','<div data-v6-free-copy class="fm-v6-free-copy"><b>실제 청구 0원</b><span>샘플 경기 정보로 결제 없이 참가 흐름을 체험합니다.</span></div>');
     }
   });
   const note=screen.querySelector('.fm-next-inline-note span');
