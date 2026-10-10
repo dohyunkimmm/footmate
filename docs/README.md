@@ -19,7 +19,8 @@ FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 �
 
 - [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
 - [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
-- [RELEASE-APP.md](RELEASE-APP.md) — current Release App v6 IA, state ownership, free Join, MY lifecycle, provider boundary와 QA contract
+- [RELEASE-APP.md](RELEASE-APP.md) — current Release App v6 IA, 재방문 Home/MY 복귀, AI 조건 정정·제로결과 완화, 무료 참가, MY/Return 및 QA contract
+- [PRODUCT-UX-P0-P2.md](PRODUCT-UX-P0-P2.md) — P0–P2 신뢰·탐색·MY 개선 수용 기준, 구현/검증 증거, Beta 기능 경계
 - [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
 - [BETA-MEASUREMENT-READINESS.md](BETA-MEASUREMENT-READINESS.md) — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
 
