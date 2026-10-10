@@ -216,7 +216,7 @@ function patchCheckout(screen){
     }
   });
   const note=screen.querySelector('.fm-next-inline-note span');
-  const noteCopy='경기 24시간 전까지 자유롭게 참가를 취소할 수 있어요. 운영 취소 시 별도 결제 환불 절차는 없습니다.';
+  const noteCopy='이 체험의 참가·취소는 샘플이며 실제 결제·환불이 발생하지 않습니다. 운영 정책은 참고용 예시입니다.';
   if(note&&note.textContent!==noteCopy)note.textContent=noteCopy;
   const confirm=screen.querySelector('[data-action="confirm-payment"],[data-participation-submit]');
   if(confirm){

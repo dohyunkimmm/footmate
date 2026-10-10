@@ -17,7 +17,7 @@ test('v4.3 detail exposes decision evidence in user-facing language',async({page
   await expect(page.getByText('시설과 준비물은 참가 전에 운영 안내와 함께 확인해주세요.',{exact:true})).toBeVisible();
   await expect(page.getByRole('heading',{name:'취소 · 환불 기준'})).toBeVisible();
   await expect(page.getByText('경기 24시간 전까지',{exact:true})).toBeVisible();
-  await expect(page.getByText('경기 시작이 가까워질수록 환불 금액이 달라질 수 있어요.',{exact:true})).toBeVisible();
+  await expect(page.getByText('무료 참가 체험이므로 실제 취소·환불은 발생하지 않아요. 위 기준은 운영 정책 예시입니다.',{exact:true})).toBeVisible();
   await expect(page.locator('[data-decision-section="fit"] [data-decision-score]')).toHaveAttribute('data-decision-score',/\d+/);
   expect(errs).toEqual([]);
 });

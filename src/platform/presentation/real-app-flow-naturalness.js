@@ -37,6 +37,9 @@ function ensureStyles(){
 .fm-next-page[data-mode="real"] .fm-flow-saved-list{display:grid;gap:8px}
 .fm-next-page[data-mode="real"] .fm-flow-saved-card{display:grid;width:100%;gap:5px;padding:13px 14px;border:1px solid rgba(20,55,40,.09);border-radius:15px;background:#f7f9f6;text-align:left;color:#173c2c}
 .fm-next-page[data-mode="real"] .fm-flow-saved-card small{color:#66776e;font-size:10px}.fm-next-page[data-mode="real"] .fm-flow-saved-card b{font-size:14px}.fm-next-page[data-mode="real"] .fm-flow-saved-card span{color:#52665b;font-size:11px}
+.fm-next-page[data-mode="real"] .fm-flow-stage-guide{margin-top:12px;border:1px solid rgba(27,71,49,.12);border-radius:13px;background:#f7f9f6;padding:10px 12px}
+.fm-next-page[data-mode="real"] .fm-flow-stage-guide summary{cursor:pointer;font-size:13px;font-weight:700;color:#375746;min-height:26px}
+.fm-next-page[data-mode="real"] .fm-flow-stage-guide .fm-next-status-list{margin-top:12px}
 .fm-flow-info-backdrop{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:20px;background:rgba(18,32,25,.35)}
 .fm-flow-info-dialog{width:min(100%,420px);padding:22px;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(12,35,25,.22);color:#173c2c}
 .fm-flow-info-dialog h2{margin:0 0 8px;font-size:20px}.fm-flow-info-dialog p{margin:8px 0;color:#586a61;font-size:13px;line-height:1.65}
@@ -76,7 +79,7 @@ function patchDetail(screen){
   userCopy(screen.querySelector('[data-decision-section="fit"] .fm-next-section-head p'),'내 조건과 맞는 이유를 참가 전에 한 번 더 확인하세요.');
   userCopy(screen.querySelector('[data-decision-section="venue"] .fm-decision-disclosure'),'시설과 준비물은 참가 전에 운영 안내와 함께 확인해주세요.');
   const refund=screen.querySelector('[data-decision-section="refund"]');
-  if(refund){userCopy(refund.querySelector('.fm-next-section-head p'),'취소 시점별 환불 기준을 확인하세요.');userCopy(refund.querySelector('.fm-decision-disclosure'),'경기 시작이 가까워질수록 환불 금액이 달라질 수 있어요.');}
+  if(refund){userCopy(refund.querySelector('.fm-next-section-head p'),'샘플 취소·환불 정책을 확인하세요.');userCopy(refund.querySelector('.fm-decision-disclosure'),'무료 참가 체험이므로 실제 취소·환불은 발생하지 않아요. 위 기준은 운영 정책 예시입니다.');}
 }
 
 function ensureAuthStatus(screen){
@@ -119,8 +122,19 @@ function savedMatchesMarkup(ids){
   return `<section class="fm-flow-saved" data-flow-saved data-flow-saved-signature="${escapeHtml(ids.join(','))}"><div class="fm-flow-saved-head"><h2>저장한 경기</h2><span>${matches.length}개</span></div><div class="fm-flow-saved-list">${matches.map(match=>`<button type="button" class="fm-flow-saved-card" data-flow-action="open-saved-match" data-match-id="${escapeHtml(match.id)}"><small>${escapeHtml(cleanDate(match.dateLabel))}</small><b>${escapeHtml(match.place)}</b><span>${escapeHtml(match.level)} · ${escapeHtml(match.distance)} · ${escapeHtml(match.spot)}</span></button>`).join('')}</div></section>`;
 }
 function patchProfile(screen){
+  const current=readSession();
+  const accountCopy=screen.querySelector('.fm-next-profile-head p');
+  if(current.authExperience==='simulated')userCopy(accountCopy,'체험 계정 · 이 브라우저에만 저장');
+  const statusList=screen.querySelector('[data-my-matches] .fm-next-status-list');
+  if(current.joinedMatchId&&statusList&&!statusList.closest('[data-flow-stage-guide]')){
+    const details=document.createElement('details');details.className='fm-flow-stage-guide';details.dataset.flowStageGuide='true';
+    const summary=document.createElement('summary');summary.textContent='경기 진행 단계 더 보기';
+    statusList.before(details);details.append(summary,statusList);
+  }
   const ids=window.__FOOTMATE_DECISION__?.read?.().savedMatchIds||[];const signature=ids.join(',');const existing=screen.querySelector('[data-flow-saved]');
   if(!ids.length)existing?.remove();else if(existing?.dataset.flowSavedSignature!==signature){const wrapper=document.createElement('div');wrapper.innerHTML=savedMatchesMarkup(ids);const next=wrapper.firstElementChild;if(existing)existing.replaceWith(next);else screen.querySelector('.fm-next-profile-card')?.before(next);}
+  const policy=screen.querySelector('[data-action="show-policy"]');
+  if(policy)userCopy(policy.querySelector('span:last-child')||policy.querySelector('span'),'샘플 취소·환불 안내');
   const reset=screen.querySelector('[data-action="reset-flow"]');if(reset){reset.setAttribute('aria-label','체험 버전 안내');const label=reset.querySelector('span:last-child')||reset.querySelector('span');if(label)userCopy(label,'체험 버전 안내');}
 }
 function patchCompareDialog(){

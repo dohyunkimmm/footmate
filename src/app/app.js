@@ -327,7 +327,7 @@ function profileView(){
   return `<section class="fm-next-screen" data-screen="profile">
     ${topbar({title:'MY',showBrandTagline:false})}
     ${myMatchesSection()}
-    <div class="fm-next-profile-card"><div class="fm-next-profile-head"><span class="fm-next-profile-avatar">${state.userName.slice(0,1)}</span><div><h2>${state.userName}님</h2><p>${state.signedIn?'계정 연결됨':'게스트로 둘러보는 중'}</p></div></div><div class="fm-next-profile-stats"><div><b>${state.level}</b><span>체감 레벨</span></div><div><b>${state.position}</b><span>선호 포지션</span></div><div><b>${state.joinedMatchId?'1':'0'}</b><span>참가 경기</span></div></div></div>
+    <div class="fm-next-profile-card"><div class="fm-next-profile-head"><span class="fm-next-profile-avatar">${state.userName.slice(0,1)}</span><div><h2>${state.userName}님</h2><p>${state.signedIn?(mode==='real'&&(state.authExperience==='simulated'||footmatePlatform.session.read()?.authExperience==='simulated')?'체험 계정 · 이 브라우저에만 저장':'계정 연결됨'):'게스트로 둘러보는 중'}</p></div></div><div class="fm-next-profile-stats"><div><b>${state.level}</b><span>체감 레벨</span></div><div><b>${state.position}</b><span>선호 포지션</span></div><div><b>${state.joinedMatchId?'1':'0'}</b><span>참가 경기</span></div></div></div>
     <div class="fm-next-menu-list"><button class="fm-next-menu-item" data-action="edit-setup"><span>${icon('level')}경기 추천 설정</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="show-policy"><span>${icon('shield')}취소·환불 정책</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="reset-flow"><span>${icon('reset')}처음부터 다시 보기</span>${icon('chevron')}</button></div>
     ${nav('profile')}
   </section>`;
@@ -444,7 +444,7 @@ root.addEventListener('click',event=>{
   if(action==='show-route'){toast('길찾기 연결은 실제 서비스 연동 단계에서 제공됩니다.');return;}
   if(action==='team-chat'){toast('팀 메시지 화면은 다음 상세 설계 범위에서 연결됩니다.');return;}
   if(action==='rate-match'){toast('경기 평가 플로우를 준비 중입니다.');return;}
-  if(action==='show-policy'){toast('경기 24시간 전까지 전액 환불됩니다.');return;}
+  if(action==='show-policy'){toast(mode==='real'?'무료 참가 체험입니다. 실제 결제·환불이나 참가 취소 처리는 발생하지 않습니다.':'경기 24시간 전까지 전액 환불됩니다.');return;}
   if(action==='reset-flow'){resetFlow();return;}
   if(action==='open-real'){location.href='/app';return;}
   if(action==='scenario-discover'){

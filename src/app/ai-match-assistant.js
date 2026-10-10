@@ -1,4 +1,5 @@
 import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {footmatePlatform} from '../platform/application/platform.js';
 
 const VERSION='5.1.1';
 const AI_STORAGE_KEY='footmate:v5.1:ai';
@@ -202,10 +203,29 @@ const readSessionJson=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'
 const writeSessionJson=(key,value)=>{try{sessionStorage.setItem(key,JSON.stringify(value))}catch{}};
 const snapshot=()=>readSessionJson(SNAPSHOT_KEY);
 const scopeActive=()=>Boolean(snapshot()?.result)&&sessionStorage.getItem(SCOPE_KEY)==='1';
+function finishedMatchId(){
+  if(document.documentElement.dataset.footmateSurface!=='real')return null;
+  const session=footmatePlatform.session.read()||{};
+  if(session.matchStage!=='postgame'||!session.joinedMatchId)return null;
+  const completed=footmatePlatform.repositories.returnLoop.read({})?.history||[];
+  return completed.some(item=>item.matchId===session.joinedMatchId&&item.completed)?session.joinedMatchId:null;
+}
 const setScope=active=>sessionStorage.setItem(SCOPE_KEY,active?'1':'0');
 const text=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value};
 const hidden=(node,value)=>{if(node&&node.hidden!==value)node.hidden=value};
 const displayMessage=value=>String(value||'AI 경기 조회').replace(/,\s*/g,' · ');
+const RELAX_FIELDS=[['afterTime','시간'],['maxPrice','가격'],['maxDistanceMin','이동 거리'],['position','포지션'],['region','지역']];
+function updateAiConditions(patch){
+  const current=snapshot();if(!current?.result)return;
+  const next={...current,result:normalizeResult({...current.result,...patch}),updatedAt:new Date().toISOString()};
+  writeSessionJson(SNAPSHOT_KEY,next);
+  saveAssistant(next);
+  enhance();
+}
+function nextRelaxation(result){
+  const entry=RELAX_FIELDS.find(([key])=>result[key]!=null);
+  return entry?{key:entry[0],label:entry[1]}:null;
+}
 
 function setPressed(button){
   pressedExample=button||null;
@@ -288,13 +308,22 @@ function configureHome(screen){
   }
   if(headAction)headAction.hidden=true;
   const list=screen.querySelector(':scope > .fm-next-list');
-  if(list){list.dataset.iaRole='personalized-recommendations';list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1))}
+  if(list){
+    list.dataset.iaRole='personalized-recommendations';
+    const completedId=finishedMatchId();
+    list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>{
+      const completed=Boolean(completedId&&node.dataset.matchId===completedId);
+      hidden(node,index>1||completed);
+      if(completed)node.style.setProperty('display','none','important');
+      else if(node.style.getPropertyValue('display')==='none'&&node.style.getPropertyPriority('display')==='important')node.style.removeProperty('display');
+    });
+  }
   if(sessionStorage.getItem(FOCUS_KEY)==='1'){
     sessionStorage.removeItem(FOCUS_KEY);
     requestAnimationFrame(()=>{assistant?.scrollIntoView({block:'start',behavior:'smooth'});assistant?.querySelector('[data-ai-input]')?.focus({preventScroll:true})});
   }
 }
-function ensureSummary(screen,saved,active){
+function ensureSummary(screen,saved,active,zero=false){
   let summary=screen.querySelector('[data-ia-ai-summary]');
   if(!saved?.result){summary?.remove();return}
   const anchor=screen.querySelector('.fm-discovery-chrome')||screen.querySelector('.fm-next-list');
@@ -303,9 +332,12 @@ function ensureSummary(screen,saved,active){
   }
   if(anchor&&summary.nextElementSibling!==anchor)anchor.before(summary);else if(!anchor&&!summary.isConnected)screen.querySelector('.fm-next-section-head')?.insertAdjacentElement('afterend',summary);
   const labels=conditionLabels(saved.result),message=displayMessage(saved.message);
-  const sig=JSON.stringify([active,message,labels]);
-  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div></div><div class="fm-discovery-ai-summary__actions"><button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'AI 조건 해제':'AI 조건 다시 적용'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
-  if(summary.dataset.iaSignature===sig&&summary.innerHTML===markup)return;
+  const level=saved.result.level||'';
+  const levelEditor=active?`<label class="fm-ia-ai-level-label" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;font-size:12px;font-weight:700;color:#355646">AI가 해석한 경기 레벨<select data-ia-correct-level aria-label="AI가 해석한 경기 레벨 수정" style="min-height:44px;max-width:52%;padding:6px 10px;border:1px solid #8da99a;border-radius:10px;background:#fff;color:#183f2c"><option value="">레벨 제한 없음</option>${LEVELS.map(value=>`<option value="${value}" ${value===level?'selected':''}>${value==='초중급'?'초급':value==='중급+'?'고급':value}</option>`).join('')}</select></label>`:'';
+  const relax=active&&zero&&nextRelaxation(saved.result)?`<button type="button" data-ia-action="relax-ai">${nextRelaxation(saved.result).label} 조건 완화</button>`:'';
+  const sig=JSON.stringify([active,zero,message,labels]);
+  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>${levelEditor}</div><div class="fm-discovery-ai-summary__actions">${relax}<button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'AI 조건 해제':'AI 조건 다시 적용'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
+  if(summary.dataset.iaSignature===sig)return;
   summary.dataset.iaSignature=sig;summary.innerHTML=markup;
 }
 function ensureEmpty(screen){
@@ -317,13 +349,22 @@ function configureDiscover(screen){
   screen.dataset.iaRole='result-exploration';
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="discover"],.fm-ai-card[data-ai-assistant]');
   if(assistant){hidden(assistant,true);assistant.dataset.iaHidden='duplicate-assistant'}
-  const saved=snapshot(),active=scopeActive();ensureSummary(screen,saved,active);
+  const saved=snapshot(),active=scopeActive();
   const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
   const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState(),Infinity).map(entry=>entry.match.id)):null;
   const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
-  cards.forEach(node=>{const matches=!allowed||allowed.has(node.dataset.matchId);hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++});
+  const completedId=finishedMatchId();
+  cards.forEach(node=>{
+    const matches=(!allowed||allowed.has(node.dataset.matchId))&&(!completedId||node.dataset.matchId!==completedId);
+    hidden(node,!matches);
+    const completed=Boolean(completedId&&node.dataset.matchId===completedId);
+    if(completed)node.style.setProperty('display','none','important');
+    else if(node.style.getPropertyValue('display')==='none'&&node.style.getPropertyPriority('display')==='important')node.style.removeProperty('display');
+    node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++;
+  });
   const empty=ensureEmpty(screen);hidden(empty,!(active&&saved?.result&&visible===0));hidden(screen.querySelector('.fm-next-list'),Boolean(active&&saved?.result&&visible===0));
-  text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${cards.length}개 경기`);
+  text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${visible}개 경기`);
+  ensureSummary(screen,saved,active,visible===0);
 }
 function enhance(){
   const screen=root.querySelector('[data-screen]');if(!screen)return;
@@ -334,9 +375,13 @@ root.addEventListener('pointerdown',event=>{const example=event.target.closest('
 root.addEventListener('submit',event=>{if(event.target.closest('[data-screen="home"] [data-ai-form]')&&searchIntent!=='example')searchIntent='submit'},true);
 root.addEventListener('click',event=>{
   const action=event.target.closest('[data-ia-action]');
-  if(action){if(action.dataset.iaAction==='show-all'){setScope(false);enhance()}else if(action.dataset.iaAction==='apply-ai'){setScope(true);enhance()}else if(action.dataset.iaAction==='edit-ai'){sessionStorage.setItem(FOCUS_KEY,'1');root.querySelector('[data-screen="discover"] [data-action="nav-home"]')?.click()}}
+  if(action){if(action.dataset.iaAction==='show-all'){setScope(false);enhance()}else if(action.dataset.iaAction==='apply-ai'){setScope(true);enhance()}else if(action.dataset.iaAction==='relax-ai'){const field=nextRelaxation(snapshot()?.result||{});if(field)updateAiConditions({[field.key]:null})}else if(action.dataset.iaAction==='edit-ai'){sessionStorage.setItem(FOCUS_KEY,'1');root.querySelector('[data-screen="discover"] [data-action="nav-home"]')?.click()}}
   if(event.target.closest('[data-action="reset-flow"]')){sessionStorage.removeItem(SNAPSHOT_KEY);sessionStorage.removeItem(SCOPE_KEY);sessionStorage.removeItem(FOCUS_KEY)}
 },true);
+root.addEventListener('change',event=>{
+  const select=event.target.closest?.('[data-ia-correct-level]');
+  if(select&&root.querySelector('[data-screen="discover"]'))updateAiConditions({level:select.value||null});
+});
 new MutationObserver(schedule).observe(root,{childList:true,subtree:true});
 enhance();
 window.__FOOTMATE_REAL_APP_IA__=Object.freeze({version:'1.0.0',roles:Object.freeze({home:'assistant-entry',discover:'result-exploration',schedule:'joined-match-status',profile:'account-settings'}),get assistant(){return snapshot()},get aiScope(){return scopeActive()}});
