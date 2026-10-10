@@ -29,6 +29,7 @@ const labels=Object.freeze({
 });
 
 let filters=readInitialFilters();
+let lastRelaxedFilters=[];
 let filterDraft=null;
 let lastFilterTrigger=null;
 let applying=false;
@@ -179,7 +180,7 @@ function ensureChrome(screen){
     <button type="button" class="fm-discovery-filter-button" data-discovery-action="open-filters" aria-haspopup="dialog">필터</button>
     <label class="fm-discovery-sort"><span>정렬</span><select data-discovery-sort aria-label="경기 정렬"><option value="fit">적합도 높은 순</option><option value="distance">거리 가까운 순</option><option value="closing">마감 임박 순</option></select></label>
   </div>
-  <div class="fm-discovery-summary"><div class="fm-discovery-active" aria-label="적용된 필터"></div><span class="fm-discovery-count" role="status" aria-live="polite"></span></div>`;
+  <div class="fm-discovery-summary"><div class="fm-discovery-active" aria-label="적용된 필터"></div><span class="fm-discovery-count" role="status" aria-live="polite"></span></div><p class="fm-discovery-relax-notice" role="status" aria-live="polite" hidden></p>`;
   list.before(chrome);
   return chrome;
 }
@@ -202,6 +203,8 @@ function updateChrome(screen,total){
   }
   const count=chrome.querySelector('.fm-discovery-count');
   if(count)count.textContent=`${total}개 경기`;
+  const note=chrome.querySelector('.fm-discovery-relax-notice');
+  if(note){note.hidden=lastRelaxedFilters.length===0;note.textContent=lastRelaxedFilters.length?'완화한 조건: '+lastRelaxedFilters.join(' · ')+' (포지션 조건 유지)':'';}
 }
 
 function renderResults(screen,state){
@@ -212,7 +215,7 @@ function renderResults(screen,state){
   if(rows.length){
     list.innerHTML=rows.map((row,index)=>card(row,index,state)).join('');
   }else{
-    list.innerHTML=`<div class="fm-discovery-empty" role="status"><span class="fm-discovery-empty-icon" aria-hidden="true">↗</span><h2>조건에 맞는 경기가 없어요.</h2><p>날짜·시간·거리·가격 범위를 넓히면 다시 비교할 수 있어요.</p><div class="fm-discovery-empty-actions"><button type="button" data-discovery-action="relax-filters">조건 넓히기</button><button type="button" data-discovery-action="clear-filters">필터 전체 해제</button></div></div>`;
+    list.innerHTML=`<div class="fm-discovery-empty" role="status"><span class="fm-discovery-empty-icon" aria-hidden="true">↗</span><h2>조건에 맞는 경기가 없어요.</h2><p>‘조건 넓히기’는 날짜·시간·거리·가격 조건을 한 번에 해제합니다. 포지션 조건은 유지됩니다.</p><div class="fm-discovery-empty-actions"><button type="button" data-discovery-action="relax-filters">조건 넓히기</button><button type="button" data-discovery-action="clear-filters">필터 전체 해제</button></div></div>`;
   }
   screen.dataset.discoveryVersion=DISCOVERY_VERSION;
   screen.dataset.discoveryResultCount=String(rows.length);
@@ -281,7 +284,8 @@ function closeFilters(restore=true){
   if(restore&&lastFilterTrigger?.isConnected)lastFilterTrigger.focus();
 }
 
-function updateFilters(patch){
+function updateFilters(patch,{keepRelaxNotice=false}={}){
+  if(!keepRelaxNotice)lastRelaxedFilters=[];
   filters=normalize({...filters,...patch});
   persist();
   const screen=root.querySelector('[data-screen="discover"]');
@@ -334,7 +338,11 @@ root?.addEventListener('click',event=>{
       updateFilters({date:'all',time:'all',distance:'all',price:'all',position:'all'});
       return;
     }
-    if(action==='relax-filters'){updateFilters({date:'all',time:'all',distance:'all',price:'all'});return;}
+    if(action==='relax-filters'){
+      const captions={date:'날짜',time:'시간',distance:'거리',price:'가격'};
+      lastRelaxedFilters=['date','time','distance','price'].filter(key=>filters[key]!=='all').map(key=>captions[key]);
+      updateFilters({date:'all',time:'all',distance:'all',price:'all'},{keepRelaxNotice:true});return;
+    }
     if(action==='remove-filter'){
       const key=discoveryTarget.dataset.filterKey;
       if(key&&key in defaults)updateFilters({[key]:defaults[key]});
