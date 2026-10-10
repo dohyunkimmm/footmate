@@ -242,3 +242,42 @@ html:has(.image-dialog[open]){overflow:hidden}
 @media(max-width:370px){
   .section-head h1 .cs-title-break{display:none}
 }
+
+/* Portfolio P0–P2: verified decision reasoning, state gates, evidence taxonomy and reader UX. */
+.journey-checkpoints{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.journey-checkpoints>div{border:1px solid var(--line);border-top:3px solid var(--green);border-radius:12px;padding:16px;background:#fafcfb;min-width:0}
+.journey-checkpoint-n{display:block;color:var(--muted);font-size:11px;font-weight:700;line-height:1.6}
+.journey-checkpoints strong{display:block;color:var(--ink);font-size:14px;line-height:1.7;margin:5px 0}
+.journey-checkpoints p{font-size:13px;line-height:1.8;margin:0;color:var(--text)}
+.flow-decision-gate{margin:22px 0 14px;padding:20px;border:1px solid #bed2c5;border-radius:14px;background:#f8fbf8}
+.flow-gate-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:10px}
+.flow-gate-track>div{border-left:3px solid var(--green);padding:8px 12px;background:white;min-width:0}
+.flow-gate-track strong,.flow-gate-track span{display:block;line-height:1.75}
+.flow-gate-track strong{font-size:13px;color:var(--ink)}
+.flow-gate-track span{font-size:12px;color:var(--muted);margin-top:4px}
+.decision-proof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 12px}
+.decision-proof>div{min-width:0;padding:12px 13px;background:#f5f8f5;border-radius:10px;border-left:3px solid #b2c5b6}
+.decision-proof dt{font-size:12px;font-weight:800;color:var(--green);line-height:1.6}
+.decision-proof dd{font-size:13px;color:var(--text);line-height:1.75;margin:5px 0 0;overflow-wrap:anywhere}
+.cs-implementation-boundary{border-left:3px solid var(--green);padding-left:12px;margin-top:16px;max-width:850px}
+#section-07 .card-grid .story-card{border-top:4px solid var(--green)}
+#section-07 .card-grid .story-card:nth-child(2){border-top-color:#709c84}
+#section-07 .card-grid .story-card:nth-child(3){border-top-color:#a1aba5;background:#f7f8f7}
+.validation-source-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.validation-source-keys span{font-size:12px;line-height:1.75;border:1px solid var(--line);border-radius:10px;padding:12px 13px;min-width:0}
+.validation-source-keys b{color:var(--green)}
+.validation-doc-links .evidence-link{margin:3px 14px 0 0;font-size:12px}
+@media(max-width:1100px){.decision-proof{grid-template-columns:1fr}}
+@media(max-width:800px){
+  .sidebar{position:sticky;top:0;z-index:30;background:#fff;box-shadow:0 2px 8px rgba(12,45,27,.06)}
+  .toc{scroll-snap-type:x proximity;scroll-padding-inline:12px}
+  .toc-item{scroll-snap-align:start;min-height:44px}
+  .journey-checkpoints,.flow-gate-track,.validation-source-keys{grid-template-columns:1fr}
+  .decision-proof{grid-template-columns:1fr}
+  .journey-checkpoints>div{padding:14px}
+  .flow-decision-gate{padding:16px}
+  .flow-gate-track{gap:8px}
+  .validation-source-keys span{padding:11px 12px}
+}
+.toc-item:focus-visible,.cs-button:focus-visible,.slide summary:focus-visible,.evidence-link:focus-visible,.evidence-preview:focus-visible{outline:3px solid #2b7051;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.toc{scroll-behavior:auto}}

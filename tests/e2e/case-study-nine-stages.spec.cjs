@@ -407,3 +407,23 @@ test('Typography QA: Case Study navigation, evidence hint and responsive heading
   await page.locator('.toc-item').first().click();
   await expect(page.locator('#section-01 .story-card p').first()).toHaveCSS('font-size','14px');
 });
+
+// Portfolio P0–P2: explicit evidence boundaries and functioning content hierarchy.
+for(const width of [320,390,1440,1920]){
+  test('portfolio reasoning and evidence taxonomy at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:900});
+    await page.goto('/#section-03');
+    await expect(page.locator('#section-03 .journey-checkpoints > div')).toHaveCount(3);
+    await page.locator('.toc-item').nth(4).click();
+    await expect(page.locator('#section-05 .flow-gate-track > div')).toHaveCount(3);
+    await page.locator('.toc-item').nth(5).click();
+    await expect(page.locator('#section-06 .decision-proof')).toHaveCount(3);
+    await expect(page.locator('#section-06 .decision-proof dt')).toHaveCount(12);
+    await expect(page.locator('#section-06')).toContainText('서버 참가·정원 확인');
+    await page.locator('.toc-item').nth(6).click();
+    await expect(page.locator('#section-07 .validation-source-keys span')).toHaveCount(3);
+    await expect(page.locator('#section-07')).toContainText('실제 측정 전');
+    await expect(page.locator('#section-07 .validation-doc-links a')).toHaveCount(3);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  });
+}
