@@ -460,6 +460,42 @@ test('Demo social login hands off to Closed Beta before provider OAuth and never
   expect(errs).toEqual([]);
 });
 
+test('P0 blocks sold-out MF role and requires explicit FW selection before local checkout',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await seedSession(page,{setupComplete:true,route:'detail',position:'MF',selectedMatchId:'yeongtong-1900',selectedJoinPosition:null});
+  const detail=page.locator('[data-screen="detail"]');
+  await expect(detail.locator('[data-join-position]')).toContainText('선호 포지션 MF 자리가 마감됐어요');
+  await expect(detail.locator('[data-action="choose-join-position"][data-position="MF"]')).toBeDisabled();
+  await expect(detail.locator('[data-action="join-match"]')).toBeDisabled();
+  await detail.locator('[data-action="choose-join-position"][data-position="FW"]').click();
+  await expect(detail.locator('[data-action="choose-join-position"][data-position="FW"]')).toHaveAttribute('aria-pressed','true');
+  await expect(detail.locator('[data-action="join-match"]')).toBeEnabled();
+  await detail.locator('[data-action="join-match"]').click();
+  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  await page.getByRole('textbox',{name:'아이디'}).fill('qatest88');
+  await page.getByLabel('비밀번호',{exact:true}).fill('testpass123!');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.locator('[data-screen="checkout"] .fm-next-checkout-meta')).toContainText('FW 1자리');
+  expect(await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__?.read()?.position)).toBe('FW');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="checkout"] .fm-next-checkout-meta')).toContainText('FW 1자리');
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
+test('P1 demo recovery guidance never pretends to email a local account',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);await openDetail(page);
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.getByRole('checkbox',{name:'로그인 상태 유지'})).toHaveCount(0);
+  await expect(page.getByRole('checkbox',{name:'아이디 저장'})).toHaveCount(0);
+  await page.getByRole('button',{name:'체험 계정 복구 안내'}).click();
+  await expect(page.locator('[data-screen="auth"]')).toContainText('비밀번호 재설정 메일을 발송하거나 계정을 조회할 수 없습니다');
+  await expect(page.getByRole('link',{name:'실제 계정은 Closed Beta에서 로그인'})).toHaveAttribute('href','/beta');
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
 test('Flow P2 preserves postgame feedback and hides completed match from next search',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
