@@ -264,7 +264,8 @@ import {completeCheckin} from '../platform/application/checkin.js';
 
   function patchIdentity(){
     if(mode!=='real')return;
-    const signedIn=Boolean((footmatePlatform.session.read()||{}).signedIn);
+    const account=footmatePlatform.session.read()||{};
+    const signedIn=Boolean(account.signedIn);
     const greeting=root.querySelector('[data-screen="home"] .fm-next-greeting');
     if(greeting){
       setText(greeting.querySelector('small'),signedIn?'다시 반가워요':'플레이 설정이 준비됐어요');
@@ -274,7 +275,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
     if(profile){
       setText(profile.querySelector('.fm-next-profile-avatar'),signedIn?'F':'?');
       setText(profile.querySelector('h2'),signedIn?'FootMate 회원':'게스트');
-      setText(profile.querySelector('p'),signedIn?'계정 연결됨':'경기를 둘러보고 있어요');
+      setText(profile.querySelector('p'),signedIn?(account.authExperience==='simulated'?'체험 계정 · 이 브라우저에만 저장':'계정 연결됨'):'경기를 둘러보고 있어요');
     }
   }
 
