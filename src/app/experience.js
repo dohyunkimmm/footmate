@@ -1,8 +1,7 @@
 import {footmatePlatform} from '../platform/application/platform.js';
 import {completeCheckin} from '../platform/application/checkin.js';
 
-/* FootMate v4 account experience.
-   External authentication remains simulated; the UI models the official sign-in / sign-up interaction. */
+/* FootMate account UX: local ID/password is browser-only; enabled Google/Kakao OAuth is handled separately. */
 (function(){
   const root=document.getElementById('footmate-next');
   if(!root)return;
@@ -56,7 +55,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
         <button class="fm-auth-provider fm-auth-provider--apple" type="button" data-action="sign-in" data-provider="apple" aria-label="Apple로 계속하기">${apple}</button>
         <button class="fm-auth-provider fm-auth-provider--google" type="button" data-action="sign-in" data-provider="google" aria-label="Google로 계속하기">${google}</button>
       </div>
-      <p class="fm-auth-context">${place} 경기 선택과 플레이 설정은 로그인 후에도 그대로 유지됩니다.</p>
+      <p class="fm-auth-context">${place} 경기 선택과 플레이 설정은 로그인 후에도 그대로 유지됩니다. 일반 아이디 로그인은 이 브라우저에서만 체험되며 실제 회원 계정이 생성되지 않습니다.</p>
       <p class="fm-auth-terms">로그인 또는 회원가입을 진행하면 FootMate 이용약관과 개인정보 처리방침에 동의하게 됩니다.</p>`;
   }
 
@@ -91,7 +90,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
   function renderPanel(screen,panel){
     const place=screen.dataset.matchPlace||'선택한';
     if(panel==='signup'){
-      shell('회원가입','경기 참가에 필요한 계정을 간단히 만들어요.',signupBody(),screen,{backToLogin:true});
+      shell('회원가입','이 브라우저에서만 사용하는 체험 계정을 설정합니다. 서버 회원가입·인증 이메일 발송은 하지 않습니다.',signupBody(),screen,{backToLogin:true});
       return;
     }
     if(panel==='find-id'){
@@ -275,7 +274,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
     if(profile){
       setText(profile.querySelector('.fm-next-profile-avatar'),signedIn?'F':'?');
       setText(profile.querySelector('h2'),signedIn?'FootMate 회원':'게스트');
-      setText(profile.querySelector('p'),signedIn?(account.authExperience==='simulated'?'체험 계정 · 이 브라우저에만 저장':'계정 연결됨'):'경기를 둘러보고 있어요');
+      setText(profile.querySelector('p'),signedIn?(account.authExperience==='oauth'?'계정 연결됨':'체험 계정 · 이 브라우저에만 저장'):'경기를 둘러보고 있어요');
     }
   }
 
