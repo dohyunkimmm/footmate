@@ -417,6 +417,8 @@ for(const width of [320,390,1440,1920]){
     await expect(page.locator('#section-03 .journey-checkpoints > div')).toHaveCount(3);
     await page.locator('.toc-item').nth(4).click();
     await expect(page.locator('#section-05 .flow-gate-track > div')).toHaveCount(3);
+    await expect(page.locator('#section-05 .flow-decision-gate')).toContainText('Demo · 브라우저 기록 / Beta · 서버 상태 조회');
+    await expect(page.locator('#section-05')).toContainText('Demo는 기록 확인 · Beta는 서버 재조회 후 복구');
     await page.locator('.toc-item').nth(5).click();
     await expect(page.locator('#section-06 .decision-proof')).toHaveCount(3);
     await expect(page.locator('#section-06 .decision-proof dt')).toHaveCount(12);
