@@ -22,6 +22,7 @@ const emptyState=()=>({
   status:'idle',
   matchId:null,
   amount:null,
+  position:null,
   paymentMethod:'easy',
   policySnapshot:null,
   attemptId:null,
@@ -47,6 +48,7 @@ function normalize(candidate={}){
   const matchId=ids.has(candidate.matchId)?candidate.matchId:null;
   const amount=Number.isFinite(Number(candidate.amount))?Number(candidate.amount):null;
   const paymentMethod=methods.has(candidate.paymentMethod)?candidate.paymentMethod:'easy';
+  const position=['MF','FW','DF','GK'].includes(candidate.position)?candidate.position:null;
   return {
     ...base,
     ...candidate,
@@ -55,6 +57,7 @@ function normalize(candidate={}){
     status,
     matchId,
     amount,
+    position,
     paymentMethod,
     policySnapshot:candidate.policySnapshot&&typeof candidate.policySnapshot==='object'?candidate.policySnapshot:null,
     attemptNumber:Number.isInteger(candidate.attemptNumber)&&candidate.attemptNumber>=0?candidate.attemptNumber:0
@@ -91,6 +94,11 @@ function matchFromCheckout(){
   const place=root?.querySelector('[data-screen="checkout"] .fm-next-checkout-summary h2')?.textContent?.trim();
   return MATCHES.find(match=>match.place===place)||matchById(readSession().selectedMatchId)||MATCHES[0];
 }
+function positionForMatch(match){
+  const session=readSession();
+  const candidate=session.selectedJoinPosition===null?null:session.selectedJoinPosition||session.position;
+  return candidate&&Number(match.positionSlots?.[candidate]||0)>0?candidate:null;
+}
 function isLocked(){return state.status==='pending'}
 function isActiveSnapshot(){return ['pending','failure','canceled','success'].includes(state.status)&&Boolean(state.matchId)}
 function authoritativeMatch(fallback){return isActiveSnapshot()?matchById(state.matchId)||fallback:fallback}
@@ -101,6 +109,7 @@ function snapshotFor(match){
     status:'checkout',
     matchId:match.id,
     amount:match.price,
+    position:positionForMatch(match),
     paymentMethod:'easy',
     policySnapshot:{...policySnapshot},
     createdAt:Date.now(),
@@ -110,7 +119,7 @@ function snapshotFor(match){
 
 function ensureCheckout(match){
   if(isActiveSnapshot())return;
-  if(state.status==='checkout'&&state.matchId===match.id&&state.amount===match.price)return;
+  if(state.status==='checkout'&&state.matchId===match.id&&state.amount===match.price&&state.position===positionForMatch(match))return;
   state=snapshotFor(match);
   persist();
 }
@@ -148,7 +157,7 @@ function patchSummary(screen,match){
   if(summary){
     const date=summary.querySelector('small');if(date)date.textContent=match.dateLabel;
     const title=summary.querySelector('h2');if(title)title.textContent=match.place;
-    const meta=summary.querySelector('.fm-next-checkout-meta');if(meta)meta.innerHTML=`<span>${match.level}</span><span>${match.spot}</span><span>${match.duration}</span>`;
+    const meta=summary.querySelector('.fm-next-checkout-meta');if(meta)meta.innerHTML=`<span>${match.level}</span><span>${state.position?`${state.position} ${Number(match.positionSlots?.[state.position]||0)}자리`:'포지션 미선택'}</span><span>${match.duration}</span>`;
   }
   const payRows=[...screen.querySelectorAll('.fm-next-pay-row')];
   if(payRows[0]?.querySelector('b'))payRows[0].querySelector('b').textContent=money(state.amount??match.price);
@@ -162,7 +171,7 @@ function patchCheckout(){
   ensureCheckout(visibleMatch);
   const match=authoritativeMatch(visibleMatch);
   if(!match)return;
-  const signature=[state.status,state.matchId,state.amount,state.paymentMethod,state.attemptId,state.attemptNumber,state.failureCode].join('|');
+  const signature=[state.status,state.matchId,state.position,state.amount,state.paymentMethod,state.attemptId,state.attemptNumber,state.failureCode].join('|');
   if(screen.dataset.participationSignature===signature)return;
   screen.dataset.participationSignature=signature;
   screen.dataset.participationVersion=PARTICIPATION_VERSION;
@@ -185,7 +194,7 @@ function patchCheckout(){
   const confirm=screen.querySelector('[data-action="confirm-payment"], [data-participation-submit]');
   if(confirm){
     confirm.dataset.participationSubmit='true';
-    confirm.disabled=isLocked();
+    confirm.disabled=isLocked()||!state.position||Number(match.positionSlots?.[state.position]||0)<=0;
     confirm.setAttribute('aria-busy',String(isLocked()));
     confirm.innerHTML=state.status==='pending'?'결제 확인 중…':`${money(state.amount??match.price)} 결제하고 참가 확정`;
   }
@@ -222,6 +231,7 @@ function startPayment(){
   const visible=matchFromCheckout();
   ensureCheckout(visible);
   if(!state.matchId||!state.amount)return;
+  if(!state.position||Number(visible.positionSlots?.[state.position]||0)<=0){announce('포지션이 마감됐어요. 이전 화면에서 참가 포지션을 선택해주세요.');return;}
   clearTimeout(completeTimer);
   state={...state,status:'pending',attemptId:newAttempt(),attemptNumber:(state.attemptNumber||0)+1,confirmationId:null,failureCode:null};
   persist();
@@ -250,7 +260,7 @@ function completePayment(outcome='success'){
   if(mode==='real'){
     const match=MATCHES.find(item=>item.id===state.matchId);
     footmatePlatform.repositories.matchday.write({matchId:state.matchId,status:'upcoming',checkinSchema:1,startsAt:match.startsAt,checkinComplete:false,checkedInAt:null});
-    writeSession({selectedMatchId:state.matchId,joinedMatchId:state.matchId,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
+    writeSession({selectedMatchId:state.matchId,joinedMatchId:state.matchId,joinedJoinPosition:state.position,checkedInMatchId:null,checkedInAt:null,matchStage:'upcoming',route:'success'});
     location.reload();
     return;
   }
