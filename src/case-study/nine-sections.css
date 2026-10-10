@@ -281,3 +281,17 @@ html:has(.image-dialog[open]){overflow:hidden}
 }
 .toc-item:focus-visible,.cs-button:focus-visible,.slide summary:focus-visible,.evidence-link:focus-visible,.evidence-preview:focus-visible{outline:3px solid #2b7051;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.toc{scroll-behavior:auto}}
+
+/* Portfolio evidence reading: self-contained task method, GitHub optional only. */
+.portfolio-task-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.portfolio-task-grid article{min-width:0;border:1px solid var(--line);border-left:3px solid var(--green);background:#f8faf8;border-radius:10px;padding:14px}
+.portfolio-task-grid h3{font-size:14px;line-height:1.65}
+.portfolio-task-grid p{font-size:14px;line-height:1.8;color:var(--text);margin-top:6px}
+.portfolio-method-details .detail-body,.portfolio-optional-sources .detail-body{padding:12px 24px 24px}
+.portfolio-method-details .detail-body>p,.portfolio-optional-sources .detail-body>p{font-size:14px;line-height:1.85}
+.portfolio-optional-sources .validation-doc-links{display:flex;flex-wrap:wrap;column-gap:12px;row-gap:5px;margin-top:10px}
+.portfolio-optional-sources .evidence-link{font-size:13px;line-height:1.65;margin:8px 16px 0 0}
+@media(max-width:800px){
+  .portfolio-task-grid{grid-template-columns:1fr}
+  .portfolio-method-details .detail-body,.portfolio-optional-sources .detail-body{padding:12px 16px 20px}
+}

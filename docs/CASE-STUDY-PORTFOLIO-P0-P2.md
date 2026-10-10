@@ -17,3 +17,9 @@
 ## QA 및 운영 잔여
 
 Case Study 9단계 및 typography/axe/visual regression을 CI에서 유지. Production Smoke의 사전 버그로 확인된 Beta HTML 참조 버전은 실제 v=512와 일치시킴. 실제 Production READY와 HTTP·AI·브라우저 Smoke는 main 병합 후 SHA가 일치할 때만 완료로 선언.
+
+## 검증 자료의 페이지 내 이해도 개선
+
+9개 섹션 전수 확인. 01 문제·역할, 02 페르소나와 실제 과업 경계, 03 여정, 04 범위와 구현 경계, 05 흐름·분기, 06 의사결정과 구현, 08 학습·한계는 이미 자체 완결적인 설명을 제공. 07의 사용자 검증은 참여 6명/iOS 4·Android 2/8회 과업(비회원·Kakao·Google·이메일 각 2회)의 대상·방법·한계를 GitHub 문서 없이 확인 가능하도록 펼침형 카드로 추가. 과업별 수행 성공이나 개선 효과 수치는 없음. 개발 QA 3건과 KPI 8개 정의는 기존 인페이지 상세 유지. 07 GitHub 원문은 3개의 선택적 참고 링크로 하단 이동. 09 자료 링크도 선택형임을 명시. **JTBD, IA, UX Flow, Must/Should, MVP, Trade-off, QA, KPI, Beta 등의 IT 용어는 변경하지 않음.**
+
+검증: 320/390/1440 반응형, 키보드 details, 기존 axe 및 타입/텍스트 행 길이 계약, 9개 섹션 딥링크, 실제 운영 Production Smoke 유지.

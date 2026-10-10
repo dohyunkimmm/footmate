@@ -423,7 +423,30 @@ for(const width of [320,390,1440,1920]){
     await page.locator('.toc-item').nth(6).click();
     await expect(page.locator('#section-07 .validation-source-keys span')).toHaveCount(3);
     await expect(page.locator('#section-07')).toContainText('실제 측정 전');
-    await expect(page.locator('#section-07 .validation-doc-links a')).toHaveCount(3);
+    await expect(page.locator('#section-07 .portfolio-method-details')).toHaveCount(1);
+    await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-link')).toHaveCount(3);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  });
+}
+
+// GitHub is supplementary, not a prerequisite for understanding any of the nine pages.
+for(const width of [320,390,1440]){
+  test('07 and 09 explain evidence without external navigation at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:900});
+    await page.goto('/#section-07');
+    await expect(page.locator('#section-07 .portfolio-optional-sources .validation-doc-links')).toBeHidden();
+    await page.locator('#section-07 .portfolio-method-details summary').click();
+    await expect(page.locator('#section-07 .portfolio-task-grid article')).toHaveCount(4);
+    await expect(page.locator('#section-07 .portfolio-method-details')).toContainText('개인별 발견·버그 빈도·수정 인과 미확정');
+    await expect(page.locator('#section-07 .qa-evidence-table tbody tr')).toHaveCount(3);
+    await page.locator('#section-07 details summary').filter({hasText:'8개 KPI'}).click();
+    await expect(page.locator('#section-07 #kpi-table-hint')).toBeVisible();
+    await page.locator('#section-07 .portfolio-optional-sources summary').click();
+    await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-link')).toHaveCount(3);
+    await page.locator('.toc-item').nth(8).click();
+    await expect(page.locator('#section-09 .next-list li')).toHaveCount(4);
+    await expect(page.locator('#section-09 .technical-resources')).toContainText('GitHub 구현·검증 원문');
+    await expect(page.locator('#section-09 .technical-resources .evidence-link')).toHaveCount(4);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
