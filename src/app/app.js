@@ -327,7 +327,7 @@ function profileView(){
   return `<section class="fm-next-screen" data-screen="profile">
     ${topbar({title:'MY',showBrandTagline:false})}
     ${myMatchesSection()}
-    <div class="fm-next-profile-card"><div class="fm-next-profile-head"><span class="fm-next-profile-avatar">${state.userName.slice(0,1)}</span><div><h2>${state.userName}님</h2><p>${state.signedIn?'계정 연결됨':'게스트로 둘러보는 중'}</p></div></div><div class="fm-next-profile-stats"><div><b>${state.level}</b><span>체감 레벨</span></div><div><b>${state.position}</b><span>선호 포지션</span></div><div><b>${state.joinedMatchId?'1':'0'}</b><span>참가 경기</span></div></div></div>
+    <div class="fm-next-profile-card"><div class="fm-next-profile-head"><span class="fm-next-profile-avatar">${state.userName.slice(0,1)}</span><div><h2>${state.userName}님</h2><p>${state.signedIn?(mode==='real'&&footmatePlatform.session.read()?.authExperience==='simulated'?'체험 계정 · 이 브라우저에만 저장':'계정 연결됨'):'게스트로 둘러보는 중'}</p></div></div><div class="fm-next-profile-stats"><div><b>${state.level}</b><span>체감 레벨</span></div><div><b>${state.position}</b><span>선호 포지션</span></div><div><b>${state.joinedMatchId?'1':'0'}</b><span>참가 경기</span></div></div></div>
     <div class="fm-next-menu-list"><button class="fm-next-menu-item" data-action="edit-setup"><span>${icon('level')}경기 추천 설정</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="show-policy"><span>${icon('shield')}취소·환불 정책</span>${icon('chevron')}</button><button class="fm-next-menu-item" data-action="reset-flow"><span>${icon('reset')}처음부터 다시 보기</span>${icon('chevron')}</button></div>
     ${nav('profile')}
   </section>`;
