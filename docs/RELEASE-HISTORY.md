@@ -1,5 +1,16 @@
 # FootMate Release History
 
+## 2026-10-10 — Interactive Demo / Closed Beta 안내 및 포트폴리오 공개 검증 완료
+
+- Scope: 현재 9단계 Case Study의 01에서 **Interactive Demo**(`/demo`: 샘플 경기 데이터, 실제 참가·결제 없음)와 **Closed Beta**(`/beta`: Supabase 서버 연결, 무료 참가·실제 결제 없음)로 이동하는 CTA를 구분. 430px 이하에서는 CTA를 세로 정렬. 9개 섹션·JTBD/IA/KPI·제품 및 Beta 서버 로직은 유지.
+- Copy 경계: #572에서 Interactive Demo / Closed Beta 명칭 정렬, #573에서 Production Smoke CTA 기대 문구를 현재 표시와 일치시킴. #574에서 01 진입점과 README 문서 경로를 함께 정리.
+- 최종 기능/문서 PR: [#574](https://github.com/dohyunkimmm/footmate/pull/574) · squash merge `4cb26cff41aa39526b67c4bbeee3f75fc5f7adce`.
+- PR QA: [run 38024959175](https://github.com/dohyunkimmm/footmate/actions/runs/38024959175) · `completed/success` · Regression 36, Browser E2E + axe, Mobile Safari/WebKit PASS.
+- Post-merge main QA: [run 38025392361](https://github.com/dohyunkimmm/footmate/actions/runs/38025392361) · `completed/success` · Regression 36, Browser E2E + axe, Production HTTP, AI inference, Chromium Smoke, Release Journeys PASS.
+- Exact Vercel Production: deployment `dpl_JCT9odNoVLxBXtcit3hgjMaAtjCe` · SHA `4cb26cff41aa39526b67c4bbeee3f75fc5f7adce` · `READY` · official alias `footmate-black.vercel.app` verified.
+- README sync: repository root `README.md`와 `docs/README.md`에 `/demo`, `/app`, `/beta`의 실제 연결 범위 반영. Case Study CTA와 문서 경계를 일치시킴.
+- Measurement boundary: 8개 KPI는 측정 설계 상태이며 실제 Closed Beta 결과값이나 개선율을 주장하지 않음. 제품 패키지 릴리스 `v6.0.0` 및 Beta 운영 정책 변경 없음.
+
 ## 2026-10-08 — Case Study 9단계 가독성·근거 확인·모바일 QA 정리
 
 - Scope: 리뷰어용 Case Study `/`의 9단계 표시·근거 확인·접근성 개선. Product Release App v6 기능·버전, Closed Beta 운영 절차와 사용자 성과 근거는 변경하지 않음.
