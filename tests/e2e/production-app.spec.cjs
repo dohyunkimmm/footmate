@@ -128,7 +128,7 @@ async function verifyMatchCards(page,name){
     const tags=card.locator('.fm-next-match-body > .fm-next-match-tags > .fm-next-tag');
     await expect(tags).toHaveText(item.tags);
     for(const tag of await tags.all())await expect(tag).toBeVisible();
-    await expect(card.locator('.fm-next-price')).toHaveText(item.price);
+    await expect(card.locator('.fm-next-price')).toHaveText(`샘플 ${item.price}`);
     await expect(card.locator('.fm-next-match-footer b')).toHaveCount(0);
     const level=tags.filter({hasText:new RegExp('^'+item.tags[3]+'$')});
     const gap=await level.evaluate(node=>node.parentElement.getBoundingClientRect().right-node.getBoundingClientRect().right);
