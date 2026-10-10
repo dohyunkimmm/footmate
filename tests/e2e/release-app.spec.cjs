@@ -127,6 +127,7 @@ async function reachJoin(page){
   const join=page.locator('[data-screen="checkout"]');
   await expect(join).toBeVisible();
   await expect(join).toHaveAttribute('data-v6-join','free');
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')||'{}').authExperience)).toBe('simulated');
 }
 
 async function seedSession(page,patch){
@@ -182,6 +183,7 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(profile).toBeVisible();
   await expect(profile).toHaveAttribute('data-v6-my','true');
   await expect(profile.locator('[data-my-matches]')).toContainText('내 경기');
+  await expect(profile.locator('.fm-next-profile-head p')).toHaveText('체험 계정 · 이 브라우저에만 저장');
   const hierarchy=await profile.evaluate(node=>{
     const margin=selector=>{const item=node.querySelector(selector);return item?parseFloat(getComputedStyle(item).marginTop):null};
     return {saved:margin('[data-v6-my-section="saved"]'),profile:margin('[data-v6-my-section="profile"]'),settings:margin('[data-v6-settings-label]')};
@@ -414,6 +416,21 @@ test('Flow P1 edits interpreted AI level and progressively relaxes empty results
   const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v5.1:ai')||'{}').result);
   expect(stored.level).toBe('초중급');
   expect(stored.afterTime).toBeNull();
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
+test('Real App labels legacy local sessions safely and separates explicit OAuth sessions',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);await openDetail(page);
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.locator('.fm-auth-context')).toContainText('실제 회원 계정이 생성되지 않습니다');
+  await page.getByRole('button',{name:'회원가입'}).click();
+  await expect(page.locator('.fm-auth-title')).toContainText('서버 회원가입·인증 이메일 발송은 하지 않습니다');
+  await seedSession(page,{setupComplete:true,route:'profile',signedIn:true});
+  await expect(page.locator('[data-screen="profile"] .fm-next-profile-head p')).toHaveText('체험 계정 · 이 브라우저에만 저장');
+  await seedSession(page,{route:'profile',signedIn:true,authExperience:'oauth'});
+  await expect(page.locator('[data-screen="profile"] .fm-next-profile-head p')).toHaveText('계정 연결됨');
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
