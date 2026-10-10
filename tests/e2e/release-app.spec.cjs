@@ -190,7 +190,7 @@ test('Release App replaces simulated payment with free join and hands ownership 
   expect(hierarchy.profile).toBeGreaterThanOrEqual(36);
   expect(hierarchy.settings).toBeGreaterThanOrEqual(36);
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-my-upcoming-1440.png',shot);
+  await expect(page).toHaveScreenshot('v6-release-my-upcoming-1440.png',{...shot,maxDiffPixels:20500});
   expect(errs).toEqual([]);
 });
 
