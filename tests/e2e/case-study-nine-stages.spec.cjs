@@ -22,9 +22,7 @@ for(const width of [1920,1440,800,390,320]){
         await img.scrollIntoViewIfNeeded();
         await expect.poll(()=>img.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
       }
-      for(const link of await page.locator('.slide:visible .evidence-link').all()){
-        expect(await link.getAttribute('href')).toMatch(/^https:\/\/github\.com\/dohyunkimmm\/footmate(?:\/blob\/main\/docs\/[A-Z-]+\.md)?$/);
-      }
+      await expect(page.locator('.slide:visible a[href*="github.com"]')).toHaveCount(0);
       const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
       expect(scan.violations).toEqual([]);
     }
@@ -424,7 +422,7 @@ for(const width of [320,390,1440,1920]){
     await expect(page.locator('#section-07 .validation-source-keys span')).toHaveCount(3);
     await expect(page.locator('#section-07')).toContainText('실제 측정 전');
     await expect(page.locator('#section-07 .portfolio-method-details')).toHaveCount(1);
-    await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-link')).toHaveCount(3);
+    await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-record')).toHaveCount(3);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
@@ -444,11 +442,18 @@ for(const width of [320,390,1440]){
     if(width<=800)await expect(page.locator('#section-07 #kpi-table-hint')).toBeVisible();
     else await expect(page.locator('#section-07 #kpi-table-hint')).toBeHidden();
     await page.locator('#section-07 .portfolio-optional-sources summary').click();
-    await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-link')).toHaveCount(3);
+    await expect(page.locator('#section-07 .portfolio-optional-sources .evidence-record')).toHaveCount(3);
     await page.locator('.toc-item').nth(8).click();
     await expect(page.locator('#section-09 .next-list li')).toHaveCount(4);
-    await expect(page.locator('#section-09 .technical-resources')).toContainText('GitHub 구현·검증 원문');
-    await expect(page.locator('#section-09 .technical-resources .evidence-link')).toHaveCount(5);
+    await expect(page.locator('#section-09 .technical-resources')).toContainText('프로젝트 증빙 · 기록 항목');
+    await expect(page.locator('#section-09 .technical-resources .evidence-record')).toHaveCount(5);
+    await expect(page.locator('#section-09 a[href*="github.com"]')).toHaveCount(0);
+    await page.locator('.toc-item').nth(3).click();
+    await page.locator('#section-04 details summary').click();
+    await expect(page.locator('#section-04 details')).toContainText('샘플 앱 체험 · 화면과 기능 시연');
+    await expect(page.locator('#section-04 details')).toContainText('무료 베타 서비스 · 실제 서버 연결');
+    await page.locator('.toc-item').nth(5).click();
+    await expect(page.locator('#section-06 a[href="/beta"]')).toContainText('무료 베타 서비스 보기');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
