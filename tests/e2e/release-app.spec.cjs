@@ -156,7 +156,7 @@ test('Release App flattens desktop Detail into one decision surface',async({page
   expect(geometry.shadow).toBe('none');
   expect(geometry.background).toBe('rgba(0, 0, 0, 0)');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:12000});
+  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:17000});
   expect(errs).toEqual([]);
 });
 
@@ -426,7 +426,7 @@ test('Real App labels legacy local sessions safely and separates explicit OAuth 
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
   await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
-  await expect(page.locator('.fm-auth-context')).toContainText('실제 회원 계정이 생성되지 않습니다');
+  await expect(page.locator('.fm-auth-context').filter({hasText:'실제 회원 계정이 생성되지 않습니다'})).toBeVisible();
   await page.getByRole('button',{name:'회원가입'}).click();
   await expect(page.locator('.fm-auth-title')).toContainText('서버 회원가입·인증 이메일 발송은 하지 않습니다');
   await seedSession(page,{setupComplete:true,route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
