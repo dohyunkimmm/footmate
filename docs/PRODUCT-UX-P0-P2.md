@@ -26,6 +26,16 @@ This change preserves the v6 Find → Decide → Join → Play → Return lifecy
 - These are searches/drafts: verify the operator-provided address, latest match time and policy. Sample /app dates do not produce these links.
 - Cross-surface /app–/beta data merging, payments, team chat and realtime geolocation remain outside the scope.
 
+## 2026-10-10 · Release App flow P0–P2 implementation closure
+
+이 절은 위 Connected Beta 중심 P0–P2 항목과 별개의 **Release App `/app` 고도화**입니다. 기존 Beta 측정·지도/캘린더 정책과 기능 소유권을 변경하지 않습니다.
+
+- **P0 / returning user:** 직접 `/app` 진입의 신규 → Welcome/Setup, 설정 완료 → Home, 참가 이력 또는 legacy Schedule → MY로 이어집니다. 이미 저장된 참가 상태를 손상시키지 않습니다. 실제 PG·환불 처리 없이 `0원 무료 체험`과 샘플 취소·환불 정책을 정확하게 안내합니다.
+- **P1 / AI result repair:** AI 추출 조건의 레벨을 Discover에서 직접 수정하고, AI 결과가 없으면 시간 → 가격 → 거리 → 포지션 → 지역의 존재하는 조건을 하나씩 완화합니다. 사용자 설정과 Discovery 추가 필터를 임의 초기화하지 않고 실제 후보·순위를 AI가 생성하지 않습니다.
+- **P2 / MY-to-Return:** 중복 진행 단계 안내를 native `details`에 접습니다. 로컬 계정은 체험 계정으로 표시합니다. Return history 완료 기록이 있는 postgame 참가 경기는 후속 Home/Discover 추천에서 제외하고 다음 경기 찾기 CTA를 유지합니다.
+- **증거:** [PR #577](https://github.com/dohyunkimmm/footmate/pull/577) · [병합 전 QA SUCCESS](https://github.com/dohyunkimmm/footmate/actions/runs/38050395821) · [병합 후 QA/Production Smoke SUCCESS](https://github.com/dohyunkimmm/footmate/actions/runs/38050777170) · main SHA `ddccd383d045ec5aee1340e339a486aff256c9b3` · Vercel `dpl_4zT1HeEfDv5jiwdTWckKvm1rbNQo` READY / 운영 alias 일치. Browser E2E·axe·타이포그래피·모바일 WebKit과 Production Smoke(Chromium 15 + 추가 8) 통과. 320/375/390/430/1440 화면의 별도 브라우저 표본 검사 기록도 보존했습니다.
+- **주의:** PNG baseline 일괄 갱신 없음. 변경된 무료 참가·MY 안내·완료 경기 대체 추천 화면에 한해 diff 검토 및 bounded tolerance를 적용했습니다. 이번 변경 이후 물리 기기 수동 QA·실제 브라우저 200% 확대·실사용 KPI 측정은 완료 범위 밖입니다.
+
 ## Gate and review protocol
 
 1. Run `node --test tests/contracts/footmate-product-ux.contract.cjs`, current Regression 36, Browser E2E + axe, typography contracts, mobile WebKit.
