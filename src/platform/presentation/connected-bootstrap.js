@@ -186,7 +186,7 @@ async function finishOAuthReturn(){
   try{
     const config=await loadBackendConfig();
     const response=await fetch(`${config.url}/auth/v1/user`,{headers:{apikey:config.publishableKey,authorization:`Bearer ${token}`,accept:'application/json'},cache:'no-store'});if(!response.ok)throw new Error(`oauth_user_${response.status}`);
-    const user=await response.json();writeSession({signedIn:true,route:'checkout',userName:user?.user_metadata?.full_name||user?.user_metadata?.name||readSession().userName||'회원'});sessionStorage.removeItem(OAUTH_PENDING_KEY);sessionStorage.removeItem(OAUTH_ERROR_KEY);location.replace(resumeUrl({oauth:'success'}));
+    const user=await response.json();writeSession({signedIn:true,authExperience:'oauth',route:'checkout',userName:user?.user_metadata?.full_name||user?.user_metadata?.name||readSession().userName||'회원'});sessionStorage.removeItem(OAUTH_PENDING_KEY);sessionStorage.removeItem(OAUTH_ERROR_KEY);location.replace(resumeUrl({oauth:'success'}));
   }catch(_error){writeSession({signedIn:false,route:'auth'});sessionStorage.setItem(OAUTH_ERROR_KEY,'소셜 로그인 확인에 실패했습니다. 다시 시도해주세요.');sessionStorage.removeItem(OAUTH_PENDING_KEY);location.replace(resumeUrl({auth_error:'1'}))}
 }
 function closeTeamMessage(){document.getElementById(TEAM_DIALOG_ID)?.remove();document.documentElement.classList.remove('fm-release-dialog-open')}
