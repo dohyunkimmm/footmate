@@ -152,12 +152,12 @@ function card(row,index,state){
   const match=row.match;
   return `<button type="button" class="fm-next-match-card" data-action="open-match" data-match-id="${match.id}" data-recommendation-score="${row.score}" data-discovery-order="${index+1}" aria-label="${match.place} 상세 보기">
     <div class="fm-next-match-card-media">
-      <div class="fm-next-match-date"><span>${match.dateLabel}</span>${index===0?`<span class="fm-next-fit-badge">${iconSpark()} ${filters.sort==='fit'?'추천 1순위':'정렬 1순위'}</span>`:''}</div>
+      <div class="fm-next-match-date"><span>${match.dateLabel}</span>${index===0?`<span class="fm-next-fit-badge${filters.sort==='fit'&&String(row.fit).includes('차이')?' fm-next-fit-badge--caution':''}">${iconSpark()} ${filters.sort==='fit'&&String(row.fit).includes('차이')?'조건 확장':filters.sort==='fit'?'추천 1순위':'정렬 1순위'}</span>`:''}</div>
       <div class="fm-next-match-place">${match.place}</div>
     </div>
     <div class="fm-next-match-body">
       <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${row.fit||match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${spotLabel(match,state)}</span><span class="fm-next-tag" style="margin-left:auto;white-space:nowrap">${match.level}</span></div>
-      <div class="fm-next-match-footer"><div><small>${match.region} · ${match.format} · ${match.duration}</small></div><div class="fm-next-price">${money(match.price)}</div></div>
+      <div class="fm-next-match-footer"><div><small>${match.region} · ${match.format} · ${match.duration}</small></div><div class="fm-next-price"><span class="fm-next-price-sample">샘플</span> ${money(match.price)}</div></div>
     </div>
   </button>`;
 }
