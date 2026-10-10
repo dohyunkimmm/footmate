@@ -51,7 +51,7 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page).toHaveURL(/#section-01$/);
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
-  await expect(page.getByRole('link',{name:'제품 체험하기',exact:true})).toHaveAttribute('href','/demo');
+  await expect(page.getByRole('link',{name:'Interactive Demo 체험하기',exact:true})).toHaveAttribute('href','/demo');
 });
 
 test('body copy stays concise outside section intros, including collapsed details',async({page})=>{
@@ -450,10 +450,12 @@ for(const width of [320,390,1440]){
     await expect(page.locator('#section-09 a[href*="github.com"]')).toHaveCount(0);
     await page.locator('.toc-item').nth(3).click();
     await page.locator('#section-04 details summary').click();
-    await expect(page.locator('#section-04 details')).toContainText('샘플 앱 체험 · 화면과 기능 시연');
-    await expect(page.locator('#section-04 details')).toContainText('무료 베타 서비스 · 실제 서버 연결');
+    await expect(page.locator('#section-04 details')).toContainText('Interactive Demo · 기능 체험');
+    await expect(page.locator('#section-04 details')).toContainText('Closed Beta · 실제 서버 연결');
     await page.locator('.toc-item').nth(5).click();
-    await expect(page.locator('#section-06 a[href="/beta"]')).toContainText('무료 베타 서비스 보기');
+    await expect(page.locator('#section-06 a[href="/beta"]')).toContainText('Closed Beta 살펴보기');
+    await expect(page.locator('#section-06 a[href="/demo"]')).toContainText('Interactive Demo 체험하기');
+    await expect(page.locator('#section-06')).toContainText('체험용 데이터 · 실제 결제·참가 없음');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
