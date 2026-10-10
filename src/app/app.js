@@ -249,7 +249,7 @@ function discoverView(){
     ${topbar({showBrandTagline:false,actionHtml:mode==='real'?`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="기본 추천 조건 수정" style="width:auto;padding:0 10px;font-size:12px;white-space:nowrap">기본 조건</button>`:`<button type="button" class="fm-next-icon-button" data-action="edit-setup" aria-label="경기 조건 수정">${icon('level')}</button>`})}
     <div class="fm-next-section">
       <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>
-      <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
+      <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-base-label">기본 추천</span><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
       ${quickDiscoveryConditions()}
       <div class="fm-next-list">${MATCHES.map((match,index)=>matchCard(match,index)).join('')}</div>
     </div>
