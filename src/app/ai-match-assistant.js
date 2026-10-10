@@ -311,7 +311,12 @@ function configureHome(screen){
   if(list){
     list.dataset.iaRole='personalized-recommendations';
     const completedId=finishedMatchId();
-    list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>hidden(node,index>1||Boolean(completedId&&node.dataset.matchId===completedId)));
+    list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>{
+      const completed=Boolean(completedId&&node.dataset.matchId===completedId);
+      hidden(node,index>1||completed);
+      if(completed)node.style.setProperty('display','none','important');
+      else if(node.style.getPropertyValue('display')==='none'&&node.style.getPropertyPriority('display')==='important')node.style.removeProperty('display');
+    });
   }
   if(sessionStorage.getItem(FOCUS_KEY)==='1'){
     sessionStorage.removeItem(FOCUS_KEY);
@@ -351,7 +356,11 @@ function configureDiscover(screen){
   const completedId=finishedMatchId();
   cards.forEach(node=>{
     const matches=(!allowed||allowed.has(node.dataset.matchId))&&(!completedId||node.dataset.matchId!==completedId);
-    hidden(node,!matches);node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++;
+    hidden(node,!matches);
+    const completed=Boolean(completedId&&node.dataset.matchId===completedId);
+    if(completed)node.style.setProperty('display','none','important');
+    else if(node.style.getPropertyValue('display')==='none'&&node.style.getPropertyPriority('display')==='important')node.style.removeProperty('display');
+    node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++;
   });
   const empty=ensureEmpty(screen);hidden(empty,!(active&&saved?.result&&visible===0));hidden(screen.querySelector('.fm-next-list'),Boolean(active&&saved?.result&&visible===0));
   text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${visible}개 경기`);
