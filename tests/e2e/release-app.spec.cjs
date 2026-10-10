@@ -456,7 +456,7 @@ test('Demo social login hands off to Closed Beta before provider OAuth and never
   await expect(page.locator('.fm-release-auth-status')).toContainText('샘플 경기 선택은 실제 계정으로 이전되지 않습니다');
   await expect(page.getByRole('button',{name:'Closed Beta에서 Kakao 로그인'})).toBeVisible();
   await page.getByRole('button',{name:'Closed Beta에서 Google 로그인'}).click();
-  await expect(page).toHaveURL(/\\/beta$/);
+  await expect(page).toHaveURL(/beta$/);
   expect(errs).toEqual([]);
 });
 
