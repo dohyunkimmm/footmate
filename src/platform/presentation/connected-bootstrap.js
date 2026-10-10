@@ -159,22 +159,24 @@ function decorateAuth(){
     const button=ensureProviderButton(auth,provider);if(!button)return;
     button.removeAttribute('data-action');button.removeAttribute('data-provider');button.dataset.oauthProvider=provider;button.type='button';
     if(!providerState.loaded){button.disabled=true;button.hidden=false;button.setAttribute('aria-busy','true')}
-    else if(providerState.enabled[provider]){button.disabled=false;button.removeAttribute('aria-busy');button.hidden=false}
+    else if(providerState.enabled[provider]){button.disabled=false;button.removeAttribute('aria-busy');button.hidden=false;button.setAttribute('aria-label',`Closed Beta에서 ${provider==='google'?'Google':'Kakao'} 로그인`)}
     else{button.disabled=true;button.removeAttribute('aria-busy');button.hidden=true}
   });
   const status=ensureAuthStatus(auth),oauthError=sessionStorage.getItem(OAUTH_ERROR_KEY)||'';
   status.hidden=false;
   if(oauthError){status.dataset.tone='error';status.textContent=oauthError;sessionStorage.removeItem(OAUTH_ERROR_KEY)}
   else if(!providerState.loaded){status.hidden=true;status.dataset.tone='loading';status.textContent=''}
-  else if(providerState.enabled.google||providerState.enabled.kakao){status.dataset.tone='connected';status.textContent='Google 또는 Kakao로 계속하면 해당 서비스의 로그인 화면으로 이동합니다.'}
+  else if(providerState.enabled.google||providerState.enabled.kakao){status.dataset.tone='connected';status.textContent='실제 Google·Kakao 로그인은 Closed Beta에서 진행합니다. Demo의 샘플 경기 선택은 실제 계정으로 이전되지 않습니다.'}
   else{status.dataset.tone='unavailable';status.textContent='현재 활성화된 소셜 로그인 provider가 없습니다.'}
   if(!providerState.loaded&&!providerState.loading)void loadProviders();
 }
 async function authorize(provider){
   await loadProviders();
   if(!providerState.config||!providerState.enabled[provider]){sessionStorage.setItem(OAUTH_ERROR_KEY,`${provider==='google'?'Google':'Kakao'} 로그인이 현재 활성화되어 있지 않습니다.`);decorateAuth();return}
-  sessionStorage.setItem(OAUTH_PENDING_KEY,JSON.stringify({provider,startedAt:new Date().toISOString()}));
-  const url=new URL(`${providerState.config.url}/auth/v1/authorize`);url.searchParams.set('provider',provider);url.searchParams.set('redirect_to',`${location.origin}/beta`);location.assign(url.toString());
+  sessionStorage.removeItem(OAUTH_PENDING_KEY);
+  // The Release App is browser-local; only Closed Beta owns server-backed OAuth.
+  // Handoff before provider authorization so no Demo match is mistaken for a server join.
+  location.assign('/beta');
 }
 async function finishOAuthReturn(){
   if(entryMode!=='real'||entryParams.get('oauth_return')!=='1')return;
