@@ -369,3 +369,70 @@ test('Real App P1 labels widened recommendations and base discovery filters',asy
   }
   expect(errs).toEqual([]);
 });
+
+
+test('Flow P0 resumes returning players without repeating setup',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  await expect(page.locator('[data-screen="setup"]')).toHaveCount(0);
+  const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
+  await page.evaluate(matchId=>{
+    const key='footmate:session',s=JSON.parse(localStorage.getItem(key)||'{}');
+    localStorage.setItem(key,JSON.stringify({...s,route:'profile',joinedMatchId:matchId,signedIn:true,matchStage:'upcoming'}));
+  },matchId);
+  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
+  await expect(page.locator('[data-screen="welcome"]')).toHaveCount(0);
+  expect(errs).toEqual([]);
+});
+
+test('Flow P1 edits interpreted AI level and progressively relaxes empty results',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  const saved={version:'5.1.1',message:'초급 FW, 밤 11시 이후, 만원 이하',mode:'connected-ai',result:{
+    intent:'search',region:'수원 · 영통',position:'FW',level:'입문',afterTime:'23:00',
+    maxPrice:10000,maxDistanceMin:null,reply:'요청 조건 확인'
+  }};
+  await page.evaluate(saved=>{
+    sessionStorage.setItem('footmate:v5.2:discover-ai-snapshot',JSON.stringify(saved));
+    sessionStorage.setItem('footmate:v5.2:discover-ai-scope','1');
+    localStorage.setItem('footmate:v5.1:ai',JSON.stringify(saved));
+  },saved);
+  await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
+  const select=page.getByRole('combobox',{name:'AI가 해석한 경기 레벨 수정'});
+  await expect(select).toHaveValue('입문');
+  await select.selectOption('초중급');
+  await expect(select).toHaveValue('초중급');
+  await expect(page.locator('[data-ia-ai-summary]')).toContainText('초급');
+  await expect(page.getByRole('button',{name:'시간 조건 완화'})).toBeVisible();
+  await page.getByRole('button',{name:'시간 조건 완화'}).click();
+  await expect(page.locator('[data-ia-ai-summary]')).not.toContainText('23:00 이후');
+  await expect(page.getByRole('button',{name:'가격 조건 완화'})).toBeVisible();
+  const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v5.1:ai')||'{}').result);
+  expect(stored.level).toBe('초중급');
+  expect(stored.afterTime).toBeNull();
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
+test('Flow P2 preserves postgame feedback and hides completed match from next search',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
+  await seedSession(page,{route:'profile',signedIn:true,authExperience:'simulated',joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'postgame'});
+  const my=page.locator('[data-screen="profile"]');
+  await expect(my.locator('[data-flow-stage-guide]')).toBeVisible();
+  await expect(my.locator('.fm-next-profile-head p')).toContainText('체험 계정');
+  await my.locator('[data-v6-action="difficulty"][data-value="hard"]').click();
+  await my.locator('[data-v6-action="repeat"][data-value="false"]').click();
+  await my.getByRole('button',{name:'평가 저장'}).click();
+  await expect(my.locator('[data-v6-return="saved"]')).toBeVisible();
+  await page.getByRole('button',{name:'홈',exact:true}).click();
+  await expect(page.locator('[data-screen="home"] .fm-next-match-card[data-match-id="'+matchId+'"]')).toBeHidden();
+  await page.getByRole('button',{name:'다음 경기 찾기'}).click();
+  await expect(page.locator('[data-screen="discover"] .fm-next-match-card[data-match-id="'+matchId+'"]')).toBeHidden();
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
