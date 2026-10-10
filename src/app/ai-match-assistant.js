@@ -325,7 +325,7 @@ function ensureSummary(screen,saved,active,zero=false){
   const relax=active&&zero&&nextRelaxation(saved.result)?`<button type="button" data-ia-action="relax-ai">${nextRelaxation(saved.result).label} 조건 완화</button>`:'';
   const sig=JSON.stringify([active,zero,message,labels]);
   const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>${levelEditor}</div><div class="fm-discovery-ai-summary__actions">${relax}<button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'AI 조건 해제':'AI 조건 다시 적용'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
-  if(summary.dataset.iaSignature===sig&&summary.innerHTML===markup)return;
+  if(summary.dataset.iaSignature===sig)return;
   summary.dataset.iaSignature=sig;summary.innerHTML=markup;
 }
 function ensureEmpty(screen){
