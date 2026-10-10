@@ -52,6 +52,9 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
   await expect(page.getByRole('link',{name:'Interactive Demo 체험하기',exact:true})).toHaveAttribute('href','/demo');
+  await expect(page.getByRole('link',{name:'Closed Beta 살펴보기',exact:true})).toHaveAttribute('href','/beta');
+  await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
+  await expect(page.locator('#section-01 .experience-disclosure')).toContainText('실제 서버 연결 · 무료 참가 · 결제 없음');
 });
 
 test('body copy stays concise outside section intros, including collapsed details',async({page})=>{
@@ -431,7 +434,11 @@ for(const width of [320,390,1440,1920]){
 for(const width of [320,390,1440]){
   test('07 and 09 explain evidence without external navigation at '+width+'px',async({page})=>{
     await page.setViewportSize({width,height:900});
-    await page.goto('/#section-07');
+    await page.goto('/#section-01');
+    await expect(page.locator('#section-01 .experience-actions > a')).toHaveCount(2);
+    const ctas=await page.locator('#section-01 .experience-actions > a').evaluateAll(nodes=>nodes.map(node=>({left:node.getBoundingClientRect().left,right:node.getBoundingClientRect().right})));
+    expect(ctas.every(({left,right})=>left>=0&&right<=width+1)).toBe(true);
+    await page.locator('.toc-item').nth(6).click();
     await expect(page.locator('#section-07 .portfolio-optional-sources .validation-doc-links')).toBeHidden();
     await page.locator('#section-07 .portfolio-method-details summary').click();
     await expect(page.locator('#section-07 .portfolio-task-grid article')).toHaveCount(4);
