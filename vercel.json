@@ -10,15 +10,44 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "functions": {
-    "api/ai-match-assistant.js": {"maxDuration": 10}
+    "api/ai-match-assistant.js": {
+      "maxDuration": 10
+    }
   },
   "rewrites": [
-    {"source":"/app","destination":"/app.html"},
-    {"source":"/beta/operator","destination":"/beta-operator.html"},
-    {"source":"/beta","destination":"/beta.html"},
-    {"source":"/demo","destination":"/app.html"},
-    {"source":"/demo.html","destination":"/app.html"},
-    {"source":"/next","destination":"/app.html"},
-    {"source":"/next.html","destination":"/app.html"}
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/beta/operator",
+      "destination": "/beta-operator.html"
+    },
+    {
+      "source": "/beta",
+      "destination": "/beta.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/demo",
+      "destination": "/app",
+      "permanent": true
+    },
+    {
+      "source": "/demo.html",
+      "destination": "/app",
+      "permanent": true
+    },
+    {
+      "source": "/next",
+      "destination": "/app",
+      "permanent": true
+    },
+    {
+      "source": "/next.html",
+      "destination": "/app",
+      "permanent": true
+    }
   ]
 }

@@ -76,10 +76,10 @@ for(const path of ['/demo','/app']){
     expect(metrics.copyVisualShift).toBeGreaterThanOrEqual(-92);
     expect(metrics.copyVisualShift).toBeLessThanOrEqual(-84);
     expect(Math.round(metrics.actionsVisualShift)).toBe(0);
-    expect(Math.round(metrics.actionsTop)).toBe(756);
+    expect(Math.round(metrics.actionsTop)).toBe(702);
     expect(metrics.supportTop).toBeGreaterThan(metrics.headlineTop);
     expect(metrics.supportBottom).toBeLessThan(metrics.actionsTop);
-    expect(metrics.buttonHeights).toEqual([54]);
+    expect(metrics.buttonHeights).toEqual([54,44]);
   });
 }
 

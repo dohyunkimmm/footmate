@@ -170,7 +170,7 @@ if(root){
   function renderMatches(){
     if(backendState==='connecting')return `<div class="fm-beta-empty"><span class="fm-beta-spinner"></span>실제 경기 데이터를 연결하고 있습니다.</div>`;
     if(matchesError)return `<div class="fm-beta-empty"><strong>경기 데이터를 불러오지 못했습니다.</strong>${esc(matchesError)}<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" data-action="refresh" type="button">다시 시도</button></div></div>`;
-    if(!matches.length)return `<div class="fm-beta-empty"><strong>아직 공개된 실제 경기가 없습니다.</strong><p>운영자가 실제 경기를 공개하면 이곳에 표시됩니다. 현재는 가입하더라도 참가할 경기가 없어요.</p><div class="fm-beta-actions" style="justify-content:center;flex-wrap:wrap;margin-top:14px"><a class="fm-beta-button fm-beta-empty-demo-link" href="/demo">샘플 경기 체험하기</a><button class="fm-beta-button" data-action="refresh" type="button">경기 다시 확인</button></div><p class="fm-beta-form-hint">샘플 체험 기록은 Beta 실제 참가 기록으로 이전되지 않습니다. 경기 오픈 알림 신청은 아직 제공하지 않습니다.</p></div>`;
+    if(!matches.length)return `<div class="fm-beta-empty"><strong>아직 공개된 실제 경기가 없습니다.</strong><p>운영자가 실제 경기를 공개하면 이곳에 표시됩니다. 현재는 가입하더라도 참가할 경기가 없어요.</p><div class="fm-beta-actions" style="justify-content:center;flex-wrap:wrap;margin-top:14px"><a class="fm-beta-button fm-beta-empty-demo-link" href="/app">샘플 경기 체험하기</a><button class="fm-beta-button" data-action="refresh" type="button">경기 다시 확인</button></div><p class="fm-beta-form-hint">샘플 체험 기록은 Beta 실제 참가 기록으로 이전되지 않습니다. 경기 오픈 알림 신청은 아직 제공하지 않습니다.</p></div>`;
     return `<div class="fm-beta-match-list">${matches.map(renderMatch).join('')}</div>`;
   }
 

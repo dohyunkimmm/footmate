@@ -44,9 +44,11 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await expect(page.locator('.slide:visible')).toContainText('추천 로직 · 후보·순위·이유 결정');
 });
 
-test('v6.0.0 exact Production aliases stay current',async({page})=>{
-  for(const route of ['/demo','/next']){
-    await page.goto(route,{waitUntil:'domcontentloaded'});
+test('v6.0.0 legacy entry URLs redirect to the single /app entry',async({page})=>{
+  for(const route of ['/demo','/demo.html','/next','/next.html']){
+    const response=await page.goto(route+'?mode=real',{waitUntil:'domcontentloaded'});
+    expect(response.request().redirectedFrom()).not.toBeNull();
+    await expect(page).toHaveURL(/\/app\?mode=real$/);
     await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
   }
 });

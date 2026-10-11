@@ -564,3 +564,41 @@ test('Flow P2 preserves postgame feedback and hides completed match from next se
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
+
+test('guest entry keeps FootMate visible and can browse without completing preferences',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  const brand=page.locator('[data-screen="welcome"] .fm-next-brand');
+  await expect(brand).toBeVisible();
+  await expect(brand).toContainText('FootMate');
+  const box=await brand.boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y+box.height).toBeLessThanOrEqual(844);
+  await page.getByRole('button',{name:'경기 먼저 둘러보기',exact:true}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-browse-notice]')).toContainText('샘플 조건');
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')).setupComplete)).toBe(false);
+  await page.locator('[data-screen="discover"] .fm-next-match-card').first().click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await page.getByRole('button',{name:'이전 화면',exact:true}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
+  await page.locator('[data-quick-condition="region"]').selectOption('서울 · 강남');
+  await page.getByRole('button',{name:'이 조건으로 다시 찾기',exact:true}).click();
+  await expect(page.locator('[data-browse-notice]')).toHaveCount(0);
+  const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')));
+  expect(session.setupComplete).toBe(true);
+  expect(session.region).toBe('서울 · 강남');
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
+test('legacy demo entry redirects permanently to /app and preserves query parameters',async({request,page})=>{
+  for(const route of ['/demo','/demo.html']){
+    const response=await request.get(route+'?mode=guided&resume=1',{maxRedirects:0});
+    expect(response.status()).toBe(308);
+    expect(response.headers().location).toBe('/app?mode=guided&resume=1');
+  }
+  await page.goto('/demo?mode=guided#welcome',{waitUntil:'domcontentloaded'});
+  await expect(page).toHaveURL(/\/app\?mode=guided#welcome$/);
+  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
+});
