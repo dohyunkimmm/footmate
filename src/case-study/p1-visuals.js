@@ -101,7 +101,7 @@
     state.innerHTML='<span><small>상태 보존</small><b>선택 경기 + 로그인 후 복귀 위치</b></span>';
 
     scope.classList.add('fm-p1-auth-boundary');
-    scope.setAttribute('aria-label','Real App과 Closed Beta의 인증 및 참가 구현 경계');
+    scope.setAttribute('aria-label','Interactive Demo과 Closed Beta의 인증 및 참가 구현 경계');
     [...scope.querySelectorAll('div')].forEach((row,index)=>{
       row.dataset.boundary=index===0?'simulation':index===1?'connected':'verified';
     });
@@ -179,10 +179,10 @@
 
     mark(slide,'release-boundary');
     outcomes.classList.add('fm-p1-release-map');
-    outcomes.setAttribute('aria-label','Real App, Closed Beta, 미연동 및 미검증 범위');
+    outcomes.setAttribute('aria-label','Interactive Demo, Closed Beta, 미연동 및 미검증 범위');
     outcomes.innerHTML=`
       <article data-zone="real-app">
-        <header><small>REAL APP</small><b>사용자에게 보여주는 제품 표면</b></header>
+        <header><small>Interactive Demo</small><b>사용자에게 보여주는 제품 표면</b></header>
         <ul>
           ${releaseItem('connected','실연동','AI Gateway')}
           ${releaseItem('implemented','구현','결정론적 추천')}

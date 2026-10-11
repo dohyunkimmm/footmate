@@ -2199,7 +2199,7 @@ html[data-fm-next-case-study="true"] :is(
 }
 
 /* ===== src/case-study/p1-real-preview.css ===== */
-/* FootMate Case Study · P1 Real App home preview */
+/* FootMate Case Study · P1 Interactive Demo home preview */
 html[data-fm-next-case-study="true"] .fm-cs-static-preview.fm-cs-real-home-preview{
   height:auto!important;
   min-height:0!important;
@@ -2449,7 +2449,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
   box-shadow:none!important;
 }
 
-/* P13 keeps one clear focal zone. Real App / open boundary are intentionally quieter. */
+/* P13 keeps one clear focal zone. Interactive Demo / open boundary are intentionally quieter. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article:not(.is-focus){
   border-color:transparent!important;
   background:#f8f9f8!important;

@@ -3,16 +3,16 @@
 ## 범위
 
 - Case Study (/): 기존 9단계의 8개 화면 폭·대체폰트·확대·간격·스크린샷 검사를 유지한다.
-- Real App (/app): Home, Discover, Detail, 무료 Join, MY의 텍스트 기하·글꼴·한글 줄바꿈 검사를 확대한다.
+- Interactive Demo (/app): Home, Discover, Detail, 무료 Join, MY의 텍스트 기하·글꼴·한글 줄바꿈 검사를 확대한다.
 - /beta 및 /beta/operator, 기능·문구·IA·색상·이미지·인증 흐름은 변경하지 않는다.
 
 ## P0 · CI 경로
 
 - 현재 저장소에 없는 구형 Case Study 테스트 파일 8개 참조를 제거한다.
 - node scripts/check-qa-test-paths.cjs 로 워크플로에 적힌 E2E 테스트 경로의 실재 여부를 확인한다.
-- 기존 Case Study 및 Real App, Chromium·WebKit 회귀 검사를 유지한다.
+- 기존 Case Study 및 Interactive Demo, Chromium·WebKit 회귀 검사를 유지한다.
 
-## P1 · Real App 글자 검증
+## P1 · Interactive Demo 글자 검증
 
 - 320, **375**, 390, 430, 560, 699, 700, 960, **1366**, 1440, **1920**px: Welcome, Home, Discover의 글자 영역·최소 크기·행간·가로 넘침을 확인한다.
 - 390, 1440px: Detail → 무료 Join → MY의 텍스트도 검사한다.

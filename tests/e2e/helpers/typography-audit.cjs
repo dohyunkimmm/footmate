@@ -5,7 +5,7 @@ const path=require('node:path');
 const {createHash}=require('node:crypto');
 
 /*
- * Read-only browser audit shared by Real App typography scenarios.
+ * Read-only browser audit shared by Interactive Demo typography scenarios.
  * Geometry failures are separate from editorial review suggestions.
  */
 async function inspectTypography(page,selector){

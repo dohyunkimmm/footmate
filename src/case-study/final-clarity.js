@@ -127,7 +127,7 @@
     setText(auth,'.fm-next-story-lead','선택 경기와 복귀 위치를 유지하고 로그인 뒤 무료 참가 확인으로 이어집니다.');
     setSummary(auth,[['진입점','참가하기 직전'],['계정','로그인'],['결과','무료 참가 확인 · MY']]);
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','로그인 · 무료 참가 확인 · MY'],
+      ['Interactive Demo','로그인 · 무료 참가 확인 · MY'],
       ['Closed Beta','Supabase 계정 · 참가 실연동'],
       ['검증 범위','Google/Kakao OAuth Production 확인 · 실제 PG 미연동']
     ]));
@@ -217,8 +217,8 @@
 
     const release=slides[12];
     setText(release,'.fm-next-story h2','구현 결과와 다음 과제를 정리했습니다.');
-    setText(release,'.fm-next-story-lead','Real App과 Closed Beta의 연결 범위를 나눠 확인했고, 실제 이용자 KPI·결제·수익성은 후속 검증으로 남겼습니다.');
-    setSummary(release,[['Real App','AI · sample · browser-local'],['Closed Beta','Supabase · Resend · Push'],['다음 단계','실제 결제 · 이용자 KPI · 수익성']]);
+    setText(release,'.fm-next-story-lead','Interactive Demo과 Closed Beta의 연결 범위를 나눠 확인했고, 실제 이용자 KPI·결제·수익성은 후속 검증으로 남겼습니다.');
+    setSummary(release,[['Interactive Demo','AI · sample · browser-local'],['Closed Beta','Supabase · Resend · Push'],['다음 단계','실제 결제 · 이용자 KPI · 수익성']]);
     release.querySelector('.fm-next-cs-outcomes')?.remove();
     release.querySelector('.fm-next-cs-final')?.remove();
 

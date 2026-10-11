@@ -80,7 +80,7 @@
     setRow(slides[6],'Trade-off','비교 대상 제한 · 참가 전 취소·환불 기준 확인');
 
     // 08 · Sign in · Join — keep the dedicated spacing; normalize only row copy.
-    setRow(slides[7],'Real App','인증 · 결제 시뮬레이션');
+    setRow(slides[7],'Interactive Demo','인증 · 결제 시뮬레이션');
     setRow(slides[7],'Closed Beta','Supabase 인증 · 참가 실연동');
     setRow(slides[7],'상태 보존','선택 경기 · 로그인 후 복귀 위치 유지');
     setRow(slides[7],'검증 범위','Google/Kakao OAuth Production 실로그인 검증 · 실제 PG 미연동');

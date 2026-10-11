@@ -9,15 +9,15 @@
 - Scope: Case Study 02–13을 페이지별로 재검토해 title·lead·summary·card·table의 동일 핵심어 반복을 줄이고, 각 section의 한 가지 기획 판단이 먼저 읽히도록 final clarity를 정리
 - Runtime PR: #314 · merged SHA `d12a806d7a9a76987ef1ff08b250f79e91fb187a`
 - Current Case Study content/runtime baseline: `d12a806d7a9a76987ef1ff08b250f79e91fb187a`
-- Moving main boundary: 이 문서 sync 시점의 repository `main`은 `ae3cfedd5a9d1a4852fc19615dea8ac029768096`이며 Real App mobile shell 변경이다. `index.html`과 `case-study-final-clarity.js` blob은 #314 baseline과 동일해 Case Study 표시 내용은 변경되지 않았다.
+- Moving main boundary: 이 문서 sync 시점의 repository `main`은 `ae3cfedd5a9d1a4852fc19615dea8ac029768096`이며 Interactive Demo mobile shell 변경이다. `index.html`과 `case-study-final-clarity.js` blob은 #314 baseline과 동일해 Case Study 표시 내용은 변경되지 않았다.
 - Copy ownership: 기존 connected/heading/service-planner/reviewer/lead-tighten/structured-copy 계층을 유지하되 최종 reader-facing 표시 문구와 페이지별 반복어 closure는 `case-study-final-clarity.js`가 마지막으로 적용
 - Repetition contract: 02–13의 핵심어 반복을 E2E로 직접 제한. 대표적으로 10 `보존` 0회, 11 `결정론적` 최대 1회, 12 `계산 기준` 최대 1회이며 `참가`·`탐색`·`추천`·`로그인`·`검증` 등도 페이지별 상한 적용
 - 10 Recovery: 원인 · 유지 상태 · 재시도/대체 행동을 직접 표시하고 `보존` 반복 라벨 제거
 - 11 Domain & AI: lead는 AI 조건 해석과 판단/실행 책임 분리에 집중하고 `결정론적 추천 엔진`은 상세 책임 근거에서 1회만 유지. AI가 경기 사실·가격·정원·순위를 생성하지 않고 참가·결제는 사용자 최종 확인하는 기존 guardrail 유지
 - 12 KPI & Validation: KPI와 QA, 측정 준비를 분리하고 Case Study 내부 8개 KPI modal 유지. 추가 지표·제외 기준·Baseline 준비 문구를 compact phrase로 정리하고 `connected-ai`와 `rules-fallback`, 사용률과 품질 판단을 분리
-- 13 Release & Learnings: `구현 / 검증 / 다음 단계` 3개 summary만 유지하고 Real App/Closed Beta 중복, 검증 표본·과업 상세, Production QA 반복, 중복 Real App CTA 제거
+- 13 Release & Learnings: `구현 / 검증 / 다음 단계` 3개 summary만 유지하고 Interactive Demo/Closed Beta 중복, 검증 표본·과업 상세, Production QA 반복, 중복 Interactive Demo CTA 제거
 - Phrase contract correction: 현재 02–13 structured label/value·table·flow·card는 명사형·짧은 구 + 무마침표가 기준이다. #286의 `이유·Trade-off·검증 설명은 항상 문장형` 해석은 현재 structured runtime과 충돌하는 범위에서 supersede되며, lead 등 long-form explanatory prose는 문장형을 유지
-- Preserved: 01 Cover, 13-section IA, 02–13 desktop center alignment, 08 auth 전용 spacing, 09 legacy link 제거, 12 KPI 내부 evidence modal, Validation Metric과 Measured Result 분리, 사용자 과업 검증의 해석 한계, Real App/Closed Beta 기능·API·state-machine 경계
+- Preserved: 01 Cover, 13-section IA, 02–13 desktop center alignment, 08 auth 전용 spacing, 09 legacy link 제거, 12 KPI 내부 evidence modal, Validation Metric과 Measured Result 분리, 사용자 과업 검증의 해석 한계, Interactive Demo/Closed Beta 기능·API·state-machine 경계
 - #314 closure QA: FootMate QA #1558 · run `36148319925` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - #314 exact Production verification: exact Vercel deployment PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
 - Documentation boundary: 이 correction과 `CASE-STUDY-COPY-QA-CORRECTIONS.md`만 #314 current Case Study baseline으로 동기화한다. 제품 기능과 장기 제품 사실이 바뀐 변경이 아니므로 root README, Beta runbook, AI architecture를 중복 수정하지 않는다.
@@ -56,7 +56,7 @@
 - PR QA: FootMate QA #1346 · run `36089398183` · SUCCESS · Change Impact PASS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
 - Final main QA: FootMate QA #1349 · run `36089979474` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: Vercel exact deploy PASS · HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
-- Preserved: 08 상태 보존/인증 spacing, 09 legacy 링크 제거, 12 Validation Metric과 실제 성과의 구분, Real App/Closed Beta 제품·API·data/state-machine 경계, 사용자 과업 검증의 해석 한계
+- Preserved: 08 상태 보존/인증 spacing, 09 legacy 링크 제거, 12 Validation Metric과 실제 성과의 구분, Interactive Demo/Closed Beta 제품·API·data/state-machine 경계, 사용자 과업 검증의 해석 한계
 - Current Case Study runtime/Production baseline at this closure: `205c1049109be2feadaedbb5937e00b812cd736e`; current baseline is superseded by the #286 closure above.
 - Notion boundary: 사용자 수동 수정본을 우선한다. 이 closure와 중복되거나 의미가 겹치는 Notion 내용은 자동 덮어쓰지 않는다.
 
@@ -65,7 +65,7 @@
 - Scope: 08 Sign in · Join 안의 인증 flow와 로그인·참가 증빙 표 내부 여백만 조정하고, section 전체 세로 위치와 02–13 page rhythm은 변경하지 않음
 - Runtime PR: #273 · merged SHA `c51411ed164d50f1366d0f71aa3a220407dd41ff`
 - Auth flow: `둘러보기 → 참가 의도 → 인증/로그인 → 참가 상태` 셀의 gap과 내부 padding을 08 전용 selector로 조정
-- Evidence table: `Real App / Closed Beta / 상태 보존 / 검증 범위` 4개 행의 panel padding, 행 간격, label/value column 간격을 08 전용 selector로 조정하며 다른 `.fm-cs-reasons` 표에는 적용하지 않음
+- Evidence table: `Interactive Demo / Closed Beta / 상태 보존 / 검증 범위` 4개 행의 panel padding, 행 간격, label/value column 간격을 08 전용 selector로 조정하며 다른 `.fm-cs-reasons` 표에는 적용하지 않음
 - Desktop preservation: 08을 포함한 02–13 active story의 `align-items:center` 계약과 page-level padding/story gap/title·lead margin은 유지
 - Mobile: 08 증빙 표는 label 위·본문 아래의 1-column 구조를 유지하면서 해당 행 내부 spacing만 별도 고정
 - Cache boundary: Case Study visual hierarchy stylesheet query를 갱신해 official Production alias에서 이전 stylesheet 재사용 가능성을 줄임
@@ -73,7 +73,7 @@
 - PR QA: FootMate QA #1301 · run `36078936502` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
 - Final main QA: FootMate QA #1302 · run `36081422283` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS
-- Preserved: PR #271 page-rhythm correction, #268에서 승인된 독자용 카피·증거 변경, 08 상태 보존 문구, 09 legacy 링크 제거, 12 KPI 계산 기준, green 강조 의미 규칙, Real App/Closed Beta 제품·API·data/state-machine 경계
+- Preserved: PR #271 page-rhythm correction, #268에서 승인된 독자용 카피·증거 변경, 08 상태 보존 문구, 09 legacy 링크 제거, 12 KPI 계산 기준, green 강조 의미 규칙, Interactive Demo/Closed Beta 제품·API·data/state-machine 경계
 - Current Case Study runtime/Production baseline at this closure: `c51411ed164d50f1366d0f71aa3a220407dd41ff`; current baseline is superseded by the #286 closure above.
 
 ## Case Study page rhythm correction · 2026-09-25
@@ -85,7 +85,7 @@
 - 08 Sign in · Join: 인증·로그인/참가 범위 표를 다듬을 때는 해당 표의 행·셀 내부 여백과 wrapping을 조정하며 section 전체 세로 위치는 유지한다. 실제 08 전용 spacing 구현과 QA는 위 #273 closure가 현재 기준이다.
 - Natural wrapping: `.fm-cs-line`을 inline 흐름으로 유지해 가능한 폭을 먼저 사용하고, 폭이 부족할 때만 자연스럽게 줄바꿈한다. 05 Guest First의 짧은 비교 흐름도 1440px에서 공간이 있으면 같은 줄을 유지한다.
 - Visual regression correction: #268에서 위로 붙은 02–13 상태를 승인 snapshot으로 취급하지 않는다. 현재 자동 gate는 cover/caption pixel baseline을 유지하면서 02–13에 대해 `align-items:center`, 강제 38px padding 비사용, center geometry, horizontal overflow, natural wrapping을 직접 검사한다.
-- Preserved from #268: 내부 `PBL` 제거와 같은 교육과정을 수강한 교육생 6명 맥락, 08 상태 보존 문구, 09 legacy evidence-mode 외부 링크 제거, 12 `계산 기준 · A ÷ B`, green 강조 의미 규칙, Real App/Closed Beta 제품·API·data/state-machine 경계
+- Preserved from #268: 내부 `PBL` 제거와 같은 교육과정을 수강한 교육생 6명 맥락, 08 상태 보존 문구, 09 legacy evidence-mode 외부 링크 제거, 12 `계산 기준 · A ÷ B`, green 강조 의미 규칙, Interactive Demo/Closed Beta 제품·API·data/state-machine 경계
 - PR QA: FootMate QA #1288 · run `36073846426` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
 - Final main QA: FootMate QA #1289 · run `36074420880` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS · Chromium smoke PASS

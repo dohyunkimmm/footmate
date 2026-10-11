@@ -6,7 +6,7 @@
 
 - Root `README.md` — 현재 제품 가치, 사용자 여정, AI Agent Workflow, 연동/미연동 경계, release readiness 기준
 - Interactive Demo `/demo` — AI 추천·경기 탐색·참가 흐름을 체험하는 경로. 경기 데이터는 샘플이며 실제 경기 참가·결제 없음
-- Real App `/app` — Interactive Demo와 동일한 체험 런타임의 개발·QA용 Release App 경로
+- Interactive Demo `/app` — Interactive Demo와 동일한 체험 런타임의 개발·QA용 Release App 경로
 - Closed Beta `/beta` — 실제 서버에 연결된 계정·경기·참가 상태를 사용하는 무료 베타 서비스. 실제 결제 없음
 - Closed Beta Operator `/beta/operator` — allowlisted + TOTP MFA 운영자 경로
 - Guided `/app?mode=guided` — 설명이 포함된 리뷰 흐름

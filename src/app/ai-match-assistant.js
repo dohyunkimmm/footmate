@@ -191,7 +191,7 @@ if(root){
 
 })();
 
-/* Real App IA: Home owns AI entry; Discover owns result exploration. */
+/* Interactive Demo IA: Home owns AI entry; Discover owns result exploration. */
 (()=>{
 const root=document.getElementById('footmate-next');
 if(!root)return;

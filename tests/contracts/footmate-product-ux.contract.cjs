@@ -67,7 +67,7 @@ test('P2 utility links require confirmed participation for calendar actions',()=
 });
 
 
-test('Real App P0/P1 visual copy preserves demo boundaries and top-rank caution',()=>{
+test('Interactive Demo P0/P1 visual copy preserves demo boundaries and top-rank caution',()=>{
   const release=fs.readFileSync(path.join(root,'src/app/release-app.js'),'utf8');
   const recommendation=fs.readFileSync(path.join(root,'src/app/recommendation.js'),'utf8');
   const discovery=fs.readFileSync(path.join(root,'src/app/discovery.js'),'utf8');

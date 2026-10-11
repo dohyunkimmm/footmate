@@ -58,7 +58,7 @@ html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="
   box-shadow:none!important;
 }
 
-/* P13 keeps one clear focal zone. Real App / open boundary are intentionally quieter. */
+/* P13 keeps one clear focal zone. Interactive Demo / open boundary are intentionally quieter. */
 html[data-fm-next-case-study="true"] .fm-next-story-slide[data-v5-content-role="production-boundary"] .fm-p1-release-map>article:not(.is-focus){
   border-color:transparent!important;
   background:#f8f9f8!important;

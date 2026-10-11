@@ -345,7 +345,7 @@ test('Release App keeps Matchday operations inside MY',async({page})=>{
 });
 
 
-test('Real App P0 trust copy distinguishes sample prices from actual zero charge',async({page})=>{
+test('Interactive Demo P0 trust copy distinguishes sample prices from actual zero charge',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
   await expect(page.locator('[data-screen="home"] .fm-next-price-sample').first()).toHaveText('샘플');
@@ -361,7 +361,7 @@ test('Real App P0 trust copy distinguishes sample prices from actual zero charge
   expect(errs).toEqual([]);
 });
 
-test('Real App P1 labels widened recommendations and base discovery filters',async({page})=>{
+test('Interactive Demo P1 labels widened recommendations and base discovery filters',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
   await seedSession(page,{route:'home',region:'수원 · 영통',position:'FW',level:'입문'});
@@ -462,7 +462,7 @@ test('Flow P1 edits interpreted AI level and progressively relaxes empty results
   expect(errs).toEqual([]);
 });
 
-test('Real App labels legacy local sessions safely and separates explicit OAuth sessions',async({page})=>{
+test('Interactive Demo labels legacy local sessions safely and separates explicit OAuth sessions',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');

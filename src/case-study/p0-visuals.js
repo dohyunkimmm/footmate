@@ -120,7 +120,7 @@
 
     mark(slide,'recommendation');
     surface.classList.add('fm-p0-recommendation');
-    surface.setAttribute('aria-label','Real App 정보 구조를 축약한 추천 화면과 추천 입력 근거');
+    surface.setAttribute('aria-label','Interactive Demo 정보 구조를 축약한 추천 화면과 추천 입력 근거');
     surface.innerHTML=`
       <div class="fm-p0-reco-stage">
         <div class="fm-p0-app-frame">
@@ -136,7 +136,7 @@
             </div>
             <div class="fm-p0-match-footer"><span>현재 경기 조건 반영</span><strong>추천 1순위</strong></div>
           </article>
-          <div class="fm-p0-ui-caption"><span>Real App 정보 구조 기반</span><b>점수보다 이유를 먼저 읽는 추천 표면</b></div>
+          <div class="fm-p0-ui-caption"><span>Interactive Demo 정보 구조 기반</span><b>점수보다 이유를 먼저 읽는 추천 표면</b></div>
         </div>
       </div>
       <ol class="fm-p0-annotations">
