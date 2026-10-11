@@ -35,6 +35,6 @@ assert(api.includes('allowedByRateLimit(req)'),'rate-limit guardrail missing');
 assert(JSON.parse(vercel).functions?.['api/ai-match-assistant.js']?.maxDuration===10,'Vercel function cost bound missing');
 assert(!data.includes('최근 경기 ELO 범위'),'current deterministic recommendation must not claim ELO ownership');
 assert(cs.includes('footmate-case-study-release\" content=\"5.5.0\"'),'Case Study must preserve its independent v5.5.0 release');
-assert(narrative.includes('추천 로직 · 후보·순위·이유 결정'),'Case Study deterministic ranking responsibility missing');
+assert(narrative.includes('AI는 조건 해석 · 후보 순위와 근거는 규칙 엔진'),'Case Study deterministic ranking responsibility missing');
 assert(narrative.includes('사용자 직접 확정 · 자동 실행 제외'),'Case Study user confirmation boundary missing');
 console.log('PASS AI Match Assistant resilience boundary');
