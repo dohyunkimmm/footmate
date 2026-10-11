@@ -96,10 +96,11 @@ function guide(){
     ['Value first','회원가입보다 서비스 가치를 먼저 이해합니다.'],
     ['Preference before account','지역·포지션·레벨만 먼저 설정합니다.'],
     ['See the recommendation','가입 없이 추천 경기를 먼저 확인합니다.'],
-    ['Decide with confidence','추천 이유·자리·가격·정책을 한 화면에서 판단합니다.'],
-    ['Sign in to join','참가 의사가 생긴 시점에만 로그인을 요청합니다.'],
-    ['Matchday continuity','참가 후에는 오늘의 경기와 체크인까지 이어집니다.']
+    ['Decide with confidence','레벨·포지션 자리·샘플 가격·정책을 비교합니다.'],
+    ['Confirm the role','마감 포지션은 차단 · 대체 포지션은 직접 선택합니다.'],
+    ['Join → MY','브라우저 체험 계정으로 무료 참가를 확인하고 MY로 이어집니다.']
   ];
+  const hints=['시작 · 계정 없이 샘플 앱을 살펴보세요.','설정 · 지역·포지션·경기 강도를 선택하세요.','탐색 · 추천 이유와 필터로 후보를 좁혀보세요.','비교 · 상세에서 포지션·취소 안내를 확인하세요.','판단 · 마감 시 대체 포지션은 직접 선택하세요.','연속성 · 참가 확인·MY와 경기 당일 흐름을 살펴보세요.'];
   const scenario=mode==='evidence'?`<div class="fm-next-evidence-box"><small>EVIDENCE MODE</small><p>외부 인증·결제·실시간 수용량은 연결하지 않은 세션 기반 검증 상태입니다. UI의 정상·경기당일·경기후 상태를 독립적으로 확인합니다.</p></div>
     <div class="fm-next-scenarios" aria-label="검증 시나리오">
       <button data-action="scenario-discover">탐색 전</button>
@@ -111,15 +112,17 @@ function guide(){
     <div class="fm-next-guide-brand"><span class="fm-next-brand-mark">${icon('logo')}</span>FootMate</div>
     <div class="fm-next-guide-kicker">${mode==='evidence'?'Reviewer Evidence':'Guided Case Study'}</div>
     <h1>실제 사용자 흐름을 먼저 보여줍니다.</h1>
-    <p>기술 설명보다 사용자가 언제 가치를 느끼고, 왜 가입하며, 어떻게 경기 당일까지 이어지는지를 앞에 둔 v4 공식 경험입니다.</p>
+    <p>포트폴리오 심사용 v6 체험 안내 · Find → Decide → Join → Play → Return</p><p>Real App과 동일한 샘플 경기 · 브라우저 체험용 참가 · 실제 청구 0원</p><p>소셜 로그인은 별도 Closed Beta로 이동하며 샘플 기록은 이전되지 않음</p>
     ${scenario}
     <div class="fm-next-guide-steps">
       ${steps.map((item,index)=>`<div class="fm-next-guide-step${routeStep===index?' is-current':''}"><b>${index+1}. ${item[0]}</b><span>${item[1]}</span></div>`).join('')}
     </div>
+    <p class="fm-next-guide-hint" role="status">${hints[routeStep]}</p>
     <div class="fm-next-guide-actions">
       ${button(`${icon('reset')} 처음부터 보기`,'reset-flow','ghost')}
       ${button('Real App만 보기','open-real','lime')}
     </div>
+    <p><a href="/#section-06">Case Study의 설계 결정·검증 보기 ↗</a></p>
   </aside>`;
 }
 
