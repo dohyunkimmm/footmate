@@ -44,11 +44,11 @@ async function expectMinimumTouchTarget(locator){
   }
 }
 
-test('Welcome describes AI as constraint interpreter while deterministic recommendation owns ranking',async({page})=>{
+test('Restored Welcome stays concise while AI interpretation and ranking ownership remain explicit',async({page})=>{
   await openClean(page);
   const copy=page.locator('[data-screen="welcome"] [data-welcome-ai-copy]');
-  await expect(copy).toHaveText('AI가 원하는 조건을 해석해, 맞는 경기를 빠르게 찾게 도와줘요.');
-  await expect(copy).toHaveAttribute('data-ai-role-aligned','true');
+  await expect(copy).toHaveCount(0);
+  await expect(page.locator('[data-screen="welcome"] h1')).toHaveText('내 수준에 맞는 경기부터,경기 당일까지.');
   const contract=await page.evaluate(()=>({
     presentation:window.__FOOTMATE_P0_USABILITY_TRUST__,
     ai:{role:window.__FOOTMATE_AI__?.role,rankingOwner:window.__FOOTMATE_AI__?.rankingOwner}
