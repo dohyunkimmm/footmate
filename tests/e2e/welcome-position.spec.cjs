@@ -1,48 +1,31 @@
 const {test,expect}=require('@playwright/test');
 
-test('Welcome moves only headline and AI support copy 88px while CTAs stay anchored',async({page})=>{
-  await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>{
-    localStorage.clear();
-    localStorage.setItem('footmate:v4:session',JSON.stringify({route:'welcome',setupComplete:true,region:'서울 · 강남',position:'GK',level:'입문',signedIn:false,userName:'게스트'}));
-  });
-  await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
-  await page.waitForFunction(()=>document.querySelector('[data-screen="welcome"] [data-welcome-ai-copy]')?.dataset.aiRoleAligned==='true');
-  await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
-
-  const metrics=await page.evaluate(()=>{
-    const screen=document.querySelector('[data-screen="welcome"]');
-    const copy=screen.querySelector('.fm-next-intro-copy');
-    const headline=copy.querySelector('h1');
-    const support=copy.querySelector('[data-welcome-ai-copy]');
-    const actions=screen.querySelector('.fm-next-actions');
-    const buttons=[...actions.querySelectorAll('button')];
-    const snapshot=()=>({
-      copyTop:copy.getBoundingClientRect().top,
-      headlineTop:headline.getBoundingClientRect().top,
-      supportTop:support.getBoundingClientRect().top,
-      actionsTop:actions.getBoundingClientRect().top,
-      buttonTops:buttons.map(node=>node.getBoundingClientRect().top),
-      buttonHeights:buttons.map(node=>node.getBoundingClientRect().height),
-      transform:getComputedStyle(copy).transform,
-      supportText:support.textContent.trim()
+for(const width of [320,390,430,1440]){
+  test(`Restored Welcome keeps the FootMate brand and bottom headline usable at ${width}px`,async({page})=>{
+    await page.setViewportSize({width,height:width===1440?900:844});
+    await page.goto('/app',{waitUntil:'domcontentloaded'});
+    await page.evaluate(()=>localStorage.clear());
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
+    await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
+    const screen=page.locator('[data-screen="welcome"]');
+    await expect(screen.locator('.fm-next-brand')).toContainText('FootMate');
+    await expect(screen.locator('.fm-next-intro-copy')).toHaveCSS('transform','none');
+    await expect(screen.locator('[data-welcome-ai-copy]')).toHaveCount(0);
+    const geometry=await screen.evaluate(node=>{
+      const box=node.getBoundingClientRect();
+      const brand=node.querySelector('.fm-next-brand').getBoundingClientRect();
+      const title=node.querySelector('h1').getBoundingClientRect();
+      const actions=node.querySelector('.fm-next-actions').getBoundingClientRect();
+      return {screenTop:box.top,screenBottom:box.bottom,brandTop:brand.top,brandBottom:brand.bottom,titleTop:title.top,titleBottom:title.bottom,actionsTop:actions.top,actionsBottom:actions.bottom,overflow:document.documentElement.scrollWidth>innerWidth};
     });
-    const moved=snapshot();
-    copy.style.setProperty('transform','none','important');
-    const natural=snapshot();
-    copy.style.removeProperty('transform');
-    const restored=snapshot();
-    return {moved,natural,restored};
+    expect(geometry.brandTop).toBeGreaterThanOrEqual(geometry.screenTop+8);
+    expect(geometry.brandBottom).toBeLessThan(geometry.titleTop);
+    expect(geometry.titleTop).toBeGreaterThan(geometry.screenTop+(geometry.screenBottom-geometry.screenTop)/2);
+    expect(geometry.titleBottom).toBeLessThanOrEqual(geometry.actionsTop);
+    expect(geometry.actionsBottom).toBeLessThanOrEqual(geometry.screenBottom);
+    expect(geometry.overflow).toBe(false);
+    await expect(screen.getByRole('button',{name:/내 경기 찾아보기/})).toBeVisible();
+    await expect(screen.getByRole('button',{name:'경기 먼저 둘러보기'})).toBeVisible();
   });
-
-  expect(Math.round(metrics.natural.headlineTop-metrics.moved.headlineTop)).toBe(88);
-  expect(Math.round(metrics.natural.supportTop-metrics.moved.supportTop)).toBe(88);
-  expect(Math.round(metrics.natural.actionsTop-metrics.moved.actionsTop)).toBe(0);
-  expect(metrics.natural.buttonTops.map((top,index)=>Math.round(top-metrics.moved.buttonTops[index]))).toEqual([0,0]);
-  expect(metrics.moved.buttonHeights).toEqual([54,54]);
-  expect(metrics.restored.headlineTop).toBeCloseTo(metrics.moved.headlineTop,3);
-  expect(metrics.moved.transform).toBe('matrix(1, 0, 0, 1, 0, -88)');
-  expect(metrics.moved.supportText).toBe('AI가 원하는 조건을 해석해, 맞는 경기를 빠르게 찾게 도와줘요.');
-});
+}
