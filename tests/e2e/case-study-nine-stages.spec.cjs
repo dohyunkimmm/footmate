@@ -36,7 +36,8 @@ test('paired portfolio connects Interactive Demo and documents a real QA before-
   await page.goto('/');
   const first=page.locator('#section-01');
   await expect(first.getByRole('link',{name:'Interactive Demo 직접 체험하기'})).toHaveAttribute('href','/app');
-  await expect(first).toContainText('체험 기록은 Closed Beta로 옮겨지지 않음');
+  await expect(first.locator('a')).toHaveCount(1);
+  await expect(first).not.toContainText('Closed Beta');
   await page.locator('.toc-item').nth(5).click();
   await expect(page.locator('#section-06 .portfolio-change-evidence')).toHaveCount(0);
   await expect(page.locator('.slide:not(#section-01) a[href^="/demo"],.slide:not(#section-01) a[href^="/app"],.slide:not(#section-01) a[href^="/beta"]')).toHaveCount(0);
@@ -61,7 +62,7 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await page.locator('.slide:visible summary').click();
   await expect(page.locator('.slide:visible details')).toHaveAttribute('open','');
   await page.locator('.toc-item').nth(6).click();
-  await expect(page.locator('.slide:visible')).toContainText('실제 이용 기준값·목표치는 미확보');
+  await expect(page.locator('.slide:visible')).toContainText('계산·관찰·제외 기준 정의');
   await page.getByText('8개 KPI의 계산·관찰 기준',{exact:true}).click();
   await expect(page.locator('.slide:visible details tbody tr')).toHaveCount(8);
   await page.reload();
@@ -70,9 +71,9 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await page.locator('.toc-item').first().click();
   await expect(page.getByRole('link',{name:'Interactive Demo 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
   await expect(page.locator('.experience-actions a[href="/app?mode=guided"]')).toHaveCount(0);
-  await expect(page.locator('#section-01 .experience-disclosure a[href="/beta"]')).toHaveText('Closed Beta ↗');
+  await expect(page.locator('.slide a[href="/beta"]')).toHaveCount(0);
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
-  await expect(page.locator('#section-01 .experience-disclosure')).toContainText('실제 서버 연결 · 무료 참가 · 결제 없음');
+  await expect(page.locator('#section-01 .experience-disclosure')).not.toContainText('Closed Beta');
 });
 
 test('body copy stays concise outside section intros, including collapsed details',async({page})=>{
@@ -435,10 +436,12 @@ for(const width of [320,390,1440,1920]){
     await expect(page.locator('#section-03 .journey-checkpoints > div')).toHaveCount(3);
     await page.locator('.toc-item').nth(4).click();
     await expect(page.locator('#section-05 .flow-gate-track > div')).toHaveCount(3);
-    await expect(page.locator('#section-05 .flow-decision-gate')).toContainText('참가 완료 여부와 남은 자리를 먼저 확인');
+    await expect(page.locator('#section-05 .card-grid')).toHaveCount(0);
+    await expect(page.locator('#section-05 .flow-decision-gate')).toContainText('마감 시 다른 포지션 선택 · 실패 시 참가 여부 확인 후 재시도');
     await expect(page.locator('#section-05')).toContainText('실패 시 참가 여부 확인 후 재시도');
     await page.locator('.toc-item').nth(5).click();
     await expect(page.locator('#section-06 .decision-proof')).toHaveCount(3);
+    await expect(page.locator('#section-06 .decision-path')).toHaveCount(0);
     await expect(page.locator('#section-06 .decision-proof dt')).toHaveCount(12);
     await expect(page.locator('#section-06')).toContainText('참가 요청 후 확정 여부·정원 확인');
     await page.locator('.toc-item').nth(6).click();
@@ -473,7 +476,7 @@ for(const width of [320,390,1440]){
     await page.locator('.toc-item').nth(8).click();
     await expect(page.locator('#section-09 .next-list li')).toHaveCount(4);
     await expect(page.locator('#section-09 .technical-resources')).toContainText('프로젝트 증빙 · 기록 항목');
-    await expect(page.locator('#section-09 .technical-resources .evidence-record')).toHaveCount(5);
+    await expect(page.locator('#section-09 .technical-resources .evidence-record')).toHaveCount(4);
     await expect(page.locator('#section-09 a[href*="github.com"]')).toHaveCount(0);
     await page.locator('.toc-item').nth(3).click();
     await page.locator('#section-04 details summary').click();
