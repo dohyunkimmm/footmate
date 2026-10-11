@@ -319,7 +319,7 @@ html[data-fm-next-case-study="true"] .fm-cs-static-summary small{display:block;c
 html[data-fm-next-case-study="true"] .fm-cs-static-summary b{display:block;margin-top:5px;font-size:17px}
 html[data-fm-next-case-study="true"] .fm-cs-static-cta{margin-top:auto;padding:14px 16px;border-radius:14px;background:#c9ef62;color:#173d2d;text-align:center;font-size:12px;font-weight:900}
 
-/* Cover preview mirrors the Real App AI Match Assistant discovery surface without interaction. */
+/* Cover preview mirrors the Interactive Demo AI Match Assistant discovery surface without interaction. */
 html[data-fm-next-case-study="true"] .fm-cs-ai-preview{background:#f7f8f7}
 html[data-fm-next-case-study="true"] .fm-cs-ai-head{
   padding:18px;

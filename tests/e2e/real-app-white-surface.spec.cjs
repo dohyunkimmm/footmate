@@ -228,7 +228,7 @@ test('Typography QA: AI microcopy specificity survives mobile and desktop cascad
   const errs=await openCleanApp(page,{width:390,height:844});
   await page.evaluate(()=>{
     const app=document.querySelector('.fm-next-page[data-mode="real"] .fm-next-app:not([data-embed="true"])');
-    if(!app)throw new Error('Real App shell missing');
+    if(!app)throw new Error('Interactive Demo shell missing');
     const probe=document.createElement('div');
     probe.setAttribute('data-typography-qa-probe','');
     probe.innerHTML=`

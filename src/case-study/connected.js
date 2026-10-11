@@ -73,7 +73,7 @@
     for(const node of nodes){
       const before=node.nodeValue||'';
       const after=before
-        .replace(/\/app\b/g,'Real App')
+        .replace(/\/app\b/g,'Interactive Demo')
         .replace(/\/beta\b/g,'Closed Beta');
       if(after!==before)node.nodeValue=after;
     }
@@ -177,7 +177,7 @@
     const rows=(items)=>`<dl class="fm-cs-reasons">${items.map(([label,copy])=>`<div><dt>${label}</dt><dd>${copy}</dd></div>`).join('')}</dl>`;
     const decision=(index,selector,items)=>setHTML(slides[index],selector,rows(items));
 
-    note.innerHTML='<strong>정적 AI 검색 프리뷰</strong><span>Real App의 AI 경기 검색 화면입니다.</span>';
+    note.innerHTML='<strong>정적 AI 검색 프리뷰</strong><span>Interactive Demo의 AI 경기 검색 화면입니다.</span>';
     note.style.wordBreak='keep-all';
     note.style.overflowWrap='normal';
     document.querySelector('.fm-next-cover-visual')?.setAttribute('aria-label','FootMate AI 경기 검색 정적 미리보기');
@@ -266,7 +266,7 @@
     const authFlow=slides[7].querySelector('.fm-next-cs-auth-flow');
     if(authFlow&&!slides[7].querySelector('.fm-next-cs-state-line'))authFlow.insertAdjacentHTML('afterend','<div class="fm-next-cs-state-line"><span>보존 · 선택 경기와 로그인 후 복귀 위치</span></div>');
     decision(7,'.fm-next-cs-scope',[
-      ['Real App','UX 시뮬레이션 인증 · 무료 참가 확인'],
+      ['Interactive Demo','UX 시뮬레이션 인증 · 무료 참가 확인'],
       ['Closed Beta','Supabase 인증·참가 경로 실연동'],
       ['검증 범위','Google/Kakao OAuth Production 실로그인 확인 · 실제 PG 미연동']]);
 
@@ -338,7 +338,7 @@
     lead(12,'구현·배포 검증과 실제 이용 성과를 나눠 현재 범위를 공개합니다.',
       '외부 연동 성공만으로 참가 전환이나 재이용 효과가 입증되지는 않습니다.');
     setHTML(slides[12],'.fm-next-cs-outcomes',
-      '<div><b>Real App</b><p>'+lines('AI Gateway 실연동 · 결정론적 추천','샘플 경기 데이터','인증·결제·정원·알림 시뮬레이션')+'</p></div>'+
+      '<div><b>Interactive Demo</b><p>'+lines('AI Gateway 실연동 · 결정론적 추천','샘플 경기 데이터','인증·결제·정원·알림 시뮬레이션')+'</p></div>'+
       '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소','체크인 · Google/Kakao OAuth','이메일 · Web Push · 미디어 실연동')+'</p></div>'+
       '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구','수익성과 실제 이용 지표는 미검증')+'</p></div>');
     setHTML(slides[12],'.fm-next-cs-final','<span>Production 기준 · 회고와 다음 단계</span>'+rows([

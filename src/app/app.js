@@ -112,7 +112,7 @@ function guide(){
     <div class="fm-next-guide-brand"><span class="fm-next-brand-mark">${icon('logo')}</span>FootMate</div>
     <div class="fm-next-guide-kicker">${mode==='evidence'?'Reviewer Evidence':'Guided Case Study'}</div>
     <h1>실제 사용자 흐름을 먼저 보여줍니다.</h1>
-    <p>포트폴리오 심사용 v6 체험 안내 · Find → Decide → Join → Play → Return</p><p>Real App과 동일한 샘플 경기 · 브라우저 체험용 참가 · 실제 청구 0원</p><p>소셜 로그인은 별도 Closed Beta로 이동하며 샘플 기록은 이전되지 않음</p>
+    <p>포트폴리오 심사용 v6 체험 안내 · Find → Decide → Join → Play → Return</p><p>Interactive Demo과 동일한 샘플 경기 · 브라우저 체험용 참가 · 실제 청구 0원</p><p>소셜 로그인은 별도 Closed Beta로 이동하며 샘플 기록은 이전되지 않음</p>
     ${scenario}
     <div class="fm-next-guide-steps">
       ${steps.map((item,index)=>`<div class="fm-next-guide-step${routeStep===index?' is-current':''}"><b>${index+1}. ${item[0]}</b><span>${item[1]}</span></div>`).join('')}
@@ -121,7 +121,7 @@ function guide(){
     ${mode==='guided'?'<section class="fm-next-review-shortcuts" aria-label="심사자 빠른 체험"><strong style="display:block;margin:12px 0 6px;font-size:12px">90초 핵심 화면 · 샘플 상태</strong><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><button type="button" data-action="review-home" style="min-height:40px;font-size:12px">추천 바로 보기</button><button type="button" data-action="review-compare" style="min-height:40px;font-size:12px">두 경기 비교</button><button type="button" data-action="review-position" style="min-height:40px;font-size:12px">마감 포지션</button><button type="button" data-action="review-my" style="min-height:40px;font-size:12px">MY 미리보기</button></div><p style="font-size:11px;margin:6px 0 0">체험용 화면 전환 · 실제 가입·예약·결제 없음</p></section>':''}
     <div class="fm-next-guide-actions">
       ${button(`${icon('reset')} 처음부터 보기`,'reset-flow','ghost')}
-      ${button('Real App만 보기','open-real','lime')}
+      ${button('Interactive Demo만 보기','open-real','lime')}
     </div>
     <p><a href="/#section-06">Case Study의 설계 결정·검증 보기 ↗</a></p>
   </aside>`;

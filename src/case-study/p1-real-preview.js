@@ -1,4 +1,4 @@
-/* FootMate Case Study · P1 Real App home preview */
+/* FootMate Case Study · P1 Interactive Demo home preview */
 (function(){
   let tries=0;
   function apply(){
@@ -12,7 +12,7 @@
     preview.dataset.fmP1RealPreview='true';
     preview.classList.remove('fm-cs-ai-preview');
     preview.classList.add('fm-cs-real-home-preview');
-    preview.setAttribute('aria-label','FootMate 최신 Real App 홈 화면 정적 프리뷰');
+    preview.setAttribute('aria-label','FootMate 최신 Interactive Demo 홈 화면 정적 프리뷰');
     preview.innerHTML=`
       <div class="fm-p1-real-review-shell">
         <aside class="fm-p1-real-context" aria-label="서비스와 체험 범위">
@@ -40,7 +40,7 @@
             <h3>광교 웨스트파크</h3>
             <div class="fm-p1-real-match-bottom"><div><span class="is-fit">조건과 잘 맞아요</span><span>22분</span><span>MF 2자리</span></div><strong>13,000원</strong></div>
           </article>
-          <nav class="fm-p1-real-nav" aria-label="Real App 하단 내비게이션"><span class="is-on">⌂<b>홈</b></span><span>⌕<b>경기 찾기</b></span><span>○<b>MY</b></span></nav>
+          <nav class="fm-p1-real-nav" aria-label="Interactive Demo 하단 내비게이션"><span class="is-on">⌂<b>홈</b></span><span>⌕<b>경기 찾기</b></span><span>○<b>MY</b></span></nav>
         </div>
       </div>`;
 

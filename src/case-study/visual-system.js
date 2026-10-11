@@ -234,7 +234,7 @@
     auth.querySelector('.fm-next-cs-state-line')?.remove();
     auth.querySelector('.fm-next-cs-auth-flow>.is-focus')?.classList.remove('is-focus');
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','UX 시뮬레이션 인증 · 무료 참가 확인'],
+      ['Interactive Demo','UX 시뮬레이션 인증 · 무료 참가 확인'],
       ['Closed Beta','Supabase 인증·참가 경로 실연동'],
       ['검증 범위','Google/Kakao OAuth Production 실로그인 확인 · 실제 PG 미연동']
     ]));
@@ -275,7 +275,7 @@
       '이 결과는 버그와 막힘을 찾기 위한 사용성 검증이며, 전환율 개선이나 시장 적합성을 입증한 Measured Result와는 구분합니다.'
     ));
     setHTML(release,'.fm-next-cs-outcomes',
-      '<div><b>Real App</b><p>'+lines('AI Gateway 실연동 · 후보·순위·이유는 추천 엔진','샘플 경기 데이터 · 인증·정원·알림 시뮬레이션 · 무료 참가 확인')+'</p></div>'+
+      '<div><b>Interactive Demo</b><p>'+lines('AI Gateway 실연동 · 후보·순위·이유는 추천 엔진','샘플 경기 데이터 · 인증·정원·알림 시뮬레이션 · 무료 참가 확인')+'</p></div>'+
       '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소·체크인 실연동','Google/Kakao OAuth · 이메일 · Web Push · 미디어 실제 환경 검증')+'</p></div>'+
       '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구 미연동','수익성 · 실제 이용 지표 미검증')+'</p></div>');
 
@@ -490,7 +490,7 @@
 
   function kpiDialogHTML(){
     const rows=kpiRows.map(([name,calc,observe])=>`<div><dt>${name}</dt><dd>${calc}</dd><dd>${observe}</dd></div>`).join('');
-    return '<dialog class="fm-next-kpi-dialog" aria-labelledby="fm-kpi-dialog-title"><div class="fm-next-kpi-dialog-inner"><div class="fm-next-kpi-dialog-head"><div><h3 id="fm-kpi-dialog-title">8개 지표의 계산·관찰 기준</h3></div><button class="fm-next-kpi-close" type="button" aria-label="닫기">×</button></div><p class="fm-next-kpi-dialog-intro">Validation Metric이며 Measured Result가 아닙니다. 실제 무료 Beta 이용자를 측정 대상으로 하고 운영·테스트 계정, 자동 QA, Real App의 샘플·시뮬레이션은 제외합니다. 비교 기준이 0건이면 N/A로 기록하고 실패·재시도는 동일 흐름 기준으로 중복 제거합니다.</p><dl class="fm-next-kpi-table">'+rows+'</dl></div></dialog>';
+    return '<dialog class="fm-next-kpi-dialog" aria-labelledby="fm-kpi-dialog-title"><div class="fm-next-kpi-dialog-inner"><div class="fm-next-kpi-dialog-head"><div><h3 id="fm-kpi-dialog-title">8개 지표의 계산·관찰 기준</h3></div><button class="fm-next-kpi-close" type="button" aria-label="닫기">×</button></div><p class="fm-next-kpi-dialog-intro">Validation Metric이며 Measured Result가 아닙니다. 실제 무료 Beta 이용자를 측정 대상으로 하고 운영·테스트 계정, 자동 QA, Interactive Demo의 샘플·시뮬레이션은 제외합니다. 비교 기준이 0건이면 N/A로 기록하고 실패·재시도는 동일 흐름 기준으로 중복 제거합니다.</p><dl class="fm-next-kpi-table">'+rows+'</dl></div></dialog>';
   }
 
   function patchKpiDisclosure(validation){
@@ -636,7 +636,7 @@
     setRow(slides[6],'Trade-off','비교 대상 제한 · 참가 전 취소·환불 기준 확인');
 
     // 08 · Sign in · Join — keep the dedicated spacing; normalize only row copy.
-    setRow(slides[7],'Real App','인증 · 결제 시뮬레이션');
+    setRow(slides[7],'Interactive Demo','인증 · 결제 시뮬레이션');
     setRow(slides[7],'Closed Beta','Supabase 인증 · 참가 실연동');
     setRow(slides[7],'상태 보존','선택 경기 · 로그인 후 복귀 위치 유지');
     setRow(slides[7],'검증 범위','Google/Kakao OAuth Production 실로그인 검증 · 실제 PG 미연동');
@@ -838,7 +838,7 @@
     setText(auth,'.fm-next-story-lead','선택 경기와 복귀 위치를 유지하고 로그인 뒤 무료 참가 확인으로 이어집니다.');
     setSummary(auth,[['진입점','참가하기 직전'],['계정','로그인'],['결과','무료 참가 확인 · MY']]);
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','로그인 · 무료 참가 확인 · MY'],
+      ['Interactive Demo','로그인 · 무료 참가 확인 · MY'],
       ['Closed Beta','Supabase 계정 · 참가 실연동'],
       ['검증 범위','Google/Kakao OAuth Production 확인 · 실제 PG 미연동']
     ]));
@@ -928,8 +928,8 @@
 
     const release=slides[12];
     setText(release,'.fm-next-story h2','구현 결과와 다음 과제를 정리했습니다.');
-    setText(release,'.fm-next-story-lead','Real App과 Closed Beta의 연결 범위를 나눠 확인했고, 실제 이용자 KPI·결제·수익성은 후속 검증으로 남겼습니다.');
-    setSummary(release,[['Real App','AI · sample · browser-local'],['Closed Beta','Supabase · Resend · Push'],['다음 단계','실제 결제 · 이용자 KPI · 수익성']]);
+    setText(release,'.fm-next-story-lead','Interactive Demo과 Closed Beta의 연결 범위를 나눠 확인했고, 실제 이용자 KPI·결제·수익성은 후속 검증으로 남겼습니다.');
+    setSummary(release,[['Interactive Demo','AI · sample · browser-local'],['Closed Beta','Supabase · Resend · Push'],['다음 단계','실제 결제 · 이용자 KPI · 수익성']]);
     release.querySelector('.fm-next-cs-outcomes')?.remove();
     release.querySelector('.fm-next-cs-final')?.remove();
 
@@ -1079,7 +1079,7 @@
 
     mark(slide,'recommendation');
     surface.classList.add('fm-p0-recommendation');
-    surface.setAttribute('aria-label','Real App 정보 구조를 축약한 추천 화면과 추천 입력 근거');
+    surface.setAttribute('aria-label','Interactive Demo 정보 구조를 축약한 추천 화면과 추천 입력 근거');
     surface.innerHTML=`
       <div class="fm-p0-reco-stage">
         <div class="fm-p0-app-frame">
@@ -1095,7 +1095,7 @@
             </div>
             <div class="fm-p0-match-footer"><span>현재 경기 조건 반영</span><strong>추천 1순위</strong></div>
           </article>
-          <div class="fm-p0-ui-caption"><span>Real App 정보 구조 기반</span><b>점수보다 이유를 먼저 읽는 추천 표면</b></div>
+          <div class="fm-p0-ui-caption"><span>Interactive Demo 정보 구조 기반</span><b>점수보다 이유를 먼저 읽는 추천 표면</b></div>
         </div>
       </div>
       <ol class="fm-p0-annotations">
@@ -1298,7 +1298,7 @@
     state.innerHTML='<span><small>상태 보존</small><b>선택 경기 + 로그인 후 복귀 위치</b></span>';
 
     scope.classList.add('fm-p1-auth-boundary');
-    scope.setAttribute('aria-label','Real App과 Closed Beta의 인증 및 참가 구현 경계');
+    scope.setAttribute('aria-label','Interactive Demo과 Closed Beta의 인증 및 참가 구현 경계');
     [...scope.querySelectorAll('div')].forEach((row,index)=>{
       row.dataset.boundary=index===0?'simulation':index===1?'connected':'verified';
     });
@@ -1376,10 +1376,10 @@
 
     mark(slide,'release-boundary');
     outcomes.classList.add('fm-p1-release-map');
-    outcomes.setAttribute('aria-label','Real App, Closed Beta, 미연동 및 미검증 범위');
+    outcomes.setAttribute('aria-label','Interactive Demo, Closed Beta, 미연동 및 미검증 범위');
     outcomes.innerHTML=`
       <article data-zone="real-app">
-        <header><small>REAL APP</small><b>사용자에게 보여주는 제품 표면</b></header>
+        <header><small>Interactive Demo</small><b>사용자에게 보여주는 제품 표면</b></header>
         <ul>
           ${releaseItem('connected','실연동','AI Gateway')}
           ${releaseItem('implemented','구현','결정론적 추천')}
@@ -1543,7 +1543,7 @@
 })();
 
 /* ===== src/case-study/p1-real-preview.js ===== */
-/* FootMate Case Study · P1 Real App home preview */
+/* FootMate Case Study · P1 Interactive Demo home preview */
 (function(){
   let tries=0;
   function apply(){
@@ -1557,7 +1557,7 @@
     preview.dataset.fmP1RealPreview='true';
     preview.classList.remove('fm-cs-ai-preview');
     preview.classList.add('fm-cs-real-home-preview');
-    preview.setAttribute('aria-label','FootMate 최신 Real App 홈 화면 정적 프리뷰');
+    preview.setAttribute('aria-label','FootMate 최신 Interactive Demo 홈 화면 정적 프리뷰');
     preview.innerHTML=`
       <div class="fm-p1-real-review-shell">
         <aside class="fm-p1-real-context" aria-label="서비스와 체험 범위">
@@ -1585,7 +1585,7 @@
             <h3>광교 웨스트파크</h3>
             <div class="fm-p1-real-match-bottom"><div><span class="is-fit">조건과 잘 맞아요</span><span>22분</span><span>MF 2자리</span></div><strong>13,000원</strong></div>
           </article>
-          <nav class="fm-p1-real-nav" aria-label="Real App 하단 내비게이션"><span class="is-on">⌂<b>홈</b></span><span>⌕<b>경기 찾기</b></span><span>○<b>MY</b></span></nav>
+          <nav class="fm-p1-real-nav" aria-label="Interactive Demo 하단 내비게이션"><span class="is-on">⌂<b>홈</b></span><span>⌕<b>경기 찾기</b></span><span>○<b>MY</b></span></nav>
         </div>
       </div>`;
 
@@ -2975,7 +2975,7 @@
     ]));
     text(7,'.fm-p1-auth-frame:nth-of-type(2) p','한 번 고른 대상을 재입력 없이 전달');
     html(7,'.fm-next-cs-scope',rows([
-      ['Real App','Google·Kakao 인증 연결 · 무료 참가 결과는 브라우저 저장'],
+      ['Interactive Demo','Google·Kakao 인증 연결 · 무료 참가 결과는 브라우저 저장'],
       ['Closed Beta','Supabase 계정·경기·참가 흐름 실제 연동'],
       ['검증 범위','운영 환경 로그인 확인 · 복귀 경로 보존 설계 · 실제 결제 미연동']
     ]));
@@ -2984,7 +2984,7 @@
     if(states[2])states[2].querySelector('p').textContent='시작 20분 전부터 종료 전까지 체크인';
     if(states[3])states[3].querySelector('p').textContent='체감 난이도·재참가 의향 → 다음 추천 보조 신호';
     html(8,'.fm-next-cs-note',rows([
-      ['체크인 범위','Real App은 체험 기록 · Beta는 실제 출석 상태'],
+      ['체크인 범위','Interactive Demo은 체험 기록 · Beta는 실제 출석 상태'],
       ['빈 자리 충원','Beta에서 취소 시 접수 순서대로 포지션별 대기자 승격'],
       ['변경과 복구','변경 이력 기록 · 알림 전달 실패와 참가 상태 분리']
     ]));
@@ -3024,7 +3024,7 @@
       app.querySelector('ul').innerHTML='<li data-status="connected"><span>실제 연결</span><b>AI 해석 · Google/Kakao 인증</b></li><li data-status="implemented"><span>구현</span><b>규칙 기반 추천 · 무료 참가 확인</b></li><li data-status="sample"><span>샘플</span><b>경기 데이터 · 잔여 자리</b></li><li data-status="simulation"><span>체험 기록</span><b>참가·체크인·피드백 · 브라우저 저장</b></li>';
     }
     slides[12].querySelectorAll('[data-zone="closed-beta"] li span').forEach(node=>node.textContent='실제 연결');
-    summary(12,[['Real App','AI·인증 연결 · 브라우저 기록'],['Closed Beta','참가·운영 · 실제 연결'],['다음 단계','이용 기준값 · 사용자 가치']]);
+    summary(12,[['Interactive Demo','AI·인증 연결 · 브라우저 기록'],['Closed Beta','참가·운영 · 실제 연결'],['다음 단계','이용 기준값 · 사용자 가치']]);
     html(12,'.fm-p1-release-next dl','<div><dt>배운 점과 다음 검증</dt><dd>실패·중복 요청·상태 갱신까지 함께 정의<br>다음 검증 · 추천 이유의 판단 도움 → Beta 과업 관찰·이탈 구간·기준값 확보</dd></div>');
     // Reader-facing wording only: keep navigation and product identifiers intact.
     const walker=document.createTreeWalker(document.querySelector('.track'),NodeFilter.SHOW_TEXT);

@@ -50,7 +50,7 @@ async function auditAndCapture(page,testInfo,selector,mode,width,screenshots){
 }
 
 for(const width of [320,375,390,430,560,699,700,960,1366,1440,1920]){
-  test('Real App typography baseline '+width+'px',async({page},testInfo)=>{
+  test('Interactive Demo typography baseline '+width+'px',async({page},testInfo)=>{
     await openCleanApp(page,width);
     const fonts=await fontCoverage(page);
     const screenshots=[];
@@ -60,7 +60,7 @@ for(const width of [320,375,390,430,560,699,700,960,1366,1440,1920]){
     await page.getByRole('button',{name:'전체 보기'}).click();
     const discover=await auditAndCapture(page,testInfo,'[data-screen="discover"]','normal',width,screenshots);
     const audits=[welcome,home,discover];
-    await recordEvidence(page,testInfo,{surface:'Real App',width,mode:'normal',fonts,audits,screenshots});
+    await recordEvidence(page,testInfo,{surface:'Interactive Demo',width,mode:'normal',fonts,audits,screenshots});
     for(const item of audits){
       expect(item.samples.length,item.screen+' visible typography').toBeGreaterThan(0);
       expect(item.issues,item.screen+' text clipping/minimum type').toEqual([]);
@@ -70,7 +70,7 @@ for(const width of [320,375,390,430,560,699,700,960,1366,1440,1920]){
 }
 
 for(const width of [390,1440]){
-  test('Real App forced fallback font '+width+'px',async({page},testInfo)=>{
+  test('Interactive Demo forced fallback font '+width+'px',async({page},testInfo)=>{
     await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//,route=>route.abort());
     await openCleanApp(page,width);
     const fonts=await fontCoverage(page);
@@ -79,7 +79,7 @@ for(const width of [390,1440]){
     const home=await auditAndCapture(page,testInfo,'[data-screen="home"]','fallback',width,screenshots);
     await page.getByRole('button',{name:'전체 보기'}).click();
     const discover=await auditAndCapture(page,testInfo,'[data-screen="discover"]','fallback',width,screenshots);
-    await recordEvidence(page,testInfo,{surface:'Real App',width,mode:'fallback',fonts,audits:[home,discover],screenshots});
+    await recordEvidence(page,testInfo,{surface:'Interactive Demo',width,mode:'fallback',fonts,audits:[home,discover],screenshots});
     expect(fonts.faces.every(face=>!face.loaded),'fallback may not be misreported as loaded fonts').toBe(true);
     for(const item of [home,discover]){
       expect(item.issues,item.screen+' fallback text geometry').toEqual([]);
@@ -90,7 +90,7 @@ for(const width of [390,1440]){
 
 for(const mode of ['text-200-percent','user-text-spacing']){
   for(const width of [390,1440]){
-    test('Real App diagnostic '+mode+' '+width+'px',async({page},testInfo)=>{
+    test('Interactive Demo diagnostic '+mode+' '+width+'px',async({page},testInfo)=>{
       await openCleanApp(page,width);
       const fonts=await fontCoverage(page);
       await toHome(page);
@@ -98,7 +98,7 @@ for(const mode of ['text-200-percent','user-text-spacing']){
       const screenshots=[];
       const home=await auditAndCapture(page,testInfo,'[data-screen="home"]',mode,width,screenshots);
       await recordEvidence(page,testInfo,{
-        surface:'Real App',width,mode,fonts,audits:[home],screenshots,
+        surface:'Interactive Demo',width,mode,fonts,audits:[home],screenshots,
         // Stress simulations are evidence-producing until any discovered
         // defects are fixed and reviewed; do not mislabel them WCAG certification.
         status:'diagnostic; issues require manual triage before promoting to release gate'
@@ -110,7 +110,7 @@ for(const mode of ['text-200-percent','user-text-spacing']){
 }
 
 for(const width of [390,1440]){
-  test('Real App Detail / Join / MY text roles '+width+'px',async({page},testInfo)=>{
+  test('Interactive Demo Detail / Join / MY text roles '+width+'px',async({page},testInfo)=>{
     await openCleanApp(page,width);
     const fonts=await fontCoverage(page);
     const screenshots=[];
@@ -122,7 +122,7 @@ for(const width of [390,1440]){
     await expect(page.locator('[data-screen="success"]')).toBeVisible();
     await page.getByRole('button',{name:'내 경기 보기'}).click();
     const my=await auditAndCapture(page,testInfo,'[data-screen="profile"]','journey',width,screenshots);
-    await recordEvidence(page,testInfo,{surface:'Real App',width,mode:'journey',fonts,audits:[detail,join,my],screenshots});
+    await recordEvidence(page,testInfo,{surface:'Interactive Demo',width,mode:'journey',fonts,audits:[detail,join,my],screenshots});
     for(const item of [detail,join,my]){
       expect(item.samples.length,item.screen+' typography').toBeGreaterThan(0);
       expect(item.issues,item.screen+' text clipping/minimum type').toEqual([]);
@@ -132,7 +132,7 @@ for(const width of [390,1440]){
 }
 
 for(const width of [320,375,390]){
-  test('Real App Korean and mixed-script long card copy wraps safely at '+width+'px',async({page},testInfo)=>{
+  test('Interactive Demo Korean and mixed-script long card copy wraps safely at '+width+'px',async({page},testInfo)=>{
     await openCleanApp(page,width);
     await toHome(page);
     const name=page.locator('[data-screen="home"] .fm-next-match-place').first();
@@ -155,12 +155,12 @@ for(const width of [320,375,390]){
       expect(audit.issues,screen+' typography should remain unclipped').toEqual([]);
       expect(audit.documentOverflow,screen+' horizontal scroll').toBe(false);
     }
-    await recordEvidence(page,testInfo,{surface:'Real App',width,mode:'korean-line-break',audits,screenshots,
+    await recordEvidence(page,testInfo,{surface:'Interactive Demo',width,mode:'korean-line-break',audits,screenshots,
       status:'injected copy is test-only; editorial flags still require human review'});
   });
 }
 
-test('Real App typography negative control identifies clipped Korean card text',async({page},testInfo)=>{
+test('Interactive Demo typography negative control identifies clipped Korean card text',async({page},testInfo)=>{
   await openCleanApp(page,390);
   await toHome(page);
   const target=page.locator('[data-screen="home"] .fm-next-match-place').first();
@@ -188,7 +188,7 @@ test('Real App typography negative control identifies clipped Korean card text',
   });
   const parentClipped=await auditRoute(page,'[data-screen="home"]');
   expect(parentClipped.issues.some(issue=>/clipped by ancestor/.test(issue))).toBe(true);
-  await recordEvidence(page,testInfo,{surface:'Real App',width:390,mode:'negative-control',
+  await recordEvidence(page,testInfo,{surface:'Interactive Demo',width:390,mode:'negative-control',
     status:'expected artificial own-element and parent clipping detected',
     beforeIssues:before.issues,detectedIssues:[...after.issues,...parentClipped.issues]});
 });
