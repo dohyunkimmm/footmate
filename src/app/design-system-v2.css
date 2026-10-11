@@ -1451,7 +1451,7 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app 
 }
 
 
-/* FootMate application entry: restore the original ball and app name before the journey. */
+/* App entry */
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-welcome-entry="app"] .fm-app-entry{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px max(24px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 20%,#253b6d 0%,#142547 45%,#0f1a3a 100%)!important;color:#fff}
 html[data-footmate-surface="real"] [data-welcome-entry="app"] .fm-app-entry:before,html[data-footmate-surface="real"] [data-welcome-entry="app"] .fm-app-entry:after{display:none}
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-welcome-entry="app"] .fm-app-entry-brand{display:flex;flex-direction:column;gap:0;position:static;transform:none!important;text-align:center;color:#fff}
@@ -1466,3 +1466,7 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-welcome
 html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] [data-welcome-entry="app"] .fm-next-button--secondary{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.5)!important;color:#fff!important;box-shadow:none}
 html[data-footmate-surface="real"] [data-welcome-entry="app"] .fm-app-entry-note{max-width:340px;margin:20px 0 0;text-align:center;font-size:12px;line-height:1.6;color:#c4d2e9}
 @media(max-height:650px){html[data-footmate-surface="real"] [data-welcome-entry="app"] .fm-app-entry{justify-content:flex-start!important;padding-top:24px!important;min-height:100%;height:auto!important;max-height:none!important}html[data-footmate-surface="real"] [data-welcome-entry="app"] .fm-app-entry-logo{width:80px;height:80px}html[data-footmate-surface="real"] [data-welcome-entry="app"] .fm-next-intro-copy{margin:20px 0}}
+
+html[data-footmate-surface="real"] .fm-next-stage:has([data-welcome-entry="app"]){grid-template-columns:minmax(0,560px)!important;gap:0!important}.fm-next-stage:has([data-welcome-entry="app"]) .fm-desktop-context{display:none}
+
+html[data-footmate-surface="real"] [data-welcome-entry="app"]{padding:0!important;background:#0f1a3a!important}
