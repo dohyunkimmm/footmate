@@ -235,11 +235,14 @@ jobs:
   production_smoke:
     name: Production Smoke
     needs: [impact, regression, browser_e2e, docs_only]
-    # Re-run against the existing Production deployment when only QA changes.
-    # Do not suppress the smoke because the runtime jobs were intentionally skipped.
+    # Validate test-only changes against existing Production before merge.
+    # Same-repository PRs are eligible only when no production asset changes.
     if: >-
       always() &&
-      github.event_name == 'push' &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        needs.impact.outputs.production == 'false')) &&
       needs.impact.result == 'success' &&
       needs.impact.outputs.production_smoke == 'true' &&
       (needs.regression.result == 'success' || needs.regression.result == 'skipped') &&
