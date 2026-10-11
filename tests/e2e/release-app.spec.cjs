@@ -1,6 +1,11 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 
+// Finish sample-date route callbacks before Playwright closes the test page.
+test.afterEach(async({page})=>{
+  await page.unrouteAll({behavior:'wait'});
+});
+
 const shot={animations:'disabled',caret:'hide',maxDiffPixels:50};
 const productionSmoke=['1','true','yes'].includes(String(process.env.PRODUCTION_SMOKE||'').toLowerCase());
 

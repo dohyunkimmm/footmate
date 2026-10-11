@@ -38,20 +38,8 @@ test('paired portfolio connects Interactive Demo and documents a real QA before-
   await expect(first.getByRole('link',{name:'Interactive Demo 직접 체험하기'})).toHaveAttribute('href','/app');
   await expect(first).toContainText('Interactive Demo(/app) = Demo(/demo)');
   await page.locator('.toc-item').nth(5).click();
-  const report=page.locator('#section-06 .portfolio-change-evidence');
-  await report.locator('summary').click();
-  await expect(report).toContainText('과거 화면 캡처가 아닌 동작 기록');
-  await expect(report).toContainText('MF 마감 → FW 직접 선택');
-  await expect(report).toContainText('사용자 전환율 개선은 미측정');
-  const realScreens=report.locator('.evidence-preview img');
-  await expect(realScreens).toHaveCount(2);
-  await expect(realScreens.first()).toHaveAttribute('src',/v6-release-join-390-chromium-linux.png$/);
-  await expect(realScreens.last()).toHaveAttribute('src',/v6-release-my-matchday-390-chromium-linux.png$/);
-  for(const img of await realScreens.all()){
-    await img.scrollIntoViewIfNeeded();
-    await expect.poll(()=>img.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
-  }
-  await expect(page.locator('#section-06 a[href="/app?mode=guided"]')).toHaveCount(0);
+  await expect(page.locator('#section-06 .portfolio-change-evidence')).toHaveCount(0);
+  await expect(page.locator('.slide:not(#section-01) a[href^="/demo"],.slide:not(#section-01) a[href^="/app"],.slide:not(#section-01) a[href^="/beta"]')).toHaveCount(0);
   await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('#section-07')).toContainText('우선 측정 3개');
   const evidence=page.locator('#section-07 .portfolio-optional-sources');
@@ -492,8 +480,8 @@ for(const width of [320,390,1440]){
     await expect(page.locator('#section-04 details')).toContainText('Interactive Demo · 기능 체험');
     await expect(page.locator('#section-04 details')).toContainText('Closed Beta · 실제 서버 연결');
     await page.locator('.toc-item').nth(5).click();
-    await expect(page.locator('#section-06 a[href="/beta"]')).toContainText('Closed Beta 살펴보기');
-    await expect(page.locator('#section-06 a[href="/demo"]')).toContainText('Interactive Demo 체험하기');
+    await expect(page.locator('#section-06 a[href="/beta"]')).toHaveCount(0);
+    await expect(page.locator('#section-06 a[href="/demo"]')).toHaveCount(0);
     await expect(page.locator('#section-06')).toContainText('체험용 데이터 · 실제 결제·참가 없음');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
