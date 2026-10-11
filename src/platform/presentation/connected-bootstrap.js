@@ -1,6 +1,8 @@
 import {connectedMatchdayPlatform} from '../application/connected-platform.js';
 import {footmatePlatform} from '../application/platform.js';
 
+const canonicalEntry=new URL(location.href);
+if(canonicalEntry.searchParams.get('entry')==='footmate'){canonicalEntry.searchParams.delete('entry');history.replaceState(history.state,'',canonicalEntry.pathname+canonicalEntry.search+canonicalEntry.hash)}
 const root=document.getElementById('footmate-next');
 const entryParams=new URLSearchParams(location.search);
 const entryMode=['guided','evidence'].includes(entryParams.get('mode'))?entryParams.get('mode'):'real';
@@ -19,7 +21,7 @@ const AI_FALLBACK_COPY='AI 장애나 지연 시 기존 rules-based 검색으로 
 
 if(isFreshEntry){
   const current=footmatePlatform.session.read()||{};
-  const nextRoute=current.joinedMatchId||current.route==='schedule'?'profile':current.setupComplete?'home':'welcome';
+  const nextRoute='welcome';
   footmatePlatform.session.write({...current,route:nextRoute,setupStep:nextRoute==='welcome'?0:current.setupStep});
   sessionStorage.removeItem(HISTORY_KEY);
   sessionStorage.removeItem(LAST_ROUTE_KEY);
@@ -227,7 +229,7 @@ document.addEventListener('click',event=>{
   if(provider){event.preventDefault();event.stopPropagation();void authorize(provider);return}
   if(['apple','naver'].includes(declaredProvider)||target.classList.contains('fm-next-social--apple')||target.classList.contains('fm-auth-provider--apple')||target.classList.contains('fm-auth-provider--naver')){event.preventDefault();event.stopPropagation();return}
   const action=target.dataset.action;
-  if(entryMode==='real'&&action==='auth-back'){event.preventDefault();event.stopPropagation();goBack('detail');return}
+  if(entryMode==='real'&&action==='auth-back'){event.preventDefault();event.stopPropagation();goBack(readSession().authOrigin==='welcome'?'welcome':'detail');return}
   if(entryMode==='real'&&action==='checkout-back'){event.preventDefault();event.stopPropagation();goBack('detail');return}
   if(entryMode==='real'&&action==='detail-back'){event.preventDefault();event.stopPropagation();goBack(readSession().setupComplete?'home':'welcome');return}
   if(action==='team-chat'){event.preventDefault();event.stopPropagation();openTeamMessage();return}

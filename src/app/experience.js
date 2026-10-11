@@ -51,7 +51,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
         <button class="fm-auth-provider fm-auth-provider--apple" type="button" data-action="sign-in" data-provider="apple" aria-label="Apple로 계속하기">${apple}</button>
         <button class="fm-auth-provider fm-auth-provider--google" type="button" data-action="sign-in" data-provider="google" aria-label="Google로 계속하기">${google}</button>
       </div>
-      <p class="fm-auth-context">${place} 경기 선택과 플레이 설정은 로그인 후에도 그대로 유지됩니다. 일반 아이디 로그인은 이 브라우저에서만 체험되며 실제 회원 계정이 생성되지 않습니다.</p>
+      <p class="fm-auth-context">${place==='앱 시작'?'로그인 후 플레이 설정을 시작합니다.':'선택한 경기와 플레이 설정은 로그인 후에도 그대로 유지됩니다.'} 일반 아이디 로그인은 이 브라우저에서만 체험되며 실제 회원 계정이 생성되지 않습니다.</p>
       <p class="fm-auth-terms">Demo는 실제 회원가입이나 이메일 인증을 수행하지 않습니다. 실제 로그인·참가 기능은 Closed Beta에서 제공합니다.</p>`;
   }
 
@@ -93,7 +93,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
       shell('체험 계정 복구 안내','서버 계정·복구 메일을 제공하지 않습니다.',helperBody(),screen,{backToLogin:true});
       return;
     }
-    shell('로그인 후 더 많은 경기를 즐겨보세요.','로그인 후 무료 체험 참가를 이어갈 수 있어요. 실제 결제는 없어요.',loginBody(place),screen);
+    shell(screen.dataset.authOrigin==='welcome'?'FootMate에 오신 것을 환영해요.':'로그인 후 더 많은 경기를 즐겨보세요.',screen.dataset.authOrigin==='welcome'?'로그인 후 플레이 설정과 경기 추천을 시작해요.':'로그인 후 무료 체험 참가를 이어갈 수 있어요. 실제 결제는 없어요.',loginBody(place),screen);
   }
 
   function wire(screen){
@@ -145,7 +145,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
     const screen=root.querySelector('[data-screen="auth"]');
     if(!screen||screen.dataset.fmAuthExperience==='3')return;
     const original=screen.querySelector('.fm-next-auth-copy p')?.textContent||'';
-    const place=(original.split(' 참가를 확정하려면')[0]||'선택한').trim();
+    const place=screen.dataset.authOrigin==='welcome'?'앱 시작':(original.split(' 참가를 확정하려면')[0]||'선택한').trim();
     screen.dataset.fmAuthExperience='3';
     screen.dataset.matchPlace=place;
     screen.classList.add('fm-next-auth-v3');

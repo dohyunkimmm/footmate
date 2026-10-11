@@ -26,6 +26,6 @@ assert.match(styles,/\[data-screen="detail"\] \.fm-next-detail-section/,'desktop
 assert.match(styles,/\[data-screen="profile"\] \.fm-next-profile-card/,'desktop MY flattening missing');
 assert.match(styles,/\[data-v6-my-section="profile"\]/,'MY major-section spacing contract missing');
 assert.match(styles,/\[data-v6-hidden-payment="true"\]/,'legacy payment surface must be hidden');
-assert.doesNotMatch(release,/Supabase Connected|connected-beta|createSupabaseBetaClient/,'/app must not pretend the separate connected beta backend has been merged');
+assert.doesNotMatch(release,/Supabase Connected|connected-beta|createSupabaseBetaClient/,'/demo must not pretend the separate connected beta backend has been merged');
 
 console.log('PASS v6 release app IA, lifecycle completion, recoverable join, MY hierarchy and provider-boundary contract');

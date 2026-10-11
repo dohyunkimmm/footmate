@@ -21,7 +21,7 @@ function failures(page){
 async function openCleanApp(page,viewport={width:390,height:844}){
   const errs=failures(page);
   await page.setViewportSize(viewport);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
@@ -59,7 +59,7 @@ async function setSession(page,route,patch={}){
 
 async function reopenRoute(page,route,patch={}){
   await setSession(page,route,patch);
-  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_P1_DECISION_CLARITY__?.version==='1.0.0');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await expect(page.locator(`[data-screen="${route}"]`)).toBeVisible();
@@ -147,7 +147,7 @@ test('P1 keeps Discover filter edits as draft until Result view commit',async({p
 test('P1 keeps Discover reset as draft until Result view commit',async({page})=>{
   const errs=await openCleanApp(page);
   await setSession(page,'discover');
-  await page.goto('/app?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_P1_DECISION_CLARITY__?.version==='1.0.0');
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   await expect(page.locator('.fm-discovery-chip')).toContainText('20분 이내');

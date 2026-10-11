@@ -6,7 +6,7 @@ const {inspectTypography,fontCoverage,applyAdaptation,captureTypographyScreen,re
 async function openCleanApp(page,width){
   await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize({width,height:900});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');

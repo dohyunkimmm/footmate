@@ -23,7 +23,7 @@ module.exports = defineConfig({
   },
   webServer: externalBaseURL ? undefined : {
     command: 'node tests/e2e/server.cjs',
-    url: 'http://127.0.0.1:4173/app',
+    url: 'http://127.0.0.1:4173/demo',
     reuseExistingServer: false,
     timeout: 15_000
   },

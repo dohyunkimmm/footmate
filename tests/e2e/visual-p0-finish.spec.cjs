@@ -21,7 +21,7 @@ function failures(page){
 async function openCleanApp(page,viewport){
   const errs=failures(page);
   await page.setViewportSize(viewport);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
@@ -49,7 +49,7 @@ async function reachCheckout(page){
     const session=JSON.parse(localStorage.getItem('footmate:v4:session')||'{}');
     localStorage.setItem('footmate:v4:session',JSON.stringify({...session,signedIn:true,route:'checkout',userName:session.userName||'도현'}));
   });
-  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
   await page.evaluate(()=>document.fonts?.ready||Promise.resolve());
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();

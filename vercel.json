@@ -16,7 +16,7 @@
   },
   "rewrites": [
     {
-      "source": "/app",
+      "source": "/demo",
       "destination": "/app.html"
     },
     {
@@ -30,24 +30,29 @@
   ],
   "redirects": [
     {
-      "source": "/demo",
-      "destination": "/app",
-      "permanent": true
+      "source": "/app",
+      "destination": "/demo?entry=footmate",
+      "permanent": false
+    },
+    {
+      "source": "/app.html",
+      "destination": "/demo?entry=footmate",
+      "permanent": false
     },
     {
       "source": "/demo.html",
-      "destination": "/app",
-      "permanent": true
+      "destination": "/demo?entry=footmate",
+      "permanent": false
     },
     {
       "source": "/next",
-      "destination": "/app",
-      "permanent": true
+      "destination": "/demo?entry=footmate",
+      "permanent": false
     },
     {
       "source": "/next.html",
-      "destination": "/app",
-      "permanent": true
+      "destination": "/demo?entry=footmate",
+      "permanent": false
     }
   ]
 }

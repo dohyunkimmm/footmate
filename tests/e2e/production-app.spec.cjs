@@ -19,7 +19,7 @@ async function setupToHome(page){
 
 test('v5.1.1 components render inside the v6.0.0 exact Production release boundary',async({page,request})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
   await expect(page.locator('meta[name="footmate-release-name"]')).toHaveAttribute('content','unified-release-app');
   await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content','#f7f8f7');
@@ -44,11 +44,11 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await expect(page.locator('.slide:visible')).toContainText('AI는 조건 해석 · 후보 순위와 근거는 규칙 엔진');
 });
 
-test('v6.0.0 legacy entry URLs redirect to the single /app entry',async({page})=>{
-  for(const route of ['/demo','/demo.html','/next','/next.html']){
+test('v6.0.0 retired app entry URLs forward to the single /demo entry',async({page})=>{
+  for(const route of ['/app','/app.html','/demo.html','/next','/next.html']){
     const response=await page.goto(route+'?mode=real',{waitUntil:'domcontentloaded'});
     expect(response.request().redirectedFrom()).not.toBeNull();
-    await expect(page).toHaveURL(/\/app\?mode=real$/);
+    await expect(page).toHaveURL(/\/demo\?mode=real$/);
     await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
   }
 });
@@ -82,7 +82,7 @@ test('v6.0.0 exact Production verifies Home, Discover and prioritized Detail UI 
 
 test('v6.0.0 exact Production verifies free Join to Success to MY handoff',async({page})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_RELEASE_APP__?.version==='6.0.0');
@@ -107,7 +107,7 @@ test('v6.0.0 exact Production verifies free Join to Success to MY handoff',async
 });
 
 test('v6.0.0 exact Production migrates legacy Schedule ownership into MY',async({page})=>{
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
     localStorage.clear();
     localStorage.setItem('footmate:session',JSON.stringify({schemaVersion:2,route:'schedule',setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:true,matchStage:'discover'}));

@@ -72,7 +72,7 @@ async function openCleanApp(page,viewport={width:1440,height:900}){
   // Stabilize display dates without changing session or participation timestamps.
   if(!productionSmoke)await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize(viewport);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await waitForReleaseReady(page);
@@ -397,7 +397,7 @@ test('portfolio recommendation prioritizes level-fit and playable role before re
 
 test('portfolio guided reviewer route describes current app and Beta boundaries',async({page})=>{
   await page.setViewportSize({width:1440,height:900});
-  await page.goto('/app?mode=guided');
+  await page.goto('/demo?mode=guided');
   await expect(page.getByRole('complementary',{name:'Case Study Guide'})).toBeVisible();
   const guide=page.locator('.fm-next-guide');
   await expect(guide).toContainText('포트폴리오 심사용 v6');
@@ -416,10 +416,12 @@ test('portfolio guided reviewer route describes current app and Beta boundaries'
   await expectNoHorizontalOverflow(page);
 });
 
-test('Flow P0 resumes returning players without repeating setup',async({page})=>{
+test('Demo starts with app identity and resumes returning players without repeating setup',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
+  await page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('[data-screen="setup"]')).toHaveCount(0);
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
@@ -427,9 +429,10 @@ test('Flow P0 resumes returning players without repeating setup',async({page})=>
     const key='footmate:session',s=JSON.parse(localStorage.getItem(key)||'{}');
     localStorage.setItem(key,JSON.stringify({...s,route:'profile',joinedMatchId:matchId,signedIn:true,matchStage:'upcoming'}));
   },matchId);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
+  await page.getByRole('button',{name:'내 경기 이어보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
-  await expect(page.locator('[data-screen="welcome"]')).toHaveCount(0);
   expect(errs).toEqual([]);
 });
 
@@ -592,13 +595,17 @@ test('guest entry keeps FootMate visible and can browse without completing prefe
   expect(errs).toEqual([]);
 });
 
-test('legacy demo entry redirects permanently to /app and preserves query parameters',async({request,page})=>{
-  for(const route of ['/demo','/demo.html']){
+test('retired app entry forwards to demo without a duplicate app screen or cached redirect loop',async({request,page})=>{
+  for(const route of ['/app','/app.html','/demo.html']){
     const response=await request.get(route+'?mode=guided&resume=1',{maxRedirects:0});
-    expect(response.status()).toBe(308);
-    expect(response.headers().location).toBe('/app?mode=guided&resume=1');
+    expect(response.status()).toBe(307);
+    const location=new URL(response.headers().location,'http://localhost');
+    expect(location.pathname).toBe('/demo');
+    expect(location.searchParams.get('mode')).toBe('guided');
+    expect(location.searchParams.get('resume')).toBe('1');
+    expect(location.searchParams.get('entry')).toBe('footmate');
   }
-  await page.goto('/demo?mode=guided#welcome',{waitUntil:'domcontentloaded'});
-  await expect(page).toHaveURL(/\/app\?mode=guided#welcome$/);
+  await page.goto('/app?mode=guided#welcome',{waitUntil:'domcontentloaded'});
+  await expect(page).toHaveURL(/\/demo\?mode=guided#welcome$/);
   await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
 });

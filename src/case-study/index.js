@@ -36,7 +36,7 @@
         <div class="fm-next-cover-kicker">FootMate · Matchday Companion</div>
         <h1><span class="fm-next-cover-title-line">내 수준에 맞는 경기부터,</span><span class="fm-next-cover-title-line">경기 당일까지.</span></h1>
         <p class="fm-next-cover-lead">경기를 찾는 데서 끝나지 않고, <strong>나에게 맞는 이유를 이해한 뒤 안심하고 참가하고 경기 당일까지 이어지는</strong> 풋살 경험을 설계했습니다.</p>
-        <div class="fm-next-cover-actions"><a href="/app">제품 직접 체험하기 <span aria-hidden="true">↗</span></a></div>
+        <div class="fm-next-cover-actions"><a href="/demo">제품 직접 체험하기 <span aria-hidden="true">↗</span></a></div>
         <div class="fm-next-cover-flow" aria-label="핵심 사용자 흐름"><b>Find</b><i>→</i><b>Decide</b><i>→</i><b>Join</b><i>→</i><b>Play</b><i>→</i><b>Return</b></div>
         <div class="fm-next-cover-proof"><div><b>가입 전에 추천부터</b><span>계정을 만들기 전에 경기 추천을 확인합니다.</span></div><div><b>추천 이유를 바로 이해</b><span>점수보다 레벨·거리·남은 자리를 먼저 봅니다.</span></div><div><b>참가 뒤 일정까지 연결</b><span>결제에서 끝내지 않고 체크인과 경기 후까지 이어집니다.</span></div></div>
       </div>
@@ -57,7 +57,7 @@
 
     shell('04 · CORE JOURNEY','전체 경험을 다섯 번의 사용자 행동으로 묶었습니다.','화면 수가 아니라 사용자가 실제로 무엇을 하려는지 기준으로 흐름을 다시 정리했습니다. 각 단계가 끝나면 다음 행동이 자연스럽게 이어지도록 정보와 CTA를 배치했습니다.',
       `<div class="fm-next-cs-journey"><div><b>01</b><h3>Find</h3><p>지역·포지션·레벨을 정하고 추천을 봅니다.</p></div><div><b>02</b><h3>Decide</h3><p>레벨·거리·자리·가격을 한 번에 비교합니다.</p></div><div><b>03</b><h3>Join</h3><p>참가할 때 로그인하고 선택을 유지한 채 결제로 갑니다.</p></div><div><b>04</b><h3>Play</h3><p>경기 당일에는 이동과 체크인 정보를 먼저 봅니다.</p></div><div><b>05</b><h3>Return</h3><p>경기 후 평가를 남기고 다음 경기를 찾습니다.</p></div></div>`,
-      `<a class="fm-next-cs-link" href="/app?mode=guided" target="_blank" rel="noopener">Guided 모드로 흐름 보기 <span>↗</span></a>`),
+      `<a class="fm-next-cs-link" href="/demo?mode=guided" target="_blank" rel="noopener">Guided 모드로 흐름 보기 <span>↗</span></a>`),
 
     shell('05 · DESIGN DECISION 01','회원가입은 첫 화면이 아니라 “참가하기”를 누른 뒤에 나옵니다.','처음 온 사용자는 아직 FootMate의 추천이 자신에게 도움이 되는지 모릅니다. 그래서 지역·포지션·레벨만 정하면 추천과 경기 상세까지 먼저 볼 수 있게 했습니다.',
       `<div class="fm-next-cs-before-after"><div><small>BEFORE</small><b>첫 화면 → 로그인 → 설문 → 추천</b><p>서비스 가치를 보기 전에 계정부터 요구</p></div><div class="is-after"><small>V4</small><b>가치 확인 → 조건 설정 → 추천 → 상세 → 참가 시 로그인</b><p>추천을 확인한 뒤 참가 의도가 생겼을 때 로그인</p></div></div>`,
@@ -81,14 +81,14 @@
 
     shell('10 · MATCHDAY','참가가 확정되면 홈의 우선순위가 바뀝니다.','예약 전에는 추천 경기를, 예약 후에는 다가오는 경기를, 경기 당일에는 이동과 체크인을, 경기 후에는 평가와 다음 행동을 먼저 보여줍니다.',
       `<div class="fm-next-cs-day-states"><div><small>탐색 중</small><b>지금 잘 맞는 경기</b></div><div><small>참가 확정</small><b>다가오는 경기</b></div><div class="is-focus"><small>경기 당일</small><b>경기까지 1시간 20분</b><p>길찾기 · 체크인 · 운영 도움</p></div><div><small>경기 후</small><b>오늘 경기, 어땠나요?</b></div></div>`,
-      `<a class="fm-next-cs-link" href="/app?mode=evidence" target="_blank" rel="noopener">상태 시나리오 보기 <span>↗</span></a>`),
+      `<a class="fm-next-cs-link" href="/demo?mode=evidence" target="_blank" rel="noopener">상태 시나리오 보기 <span>↗</span></a>`),
 
     shell('11 · RECOVERY','막혔을 때는 오류 설명보다 다음 행동을 먼저 보여줍니다.','추천 결과가 없거나 자리가 마감되고, 참가 상태나 경기 당일 문제가 생길 수 있습니다. 각 상황에서 사용자가 다시 진행할 수 있는 선택지를 바로 붙였습니다.',
       `<div class="fm-next-cs-recovery"><div><b>추천 없음</b><span>조건 완화 · 지역/시간 수정</span></div><div><b>자리 마감</b><span>대기 등록 · 비슷한 경기 탐색</span></div><div><b>참가 상태 문제</b><span>상태 확인 · 다시 참가</span></div><div><b>경기 당일 문제</b><span>체크인 재시도 · 운영 도움</span></div></div>`,
       `<div class="fm-next-cs-decision"><span>복구 원칙</span><b>무슨 일이 생겼는지 설명하는 데서 끝내지 않고, 사용자가 다음에 할 수 있는 행동까지 함께 보여줍니다.</b></div>`),
 
     shell('12 · IA / MODES','사용자에게 보여줄 화면과 리뷰어에게 보여줄 근거를 분리했습니다.','실제 앱 화면에는 사용에 필요한 정보만 남기고, 설계 의도와 상태 검증은 Guided와 Evidence 모드에서 따로 확인할 수 있게 했습니다.',
-      `<div class="fm-next-cs-modes"><div class="is-focus"><small>Interactive Demo</small><h3>/app</h3><p>사용자에게 필요한 UI만 보여줍니다.</p></div><div><small>GUIDED</small><h3>?mode=guided</h3><p>주요 흐름 옆에서 설계 이유를 설명합니다.</p></div><div><small>EVIDENCE</small><h3>?mode=evidence</h3><p>상태 시나리오와 검증 범위를 확인합니다.</p></div></div>`,
+      `<div class="fm-next-cs-modes"><div class="is-focus"><small>Interactive Demo</small><h3>/demo</h3><p>사용자에게 필요한 UI만 보여줍니다.</p></div><div><small>GUIDED</small><h3>?mode=guided</h3><p>주요 흐름 옆에서 설계 이유를 설명합니다.</p></div><div><small>EVIDENCE</small><h3>?mode=evidence</h3><p>상태 시나리오와 검증 범위를 확인합니다.</p></div></div>`,
       `<div class="fm-next-cs-note">실제 앱에는 “프로토타입”, “QA”, “Evidence” 같은 리뷰어용 표현을 노출하지 않습니다.</div>`),
 
     shell('13 · SYSTEM EVIDENCE','상태와 데이터 근거는 리뷰 모드에서만 자세히 보여줍니다.','AI와 데이터 구조를 기능명으로 장식하기보다, 추천과 복구가 어떤 정보와 상태를 바탕으로 움직이는지 설명하는 계약으로 정리했습니다.',
@@ -101,7 +101,7 @@
 
     shell('15 · OUTCOME / LIMITS','화면 수를 늘리기보다, 사용자가 다음 행동을 이해하기 쉽게 만들었습니다.','FootMate v4.0은 추천을 먼저 경험하고, 이유를 이해한 뒤 참가하고, 경기 당일까지 같은 맥락을 유지하는 데 집중합니다. Case Study도 기능 목록보다 이 의사결정 흐름을 따라가도록 정리했습니다.',
       `<div class="fm-next-cs-outcomes"><div><b>제품</b><p>추천 → 판단 → 참가 → 경기 당일까지 하나의 흐름으로 이어집니다.</p></div><div><b>Case Study</b><p>문제와 사용자 맥락에서 시작해 디자인 결정, 검증, 한계 순으로 설명합니다.</p></div><div><b>남은 실제 연동</b><p>OAuth · 회원 DB · PG · 실시간 정원 · 알림 backend</p></div></div>`,
-      `<div class="fm-next-cs-final"><span>현재 범위</span><b>실제 외부 연동 전에도 사용자 흐름과 상태 계약을 검증할 수 있는 인터랙티브 프로토타입입니다.</b><a href="/app" target="_blank" rel="noopener">FootMate v4.0 앱 보기 ↗</a></div>`)
+      `<div class="fm-next-cs-final"><span>현재 범위</span><b>실제 외부 연동 전에도 사용자 흐름과 상태 계약을 검증할 수 있는 인터랙티브 프로토타입입니다.</b><a href="/demo" target="_blank" rel="noopener">FootMate v4.0 앱 보기 ↗</a></div>`)
   ];
 
   function enhance(){

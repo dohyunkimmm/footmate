@@ -22,7 +22,7 @@ function failures(page){
 async function openDiscover(page,width=390){
   const errs=failures(page);
   await page.setViewportSize({width,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();history.replaceState({},'',location.pathname)});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();
