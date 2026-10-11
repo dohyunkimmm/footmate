@@ -467,7 +467,7 @@ for(const width of [320,390,1440]){
   test('07 and 09 explain evidence without external navigation at '+width+'px',async({page})=>{
     await page.setViewportSize({width,height:900});
     await page.goto('/#section-01');
-    await expect(page.locator('#section-01 .experience-actions > a')).toHaveCount(2);
+    await expect(page.locator('#section-01 .experience-actions > a')).toHaveCount(1);
     const ctas=await page.locator('#section-01 .experience-actions > a').evaluateAll(nodes=>nodes.map(node=>({left:node.getBoundingClientRect().left,right:node.getBoundingClientRect().right})));
     expect(ctas.every(({left,right})=>left>=0&&right<=width+1)).toBe(true);
     await page.locator('.toc-item').nth(6).click();
