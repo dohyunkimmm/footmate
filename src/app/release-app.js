@@ -239,7 +239,7 @@ function patchCheckout(screen){
     confirm.disabled=state==='processing'||(!role&&state!=='error');
     if(state==='processing')confirm.setAttribute('aria-busy','true');
     else confirm.removeAttribute('aria-busy');
-    const label=state==='processing'?'참가 확정 중…':!role?'포지션 선택 후 참가':state==='error'?'다시 시도':'무료로 참가 확정';
+    const label=state==='processing'?'참가 확정 중…':state==='error'?'다시 시도':!role?'포지션 선택 후 참가':'무료로 참가 확정';
     if(confirm.textContent!==label)confirm.textContent=label;
   }
   screen.querySelectorAll('[data-participation-panel]').forEach(node=>node.dataset.v6LegacyPayment='true');
