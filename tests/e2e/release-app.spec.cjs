@@ -374,6 +374,31 @@ test('Real App P1 labels widened recommendations and base discovery filters',asy
 });
 
 
+test('portfolio recommendation prioritizes level-fit and playable role before regional score',async({page})=>{
+  const errors=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);
+  await seedSession(page,{route:'home',region:'수원 · 영통',position:'MF',level:'입문'});
+  const first=page.locator('[data-screen="home"] .fm-next-match-card').first();
+  await expect(first).toHaveAttribute('data-match-id','giheung-2000');
+  await expect(first).toContainText('MF 1자리');
+  await expect(first.locator('.fm-next-fit-badge')).toHaveText('조건 확장');
+  await expectNoHorizontalOverflow(page);
+  expect(errors).toEqual([]);
+});
+
+test('portfolio guided reviewer route describes current app and Beta boundaries',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/app?mode=guided');
+  await expect(page.getByRole('complementary',{name:'Case Study Guide'})).toBeVisible();
+  const guide=page.locator('.fm-next-guide');
+  await expect(guide).toContainText('포트폴리오 심사용 v6');
+  await expect(guide).toContainText('대체 포지션은 직접 선택');
+  await expect(guide).toContainText('실제 청구 0원');
+  await expect(guide).toContainText('샘플 기록은 이전되지 않음');
+  await expect(guide.getByRole('link',{name:'Case Study의 설계 결정·검증 보기'})).toHaveAttribute('href','/#section-06');
+  await expectNoHorizontalOverflow(page);
+});
+
 test('Flow P0 resumes returning players without repeating setup',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
