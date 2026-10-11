@@ -41,7 +41,7 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await page.locator('.slide:visible summary').click();
   await expect(page.locator('.slide:visible')).toContainText('사용자 직접 확정 · 자동 실행 제외');
   await page.locator('.toc-item').nth(5).click();
-  await expect(page.locator('.slide:visible')).toContainText('추천 로직 · 후보·순위·이유 결정');
+  await expect(page.locator('.slide:visible')).toContainText('AI는 조건 해석 · 후보 순위와 근거는 규칙 엔진');
 });
 
 test('v6.0.0 legacy entry URLs redirect to the single /app entry',async({page})=>{
@@ -122,8 +122,8 @@ test('v6.0.0 exact Production migrates legacy Schedule ownership into MY',async(
 async function verifyMatchCards(page,name){
   const screen=page.locator('[data-screen="'+name+'"]');
   const expected=[
-    {tags:['조건과 잘 맞아요','22분','MF 2자리','고급'],price:'13,000원'},
-    {tags:['함께 비교해볼 만해요','12분','FW 1자리','중급'],price:'11,000원'}
+    {tags:['조건과 잘 맞아요','예시 22분','MF 2자리','고급'],price:'13,000원'},
+    {tags:['함께 비교해볼 만해요','예시 12분','FW 1자리','중급'],price:'11,000원'}
   ];
   for(const [index,item] of expected.entries()){
     const card=screen.locator('.fm-next-match-card').nth(index);
