@@ -226,6 +226,7 @@ jobs:
             test-results/
             verification/typography-qa-summary.json
             verification/typography-qa-summary.md
+            verification/p1-desktop-qa/
           if-no-files-found: warn
           retention-days: 14
 

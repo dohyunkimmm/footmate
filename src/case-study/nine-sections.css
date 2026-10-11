@@ -400,3 +400,25 @@ html:has(.image-dialog[open]){overflow:hidden}
   .slide details>summary{transition:background-color 140ms ease}
   .slide details>summary::after{transition:transform 160ms ease}
 }
+
+/* P1 desktop module layout: preserve the centered shell and all narrative copy. */
+@media(min-width:1400px){
+  #section-01{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;padding-top:24px;padding-bottom:24px;align-content:start}
+  #section-01 .section-head{grid-column:1;grid-row:1;max-width:none;margin:0;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  #section-01 .section-head h1{margin-top:8px}
+  #section-01 .lead{max-width:620px;margin-top:10px}
+  #section-01 .overview-grid{display:contents}
+  #section-01 .overview-grid>div{grid-column:1;grid-row:2;min-width:0;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  #section-01 .project-facts{padding:0 0 12px;border-top:0;gap:16px}
+  #section-01 .problem-statement{padding:12px 0}
+  #section-01 .problem-statement h2{margin-top:6px}
+  #section-01 .problem-statement p{margin-top:8px}
+  #section-01 .experience-disclosure{margin-top:8px}
+  #section-01 .product-figure{grid-column:2;grid-row:1/span 2;min-width:0;margin:0;padding:14px;display:flex;flex-direction:column;justify-content:center;border-radius:12px;background:var(--soft)}
+  #section-01 .evidence-preview:has(img[src*="recommendation-home"]){max-width:240px}
+  #section-01 .product-figure figcaption{line-height:1.7}
+  #section-01>.card-grid{grid-column:1/-1;grid-row:3;margin:0;column-gap:12px}
+  #section-01 .story-card{padding:14px 16px;background:#fff;border-color:var(--line);border-radius:12px}
+  #section-01 .story-card h3{margin-top:5px}
+  #section-01 .story-card p{margin-top:6px}
+}
