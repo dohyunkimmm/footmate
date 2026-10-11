@@ -60,7 +60,7 @@ test('Welcome presentation contract owns AI role copy while source layout remain
   expect(personalization).not.toContain("copy.style.transform='translateY(-44px)'");
   expect(html).toContain('/src/platform/presentation/bootstrap.js?v=490');
   expect(html).toContain('/src/app/app.js?v=610');
-  expect(html).toContain('/src/app/personalization.js?v=493');
+  expect(html).toContain('/src/app/personalization.js?v=610');
 });
 
 for(const path of ['/demo','/app']){
