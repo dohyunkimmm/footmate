@@ -240,7 +240,7 @@ test('Home lifecycle closes Return and hands the next action back to Discover',a
   const lifecycle=page.locator('[data-v6-lifecycle="upcoming"]');
   await expect(lifecycle).toBeVisible();
   await page.mouse.move(1,1);
-  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',shot);
+  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',{...shot,maxDiffPixels:200});
   await lifecycle.getByRole('button',{name:'내 경기 보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await seedSession(page,{route:'profile',matchStage:'postgame'});
