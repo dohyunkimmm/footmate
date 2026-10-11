@@ -489,3 +489,29 @@ for(const width of [320,390,1440]){
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
+
+
+// Capture and verify the P1-only desktop module composition.
+for(const width of [1440,1920]){
+  test('P1 centered desktop modules at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:1080});
+    await page.goto('/#section-01');
+    await page.evaluate(()=>document.fonts.ready);
+    const image=page.locator('#section-01 .product-figure img');
+    await expect.poll(()=>image.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+    const layout=await page.evaluate(()=>{
+      const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width};};
+      return {shell:rect('.fm-cs-shell'),head:rect('#section-01 .section-head'),info:rect('#section-01 .overview-grid>div'),image:rect('#section-01 .product-figure'),cards:rect('#section-01>.card-grid')};
+    });
+    expect(Math.abs(layout.shell.left-(width-layout.shell.width)/2)).toBeLessThan(2);
+    expect(layout.shell.width).toBe(1360);
+    expect(layout.head.right).toBeLessThan(layout.image.left);
+    expect(Math.abs(layout.head.top-layout.image.top)).toBeLessThan(2);
+    expect(Math.abs(layout.head.left-layout.info.left)).toBeLessThan(2);
+    expect(layout.cards.top).toBeGreaterThanOrEqual(Math.max(layout.info.bottom,layout.image.bottom));
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+    await page.waitForTimeout(200);
+    require('node:fs').mkdirSync('verification/p1-desktop-qa',{recursive:true});
+    await page.screenshot({path:'verification/p1-desktop-qa/p1-'+width+'.png',fullPage:true});
+  });
+}
