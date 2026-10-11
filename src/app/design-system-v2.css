@@ -1464,3 +1464,21 @@ html[data-footmate-surface="real"] .fm-next-page[data-mode="real"] .fm-next-app 
   word-break:keep-all;
   overflow-wrap:break-word;
 }
+
+/* Restore Welcome surface from d325f108 (#326), without reverting app behavior. */
+#footmate-next .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-intro{
+background:radial-gradient(circle at 86% 12%,rgba(216,255,115,.18),transparent 24%),linear-gradient(155deg,#fff 0%,#f8faf7 58%,#f3f7f3 100%);
+}
+#footmate-next .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-intro:after{
+border-color:rgba(29,104,74,.11);box-shadow:0 0 0 48px rgba(29,104,74,.026),0 0 0 96px rgba(29,104,74,.014);
+}
+#footmate-next .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-topbar--dark{
+position:absolute;top:0!important;left:0;right:0;transform:none!important;min-height:64px;margin:0;padding:10px 20px;z-index:30;
+background:rgba(255,255,255,.86);color:#132019;
+}
+#footmate-next .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-brand{
+display:flex;visibility:visible;opacity:1;position:relative;top:0;transform:translateY(-2px)!important;
+}
+#footmate-next .fm-next-page[data-mode="real"] [data-screen="welcome"] .fm-next-intro-copy{
+transform:none!important;
+}
