@@ -396,6 +396,14 @@ test('portfolio guided reviewer route describes current app and Beta boundaries'
   await expect(guide).toContainText('실제 청구 0원');
   await expect(guide).toContainText('샘플 기록은 이전되지 않음');
   await expect(guide.getByRole('link',{name:'Case Study의 설계 결정·검증 보기'})).toHaveAttribute('href','/#section-06');
+  await guide.getByRole('button',{name:'두 경기 비교'}).click();
+  await expect(page.getByRole('dialog',{name:'두 경기 비교'})).toBeVisible();
+  await page.getByRole('button',{name:'경기 비교 닫기'}).click();
+  await guide.getByRole('button',{name:'마감 포지션'}).click();
+  await expect(page.locator('[data-screen="detail"] [data-position="MF"]')).toBeDisabled();
+  await guide.getByRole('button',{name:'MY 미리보기'}).click();
+  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
+  await expect(guide).toContainText('체험용 화면 전환');
   await expectNoHorizontalOverflow(page);
 });
 
