@@ -68,7 +68,7 @@ test('390px Welcome restores the ball logo and FootMate application entry',async
   const headline=page.locator('.fm-next-intro h1');
   const cta=page.getByRole('button',{name:/내 경기 찾아보기/});
   await expect(intro).toBeVisible();
-  await expect(headline).toHaveCSS('color','rgb(255, 255, 255)');
+  await expect(headline).toHaveCSS('color','rgb(23, 60, 44)');
   await expect(page.locator('[data-screen="welcome"] .fm-app-entry-name')).toHaveText('FootMate');
   await expect(page.locator('[data-screen="welcome"] .fm-app-entry-logo')).toBeVisible();
   await expect(page.locator('[data-screen="welcome"] .fm-app-entry-logo')).toHaveJSProperty('naturalWidth',120);
