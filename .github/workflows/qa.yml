@@ -160,6 +160,8 @@ jobs:
 
   browser_e2e:
     name: Browser E2E + axe
+    env:
+      QA_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     needs: impact
     if: needs.impact.outputs.runtime == 'true'
     runs-on: ubuntu-latest

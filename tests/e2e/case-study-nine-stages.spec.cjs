@@ -401,7 +401,7 @@ test('mobile QA records expose complete problem, change and verification without
   await page.goto('/#section-07');
   const records=page.locator('.qa-evidence-table');
   await expect(records.locator('tbody tr')).toHaveCount(3);
-  await expect(records.getByRole('cell',{name:'점검 항목 · 모바일 첫 화면의 추천 카드 노출·스크롤 범위 점검',exact:true})).toBeVisible();
+  await expect(records.getByRole('cell',{name:'재검증 결과 · 모바일 추천 카드 노출·가로 넘침 없음 확인',exact:true})).toBeVisible();
   const geometry=await records.evaluate(node=>({width:node.clientWidth,scroll:node.scrollWidth,rows:[...node.querySelectorAll('tbody tr')].map(row=>row.getBoundingClientRect().top)}));
   expect(geometry.scroll).toBeLessThanOrEqual(geometry.width+1);
   expect(geometry.rows[1]).toBeGreaterThan(geometry.rows[0]);

@@ -492,3 +492,10 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-01 .section-head h1{font-size:28px}
   .section-head h1 .cs-title-break{display:none}
 }
+
+/* QA 01–08: emphasize the decision while retaining the approved shell. */
+#section-06 .decision-proof>div{background:transparent;border-left:0;border-radius:0;border-bottom:1px solid var(--line)}
+#section-06 .decision-proof>.decision-judgment{background:var(--soft);border-left:3px solid var(--green);border-bottom:0;border-radius:8px}
+#section-06 .decision-proof>.decision-judgment dd{font-weight:700;color:var(--ink)}
+#section-06 .product-figure figcaption{font-size:13px;line-height:1.8}
+#section-06 .evidence-notice{display:block;margin-top:4px;font-weight:700;color:var(--ink)}
