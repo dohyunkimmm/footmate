@@ -301,3 +301,63 @@ html:has(.image-dialog[open]){overflow:hidden}
 #section-01 .experience-actions a{justify-content:space-between;gap:12px;min-height:44px}
 #section-01 .experience-disclosure{margin-top:12px;line-height:1.8}
 @media(max-width:430px){#section-01 .experience-actions{flex-direction:column;align-items:stretch}#section-01 .experience-actions a{width:100%}}
+
+/* Visual review 01–12: text hierarchy, reading order and complete evidence. */
+.section-head h1{letter-spacing:-.03em;text-wrap:balance}
+.project-facts span,.project-facts p{font-size:12px;line-height:1.8}
+.project-facts strong{font-size:14px}
+.flow strong{font-size:14px;line-height:1.65}
+.flow span{font-size:13px;line-height:1.8}
+.flow .flow-number{font-size:12px}
+#section-06 .decision-row{align-items:start;gap:26px}
+#section-06 .decision-proof dd{font-size:14px;line-height:1.8}
+#section-06 .decision-proof{gap:12px;margin-top:18px}
+#section-06 .decision-proof>div{padding:13px 14px}
+#section-01 .evidence-preview,#section-06 .evidence-preview{margin-inline:auto}
+#section-01 .evidence-preview:has(img[src*="recommendation-home"]){max-width:260px}
+#section-06 .evidence-preview:has(img[src*="recommendation-home"]){max-width:220px}
+#section-01 .product-figure img[src*="recommendation-home"],
+#section-06 .product-figure img[src*="recommendation-home"]{width:100%;height:auto;aspect-ratio:1/2;object-fit:cover}
+#section-06 .product-figure img[src*="decision-detail"]{width:100%;height:auto;object-fit:contain}
+#section-07 .validation-source-keys{gap:0;border-bottom:1px solid var(--line);margin:12px 0 18px}
+#section-07 .validation-source-keys span{border:0;border-radius:0;padding:8px 12px;background:transparent}
+@media(min-width:801px){
+  #section-06 .decision-row>div{padding-top:0}
+  #section-06 .decision-row .product-figure{margin:0}
+}
+@media(max-width:800px){
+  .sb-brand{padding:12px 20px}
+  .sb-logo{font-size:20px}
+  .toc{padding-bottom:8px}
+  .toc-item{padding:8px 10px}
+  .topbar{height:48px}
+  .slide{padding-top:28px}
+  .section-head h1{font-size:32px;line-height:1.4}
+  .section-head h1 .cs-title-break{display:none}
+  .section-head{margin-bottom:24px}
+  #section-05 .flow{grid-template-columns:1fr;gap:24px}
+  #section-05 .flow li{padding:14px 16px}
+  #section-05 .flow li+li:before{content:'↓'!important;left:50%;top:-25px;transform:translateX(-50%);font-size:16px;line-height:24px}
+  #section-05 .flow .flow-number{margin-bottom:3px}
+  #section-05 .flow span{margin-top:4px}
+  #section-03 .journey-map article{padding:18px}
+  #section-03 .journey-map article+article{border-top:3px solid var(--cs-border-strong)}
+  #section-03 .journey-map h2{margin:6px 0 12px}
+  #section-03 .journey-map article>div{padding:9px 0}
+  #section-03 .journey-map p{margin-top:5px}
+  #section-03 .journey-map .opportunity{padding:11px;margin-top:3px}
+  #section-06 .decision-row{gap:18px;padding:22px 0}
+  #section-06 .decision-proof{gap:8px}
+  #section-06 .decision-proof>div{padding:10px 12px}
+  #section-07 .validation-source-keys span{padding:6px 0}
+  #section-09 .next-list li{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:12px}
+  #section-09 .next-list li>div{display:contents}
+  #section-09 .next-number{grid-column:1;grid-row:1/span 2}
+  #section-09 .next-list .eyebrow,#section-09 .next-list h2{grid-column:2}
+  #section-09 .next-list p{grid-column:1/-1}
+  .cs-button{font-size:12px}
+}
+@media(max-width:370px){
+  .section-head h1{font-size:30px}
+  .sb-brand{padding:10px 16px}
+}
