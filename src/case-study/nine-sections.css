@@ -361,3 +361,12 @@ html:has(.image-dialog[open]){overflow:hidden}
   .section-head h1{font-size:30px}
   .sb-brand{padding:10px 16px}
 }
+
+/* Small visual patches: explicit row continuation and one journey divider. */
+@media(min-width:801px) and (max-width:1100px){
+  #section-05 .flow{row-gap:32px}
+  #section-05 .flow li:nth-child(4):before{content:'03 → 04';left:0;top:-27px;font-size:11px;font-weight:600;line-height:20px;white-space:nowrap}
+}
+@media(max-width:800px){
+  #section-03 .journey-map article:not(:last-child){border-bottom:0}
+}
