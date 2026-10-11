@@ -139,10 +139,11 @@ async function verifyMatchCards(page,name){
     const tags=card.locator('.fm-next-match-body > .fm-next-match-tags > .fm-next-tag');
     await expect(tags).toHaveCount(4);
     await expect(tags.nth(0)).toHaveText(recommendation.fit);
-    await expect(tags.nth(1)).toHaveText('예시 '+match.distance);
+    await expect(tags.nth(1)).toHaveText((name==='home'?'예시 ':'')+match.distance);
     const position=context.session.position||'MF';
     const available=match.positionSlots[position]||0;
     if(available>0)await expect(tags.nth(2)).toHaveText(position+' '+available+'자리');
+    else if(name==='discover')await expect(tags.nth(2)).toHaveText(match.spot);
     else await expect(tags.nth(2)).toHaveText(new RegExp(position+'.*(0자리|마감)'));
     await expect(tags.nth(3)).toHaveText(level);
     for(const tag of await tags.all())await expect(tag).toBeVisible();
