@@ -11,12 +11,12 @@
 | 경로 | 설명 |
 | --- | --- |
 | `/` | 문제 정의·설계·검증 근거를 소개하는 Case Study |
-| `/demo` | **Interactive Demo**: 체험용 경기 데이터로 추천·탐색·참가 흐름 체험 (실제 참가·결제 없음) |
-| `/app` | 동일한 샘플 앱의 Release App 경로: **Home / 경기 찾기 / MY** |
+| `/demo` | `/app`과 동일한 샘플 앱의 별칭: 체험용 경기 데이터 (실제 참가·결제 없음) |
+| `/app` | **포트폴리오 제출용 Real App**: 샘플 경기로 실제 사용자 흐름을 조작하는 Home / 경기 찾기 / MY |
 | `/beta` | **Closed Beta**: Supabase 서버 연동 기반 무료 참가 서비스 (실제 결제 없음) |
 | `/beta/operator` | 허용된 운영자만 접근하는 TOTP MFA 운영 화면 |
 
-`/app?mode=guided`는 안내형 체험, `/app?mode=evidence`는 구현·검증 근거 확인용입니다.
+**제출 링크 2개:** [Case Study](https://footmate-black.vercel.app/) + [Real App](https://footmate-black.vercel.app/app). 심사자에게는 [6단계 Guided Mode](https://footmate-black.vercel.app/app?mode=guided)를 선택 체험 경로로 제공합니다. `/app?mode=evidence`는 구현·검증 근거 확인용입니다.
 
 ## 주요 경험
 
