@@ -23,7 +23,7 @@ if(root){
   function exportRecommendations(){
     window.__FOOTMATE_RECOMMENDATION__={
       version:'4.1.0',
-      rank:(preferences={})=>rank(createState(preferences)).map(item=>({id:item.match.id,score:item.score,fit:item.fit,reasons:item.reasons.map(reason=>reason.title)}))
+      rank:(preferences={})=>rank(createState(preferences)).map(item=>({id:item.match.id,score:item.score,fit:item.fit,fitTier:item.fitTier,exactRegion:item.exactRegion,slotCount:item.slotCount,reasons:item.reasons.map(reason=>reason.title)}))
     };
   }
 
