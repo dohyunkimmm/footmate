@@ -68,10 +68,10 @@
       `<div class="validation-source-keys" aria-label="검증 근거 수준 구분"><span><b>과업 검증</b> · 수행 횟수 확인 / 참여자별 발견 연결 미확정</span><span><b>개발 QA</b> · 구현 동작과 재검증 / 사용자 성과와 별개</span><span><b>성과 KPI</b> · 산식과 제외 조건 정의 / 실제 측정 전</span></div>` +
       `<details class="portfolio-method-details"><summary>사용자 과업 검증 · 과정과 한계 자세히 보기</summary><div class="detail-body"><p>같은 교육과정을 수강한 6명 · iOS 4명 / Android 2명</p><p>일부 참여자가 복수 과업 수행 · 총 8회 요청</p><div class="portfolio-task-grid">${[
         ['비회원 탐색 · 2회','조건 설정 → 추천·목록 → 상세 이동 확인'],
-        ['Kakao 가입 · 2회','참가 맥락 → 인증 → 가입 동선 확인'],
-        ['Google 가입 · 2회','인증 이후 원래 경기로 복귀하는 흐름 확인'],
+        ['Kakao 가입 · 2회','당시 가입·인증 과업 확인 · 현 Demo는 Beta로 이동'],
+        ['Google 가입 · 2회','당시 선택 경기·복귀 과업 · 현 Demo 샘플은 이전되지 않음'],
         ['이메일 가입 · 2회','가입·인증·로그인 단계의 상태 확인']
-      ].map(([title,body])=>`<article><h3>${title}</h3><p>${body}</p></article>`).join('')}</div><p>관찰 범위 · 인증 방식·선택 보존·복귀 위치·모바일 차이</p><p>기록 한계 · 개인별 발견·버그 빈도·수정 인과 미확정</p><p>이 자료만으로 이탈률·전환율 개선을 주장하지 않음</p></div></details>` +
+      ].map(([title,body])=>`<article><h3>${title}</h3><p>${body}</p></article>`).join('')}</div><p>관찰 범위 · 검증 당시 인증 방식·복귀·모바일 차이</p><p>현 구현 · Demo 소셜 로그인은 Beta로 전환 · 선택 샘플 미이전</p><p>기록 한계 · 개인별 발견·버그 빈도·수정 인과 미확정</p><p>이 자료만으로 이탈률·전환율 개선을 주장하지 않음</p></div></details>` +
       `<h2 class="block-title">개선·재검증 사례 · 개발 QA 근거</h2><p class="table-scroll-hint small-copy" id="qa-table-hint">발견 문제 → 수정 → 점검 내용 순서로 확인</p><div class="table-wrap qa-evidence-table" tabindex="0" role="region" aria-label="개선·재검증 사례 표" aria-describedby="qa-table-hint"><table><caption class="sr-only">개발 QA에서 확인한 개선과 재검증 기록</caption><thead><tr><th scope="col">발견 문제</th><th scope="col">수정</th><th scope="col">점검 항목</th></tr></thead><tbody><tr><th scope="row">첫 추천까지 스크롤 부담</th><td>상단 여백·카드 밀도 조정</td><td>모바일 첫 화면의 추천 카드 노출·스크롤 범위 점검</td></tr><tr><th scope="row">참가 오류 후 복귀</th><td>오류 안내·재시도·경기 다시 선택</td><td>배포 핵심 동작 15개 · 앱 흐름 8개 점검</td></tr><tr><th scope="row">필터 초기 색 대비</th><td>기본 상태에도 구분 색상 적용</td><td>색상 구분·화면 표시·모바일 Safari 동작 점검</td></tr></tbody></table></div>` +
       note('개발·배포 점검 사례 · 교육생 과업 결과와 별도<br>성공률·시간·만족도 개선 수치 미확정') +
       `<p class="small-copy">우선 측정 3개 · 상세 진입률 / 참가 실패율 / 복구 성공률<br>실제 사용 기준값 미확보 · 개선 성과 수치 아님</p>` +
