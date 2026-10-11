@@ -482,7 +482,7 @@ test('Interactive Demo labels legacy local sessions safely and separates explici
   expect(errs).toEqual([]);
 });
 
-test('Demo keeps local join separate from an explicit actual-service handoff',async({page})=>{
+test('Demo keeps local join separate from an explicit actual-service handoff',async({page},testInfo)=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
@@ -490,7 +490,9 @@ test('Demo keeps local join separate from an explicit actual-service handoff',as
   await expect(page.locator('[data-oauth-provider]')).toHaveCount(0);
   const service=page.locator('[data-demo-service]');
   await expect(service.locator('a')).toBeHidden();
+  await page.screenshot({path:testInfo.outputPath('demo-auth-390.png'),fullPage:true});
   await service.locator('summary').click();
+  await page.screenshot({path:testInfo.outputPath('demo-auth-service-390.png'),fullPage:true});
   await expect(service).toContainText('체험 기록은 이전되지 않습니다');
   await expect(service.getByRole('link',{name:'실제 서비스로 이동'})).toHaveAttribute('href','/beta');
   await expectAxeClean(page,'[data-screen="auth"]');
