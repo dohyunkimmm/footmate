@@ -178,7 +178,7 @@
     auth.querySelector('.fm-next-cs-state-line')?.remove();
     auth.querySelector('.fm-next-cs-auth-flow>.is-focus')?.classList.remove('is-focus');
     setHTML(auth,'.fm-next-cs-scope',rows([
-      ['Real App','UX 시뮬레이션 인증 · 무료 참가 확인'],
+      ['Interactive Demo','UX 시뮬레이션 인증 · 무료 참가 확인'],
       ['Closed Beta','Supabase 인증·참가 경로 실연동'],
       ['검증 범위','Google/Kakao OAuth Production 실로그인 확인 · 실제 PG 미연동']
     ]));
@@ -219,7 +219,7 @@
       '이 결과는 버그와 막힘을 찾기 위한 사용성 검증이며, 전환율 개선이나 시장 적합성을 입증한 Measured Result와는 구분합니다.'
     ));
     setHTML(release,'.fm-next-cs-outcomes',
-      '<div><b>Real App</b><p>'+lines('AI Gateway 실연동 · 후보·순위·이유는 추천 엔진','샘플 경기 데이터 · 인증·정원·알림 시뮬레이션 · 무료 참가 확인')+'</p></div>'+
+      '<div><b>Interactive Demo</b><p>'+lines('AI Gateway 실연동 · 후보·순위·이유는 추천 엔진','샘플 경기 데이터 · 인증·정원·알림 시뮬레이션 · 무료 참가 확인')+'</p></div>'+
       '<div><b>Closed Beta</b><p>'+lines('Supabase 인증·경기·정원·참가/취소·체크인 실연동','Google/Kakao OAuth · 이메일 · Web Push · 미디어 실제 환경 검증')+'</p></div>'+
       '<div><b>미연동 범위</b><p>'+lines('실제 PG · 외부 분석 도구 미연동','수익성 · 실제 이용 지표 미검증')+'</p></div>');
 

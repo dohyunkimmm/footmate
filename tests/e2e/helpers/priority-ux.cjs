@@ -127,7 +127,7 @@ async function profileSettings(page,capture=async()=>{}){
   await page.locator('[data-screen="profile"] .fm-next-nav [data-action="nav-discover"]').click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
-  // Real App P1 edits base conditions inline in Discover, without revisiting setup.
+  // Interactive Demo P1 edits base conditions inline in Discover, without revisiting setup.
   const quickEdit=page.locator('[data-screen="discover"] [data-discovery-quick-edit]');
   await expect(quickEdit).toBeVisible();
   await quickEdit.locator('[data-quick-condition="region"]').selectOption('수원 · 영통');

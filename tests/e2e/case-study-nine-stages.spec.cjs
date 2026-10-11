@@ -31,12 +31,12 @@ for(const width of [1920,1440,800,390,320]){
   });
 }
 
-test('paired portfolio connects Real App and documents a real QA before-after, not a fake result',async({page})=>{
+test('paired portfolio connects Interactive Demo and documents a real QA before-after, not a fake result',async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await page.goto('/');
   const first=page.locator('#section-01');
-  await expect(first.getByRole('link',{name:'Real App 직접 체험하기'})).toHaveAttribute('href','/app');
-  await expect(first).toContainText('Real App(/app) = Demo(/demo)');
+  await expect(first.getByRole('link',{name:'Interactive Demo 직접 체험하기'})).toHaveAttribute('href','/app');
+  await expect(first).toContainText('Interactive Demo(/app) = Demo(/demo)');
   await page.locator('.toc-item').nth(5).click();
   const report=page.locator('#section-06 .portfolio-change-evidence');
   await report.locator('summary').click();
@@ -80,7 +80,7 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page).toHaveURL(/#section-01$/);
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
-  await expect(page.getByRole('link',{name:'Real App 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
+  await expect(page.getByRole('link',{name:'Interactive Demo 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
   await expect(page.locator('.experience-actions a[href="/app?mode=guided"]')).toHaveCount(0);
   await expect(page.locator('#section-01 .experience-disclosure a[href="/beta"]')).toHaveText('Closed Beta ↗');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');

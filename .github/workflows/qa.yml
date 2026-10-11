@@ -179,7 +179,7 @@ jobs:
         run: node -e "if (require('./package.json').qaToolchain.playwright !== '1.55.1') throw new Error('Update the Playwright container with qaToolchain.playwright')"
       - name: Verify installed QA toolchain
         run: node scripts/check-qa-toolchain.cjs
-      - name: Check Real App CSS ownership and syntax
+      - name: Check Interactive Demo CSS ownership and syntax
         run: |
           node - <<'NODE'
           const fs=require('fs');
@@ -187,12 +187,12 @@ jobs:
           const html=fs.readFileSync('app.html','utf8');
           const design=fs.readFileSync('src/app/design-system-v2.css','utf8');
           if(html.includes('id="fm-real-app-white-tone"'))throw new Error('white-first CSS must not return to inline HTML ownership');
-          if(!design.includes('White-first Real App surface ownership'))throw new Error('white-first design-system ownership marker missing');
-          if(!design.includes('FootMate Real App Visual Finish · P0–P2'))throw new Error('Real App finish ownership marker missing');
-          if(html.includes('/src/app/real-app-visual-finish.css'))throw new Error('Real App finish must not add a standalone stylesheet request');
+          if(!design.includes('White-first Interactive Demo surface ownership'))throw new Error('white-first design-system ownership marker missing');
+          if(!design.includes('FootMate Interactive Demo Visual Finish · P0–P2'))throw new Error('Interactive Demo finish ownership marker missing');
+          if(html.includes('/src/app/real-app-visual-finish.css'))throw new Error('Interactive Demo finish must not add a standalone stylesheet request');
           if(!design.includes('Visual Consistency v4')||!design.includes('--fm-v4-consistency:1'))throw new Error('visual consistency ownership missing');
           csstree.parse(design);
-          console.log('PASS Real App CSS syntax and consolidated ownership');
+          console.log('PASS Interactive Demo CSS syntax and consolidated ownership');
           NODE
       - name: Check product completion JS syntax
         run: node --check src/app/ai-match-assistant.js && node --check src/platform/presentation/real-app-card-polish.js && node --check src/platform/presentation/p0-usability-trust.js && node --check src/platform/presentation/p1-decision-clarity.js && node --check src/app/release-app.js

@@ -45,7 +45,7 @@ const screens={
 function example(mode,width){
   const checks=screens[mode]||[];
   return {
-    schema:1,test:mode+' '+width,project:'chromium',surface:'Real App',width,mode,
+    schema:1,test:mode+' '+width,project:'chromium',surface:'Interactive Demo',width,mode,
     audits:checks.map(screen=>({
       screen,issues:[],review:[],documentOverflow:false,
       samples:[{id:'h1 경기',lines:2,height:40}]

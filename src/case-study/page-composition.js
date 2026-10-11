@@ -230,7 +230,7 @@
     ]));
     text(7,'.fm-p1-auth-frame:nth-of-type(2) p','한 번 고른 대상을 재입력 없이 전달');
     html(7,'.fm-next-cs-scope',rows([
-      ['Real App','Google·Kakao 인증 연결 · 무료 참가 결과는 브라우저 저장'],
+      ['Interactive Demo','Google·Kakao 인증 연결 · 무료 참가 결과는 브라우저 저장'],
       ['Closed Beta','Supabase 계정·경기·참가 흐름 실제 연동'],
       ['검증 범위','운영 환경 로그인 확인 · 복귀 경로 보존 설계 · 실제 결제 미연동']
     ]));
@@ -239,7 +239,7 @@
     if(states[2])states[2].querySelector('p').textContent='시작 20분 전부터 종료 전까지 체크인';
     if(states[3])states[3].querySelector('p').textContent='체감 난이도·재참가 의향 → 다음 추천 보조 신호';
     html(8,'.fm-next-cs-note',rows([
-      ['체크인 범위','Real App은 체험 기록 · Beta는 실제 출석 상태'],
+      ['체크인 범위','Interactive Demo은 체험 기록 · Beta는 실제 출석 상태'],
       ['빈 자리 충원','Beta에서 취소 시 접수 순서대로 포지션별 대기자 승격'],
       ['변경과 복구','변경 이력 기록 · 알림 전달 실패와 참가 상태 분리']
     ]));
@@ -279,7 +279,7 @@
       app.querySelector('ul').innerHTML='<li data-status="connected"><span>실제 연결</span><b>AI 해석 · Google/Kakao 인증</b></li><li data-status="implemented"><span>구현</span><b>규칙 기반 추천 · 무료 참가 확인</b></li><li data-status="sample"><span>샘플</span><b>경기 데이터 · 잔여 자리</b></li><li data-status="simulation"><span>체험 기록</span><b>참가·체크인·피드백 · 브라우저 저장</b></li>';
     }
     slides[12].querySelectorAll('[data-zone="closed-beta"] li span').forEach(node=>node.textContent='실제 연결');
-    summary(12,[['Real App','AI·인증 연결 · 브라우저 기록'],['Closed Beta','참가·운영 · 실제 연결'],['다음 단계','이용 기준값 · 사용자 가치']]);
+    summary(12,[['Interactive Demo','AI·인증 연결 · 브라우저 기록'],['Closed Beta','참가·운영 · 실제 연결'],['다음 단계','이용 기준값 · 사용자 가치']]);
     html(12,'.fm-p1-release-next dl','<div><dt>배운 점과 다음 검증</dt><dd>실패·중복 요청·상태 갱신까지 함께 정의<br>다음 검증 · 추천 이유의 판단 도움 → Beta 과업 관찰·이탈 구간·기준값 확보</dd></div>');
     // Reader-facing wording only: keep navigation and product identifiers intact.
     const walker=document.createTreeWalker(document.querySelector('.track'),NodeFilter.SHOW_TEXT);

@@ -79,7 +79,7 @@
 - Production verification: exact Production에서 core 15 tests PASS + Release App journey 8 tests PASS. Home / Discover / Detail, free Join → Success → MY, legacy Schedule → MY migration, Matchday, Return lifecycle, 320 / 375 / 390 / 430px overflow/accessibility 계약을 확인.
 - QA hardening: Production release behavior gate가 Join 오류 복구와 Return 완료 → Discover handoff를 직접 실행하도록 확대하고, HTTP smoke의 lifecycle 구현 문자열 의존을 제거. 통합 QA workflow는 README/docs/markdown-only 변경에서 heavy browser/visual job을 skip하고 Release App contract는 유지.
 - Documentation sync: root README와 `RELEASE-APP.md`의 durable 제품 설명은 현재 상태와 충돌하지 않아 유지하고, 이 Release History의 current Production/runtime 사실만 #450 기준으로 동기화. Closed Beta Runbook은 운영 절차 변경이 없어 유지. 이번 변경은 visual polish이므로 Notion sync 대상이 아니며, Case Study는 별도 프로젝트라 sync하지 않음.
-- Case Study P0/P1 visual hierarchy closure: PR #453 · runtime baseline `73fb999de4661bdb989c467b42a55d15f186aa87`. 13-section IA와 승인 카피·제품 사실·route는 유지하면서 02 Problem의 원인→핵심 문제 구조, 06/07/09 Product UI evidence 비중, 10 Recovery 2-up evidence, 12 Validation Metric/QA Evidence 분리, 01 Overview proof hierarchy와 13 final Real App CTA를 정리.
+- Case Study P0/P1 visual hierarchy closure: PR #453 · runtime baseline `73fb999de4661bdb989c467b42a55d15f186aa87`. 13-section IA와 승인 카피·제품 사실·route는 유지하면서 02 Problem의 원인→핵심 문제 구조, 06/07/09 Product UI evidence 비중, 10 Recovery 2-up evidence, 12 Validation Metric/QA Evidence 분리, 01 Overview proof hierarchy와 13 final Interactive Demo CTA를 정리.
 - Final PR QA: FootMate QA run `37075858806` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Case Study 13-section desktop/mobile rough visual audit PASS · Mobile Safari/WebKit PASS.
 - Post-merge main QA: FootMate QA run `37076363576` SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS.
 - Exact Vercel Production: deployment `dpl_Bnk4WZo7k3tH4JzRwSMQkVkJz4cH` · SHA `73fb999de4661bdb989c467b42a55d15f186aa87` · READY · official alias `footmate-black.vercel.app`.
@@ -89,9 +89,9 @@
 
 이 문서는 현재 public branch의 **검증된 durable release 사실**을 기록한다. 일시적인 Preview 취소·quota·대기 상태는 누적하지 않는다. docs-only merge로 moving `main`이 바뀌어도 각 release의 product/runtime baseline과 exact Production SHA는 별도로 유지한다.
 
-## Real App flow naturalness closure · 2026-10-01
+## Interactive Demo flow naturalness closure · 2026-10-01
 
-- Scope: Real App의 기존 기능·도메인 상태 머신은 유지하면서 첫 setup 완료 안내, 실제 진입 surface를 복원하는 Detail back, 사용자 판단 중심의 Detail/Checkout/Matchday/Return 카피, MY 저장 경기 재진입, 체험 버전 안내 통합으로 prototype-like flow를 줄임
+- Scope: Interactive Demo의 기존 기능·도메인 상태 머신은 유지하면서 첫 setup 완료 안내, 실제 진입 surface를 복원하는 Detail back, 사용자 판단 중심의 Detail/Checkout/Matchday/Return 카피, MY 저장 경기 재진입, 체험 버전 안내 통합으로 prototype-like flow를 줄임
 - Runtime PR: #415 · merged SHA `767700291fad8f8959028dd028e3853da8982d41`
 - Accessibility hotfix: #416 · Discover filter draft-status의 초기 색 대비를 상호작용 전에 안정적으로 설치하고 CSS performance budget을 유지 · merged SHA `63ac31d59099a480337cd73787dcf0ebd24224dc`
 - Product/runtime baseline: `63ac31d59099a480337cd73787dcf0ebd24224dc`
@@ -104,39 +104,39 @@
 - Exact Vercel Production: `dpl_BSHizVH8jLpNSARcCgMMg5NoWETu` · SHA `63ac31d59099a480337cd73787dcf0ebd24224dc` · READY · official alias `footmate-black.vercel.app`
 - Documentation sync: root README와 이 Release History를 현재 flow/Production 사실로 동기화. Closed Beta 운영 절차는 변경되지 않아 Runbook 유지; Notion과 별도 Case Study 프로젝트는 핵심 IA·제품 설명을 materially 바꾸는 변경이 아니므로 sync하지 않음
 
-## Real App P1 secondary visual hierarchy closure · 2026-09-28
+## Interactive Demo P1 secondary visual hierarchy closure · 2026-09-28
 
 - Scope: Discover 임시 filter를 neutral secondary control로 낮추고, Detail decision nested card를 평탄화하며 decision microcopy를 11px readability floor로 정리하고, Matchday / MY의 equal-weight elevation을 줄여 현재·primary action hierarchy를 선명하게 조정
 - Runtime PR: #386 · merged SHA `b57e97bd1a540cb095e248fe34930c5727a326aa`
 - Product/runtime baseline: `b57e97bd1a540cb095e248fe34930c5727a326aa`; P0 Home focal hierarchy, Checkout execution CTA, shell continuity, IA·routes·copy·state model·Matching/ELO ownership·persistence·39-screen baseline 유지
 - Performance boundary: first-party CSS `204,975 / 205,000` bytes 유지, first-party asset request 24 유지, 신규 stylesheet / network request 추가 없음
-- Visual Regression: pinned Ubuntu/Chromium에서 Discover·Matchday/check-in·MY의 의도된 Product baseline만 갱신하고 temporary baseline generator workflow를 제거한 뒤 comparison-only `toHaveScreenshot()` 재실행; PR Real App White Surface QA run `36416233311` · SUCCESS, post-merge run `36416971373` · SUCCESS
+- Visual Regression: pinned Ubuntu/Chromium에서 Discover·Matchday/check-in·MY의 의도된 Product baseline만 갱신하고 temporary baseline generator workflow를 제거한 뒤 comparison-only `toHaveScreenshot()` 재실행; PR Interactive Demo White Surface QA run `36416233311` · SUCCESS, post-merge run `36416971373` · SUCCESS
 - Final PR QA: FootMate QA run `36416233308` · SUCCESS · Regression 36 PASS · Chromium Browser E2E + axe / beta / AI / recovery / visual gates PASS · Mobile Safari/WebKit PASS; P1 semantic contract를 permanent QA gate로 유지
 - Post-merge main QA: FootMate QA run `36416971482` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Production verification: exact HTTP smoke PASS · exact AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium Production smoke 13/13 PASS · official `footmate-black.vercel.app`의 `/demo`와 `/demo?mode=portfolio` HTTP 200 · 최근 24시간 Vercel runtime error 없음
 - Exact Vercel Production: `dpl_3NYpm2XYGAeU1152BzbSwJn5Mq71` · SHA `b57e97bd1a540cb095e248fe34930c5727a326aa` · READY · official alias `footmate-black.vercel.app`
 - Documentation boundary: visual polish / QA closure이므로 README·Closed Beta runbook·Notion·별도 Case Study 프로젝트의 제품 설명은 변경하지 않음
 
-## Real App visual consistency completion · 2026-09-28
+## Interactive Demo visual consistency completion · 2026-09-28
 
-- Scope: Welcome / Setup, Auth → Checkout → Success, Schedule secondary / empty states, loading / empty / pending / failure / canceled / fallback 상태를 승인된 Real App visual language로 통일하면서 IA·route·product behavior·Matching/ELO ownership은 유지
+- Scope: Welcome / Setup, Auth → Checkout → Success, Schedule secondary / empty states, loading / empty / pending / failure / canceled / fallback 상태를 승인된 Interactive Demo visual language로 통일하면서 IA·route·product behavior·Matching/ELO ownership은 유지
 - Runtime PR: #373 · merged SHA `463f04546a583526a37b5d4ddd7b063a6e3a2d55`
 - Product/runtime baseline: `463f04546a583526a37b5d4ddd7b063a6e3a2d55`
-- Visual Regression: GitHub Actions와 동일한 pinned Ubuntu/Chromium 환경에서 Product visual baseline 52/52 갱신 후 별도 comparison-only `toHaveScreenshot()` 52/52 PASS; `visual-consistency-v4`를 permanent Real App QA gate에 포함
-- Final PR QA: Real App White Surface QA run `36358981291` · SUCCESS; FootMate QA run `36358981262` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Visual Regression: GitHub Actions와 동일한 pinned Ubuntu/Chromium 환경에서 Product visual baseline 52/52 갱신 후 별도 comparison-only `toHaveScreenshot()` 52/52 PASS; `visual-consistency-v4`를 permanent Interactive Demo QA gate에 포함
+- Final PR QA: Interactive Demo White Surface QA run `36358981291` · SUCCESS; FootMate QA run `36358981262` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
 - Current main follow-up QA: FootMate QA run `36369768824` · SUCCESS · visual baseline gates PASS · Production Smoke PASS; #374/#377은 QA 안정화 범위이며 runtime visual/product contract는 변경하지 않음
 - Production verification: official `footmate-black.vercel.app`의 `/demo`와 `/demo?mode=portfolio` HTTP 200 · exact HTTP smoke PASS · exact AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium Production smoke 13/13 PASS · 최근 24시간 Vercel runtime error 없음
 - Exact Vercel Production: `dpl_EZgiLRB1kT51ZThnyF7FAMHTBFT1` · SHA `463f04546a583526a37b5d4ddd7b063a6e3a2d55` · READY · official alias `footmate-black.vercel.app`
 - Documentation boundary: 이번 변경은 visual consistency / QA closure이므로 README·Closed Beta runbook·Notion·별도 Case Study 프로젝트의 제품 설명을 변경하지 않음
 
-## Real App Home → Discover IA closure · 2026-09-25
+## Interactive Demo Home → Discover IA closure · 2026-09-25
 
 - Scope: Home을 AI Match Assistant entry + compact personalization으로, Discover를 AI/search result exploration + condition edit/filter/sort/full list로 분리하고 Home example suggestion이 실제 Assistant 실행 후 Discover 결과로 이어지도록 정리
 - Dedup / role boundary: Home For You는 1–2개 compact match만 노출하고 동일 경기의 별도 중복 추천 section을 제거; Detail은 match decision, Join은 joined-match status, MY는 profile/settings 역할을 유지
 - Runtime PR: #269 · merged SHA `30edf47fa69dec7f2d72d68c4ff99096a3f91bee`
 - Product/runtime baseline: `30edf47fa69dec7f2d72d68c4ff99096a3f91bee`
 - State ownership: `src/app/ai-match-assistant.js`가 AI query/constraints/Home→Discover handoff를 소유하고, `src/app/discovery.js`는 discovery filter/sort/result-list state를 소유; deterministic recommendation ranking과 기존 domain boundary 유지
-- Final post-merge QA: Real App White Surface QA #166 · run `36077898939` · SUCCESS; actual Ubuntu/Chromium `toHaveScreenshot()` comparison PASS
+- Final post-merge QA: Interactive Demo White Surface QA #166 · run `36077898939` · SUCCESS; actual Ubuntu/Chromium `toHaveScreenshot()` comparison PASS
 - Main QA: FootMate QA #1298 · run `36077898926` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
 - Exact Vercel Production: `dpl_Anb95bVzLPwBAV1t5FzGio4zhvWy` · SHA `30edf47fa69dec7f2d72d68c4ff99096a3f91bee` · READY · official alias `footmate-black.vercel.app`
@@ -147,7 +147,7 @@
 
 - Scope: Case Study 02–13의 desktop 여백·밀도와 독자용 문체를 정리하고, 내부 `PBL` 표현 제거, 08 상태 보존 맥락 통합, 09 legacy evidence-mode 외부 링크 제거, 12 KPI `계산 기준 · A ÷ B` 표기, green 강조의 의미 기준을 반영
 - Runtime PR: #268 · merged SHA `6a7150e765309a72affda03380fabf8601d3c978`
-- Preserved boundary: 13-section IA, Real App / Closed Beta 제품 로직, API·데이터·state machine, 실제 사용자 성과·KPI 결과에 대한 미검증 경계 유지
+- Preserved boundary: 13-section IA, Interactive Demo / Closed Beta 제품 로직, API·데이터·state machine, 실제 사용자 성과·KPI 결과에 대한 미검증 경계 유지
 - Evidence sync: `SERVICE-PLANNING-EVIDENCE.md`와 `USER-TEST-EVIDENCE.md`는 같은 교육과정을 수강한 교육생 6명, 계산 기준 용어, 검증 범위와 해석 한계로 동기화
 - Final post-merge QA: FootMate QA #1250 · run `36042231747` · SUCCESS
 - QA details: Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
@@ -155,46 +155,46 @@
 - Documentation sync: root README · `docs/README.md` · `CASE-STUDY-COPY-QA.md`를 #268의 reader-facing 표현 기준에 맞춰 정리; Closed Beta runbook과 AI architecture는 기능·운영 계약 변경이 없어 유지
 - Notion boundary: 공개 FootMate 대표 프로젝트 페이지는 main SHA `6a7150e765309a72affda03380fabf8601d3c978`, #268 범위와 main QA #1250까지 동기화
 
-## Real App Home initial viewport density closure · 2026-09-24
+## Interactive Demo Home initial viewport density closure · 2026-09-24
 
-- Scope: Real App Home 진입 직후의 과도한 vertical scroll을 줄이기 위해 standalone max 560px shell의 greeting·추천 context·AI Match Assistant·section heading·personalization explanation density를 압축
+- Scope: Interactive Demo Home 진입 직후의 과도한 vertical scroll을 줄이기 위해 standalone max 560px shell의 greeting·추천 context·AI Match Assistant·section heading·personalization explanation density를 압축
 - Root cause: Product shell은 max 560px로 고정되어 있지만 일부 Home density 규칙이 browser viewport breakpoint에 묶여 있어 shell보다 넓은 viewport에서 상단 카드 stack이 불필요하게 다시 확장됨
 - Runtime PR: #265 · merged SHA `f18da024038ef0260b1e3a8af25221b0d5f21be7`
 - Product/runtime baseline: `f18da024038ef0260b1e3a8af25221b0d5f21be7`
 - Geometry contract: 390×844에서 첫 추천 match가 persistent bottom navigation 위에 의미 있게 노출되도록 `firstCardTop <= 600` 및 `navTop - firstCardTop >= 120`; 601px viewport에서도 fixed 560px shell compactness와 no-horizontal-overflow를 별도 regression으로 고정
 - Preserved boundary: IA·copy·AI core emphasis·44px touch target·bottom navigation·routes·state machines·deterministic recommendation·Matching/ELO ownership·Product `/demo`·Portfolio `/demo?mode=portfolio`·39-screen baseline·v5.2.0 release identity 유지
 - Performance boundary: first-party asset request budget 24/24 유지
-- Final PR QA: Real App White Surface QA #120 · run `36005724651` · SUCCESS · actual Ubuntu/Chromium `toHaveScreenshot()` comparison 20/20 PASS; FootMate QA #1217 · run `36005724905` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
-- Final post-merge QA: Real App White Surface QA #121 · run `36006648149` · SUCCESS; FootMate QA #1219 · run `36006647616` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Final PR QA: Interactive Demo White Surface QA #120 · run `36005724651` · SUCCESS · actual Ubuntu/Chromium `toHaveScreenshot()` comparison 20/20 PASS; FootMate QA #1217 · run `36005724905` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS
+- Final post-merge QA: Interactive Demo White Surface QA #121 · run `36006648149` · SUCCESS; FootMate QA #1219 · run `36006647616` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
 - Exact Vercel Production: `dpl_2QZVYSvd2WvtGn2fwRMSsYtBjw5L` · SHA `f18da024038ef0260b1e3a8af25221b0d5f21be7` · READY · official alias `footmate-black.vercel.app`
 - Documentation boundary: README·Closed Beta runbook·AI architecture는 기능/운영 계약이 바뀌지 않아 중복 수정하지 않음; Case Study는 별도 프로젝트 경계를 유지하며 이번 FootMate 변경에서 직접 수정하지 않음
 
-## Real App core AI / auth flow / desktop Schedule polish closure · 2026-09-24
+## Interactive Demo core AI / auth flow / desktop Schedule polish closure · 2026-09-24
 
-- Scope: setup의 visible `수비`를 `수비수`로 정리하고, Home `AI Match Assistant`를 Real App의 핵심 focal feature로 강화하며, Google/Kakao connected login 안내를 사용자 언어로 정리하고, 로그인 입력 표기를 `아이디`로 통일
+- Scope: setup의 visible `수비`를 `수비수`로 정리하고, Home `AI Match Assistant`를 Interactive Demo의 핵심 focal feature로 강화하며, Google/Kakao connected login 안내를 사용자 언어로 정리하고, 로그인 입력 표기를 `아이디`로 통일
 - Auth flow: signup / 아이디 찾기 / 비밀번호 찾기 subpanel의 뒤로가기는 먼저 Login으로 복귀하고, Login의 뒤로가기는 참가를 시작한 Detail로 복귀하며 이후 기존 originating surface 복귀 contract를 유지
 - Desktop Schedule: stable max 560px shell을 유지한 채 joined Schedule / Matchday operational summary의 density를 압축하고 1440×900 첫 viewport geometry contract를 추가
 - Runtime PR: #258 · merged SHA `8a58980ae9982f4361d5e755ad10a8ab9d763429`
 - Product/runtime baseline: `8a58980ae9982f4361d5e755ad10a8ab9d763429`
 - Preserved boundary: canonical position 값 `DF`, deterministic recommendation / Matching / ELO ownership, OAuth callback/provider behavior, Product `/demo`, Portfolio `/demo?mode=portfolio`, 39-screen baseline, v5.2.0 release identity 유지
 - Visual Regression: 검수한 Ubuntu/Chromium CI actual만 Product 승인 baseline으로 반영한 뒤 임시 baseline 갱신 workflow를 제거하고 comparison-only `toHaveScreenshot()` gate를 복원해 최종 PASS 확인
-- Final PR QA: Real App White Surface QA #107 · run `35990681270` · SUCCESS; FootMate QA #1188 · run `35990681350` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS
-- Final post-merge QA: Real App White Surface QA #109 · run `35994113694` · SUCCESS; FootMate QA #1193 · run `35994113731` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Final PR QA: Interactive Demo White Surface QA #107 · run `35990681270` · SUCCESS; FootMate QA #1188 · run `35990681350` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS
+- Final post-merge QA: Interactive Demo White Surface QA #109 · run `35994113694` · SUCCESS; FootMate QA #1193 · run `35994113731` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
 - Exact Vercel Production: `dpl_29vaTcjJnP4MSJWxoxaTmmhJD26X` · SHA `8a58980ae9982f4361d5e755ad10a8ab9d763429` · READY · official alias `footmate-black.vercel.app`
 - Documentation boundary: README·Closed Beta runbook·AI architecture 문서는 기능/운영 계약이 바뀌지 않아 중복 추가하지 않음; Case Study는 별도 프로젝트 경계를 유지하며 이번 FootMate 변경에서 직접 수정하지 않음
 
-## Real App Visual Finish P0–P2 closure · 2026-09-24
+## Interactive Demo Visual Finish P0–P2 closure · 2026-09-24
 
-- Scope: standalone Real App의 최종 visual ownership을 `src/app/design-system-v2.css`로 통합하고, decision-support typography·surface/elevation·accent hierarchy·loading/empty/fallback/recovery state language·절제된 interaction motion을 정제
+- Scope: standalone Interactive Demo의 최종 visual ownership을 `src/app/design-system-v2.css`로 통합하고, decision-support typography·surface/elevation·accent hierarchy·loading/empty/fallback/recovery state language·절제된 interaction motion을 정제
 - Runtime PR: #252 · merged SHA `784ec086f9d84b16fcbf37abd4a776478827a980`
 - Product/runtime baseline: `784ec086f9d84b16fcbf37abd4a776478827a980`
 - Preserved boundary: Product 560px shell, IA·copy·routes·state machine·deterministic recommendation behavior, Portfolio/embed compatibility, v5.2.0 release identity, AI loading/fallback semantic visual contracts 유지
 - Performance boundary: 별도 finish stylesheet request를 추가하지 않고 기존 first-party request budget 24/24 유지
 - Visual Regression: 검수한 Ubuntu/Chromium CI actual을 Product 승인 baseline으로 반영한 뒤 `toHaveScreenshot()` comparison PASS; Case Study runtime/files/baselines는 최종 PR diff에서 제외
-- Final PR QA: Real App White Surface QA #91 · run `35980404685` · SUCCESS; FootMate QA #1164 · run `35980404652` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS
-- Final post-merge QA: Real App White Surface QA #92 · SUCCESS; FootMate QA #1165 · run `35981204805` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
+- Final PR QA: Interactive Demo White Surface QA #91 · run `35980404685` · SUCCESS; FootMate QA #1164 · run `35980404652` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS
+- Final post-merge QA: Interactive Demo White Surface QA #92 · SUCCESS; FootMate QA #1165 · run `35981204805` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
 - Exact Vercel Production: `dpl_BCHva4gFZz7JgJhsetVU1NJpfNcL` · SHA `784ec086f9d84b16fcbf37abd4a776478827a980` · READY · official alias `footmate-black.vercel.app`
 - Documentation boundary: README·Closed Beta runbook·AI 문서는 기능/운영 계약이 바뀌지 않아 중복 추가하지 않음; Case Study는 별도 프로젝트 경계를 유지하며 이번 FootMate closure에서 직접 수정하지 않음
@@ -202,7 +202,7 @@
 ## Case Study AI preview emphasis / spacing closure · 2026-09-24
 
 - Scope: Case Study cover의 AI Match Assistant 정적 프리뷰 강제 높이를 해제해 상태 카드 아래 과도한 공백을 제거하고, `NEW` 배지와 `AI 기능 추가` 캡션으로 신규 AI 기능을 즉시 식별 가능하게 함
-- Runtime/Product boundary: Case Study 13-section IA·본문 순서·Real App 동작·AI 추천/가드레일 로직 변경 없음
+- Runtime/Product boundary: Case Study 13-section IA·본문 순서·Interactive Demo 동작·AI 추천/가드레일 로직 변경 없음
 - Runtime PR: #247 · merged SHA `fa4a1fd9c023cef647a6d1114ed052b75b36f358`
 - Visual baseline: 의도된 cover 변화에 맞춰 Case Study screenshot baseline 갱신; 임시 baseline 갱신 workflow는 merge 전 제거
 - Final post-merge QA: FootMate QA #1120 · run `35953801099` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
@@ -236,7 +236,7 @@
 - Final post-merge QA: FootMate QA #1110 · run `35952503452` · SUCCESS · Regression 36 PASS · Browser E2E + axe PASS · Product Visual Regression PASS · Mobile Safari/WebKit PASS · Production Smoke PASS
 - Exact Production verification: HTTP smoke PASS · AI inference PASS (`openai/gpt-5.4-nano`, `fallbackUsed=true`) · Chromium smoke 7/7 PASS
 - Exact Vercel Production: `dpl_EZuMxfoCriRy1FT7W2cs4RX3qhum` · SHA `8f06f5969083b2d014c8b0449ed5befab90a648b` · READY · official alias `footmate-black.vercel.app`
-- Preservation: 기존 Real App 1–10 polish, Case Study 13-section public IA/content/release surface, Closed Beta integrations, AI connected/fallback/HITL boundaries, routes와 compatibility aliases 유지
+- Preservation: 기존 Interactive Demo 1–10 polish, Case Study 13-section public IA/content/release surface, Closed Beta integrations, AI connected/fallback/HITL boundaries, routes와 compatibility aliases 유지
 - Superseded branch: #239는 #241 완료 후 duplicate implementation을 남기지 않기 위해 merge 없이 closed
 - Documentation boundary: README·Closed Beta runbook·AI 문서는 기존 계약이 그대로 정확해 중복 추가하지 않음. 공개 FootMate Notion 페이지의 reviewer-facing QA 문구는 #241 closure로 동기화했으며 Case Study sync는 불필요
 
@@ -245,7 +245,7 @@
 - #225 merged at `0f25ab4c296de059ad876f48ee30c57020c32e65`: story H2 English copy and TOC subtitle wrapping.
 - #226 merged at `c03a8fccd1802fc9d8c28d9d6e033687b98651bc`: English applies to section labels/kickers; story H2 restored to Korean. This supersedes #225's heading-language change.
 - #228 keeps 13 sections and Korean body copy while revising the planning narrative and returning TOC subtitles to a single line.
-- #243 merged at `9dc82b93ee59fd877ecada0f64b1de5ef670370c`: #1 cover label을 `Overview`로 정리하고 desktop topbar·browser title을 `FootMate · Case Study`로 통일; 13개 섹션·한국어 본문·Product/Real App runtime은 변경하지 않음.
+- #243 merged at `9dc82b93ee59fd877ecada0f64b1de5ef670370c`: #1 cover label을 `Overview`로 정리하고 desktop topbar·browser title을 `FootMate · Case Study`로 통일; 13개 섹션·한국어 본문·Product/Interactive Demo runtime은 변경하지 않음.
 - PR final required checks: Regression 36 PASS · Browser E2E + axe PASS · approved Case Study screenshot baseline actual comparison PASS.
 - Post-merge QA: FootMate QA run `35951414230` · Regression 36 PASS · Browser E2E + axe PASS · Production Smoke PASS; exact HTTP · AI inference · Chromium smoke 모두 PASS.
 - Exact verified Vercel Production: `dpl_ERrv77AntHrxkEwK9Xx866SNsaSZ` · SHA `9dc82b93ee59fd877ecada0f64b1de5ef670370c` · READY · official alias `footmate-black.vercel.app`; served Case Study asset에서 `Overview` / `FootMate · Case Study` 반영 확인.
@@ -272,7 +272,7 @@
 - Exact verified Vercel Production: `dpl_eMzzjfTZTUaeESYSnHH3EyceVtUu` · SHA `20f3eef4845a9787fe64dfefb88f5b6748146016` · READY · official alias `footmate-black.vercel.app`
 - Production HTTP: PASS; Case Study HTML·현재 narrative·section label 파일이 checkout SHA의 파일 내용과 정확히 일치하는 검사 추가
 - Production AI inference / Chromium smoke: PASS
-- Documentation: README·문서 인덱스·서비스 기획 근거 및 Notion 프로젝트/PRD 동기화; Notion의 과거 16-section·OAuth 미연동 일반화 표기는 현재 13-section과 Real App/Beta 경계로 수정
+- Documentation: README·문서 인덱스·서비스 기획 근거 및 Notion 프로젝트/PRD 동기화; Notion의 과거 16-section·OAuth 미연동 일반화 표기는 현재 13-section과 Interactive Demo/Beta 경계로 수정
 - Runbook: 운영 절차 변경 없음
 - Render backup: 이번 Case Study 변경은 재검증하지 않음
 - Remaining validation: 실제 사용자 조사, 전환·체크인·재탐색 기준값과 사업 성과는 별도 Beta 관찰 대상이며 이번 QA PASS로 대체하지 않음
@@ -403,9 +403,9 @@
 - Render backup: 이번 최종 sync-up에서는 재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 - Final sync rule: `최종 runtime/수동 QA 확정 → README → Release History → Case Study → Runbook(절차 변경 시) → Notion 관련 페이지 → 서로 상충하는 pending/미검증 문구 검색 → QA/merge`
 
-### Real App visual polish closure · 2026-09-22
+### Interactive Demo visual polish closure · 2026-09-22
 
-- Scope: Real App `/app`의 screen/state visual polish audit · 390px mobile + 1440px desktop에서 viewport당 21개 대표 상태, 총 42개 rendered state 확인
+- Scope: Interactive Demo `/app`의 screen/state visual polish audit · 390px mobile + 1440px desktop에서 viewport당 21개 대표 상태, 총 42개 rendered state 확인
 - Audit coverage: onboarding, home/AI, discovery/filter/empty, detail/compare, auth, checkout/pending/failure/success, schedule/matchday/postgame, profile
 - Layout result: 두 audit viewport 모두 horizontal overflow 0
 - Confirmed fixes: setup primary CTA를 full-width + screen bottom hierarchy로 정리; checkout primary CTA full-width; checkout failure에서 중복 원본 submit CTA를 숨기고 명시적 `다시 결제하기` recovery action만 유지
@@ -419,9 +419,9 @@
 - Preservation: IA, copy, routes, feature behavior, sample data, internal release identifier 변경 없음; Case Study 16-section IA와 Closed Beta 운영 절차도 변경 없음
 - Render backup: 이번 patch에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
-### Real App design-system / visual regression closure · 2026-09-22
+### Interactive Demo design-system / visual regression closure · 2026-09-22
 
-- Design-system baseline PR: #188 · Real App UX/design-system baseline을 보강하면서 IA, copy, routes, feature behavior, sample data, internal release identifier는 유지
+- Design-system baseline PR: #188 · Interactive Demo UX/design-system baseline을 보강하면서 IA, copy, routes, feature behavior, sample data, internal release identifier는 유지
 - Visual regression PR: #190 · Playwright screenshot baseline gate를 기존 `Browser E2E + axe`에 통합
 - Interaction consistency runtime PR: #189 · secondary/navigation/discovery/decision/AI controls의 hover/pressed feedback을 정규화하고 visual baseline capture의 accidental hover 영향을 안정화; IA/copy/routes/feature behavior는 유지
 - Current product/runtime baseline: `f1c2d19d418e6cbe93cc2fa70209895ed391bd9e`
@@ -438,12 +438,12 @@
 - Exact Vercel Production for the Case Study sync: deployment `dpl_FgQUCuBhhMtNDgLRrwK1SLT3Yz6F` · SHA `8189fdf8f07aea9c8d97fd9f15af19b70883cd70` · READY · Production alias 반영 확인 · `/` 및 `/app` HTTP 200 · Production `case-study-connected.js`의 visual regression 문구 반영 확인
 - Product app runtime behavior는 #191에서 변경하지 않았으므로 full exact Production AI inference / Chromium smoke 기준은 #684의 `f1c2d19d418e6cbe93cc2fa70209895ed391bd9e` 검증을 유지; #191에는 해당 두 smoke를 재실행했다고 기록하지 않음
 
-### Real App UI/UX completion · desktop visual baseline closure · 2026-09-22
+### Interactive Demo UI/UX completion · desktop visual baseline closure · 2026-09-22
 
 - State hierarchy runtime PR: #193 · Discovery zero-result, AI loading/fallback/empty, participation pending/failure/canceled의 시각 hierarchy를 정리하면서 기존 state behavior·IA·copy·routes를 유지
 - Decision-flow desktop/mobile polish PR: #194 · 1440px 제품 canvas와 Detail/Checkout desktop 2-column hierarchy, floating/sticky CTA, Success width/CTA 정렬, 430px 이하 recovery CTA stack을 보강
 - Desktop visual baseline PR: #196 · Home/Discover 1440px 2-column density, high-frequency micro label 11px 정규화, 1440px Detail/Checkout/Success exact screenshot baseline을 추가
-- Exact Real App screenshot coverage: 320px context actions · 390px AI card · 1440px Detail · 1440px Checkout · 1440px Success
+- Exact Interactive Demo screenshot coverage: 320px context actions · 390px AI card · 1440px Detail · 1440px Checkout · 1440px Success
 - Comparison contract: GitHub Actions Ubuntu/Chromium에서 `toHaveScreenshot()` + `maxDiffPixels: 0`; 신규 desktop baseline은 CI actual을 검토한 뒤 expected로 승인하고 동일 환경에서 실제 0-diff comparison PASS 확인
 - Desktop geometry contract: 1440px Home/Discover 2-column density, card width, horizontal overflow 검증; desktop decision flow는 960px product canvas 기준
 - Mobile preservation: responsive 320/375/390/430px, recovery CTA stacking, 390px decision micro-label readability regression 유지
@@ -452,14 +452,14 @@
 - Exact Production smoke: HTTP PASS · AI inference PASS · Chromium PASS
 - Current product/runtime baseline: `3cd79312244dbdfbcdcea08540f68cea5e7ae375`
 - Exact Vercel Production: `dpl_Ghe1PXNtPUXm7PWVPKxekPfXTaJS` · SHA `3cd79312244dbdfbcdcea08540f68cea5e7ae375` · READY · production aliases 반영 · alias error 없음
-- Case Study visual regression은 별도 approved baseline gate를 유지하며 이번 Real App baseline 확장과 함께 main Browser E2E gate에서 PASS
+- Case Study visual regression은 별도 approved baseline gate를 유지하며 이번 Interactive Demo baseline 확장과 함께 main Browser E2E gate에서 PASS
 - Preservation: Matching/recommendation ownership, auth/payment state behavior, sample data, 16-section Case Study IA, internal release identifier 변경 없음
 - Documentation sync: README / Release History / Case Study Validation과 관련 Notion FootMate 문서를 current visual QA 사실에 맞춰 후속 sync; Closed Beta 운영 절차는 변경되지 않아 `docs/BETA-PILOT-RUNBOOK.md`는 수정하지 않음
 - Render backup: 이번 final UI/UX closure에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
-### Real App release-flow / Design System v2 correction closure · 2026-09-23
+### Interactive Demo release-flow / Design System v2 correction closure · 2026-09-23
 
-- Scope: Product Flow review에서 확인된 8개 QA 항목과 Design System v2 coherence를 정리하면서, 요청되지 않았던 1040px desktop 확장과 2-column composition을 제거하고 Real App의 stable max 560px shell을 복구
+- Scope: Product Flow review에서 확인된 8개 QA 항목과 Design System v2 coherence를 정리하면서, 요청되지 않았던 1040px desktop 확장과 2-column composition을 제거하고 Interactive Demo의 stable max 560px shell을 복구
 - Display terminology: setup UI는 `공격수` / `초급` / `고급`을 표시하고 canonical compatibility 값은 내부에 유지
 - Auth / continuity: active Auth v3는 Google/Kakao만 노출하고 Naver/Apple은 제거; 실제 previous-route back, readable team-message simulation boundary, checked-in → postgame → next-match continuation을 release-flow contract로 유지
 - Entry / recovery: fresh external `/app` entry는 첫 화면에서 시작하고, active same-tab reload recovery는 explicit `?resume=1` 경계로 유지
@@ -473,7 +473,7 @@
 - Case Study boundary: current 13-section IA / narrative를 유지하고 affected Case Study screenshot baseline comparison PASS; 이번 correction에서 별도 Case Study copy 재작성은 필요하지 않음
 - Documentation sync: README와 Design System v2 QA/changelog는 stable max 560px shell과 current release-flow contract로 동기화; 관련 Notion FootMate 문서의 stale 2-column / Naver·Apple 표현도 current contract로 정리
 - Runbook boundary: Closed Beta 운영 절차 변경이 없어 `docs/BETA-PILOT-RUNBOOK.md`는 수정하지 않음
-- Render backup: 이번 Real App correction에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
+- Render backup: 이번 Interactive Demo correction에서는 재검증·재배포하지 않음; Vercel이 공식 Production이며 Render는 backup/alternate deployment
 
 ## v5.1.1 — AI Match Assistant Resilience Patch · 2026-09-20
 
