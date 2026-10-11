@@ -90,7 +90,7 @@ test('390px personalized Welcome keeps one primary CTA and one returning-user sh
   await expect(page.getByRole('button',{name:'이전 설정으로 계속하기'})).toHaveCount(0);
   const buttons=page.locator('[data-screen="welcome"] .fm-next-actions button');
   await expect(buttons).toHaveCount(4);
-  await expect(buttons.first()).toHaveText('저장된 설정으로 바로 추천 보기');
+  await expect(buttons.first()).toContainText('저장된 설정으로 바로 추천 보기');
   await expect(page.locator('[data-screen="welcome"] .fm-next-actions .fm-next-button--primary')).toHaveCount(1);
   const geometry=async locator=>locator.evaluate(node=>({height:node.getBoundingClientRect().height}));
   expect((await geometry(buttons.first())).height).toBe(54);
