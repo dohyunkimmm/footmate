@@ -51,7 +51,7 @@ test('paired portfolio connects Interactive Demo and documents a real QA before-
     await img.scrollIntoViewIfNeeded();
     await expect.poll(()=>img.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
   }
-  await expect(page.locator('#section-06 a[href="/app?mode=guided"]')).toBeVisible();
+  await expect(page.locator('#section-06 a[href="/app?mode=guided"]')).toHaveCount(0);
   await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('#section-07')).toContainText('우선 측정 3개');
   const evidence=page.locator('#section-07 .portfolio-optional-sources');
@@ -81,7 +81,7 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
   await expect(page.getByRole('link',{name:'Interactive Demo 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
-  await expect(page.getByRole('link',{name:'심사자 빠른 체험',exact:true})).toHaveAttribute('href','/app?mode=guided');
+  await expect(page.locator('.experience-actions a[href="/app?mode=guided"]')).toHaveCount(0);
   await expect(page.locator('#section-01 .experience-disclosure a[href="/beta"]')).toHaveText('Closed Beta ↗');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('실제 서버 연결 · 무료 참가 · 결제 없음');
@@ -467,7 +467,7 @@ for(const width of [320,390,1440]){
   test('07 and 09 explain evidence without external navigation at '+width+'px',async({page})=>{
     await page.setViewportSize({width,height:900});
     await page.goto('/#section-01');
-    await expect(page.locator('#section-01 .experience-actions > a')).toHaveCount(2);
+    await expect(page.locator('#section-01 .experience-actions > a')).toHaveCount(1);
     const ctas=await page.locator('#section-01 .experience-actions > a').evaluateAll(nodes=>nodes.map(node=>({left:node.getBoundingClientRect().left,right:node.getBoundingClientRect().right})));
     expect(ctas.every(({left,right})=>left>=0&&right<=width+1)).toBe(true);
     await page.locator('.toc-item').nth(6).click();

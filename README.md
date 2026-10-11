@@ -18,7 +18,7 @@
 
 **이번 제출 개선:** Case Study에 실제 모바일 QA 화면 캡처를 연결했고, Guided Mode에 추천·두 경기 비교·마감 포지션·MY 바로가기를 추가했습니다. 추천 카드의 선호 포지션 마감과 예시 이동시간은 실제 정원·경로 계산과 구분해 표시합니다. Interactive Demo의 공유 미리보기는 Case Study와 다른 제목·이미지를 사용합니다.
 
-**제출 링크 2개:** [Case Study](https://footmate-black.vercel.app/) + [Interactive Demo](https://footmate-black.vercel.app/app). 심사자에게는 [6단계 Guided Mode](https://footmate-black.vercel.app/app?mode=guided)를 선택 체험 경로로 제공합니다. `/app?mode=evidence`는 구현·검증 근거 확인용입니다.
+**제출 링크 2개:** [Case Study](https://footmate-black.vercel.app/) + [Interactive Demo](https://footmate-black.vercel.app/app). 안내에 따라 체험하려면 [6단계 Guided Mode](https://footmate-black.vercel.app/app?mode=guided)를 이용할 수 있습니다. `/app?mode=evidence`는 구현·검증 근거 확인용입니다.
 
 ## 주요 경험
 
