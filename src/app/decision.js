@@ -304,5 +304,12 @@ window.__FOOTMATE_DECISION__={
   version:DECISION_VERSION,
   storageKey:DECISION_STORAGE_KEY,
   read:()=>({...state,savedMatchIds:[...state.savedMatchIds],compareMatchIds:[...state.compareMatchIds]}),
+  showReviewerCompare:()=>{
+    if(mode!=='guided')return false;
+    state.compareMatchIds=[MATCHES[0].id,MATCHES[4].id];
+    patchDetail();
+    openCompare(null);
+    return true;
+  },
   openSeats:id=>{const match=matchById(id);return match?openSeats(match):null;}
 };
