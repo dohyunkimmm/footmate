@@ -48,7 +48,7 @@ if(root){
     const homeMeta=scope==='home';
     return `<button type="button" class="fm-next-match-card" data-action="open-match" data-match-id="${match.id}" data-recommendation-score="${item.score}" data-recommendation-region="${match.region}" aria-label="${match.place} 상세 보기">
       <div class="fm-next-match-card-media">
-        <div class="fm-next-match-date"><span>${match.dateLabel}</span>${index===0?`<span class="fm-next-fit-badge${item.fit.includes('차이')?' fm-next-fit-badge--caution':''}">${tinyIcon('spark')} ${item.fit.includes('차이')?'조건 확장':'추천 1순위'}</span>`:''}</div>
+        <div class="fm-next-match-date"><span>${match.dateLabel}</span>${index===0?`<span class="fm-next-fit-badge${(item.fit.includes('차이')||!item.exactRegion||item.slotCount<=0)?' fm-next-fit-badge--caution':''}">${tinyIcon('spark')} ${(item.fit.includes('차이')||!item.exactRegion||item.slotCount<=0)?'조건 확장':'추천 1순위'}</span>`:''}</div>
         <div class="fm-next-match-place">${match.place}</div>
       </div>
       <div class="fm-next-match-body">
@@ -72,7 +72,7 @@ if(root){
     list.dataset.fmRecommendationSignature=sig;
     list.innerHTML=ranked.slice(0,2).map((item,index)=>card(item,index,'home')).join('');
     const sectionCopy=screen.querySelector('.fm-next-section-head p');
-    if(sectionCopy)sectionCopy.textContent=ranked[0]?.fit?.includes('차이')?'추천 순위가 높아도 경기 강도는 다를 수 있어요.':'지역·포지션·레벨 기준으로 적합도 높은 순으로 정리했어요.';
+    if(sectionCopy)sectionCopy.textContent=ranked[0]?.fit?.includes('차이')?'경기 강도가 다른 후보는 조건 확장으로 표시해요.':!ranked[0]?.exactRegion?'선호 포지션·레벨에 맞는 후보를 우선하고 생활권을 넓혔어요.':'지역·포지션·레벨이 맞는 참가 가능 경기를 먼저 정리했어요.';
     if(!state.joinedMatchId){
       const context=screen.querySelector('.fm-next-context-card');
       const heading=context?.querySelector('h2');
