@@ -1,5 +1,7 @@
 # FootMate Release History
 
+현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
+
 ## 2026-10-10 — Release App P0–P2 flow 개선·운영 검증 완료
 
 - Scope: `/app` 신규/재방문 routing을 canonical session에 따라 Welcome/Setup → Home 또는 MY로 복귀. 기존 legacy `schedule` → MY 호환 유지; 명시적 체험 초기화는 별도 기능.
@@ -825,6 +827,6 @@
 
 ## Shared prototype boundary
 
-v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 Closed Beta는 account recovery·취소 마감·connected check-in·operator completion·DB-backed in-app notification·Resend transactional email에 더해 Realtime refresh, reminder, waitlist, actual Beta match ranking/feedback, provider-aware Google/Kakao OAuth UI, Operator TOTP MFA, opt-in Web Push, Supabase Storage media까지 연결되어 있다. transactional email과 Web Push outbox는 server worker/Cron이 처리하고, email은 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/app`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며 `/beta`는 별도의 connected data path다. 실제 PG와 external analytics는 연결하지 않았고, Google/Kakao 실제 로그인과 device-level Web Push 브라우저/OS 표시는 2026-09-22 Production 수동 QA를 완료했다. OAuth provider credential/config와 사용자의 브라우저/OS 권한은 해당 기능이 동작하기 위한 운영 의존성으로 유지된다.
+v4.x → v5.0은 인터랙티브 서비스 기획 프로토타입의 단계적 제품/아키텍처 진화다. v5.1에서는 AI Match Assistant의 Vercel AI Gateway inference가 실제 Production에서 검증되었다. v5.1.1에서는 AI primary path, bounded recovery, state consistency와 request guard를 강화했고, release-readiness 단계에서 `/beta`의 Supabase Auth·member profile·match catalog·position capacity·participation 및 `/beta/operator`의 allowlisted 경기/참가자 운영 경로를 실제 backend에 연결했다. 이후 Must hardening에서 network/offline recovery, minimal audit, account deletion, data-freshness boundary를 추가했다. 현재 Closed Beta는 account recovery·취소 마감·connected check-in·operator completion·DB-backed in-app notification·Resend transactional email에 더해 Realtime refresh, reminder, waitlist, actual Beta match ranking/feedback, provider-aware Google/Kakao OAuth UI, Operator TOTP MFA, opt-in Web Push, Supabase Storage media까지 연결되어 있다. transactional email과 Web Push outbox는 server worker/Cron이 처리하고, email은 signed Resend webhook으로 final delivery state를 회수한다. 현재 `/demo`의 경기 데이터와 추천 순위는 sample records + deterministic recommendation engine이 Source of Truth이며 `/beta`는 별도의 connected data path다. 실제 PG와 external analytics는 연결하지 않았고, Google/Kakao 실제 로그인과 device-level Web Push 브라우저/OS 표시는 2026-09-22 Production 수동 QA를 완료했다. OAuth provider credential/config와 사용자의 브라우저/OS 권한은 해당 기능이 동작하기 위한 운영 의존성으로 유지된다.
 
 GitHub commit history는 historical repository data로 유지되며 current product surface와 구분한다.

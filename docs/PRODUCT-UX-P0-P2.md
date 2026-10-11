@@ -24,7 +24,7 @@ This change preserves the v6 Find → Decide → Join → Play → Return lifecy
 - Real Supabase-backed matches only (`source: connected-beta`) expose a user-initiated maps search link.
 - The Google Calendar **draft** link is exposed only for confirmed participation. It uses the connected match's ISO start time, declared duration, title and stored venue. It cannot make a calendar event or booking without user action in the external service.
 - These are searches/drafts: verify the operator-provided address, latest match time and policy. Sample /demo dates do not produce these links.
-- Cross-surface /app–/beta data merging, payments, team chat and realtime geolocation remain outside the scope.
+- Cross-surface /demo–/beta data merging, payments, team chat and realtime geolocation remain outside the scope.
 
 ## 2026-10-10 · Release App flow P0–P2 implementation closure
 
