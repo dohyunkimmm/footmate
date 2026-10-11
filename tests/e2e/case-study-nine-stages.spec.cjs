@@ -43,6 +43,10 @@ test('paired portfolio connects Real App and documents a real QA before-after, n
   await expect(report).toContainText('과거 화면 캡처가 아닌 동작 기록');
   await expect(report).toContainText('MF 마감 → FW 직접 선택');
   await expect(report).toContainText('사용자 전환율 개선은 미측정');
+  const realScreens=report.locator('.evidence-preview img');
+  await expect(realScreens).toHaveCount(2);
+  await expect(realScreens.first()).toHaveAttribute('src',/v6-release-join-390-chromium-linux.png$/);
+  await expect(realScreens.last()).toHaveAttribute('src',/v6-release-my-matchday-390-chromium-linux.png$/);
   await expect(page.locator('#section-06 a[href="/app?mode=guided"]')).toBeVisible();
   await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('#section-07')).toContainText('우선 측정 3개');
@@ -73,7 +77,8 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
   await expect(page.getByRole('link',{name:'Real App 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
-  await expect(page.getByRole('link',{name:'Closed Beta 살펴보기',exact:true})).toHaveAttribute('href','/beta');
+  await expect(page.getByRole('link',{name:'심사자 빠른 체험',exact:true})).toHaveAttribute('href','/app?mode=guided');
+  await expect(page.locator('#section-01 .experience-disclosure a[href="/beta"]')).toHaveText('Closed Beta ↗');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('실제 서버 연결 · 무료 참가 · 결제 없음');
 });
