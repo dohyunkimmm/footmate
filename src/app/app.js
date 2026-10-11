@@ -137,7 +137,7 @@ function welcomeView(){
         </div>
         <div class="fm-next-actions">
           ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
-          ${state.setupComplete?button('저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):''}
+          ${state.setupComplete?button('저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):button('경기 먼저 둘러보기','browse-matches','secondary')}
         </div>
       </div>
     </section>`;
@@ -253,6 +253,7 @@ function discoverView(){
     <div class="fm-next-section">
       <div class="fm-next-section-head" data-discovery-heading hidden style="display:none"><div><h1></h1><p></p></div></div>
       <div class="fm-next-match-tags" aria-label="현재 검색 조건"><span class="fm-next-base-label">기본 추천</span><span class="fm-next-tag fm-next-tag--strong">${state.region}</span><span class="fm-next-tag">${state.position}</span><span class="fm-next-tag">${state.level}</span></div>
+      ${mode==='real'&&!state.setupComplete?`<div class="fm-next-inline-note" data-browse-notice>${icon('info')}<span>샘플 조건으로 둘러보는 중이에요. ‘기본 조건’에서 지역·포지션·레벨을 바꿀 수 있어요.</span></div>`:''}
       ${quickDiscoveryConditions()}
       <div class="fm-next-list">${MATCHES.map((match,index)=>matchCard(match,index)).join('')}</div>
     </div>
@@ -413,6 +414,7 @@ root.addEventListener('click',event=>{
   if(!target)return;
   const action=target.dataset.action;
   if(action==='start-setup'){const freshReal=mode==='real'&&!state.setupComplete;setState(freshReal?{route:'setup',setupStep:0,region:'',position:'',level:''}:{route:'setup',setupStep:0});return;}
+  if(action==='browse-matches'){setState({route:'discover',browseOnly:true});return;}
   if(action==='continue-home'){setState({route:'home'});return;}
   if(action==='back-welcome'){if(state.setupOrigin)finishSetup(true);else setState({route:'welcome'});return;}
   if(action==='setup-back'){setState({setupStep:Math.max(0,state.setupStep-1)});return;}
@@ -438,7 +440,7 @@ root.addEventListener('click',event=>{
       changes[step.key]=value;
     }
     discoverQuickEditing=false;
-    setState(changes);
+    setState({...changes,setupComplete:true,browseOnly:false});
     return;
   }
   if(action==='edit-setup'&&mode==='real'&&state.route==='discover'){
@@ -450,7 +452,7 @@ root.addEventListener('click',event=>{
   if(action==='open-match'){
     setState({selectedMatchId:target.dataset.matchId,selectedJoinPosition:undefined,route:'detail'});return;
   }
-  if(action==='detail-back'){setState({route:state.setupComplete?'discover':'home'});return;}
+  if(action==='detail-back'){setState({route:state.setupComplete||state.browseOnly?'discover':'home'});return;}
   if(action==='choose-join-position'){
     const match=selectedMatch(state),position=target.dataset.position;
     if(!['MF','FW','DF','GK'].includes(position)||Number(match.positionSlots?.[position]||0)<=0)return;
@@ -472,7 +474,7 @@ root.addEventListener('click',event=>{
     setState({joinedMatchId:state.selectedMatchId,joinedJoinPosition:position,matchStage:'upcoming',route:'success'});return;
   }
   if(action==='nav-home'){setState({route:state.setupComplete?'home':'welcome'});return;}
-  if(action==='nav-discover'){setState({route:state.setupComplete?'discover':'setup',setupStep:0});return;}
+  if(action==='nav-discover'){setState({route:state.setupComplete||state.browseOnly?'discover':'setup',setupStep:0});return;}
   if(action==='nav-schedule'){setState({route:'schedule'});return;}
   if(action==='nav-profile'){setState({route:'profile'});return;}
   if(action==='open-joined-match'){
