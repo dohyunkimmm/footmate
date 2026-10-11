@@ -3,7 +3,7 @@ const AxeBuilder=require('@axe-core/playwright').default;
 
 function failures(page){const items=[];page.on('pageerror',e=>items.push(`pageerror: ${e.message}`));page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('Failed to load resource'))items.push(`console.error: ${m.text()}`)});return items}
 async function detail(page,id='suwon-ingye-2000',viewport={width:390,height:844}){
-  const errs=failures(page);await page.setViewportSize(viewport);await page.goto('/app',{waitUntil:'domcontentloaded'});await page.evaluate(({id})=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({setupComplete:true,route:'detail',selectedMatchId:id,region:'수원 · 영통',position:'MF',level:'중급'}));location.reload()},{id});await page.waitForSelector('[data-screen="detail"][data-decision-version="4.3.0"]');return errs;
+  const errs=failures(page);await page.setViewportSize(viewport);await page.goto('/demo',{waitUntil:'domcontentloaded'});await page.evaluate(({id})=>{localStorage.clear();localStorage.setItem('footmate:v4:session',JSON.stringify({setupComplete:true,route:'detail',selectedMatchId:id,region:'수원 · 영통',position:'MF',level:'중급'}));location.reload()},{id});await page.waitForSelector('[data-screen="detail"][data-decision-version="4.3.0"]');return errs;
 }
 async function switchMatch(page,id){await page.evaluate(id=>{const session=JSON.parse(localStorage.getItem('footmate:v4:session'));localStorage.setItem('footmate:v4:session',JSON.stringify({...session,route:'detail',selectedMatchId:id}));location.reload()},id);await page.waitForSelector('[data-screen="detail"][data-decision-version="4.3.0"]')}
 const compareButton=page=>page.getByRole('button',{name:'비교',exact:true});

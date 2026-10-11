@@ -2,7 +2,7 @@
 
 이 문서는 FootMate의 **Validation Metric을 실제 Measured Result로 전환하기 위한 계측·표본·판정 기준**을 정리합니다. 숫자를 채우기 위한 문서가 아니라, 어떤 데이터만 사용자 성과로 인정할지 먼저 고정하는 문서입니다.
 
-현재 Case Study의 KPI는 모두 **Validation Metric**이며 아직 **Measured Result가 아닙니다**. 운영·테스트 계정, 자동 QA, `/app` sample/simulation을 실제 Beta 성과에 섞지 않습니다.
+현재 Case Study의 KPI는 모두 **Validation Metric**이며 아직 **Measured Result가 아닙니다**. 운영·테스트 계정, 자동 QA, `/demo` sample/simulation을 실제 Beta 성과에 섞지 않습니다.
 
 ## 1. Measured Result 인정 조건
 

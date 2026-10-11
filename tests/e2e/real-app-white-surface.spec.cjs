@@ -22,7 +22,7 @@ async function openCleanApp(page,viewport){
   const errs=failures(page);
   await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize(viewport);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
@@ -33,7 +33,7 @@ async function openCleanApp(page,viewport){
 async function openPersonalizedWelcome(page,viewport){
   const errs=failures(page);
   await page.setViewportSize(viewport);
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
     localStorage.clear();
     localStorage.setItem('footmate:v4:session',JSON.stringify({route:'welcome',setupComplete:true,region:'서울 · 강남',position:'GK',level:'입문',signedIn:false,userName:'게스트'}));
@@ -62,33 +62,18 @@ async function expectNoHorizontalOverflow(page){
 
 const exact={animations:'disabled',caret:'hide',maxDiffPixels:0};
 
-test('390px Welcome is white-first with readable ink and green accent CTA',async({page})=>{
+test('390px Welcome restores the ball logo and FootMate application entry',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   const intro=page.locator('.fm-next-intro');
   const headline=page.locator('.fm-next-intro h1');
   const cta=page.getByRole('button',{name:/내 경기 찾아보기/});
-  const welcomeTopbar=page.locator('[data-screen="welcome"] .fm-next-topbar--dark');
-  const welcomeBrand=welcomeTopbar.locator('.fm-next-brand');
   await expect(intro).toBeVisible();
-  await expect(headline).toHaveCSS('color','rgb(19, 32, 25)');
-  await expect(page.locator('.fm-next-intro-lead')).toHaveCount(0);
+  await expect(headline).toHaveCSS('color','rgb(255, 255, 255)');
+  await expect(page.locator('[data-screen="welcome"] .fm-app-entry-name')).toHaveText('FootMate');
+  await expect(page.locator('[data-screen="welcome"] .fm-app-entry-logo')).toBeVisible();
+  await expect(page.locator('[data-screen="welcome"] .fm-app-entry-logo')).toHaveJSProperty('naturalWidth',120);
+  await expect(page.getByRole('button',{name:'로그인하고 시작하기'})).toBeVisible();
   await expect(page.locator('[data-screen="welcome"] [data-welcome-ai-copy]')).toHaveCount(0);
-  await expect(welcomeTopbar).toHaveCSS('transform','none');
-  await expect(welcomeBrand).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, -2)');
-  await expect(welcomeTopbar).toHaveCSS('position','absolute');
-  const renderedBrandGeometry=await welcomeBrand.evaluate(node=>{
-    const topbar=node.closest('.fm-next-topbar--dark');
-    const topbarBox=topbar.getBoundingClientRect();
-    const brandBox=node.getBoundingClientRect();
-    const topbarStyle=getComputedStyle(topbar);
-    const paddingTop=parseFloat(topbarStyle.paddingTop)||0;
-    const paddingBottom=parseFloat(topbarStyle.paddingBottom)||0;
-    const normalBrandTop=topbarBox.top+paddingTop+(topbarBox.height-paddingTop-paddingBottom-brandBox.height)/2;
-    return {offset:brandBox.top-normalBrandTop,topInset:brandBox.top-topbarBox.top};
-  });
-  expect(Math.round(renderedBrandGeometry.offset)).toBeGreaterThanOrEqual(-2);
-  expect(Math.round(renderedBrandGeometry.offset)).toBeLessThanOrEqual(-1);
-  expect(renderedBrandGeometry.topInset).toBeGreaterThanOrEqual(8);
   const ctaStyle=await cta.evaluate(node=>({background:getComputedStyle(node).backgroundColor,height:node.getBoundingClientRect().height}));
   expect(ctaStyle.background).not.toBe('rgb(255, 255, 255)');
   expect(ctaStyle.height).toBe(54);
@@ -116,7 +101,7 @@ test('390px personalized Welcome keeps one primary CTA and one returning-user sh
   await buttons.nth(0).click();
   const setupNext=page.getByRole('button',{name:'다음'});
   await expect(setupNext).toBeVisible();
-  expect(await geometry(setupNext)).toEqual(firstGeometry);
+  expect((await geometry(setupNext)).height).toBe(54);
   expect(errs).toEqual([]);
 });
 

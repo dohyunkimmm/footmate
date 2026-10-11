@@ -73,7 +73,7 @@
     for(const node of nodes){
       const before=node.nodeValue||'';
       const after=before
-        .replace(/\/app\b/g,'Interactive Demo')
+        .replace(/\/demo\b/g,'Interactive Demo')
         .replace(/\/beta\b/g,'Closed Beta');
       if(after!==before)node.nodeValue=after;
     }
@@ -345,7 +345,7 @@
       ['배운 점','연결 성공 + 실패·중복·상태 갱신까지 함께 정의'],
       ['다음 관찰','Beta · Persona 판단 기준·참가 이탈 구간 관찰'],
       ['판단 기준','Baseline 확보 → 목표치 설정 → 참가 실패·복구와 전환 변화 함께 해석']])+
-      '<a href="/app" target="_blank" rel="noopener">FootMate 앱 보기 ↗</a>');
+      '<a href="/demo" target="_blank" rel="noopener">FootMate 앱 보기 ↗</a>');
 
     cleanVersionCopy(document.querySelector('.fm-cs-shell'));
     cleanReaderRouteLabels(document.querySelector('.fm-cs-shell'));

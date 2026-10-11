@@ -3,7 +3,7 @@
 ## 범위
 
 - Case Study (/): 기존 9단계의 8개 화면 폭·대체폰트·확대·간격·스크린샷 검사를 유지한다.
-- Interactive Demo (/app): Home, Discover, Detail, 무료 Join, MY의 텍스트 기하·글꼴·한글 줄바꿈 검사를 확대한다.
+- Interactive Demo (/demo): Home, Discover, Detail, 무료 Join, MY의 텍스트 기하·글꼴·한글 줄바꿈 검사를 확대한다.
 - /beta 및 /beta/operator, 기능·문구·IA·색상·이미지·인증 흐름은 변경하지 않는다.
 
 ## P0 · CI 경로

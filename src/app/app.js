@@ -129,16 +129,22 @@ function guide(){
 
 function welcomeView(){
   if(mode==='real'){
-    return `<section class="fm-next-screen fm-next-screen--intro" data-screen="welcome">
-      <div class="fm-next-intro">
-        <div class="fm-next-topbar fm-next-topbar--dark">${brand({dark:true})}<span style="width:44px" aria-hidden="true"></span></div>
+    return `<section class="fm-next-screen fm-next-screen--intro" data-screen="welcome" data-welcome-entry="app">
+      <div class="fm-next-intro fm-app-entry">
+        <div class="fm-app-entry-brand fm-next-brand">
+          <img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate 축구공 로고">
+          <strong class="fm-app-entry-name">FootMate</strong>
+          <span class="fm-app-entry-tagline">나에게 맞는 풋살, 함께 뛰는 즐거움</span>
+        </div>
         <div class="fm-next-intro-copy">
-          <h1>내 수준에 맞는 경기부터,<br>경기 당일까지.</h1>
+          <h1>내 조건에 맞는 경기를<br>찾아보세요.</h1>
+          <p>실력·위치·포지션을 설정하면<br>맞는 경기를 추천해드려요.</p>
         </div>
         <div class="fm-next-actions">
           ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
-          ${state.setupComplete?button('저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):button('경기 먼저 둘러보기','browse-matches','secondary')}
+          ${state.setupComplete?button(state.joinedMatchId?'내 경기 이어보기':'저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):`${button('로그인하고 시작하기','welcome-sign-in','secondary')}${button('경기 먼저 둘러보기','browse-matches','secondary')}`}
         </div>
+        <p class="fm-app-entry-note">경기와 참가는 무료 체험용이며 실제 결제는 없어요.</p>
       </div>
     </section>`;
   }
@@ -299,7 +305,7 @@ function detailView(){
 
 function authView(){
   const match=selectedMatch(state);
-  return `<section class="fm-next-auth-wrap" data-screen="auth">
+  return `<section class="fm-next-auth-wrap" data-screen="auth" data-auth-origin="${state.authOrigin||'join'}">
     <button class="fm-next-icon-button fm-next-auth-back" type="button" data-action="auth-back" aria-label="경기 상세로 돌아가기">${icon('back')}</button>
     <div class="fm-next-auth-copy"><span class="fm-next-brand-mark">${icon('logo')}</span><h1>참가 정보를<br>안전하게 이어갈게요.</h1><p>${match.place} 참가를 확정하려면 계정을 연결해주세요. 둘러본 조건과 선택한 경기는 그대로 유지됩니다.</p></div>
     <div class="fm-next-social-list">
@@ -413,9 +419,10 @@ root.addEventListener('click',event=>{
   const target=event.target.closest('[data-action]');
   if(!target)return;
   const action=target.dataset.action;
+  if(action==='welcome-sign-in'){setState({route:'auth',authOrigin:'welcome'});return;}
   if(action==='start-setup'){const freshReal=mode==='real'&&!state.setupComplete;setState(freshReal?{route:'setup',setupStep:0,region:'',position:'',level:''}:{route:'setup',setupStep:0});return;}
   if(action==='browse-matches'){setState({route:'discover',browseOnly:true});return;}
-  if(action==='continue-home'){setState({route:'home'});return;}
+  if(action==='continue-home'){setState({route:state.joinedMatchId?'profile':'home'});return;}
   if(action==='back-welcome'){if(state.setupOrigin)finishSetup(true);else setState({route:'welcome'});return;}
   if(action==='setup-back'){setState({setupStep:Math.max(0,state.setupStep-1)});return;}
   if(action==='choose-setup'){
@@ -460,10 +467,11 @@ root.addEventListener('click',event=>{
   }
   if(action==='join-match'){
     if(!availableJoinPosition(selectedMatch(state))){toast('선호 포지션이 마감됐어요. 참가 가능한 포지션을 직접 선택해주세요.');return;}
-    setState({route:state.signedIn?'checkout':'auth'});return;
+    setState({authOrigin:'join',route:state.signedIn?'checkout':'auth'});return;
   }
-  if(action==='auth-back'){setState({route:'detail'});return;}
+  if(action==='auth-back'){setState({route:state.authOrigin==='welcome'?'welcome':'detail'});return;}
   if(action==='sign-in'){
+    if(state.authOrigin==='welcome'){setState({signedIn:true,authExperience:'simulated',authOrigin:null,route:state.setupComplete?(state.joinedMatchId?'profile':'home'):'setup',setupStep:0,...(!state.setupComplete?{region:'',position:'',level:''}:{})});return;}
     if(!availableJoinPosition(selectedMatch(state))){setState({route:'detail'});toast('참가할 포지션을 먼저 선택해주세요.');return;}
     setState({signedIn:true,authExperience:'simulated',route:'checkout'});return;
   }
@@ -486,7 +494,7 @@ root.addEventListener('click',event=>{
   if(action==='rate-match'){toast('경기 평가 플로우를 준비 중입니다.');return;}
   if(action==='show-policy'){toast(mode==='real'?'무료 참가 체험입니다. 실제 결제·환불이나 참가 취소 처리는 발생하지 않습니다.':'경기 24시간 전까지 전액 환불됩니다.');return;}
   if(action==='reset-flow'){resetFlow();return;}
-  if(action==='open-real'){location.href='/app';return;}
+  if(action==='open-real'){location.href='/demo';return;}
   if(mode==='guided'&&action==='review-home'){state=createState({setupComplete:true,route:'home'});render();return;}
   if(mode==='guided'&&action==='review-compare'){
     state=createState({setupComplete:true,route:'detail',selectedMatchId:MATCHES[0].id});render();

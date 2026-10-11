@@ -35,12 +35,12 @@ test('paired portfolio connects Interactive Demo and documents a real QA before-
   await page.setViewportSize({width:390,height:844});
   await page.goto('/');
   const first=page.locator('#section-01');
-  await expect(first.getByRole('link',{name:'Interactive Demo 직접 체험하기'})).toHaveAttribute('href','/app');
+  await expect(first.getByRole('link',{name:'Interactive Demo 직접 체험하기'})).toHaveAttribute('href','/demo');
   await expect(first.locator('a')).toHaveCount(1);
   await expect(first).not.toContainText('Closed Beta');
   await page.locator('.toc-item').nth(5).click();
   await expect(page.locator('#section-06 .portfolio-change-evidence')).toHaveCount(0);
-  await expect(page.locator('.slide:not(#section-01) a[href^="/demo"],.slide:not(#section-01) a[href^="/app"],.slide:not(#section-01) a[href^="/beta"]')).toHaveCount(0);
+  await expect(page.locator('.slide:not(#section-01) a[href^="/demo"],.slide:not(#section-01) a[href^="/demo"],.slide:not(#section-01) a[href^="/beta"]')).toHaveCount(0);
   await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('#section-07')).toContainText('우선 측정 3개');
   const evidence=page.locator('#section-07 .portfolio-optional-sources');
@@ -69,8 +69,8 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page).toHaveURL(/#section-01$/);
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
-  await expect(page.getByRole('link',{name:'Interactive Demo 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
-  await expect(page.locator('.experience-actions a[href="/app?mode=guided"]')).toHaveCount(0);
+  await expect(page.getByRole('link',{name:'Interactive Demo 직접 체험하기',exact:true})).toHaveAttribute('href','/demo');
+  await expect(page.locator('.experience-actions a[href="/demo?mode=guided"]')).toHaveCount(0);
   await expect(page.locator('.slide a[href="/beta"]')).toHaveCount(0);
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
   await expect(page.locator('#section-01 .experience-disclosure')).not.toContainText('Closed Beta');

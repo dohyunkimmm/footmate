@@ -8,7 +8,7 @@ async function waitForApp(page){
 
 async function openClean(page){
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await waitForApp(page);
@@ -48,7 +48,7 @@ test('Restored Welcome stays concise while AI interpretation and ranking ownersh
   await openClean(page);
   const copy=page.locator('[data-screen="welcome"] [data-welcome-ai-copy]');
   await expect(copy).toHaveCount(0);
-  await expect(page.locator('[data-screen="welcome"] h1')).toHaveText('내 수준에 맞는 경기부터,경기 당일까지.');
+  await expect(page.locator('[data-screen="welcome"] h1')).toHaveText('내 조건에 맞는 경기를찾아보세요.');
   const contract=await page.evaluate(()=>({
     presentation:window.__FOOTMATE_P0_USABILITY_TRUST__,
     ai:{role:window.__FOOTMATE_AI__?.role,rankingOwner:window.__FOOTMATE_AI__?.rankingOwner}
@@ -62,14 +62,14 @@ test('Restored Welcome stays concise while AI interpretation and ranking ownersh
 test('frequent mobile chips and AI examples keep a 44px minimum touch target',async({page})=>{
   await openClean(page);
   await setSession(page,'home');
-  await page.goto('/app?resume=1',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
   await waitForApp(page);
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('[data-screen="home"] .fm-ai-examples button').first()).toBeVisible();
   await expectMinimumTouchTarget(page.locator('[data-screen="home"] .fm-ai-examples button:visible'));
 
   await setSession(page,'discover');
-  await page.goto('/app?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
   await waitForApp(page);
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   await expect(page.locator('.fm-discovery-chip')).toHaveCount(1);

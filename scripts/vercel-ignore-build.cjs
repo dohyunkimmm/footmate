@@ -26,7 +26,7 @@ function readChangedFiles() {
   }
 
   // Preview builds must consider the whole PR, not only the last commit.
-  // A docs-only tip may still contain CSS/app changes since main.
+  // A docs-only tip may still contain CSS/demo changes since main.
   const branch = process.env.VERCEL_GIT_COMMIT_REF;
   const preview = Boolean(branch && branch !== 'main');
   let start = 'HEAD^';

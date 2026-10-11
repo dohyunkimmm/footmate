@@ -11,7 +11,7 @@ async function chooseSetupDefaultIfNeeded(page){
 
 async function openDesktopAuth(page){
   await page.setViewportSize({width:1440,height:900});
-  await page.goto('/app',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
