@@ -591,3 +591,14 @@ test('guest entry keeps FootMate visible and can browse without completing prefe
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
+
+test('legacy demo entry redirects permanently to /app and preserves query parameters',async({request,page})=>{
+  for(const route of ['/demo','/demo.html']){
+    const response=await request.get(route+'?mode=guided&resume=1',{maxRedirects:0});
+    expect(response.status()).toBe(308);
+    expect(response.headers().location).toBe('/app?mode=guided&resume=1');
+  }
+  await page.goto('/demo?mode=guided#welcome',{waitUntil:'domcontentloaded'});
+  await expect(page).toHaveURL(/\/app\?mode=guided#welcome$/);
+  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
+});

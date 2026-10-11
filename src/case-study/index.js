@@ -36,7 +36,7 @@
         <div class="fm-next-cover-kicker">FootMate · Matchday Companion</div>
         <h1><span class="fm-next-cover-title-line">내 수준에 맞는 경기부터,</span><span class="fm-next-cover-title-line">경기 당일까지.</span></h1>
         <p class="fm-next-cover-lead">경기를 찾는 데서 끝나지 않고, <strong>나에게 맞는 이유를 이해한 뒤 안심하고 참가하고 경기 당일까지 이어지는</strong> 풋살 경험을 설계했습니다.</p>
-        <div class="fm-next-cover-actions"><a href="/demo">제품 직접 체험하기 <span aria-hidden="true">↗</span></a></div>
+        <div class="fm-next-cover-actions"><a href="/app">제품 직접 체험하기 <span aria-hidden="true">↗</span></a></div>
         <div class="fm-next-cover-flow" aria-label="핵심 사용자 흐름"><b>Find</b><i>→</i><b>Decide</b><i>→</i><b>Join</b><i>→</i><b>Play</b><i>→</i><b>Return</b></div>
         <div class="fm-next-cover-proof"><div><b>가입 전에 추천부터</b><span>계정을 만들기 전에 경기 추천을 확인합니다.</span></div><div><b>추천 이유를 바로 이해</b><span>점수보다 레벨·거리·남은 자리를 먼저 봅니다.</span></div><div><b>참가 뒤 일정까지 연결</b><span>결제에서 끝내지 않고 체크인과 경기 후까지 이어집니다.</span></div></div>
       </div>
