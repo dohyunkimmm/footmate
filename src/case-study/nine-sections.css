@@ -422,3 +422,65 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-01 .story-card h3{margin-top:5px}
   #section-01 .story-card p{margin-top:6px}
 }
+
+/* P2–P9 desktop modules: same centered shell and density as the approved P1. */
+@media(min-width:1400px){
+  .slide:not(#section-01){padding-top:24px;padding-bottom:24px}
+  .slide:not(#section-01)>.section-head{max-width:none;margin:0 0 16px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .slide:not(#section-01)>.section-head h1{margin-top:8px}
+  .slide:not(#section-01)>.section-head .lead{margin-top:10px}
+  .slide:not(#section-01) .card-grid{margin-top:16px;column-gap:12px}
+  .slide:not(#section-01) .story-card{padding:16px 18px;background:#fff;border-color:var(--line);border-radius:12px}
+  .slide:not(#section-01) .story-card h3{margin-top:6px}
+  .slide:not(#section-01) .story-card p{margin-top:8px}
+  .slide:not(#section-01) .source-note{margin-top:14px}
+  .slide:not(#section-01)>details{margin-top:14px}
+  .slide:not(#section-01) .block-title{margin:20px 0 12px}
+  #section-02 .split{gap:16px}
+  #section-02 .persona-panel,#section-02 .jtbd-panel{padding:20px;border-radius:12px}
+  #section-02 .persona-panel{background:#fff}
+  #section-02 .persona-panel h2{margin-top:10px}
+  #section-02 .persona-panel dl div{padding:10px 0}
+  #section-02 blockquote{margin-top:16px}
+  #section-03 .journey-map{border-radius:12px}
+  #section-03 .callout{padding:16px 20px;margin-top:14px;border-radius:12px}
+  #section-03 .callout p{margin-top:8px}
+  #section-03 .journey-checkpoints{gap:12px;margin-top:14px}
+  #section-03 .journey-checkpoints>div{padding:14px 16px;background:#fff}
+  #section-04 .priority-grid{gap:12px;margin-bottom:0}
+  #section-04 .priority-card{padding:18px 20px;border-radius:12px}
+  #section-04 .priority-card h2{margin-top:12px}
+  #section-04 .priority-reason{padding-top:10px}
+  #section-05 .ia-tree{padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  #section-05 .ia-root{padding:8px 12px}
+  #section-05 .ia-branches{column-gap:12px;margin-top:30px}
+  #section-05 .ia-branches ul{margin:12px 18px}
+  #section-05 .flow li{padding:14px 12px}
+  #section-05 .flow-guide{margin:0 0 10px}
+  #section-05 .flow-decision-gate{margin:16px 0 0;padding:16px;border-radius:12px}
+  #section-06 .decision-list{display:grid;gap:16px}
+  #section-06 .decision-row{grid-template-columns:minmax(0,1fr) 280px;gap:20px;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  #section-06 .decision-row h2{margin-top:8px}
+  #section-06 .decision-proof{grid-template-columns:1fr;gap:10px;margin:14px 0 0}
+  #section-06 .decision-proof>div{padding:10px 12px}
+  #section-06 .decision-row .product-figure{padding:12px;border-radius:10px;background:var(--soft)}
+  #section-06 .product-figure img[src*="decision-detail"]{max-height:440px;object-fit:contain}
+  #section-06 .recovery-diagram{padding:16px;border-radius:10px}
+  #section-06 .cs-implementation-boundary{margin-top:14px}
+  #section-07 .card-grid{margin-top:0}
+  #section-07 .story-card:nth-child(3){background:#fbfaf6}
+  #section-07 .validation-source-keys{margin:10px 0 14px}
+  #section-07 .qa-evidence-table{border-radius:12px}
+  #section-07 .qa-evidence-table th,#section-07 .qa-evidence-table td{padding:13px 16px}
+  #section-08 .card-grid{margin-top:0}
+  #section-08 .reflection-bottom{gap:16px;margin-top:16px}
+  #section-08 .reflection-bottom .story-card{padding:20px}
+  #section-08 .closing-note{padding:20px;border-radius:12px}
+  #section-08 .closing-note h2{margin-top:10px}
+  #section-09 .next-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #section-09 .next-list li{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:12px;row-gap:0;align-content:start;margin:0;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  #section-09 .next-list li>div{display:contents}
+  #section-09 .next-number{grid-column:1;grid-row:1/span 2}
+  #section-09 .next-list .eyebrow,#section-09 .next-list h2{grid-column:2}
+  #section-09 .next-list p{grid-column:1/-1;margin-top:10px}
+}
