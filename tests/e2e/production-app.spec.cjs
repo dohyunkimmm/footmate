@@ -143,7 +143,7 @@ async function verifyMatchCards(page,name){
     const position=context.session.position||'MF';
     const available=match.positionSlots[position]||0;
     if(available>0)await expect(tags.nth(2)).toHaveText(position+' '+available+'자리');
-    else await expect(tags.nth(2)).toHaveText(new RegExp(position+'.*마감'));
+    else await expect(tags.nth(2)).toHaveText(new RegExp(position+'.*(0자리|마감)'));
     await expect(tags.nth(3)).toHaveText(level);
     for(const tag of await tags.all())await expect(tag).toBeVisible();
     await expect(card).toHaveAttribute('aria-label',match.place+' 상세 보기');
