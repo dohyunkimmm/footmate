@@ -51,7 +51,7 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await expect(page).toHaveURL(/#section-01$/);
   await expect(page.getByRole('region',{name:'Overview & Problem',exact:true})).toBeVisible();
   await page.locator('.toc-item').first().click();
-  await expect(page.getByRole('link',{name:'Interactive Demo 체험하기',exact:true})).toHaveAttribute('href','/demo');
+  await expect(page.getByRole('link',{name:'Real App 직접 체험하기',exact:true})).toHaveAttribute('href','/app');
   await expect(page.getByRole('link',{name:'Closed Beta 살펴보기',exact:true})).toHaveAttribute('href','/beta');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
   await expect(page.locator('#section-01 .experience-disclosure')).toContainText('실제 서버 연결 · 무료 참가 · 결제 없음');
