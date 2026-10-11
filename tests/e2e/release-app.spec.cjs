@@ -9,18 +9,20 @@ test.afterEach(async({page})=>{
 const shot={animations:'disabled',caret:'hide',maxDiffPixels:50};
 const productionSmoke=['1','true','yes'].includes(String(process.env.PRODUCTION_SMOKE||'').toLowerCase());
 
-test('desktop review surface explains the sample and remains readable on laptops',async({page})=>{
+test('desktop entry focuses on app identity and explains the sample after starting',async({page})=>{
   const errs=await openCleanApp(page,{width:1366,height:768});
-  const context=page.getByRole('complementary',{name:'FootMate 서비스와 체험 안내'});
-  await expect(context).toBeVisible();
-  await expect(context).toContainText('풋살');
-  await expect(context).toContainText('실제 결제는 발생하지 않습니다');
+  const context=page.locator('.fm-desktop-context');
+  await expect(context).toBeHidden();
+  await expect(page.locator('.fm-app-entry-name')).toHaveText('FootMate');
   for(const width of [1366,1440,1920]){
     await page.setViewportSize({width,height:900});
     await expectNoHorizontalOverflow(page);
     expect((await page.locator('.fm-next-app').boundingBox()).width).toBe(560);
   }
   await setupToHome(page);
+  await expect(context).toBeVisible();
+  await expect(context).toContainText('풋살');
+  await expect(context).toContainText('실제 결제는 발생하지 않습니다');
   await expect(page.locator('[data-desktop-ai-scope]')).toContainText('기본 추천 프로필');
   await expect(page.getByRole('heading',{name:'내 조건에 맞는 추천'})).toBeVisible();
   await openDetail(page);
