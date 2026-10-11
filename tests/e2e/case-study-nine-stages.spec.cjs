@@ -36,7 +36,7 @@ test('paired portfolio connects Interactive Demo and documents a real QA before-
   await page.goto('/');
   const first=page.locator('#section-01');
   await expect(first.getByRole('link',{name:'Interactive Demo 직접 체험하기'})).toHaveAttribute('href','/app');
-  await expect(first).toContainText('Interactive Demo(/app) = Demo(/demo)');
+  await expect(first).toContainText('체험 기록은 Closed Beta로 옮겨지지 않음');
   await page.locator('.toc-item').nth(5).click();
   await expect(page.locator('#section-06 .portfolio-change-evidence')).toHaveCount(0);
   await expect(page.locator('.slide:not(#section-01) a[href^="/demo"],.slide:not(#section-01) a[href^="/app"],.slide:not(#section-01) a[href^="/beta"]')).toHaveCount(0);
@@ -435,12 +435,12 @@ for(const width of [320,390,1440,1920]){
     await expect(page.locator('#section-03 .journey-checkpoints > div')).toHaveCount(3);
     await page.locator('.toc-item').nth(4).click();
     await expect(page.locator('#section-05 .flow-gate-track > div')).toHaveCount(3);
-    await expect(page.locator('#section-05 .flow-decision-gate')).toContainText('Demo · 브라우저 기록 / Beta · 서버 상태 조회');
-    await expect(page.locator('#section-05')).toContainText('Demo는 기록 확인 · Beta는 서버 재조회 후 복구');
+    await expect(page.locator('#section-05 .flow-decision-gate')).toContainText('참가 완료 여부와 남은 자리를 먼저 확인');
+    await expect(page.locator('#section-05')).toContainText('실패 시 참가 여부 확인 후 재시도');
     await page.locator('.toc-item').nth(5).click();
     await expect(page.locator('#section-06 .decision-proof')).toHaveCount(3);
     await expect(page.locator('#section-06 .decision-proof dt')).toHaveCount(12);
-    await expect(page.locator('#section-06')).toContainText('서버 참가·정원 확인');
+    await expect(page.locator('#section-06')).toContainText('참가 요청 후 확정 여부·정원 확인');
     await page.locator('.toc-item').nth(6).click();
     await expect(page.locator('#section-07 .validation-source-keys span')).toHaveCount(3);
     await expect(page.locator('#section-07')).toContainText('실제 측정 전');
@@ -462,7 +462,7 @@ for(const width of [320,390,1440]){
     await expect(page.locator('#section-07 .portfolio-optional-sources .validation-doc-links')).toBeHidden();
     await page.locator('#section-07 .portfolio-method-details summary').click();
     await expect(page.locator('#section-07 .portfolio-task-grid article')).toHaveCount(4);
-    await expect(page.locator('#section-07 .portfolio-method-details')).toContainText('개인별 발견·버그 빈도·수정 인과 미확정');
+    await expect(page.locator('#section-07 .portfolio-method-details')).toContainText('참여자별 문제·발생 횟수와 해당 수정의 연결 기록 부족');
     await expect(page.locator('#section-07 .qa-evidence-table tbody tr')).toHaveCount(3);
     await page.locator('#section-07 details summary').filter({hasText:'8개 KPI'}).click();
     await expect(page.locator('#section-07 details:has(summary:has-text("8개 KPI")) table tbody tr')).toHaveCount(8);
@@ -482,7 +482,7 @@ for(const width of [320,390,1440]){
     await page.locator('.toc-item').nth(5).click();
     await expect(page.locator('#section-06 a[href="/beta"]')).toHaveCount(0);
     await expect(page.locator('#section-06 a[href="/demo"]')).toHaveCount(0);
-    await expect(page.locator('#section-06')).toContainText('체험용 데이터 · 실제 결제·참가 없음');
+    await expect(page.locator('#section-06')).toContainText('구현 화면과 QA 기록으로 설계 결정 확인');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   });
 }
