@@ -18,7 +18,7 @@ for(const width of [1920,1440,800,390,320]){
       await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 09`);
       await expect(page.locator('.toc-item').nth(i)).toHaveAttribute('aria-current','step');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-      for(const img of await page.locator('.slide:visible img').all()){
+      for(const img of await page.locator('.slide:visible img:visible').all()){
         await img.scrollIntoViewIfNeeded();
         await expect.poll(()=>img.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
       }
@@ -47,6 +47,10 @@ test('paired portfolio connects Real App and documents a real QA before-after, n
   await expect(realScreens).toHaveCount(2);
   await expect(realScreens.first()).toHaveAttribute('src',/v6-release-join-390-chromium-linux.png$/);
   await expect(realScreens.last()).toHaveAttribute('src',/v6-release-my-matchday-390-chromium-linux.png$/);
+  for(const img of await realScreens.all()){
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(()=>img.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
+  }
   await expect(page.locator('#section-06 a[href="/app?mode=guided"]')).toBeVisible();
   await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('#section-07')).toContainText('우선 측정 3개');
