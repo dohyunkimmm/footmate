@@ -515,3 +515,31 @@ for(const width of [1440,1920]){
     await page.screenshot({path:'verification/p1-desktop-qa/p1-'+width+'.png',fullPage:true});
   });
 }
+
+
+for(const width of [1440,1920]){
+  test('P2 through P9 centered desktop module evidence at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:1080});
+    await page.goto('/#section-02');
+    await page.evaluate(()=>document.fonts.ready);
+    require('node:fs').mkdirSync('verification/p1-desktop-qa',{recursive:true});
+    for(let n=2;n<=9;n++){
+      await page.locator('.toc-item').nth(n-1).click();
+      await page.waitForTimeout(200);
+      const section='#section-'+String(n).padStart(2,'0');
+      for(const image of await page.locator(section+' img').all())
+        await expect.poll(()=>image.evaluate(node=>node.complete&&node.naturalWidth>0)).toBe(true);
+      const layout=await page.evaluate(selector=>{
+        const shell=document.querySelector('.fm-cs-shell').getBoundingClientRect();
+        const head=document.querySelector(selector+' .section-head');
+        return {left:shell.left,width:shell.width,headWidth:head.getBoundingClientRect().width,border:getComputedStyle(head).borderTopWidth,overflow:document.documentElement.scrollWidth>innerWidth+1};
+      },section);
+      expect(Math.abs(layout.left-(width-layout.width)/2)).toBeLessThan(2);
+      expect(layout.width).toBe(1360);
+      expect(layout.headWidth).toBe(1000);
+      expect(layout.border).toBe('1px');
+      expect(layout.overflow).toBe(false);
+      await page.screenshot({path:'verification/p1-desktop-qa/p'+n+'-'+width+'.png',fullPage:true});
+    }
+  });
+}
