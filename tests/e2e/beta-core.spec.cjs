@@ -108,7 +108,13 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
 
-  page.once('dialog',dialog=>dialog.accept());
+  let deletionDialog=0;
+  page.on('dialog',async dialog=>{
+    deletionDialog+=1;
+    if(dialog.type()==='confirm')await dialog.accept();
+    else if(dialog.type()==='prompt')await dialog.accept('계정 삭제');
+    else await dialog.dismiss();
+  });
   await page.getByRole('button',{name:'계정·참가 데이터 삭제'}).click();
   await expect(page.getByText('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeVisible();

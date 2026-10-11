@@ -92,9 +92,12 @@ if(root){
       return `<div class="fm-beta-panel" id="beta-auth-panel">
         <div class="fm-beta-panel-head"><div><h2>${signup?'Closed Beta 가입':'로그인'}</h2><p>${signup?'실제 참가 기록을 저장할 계정을 만듭니다.':'참가·취소 상태를 내 계정에 연결합니다.'}</p></div></div>
         <form class="fm-beta-stack" data-form="auth">
-          ${signup?`<label class="fm-beta-field"><span>이름</span><input name="displayName" autocomplete="name" maxlength="40" placeholder="풋살러 이름"></label>`:''}
+          ${signup?`<label class="fm-beta-field"><span>이름 · 선택</span><input name="displayName" autocomplete="name" maxlength="40" placeholder="풋살러 이름"></label>`:''}
           <label class="fm-beta-field"><span>이메일</span><input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
           <label class="fm-beta-field"><span>비밀번호</span><input name="password" type="password" autocomplete="${signup?'new-password':'current-password'}" ${signup?`minlength="${BETA_SIGNUP_PASSWORD_MIN_LENGTH}"`:''} required placeholder="${signup?`${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상`:'비밀번호'}"></label>
+          ${signup?`<p class="fm-beta-form-hint" id="beta-password-hint">비밀번호는 최소 ${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상입니다. 실제 계정으로 Supabase Auth에 저장되며, 가입 확인 이메일이 필요할 수 있습니다.</p>
+          <details class="fm-beta-data-details"><summary>가입 전 데이터 이용 안내</summary><p>이메일과 암호화된 로그인 정보, 선택한 이름과 경기·포지션·참가 기록이 실제 서버 계정과 연결됩니다. 결제는 연결하지 않았습니다.</p><p><a href="/beta-data-notice.html" target="_blank" rel="noopener noreferrer">Beta 데이터 이용 안내 전문 보기</a></p></details>
+          <label class="fm-beta-consent"><input type="checkbox" name="dataNoticeAcknowledged" required> Beta의 실제 계정·참가 정보 처리 안내를 확인했습니다.</label>`:''}
           <button class="fm-beta-button fm-beta-button--primary" type="submit" ${busy?'disabled':''}>${busy?'<span class="fm-beta-spinner"></span>처리 중':signup?'가입하기':'로그인'}</button>
           <button class="fm-beta-link" type="button" data-action="toggle-auth">${signup?'이미 계정이 있어요 · 로그인':'처음이에요 · 가입하기'}</button>
         </form>
@@ -167,7 +170,7 @@ if(root){
   function renderMatches(){
     if(backendState==='connecting')return `<div class="fm-beta-empty"><span class="fm-beta-spinner"></span>실제 경기 데이터를 연결하고 있습니다.</div>`;
     if(matchesError)return `<div class="fm-beta-empty"><strong>경기 데이터를 불러오지 못했습니다.</strong>${esc(matchesError)}<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" data-action="refresh" type="button">다시 시도</button></div></div>`;
-    if(!matches.length)return `<div class="fm-beta-empty"><strong>아직 공개된 실제 경기가 없습니다.</strong>운영자가 Closed Beta 경기를 공개하면 이곳에 바로 표시됩니다.</div>`;
+    if(!matches.length)return `<div class="fm-beta-empty"><strong>아직 공개된 실제 경기가 없습니다.</strong><p>운영자가 실제 경기를 공개하면 이곳에 표시됩니다. 현재는 가입하더라도 참가할 경기가 없어요.</p><div class="fm-beta-actions" style="justify-content:center;flex-wrap:wrap;margin-top:14px"><a class="fm-beta-button fm-beta-empty-demo-link" href="/demo">샘플 경기 체험하기</a><button class="fm-beta-button" data-action="refresh" type="button">경기 다시 확인</button></div><p class="fm-beta-form-hint">샘플 체험 기록은 Beta 실제 참가 기록으로 이전되지 않습니다. 경기 오픈 알림 신청은 아직 제공하지 않습니다.</p></div>`;
     return `<div class="fm-beta-match-list">${matches.map(renderMatch).join('')}</div>`;
   }
 
@@ -263,6 +266,7 @@ if(root){
         const email=String(data.get('email')||'').trim();
         const password=String(data.get('password')||'');
         if(authMode==='signup'){
+          if(data.get('dataNoticeAcknowledged')!=='on')throw new Error('실제 Beta 데이터 이용 안내 확인이 필요합니다.');
           const result=await client.auth.signUp({email,password,displayName:String(data.get('displayName')||'').trim()});
           if(result?.access_token){
             writeSession(result);await loadPrivate();await loadMatches();if(!matchesError)lastSyncedAt=Date.now();setNotice('가입과 로그인이 완료됐습니다. 프로필을 설정해주세요.','success');
@@ -300,8 +304,10 @@ if(root){
       run(async()=>{try{await client.auth.signOut({accessToken:session.accessToken})}finally{clearSession();setNotice('로그아웃했습니다.','success')}});return;
     }
     if(action==='delete-account'){
-      const confirmed=window.confirm('FootMate Closed Beta 계정과 프로필·참가 기록을 삭제합니다. 이 작업은 되돌릴 수 없습니다. 계속할까요?');
+      const confirmed=window.confirm('FootMate Closed Beta 계정 및 연동된 프로필·참가·알림 기록 삭제를 요청합니다. 이 작업은 되돌릴 수 없습니다. 다음 단계에서 삭제 문구를 다시 입력해야 합니다. 계속할까요?');
       if(!confirmed)return;
+      const typed=window.prompt('마지막 확인: 삭제하려면 아래 칸에 정확히 “계정 삭제”를 입력하세요. 취소하면 아무 작업도 하지 않습니다.','');
+      if(typed!=='계정 삭제'){setNotice('계정 삭제를 취소했습니다. 데이터는 변경되지 않았어요.');return;}
       run(async()=>{
         await client.auth.deleteAccount({accessToken:session.accessToken});
         clearSession();

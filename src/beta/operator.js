@@ -58,7 +58,7 @@ if(root){
 
   function renderGate(){
     if(state==='booting')return `<div class="fm-beta-shell"><div class="fm-beta-panel"><div class="fm-beta-empty"><span class="fm-beta-spinner"></span>운영자 권한과 실제 DB를 확인하고 있습니다.</div></div></div>`;
-    if(state==='auth-required')return `<div class="fm-beta-shell"><div class="fm-beta-panel"><div class="fm-beta-empty"><strong>먼저 Closed Beta에 로그인해주세요.</strong>운영자 콘솔은 사용자 Beta 계정의 세션을 공유합니다.<div class="fm-beta-actions" style="justify-content:center;margin-top:14px"><a class="fm-beta-button fm-beta-button--primary" href="/beta">Beta 로그인</a></div></div></div></div>`;
+    if(state==='auth-required')return `<div class="fm-beta-shell"><div class="fm-beta-panel"><div class="fm-beta-empty"><strong>먼저 Closed Beta에 로그인해주세요.</strong>운영자 콘솔은 Beta 로그인 세션을 공유하지만, 별도의 운영자 허용 목록 등록과 TOTP 2단계 인증이 필요합니다. 일반 회원은 운영자 기능에 접근할 수 없습니다.<div class="fm-beta-actions" style="justify-content:center;margin-top:14px"><a class="fm-beta-button fm-beta-button--primary" href="/beta">Beta 로그인</a></div></div></div></div>`;
     if(state==='forbidden')return `<div class="fm-beta-shell"><div class="fm-beta-panel"><div class="fm-beta-empty"><strong>운영자 권한이 없는 계정입니다.</strong>운영자 allowlist에 등록된 계정만 경기와 참가자를 관리할 수 있습니다.<div class="fm-beta-actions" style="justify-content:center;margin-top:14px"><a class="fm-beta-button" href="/beta">사용자 Beta로 돌아가기</a></div></div></div></div>`;
     if(state==='error')return `<div class="fm-beta-shell"><div class="fm-beta-panel"><div class="fm-beta-empty"><strong>운영자 콘솔을 불러오지 못했습니다.</strong>${esc(failure||'연결을 확인해주세요.')}<div class="fm-beta-actions" style="justify-content:center;margin-top:14px"><button class="fm-beta-button" type="button" data-action="retry">다시 시도</button></div></div></div></div>`;
     return '';

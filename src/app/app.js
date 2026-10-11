@@ -257,6 +257,27 @@ function discoverView(){
   </section>`;
 }
 
+function availableJoinPosition(match){
+  const preferred=state.position;
+  const explicit=state.selectedJoinPosition;
+  if(explicit===null)return null;
+  if(explicit&&Number(match.positionSlots?.[explicit]||0)>0)return explicit;
+  if(explicit)return null;
+  return Number(match.positionSlots?.[preferred]||0)>0?preferred:null;
+}
+function joinPositionChoices(match){
+  const chosen=availableJoinPosition(match),preferred=state.position;
+  const preferredAvailable=Number(match.positionSlots?.[preferred]||0)>0;
+  const warning=!preferredAvailable?'선호 포지션 '+preferred+' 자리가 마감됐어요. 다른 포지션은 직접 선택해야 참가할 수 있습니다.':chosen&&chosen!==preferred?'선호 포지션과 다른 '+chosen+'를 직접 선택했습니다. 참가 전에 한 번 더 확인해주세요.':'선택한 포지션과 남은 자리를 확인해주세요.';
+  return `<section class="fm-next-detail-section fm-join-position" aria-label="참가 포지션 선택" data-join-position>
+    <h2>참가 포지션 선택</h2><p role="status" class="fm-join-position-note">${warning}</p>
+    <div class="fm-join-position-options" role="group" aria-label="참가 가능한 포지션">
+    ${['MF','FW','DF','GK'].map(position=>{
+      const count=Number(match.positionSlots?.[position]||0);
+      return `<button type="button" class="fm-next-button fm-next-button--${chosen===position?'lime':'secondary'}" data-action="choose-join-position" data-position="${position}" aria-pressed="${chosen===position}" ${count===0?'disabled':''}>${position} · ${count===0?'마감':count+'자리'}${chosen===position?' · 선택됨':''}</button>`;
+    }).join('')}</div><p class="fm-join-position-note">샘플 경기 · 실제 자리 예약·결제는 발생하지 않습니다.</p>
+  </section>`;
+}
 function detailView(){
   const match=selectedMatch(state);
   return `<section class="fm-next-screen" data-screen="detail">
@@ -267,7 +288,8 @@ function detailView(){
       <div class="fm-next-detail-address">${icon('pin')}<span>${match.address}</span></div>
       <div class="fm-next-detail-summary"><div><small>경기 레벨</small><b>${match.level}</b></div><div><small>남은 자리</small><b>${match.spot}</b></div><div><small>참가비</small><b>${money(match.price)}</b></div></div>
     </div>
-    <div class="fm-next-sticky-cta"><div class="fm-next-sticky-cta-row"><div class="fm-next-sticky-price"><small>참가비</small><b>${money(match.price)}</b></div>${button(state.joinedMatchId===match.id?'내 경기 보기':'참가하기',state.joinedMatchId===match.id?'nav-profile':'join-match','primary')}</div></div>
+    ${joinPositionChoices(match)}
+    <div class="fm-next-sticky-cta"><div class="fm-next-sticky-cta-row"><div class="fm-next-sticky-price"><small>샘플 참가비</small><b>${money(match.price)}</b><small>실제 청구 0원</small></div>${button(state.joinedMatchId===match.id?'내 경기 보기':availableJoinPosition(match)?'참가하기':'포지션 선택 후 참가',state.joinedMatchId===match.id?'nav-profile':'join-match','primary',state.joinedMatchId!==match.id&&!availableJoinPosition(match)?'disabled':'')}</div></div>
   </section>`;
 }
 
@@ -289,7 +311,7 @@ function checkoutView(){
   const match=selectedMatch(state);
   return `<section class="fm-next-screen fm-next-screen--plain" data-screen="checkout">
     ${topbar({backAction:'checkout-back',title:'참가 확인'})}
-    <div class="fm-next-checkout-summary"><small>${match.dateLabel}</small><h2>${match.place}</h2><div class="fm-next-checkout-meta"><span>${match.level}</span><span>${match.spot}</span><span>${match.duration}</span></div></div>
+    <div class="fm-next-checkout-summary"><small>${match.dateLabel}</small><h2>${match.place}</h2><div class="fm-next-checkout-meta"><span>${match.level}</span><span>${availableJoinPosition(match)||'포지션 미선택'} ${availableJoinPosition(match)?Number(match.positionSlots[availableJoinPosition(match)])+'자리':''}</span><span>${match.duration}</span></div></div>
     <section class="fm-next-detail-section"><h2>결제 수단</h2><div class="fm-next-payment-method"><span class="fm-next-payment-method-icon">${icon('card')}</span><div><b>간편결제</b><span>결제 수단은 다음 단계에서 선택합니다.</span></div></div></section>
     <section class="fm-next-detail-section"><h2>결제 금액</h2><div class="fm-next-pay-row"><span>경기 참가비</span><b>${money(match.price)}</b></div><div class="fm-next-pay-row"><span>서비스 수수료</span><b>0원</b></div><div class="fm-next-pay-row fm-next-pay-row--total"><span>총 결제</span><b>${money(match.price)}</b></div></section>
     <div class="fm-next-inline-note">${icon('shield')}<span>경기 24시간 전까지 취소하면 전액 환불됩니다. 운영 취소 시에도 참가비가 전액 반환됩니다.</span></div>
@@ -301,7 +323,7 @@ function successView(){
   const match=joinedMatch(state)||selectedMatch(state);
   return `<section class="fm-next-success" data-screen="success">
     <div class="fm-next-success-icon">${icon('check')}</div><h1>참가가 확정됐어요.</h1><p>경기 당일 필요한 정보와 체크인은 이제 MY에서 이어집니다.</p>
-    <div class="fm-next-ticket"><div class="fm-next-ticket-time"><span>${match.dateLabel}</span><span>${match.spot.replace('1자리','참가 확정').replace('2자리','참가 확정')}</span></div><h2>${match.place}</h2><p>${match.address}<br>${match.format} · ${match.duration} · ${match.level}</p></div>
+    <div class="fm-next-ticket"><div class="fm-next-ticket-time"><span>${match.dateLabel}</span><span>${state.joinedJoinPosition||state.position} 참가 확정</span></div><h2>${match.place}</h2><p>${match.address}<br>${match.format} · ${match.duration} · ${match.level}</p></div>
     <div class="fm-next-actions">${button('내 경기 보기','nav-profile','primary')}${button('홈으로','nav-home','secondary')}</div>
   </section>`;
 }
@@ -310,7 +332,7 @@ function myMatchesSection(){
   const match=joinedMatch(state);
   return `<section class="fm-next-section fm-next-my-matches" data-my-matches aria-label="내 경기">
     <div class="fm-next-section-head"><div><h2>내 경기</h2><p>${match?'경기 전부터 결과 확인까지 MY에서 이어집니다.':'참가한 경기는 MY에서 이어서 확인할 수 있어요.'}</p></div></div>
-    ${match?`<div class="fm-next-upcoming"><div class="fm-next-upcoming-top"><span>${state.matchStage==='matchday'?'TODAY':state.matchStage==='postgame'?'COMPLETED':'UPCOMING'}</span><span class="fm-next-upcoming-count">${match.dateLabel}</span></div><h2>${match.place}</h2><p>${match.address}</p><div class="fm-next-upcoming-actions">${button(state.matchStage==='matchday'?'체크인':'경기 상세',state.matchStage==='matchday'?'check-in':'open-joined-match','lime')}${button('팀 메시지','team-chat','secondary')}</div></div>
+    ${match?`<div class="fm-next-upcoming"><div class="fm-next-upcoming-top"><span>${state.matchStage==='matchday'?'TODAY':state.matchStage==='postgame'?'COMPLETED':'UPCOMING'}</span><span class="fm-next-upcoming-count">${match.dateLabel}</span></div><h2>${match.place}</h2><p>${match.address} · 참가 포지션 ${state.joinedJoinPosition||state.position}</p><div class="fm-next-upcoming-actions">${button(state.matchStage==='matchday'?'체크인':'경기 상세',state.matchStage==='matchday'?'check-in':'open-joined-match','lime')}${button('팀 메시지','team-chat','secondary')}</div></div>
     <div class="fm-next-status-list"><div class="fm-next-status-card is-current"><span class="fm-next-status-icon">${icon(state.matchStage==='postgame'?'check':'calendar')}</span><div><b>${state.matchStage==='postgame'?'경기 완료':'참가 확정'}</b><p>${state.matchStage==='postgame'?'경기 결과와 평가가 저장됐어요.':'경기 정보 변경이 있으면 이 화면에서 바로 알려드려요.'}</p></div></div><div class="fm-next-status-card${state.matchStage==='matchday'?' is-current':''}"><span class="fm-next-status-icon">${icon('pin')}</span><div><b>경기 당일</b><p>경기 20분 전부터 체크인과 길찾기를 바로 사용할 수 있어요.</p></div></div><div class="fm-next-status-card${state.matchStage==='postgame'?' is-current':''}"><span class="fm-next-status-icon">${icon('level')}</span><div><b>경기 후</b><p>간단한 평가와 경기 레벨 변화가 다음 추천에 반영됩니다.</p></div></div></div>`:`<div class="fm-next-empty">아직 참가한 경기가 없어요.<br>마음에 드는 경기를 찾아 참가해보세요.<div style="margin-top:16px">${button('경기 찾기','nav-discover','primary')}</div></div>`}
   </section>`;
 }
@@ -423,15 +445,28 @@ root.addEventListener('click',event=>{
   }
   if(action==='edit-setup'){const origin=mode==='real'?{route:state.route,scrollTop:root.querySelector('[data-screen]')?.scrollTop||0,region:state.region,position:state.position,level:state.level}:null;setState({route:'setup',setupStep:0,setupOrigin:origin});return;}
   if(action==='open-match'){
-    setState({selectedMatchId:target.dataset.matchId,route:'detail'});return;
+    setState({selectedMatchId:target.dataset.matchId,selectedJoinPosition:undefined,route:'detail'});return;
   }
   if(action==='detail-back'){setState({route:state.setupComplete?'discover':'home'});return;}
-  if(action==='join-match'){setState({route:state.signedIn?'checkout':'auth'});return;}
+  if(action==='choose-join-position'){
+    const match=selectedMatch(state),position=target.dataset.position;
+    if(!['MF','FW','DF','GK'].includes(position)||Number(match.positionSlots?.[position]||0)<=0)return;
+    setState({selectedJoinPosition:position});return;
+  }
+  if(action==='join-match'){
+    if(!availableJoinPosition(selectedMatch(state))){toast('선호 포지션이 마감됐어요. 참가 가능한 포지션을 직접 선택해주세요.');return;}
+    setState({route:state.signedIn?'checkout':'auth'});return;
+  }
   if(action==='auth-back'){setState({route:'detail'});return;}
-  if(action==='sign-in'){setState({signedIn:true,authExperience:'simulated',route:'checkout'});return;}
+  if(action==='sign-in'){
+    if(!availableJoinPosition(selectedMatch(state))){setState({route:'detail'});toast('참가할 포지션을 먼저 선택해주세요.');return;}
+    setState({signedIn:true,authExperience:'simulated',route:'checkout'});return;
+  }
   if(action==='checkout-back'){setState({route:'detail'});return;}
   if(action==='confirm-payment'){
-    setState({joinedMatchId:state.selectedMatchId,matchStage:'upcoming',route:'success'});return;
+    const position=availableJoinPosition(selectedMatch(state));
+    if(!position){setState({route:'detail'});toast('참가할 포지션을 먼저 선택해주세요.');return;}
+    setState({joinedMatchId:state.selectedMatchId,joinedJoinPosition:position,matchStage:'upcoming',route:'success'});return;
   }
   if(action==='nav-home'){setState({route:state.setupComplete?'home':'welcome'});return;}
   if(action==='nav-discover'){setState({route:state.setupComplete?'discover':'setup',setupStep:0});return;}

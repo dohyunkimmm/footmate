@@ -37,15 +37,11 @@ import {completeCheckin} from '../platform/application/checkin.js';
       <form class="fm-auth-form" data-auth-form="login">
         <label class="fm-auth-field"><span>아이디</span><input name="identifier" autocomplete="username" placeholder="아이디" aria-label="아이디"></label>
         <label class="fm-auth-field"><span>비밀번호</span><span class="fm-auth-password"><input name="password" type="password" autocomplete="current-password" placeholder="비밀번호" aria-label="비밀번호"><button type="button" data-auth-toggle-password aria-label="비밀번호 보기">${eyeIcon}</button></span></label>
-        <div class="fm-auth-options">
-          <label><input type="checkbox" name="keepSignedIn"><span>로그인 상태 유지</span></label>
-          <label><input type="checkbox" name="rememberId"><span>아이디 저장</span></label>
-        </div>
+        <p class="fm-auth-context">체험 계정은 브라우저에만 저장됩니다. 실제 사용하는 계정 비밀번호를 입력하지 마세요.</p>
         <button class="fm-auth-primary" type="button" data-action="sign-in" data-provider="account">로그인</button>
       </form>
       <div class="fm-auth-links" aria-label="계정 도움말">
-        <button type="button" data-auth-panel="find-id">아이디 찾기</button><i aria-hidden="true"></i>
-        <button type="button" data-auth-panel="find-password">비밀번호 찾기</button><i aria-hidden="true"></i>
+        <button type="button" data-auth-panel="find-password">체험 계정 복구 안내</button><i aria-hidden="true"></i>
         <button type="button" data-auth-panel="signup">회원가입</button>
       </div>
       <div class="fm-auth-divider"><span>또는</span></div>
@@ -56,7 +52,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
         <button class="fm-auth-provider fm-auth-provider--google" type="button" data-action="sign-in" data-provider="google" aria-label="Google로 계속하기">${google}</button>
       </div>
       <p class="fm-auth-context">${place} 경기 선택과 플레이 설정은 로그인 후에도 그대로 유지됩니다. 일반 아이디 로그인은 이 브라우저에서만 체험되며 실제 회원 계정이 생성되지 않습니다.</p>
-      <p class="fm-auth-terms">로그인 또는 회원가입을 진행하면 FootMate 이용약관과 개인정보 처리방침에 동의하게 됩니다.</p>`;
+      <p class="fm-auth-terms">Demo는 실제 회원가입이나 이메일 인증을 수행하지 않습니다. 실제 로그인·참가 기능은 Closed Beta에서 제공합니다.</p>`;
   }
 
   function signupBody(){
@@ -77,28 +73,24 @@ import {completeCheckin} from '../platform/application/checkin.js';
       <button class="fm-auth-back-link" type="button" data-auth-panel="login">이미 계정이 있어요 · 로그인</button>`;
   }
 
-  function helperBody(kind){
-    const isId=kind==='find-id';
-    return `
-      <form class="fm-auth-form fm-auth-helper" data-auth-form="${kind}">
-        <label class="fm-auth-field"><span>${isId?'이메일 주소':'아이디 또는 이메일'}</span><input type="${isId?'email':'text'}" autocomplete="${isId?'email':'username'}" placeholder="${isId?"'@' 포함 이메일 주소 입력":'가입한 아이디 또는 이메일'}" aria-label="${isId?'아이디 찾기 이메일':'비밀번호 찾기 계정'}"></label>
-        <button class="fm-auth-primary" type="button" data-auth-panel="login">확인 후 로그인으로 돌아가기</button>
-      </form>
-      <button class="fm-auth-back-link" type="button" data-auth-panel="login">로그인 화면으로 돌아가기</button>`;
+  function helperBody(){
+    return `<div class="fm-auth-form"><p class="fm-auth-context" role="note">Demo의 아이디·비밀번호는 서버 회원 계정이 아닙니다. 비밀번호 재설정 메일을 발송하거나 계정을 조회할 수 없습니다. 브라우저를 초기화한 경우 체험 기록도 복구할 수 없어요.</p>
+      <button class="fm-auth-primary" type="button" data-auth-panel="login">로그인 화면으로 돌아가기</button>
+      <a class="fm-auth-back-link" href="/beta">실제 계정은 Closed Beta에서 로그인</a></div>`;
   }
 
   function renderPanel(screen,panel){
     const place=screen.dataset.matchPlace||'선택한';
     if(panel==='signup'){
-      shell('회원가입','이 브라우저에서만 사용하는 체험 계정을 설정합니다. 서버 회원가입·인증 이메일 발송은 하지 않습니다.',signupBody(),screen,{backToLogin:true});
+      shell('회원가입','이 브라우저에서만 사용하는 체험 계정을 설정합니다. 서버 회원가입·인증 이메일 발송은 하지 않습니다. 실제 계정 비밀번호를 사용하지 마세요.',signupBody(),screen,{backToLogin:true});
       return;
     }
     if(panel==='find-id'){
-      shell('아이디 찾기','가입할 때 사용한 이메일 주소를 입력해주세요.',helperBody('find-id'),screen,{backToLogin:true});
+      shell('체험 계정 안내','Demo는 브라우저에만 저장되는 체험입니다.',helperBody(),screen,{backToLogin:true});
       return;
     }
     if(panel==='find-password'){
-      shell('비밀번호 찾기','가입한 아이디 또는 이메일을 입력해주세요.',helperBody('find-password'),screen,{backToLogin:true});
+      shell('체험 계정 복구 안내','서버 계정·복구 메일을 제공하지 않습니다.',helperBody(),screen,{backToLogin:true});
       return;
     }
     shell('로그인 후 더 많은 경기를 즐겨보세요.','로그인 후 무료 체험 참가를 이어갈 수 있어요. 실제 결제는 없어요.',loginBody(place),screen);

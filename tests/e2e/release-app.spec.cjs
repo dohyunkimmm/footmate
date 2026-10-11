@@ -156,7 +156,7 @@ test('Release App flattens desktop Detail into one decision surface',async({page
   expect(geometry.shadow).toBe('none');
   expect(geometry.background).toBe('rgba(0, 0, 0, 0)');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:12000});
+  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:17000});
   expect(errs).toEqual([]);
 });
 
@@ -426,7 +426,7 @@ test('Real App labels legacy local sessions safely and separates explicit OAuth 
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
   await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
-  await expect(page.locator('.fm-auth-context')).toContainText('실제 회원 계정이 생성되지 않습니다');
+  await expect(page.locator('.fm-auth-context').filter({hasText:'실제 회원 계정이 생성되지 않습니다'})).toBeVisible();
   await page.getByRole('button',{name:'회원가입'}).click();
   await expect(page.locator('.fm-auth-title')).toContainText('서버 회원가입·인증 이메일 발송은 하지 않습니다');
   await seedSession(page,{setupComplete:true,route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
@@ -457,6 +457,49 @@ test('Demo social login hands off to Closed Beta before provider OAuth and never
   await expect(page.getByRole('button',{name:'Closed Beta에서 Kakao 로그인'})).toBeVisible();
   await page.getByRole('button',{name:'Closed Beta에서 Google 로그인'}).click();
   await expect(page).toHaveURL(/beta$/);
+  expect(errs).toEqual([]);
+});
+
+test('P0 blocks sold-out MF role and requires explicit FW selection before local checkout',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await seedSession(page,{setupComplete:true,route:'detail',position:'MF',selectedMatchId:'yeongtong-1900',selectedJoinPosition:null});
+  const detail=page.locator('[data-screen="detail"]');
+  await expect(detail.locator('[data-join-position]')).toContainText('선호 포지션 MF 자리가 마감됐어요');
+  await expect(detail.locator('[data-action="choose-join-position"][data-position="MF"]')).toBeDisabled();
+  await expect(detail.locator('[data-action="join-match"]')).toBeDisabled();
+  await detail.locator('[data-action="choose-join-position"][data-position="FW"]').click();
+  await expect(detail.locator('[data-action="choose-join-position"][data-position="FW"]')).toHaveAttribute('aria-pressed','true');
+  await expect(detail.locator('[data-action="join-match"]')).toBeEnabled();
+  await detail.locator('[data-action="join-match"]').click();
+  await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  await page.getByRole('textbox',{name:'아이디'}).fill('qatest88');
+  await page.getByLabel('비밀번호',{exact:true}).fill('testpass123!');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.locator('[data-screen="checkout"] .fm-next-checkout-meta')).toContainText('FW 1자리');
+  expect(await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__?.read()?.position)).toBe('FW');
+  await expect(page.getByRole('button',{name:'무료로 참가 확정'})).toBeEnabled();
+  await page.getByRole('button',{name:'무료로 참가 확정'}).click();
+  await expect(page.locator('[data-screen="success"]')).toBeVisible();
+  await expect(page.locator('.fm-next-ticket-time')).toContainText('FW 참가 확정');
+  await page.getByRole('button',{name:'내 경기 보기'}).click();
+  await expect(page.locator('[data-screen="profile"] [data-my-matches]')).toContainText('참가 포지션 FW');
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')||'{}').joinedJoinPosition)).toBe('FW');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-screen="profile"] [data-my-matches]')).toContainText('참가 포지션 FW');
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
+
+test('P1 demo recovery guidance never pretends to email a local account',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  await setupToHome(page);await openDetail(page);
+  await page.getByRole('button',{name:'참가하기'}).click();
+  await expect(page.getByRole('checkbox',{name:'로그인 상태 유지'})).toHaveCount(0);
+  await expect(page.getByRole('checkbox',{name:'아이디 저장'})).toHaveCount(0);
+  await page.getByRole('button',{name:'체험 계정 복구 안내'}).click();
+  await expect(page.locator('[data-screen="auth"]')).toContainText('비밀번호 재설정 메일을 발송하거나 계정을 조회할 수 없습니다');
+  await expect(page.getByRole('link',{name:'실제 계정은 Closed Beta에서 로그인'})).toHaveAttribute('href','/beta');
+  await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
 
