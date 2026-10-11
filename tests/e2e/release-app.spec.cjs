@@ -564,3 +564,30 @@ test('Flow P2 preserves postgame feedback and hides completed match from next se
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
+
+test('guest entry keeps FootMate visible and can browse without completing preferences',async({page})=>{
+  const errs=await openCleanApp(page,{width:390,height:844});
+  const brand=page.locator('[data-screen="welcome"] .fm-next-brand');
+  await expect(brand).toBeVisible();
+  await expect(brand).toContainText('FootMate');
+  const box=await brand.boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y+box.height).toBeLessThanOrEqual(844);
+  await page.getByRole('button',{name:'경기 먼저 둘러보기',exact:true}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-browse-notice]')).toContainText('샘플 조건');
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')).setupComplete)).toBe(false);
+  await page.locator('[data-screen="discover"] .fm-next-match-card').first().click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+  await page.getByRole('button',{name:'이전 화면',exact:true}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await page.getByRole('button',{name:'기본 추천 조건 수정',exact:true}).click();
+  await page.locator('[data-quick-condition="region"]').selectOption('서울 · 강남');
+  await page.getByRole('button',{name:'이 조건으로 다시 찾기',exact:true}).click();
+  await expect(page.locator('[data-browse-notice]')).toHaveCount(0);
+  const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v4:session')));
+  expect(session.setupComplete).toBe(true);
+  expect(session.region).toBe('서울 · 강남');
+  await expectNoHorizontalOverflow(page);
+  expect(errs).toEqual([]);
+});
