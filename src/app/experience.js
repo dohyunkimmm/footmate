@@ -18,7 +18,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
   function shell(title,subtitle,body,screen,{backToLogin=false}={}){
     screen.innerHTML=`
       <div class="fm-auth-head">
-        <button class="fm-next-icon-button" type="button" ${backToLogin?'data-auth-panel="login" aria-label="로그인 화면으로 돌아가기"':'data-action="auth-back" aria-label="이전 화면으로 돌아가기"'}>${backIcon}</button>
+        <button class="fm-next-icon-button" type="button" ${backToLogin?'data-auth-panel="login" aria-label="로그인 화면으로 돌아가기"':`data-action="auth-back" aria-label="${screen.dataset.authOrigin==='welcome'?'앱 시작 화면으로 돌아가기':'경기 상세로 돌아가기'}"` }>${backIcon}</button>
       </div>
       <div class="fm-auth-card">
         <div class="fm-auth-brand"><span class="fm-next-brand-mark">${mark}</span><strong>FootMate</strong></div>
@@ -33,6 +33,16 @@ import {completeCheckin} from '../platform/application/checkin.js';
   }
 
   function loginBody(place){
+    if(isRealMode)return `
+      <form class="fm-auth-form" data-auth-form="login" data-demo-auth>
+        <p class="fm-auth-context">${place==='앱 시작'?'체험 로그인 후 플레이 설정을 시작합니다.':'선택한 경기와 플레이 설정을 유지한 채 무료 참가 체험을 이어갑니다.'} 아이디·비밀번호 입력 없이 이 브라우저에서만 체험합니다. 실제 회원 계정이 생성되지 않습니다.</p>
+        <button class="fm-auth-primary" type="button" data-action="sign-in" data-provider="account">체험 로그인으로 계속</button>
+      </form>
+      <details class="fm-auth-context" data-demo-service>
+        <summary style="min-height:44px;display:list-item;align-content:center;cursor:pointer">실제 서비스 이용 안내</summary>
+        <p>실제 Google·Kakao 로그인과 경기 참가는 별도 서비스에서 진행합니다. Demo에서 선택한 샘플 경기와 체험 기록은 이전되지 않습니다.</p>
+        <a class="fm-auth-back-link" href="/beta">실제 서비스로 이동</a>
+      </details>`;
     return `
       <form class="fm-auth-form" data-auth-form="login">
         <label class="fm-auth-field"><span>아이디</span><input name="identifier" autocomplete="username" placeholder="아이디" aria-label="아이디"></label>
@@ -214,7 +224,7 @@ import {completeCheckin} from '../platform/application/checkin.js';
 
   function validateLogin(screen){
     const form=screen.querySelector('[data-auth-form="login"]');
-    if(!form)return true;
+    if(!form||form.hasAttribute('data-demo-auth'))return true;
     clearErrors(form);
     const identifier=form.elements.identifier;
     const password=form.elements.password;

@@ -141,8 +141,10 @@ function welcomeView(){
           <p>실력·위치·포지션을 설정하면<br>맞는 경기를 추천해드려요.</p>
         </div>
         <div class="fm-next-actions">
-          ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
-          ${state.setupComplete?button(state.joinedMatchId?'내 경기 이어보기':'저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):`${button('로그인하고 시작하기','welcome-sign-in','secondary')}${button('경기 먼저 둘러보기','browse-matches','secondary')}`}
+          ${state.setupComplete?button(state.joinedMatchId?'내 경기 이어보기':'저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):''}
+          ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup',state.setupComplete?'secondary':'primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
+          ${button('경기 먼저 둘러보기','browse-matches','secondary')}
+          ${!state.signedIn?button('로그인하고 시작하기','welcome-sign-in','text'):''}
         </div>
         <p class="fm-app-entry-note">경기와 참가는 무료 체험용이며 실제 결제는 없어요.</p>
       </div>
@@ -306,7 +308,7 @@ function detailView(){
 function authView(){
   const match=selectedMatch(state);
   return `<section class="fm-next-auth-wrap" data-screen="auth" data-auth-origin="${state.authOrigin||'join'}">
-    <button class="fm-next-icon-button fm-next-auth-back" type="button" data-action="auth-back" aria-label="경기 상세로 돌아가기">${icon('back')}</button>
+    <button class="fm-next-icon-button fm-next-auth-back" type="button" data-action="auth-back" aria-label="${state.authOrigin==='welcome'?'앱 시작 화면으로 돌아가기':'경기 상세로 돌아가기'}">${icon('back')}</button>
     <div class="fm-next-auth-copy"><span class="fm-next-brand-mark">${icon('logo')}</span><h1>참가 정보를<br>안전하게 이어갈게요.</h1><p>${match.place} 참가를 확정하려면 계정을 연결해주세요. 둘러본 조건과 선택한 경기는 그대로 유지됩니다.</p></div>
     <div class="fm-next-social-list">
       <button class="fm-next-social fm-next-social--kakao" data-action="sign-in"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4C6.9 4 3 7.1 3 10.9c0 2.4 1.6 4.5 4 5.7l-1 3.4 3.9-2.3c.7.1 1.4.2 2.1.2 5.1 0 9-3.1 9-7S17.1 4 12 4Z"/></svg>카카오로 계속하기</button>

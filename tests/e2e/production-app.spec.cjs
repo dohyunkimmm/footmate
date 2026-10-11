@@ -89,9 +89,7 @@ test('v6.0.0 exact Production verifies free Join to Success to MY handoff',async
   await setupToHome(page);
   await page.locator('[data-screen="home"] .fm-next-match-card').first().click();
   await page.getByRole('button',{name:'참가하기'}).click();
-  await page.getByRole('textbox',{name:'아이디'}).fill('member01');
-  await page.getByLabel('비밀번호',{exact:true}).fill('password123!');
-  await page.getByRole('button',{name:'로그인'}).click();
+  await page.getByRole('button',{name:'체험 로그인으로 계속'}).click();
   const join=page.locator('[data-screen="checkout"]');
   await expect(join).toBeVisible();
   await expect(join).toHaveAttribute('data-v6-join','free');
