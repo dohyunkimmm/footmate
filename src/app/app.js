@@ -209,7 +209,7 @@ function matchCard(match,index=0){
       <div class="fm-next-match-place">${match.place}</div>
     </div>
     <div class="fm-next-match-body">
-      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${match.spot}</span></div>
+      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${match.fit}</span><span class="fm-next-tag">예시 ${match.distance}</span><span class="fm-next-tag">${match.spot}</span></div>
       <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>
     </div>
   </button>`;
