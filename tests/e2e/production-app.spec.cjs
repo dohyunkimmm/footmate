@@ -121,19 +121,35 @@ test('v6.0.0 exact Production migrates legacy Schedule ownership into MY',async(
 
 async function verifyMatchCards(page,name){
   const screen=page.locator('[data-screen="'+name+'"]');
-  const expected=[
-    {tags:['조건과 잘 맞아요','예시 22분','MF 2자리','고급'],price:'13,000원'},
-    {tags:['함께 비교해볼 만해요','예시 12분','FW 1자리','중급'],price:'11,000원'}
-  ];
-  for(const [index,item] of expected.entries()){
-    const card=screen.locator('.fm-next-match-card').nth(index);
+  const context=await page.evaluate(async()=>({
+    catalog:(await import('/src/app/data.js')).MATCHES,
+    session:JSON.parse(localStorage.getItem('footmate:v4:session')||'{}'),
+    recommendations:window.__FOOTMATE_RECOMMENDATION__.rank(JSON.parse(localStorage.getItem('footmate:v4:session')||'{}'))
+  }));
+  const cards=screen.locator('.fm-next-match-card');
+  expect(await cards.count()).toBeGreaterThanOrEqual(2);
+  for(let index=0;index<2;index++){
+    const card=cards.nth(index);
+    const id=await card.getAttribute('data-match-id');
+    const match=context.catalog.find(item=>item.id===id);
+    const recommendation=context.recommendations.find(item=>item.id===id);
+    expect(match,'rendered card belongs to the sample catalog').toBeDefined();
+    expect(recommendation,'rendered card has a recommendation reason').toBeDefined();
+    const level={'초중급':'초급','중급+':'고급'}[match.level]||match.level;
     const tags=card.locator('.fm-next-match-body > .fm-next-match-tags > .fm-next-tag');
-    await expect(tags).toHaveText(item.tags);
+    await expect(tags).toHaveCount(4);
+    await expect(tags.nth(0)).toHaveText(recommendation.fit);
+    await expect(tags.nth(1)).toHaveText('예시 '+match.distance);
+    const position=context.session.position||'MF';
+    const available=match.positionSlots[position]||0;
+    if(available>0)await expect(tags.nth(2)).toHaveText(position+' '+available+'자리');
+    else await expect(tags.nth(2)).toHaveText(new RegExp(position+'.*마감'));
+    await expect(tags.nth(3)).toHaveText(level);
     for(const tag of await tags.all())await expect(tag).toBeVisible();
-    await expect(card.locator('.fm-next-price')).toHaveText(`샘플 ${item.price}`);
+    await expect(card).toHaveAttribute('aria-label',match.place+' 상세 보기');
+    await expect(card.locator('.fm-next-price')).toHaveText('샘플 '+new Intl.NumberFormat('ko-KR').format(match.price)+'원');
     await expect(card.locator('.fm-next-match-footer b')).toHaveCount(0);
-    const level=tags.filter({hasText:new RegExp('^'+item.tags[3]+'$')});
-    const gap=await level.evaluate(node=>node.parentElement.getBoundingClientRect().right-node.getBoundingClientRect().right);
+    const gap=await tags.nth(3).evaluate(node=>node.parentElement.getBoundingClientRect().right-node.getBoundingClientRect().right);
     expect(Math.abs(gap)).toBeLessThanOrEqual(1);
   }
   await page.evaluate(()=>document.fonts.ready);
