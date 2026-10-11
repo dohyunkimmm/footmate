@@ -11,16 +11,16 @@
   const image = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/src/case-study/evidence/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/src/case-study/evidence/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption} <span class="image-view-hint" aria-hidden="true">· 확대 보기 ↗</span></figcaption></figure>`;
   const sections = [
     {name:'Overview & Problem', sub:'Project & Design Goal', html:
-      head('01','OVERVIEW & PROBLEM','내 수준에 맞는 경기부터,<br>참가 이후의 경험까지.','경기 조건을 해석하고, 추천 이유로 판단을 돕고, 참가부터 경기 후까지 연결하는 풋살 서비스를 설계·구축했습니다.') +
+      head('01','OVERVIEW & PROBLEM','내 수준에 맞는 경기부터,<br>참가 이후의 경험까지.','경기 탐색부터 참가·경기 후 경험까지 연결하는 풋살 서비스를 설계·구축했습니다.') +
       `<div class="overview-grid"><div><div class="project-facts"><div><span>역할</span><strong>단독 기획 · UX 설계 · 구축</strong><p>프로토타입 · 과업 검증 · QA · 배포</p></div><div><span>기간</span><strong>2026.06.08–현재</strong><p>AI 실무과정에서 시작 · 수료 후 고도화</p></div></div><div class="problem-statement"><span class="eyebrow">PROBLEM STATEMENT · 설계 가설</span><h2>경기 선택의 부담과<br>참가 이후의 단절</h2><p>레벨·거리·포지션·잔여 자리 비교<br>불분명한 추천 근거 · 경기 후 다음 행동 부재</p></div><div class="experience-actions" aria-label="체험 환경 선택"><a class="primary-link" href="/app">Interactive Demo 직접 체험하기 <span aria-hidden="true">↗</span></a></div><p class="small-copy experience-disclosure">체험용 데이터 · 실제 참가·결제 없음</p></div>${image('recommendation-home.png','FootMate의 추천 경기와 탐색 화면','홈 구현 기록 · 참가비는 샘플 정보')}</div>` +
       grid(card('DECISION 01','가치 확인 후 인증','추천·상세 먼저 탐색 · 참가 시 로그인'),card('DECISION 02','점수보다 추천 이유','레벨·거리·포지션을 판단 근거로'),card('DECISION 03','중단 후 복구','선택 유지 · 재시도'))},
     {name:'Persona & JTBD', sub:'Context & User Tasks', html:
-      head('02','PERSONA & JTBD','사용자 가설을,<br>구체적인 행동 과업으로.','퇴근 후 갈 수 있는 경기를 찾는 상황을 기준으로, 무엇을 비교하고 어디서 망설일지 정의했습니다.') +
+      head('02','PERSONA & JTBD','사용자 상황을 구체적인 행동 과업으로 정리했습니다.','퇴근 후 갈 수 있는 경기를 찾는 상황을 기준으로, 무엇을 비교하고 어디서 망설일지 정의했습니다.') +
       `<div class="split"><article class="persona-panel"><span class="eyebrow">DESIGN PERSONA · 검증 전 가설</span><h2>퇴근 후 한 경기를 고르는 플레이어</h2><dl><div><dt>이용 맥락</dt><dd>평일 저녁 · 주 1~2회 · 30분 안쪽 이동</dd></div><div><dt>선택 기준</dt><dd>레벨 · 거리 · 포지션 · 남은 자리</dd></div><div><dt>불안 요소</dt><dd>실력 차이 · 자리 마감 · 취소 규칙 · 경기 당일 변수</dd></div></dl></article><div class="jtbd-panel"><span class="eyebrow">JOB TO BE DONE</span><blockquote>퇴근 후 운동 시간 확보<br>일정·수준에 맞는 후보 판단<br>참가 확정 → 당일 준비</blockquote><p>맥락 → 선택 → 실행</p></div></div>` +
       grid(card('TASK 01','가입 전 탐색','조건 설정 → 추천·목록 → 상세'),card('TASK 02','인증 후 복귀','체험 계정 로그인 후 선택했던 경기로 복귀'),card('TASK 03','상태 변화 확인','포지션 마감 → 직접 대체 선택 · 참가 중단 → 재진입')) +
       note('과업 기록 · 교육생 6명 · 총 8회<br>일부 참여자 복수 수행 · 기기별 구성은 07에서 확인')},
     {name:'Journey Map', sub:'Friction & Opportunities', html:
-      head('03','JOURNEY MAP','탐색의 막힘을,<br>다음 설계 기회로 연결했습니다.','화면 목록 대신 사용자의 목적을 기준으로 탐색 → 판단 → 참가 → 경기 → 재탐색의 여정을 정리했습니다.') +
+      head('03','JOURNEY MAP','경기 탐색의 불편을 개선 기회로 연결했습니다.','탐색부터 재탐색까지, 단계별 목적과 불편을 정리하고 설계 대응을 연결했습니다.') +
       `<div class="journey-map" aria-label="설계 가설 기반 사용자 여정">${[
         ['01','Find · 탐색','오늘 갈 수 있는 경기 찾기','시간·지역·레벨 비교 부담','자연어 탐색 · 필터 수정'],
         ['02','Decide · 판단','내게 맞는 후보 비교','추천 이유·자리·취소 규칙이 불명확','추천 이유 · 상세 · 2경기 비교'],
@@ -31,7 +31,7 @@
       `<div class="callout"><strong>공통 원칙 · 선택과 진행 맥락 보존</strong><p>결과 없음·인증 취소·참가 실패·당일 변경 시, 상황에 맞는 재탐색·재시도·현황 안내</p></div>` +
       "<div class=\"journey-checkpoints\" aria-label=\"사용자 여정의 설계 분기점\"><div><span class=\"journey-checkpoint-n\">01 · 결정 전</span><strong>탐색에서 판단까지</strong><p>추천 이유·자리·정책을 확인할 정보 우선</p></div><div><span class=\"journey-checkpoint-n\">02 · 참가 중</span><strong>인증과 실패의 복구</strong><p>선택한 경기는 유지 · 참가 완료 여부는 따로 확인</p></div><div><span class=\"journey-checkpoint-n\">03 · 참가 후</span><strong>당일부터 다음 탐색</strong><p>체크인과 피드백을 이후 행동에 연결</p></div></div>" + note('현재 제품 기반의 예상 여정 · 감정 조사·점수화 미실시')},
     {name:'Scope & Priorities', sub:'MVP & Trade-offs', html:
-      head('04','SCOPE & PRIORITIES','참가와 복구를 먼저,<br>확장 검증은 다음으로.','사용자 판단 가치, 실패의 영향, 검증 가능성을 기준으로 Closed Beta의 범위를 정했습니다.') +
+      head('04','SCOPE & PRIORITIES','참가와 복구를 먼저,<br>확장 검증은 다음으로.','사용자 가치·실패 위험·검증 가능성을 기준으로 Closed Beta의 범위를 정했습니다.') +
       `<div class="priority-grid">${[
         ['Must','핵심 동선의 완결','탐색·추천·상세 → 인증·참가 · 정원·취소·체크인 · 실패 복구','우선 기준 · 참가 흐름과 상태 유지'],
         ['Should','선택과 운영의 보조','저장 · 최대 2경기 비교 · 대기열 · 알림 · 경기 후 피드백','기능 구현 완료 · 이용 효과는 검증 전'],
@@ -41,7 +41,7 @@
       note('현재 제품 기준의 우선순위 · 과거 회의·정량 점수 근거 없음') +
       `<details><summary>현재 구현 범위와 Trade-off</summary><div class="detail-body"><p><strong>Interactive Demo · 기능 체험</strong><br>AI로 입력 조건 해석 · 경기·잔여 자리는 체험용 데이터<br>참가·체크인·피드백 기록은 체험한 브라우저에 저장<br>Google/Kakao 로그인 선택 시 Closed Beta로 이동<br>체험 기록은 Closed Beta로 옮겨지지 않음</p><p><strong>Closed Beta · 실제 서버 연결</strong><br>로그인·경기·정원·참가·취소·대기·체크인·알림 연동<br>무료 참가 · 실제 결제·외부 분석 도구 미연동</p><p><strong>참가 결정</strong><br>사용자 직접 확정 · 자동 실행 제외</p></div></details>`},
     {name:'IA & UX Flow', sub:'Structure & Recovery', html:
-      head('05','IA & UX FLOW','세 개의 탭으로 찾고,<br>하나의 참가 흐름으로 이어집니다.','메뉴는 정보의 위치를, UX Flow는 과업의 순서와 예외 경로를 설명합니다.') +
+      head('05','IA & UX FLOW','세 개의 탭으로 찾고,<br>하나의 참가 흐름으로 이어집니다.','정보 위치는 IA로, 참가 순서와 오류 복구는 UX Flow로 정리했습니다.') +
       `<h2 class="block-title">Information Architecture · 정보 구조</h2><div class="ia-tree" aria-label="FootMate 아래 홈·경기 찾기·MY의 정보 구조"><div class="ia-root">FootMate</div><div class="ia-branches">${[
         ['홈','자연어 경기 탐색','선호 조건 · 추천 경기','추천 이유 · 최근 확인'],
         ['경기 찾기','목록 · 필터 · 정렬','경기 상세 · 저장','최대 2경기 비교'],
@@ -49,13 +49,13 @@
       ].map(([title,...items])=>`<article><h3>${title}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('')}</div></div>` +
       `<h2 class="block-title">User Task Flow · 참가 과업</h2><p class="flow-guide small-copy">01 → 06 순서 · 아래 예외 경로는 인증·참가 단계에서 분기</p>` + steps([['조건 설정','가입 전 탐색'],['추천·상세 비교','이유·포지션 잔여 자리 확인'],['참가하기','선택 포지션 확인 · 가입 필요 여부 확인'],['인증·복귀','체험 계정 로그인 후 선택 경기에서 참가 계속'],['무료 참가 확인','사용자가 포지션과 무료 체험을 최종 확인'],['MY 내 경기','당일·경기 후로 연결']]) +
       "<div class=\"flow-decision-gate\" aria-label=\"참가 과정의 실제 분기\"><span class=\"eyebrow\">DECISION GATES · 분기 기준</span><div class=\"flow-gate-track\"><div><strong>로그인 상태인가?</strong><span>인증 완료 시 04 단계 생략</span></div><div><strong>체험 계정 로그인을 취소했는가?</strong><span>선택한 경기를 유지하고 상세 화면으로 복귀</span></div><div><strong>포지션 마감 또는 참가 확정 실패인가?</strong><span>마감 시 다른 포지션 선택 · 실패 시 참가 여부 확인 후 재시도</span></div></div></div>"},
-    {name:'Design Decisions & Demo', sub:'Decisions in the Product', html:
-      head('06','DESIGN DECISIONS & DEMO','세 가지 설계 결정을,<br>실제로 동작하는 화면으로.','각 화면에서 무엇을 앞세웠는지, 어떤 흐름을 유지했는지 구현 결과와 함께 설명합니다.') +
+    {name:'Design Decisions', sub:'Implementation Evidence', html:
+      head('06','DESIGN DECISIONS','세 가지 설계 판단을 구현 화면으로 설명합니다.','로그인 시점·추천 근거·중단 후 복구의 설계 이유를 구현 화면과 QA 기록으로 설명합니다.') +
       `<div class="decision-list"><article class="decision-row"><div><span class="eyebrow">DECISION 01 / GUEST FIRST</span><h2>가치를 본 뒤 로그인</h2><dl class="decision-proof" aria-label="설계 판단과 근거"><div><dt>문제 · 가설</dt><dd>추천·상세 확인 전 인증은 탐색 장벽이 될 가능성</dd></div><div><dt>판단 · Trade-off</dt><dd>비회원 탐색 우선 · 계정 기반 동기화는 인증 이후</dd></div><div><dt>구현 · Interactive Demo</dt><dd>조건 설정 → 추천 → 상세 → 참가 시 인증</dd></div><div><dt>검증 · 범위</dt><dd>비회원 탐색·가입 과업 수행 기록</dd></div></dl></div>${image('recommendation-home.png','조건 설정과 추천이 보이는 홈 화면','구현 기록 화면 · 최신 UX는 Interactive Demo에서 확인')}</article><article class="decision-row"><div><span class="eyebrow">DECISION 02 / REASONS FIRST</span><h2>추천 점수보다 판단 근거</h2><dl class="decision-proof" aria-label="설계 판단과 근거"><div><dt>문제 · 가설</dt><dd>점수만으로는 레벨·거리·포지션 적합성을 판단하기 어려움</dd></div><div><dt>판단 · Trade-off</dt><dd>AI는 조건 해석 · 후보 순위와 근거는 규칙 엔진</dd></div><div><dt>구현 · Interactive Demo</dt><dd>추천 이유·조건 수정 · 상세에서 참가 조건·시설·취소 정책 확인</dd></div><div><dt>검증 · 범위</dt><dd>추천 로직·UI 회귀 검증</dd></div></dl></div>${image('decision-detail.png','추천 이유와 참가 정보를 함께 제공하는 경기 상세','상세 구현 기록 · 참가비 표시는 샘플 · 실제 청구 0원')}</article><article class="decision-row"><div><span class="eyebrow">DECISION 03 / PRESERVE & RECOVER</span><h2>중단 후 선택 유지</h2><dl class="decision-proof" aria-label="설계 판단과 근거"><div><dt>문제 · 가설</dt><dd>인증 취소·정원 마감 시 참가 의도와 상태가 유실될 위험</dd></div><div><dt>판단 · Trade-off</dt><dd>참가 확정을 확인한 뒤 완료 안내 · 실패 시 선택 유지</dd></div><div><dt>구현 · 참가 확인</dt><dd>참가 요청 후 확정 여부·정원 확인 · 참가 상태와 알림 결과 구분</dd></div><div><dt>검증 · 범위</dt><dd>상태·복구 QA 수행</dd></div></dl></div><figure class="recovery-diagram" aria-label="현재 무료 참가의 복구 흐름 요약"><span class="eyebrow">RECOVERY FLOW</span><h3>참가 상태 먼저 확인</h3><p>확정 여부 · 정원 · 선택 경기</p><ol><li><strong>재시도 가능한 상태</strong><span>선택 유지 → 참가 다시 확인</span></li><li><strong>마감·조건 변경</strong><span>다른 경기 탐색 → 새 후보 선택</span></li></ol><figcaption>현재 복구 흐름 · 구조 요약</figcaption></figure></article></div>` +
       `<p class="small-copy cs-implementation-boundary">구현 화면과 QA 기록으로 설계 결정 확인 · 사용자 검증과 성과 측정은 P7</p>` +
       `<details><summary>프로토타입에서 현재 구현까지 · 근거 범위</summary><div class="detail-body"><p>초기 프로토타입 → 교육생 과업 검증 → 제품·운영 고도화<br>배포 점검 → KPI 측정 준비</p></div></details>`},
-    {name:'Validation & Metrics', sub:'Evidence & Measurement', html:
-      head('07','VALIDATION & METRICS','확인한 동작과,<br>앞으로 측정할 성과를 구분했습니다.','과업 기반 사용성 검증, 개발·배포 QA, 제품 KPI를 서로 다른 근거로 관리합니다.') +
+    {name:'Validation & Metrics', sub:'Evidence & KPI Definitions', html:
+      head('07','VALIDATION & METRICS','확인한 동작과,<br>앞으로 측정할 성과를 구분했습니다.','사용자 과업 기록·QA 결과와 아직 측정하지 않은 KPI를 구분해 제시합니다.') +
       grid(card('USER TASKS · 수행 확인','교육생 6명 · 과업 8회','<span class="copy-unit">iOS 4명 · Android 2명</span> / <span class="copy-unit">비회원 탐색 · 소셜·이메일 가입</span>'),card('PRODUCT QA · 자동·개발 검증','상태·복구·접근성 확인','<span class="copy-unit">주요 흐름 · 오류 복구 · 가독성</span> / <span class="copy-unit">화면 크기별 표시 · 모바일 Safari</span>'),card('PRODUCT METRICS · 미측정','8개 KPI · 측정 전 정의','계산·관찰·제외 기준 정의')) +
       `<div class="validation-source-keys" aria-label="검증 근거 수준 구분"><span><b>과업 검증</b> · 사용자의 과업 수행 기록</span><span><b>개발 QA</b> · 오류 수정과 동작 재검증</span><span><b>성과 KPI</b> · 실제 이용의 변화를 측정할 지표</span></div>` +
       `<details class="portfolio-method-details"><summary>사용자 과업 검증 · 과정과 한계 자세히 보기</summary><div class="detail-body"><p>참여자 · 같은 교육과정 수강생</p><p>일부 참여자가 복수 과업 수행 · 총 8회 요청</p><div class="portfolio-task-grid">${[
@@ -72,11 +72,11 @@
       ].map(([a,b,c])=>`<tr><th scope="row">${a}</th><td>${b}</td><td>${c}</td></tr>`).join('')}</tbody></table></div><p>대상 · Closed Beta의 실제 이용자<br>제외 · 운영·테스트 계정·자동 점검·Interactive Demo<br>분모 0 · N/A 처리 · 첫 유효값은 개선 전 기준값</p></div></details>` +
       `<details class="portfolio-optional-sources"><summary>검증 증빙 · 기록 항목</summary><div class="detail-body"><p>아래 원본 기록을 직접 확인 가능 · 개인정보 없는 공개 문서</p><div class="validation-doc-links" role="list" aria-label="검증 증빙 기록">${evidence('USER-TEST-EVIDENCE.md','사용자 과업 기록')}${evidence('SERVICE-PLANNING-EVIDENCE.md','설계·Trade-off')}${evidence('BETA-MEASUREMENT-READINESS.md','KPI 계산 기준')}</div></div></details>`},
     {name:'Reflection', sub:'Learning & Limits', html:
-      head('08','REFLECTION','성공 이후의 상태까지,<br>설계해야 경험이 완성됩니다.','탐색·인증·참가를 연결하면서, 정상 경로뿐 아니라 중단·복구·운영 상태를 함께 정의해야 한다는 점을 배웠습니다.') +
+      head('08','REFLECTION','정상 흐름뿐 아니라 중단과 복구까지 설계해야 합니다.','탐색·인증·참가를 연결하면서, 정상 경로뿐 아니라 중단·복구·운영 상태를 함께 정의해야 한다는 점을 배웠습니다.') +
       grid(card('KEEP','판단과 실행의 책임 분리','<span class="copy-unit">AI · 조건 해석</span> / <span class="copy-unit">추천 로직 · 후보 선정</span> / <span class="copy-unit">사용자 · 참가 확정</span>'),card('LEARNED','같은 조건으로 수정 결과 확인','로그인 취소·참가 실패 상황 재현 → 수정 후 선택 유지와 복귀 재확인'),card('LEARNED','실패도 사용자 흐름의 일부','중복 요청·정원 마감·알림 실패 확인 · 참가 상태와 알림 결과 분리')) +
       `<div class="split reflection-bottom"><article class="story-card"><span class="eyebrow">LIMITS</span><h2>근거의 한계</h2><ul><li>Persona·문제 정의 · 설계 가설</li><li>6명 과업 검증 · 시장 대표성 한계</li></ul></article><article class="closing-note"><span class="eyebrow">NEXT DESIGN PRINCIPLE</span><h2>기능보다 흐름,<br>판단마다 근거</h2><p>문제 → 과업 → 상태·예외 → 수정 → 같은 조건에서 재검증</p></article></div>`},
-    {name:'Next Steps', sub:'What to Validate Next', html:
-      head('09','NEXT STEPS','먼저 기준값을 확보하고,<br>한 번에 하나의 가설을 검증합니다.','남은 기능을 늘리기 전에 Closed Beta 이용과 과업 기록을 정리해 다음 개선의 우선순위를 판단하겠습니다.') +
+    {name:'Next Steps', sub:'Validation Priorities', html:
+      head('09','NEXT STEPS','먼저 기준값을 확보하고,<br>한 번에 하나의 가설을 검증합니다.','실제 이용과 과업 기록으로 기준값을 확보한 뒤, 개선 가설을 하나씩 검증하겠습니다.') +
       `<ol class="next-list">${[
         ['01','사용자 과업 발견·수정 연결','참여자별 발견 → 수정 → 재검증','관찰 항목 · 막힘·복귀 위치·재현 여부'],
         ['02','실제 이용 데이터 확보','운영·테스트 계정을 제외한 실제 이용 기록 수집<br>경기가 없어 참가하지 못한 경우는 별도 구분','보고 항목 · 표본·기간·분모·누락'],
