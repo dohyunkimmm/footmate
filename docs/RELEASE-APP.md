@@ -19,7 +19,7 @@ FootMate v6는 `/demo`을 개별 기능 데모가 아니라 **Find → Decide �
 ## Re-entry / AI recovery / MY continuation · 2026-10-10
 
 - **P0 / 재방문:** `/demo` direct entry는 앱 시작 화면을 먼저 보여줍니다. 저장한 설정은 추천 이어보기, 참가 기록은 내 경기 이어보기로 연결합니다. 데이터는 유지하며 `?resume=1` 등 내부 복귀 요청은 저장 경로를 보존합니다.
-- **P0 / 샘플 신뢰:** 참가 화면은 샘플 경기 가격·잔여 자리·정책 예시와 **무료 참가 체험의 실제 청구액 0원**을 구분합니다. MY의 취소·환불 안내는 실제 취소 실행이나 환불이 발생하는 연결 서비스로 표현하지 않습니다. 비밀번호 방식 로컬 체험 로그인은 `체험 계정 · 이 브라우저에만 저장`으로 표시하고 실제 Google/Kakao OAuth와 구분합니다.
+- **P0 / 샘플 신뢰:** 참가 화면은 샘플 경기 가격·잔여 자리·정책 예시와 **무료 참가 체험의 실제 청구액 0원**을 구분합니다. MY의 취소·환불 안내는 실제 취소 실행이나 환불이 발생하는 연결 서비스로 표현하지 않습니다. 체험 로그인은 아이디·비밀번호 입력 없이 진행하며 `체험 계정 · 이 브라우저에만 저장`으로 표시합니다. 실제 Google/Kakao 로그인은 펼침형 서비스 안내에서 별도 `/beta` 경로로 이동합니다. 샘플 경기·체험 기록은 이전하지 않습니다.
 - **P1 / AI 조건 정정:** Home 자연어 요청을 구조화해 Discover로 넘긴 뒤 사용자가 **해석된 경기 레벨**을 직접 수정할 수 있습니다. UI의 `초급` 표기는 내부 canonical `초중급`과 다를 수 있으므로 사용자 표시와 저장된 조건을 구분합니다. AI 결과 0개라면 시간(`afterTime`) → 가격(`maxPrice`) → 거리(`maxDistanceMin`) → 포지션(`position`) → 지역(`region`) 순서로 존재하는 조건을 하나씩 완화할 수 있습니다. 레벨은 별도 직접 정정합니다. 실제 경기 후보와 순위·추천 이유는 deterministic runtime이 계속 소유합니다.
 - **P2 / MY·다음 경기:** MY의 현재 경기 상태는 유지하되 중복되는 `참가 확정 → 경기 당일 → 경기 후` 보조 설명은 펼침 영역으로 정리합니다. postgame 피드백이 기존 return history에 `completed: true`로 저장되고 `matchStage: postgame`이면 같은 `joinedMatchId`는 후속 Home 추천/Discover 결과에서 표시하지 않습니다. 저장된 경기 기록이나 기존 추천 로직 자체를 삭제·변경하지 않습니다.
 - **상태·경계:** `footmate:session`, `footmate:v5.1:ai`, `footmate:v5.2:discover-ai-snapshot`, `footmate:return`과 기존 domain/repository ownership을 재사용합니다. `/beta`, `/beta/operator`, Case Study, 실제 PG, 서버 간 계정 동기화는 이번 변경 범위가 아닙니다.
@@ -41,7 +41,7 @@ v6는 UX와 IA를 통합하지만 연결 범위를 과장하지 않는다.
 - `/demo` recommendation: deterministic runtime logic
 - `/demo` match/capacity/participant data: sample records
 - `/demo` participation persistence: browser local state
-- `/demo` Google/Kakao social auth entrypoint: 활성 provider가 있을 때 Supabase OAuth authorize/user 확인 경로를 사용하며 외부 로그인 화면으로 이동할 수 있음; signup/recovery panel에는 social-provider status를 노출하지 않음
+- `/demo` auth: 입력 없는 browser-local 체험 로그인으로 선택 경기·설정을 유지합니다. 실제 서비스 이용 안내를 펼친 뒤 `/beta`로 이동할 수 있으며 Demo 안에서 provider OAuth를 실행하지 않습니다.
 - `/demo` Release join: free participation confirmation; real PG 없음
 - `/beta`: Supabase Auth, match data, participation/cancel/check-in, Realtime, notification/email/Web Push/media 등 connected validation surface
 - `/beta/operator`: allowlisted + TOTP MFA connected operator surface
