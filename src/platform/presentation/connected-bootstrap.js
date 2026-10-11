@@ -151,6 +151,7 @@ function ensureProviderButton(auth,provider){
 }
 function decorateAuth(){
   if(!root||entryMode!=='real')return;const auth=root.querySelector('[data-screen="auth"]');if(!auth)return;
+  if(auth.querySelector('[data-demo-auth]')){auth.querySelector('[data-release-auth-status]')?.remove();return;}
   // Signup and recovery panels have no social-login action to explain.
   if(!auth.querySelector('.fm-auth-sso,.fm-next-social-list')){
     auth.querySelector('[data-release-auth-status]')?.remove();

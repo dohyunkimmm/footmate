@@ -35,12 +35,10 @@ test('Welcome login returns to the app start and then leads to setup, never chec
   await page.getByRole('button',{name:'로그인하고 시작하기'}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
   await expect(page.locator('.fm-auth-title')).toContainText('로그인 후 플레이 설정과 경기 추천을 시작해요');
-  await page.getByRole('button',{name:'이전 화면으로 돌아가기',exact:true}).click();
+  await page.getByRole('button',{name:'앱 시작 화면으로 돌아가기',exact:true}).click();
   await expect(page.locator('.fm-app-entry-name')).toBeVisible();
   await page.getByRole('button',{name:'로그인하고 시작하기'}).click();
-  await page.getByRole('textbox',{name:'아이디',exact:true}).fill('demo-player');
-  await page.getByLabel('비밀번호',{exact:true}).fill('demo-only-password');
-  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.getByRole('button',{name:'체험 로그인으로 계속',exact:true}).click();
   await expect(page.locator('[data-screen="setup"]')).toBeVisible();
   await expect(page.locator('[data-screen="checkout"]')).toHaveCount(0);
 });

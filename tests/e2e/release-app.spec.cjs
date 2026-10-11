@@ -128,9 +128,7 @@ async function openDetail(page){
 
 async function reachJoin(page){
   await page.getByRole('button',{name:'참가하기'}).click();
-  await page.getByRole('textbox',{name:'아이디'}).fill('member01');
-  await page.getByLabel('비밀번호',{exact:true}).fill('password123!');
-  await page.getByRole('button',{name:'로그인'}).click();
+  await page.getByRole('button',{name:'체험 로그인으로 계속'}).click();
   const join=page.locator('[data-screen="checkout"]');
   await expect(join).toBeVisible();
   await expect(join).toHaveAttribute('data-v6-join','free');
@@ -474,8 +472,8 @@ test('Interactive Demo labels legacy local sessions safely and separates explici
   await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
   await expect(page.locator('.fm-auth-context').filter({hasText:'실제 회원 계정이 생성되지 않습니다'})).toBeVisible();
-  await page.getByRole('button',{name:'회원가입'}).click();
-  await expect(page.locator('.fm-auth-title')).toContainText('서버 회원가입·인증 이메일 발송은 하지 않습니다');
+  await expect(page.getByRole('textbox')).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'회원가입'})).toHaveCount(0);
   await seedSession(page,{setupComplete:true,route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
   await expect(page.locator('[data-screen="profile"] .fm-next-profile-head p')).toHaveText('체험 계정 · 이 브라우저에만 저장');
   await seedSession(page,{route:'profile',signedIn:true,authExperience:'oauth'});
@@ -484,26 +482,24 @@ test('Interactive Demo labels legacy local sessions safely and separates explici
   expect(errs).toEqual([]);
 });
 
-test('Demo social login hands off to Closed Beta before provider OAuth and never transfers sample match',async({page})=>{
-  // Stub ONLY public provider settings: no user token, provider auth, or Beta mutation.
-  const authOrigin='https://footmate-qa-auth.invalid';
-  await page.route('**/api/beta-config',route=>route.fulfill({
-    status:200,contentType:'application/json',
-    body:JSON.stringify({connected:true,url:authOrigin,publishableKey:'qa-publishable'})
-  }));
-  await page.route(authOrigin+'/auth/v1/settings',route=>route.fulfill({
-    status:200,contentType:'application/json',
-    headers:{'access-control-allow-origin':'*','access-control-allow-headers':'apikey, accept, content-type','access-control-allow-methods':'GET, OPTIONS'},
-    body:JSON.stringify({external:{google:true,kakao:true}})
-  }));
+test('Demo keeps local join separate from an explicit actual-service handoff',async({page},testInfo)=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
-  await expect(page.locator('.fm-release-auth-status')).toContainText('실제 Google·Kakao 로그인은 Closed Beta에서 진행합니다');
-  await expect(page.locator('.fm-release-auth-status')).toContainText('샘플 경기 선택은 실제 계정으로 이전되지 않습니다');
-  await expect(page.getByRole('button',{name:'Closed Beta에서 Kakao 로그인'})).toBeVisible();
-  await page.getByRole('button',{name:'Closed Beta에서 Google 로그인'}).click();
-  await expect(page).toHaveURL(/beta$/);
+  await expect(page.locator('[data-demo-auth]')).toBeVisible();
+  await expect(page.locator('[data-oauth-provider]')).toHaveCount(0);
+  const service=page.locator('[data-demo-service]');
+  await expect(service.locator('a')).toBeHidden();
+  await page.screenshot({path:testInfo.outputPath('demo-auth-390.png'),fullPage:true});
+  await service.locator('summary').click();
+  await page.screenshot({path:testInfo.outputPath('demo-auth-service-390.png'),fullPage:true});
+  await expect(service).toContainText('체험 기록은 이전되지 않습니다');
+  await expect(service.getByRole('link',{name:'실제 서비스로 이동'})).toHaveAttribute('href','/beta');
+  await expectAxeClean(page,'[data-screen="auth"]');
+  await page.getByRole('button',{name:'체험 로그인으로 계속'}).click();
+  await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
+  await expect(page).toHaveURL(/\/demo/);
+  await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
 
@@ -519,9 +515,7 @@ test('P0 blocks sold-out MF role and requires explicit FW selection before local
   await expect(detail.locator('[data-action="join-match"]')).toBeEnabled();
   await detail.locator('[data-action="join-match"]').click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
-  await page.getByRole('textbox',{name:'아이디'}).fill('qatest88');
-  await page.getByLabel('비밀번호',{exact:true}).fill('testpass123!');
-  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.getByRole('button',{name:'체험 로그인으로 계속',exact:true}).click();
   await expect(page.locator('[data-screen="checkout"] .fm-next-checkout-meta')).toContainText('FW 1자리');
   expect(await page.evaluate(()=>window.__FOOTMATE_PARTICIPATION__?.read()?.position)).toBe('FW');
   await expect(page.getByRole('button',{name:'무료로 참가 확정'})).toBeEnabled();
@@ -537,15 +531,15 @@ test('P0 blocks sold-out MF role and requires explicit FW selection before local
   expect(errs).toEqual([]);
 });
 
-test('P1 demo recovery guidance never pretends to email a local account',async({page})=>{
+test('Demo auth asks for no credentials and actual-service navigation is optional',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);await openDetail(page);
   await page.getByRole('button',{name:'참가하기'}).click();
-  await expect(page.getByRole('checkbox',{name:'로그인 상태 유지'})).toHaveCount(0);
-  await expect(page.getByRole('checkbox',{name:'아이디 저장'})).toHaveCount(0);
-  await page.getByRole('button',{name:'체험 계정 복구 안내'}).click();
-  await expect(page.locator('[data-screen="auth"]')).toContainText('비밀번호 재설정 메일을 발송하거나 계정을 조회할 수 없습니다');
-  await expect(page.getByRole('link',{name:'실제 계정은 Closed Beta에서 로그인'})).toHaveAttribute('href','/beta');
+  await expect(page.locator('[data-screen="auth"] input')).toHaveCount(0);
+  await expect(page.locator('[data-screen="auth"]')).toContainText('아이디·비밀번호 입력 없이');
+  await expect(page.getByRole('button',{name:'경기 상세로 돌아가기'})).toBeVisible();
+  await page.getByRole('button',{name:'경기 상세로 돌아가기'}).click();
+  await expect(page.locator('[data-screen="detail"]')).toBeVisible();
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
