@@ -118,6 +118,7 @@ function guide(){
       ${steps.map((item,index)=>`<div class="fm-next-guide-step${routeStep===index?' is-current':''}"><b>${index+1}. ${item[0]}</b><span>${item[1]}</span></div>`).join('')}
     </div>
     <p class="fm-next-guide-hint" role="status">${hints[routeStep]}</p>
+    ${mode==='guided'?'<section class="fm-next-review-shortcuts" aria-label="심사자 빠른 체험"><strong style="display:block;margin:12px 0 6px;font-size:12px">90초 핵심 화면 · 샘플 상태</strong><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><button type="button" data-action="review-home" style="min-height:40px;font-size:12px">추천 바로 보기</button><button type="button" data-action="review-compare" style="min-height:40px;font-size:12px">두 경기 비교</button><button type="button" data-action="review-position" style="min-height:40px;font-size:12px">마감 포지션</button><button type="button" data-action="review-my" style="min-height:40px;font-size:12px">MY 미리보기</button></div><p style="font-size:11px;margin:6px 0 0">체험용 화면 전환 · 실제 가입·예약·결제 없음</p></section>':''}
     <div class="fm-next-guide-actions">
       ${button(`${icon('reset')} 처음부터 보기`,'reset-flow','ghost')}
       ${button('Real App만 보기','open-real','lime')}
@@ -209,7 +210,7 @@ function matchCard(match,index=0){
       <div class="fm-next-match-place">${match.place}</div>
     </div>
     <div class="fm-next-match-body">
-      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${match.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag">${match.spot}</span></div>
+      <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${match.fit}</span><span class="fm-next-tag">예시 ${match.distance}</span><span class="fm-next-tag">${match.spot}</span></div>
       <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small><b>${match.level} · ${match.surface}</b></div><div class="fm-next-price">${money(match.price)}</div></div>
     </div>
   </button>`;
@@ -485,6 +486,17 @@ root.addEventListener('click',event=>{
   if(action==='show-policy'){toast(mode==='real'?'무료 참가 체험입니다. 실제 결제·환불이나 참가 취소 처리는 발생하지 않습니다.':'경기 24시간 전까지 전액 환불됩니다.');return;}
   if(action==='reset-flow'){resetFlow();return;}
   if(action==='open-real'){location.href='/app';return;}
+  if(mode==='guided'&&action==='review-home'){state=createState({setupComplete:true,route:'home'});render();return;}
+  if(mode==='guided'&&action==='review-compare'){
+    state=createState({setupComplete:true,route:'detail',selectedMatchId:MATCHES[0].id});render();
+    window.__FOOTMATE_DECISION__?.showReviewerCompare?.();return;
+  }
+  if(mode==='guided'&&action==='review-position'){
+    state=createState({setupComplete:true,route:'detail',region:'수원 · 영통',position:'MF',selectedMatchId:'yeongtong-1900'});render();return;
+  }
+  if(mode==='guided'&&action==='review-my'){
+    state=createState({setupComplete:true,route:'profile',signedIn:true,authExperience:'simulated',joinedMatchId:MATCHES[0].id,selectedMatchId:MATCHES[0].id,joinedJoinPosition:'MF',matchStage:'upcoming'});render();return;
+  }
   if(action==='scenario-discover'){
     state=createState({setupComplete:true,route:'home',signedIn:true});render();return;
   }

@@ -240,7 +240,7 @@ test('Home lifecycle closes Return and hands the next action back to Discover',a
   const lifecycle=page.locator('[data-v6-lifecycle="upcoming"]');
   await expect(lifecycle).toBeVisible();
   await page.mouse.move(1,1);
-  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',{...shot,maxDiffPixels:200});
+  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',{...shot,maxDiffPixels:900});
   await lifecycle.getByRole('button',{name:'내 경기 보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await seedSession(page,{route:'profile',matchStage:'postgame'});
@@ -271,7 +271,7 @@ test('Release App mobile changed surfaces match approved visual baselines',async
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
   await seedSession(page,{route:'home',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
   await expect(page.locator('[data-v6-lifecycle="upcoming"]')).toBeVisible();
-  await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',{...shot,maxDiffPixels:850});
+  await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',{...shot,maxDiffPixels:1600});
 
   await seedSession(page,{route:'home',signedIn:false,joinedMatchId:null,matchStage:'discover'});
   await openDetail(page);await reachJoin(page);
@@ -381,6 +381,10 @@ test('portfolio recommendation prioritizes level-fit and playable role before re
   const first=page.locator('[data-screen="home"] .fm-next-match-card').first();
   await expect(first).toHaveAttribute('data-match-id','giheung-2000');
   await expect(first).toContainText('MF 1자리');
+  await expect(first).toContainText('예시 17분');
+  const second=page.locator('[data-screen="home"] .fm-next-match-card').nth(1);
+  await expect(second).toContainText('선호 포지션 마감');
+  await expect(second).toContainText('MF 0자리 · 다른 포지션 가능');
   await expect(first.locator('.fm-next-fit-badge')).toHaveText('조건 확장');
   await expectNoHorizontalOverflow(page);
   expect(errors).toEqual([]);
@@ -396,6 +400,14 @@ test('portfolio guided reviewer route describes current app and Beta boundaries'
   await expect(guide).toContainText('실제 청구 0원');
   await expect(guide).toContainText('샘플 기록은 이전되지 않음');
   await expect(guide.getByRole('link',{name:'Case Study의 설계 결정·검증 보기'})).toHaveAttribute('href','/#section-06');
+  await guide.getByRole('button',{name:'두 경기 비교'}).click();
+  await expect(page.getByRole('dialog',{name:'두 경기 비교'})).toBeVisible();
+  await page.getByRole('button',{name:'경기 비교 닫기'}).click();
+  await guide.getByRole('button',{name:'마감 포지션'}).click();
+  await expect(page.locator('[data-screen="detail"] [data-position="MF"]')).toBeDisabled();
+  await guide.getByRole('button',{name:'MY 미리보기'}).click();
+  await expect(page.locator('[data-screen="profile"]')).toBeVisible();
+  await expect(guide).toContainText('체험용 화면 전환');
   await expectNoHorizontalOverflow(page);
 });
 

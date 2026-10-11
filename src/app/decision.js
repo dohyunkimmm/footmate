@@ -184,7 +184,7 @@ function compareCell(match,session){
   const positionCount=Number(match.positionSlots?.[session.position]||0);
   return `<article class="fm-decision-compare-card" data-compare-match-id="${match.id}">
     <small>${escapeHtml(match.dateLabel)}</small><h3>${escapeHtml(match.place)}</h3>
-    <dl><div><dt>추천</dt><dd>${escapeHtml(row?.fit||match.fit)}</dd></div><div><dt>거리</dt><dd>${escapeHtml(match.distance)}</dd></div><div><dt>레벨</dt><dd>${escapeHtml(match.level)}</dd></div><div><dt>${escapeHtml(session.position)} 자리</dt><dd>${positionCount}자리</dd></div><div><dt>샘플 잔여</dt><dd>${openSeats(match)}자리</dd></div><div><dt>참가비</dt><dd>${money(match.price)}</dd></div></dl>
+    <dl><div><dt>추천</dt><dd>${escapeHtml(row?.fit||match.fit)}</dd></div><div><dt>예시 이동</dt><dd>${escapeHtml(match.distance)}</dd></div><div><dt>레벨</dt><dd>${escapeHtml(match.level)}</dd></div><div><dt>${escapeHtml(session.position)} 자리</dt><dd>${positionCount}자리</dd></div><div><dt>샘플 잔여</dt><dd>${openSeats(match)}자리</dd></div><div><dt>참가비</dt><dd>${money(match.price)}</dd></div></dl>
     <button type="button" data-decision-action="choose-compare-match" data-match-id="${match.id}">이 경기 보기</button>
   </article>`;
 }
@@ -304,5 +304,12 @@ window.__FOOTMATE_DECISION__={
   version:DECISION_VERSION,
   storageKey:DECISION_STORAGE_KEY,
   read:()=>({...state,savedMatchIds:[...state.savedMatchIds],compareMatchIds:[...state.compareMatchIds]}),
+  showReviewerCompare:()=>{
+    if(mode!=='guided')return false;
+    state.compareMatchIds=[MATCHES[0].id,MATCHES[4].id];
+    patchDetail();
+    openCompare(null);
+    return true;
+  },
   openSeats:id=>{const match=matchById(id);return match?openSeats(match):null;}
 };
