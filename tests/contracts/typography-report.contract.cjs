@@ -205,3 +205,21 @@ test('PNG traversal and symlink attempts fail closed',()=>{
     fs.symlinkSync(path.join(input,'case-0','typography-normal-320-home.png'),file);
   });
 });
+
+ test('report records PR test commit separately from source and leaves visual signoff pending',()=>{
+  const keys=['GITHUB_SHA','GITHUB_EVENT_NAME','QA_HEAD_SHA','GITHUB_RUN_ID','GITHUB_RUN_ATTEMPT'];
+  const previous=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
+  try{
+    Object.assign(process.env,{GITHUB_SHA:'test-merge',GITHUB_EVENT_NAME:'pull_request',QA_HEAD_SHA:'source-head',GITHUB_RUN_ID:'123',GITHUB_RUN_ATTEMPT:'2'});
+    fixture(completeSuite(),({report,markdown})=>{
+      assert.equal(report.commit,'test-merge');
+      assert.equal(report.provenance.headCommit,'source-head');
+      assert.equal(report.provenance.commitMeaning,'PR test merge commit');
+      assert.equal(report.provenance.runId,'123');
+      assert.equal(report.provenance.productionVerified,false);
+      assert.equal(report.reviewStages.humanVisual,'pending-human-review');
+      assert.equal(report.reviewStages.aiVisual,'not-recorded');
+      assert.match(markdown,/변경 원본 커밋: source-head/);
+    });
+  }finally{for(const key of keys){if(previous[key]===undefined)delete process.env[key];else process.env[key]=previous[key];}}
+ });
