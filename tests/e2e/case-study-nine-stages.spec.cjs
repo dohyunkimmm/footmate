@@ -31,6 +31,27 @@ for(const width of [1920,1440,800,390,320]){
   });
 }
 
+test('paired portfolio connects Real App and documents a real QA before-after, not a fake result',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  const first=page.locator('#section-01');
+  await expect(first.getByRole('link',{name:'Real App 직접 체험하기'})).toHaveAttribute('href','/app');
+  await expect(first).toContainText('Real App(/app) = Demo(/demo)');
+  await page.locator('.toc-item').nth(5).click();
+  const report=page.locator('#section-06 .portfolio-change-evidence');
+  await report.locator('summary').click();
+  await expect(report).toContainText('과거 화면 캡처가 아닌 동작 기록');
+  await expect(report).toContainText('MF 마감 → FW 직접 선택');
+  await expect(report).toContainText('사용자 전환율 개선은 미측정');
+  await expect(page.locator('#section-06 a[href="/app?mode=guided"]')).toBeVisible();
+  await page.locator('.toc-item').nth(6).click();
+  await expect(page.locator('#section-07')).toContainText('우선 측정 3개');
+  const evidence=page.locator('#section-07 .portfolio-optional-sources');
+  await evidence.locator('summary').click();
+  await expect(evidence.locator('a[href="/docs/USER-TEST-EVIDENCE.md"]')).toHaveCount(1);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+});
+
 test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await page.goto('/#section-05');
   await expect(page.getByRole('region',{name:'IA & UX Flow',exact:true})).toBeVisible();
