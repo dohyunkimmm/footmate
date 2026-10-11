@@ -39,7 +39,7 @@ test('Vercel preview deploy includes runtime changes even when final commit only
 
     const preview=run(cwd);
     assert.equal(preview.status,1,preview.stderr);
-    assert.match(preview.stdout,/src\/app\/demo\.css/);
+    assert.match(preview.stdout,/src\/app\/app\.css/);
     assert.match(preview.stdout,/build required/);
 
     const productionTip=run(cwd,{VERCEL_GIT_COMMIT_REF:'main',VERCEL_ENV:'production'});
@@ -53,7 +53,7 @@ test('Vercel preview deploy includes runtime changes even when final commit only
     git(cwd,'update-ref','-d','refs/remotes/origin/main');
     const fetchedBase=run(cwd);
     assert.equal(fetchedBase.status,1,fetchedBase.stderr);
-    assert.match(fetchedBase.stdout,/src\/app\/demo\.css/);
+    assert.match(fetchedBase.stdout,/src\/app\/app\.css/);
     assert.doesNotMatch(fetchedBase.stderr,/Failing open/);
 
     // A docs-only PR can correctly skip once the missing refs are fetched.
