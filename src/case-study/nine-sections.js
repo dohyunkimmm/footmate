@@ -9,7 +9,7 @@
   const note = text => `<p class="source-note">${text}</p>`;
   const steps = items => `<ol class="flow">${items.map(([title, body], index) => `<li><span class="flow-number" aria-hidden="true">${String(index+1).padStart(2,'0')}</span><strong>${title}</strong><span>${body}</span></li>`).join('')}</ol>`;
   const image = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/src/case-study/evidence/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/src/case-study/evidence/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption} <span class="image-view-hint" aria-hidden="true">· 확대 보기 ↗</span></figcaption></figure>`;
-  const qaImage = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/tests/e2e/release-app.spec.cjs-snapshots/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/tests/e2e/release-app.spec.cjs-snapshots/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption} <span class="image-view-hint" aria-hidden="true">· 확대 보기 ↗</span></figcaption></figure>`;
+  const qaImage = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/tests/e2e/release-app.spec.cjs-snapshots/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/tests/e2e/release-app.spec.cjs-snapshots/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption}</figcaption></figure>`;
   const sections = [
     {name:'Overview & Problem', sub:'Project & Design Goal', html:
       head('01','OVERVIEW & PROBLEM','내 수준에 맞는 경기부터,<br>참가 이후의 경험까지.','경기 조건을 해석하고, 추천 이유로 판단을 돕고, 참가부터 경기 후까지 연결하는 풋살 서비스를 설계·구축했습니다.') +
@@ -59,8 +59,8 @@
       <article class="story-card"><span class="eyebrow">BEFORE · 발견된 동작</span><h3>선호 MF 0자리</h3><p>참가 화면 진입 후 FW 1자리로 변경</p><p>대체 포지션에 대한 명시적 선택 단계 부재</p></article>
       <article class="story-card"><span class="eyebrow">AFTER · 구현 동작</span><h3>마감 포지션은 참가 차단</h3><p>MF 마감 → FW 직접 선택 → 무료 참가 확인</p><p>선택 포지션을 MY·새로고침까지 유지</p></article>
       </div><h3>실제 구현 화면 · 모바일 QA 캡처</h3><div class="card-grid">` +
-        qaImage('v6-release-join-390-chromium-linux.png','무료 참가 직전 실제 모바일 화면','Playwright 회귀 캡처 · 참가 확인 화면') +
-        qaImage('v6-release-my-matchday-390-chromium-linux.png','MY 경기 당일 실제 모바일 화면','Playwright 회귀 캡처 · MY 경기 당일') +
+        qaImage('v6-release-join-390-chromium-linux.png','무료 참가 직전 실제 모바일 화면','실제 QA · 참가 확인') +
+        qaImage('v6-release-my-matchday-390-chromium-linux.png','MY 경기 당일 실제 모바일 화면','실제 QA · 경기 당일') +
       `</div><p>설계 원칙 · 포지션 변경은 시스템 추정 대신 사용자 선택</p><p>검증 · Playwright 실제 화면 E2E / 배포 후 브라우저 QA</p><p>근거 · 변경 PR #583 · 사용자 전환율 개선은 미측정</p>
       </div></details>` +
       `<p class="small-copy"><a href="/demo">Interactive Demo 체험하기 ↗</a> · <a href="/app?mode=guided">심사자 안내 모드 ↗</a><br>같은 샘플 앱 · 조건 탐색 → 추천 이유 → 상세 → 참가 확인 → MY</p>` +
