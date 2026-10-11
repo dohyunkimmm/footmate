@@ -381,6 +381,10 @@ test('portfolio recommendation prioritizes level-fit and playable role before re
   const first=page.locator('[data-screen="home"] .fm-next-match-card').first();
   await expect(first).toHaveAttribute('data-match-id','giheung-2000');
   await expect(first).toContainText('MF 1자리');
+  await expect(first).toContainText('예시 17분');
+  const second=page.locator('[data-screen="home"] .fm-next-match-card').nth(1);
+  await expect(second).toContainText('선호 포지션 마감');
+  await expect(second).toContainText('MF 0자리 · 다른 포지션 가능');
   await expect(first.locator('.fm-next-fit-badge')).toHaveText('조건 확장');
   await expectNoHorizontalOverflow(page);
   expect(errors).toEqual([]);
