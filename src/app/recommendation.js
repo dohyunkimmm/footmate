@@ -48,11 +48,11 @@ if(root){
     const homeMeta=scope==='home';
     return `<button type="button" class="fm-next-match-card" data-action="open-match" data-match-id="${match.id}" data-recommendation-score="${item.score}" data-recommendation-region="${match.region}" aria-label="${match.place} 상세 보기">
       <div class="fm-next-match-card-media">
-        <div class="fm-next-match-date"><span>${match.dateLabel}</span>${index===0?`<span class="fm-next-fit-badge${(item.fit.includes('차이')||!item.exactRegion||item.slotCount<=0)?' fm-next-fit-badge--caution':''}">${tinyIcon('spark')} ${(item.fit.includes('차이')||!item.exactRegion||item.slotCount<=0)?'조건 확장':'추천 1순위'}</span>`:''}</div>
+        <div class="fm-next-match-date"><span>${match.dateLabel}</span>${index===0?`<span class="fm-next-fit-badge${(item.fit.includes('차이')||!item.exactRegion||item.slotCount<=0)?' fm-next-fit-badge--caution':''}">${tinyIcon('spark')} ${item.slotCount<=0?'포지션 마감':(item.fit.includes('차이')||!item.exactRegion)?'조건 확장':'추천 1순위'}</span>`:''}</div>
         <div class="fm-next-match-place">${match.place}</div>
       </div>
       <div class="fm-next-match-body">
-        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">${match.distance}</span><span class="fm-next-tag"${homeMeta?' style="display:inline-flex"':''}>${item.spotLabel}</span><span class="fm-next-tag" style="${homeMeta?'display:inline-flex;':''}margin-left:auto;white-space:nowrap">${match.level}</span></div>
+        <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">예시 ${match.distance}</span><span class="fm-next-tag"${homeMeta?' style="display:inline-flex"':''}>${item.spotLabel}</span><span class="fm-next-tag" style="${homeMeta?'display:inline-flex;':''}margin-left:auto;white-space:nowrap">${match.level}</span></div>
         <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small></div><div class="fm-next-price"><span class="fm-next-price-sample">샘플</span> ${money(match.price)}</div></div>
       </div>
     </button>`;
