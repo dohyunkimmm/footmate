@@ -204,11 +204,11 @@ for(const fonts of ['normal','fallback']){
           expect(body.line/body.size,result.section+' '+body.selector+' body leading').toBeGreaterThanOrEqual(1.7);
         }
         expect(result.failures,result.section+' text geometry').toEqual([]);
-        const expected=width>800?34:width<=370?30:34;
+        const expected=width>800?34:width<=370?30:32;
         expect(result.heading.size,result.section+' title size').toBe(expected);
         expect(result.heading.weight,result.section+' title weight').toBe('800');
-        expect(result.heading.line/result.heading.size).toBeCloseTo(width>800?1.4:1.3,2);
-        expect(result.heading.tracking/result.heading.size).toBeCloseTo(-.055,3);
+        expect(result.heading.line/result.heading.size).toBeCloseTo(1.4,2);
+        expect(result.heading.tracking/result.heading.size).toBeCloseTo(-.03,3);
         expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
       }
       await testInfo.attach('typography-audit',{body:JSON.stringify({width,coverage,fontState,audits},null,2),contentType:'application/json'});
