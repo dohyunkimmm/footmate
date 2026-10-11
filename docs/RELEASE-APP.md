@@ -18,7 +18,7 @@ FootMate v6는 `/demo`을 개별 기능 데모가 아니라 **Find → Decide �
 
 ## Re-entry / AI recovery / MY continuation · 2026-10-10
 
-- **P0 / 재방문:** 일반 `/demo` direct entry는 기존 `footmate:session` 상태를 우선합니다. 신규(`setupComplete=false`, 참가 기록 없음)만 Welcome/Setup, 설정 완료(`setupComplete=true`, 참가 기록 없음)는 Home, `joinedMatchId`가 있거나 legacy `schedule` 상태면 MY(`profile`)에서 이어집니다. `?resume=1` 등 내부 복귀 요청은 저장 경로를 유지합니다. `처음부터 다시 보기`는 별도 명시적 초기화입니다.
+- **P0 / 재방문:** `/demo` direct entry는 앱 시작 화면을 먼저 보여줍니다. 저장한 설정은 추천 이어보기, 참가 기록은 내 경기 이어보기로 연결합니다. 데이터는 유지하며 `?resume=1` 등 내부 복귀 요청은 저장 경로를 보존합니다.
 - **P0 / 샘플 신뢰:** 참가 화면은 샘플 경기 가격·잔여 자리·정책 예시와 **무료 참가 체험의 실제 청구액 0원**을 구분합니다. MY의 취소·환불 안내는 실제 취소 실행이나 환불이 발생하는 연결 서비스로 표현하지 않습니다. 비밀번호 방식 로컬 체험 로그인은 `체험 계정 · 이 브라우저에만 저장`으로 표시하고 실제 Google/Kakao OAuth와 구분합니다.
 - **P1 / AI 조건 정정:** Home 자연어 요청을 구조화해 Discover로 넘긴 뒤 사용자가 **해석된 경기 레벨**을 직접 수정할 수 있습니다. UI의 `초급` 표기는 내부 canonical `초중급`과 다를 수 있으므로 사용자 표시와 저장된 조건을 구분합니다. AI 결과 0개라면 시간(`afterTime`) → 가격(`maxPrice`) → 거리(`maxDistanceMin`) → 포지션(`position`) → 지역(`region`) 순서로 존재하는 조건을 하나씩 완화할 수 있습니다. 레벨은 별도 직접 정정합니다. 실제 경기 후보와 순위·추천 이유는 deterministic runtime이 계속 소유합니다.
 - **P2 / MY·다음 경기:** MY의 현재 경기 상태는 유지하되 중복되는 `참가 확정 → 경기 당일 → 경기 후` 보조 설명은 펼침 영역으로 정리합니다. postgame 피드백이 기존 return history에 `completed: true`로 저장되고 `matchStage: postgame`이면 같은 `joinedMatchId`는 후속 Home 추천/Discover 결과에서 표시하지 않습니다. 저장된 경기 기록이나 기존 추천 로직 자체를 삭제·변경하지 않습니다.
