@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
-const titles=['Overview & Problem','Persona & JTBD','Journey Map','Scope & Priorities','IA & UX Flow','Design Decisions & Demo','Validation & Metrics','Reflection','Next Steps'];
+const titles=['Overview & Problem','Persona & JTBD','Journey Map','Scope & Priorities','IA & UX Flow','Design Decisions','Validation & Metrics','Reflection','Next Steps'];
 
 for(const width of [1920,1440,800,390,320]){
   test(`nine-stage navigation, evidence and layout at ${width}px`,async({page})=>{
@@ -53,7 +53,7 @@ test('direct links, history, keyboard and hidden content focus',async({page})=>{
   await page.goto('/#section-05');
   await expect(page.getByRole('region',{name:'IA & UX Flow',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'다음 섹션',exact:true}).click();
-  await expect(page.getByRole('region',{name:'Design Decisions & Demo',exact:true})).toBeVisible();
+  await expect(page.getByRole('region',{name:'Design Decisions',exact:true})).toBeVisible();
   await expect(page.locator('.slide:visible h1')).toBeFocused();
   await page.goBack();
   await expect(page.getByRole('region',{name:'IA & UX Flow',exact:true})).toBeVisible();
