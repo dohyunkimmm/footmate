@@ -370,3 +370,33 @@ html:has(.image-dialog[open]){overflow:hidden}
 @media(max-width:800px){
   #section-03 .journey-map article:not(:last-child){border-bottom:0}
 }
+
+/* Subtle feedback; content and native keyboard interactions remain immediate. */
+.toc-item,.cs-button,.primary-link,.secondary-link,.image-dialog-close{touch-action:manipulation}
+.slide details>summary{display:block;position:relative;padding-right:52px;list-style:none;border-radius:11px}
+.slide details>summary::-webkit-details-marker{display:none}
+.slide details>summary::after{content:'';position:absolute;right:23px;top:calc(50% - 5px);width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);pointer-events:none}
+.slide details[open]>summary{background:var(--soft)}
+.slide details[open]>summary::after{transform:rotate(225deg)}
+#section-01 .evidence-preview:focus-visible,#section-06 .evidence-preview:focus-visible{box-shadow:0 0 0 4px var(--soft)}
+@media(hover:hover) and (pointer:fine){
+  .toc-item:not(.on):hover{background:var(--soft)}
+  .cs-button:not(:disabled):hover{border-color:var(--cs-border-strong);box-shadow:0 2px 8px rgba(8,30,22,.08)}
+  .primary-link:hover,.secondary-link:hover,.image-dialog-close:hover{box-shadow:0 2px 8px rgba(8,30,22,.12)}
+  .slide details>summary:hover{background:var(--soft)}
+  #section-01 .evidence-preview:hover,#section-06 .evidence-preview:hover{box-shadow:0 0 0 3px var(--cs-border-strong)}
+}
+@media(prefers-reduced-motion:no-preference){
+  @keyframes cs-section-enter{from{opacity:.94}to{opacity:1}}
+  @keyframes cs-image-enter{from{opacity:.94;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+  @keyframes cs-backdrop-enter{from{opacity:.9}to{opacity:1}}
+  .slide.on:not([hidden]){animation:cs-section-enter 180ms ease-out}
+  .toc-item,.cs-button,.primary-link,.secondary-link,.image-dialog-close{transition:background-color 140ms ease,border-color 140ms ease,box-shadow 140ms ease,transform 100ms ease}
+  .toc-item:active,.cs-button:not(:disabled):active,.primary-link:active,.secondary-link:active,.image-dialog-close:active{transform:translateY(1px)}
+  .pbar-fill{transition:width 180ms ease-out}
+  #section-01 .evidence-preview,#section-06 .evidence-preview{transition:box-shadow 140ms ease}
+  .image-dialog[open]{animation:cs-image-enter 160ms ease-out}
+  .image-dialog[open]::backdrop{animation:cs-backdrop-enter 160ms ease-out}
+  .slide details>summary{transition:background-color 140ms ease}
+  .slide details>summary::after{transition:transform 160ms ease}
+}
