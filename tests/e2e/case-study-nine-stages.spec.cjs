@@ -204,7 +204,7 @@ for(const fonts of ['normal','fallback']){
           expect(body.line/body.size,result.section+' '+body.selector+' body leading').toBeGreaterThanOrEqual(1.7);
         }
         expect(result.failures,result.section+' text geometry').toEqual([]);
-        const expected=width>800?34:width<=370?30:32;
+        const expected=width>=1400?(result.section==='section-01'?28:32):width>800?34:width<=370?30:32;
         expect(result.heading.size,result.section+' title size').toBe(expected);
         expect(result.heading.weight,result.section+' title weight').toBe('800');
         expect(result.heading.line/result.heading.size).toBeCloseTo(1.4,2);
@@ -540,6 +540,22 @@ for(const width of [1440,1920]){
       expect(layout.border).toBe('1px');
       expect(layout.overflow).toBe(false);
       await page.screenshot({path:'verification/p1-desktop-qa/p'+n+'-'+width+'.png',fullPage:true});
+    }
+  });
+}
+
+for(const width of [1440,1920]){
+  test('Desktop navigation and main titles stay on one line at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:1080});
+    await page.goto('/#section-01');
+    await page.evaluate(()=>document.fonts.ready);
+    const navigation=await page.locator('.toc-t,.toc-s').evaluateAll(nodes=>nodes.map(node=>({text:node.textContent,lines:node.getBoundingClientRect().height/parseFloat(getComputedStyle(node).lineHeight)})));
+    for(const title of navigation)expect(title.lines,title.text).toBeCloseTo(1,1);
+    for(let n=1;n<=9;n++){
+      await page.locator('.toc-item').nth(n-1).click();
+      const heading=page.locator('#section-'+String(n).padStart(2,'0')+' .section-head h1');
+      const lines=await heading.evaluate(node=>node.getBoundingClientRect().height/parseFloat(getComputedStyle(node).lineHeight));
+      expect(lines,'P'+n+' main title').toBeCloseTo(1,1);
     }
   });
 }

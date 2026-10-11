@@ -484,3 +484,11 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-09 .next-list .eyebrow,#section-09 .next-list h2{grid-column:2}
   #section-09 .next-list p{grid-column:1/-1;margin-top:10px}
 }
+
+/* Desktop title review: retain copy and shell; let compact headings read on one line. */
+@media(min-width:1400px){
+  .toc-item{padding-inline:8px;gap:8px}
+  .section-head h1{font-size:32px;text-wrap:wrap}
+  #section-01 .section-head h1{font-size:28px}
+  .section-head h1 .cs-title-break{display:none}
+}
