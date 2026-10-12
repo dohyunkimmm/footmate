@@ -169,3 +169,29 @@ for(const width of [390,1440]){
   });
  }
 }
+
+for(const reducedMotion of ['no-preference','reduce']){
+ test('desktop navigation and disclosures settle with '+reducedMotion+' motion',async({page},testInfo)=>{
+  await page.emulateMedia({reducedMotion});
+  await page.setViewportSize({width:1920,height:1080});
+  await page.goto('/');await page.evaluate(()=>document.fonts.ready);
+  await page.locator('.toc-item').nth(7).click();
+  await page.locator('#section-08 summary').click();
+  await expect(page.locator('#section-08 details')).toHaveAttribute('open','');
+  if(reducedMotion==='reduce'){
+   expect(await page.locator('#section-08').evaluate(n=>n.getAnimations({subtree:true}).filter(a=>a.playState==='running').length)).toBe(0);
+  }
+  await expect.poll(()=>page.locator('#section-08').evaluate(n=>n.getAnimations({subtree:true}).filter(a=>a.playState==='running').length)).toBe(0);
+  await expect(page.locator('#section-08')).toHaveCSS('opacity','1');
+  await expect(page.locator('#section-08 .detail-body')).toHaveCSS('transform','none');
+  await expect(page.locator('#section-08 .detail-body')).toHaveCSS('opacity','1');
+  await page.locator('#section-08 summary').press('Enter');
+  await expect(page.locator('#section-08 details')).not.toHaveAttribute('open','');
+  await page.locator('.btn-next').click();
+  await expect(page).toHaveURL(/#section-09$/);
+  await expect(page.locator('#section-09 h1')).toBeFocused();
+  await expect.poll(()=>page.locator('#section-09').evaluate(n=>n.getAnimations({subtree:true}).filter(a=>a.playState==='running').length)).toBe(0);
+  expect(await page.evaluate(()=>scrollX)).toBe(0);
+  await testInfo.attach('motion-settings',{body:JSON.stringify({reducedMotion,viewport:'1920x1080',settled:true}),contentType:'application/json'});
+ });
+}
