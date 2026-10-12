@@ -139,7 +139,7 @@ async function applyAdaptation(page,mode){
     return;
   }
   if(mode==='user-text-spacing'){
-    await page.addStyleTag({content:'.fm-next-app :is(h1,h2,h3,p,small,button,label,li,span,strong){line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.fm-next-app p{margin-bottom:2em!important}'});
+    await page.addStyleTag({content:'.fm-next-app :is(h1,h2,h3,p,small,button,input,textarea,select,label,li,span,strong,.fm-next-match-place){line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.fm-next-app p{margin-bottom:2em!important}'});
     return;
   }
   throw new Error('Unknown typography adaptation: '+mode);
