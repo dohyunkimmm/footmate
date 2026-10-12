@@ -30,12 +30,12 @@ if(/(?:script\.src|link\.href)\s*=\s*['"]\/src\/case-study\//.test(runtimeJs)){
 if(check){
   if(updated!==html){
     const stale=matches.filter(match=>match[2]!==version).map(match=>match[1]+'?v='+match[2]);
-    console.error('STALE Case Study asset versions �� expected ?v='+version+': '+stale.join(', '));
+    console.error('STALE Case Study asset versions · expected ?v='+version+': '+stale.join(', '));
     process.exit(1);
   }
-  console.log('PASS Case Study asset versions �� release '+release+' �� v='+version);
+  console.log('PASS Case Study asset versions · release '+release+' → v='+version);
 }else{
   fs.writeFileSync(htmlPath,updated);
-  console.log('WROTE Case Study asset versions �� release '+release+' �� v='+version);
+  console.log('WROTE Case Study asset versions · release '+release+' → v='+version);
 }
 
