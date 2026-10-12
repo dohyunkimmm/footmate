@@ -512,3 +512,65 @@ html:has(.image-dialog[open]){overflow:hidden}
 #section-06 .flow li:nth-child(4):before{content:"→"}@media(max-width:800px){#section-06 .flow li+li:before{content:"↓"!important}}
 
 @media(max-width:800px){.slide .table-wrap:not(.qa-evidence-table){overflow:visible;border:0}.slide .table-wrap:not(.qa-evidence-table) table,.slide .table-wrap:not(.qa-evidence-table) tbody{display:block;width:100%}.slide .table-wrap:not(.qa-evidence-table) thead{display:none}.slide .table-wrap:not(.qa-evidence-table) tr{display:block;border-top:1px solid var(--line);padding:14px 0}.slide .table-wrap:not(.qa-evidence-table) tbody th{display:block;min-width:0;border:0;padding:0;font-size:14px}.slide .table-wrap:not(.qa-evidence-table) td{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;min-width:0;border:0;padding:8px 0 0;font-size:14px}.slide .table-wrap:not(.qa-evidence-table) td:before{content:attr(data-label);font-size:12px;color:var(--muted);font-weight:700}}
+
+/* Card typography QA: retain shell, product image ratio and title scale. */
+.slide .story-card,.slide .priority-card,.slide .wireframe-record{min-width:0}
+.slide .story-card h3{line-height:1.6;text-wrap:pretty}
+.slide .story-card p{line-height:1.8;text-wrap:pretty}
+.slide .card-grid,.slide .priority-grid,.slide .ai-contract{align-items:stretch}
+.slide .story-card .eyebrow{margin:0}
+.slide .story-card h3+p{margin-top:10px}
+.slide>.source-note{margin-top:16px}
+.slide>details+.journey-map{margin-top:16px}
+#section-09 .ai-contract .story-card{display:flex;flex-direction:column;padding:20px}
+#section-09 .ai-contract h3{font-size:16px;line-height:1.6;margin-top:8px}
+#section-09 .ai-contract p{font-size:14px;line-height:1.8;margin-top:10px}
+#section-09 .card-grid{margin-top:16px}
+.wireframe-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.wireframe-record{display:flex;flex-direction:column;padding:18px}
+.wireframe-record>h2{font-size:17px;line-height:1.6}
+.wireframe-record>.evidence-preview{width:100%;max-width:300px;margin:16px auto 0}
+.wireframe-record>p{margin-top:14px;font-size:14px;line-height:1.8}
+.wireframe-record>.small-copy{margin-top:8px;font-size:13px;line-height:1.8}
+@media(min-width:801px){
+ .slide:not(#section-01){min-height:0;padding-bottom:32px}
+ .slide .card-grid{gap:16px}
+ .slide .story-card{padding:20px}
+ .slide>.section-head{margin-bottom:20px}
+ .slide .table-wrap table{font-size:13px;line-height:1.8}
+ .slide .block-title{margin-top:24px;margin-bottom:16px}
+ #section-11 .reflection-bottom{margin-top:20px}
+ #section-11 .closing-note{padding:24px}
+ #section-11 .closing-note h2{font-size:24px;line-height:1.6}
+}
+@media(max-width:1100px){.wireframe-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){
+ .slide .card-grid,#section-09 .ai-contract{gap:16px}
+ .slide .story-card{padding:20px}
+ .wireframe-grid{grid-template-columns:1fr}
+}
+/* All disclosures: consistent closed/open header and content insets. */
+.slide>details{margin-top:16px;overflow:visible}
+.slide details>summary{padding:18px 56px 18px 22px;min-height:60px;line-height:1.7}
+.slide details>summary:after{right:24px}
+.slide details[open]>summary{border-radius:11px 11px 0 0;border-bottom:1px solid var(--line)}
+.slide details>.detail-body,.slide .portfolio-method-details>.detail-body,.slide .portfolio-optional-sources>.detail-body{padding:22px 24px 24px}
+.slide details>.detail-body>p:first-child{margin-top:0}
+.slide details>.detail-body>p+p{margin-top:16px}
+.slide details>.detail-body>.table-wrap,.slide details>.detail-body>.split{margin:0}
+.slide details .table-wrap{border-radius:10px}
+.slide details table{table-layout:fixed}
+.slide details th,.slide details td{min-width:0;overflow-wrap:anywhere;font-size:14px;line-height:1.8;padding:14px 16px}
+.slide details th:first-child{width:23%}
+.slide details .detail-body .persona-panel,.slide details .detail-body .jtbd-panel{padding:22px}
+@media(max-width:800px){
+ .slide details>summary{padding:16px 48px 16px 18px;min-height:56px}
+ .slide details>summary:after{right:20px}
+ .slide details>.detail-body,.slide .portfolio-method-details>.detail-body,.slide .portfolio-optional-sources>.detail-body{padding:18px}
+ .slide details .table-wrap{border:0;border-radius:0;overflow:visible}
+ .slide details th:first-child{width:auto}
+ .slide details .table-wrap td{grid-template-columns:minmax(0,1fr);gap:4px;padding-top:10px;font-size:14px}
+ .slide details .table-wrap td:before{font-size:12px;line-height:1.7}
+ .slide details .table-wrap tbody th{padding:0;font-size:14px}
+ .slide details .detail-body .persona-panel,.slide details .detail-body .jtbd-panel{padding:18px}
+}
