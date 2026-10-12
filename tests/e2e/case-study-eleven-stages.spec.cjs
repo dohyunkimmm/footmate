@@ -1,4 +1,4 @@
-// The filename is retained because the QA workflow already selects it.
+// Current eleven-section Case Study contract.
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 const titles=['Overview & Problem','User Research','Persona & Journey','Scope & Priorities','IA & Navigation','Flowchart & Recovery','Wireframe & Screens','Functions & Policies','AI & Prototype','Validation & UX','Reflection & Next'];
@@ -132,10 +132,9 @@ for(const width of [320,390,1440,1920]){
     await page.waitForTimeout(220);await testInfo.attach('card-qa-'+(i+1)+'-'+width,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
    }
    if(width===1920){
-    console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+' '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
     await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(n=>n.open=false));
     await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
-    console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+'-closed '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
+    await testInfo.attach('card-qa-closed-'+(i+1)+'-'+width,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
    }
   }
   await testInfo.attach('card-typography-and-disclosure-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});

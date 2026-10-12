@@ -1,5 +1,7 @@
 # Case Study UI, UX and Visual QA
 
+> **과거 9단계 QA 기록** · 현재 11개 섹션의 검증 기준은 [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md)와 현행 전용 E2E입니다. 아래 판정은 작성 당시 상태를 설명합니다.
+
 The nine-stage case study uses native vertical scrolling. Visual review covers content relationships, emphasis, evidence accuracy and mobile navigation in addition to typography.
 
 ## Evidence accuracy

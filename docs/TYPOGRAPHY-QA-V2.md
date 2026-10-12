@@ -2,7 +2,7 @@
 
 ## 범위
 
-- Case Study (/): 기존 9단계의 8개 화면 폭·대체폰트·확대·간격·스크린샷 검사를 유지한다.
+- Case Study (/): 현재 11개 섹션의 8개 화면 폭·대체폰트·확대·간격·스크린샷 검사를 유지한다.
 - Interactive Demo (/demo): Home, Discover, Detail, 무료 Join, MY의 텍스트 기하·글꼴·한글 줄바꿈 검사를 확대한다.
 - /beta 및 /beta/operator, 기능·문구·IA·색상·이미지·인증 흐름은 변경하지 않는다.
 
@@ -48,7 +48,7 @@
 
 1. node scripts/check-qa-test-paths.cjs
 2. node --test tests/contracts/typography-report.contract.cjs
-3. npx playwright test --project=chromium tests/e2e/case-study-nine-stages.spec.cjs
+3. npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
 4. npx playwright test --project=chromium tests/e2e/typography-real-app.spec.cjs
 5. node scripts/typography-qa-report.cjs
 
