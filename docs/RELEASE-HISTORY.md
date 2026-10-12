@@ -2,6 +2,13 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+## 2026-10-12~13 — Case Study 11개 섹션 개편 및 문서 기준 (GitHub main 병합 확인)
+
+- 현행 Case Study `/`: [PR #616](https://github.com/dohyunkimmm/footmate/pull/616)에서 9개 섹션을 11개 섹션으로 재구성. 병합 SHA `e8597e9f5870a449c63200bbfdf89bd5d594cca4`. 현재 구성은 [11개 섹션 명세](CASE-STUDY-ELEVEN-STAGES.md), `index.html`의 `data-case-study-stages="11"`, `src/case-study/nine-sections.js`의 11개 섹션을 기준으로 한다. 구현 및 E2E의 `nine-sections`/`nine-stages`는 호환상 남은 파일명이다.
+- 후속 시각/표시: [#617](https://github.com/dohyunkimmm/footmate/pull/617) 카드·펼침 UI·5개 와이어프레임(병합 `098c96e441a952f0ff5ef27a429ebd85f5bf09fd`), [#618](https://github.com/dohyunkimmm/footmate/pull/618) 1920px 시각 위계(`fcc9e31cb76475b2fdc1a8451a65926310ee8095`), [#619](https://github.com/dohyunkimmm/footmate/pull/619) 글자·간격·모션(`ce75db785bb1809a6bfe2d5a4897a398940a658a`), [#620](https://github.com/dohyunkimmm/footmate/pull/620) 미사용 CSS 제거(`75c9ae2a39de00bef5192a8ec7b65a3441060182`). #620은 2026-10-13 08:15 KST 병합.
+- QA 계약: `tests/e2e/case-study-nine-stages.spec.cjs`는 현재 11개 섹션을 검사하며, 반응형·직접 링크·키보드·접근성·와이어프레임·타이포그래피·모션 감소 검사를 포함한다. 이 문서 동기화는 CI 실행 성공, 현행 Production SHA 일치, 사람의 모든 화면 시각 승인까지 추가로 주장하지 않는다.
+- 사실/이력 경계: 현재 와이어프레임은 Demo 구현을 기준으로 재구성한 자료이지 최초 설계 당시의 원본이 아니다. 교육생 6명의 과업 검증과 개발 QA의 인과는 미확정이고 실사용 전환 성과는 주장하지 않는다. Demo `/demo`와 Beta `/beta`의 기능·서버·결제 계약은 변경되지 않았다. 과거 9·13단계 기준은 작성 당시의 이력으로 보존하고 현행 11개 섹션 설계·코드·테스트를 우선한다.
+
 ## 2026-10-10 — Release App P0–P2 flow 개선·운영 검증 완료
 
 - Scope: `/app` 신규/재방문 routing을 canonical session에 따라 Welcome/Setup → Home 또는 MY로 복귀. 기존 legacy `schedule` → MY 호환 유지; 명시적 체험 초기화는 별도 기능.

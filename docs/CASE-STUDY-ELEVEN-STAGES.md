@@ -1,5 +1,7 @@
 # FootMate 11개 섹션
 
+현재 공개 `/` Case Study는 이 11개 섹션을 사용합니다. `index.html`의 11개 섹션과 `src/case-study/nine-sections.{js,css}`가 표시 원본이며, `tests/e2e/case-study-nine-stages.spec.cjs`는 호환 파일명을 유지하면서 11개 섹션·반응형·접근성·와이어프레임을 검사합니다. [현행 시각 QA](CASE-STUDY-VISUAL-QA.md) · [현행 타이포그래피 QA](CASE-STUDY-TYPOGRAPHY-QA.md). 과거 9단계 구조는 [이력](CASE-STUDY-NINE-STAGES.md)으로만 참조합니다.
+
 현재 Demo와 기존 Notion/GitHub 자료를 재구성한다. 실제 출시·전환 개선 성과를 주장하지 않는다. 와이어프레임은 현재 구현 기준 재구성이다.
 
 1. Overview & Problem
