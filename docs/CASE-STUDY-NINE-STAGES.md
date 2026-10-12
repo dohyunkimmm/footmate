@@ -1,3 +1,5 @@
+> **과거 기록 (2026-10-08 기준):** 이 문서는 이전 9단계 Case Study의 설계·검증 이력입니다. 현행 공개 화면은 2026-10-12 [PR #616](https://github.com/dohyunkimmm/footmate/pull/616) 이후 **11개 섹션**으로 재구성되었습니다. 현재 섹션 순서·구현/QA 기준은 [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md), `index.html`, `tests/e2e/case-study-nine-stages.spec.cjs`를 우선합니다. 후자의 파일명은 호환상 유지되지만 실제 테스트는 11개 섹션을 검사합니다. 아래 '현재' 표현은 문서 작성 당시의 기준이며 2026-10-13의 현행 상태가 아닙니다.
+
 # FootMate Case Study · 9단계 재편
 
 PC 표시 조정: 기존 왼쪽 목차·본문·카드 구성과 색상을 유지합니다. 1920px 화면에서 전체 폭 1360px, 목차 220px, 본문 최대 1000px로 읽는 폭을 제한하고 제목·이미지·여백만 줄였습니다. 페이지 전환 후 제목으로 이동하는 포커스는 유지하며 제목의 outline만 제외합니다.
