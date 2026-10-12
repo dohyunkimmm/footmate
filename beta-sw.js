@@ -14,7 +14,14 @@ self.addEventListener('push',event=>{
 
 self.addEventListener('notificationclick',event=>{
   event.notification.close();
-  const target=new URL(String(event.notification?.data?.url||'/beta'),self.location.origin).href;
+  // Push payloads must not turn the app's notification into an external redirect.
+  let target=new URL('/beta',self.location.origin).href;
+  try{
+    const requested=new URL(String(event.notification?.data?.url||'/beta'),self.location.origin);
+    if(requested.origin===self.location.origin&&['https:','http:'].includes(requested.protocol))target=requested.href;
+  }catch{
+    // Keep the safe Beta landing route for malformed notification URLs.
+  }
   event.waitUntil((async()=>{
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
     for(const client of windows){

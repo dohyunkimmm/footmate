@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
 const migration=fs.readFileSync('supabase/migrations/20260922012426_beta_push_media.sql','utf8');
@@ -48,5 +49,35 @@ assert.ok(beta.includes("import('/src/beta/media.js?v=1')"));
 assert.ok(operator.includes('/src/beta/media.js?v=1'));
 assert.ok(beta.includes('/src/beta/enhancements.css?v=512'));
 assert.ok(operator.includes('/src/beta/enhancements.css?v=1'));
+
+// Exercise click navigation, not just the presence of its listener.
+let onNotificationClick;
+let openedTarget=null;
+const serviceWorker={
+  location:{origin:'https://footmate.example'},
+  addEventListener(type,handler){if(type==='notificationclick')onNotificationClick=handler;},
+  clients:{
+    async matchAll(){return [];},
+    async openWindow(url){openedTarget=url;return null;}
+  }
+};
+vm.runInNewContext(sw,{self:serviceWorker,URL});
+assert.equal(typeof onNotificationClick,'function','notification click listener must be registered');
+for(const [url,expected] of [
+  ['/beta?view=matches','https://footmate.example/beta?view=matches'],
+  ['https://external.example/phishing','https://footmate.example/beta'],
+  ['//external.example/phishing','https://footmate.example/beta'],
+  ['javascript:alert(1)','https://footmate.example/beta'],
+  ['http://[','https://footmate.example/beta']
+]){
+  openedTarget=null;
+  let pending;
+  onNotificationClick({
+    notification:{data:{url},close(){}},
+    waitUntil(promise){pending=promise;}
+  });
+  await pending;
+  assert.equal(openedTarget,expected,`unsafe push click destination: ${url}`);
+}
 
 console.log('beta web push + media contracts: PASS');
