@@ -39,30 +39,30 @@ test('section history, keyboard, deep links and reload retain their contract',as
 
 test('existing Demo is linked unchanged and wireframes are disclosed as current implementation',async({page})=>{
  await page.goto('/');await expect(page.locator('#section-01 a[href="/demo"]')).toHaveCount(1);
- await expect(page.locator('#section-01')).toContainText('ü��� ������ �� ���� ���������� ����');
+ await expect(page.locator('#section-01')).toContainText('체험용 데이터 · 실제 참가·결제 없음');
  await page.locator('.toc-item').nth(6).click();await expect(page.locator('#section-07 .wireframe-record')).toHaveCount(5);
- await expect(page.locator('#section-07')).toContainText('���� ���� ���� ���̾�������');
+ await expect(page.locator('#section-07')).toContainText('현재 구현 기준 와이어프레임');
  await expect(page.locator('#section-07 a[href*="figma.com/design/rvhwFauZFBsSnvHYitohgC"]')).toHaveCount(1);
  await page.locator('.toc-item').nth(8).click();await expect(page.locator('#section-09 a[href="/demo"]')).toHaveCount(1);
- await expect(page.locator('#section-09')).toContainText('AI�� ��⡤�ڸ��������� ���� �������� ����');
+ await expect(page.locator('#section-09')).toContainText('AI가 경기·자리·순위를 임의 생성하지 않음');
 });
 
 test('research, QA improvements and policy evidence have separate responsibilities',async({page})=>{
- await page.goto('/#section-02');await expect(page.locator('#section-02')).toContainText('6�� �� iOS 4 / Android 2');
- await expect(page.locator('#section-02')).toContainText('Ž�������� ���� 8ȸ');await expect(page.locator('#section-02')).toContainText('���� ������ ��Ȯ��');
+ await page.goto('/#section-02');await expect(page.locator('#section-02')).toContainText('6명 · iOS 4 / Android 2');
+ await expect(page.locator('#section-02')).toContainText('탐색·가입 과업 8회');await expect(page.locator('#section-02')).toContainText('수정 연결은 미확정');
  await page.locator('.toc-item').nth(7).click();await expect(page.locator('#section-08 table')).toHaveCount(2);
- await page.locator('#section-08 summary').click();await expect(page.locator('#section-08')).toContainText('��⺰ ��� ����');
+ await page.locator('#section-08 summary').click();await expect(page.locator('#section-08')).toContainText('경기별 취소 마감');
  await page.locator('.toc-item').nth(9).click();await expect(page.locator('#section-10 .qa-evidence-table tbody tr')).toHaveCount(3);
- await expect(page.locator('#section-10')).toContainText('����� ���� �������� ���� ����� ����� �������� �ʽ��ϴ�');
+ await expect(page.locator('#section-10')).toContainText('사용자 과업 검증에서 직접 도출된 결과로 연결하지 않습니다');
  await expect(page.locator('#section-10 .portfolio-method-details')).toHaveCount(0);
- await expect(page.locator('#section-10')).not.toContainText('8�� KPI');
+ await expect(page.locator('#section-10')).not.toContainText('8개 KPI');
 });
 
 test('wireframe enlargement preserves section and restores keyboard focus',async({page})=>{
  await page.goto('/#section-07');const preview=page.locator('#section-07 .evidence-preview').first();await preview.click();
- const dialog=page.getByRole('dialog',{name:'Ȩ ���̾�������',exact:true});await expect(dialog).toBeVisible();
+ const dialog=page.getByRole('dialog',{name:'홈 와이어프레임',exact:true});await expect(dialog).toBeVisible();
  await expect(dialog.locator('img')).toHaveAttribute('src',await preview.getAttribute('data-image'));
- await expect(page.getByRole('button',{name:'�ݱ� ��',exact:true})).toBeFocused();
+ await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
  await page.keyboard.press('ArrowRight');await expect(page).toHaveURL(/#section-07$/);
  const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
  await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(preview).toBeFocused();
