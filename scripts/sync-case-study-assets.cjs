@@ -17,7 +17,8 @@ const cssFiles=assetFiles.filter(file=>file.endsWith('.css'));
 const jsFiles=assetFiles.filter(file=>file.endsWith('.js'));
 if(cssFiles.length!==1||jsFiles.length!==1||!assetFiles.includes('/src/case-study/nine-sections.css')||!assetFiles.includes('/src/case-study/nine-sections.js'))throw new Error('Nine-stage Case Study must load only its CSS and JS entry points');
 const slideCount=(html.match(/<section class="slide"><\/section>/g)||[]).length;
-if(slideCount!==9)throw new Error('Case Study must contain nine section slots');
+const expectedCount=Number((html.match(/data-case-study-stages="(\d+)"/)||[])[1]);
+if(expectedCount!==11||slideCount!==expectedCount)throw new Error('Case Study must contain eleven section slots');
 const updated=html.replace(assetPattern,function(_all,file){return file+'?v='+version;});
 const check=process.argv.includes('--check');
 
@@ -37,3 +38,4 @@ if(check){
   fs.writeFileSync(htmlPath,updated);
   console.log('WROTE Case Study asset versions · release '+release+' → v='+version);
 }
+
