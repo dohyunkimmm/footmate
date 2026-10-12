@@ -2,6 +2,7 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+NaN
 ## 2026-10-10 — Release App P0–P2 flow 개선·운영 검증 완료
 
 - Scope: `/app` 신규/재방문 routing을 canonical session에 따라 Welcome/Setup → Home 또는 MY로 복귀. 기존 legacy `schedule` → MY 호환 유지; 명시적 체험 초기화는 별도 기능.
