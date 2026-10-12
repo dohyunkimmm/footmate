@@ -140,7 +140,12 @@
     next.innerHTML = `<span><small>${current===8?'마지막 섹션':'다음 섹션'}</small>${sections[Math.min(8,current+1)].name}</span><span aria-hidden="true">→</span>`;
     const hash = `#section-${String(current+1).padStart(2,'0')}`;
     if(historyMode && location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',location.pathname+location.search+hash);
-    if(innerWidth<=800)toc.querySelectorAll('button')[current].scrollIntoView({block:'nearest',inline:'center',behavior:'instant'});
+    if(innerWidth<=800) {
+      const button=toc.querySelectorAll('button')[current];
+      const buttonRect=button.getBoundingClientRect();
+      const tocRect=toc.getBoundingClientRect();
+      toc.scrollTo({left:toc.scrollLeft+buttonRect.left-tocRect.left-(toc.clientWidth-buttonRect.width)/2,behavior:'instant'});
+    }
     if(focus) { slides[current].querySelector('h1').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
   }
   document.addEventListener('click', event => { const button = event.target.closest('.toc-item,.dot'); if(button)goTo(button.dataset.index); });
@@ -159,5 +164,6 @@
   const reloaded = performance.getEntriesByType('navigation')[0]?.type==='reload';
   if(reloaded)history.scrollRestoration='manual';
   goTo(reloaded?0:fromUrl(),{historyMode:'replace',focus:false});
-  if(reloaded)window.scrollTo({top:0,behavior:'instant'});
+  const navigationType=performance.getEntriesByType('navigation')[0]?.type;
+  if(navigationType!=='back_forward')window.scrollTo({top:0,left:0,behavior:'instant'});
 })();
