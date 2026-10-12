@@ -589,13 +589,13 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 /* Desktop visual refinement: retain the 1360px shell and existing screen ratios. */
 @media(min-width:801px){
- .slide>.section-head{
+ #main .slide>.section-head{
   background:linear-gradient(110deg,#f3f7f4 0%,#fff 72%);
   border-color:#d6e1da;
   border-left:3px solid #39735a;
  }
- .slide>.section-head>.eyebrow{color:#38634e}
- .slide>.section-head .lead{color:#596b61}
+ #main .slide>.section-head>.eyebrow{color:#38634e}
+ #main .slide>.section-head .lead{color:#596b61}
  .slide .story-card,.slide .priority-card,.slide .wireframe-record{
   border-color:#d6e1da;
   box-shadow:0 2px 7px rgba(19,58,41,.035);
