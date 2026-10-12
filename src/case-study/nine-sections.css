@@ -577,3 +577,6 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 .slide .story-card,.slide .priority-card,.slide .wireframe-record,.slide .closing-note,.slide .persona-panel,.slide .jtbd-panel{overflow-wrap:anywhere}
 .slide .section-head h1{overflow-wrap:anywhere}
+
+.slide :is(.story-card,.priority-card,.wireframe-record,.closing-note,.persona-panel,.jtbd-panel) :is(h2,h3),.slide .ia-branches h3,.slide .journey-map h2{line-height:1.6}
+.slide th,.slide td,.slide summary{overflow-wrap:anywhere}
