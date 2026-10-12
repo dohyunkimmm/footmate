@@ -137,3 +137,31 @@ for(const width of [320,390,1440,1920]){
   await testInfo.attach('card-typography-and-disclosure-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});
  });
 }
+
+for(const width of [390,1440]){
+ for(const mode of ['fallback','text-200-percent']){
+  test('card typography '+mode+' at '+width+'px',async({page},testInfo)=>{
+   if(mode==='fallback')await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//,route=>route.abort());
+   await page.setViewportSize({width,height:1080});await page.goto('/');await page.evaluate(()=>document.fonts.ready);
+   if(mode==='text-200-percent')await page.locator('.slide *').evaluateAll(nodes=>{
+    const values=nodes.map(node=>({node,size:parseFloat(getComputedStyle(node).fontSize),line:parseFloat(getComputedStyle(node).lineHeight)}));
+    for(const {node,size,line}of values){node.style.setProperty('font-size',size*2+'px','important');if(Number.isFinite(line))node.style.setProperty('line-height',line*2+'px','important');}
+   });
+   const report=[];
+   for(let i=0;i<11;i++){
+    await page.locator('.toc-item').nth(i).click();await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
+    const audit=await page.locator('.slide:visible').evaluate(slide=>{
+     const failures=[];
+     for(const n of slide.querySelectorAll('h1,h2,h3,p,dt,dd,li,th,td')){
+      if(!n.getClientRects().length)continue;
+      const b=n.getBoundingClientRect(),walker=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);let child;
+      while((child=walker.nextNode())){if(!child.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(child);for(const r of range.getClientRects())if(r.width>0&&(r.left<b.left-2||r.right>b.right+2))failures.push(n.textContent.slice(0,60));}
+     }
+     return {section:slide.id,failures:[...new Set(failures)],overflow:document.documentElement.scrollWidth>innerWidth+1};
+    });
+    expect(audit.failures).toEqual([]);expect(audit.overflow).toBe(false);report.push(audit);
+   }
+   await testInfo.attach('card-font-adaptation',{body:JSON.stringify({width,mode,report},null,2),contentType:'application/json'});
+  });
+ }
+}
