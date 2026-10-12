@@ -22,7 +22,7 @@ for(const width of [320,390,800,1440,1920]){
    await slide.locator('details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
    const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
    await page.waitForTimeout(200);
-   if([390,1440].includes(width))await testInfo.attach(`section-${i+1}-${width}`,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
+   if(width===1920)await testInfo.attach(`section-${i+1}-${width}`,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
   }
   await expect(page.locator('.btn-next')).toBeDisabled();expect(errors).toEqual([]);
  });
@@ -127,11 +127,15 @@ for(const width of [320,390,1440,1920]){
     return {section:slide.id,failures,cards,overflow:document.documentElement.scrollWidth>innerWidth+1};
    });
    expect(audit.failures).toEqual([]);expect(audit.overflow).toBe(false);report.push(audit);
-   if([390,1440].includes(width)&&[2,3,4,5,7,8,9,11].includes(i+1)){
+   if(width===1920){
+    await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
     await page.waitForTimeout(220);await testInfo.attach('card-qa-'+(i+1)+'-'+width,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
    }
-   if((width===1440&&[7,8,9].includes(i+1))||(width===390&&i===7)){
+   if(width===1920){
     console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+' '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
+    await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(n=>n.open=false));
+    await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+    console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+'-closed '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
    }
   }
   await testInfo.attach('card-typography-and-disclosure-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});

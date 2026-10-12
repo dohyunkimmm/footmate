@@ -217,7 +217,7 @@ html::-webkit-scrollbar{
   .qa-evidence-table thead{display:none}
   .qa-evidence-table tr{display:block;border-top:1px solid var(--line);padding:16px 0}
   .qa-evidence-table tbody th{display:block;min-width:0;padding:0;border:0;font-size:14px;line-height:1.8;background:transparent}
-  .qa-evidence-table td{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;min-width:0;padding:8px 0 0;border:0;font-size:14px;line-height:1.8}
+  .qa-evidence-table td{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;min-width:0;padding:8px 0 0;border:0;font-size:14px;line-height:1.8}
   .qa-evidence-table td:before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:700}
   #section-10 .detail-body{padding:18px}
   .image-dialog-header{padding:12px;gap:12px}
@@ -580,3 +580,50 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 .slide :is(.story-card,.priority-card,.wireframe-record,.closing-note,.persona-panel,.jtbd-panel) :is(h2,h3),.slide .ia-branches h3,.slide .journey-map h2{line-height:1.6}
 .slide th,.slide td,.slide summary{overflow-wrap:anywhere}
+
+/* Mobile visual hierarchy: process, supporting rules and closing emphasis. */
+@media(max-width:800px){
+ #section-09>.card-grid>.story-card{background:#fff;border-color:var(--line)}
+ #section-11 .reflection-bottom>.story-card{background:#fff;border-color:var(--line)}
+}
+
+/* Desktop visual refinement: retain the 1360px shell and existing screen ratios. */
+@media(min-width:801px){
+ #main .slide>.section-head{
+  background:linear-gradient(110deg,#f3f7f4 0%,#fff 72%);
+  border-color:#d6e1da;
+  border-left:3px solid #39735a;
+ }
+ #main .slide>.section-head>.eyebrow{color:#38634e}
+ #main .slide>.section-head .lead{color:#596b61}
+ .slide .story-card,.slide .priority-card,.slide .wireframe-record{
+  border-color:#d6e1da;
+  box-shadow:0 2px 7px rgba(19,58,41,.035);
+ }
+ #section-01>.card-grid>.story-card{background:#f6f9f6}
+ #section-02>.card-grid>.story-card:first-child{background:#f3f7f4}
+ #section-06 .flow li{
+  background:linear-gradient(180deg,#f5f8f5 0%,#fff 64%);
+  border-color:#d3dfd7;
+ }
+ #section-06 .flow .flow-number{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:7px;background:var(--green);
+  color:#fff;font-size:11px;line-height:1;margin-bottom:10px;
+ }
+ #section-06 .flow li>span{font-size:13px;line-height:1.8}
+ #section-07 .wireframe-record{background:#f6f8f6}
+ #section-07 .wireframe-record>.evidence-preview{background:#fff;border-radius:18px}
+ #section-09 .ai-contract>.story-card{background:#f3f7f4}
+ #section-09 .ai-contract .eyebrow{color:#38634e}
+ .slide .table-wrap thead{background:#edf4ef}
+ .slide .table-wrap tbody tr:nth-child(even){background:#fafcfb}
+ .slide details{border-color:#d6e1da}
+ .slide details>summary{background:#f3f7f4}
+ .slide details>summary:hover{background:#eaf1ec}
+ .slide details[open]>summary{background:#edf4ef}
+ .slide .source-note{border-left-color:#91b39e}
+}
+
+/* Give 1920px desktop content 32px more room on each side. */
+@media(min-width:1600px){.slide,.cs-controls{max-width:1064px}}
