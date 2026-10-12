@@ -165,5 +165,16 @@
   if(reloaded)history.scrollRestoration='manual';
   goTo(reloaded?0:fromUrl(),{historyMode:'replace',focus:false});
   const navigationType=performance.getEntriesByType('navigation')[0]?.type;
-  if(navigationType!=='back_forward')window.scrollTo({top:0,left:0,behavior:'instant'});
+  if(navigationType!=='back_forward'){
+    history.scrollRestoration='manual';
+    const resetInitialScroll=()=>window.scrollTo({top:0,left:0,behavior:'instant'});
+    resetInitialScroll();
+    // Native fragment positioning runs after the initial script on navigation.
+    const resetAfterLoad=()=>requestAnimationFrame(()=>{
+      resetInitialScroll();
+      requestAnimationFrame(resetInitialScroll);
+    });
+    if(document.readyState==='complete')resetAfterLoad();
+    else window.addEventListener('load',resetAfterLoad,{once:true});
+  }
 })();
