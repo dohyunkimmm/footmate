@@ -8,6 +8,7 @@ for(const width of [1920,1440,800,390,320]){
     const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto('/');
     await expect(page.locator('.toc-item')).toHaveCount(9);
+    await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
     await expect(page.locator('.dot')).toHaveCount(9);
     await expect(page.getByRole('button',{name:'이전 섹션',exact:true})).toBeDisabled();
     for(let i=0;i<9;i++){
@@ -556,6 +557,22 @@ for(const width of [1440,1920]){
       const heading=page.locator('#section-'+String(n).padStart(2,'0')+' .section-head h1');
       const lines=await heading.evaluate(node=>node.getBoundingClientRect().height/parseFloat(getComputedStyle(node).lineHeight));
       expect(lines,'P'+n+' main title').toBeCloseTo(1,1);
+    }
+  });
+}
+
+for(const width of [320,390,800,1440]){
+  test('first entry and reload start at top at '+width+'px',async({page})=>{
+    await page.setViewportSize({width,height:844});
+    for(const path of ['/', '/#section-05']){
+      await page.goto(path);
+      await expect(page.locator('.slide:visible')).toHaveCount(1);
+      await page.evaluate(()=>document.fonts.ready);
+      await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+      await page.evaluate(()=>window.scrollTo(0,200));
+      await page.reload();
+      await expect(page).toHaveURL(/#section-01$/);
+      await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
     }
   });
 }
