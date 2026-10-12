@@ -574,3 +574,6 @@ html:has(.image-dialog[open]){overflow:hidden}
  .slide details .table-wrap tbody th{padding:0;font-size:14px}
  .slide details .detail-body .persona-panel,.slide details .detail-body .jtbd-panel{padding:18px}
 }
+
+.slide .story-card,.slide .priority-card,.slide .wireframe-record,.slide .closing-note,.slide .persona-panel,.slide .jtbd-panel{overflow-wrap:anywhere}
+.slide .section-head h1{overflow-wrap:anywhere}
