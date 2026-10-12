@@ -9,6 +9,8 @@ function extractBetaRuntime(html){
   return match[1];
 }
 function a(condition,message){if(!condition)throw new Error(message)}
+// Case Study markup is embedded in a JavaScript string; its quotes may be escaped.
+function hasCaseStudyDemoCta(source){return /href=\\?["']\/demo\\?["']/.test(source)}
 async function get(path){const response=await fetch(base+path,{redirect:'follow',headers:{'user-agent':`FootMate-v${release}-QA`}});a(response.ok,`${path} ${response.status}`);return response}
 async function runProductionSmoke(){
   if(!strict){console.log(`SKIP v${release} exact Production HTTP smoke`);return}
@@ -19,7 +21,7 @@ async function runProductionSmoke(){
   const caseScript=await(await get('/src/case-study/nine-sections.js')).text();
   a(!caseScript.includes('Live interaction'),'Case Study Live interaction removed');
   a(!caseScript.includes('/demo?embed=1'),'Case Study embedded app removed');
-  a(caseScript.includes('href="/demo"'),'Case Study Product CTA route');
+  a(hasCaseStudyDemoCta(caseScript),'Case Study Product CTA route');
   a(caseScript.includes('Interactive Demo 직접 체험하기'),'Case Study Product CTA copy');
   // Verify the changed Case Study assets themselves, not only the product release marker.
   for(const asset of ['index.html','src/case-study/nine-sections.js','src/case-study/nine-sections.css']){
@@ -32,6 +34,6 @@ async function runProductionSmoke(){
 if(require.main===module){
   runProductionSmoke().catch(error=>{console.error(error);process.exitCode=1});
 }
-module.exports={extractBetaRuntime};
+module.exports={extractBetaRuntime,hasCaseStudyDemoCta};
 
 

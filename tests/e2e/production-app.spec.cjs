@@ -36,11 +36,11 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   expect(health.model).toBe('openai/gpt-5.4-mini');
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.5.0');
-  await expect(page.locator('.toc-item')).toHaveCount(9);
+  await expect(page.locator('.toc-item')).toHaveCount(11);
   await page.locator('.toc-item').nth(3).click();
   await page.locator('.slide:visible summary').click();
   await expect(page.locator('.slide:visible')).toContainText('사용자 직접 확정 · 자동 실행 제외');
-  await page.locator('.toc-item').nth(5).click();
+  await page.locator('.toc-item').nth(8).click();
   await expect(page.locator('.slide:visible')).toContainText('AI는 조건 해석 · 후보 순위와 근거는 규칙 엔진');
 });
 
