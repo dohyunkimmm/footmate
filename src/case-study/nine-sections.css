@@ -217,7 +217,7 @@ html::-webkit-scrollbar{
   .qa-evidence-table thead{display:none}
   .qa-evidence-table tr{display:block;border-top:1px solid var(--line);padding:16px 0}
   .qa-evidence-table tbody th{display:block;min-width:0;padding:0;border:0;font-size:14px;line-height:1.8;background:transparent}
-  .qa-evidence-table td{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;min-width:0;padding:8px 0 0;border:0;font-size:14px;line-height:1.8}
+  .qa-evidence-table td{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;min-width:0;padding:8px 0 0;border:0;font-size:14px;line-height:1.8}
   .qa-evidence-table td:before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:700}
   #section-10 .detail-body{padding:18px}
   .image-dialog-header{padding:12px;gap:12px}
@@ -580,3 +580,9 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 .slide :is(.story-card,.priority-card,.wireframe-record,.closing-note,.persona-panel,.jtbd-panel) :is(h2,h3),.slide .ia-branches h3,.slide .journey-map h2{line-height:1.6}
 .slide th,.slide td,.slide summary{overflow-wrap:anywhere}
+
+/* Mobile visual hierarchy: process, supporting rules and closing emphasis. */
+@media(max-width:800px){
+ #section-09>.card-grid>.story-card{background:#fff;border-color:var(--line)}
+ #section-11 .reflection-bottom>.story-card{background:#fff;border-color:var(--line)}
+}
