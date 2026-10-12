@@ -627,3 +627,46 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 /* Give 1920px desktop content 32px more room on each side. */
 @media(min-width:1600px){.slide,.cs-controls{max-width:1064px}}
+
+/* Reading hierarchy and interaction polish; content and screen proportions retained. */
+:root{--text:#34433b;--muted:#56675d}
+#section-07 .evidence-preview{position:relative}
+#section-07 .evidence-preview::after{
+ content:'확대 ↗';position:absolute;right:10px;bottom:10px;
+ padding:7px 10px;border:1px solid #b8ccbf;border-radius:8px;
+ background:#fff;color:var(--green);font-size:12px;font-weight:700;line-height:1.4;
+ pointer-events:none;box-shadow:0 2px 5px rgba(15,52,36,.08);
+}
+@media(min-width:801px){
+ #main .slide .story-card p,#main .slide .priority-card p,
+ #main .slide .ia-branches ul,#main .slide .journey-map p,
+ #main .slide .persona-panel dd,#main .slide .jtbd-panel p{font-size:14px;line-height:1.8}
+ #main .slide .table-wrap :is(th,td){font-size:14px;line-height:1.8}
+ #main .slide>.source-note,#main .slide .small-copy{font-size:13px;line-height:1.8}
+ #main .slide .ai-contract h3{font-size:18px;line-height:1.6}
+ #section-09 .ai-contract>.story-card{padding:24px;min-height:164px}
+ #section-09>.card-grid>.story-card{padding:24px}
+ #main .slide>.section-head{margin-bottom:24px}
+ #section-01>.section-head{margin-bottom:0!important}
+ #section-05>.card-grid,#section-09>.card-grid{margin-top:24px}
+ #section-06 .flow li{padding:20px 14px}
+ #section-06 .flow li>span:not(.flow-number){font-size:14px;line-height:1.8}
+ #section-11 .reflection-bottom{margin-top:24px}
+}
+@media(hover:hover){
+ #section-07 .evidence-preview:hover{box-shadow:0 0 0 3px #91b39e}
+ .primary-link:hover{background:#c4f55f}
+ .secondary-link:hover{background:#edf4ef;border-color:#91b39e}
+}
+@media(prefers-reduced-motion:no-preference){
+ @keyframes cs-section-enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+ @keyframes cs-detail-enter{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+ .slide.on:not([hidden]){animation:cs-section-enter 180ms ease-out}
+ .slide details[open]>.detail-body{animation:cs-detail-enter 180ms ease-out}
+ #section-07 .evidence-preview{transition:box-shadow 140ms ease}
+}
+@media(prefers-reduced-motion:reduce){
+ .slide,.slide .detail-body,.image-dialog,.image-dialog::backdrop{
+  animation:none!important;transition:none!important;
+ }
+}
