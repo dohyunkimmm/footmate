@@ -127,10 +127,11 @@ for(const width of [320,390,1440,1920]){
     return {section:slide.id,failures,cards,overflow:document.documentElement.scrollWidth>innerWidth+1};
    });
    expect(audit.failures).toEqual([]);expect(audit.overflow).toBe(false);report.push(audit);
-   if([390,1440].includes(width)&&[2,3,4,5,7,8,9,11].includes(i+1)){
+   if([390,1440].includes(width)){
+    await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
     await page.waitForTimeout(220);await testInfo.attach('card-qa-'+(i+1)+'-'+width,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
    }
-   if((width===1440&&[7,8,9].includes(i+1))||(width===390&&i===7)){
+   if([390,1440].includes(width)){
     console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+' '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
    }
   }
