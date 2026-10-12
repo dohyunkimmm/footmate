@@ -15,14 +15,14 @@ if(!matches.length)throw new Error('No Case Study versioned assets found');
 const assetFiles=matches.map(match=>match[1]);
 const cssFiles=assetFiles.filter(file=>file.endsWith('.css'));
 const jsFiles=assetFiles.filter(file=>file.endsWith('.js'));
-if(cssFiles.length!==1||jsFiles.length!==1||!assetFiles.includes('/src/case-study/nine-sections.css')||!assetFiles.includes('/src/case-study/nine-sections.js'))throw new Error('Nine-stage Case Study must load only its CSS and JS entry points');
+if(cssFiles.length!==1||jsFiles.length!==1||!assetFiles.includes('/src/case-study/nine-sections.css')||!assetFiles.includes('/src/case-study/nine-sections.js'))throw new Error('11-section Case Study must load only its CSS and JS entry points');
 const slideCount=(html.match(/<section class="slide"><\/section>/g)||[]).length;
 const expectedCount=Number((html.match(/data-case-study-stages="(\d+)"/)||[])[1]);
 if(expectedCount!==11||slideCount!==expectedCount)throw new Error('Case Study must contain eleven section slots');
 const updated=html.replace(assetPattern,function(_all,file){return file+'?v='+version;});
 const check=process.argv.includes('--check');
 
-const runtimeJs=fs.readFileSync(path.join(root,'src/case-study/visual-system.js'),'utf8');
+const runtimeJs=fs.readFileSync(path.join(root,'src/case-study/nine-sections.js'),'utf8');
 if(/(?:script\.src|link\.href)\s*=\s*['"]\/src\/case-study\//.test(runtimeJs)){
   throw new Error('Case Study visual bundle must not dynamically load additional Case Study assets');
 }
