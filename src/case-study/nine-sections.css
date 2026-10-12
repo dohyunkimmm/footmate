@@ -87,8 +87,6 @@ html::-webkit-scrollbar{
 
 /* Remove repeated spacing in P9 while retaining the existing text sizes. */
 @media(min-width:801px){
-  #section-11 .next-list li{padding:16px 0}
-  #section-11 .next-list p{margin-top:8px}
 }
 
 /* Readable text roles; native scrolling lets content grow without compression. */
@@ -152,9 +150,6 @@ html::-webkit-scrollbar{
 .recovery-diagram li strong{display:block;font-size:13px}
 .recovery-diagram li span{display:block;font-size:12px;color:var(--muted);margin-top:6px;line-height:1.8}
 .recovery-diagram figcaption{font-size:12px;color:var(--muted);margin-top:12px}
-#section-10 .story-card:nth-child(2){background:#fff;border-color:var(--cs-border-strong)}
-#section-10 .story-card:nth-child(3){background:var(--cs-deferred);border-style:dashed}
-#section-10 .story-card:nth-child(3) .eyebrow{color:#675c3f}
 .table-scroll-hint{display:none;font-size:13px}
 .next-list h2{margin-top:5px}
 .next-list li:nth-child(-n+2) .next-number{background:var(--green);color:#fff}
@@ -260,9 +255,6 @@ html:has(.image-dialog[open]){overflow:hidden}
 .decision-proof dt{font-size:12px;font-weight:800;color:var(--green);line-height:1.6}
 .decision-proof dd{font-size:13px;color:var(--text);line-height:1.75;margin:5px 0 0;overflow-wrap:anywhere}
 .cs-implementation-boundary{border-left:3px solid var(--green);padding-left:12px;margin-top:16px;max-width:850px}
-#section-10 .card-grid .story-card{border-top:4px solid var(--green)}
-#section-10 .card-grid .story-card:nth-child(2){border-top-color:#709c84}
-#section-10 .card-grid .story-card:nth-child(3){border-top-color:#a1aba5;background:#f7f8f7}
 .validation-source-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
 .validation-source-keys span{font-size:12px;line-height:1.75;border:1px solid var(--line);border-radius:10px;padding:12px 13px;min-width:0}
 .validation-source-keys b{color:var(--green)}
@@ -335,11 +327,6 @@ html:has(.image-dialog[open]){overflow:hidden}
   .section-head h1{font-size:32px;line-height:1.4}
   .section-head h1 .cs-title-break{display:none}
   .section-head{margin-bottom:24px}
-  #section-05 .flow{grid-template-columns:1fr;gap:24px}
-  #section-05 .flow li{padding:14px 16px}
-  #section-05 .flow li+li:before{content:'↓'!important;left:50%;top:-25px;transform:translateX(-50%);font-size:16px;line-height:24px}
-  #section-05 .flow .flow-number{margin-bottom:3px}
-  #section-05 .flow span{margin-top:4px}
   #section-03 .journey-map article{padding:18px}
   #section-03 .journey-map article+article{border-top:3px solid var(--cs-border-strong)}
   #section-03 .journey-map h2{margin:6px 0 12px}
@@ -350,11 +337,6 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-06 .decision-proof{gap:8px}
   #section-06 .decision-proof>div{padding:10px 12px}
   #section-10 .validation-source-keys span{padding:6px 0}
-  #section-11 .next-list li{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:12px}
-  #section-11 .next-list li>div{display:contents}
-  #section-11 .next-number{grid-column:1;grid-row:1/span 2}
-  #section-11 .next-list .eyebrow,#section-11 .next-list h2{grid-column:2}
-  #section-11 .next-list p{grid-column:1/-1}
   .cs-button{font-size:12px}
 }
 @media(max-width:370px){
@@ -364,8 +346,6 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 /* Small visual patches: explicit row continuation and one journey divider. */
 @media(min-width:801px) and (max-width:1100px){
-  #section-05 .flow{row-gap:32px}
-  #section-05 .flow li:nth-child(4):before{content:'03 → 04';left:0;top:-27px;font-size:11px;font-weight:600;line-height:20px;white-space:nowrap}
 }
 @media(max-width:800px){
   #section-03 .journey-map article:not(:last-child){border-bottom:0}
@@ -387,7 +367,6 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-01 .evidence-preview:hover,#section-06 .evidence-preview:hover{box-shadow:0 0 0 3px var(--cs-border-strong)}
 }
 @media(prefers-reduced-motion:no-preference){
-  @keyframes cs-section-enter{from{opacity:.94}to{opacity:1}}
   @keyframes cs-image-enter{from{opacity:.94;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
   @keyframes cs-backdrop-enter{from{opacity:.9}to{opacity:1}}
   .slide.on:not([hidden]){animation:cs-section-enter 180ms ease-out}
@@ -455,9 +434,6 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-05 .ia-root{padding:8px 12px}
   #section-05 .ia-branches{column-gap:12px;margin-top:30px}
   #section-05 .ia-branches ul{margin:12px 18px}
-  #section-05 .flow li{padding:14px 12px}
-  #section-05 .flow-guide{margin:0 0 10px}
-  #section-05 .flow-decision-gate{margin:16px 0 0;padding:16px;border-radius:12px}
   #section-06 .decision-list{display:grid;gap:16px}
   #section-06 .decision-row{grid-template-columns:minmax(0,1fr) 280px;gap:20px;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff}
   #section-06 .decision-row h2{margin-top:8px}
@@ -467,8 +443,6 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-06 .product-figure img[src*="decision-detail"]{max-height:440px;object-fit:contain}
   #section-06 .recovery-diagram{padding:16px;border-radius:10px}
   #section-06 .cs-implementation-boundary{margin-top:14px}
-  #section-10 .card-grid{margin-top:0}
-  #section-10 .story-card:nth-child(3){background:#fbfaf6}
   #section-10 .validation-source-keys{margin:10px 0 14px}
   #section-10 .qa-evidence-table{border-radius:12px}
   #section-10 .qa-evidence-table th,#section-10 .qa-evidence-table td{padding:13px 16px}
@@ -477,12 +451,6 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-08 .reflection-bottom .story-card{padding:20px}
   #section-08 .closing-note{padding:20px;border-radius:12px}
   #section-08 .closing-note h2{margin-top:10px}
-  #section-11 .next-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  #section-11 .next-list li{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:12px;row-gap:0;align-content:start;margin:0;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:#fff}
-  #section-11 .next-list li>div{display:contents}
-  #section-11 .next-number{grid-column:1;grid-row:1/span 2}
-  #section-11 .next-list .eyebrow,#section-11 .next-list h2{grid-column:2}
-  #section-11 .next-list p{grid-column:1/-1;margin-top:10px}
 }
 
 /* Desktop title review: retain copy and shell; let compact headings read on one line. */
