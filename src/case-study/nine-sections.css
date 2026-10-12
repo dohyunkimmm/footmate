@@ -219,7 +219,7 @@ html::-webkit-scrollbar{
   .qa-evidence-table tbody th{display:block;min-width:0;padding:0;border:0;font-size:14px;line-height:1.8;background:transparent}
   .qa-evidence-table td{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;min-width:0;padding:8px 0 0;border:0;font-size:14px;line-height:1.8}
   .qa-evidence-table td:before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:700}
-  #section-10 .detail-body{padding:16px 0}
+  #section-10 .detail-body{padding:18px}
   .image-dialog-header{padding:12px;gap:12px}
   .image-dialog-header h2{font-size:16px}
   .image-dialog-body{padding:12px}
@@ -511,7 +511,7 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 #section-06 .flow li:nth-child(4):before{content:"→"}@media(max-width:800px){#section-06 .flow li+li:before{content:"↓"!important}}
 
-@media(max-width:800px){.slide .table-wrap:not(.qa-evidence-table){overflow:visible;border:0}.slide .table-wrap:not(.qa-evidence-table) table,.slide .table-wrap:not(.qa-evidence-table) tbody{display:block;width:100%}.slide .table-wrap:not(.qa-evidence-table) thead{display:none}.slide .table-wrap:not(.qa-evidence-table) tr{display:block;border-top:1px solid var(--line);padding:14px 0}.slide .table-wrap:not(.qa-evidence-table) tbody th{display:block;min-width:0;border:0;padding:0;font-size:14px}.slide .table-wrap:not(.qa-evidence-table) td{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;min-width:0;border:0;padding:8px 0 0;font-size:14px}.slide .table-wrap:not(.qa-evidence-table) td:before{content:attr(data-label);font-size:12px;color:var(--muted);font-weight:700}}
+@media(max-width:800px){.slide .table-wrap:not(.qa-evidence-table){overflow:visible;border:0}.slide .table-wrap:not(.qa-evidence-table) table,.slide .table-wrap:not(.qa-evidence-table) tbody{display:block;width:100%}.slide .table-wrap:not(.qa-evidence-table) thead{display:none}.slide .table-wrap:not(.qa-evidence-table) tr{display:block;border-top:1px solid var(--line);padding:14px 0}.slide .table-wrap:not(.qa-evidence-table) tbody th{display:block;min-width:0;border:0;padding:0;font-size:14px}.slide .table-wrap:not(.qa-evidence-table) td{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;min-width:0;border:0;padding:8px 0 0;font-size:14px}.slide .table-wrap:not(.qa-evidence-table) td:before{content:attr(data-label);font-size:12px;color:var(--muted);font-weight:700}}
 
 /* Card typography QA: retain shell, product image ratio and title scale. */
 .slide .story-card,.slide .priority-card,.slide .wireframe-record{min-width:0}
