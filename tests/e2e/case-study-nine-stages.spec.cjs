@@ -43,7 +43,7 @@ test('existing Demo is linked unchanged and wireframes are disclosed as current 
  await page.locator('.toc-item').nth(6).click();await expect(page.locator('#section-07 .wireframe-record')).toHaveCount(5);
  await expect(page.locator('#section-07')).toContainText('현재 구현 기준 와이어프레임');
  await expect(page.locator('#section-07 a[href*="figma.com/design/rvhwFauZFBsSnvHYitohgC"]')).toHaveCount(1);
- await page.locator('.toc-item').nth(8).click();await expect(page.locator('#section-09 a[href="/demo"]')).toHaveCount(1);
+ await page.locator('.toc-item').nth(8).click();await expect(page.locator('#section-09 a[href="/demo"]')).toHaveCount(0);
  await expect(page.locator('#section-09')).toContainText('AI가 경기·자리·순위를 임의 생성하지 않음');
 });
 
@@ -88,5 +88,52 @@ for(const width of [1440,1920]){
    await page.locator('.toc-item').nth(i).click();await expect(page.locator('.slide:visible .section-head h1')).toHaveCSS('font-size',i===0?'28px':'32px');
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   }
+ });
+}
+
+for(const width of [320,390,1440,1920]){
+ test('card typography and disclosure open/closed QA at '+width+'px',async({page},testInfo)=>{
+  await page.setViewportSize({width,height:1080});await page.goto('/');
+  const report=[];
+  for(let i=0;i<11;i++){
+   await page.locator('.toc-item').nth(i).click();
+   const section=page.locator('.slide:visible');
+   for(const disclosure of await section.locator('details').all()){
+    const summary=disclosure.locator(':scope > summary');
+    await summary.click();await expect(disclosure).toHaveAttribute('open','');
+    await summary.click();await expect(disclosure).not.toHaveAttribute('open','');
+    await summary.press('Enter');await expect(disclosure).toHaveAttribute('open','');
+   }
+   const audit=await section.evaluate(slide=>{
+    const failures=[],cards=[];
+    for(const card of slide.querySelectorAll('.story-card,.priority-card,.wireframe-record,.closing-note,.persona-panel,.jtbd-panel,.ia-branches article,.journey-map article')){
+     const box=card.getBoundingClientRect(),css=getComputedStyle(card),texts=[];
+     for(const node of card.querySelectorAll('h2,h3,p,dt,dd,li')){
+      if(!node.getClientRects().length)continue;
+      const b=node.getBoundingClientRect(),s=getComputedStyle(node),range=document.createRange();range.selectNodeContents(node);
+      const rects=[...range.getClientRects()].filter(r=>r.width>0);
+      if(rects.some(r=>r.left<b.left-2||r.right>b.right+2))failures.push(node.textContent+' text overflow');
+      if(parseFloat(s.lineHeight)<parseFloat(s.fontSize)*1.5)failures.push(node.textContent+' tight leading');
+      texts.push({text:node.textContent,size:parseFloat(s.fontSize),line:parseFloat(s.lineHeight)});
+     }
+     cards.push({class:card.className,width:box.width,height:box.height,padding:css.padding,texts});
+    }
+    for(const detail of slide.querySelectorAll('details[open]')){
+     const body=detail.querySelector(':scope > .detail-body');if(!body)continue;
+     const p=parseFloat(getComputedStyle(body).paddingTop);
+     if(p<18)failures.push('disclosure has no top inset');
+     for(const table of body.querySelectorAll('.table-wrap'))if(table.scrollWidth>table.clientWidth+1)failures.push('disclosure table overflow');
+    }
+    return {section:slide.id,failures,cards,overflow:document.documentElement.scrollWidth>innerWidth+1};
+   });
+   expect(audit.failures).toEqual([]);expect(audit.overflow).toBe(false);report.push(audit);
+   if([390,1440].includes(width)&&[2,3,4,5,7,8,9,11].includes(i+1)){
+    await page.waitForTimeout(220);await testInfo.attach('card-qa-'+(i+1)+'-'+width,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
+   }
+   if((width===1440&&[7,8,9].includes(i+1))||(width===390&&i===7)){
+    console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+' '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
+   }
+  }
+  await testInfo.attach('card-typography-and-disclosure-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});
  });
 }
