@@ -55,6 +55,10 @@ for(const width of [320,375,390,430,560,699,700,960,1366,1440,1920]){
     const welcome=await auditAndCapture(page,testInfo,'[data-screen="welcome"]','normal',width,screenshots);
     await toHome(page);
     const home=await auditAndCapture(page,testInfo,'[data-screen="home"]','normal',width,screenshots);
+    for(const button of await page.locator('[data-screen="home"] .fm-next-nav button').all()){
+      const size=await button.evaluate(node=>parseFloat(getComputedStyle(node).fontSize));
+      expect(size,'navigation label minimum').toBeGreaterThanOrEqual(12);
+    }
     await page.getByRole('button',{name:'전체 보기'}).click();
     const discover=await auditAndCapture(page,testInfo,'[data-screen="discover"]','normal',width,screenshots);
     const audits=[welcome,home,discover];
@@ -92,7 +96,15 @@ for(const mode of ['text-200-percent','user-text-spacing']){
       await openCleanApp(page,width);
       const fonts=await fontCoverage(page);
       await toHome(page);
+      const enlargedRoles=page.locator('[data-screen="home"] :is(.fm-ai-input-row input,.fm-next-match-place)');
+      const beforeSizes=await enlargedRoles.evaluateAll(nodes=>nodes.map(node=>parseFloat(getComputedStyle(node).fontSize)));
+      expect(beforeSizes.length,'input and match title enlargement coverage').toBeGreaterThanOrEqual(2);
       await applyAdaptation(page,mode);
+      if(mode==='text-200-percent'){
+        const afterSizes=await enlargedRoles.evaluateAll(nodes=>nodes.map(node=>parseFloat(getComputedStyle(node).fontSize)));
+        expect(afterSizes.length).toBe(beforeSizes.length);
+        afterSizes.forEach((size,index)=>expect(size,'input or match title doubled').toBeCloseTo(beforeSizes[index]*2,1));
+      }
       const screenshots=[];
       const home=await auditAndCapture(page,testInfo,'[data-screen="home"]',mode,width,screenshots);
       await recordEvidence(page,testInfo,{
