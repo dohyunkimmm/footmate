@@ -499,3 +499,8 @@ html:has(.image-dialog[open]){overflow:hidden}
 #section-06 .decision-proof>.decision-judgment dd{font-weight:700;color:var(--ink)}
 #section-06 .product-figure figcaption{font-size:13px;line-height:1.8}
 #section-06 .evidence-notice{display:block;margin-top:4px;font-weight:700;color:var(--ink)}
+
+/* Keep the desktop evidence notice from ending with a single short word. */
+@media(min-width:1920px){
+  #section-06 .product-figure .evidence-notice{text-wrap:balance}
+}
