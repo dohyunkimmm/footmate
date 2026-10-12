@@ -23,11 +23,11 @@ async function inspectTypography(page,selector){
       const classes=typeof node.className==='string'?node.className.trim().split(/\s+/).slice(0,2).join('.'):'';
       return node.tagName.toLowerCase()+(classes?'.'+classes:'');
     };
-    const nodes=[...root.querySelectorAll('h1,h2,h3,p,small,label,button,li,figcaption,.fm-next-match-place,.fm-next-match-footer small,.fm-ai-kicker,.fm-ai-guardrail')];
+    const nodes=[...root.querySelectorAll('h1,h2,h3,p,small,label,button,input,textarea,select,li,figcaption,.fm-next-match-place,.fm-next-match-footer small,.fm-ai-kicker,.fm-ai-guardrail')];
     for(const node of [...new Set(nodes)]){
       if(!visible(node))continue;
       const style=getComputedStyle(node),bounds=node.getBoundingClientRect();
-      const text=(node.innerText||node.textContent||'').trim();
+      const text=(node.value||node.placeholder||node.innerText||node.textContent||'').trim();
       if(!text)continue;
       const fontSize=parseFloat(style.fontSize),lineHeight=parseFloat(style.lineHeight);
       const id=describe(node)+' '+text.slice(0,48);
@@ -125,7 +125,7 @@ async function fontCoverage(page){
 async function applyAdaptation(page,mode){
   if(mode==='normal'||mode==='fallback')return;
   if(mode==='text-200-percent'){
-    await page.locator('.fm-next-app :is(h1,h2,h3,p,small,button,label,li,span,strong)').evaluateAll(nodes=>{
+    await page.locator('.fm-next-app :is(h1,h2,h3,p,small,button,input,textarea,select,label,li,span,strong,.fm-next-match-place)').evaluateAll(nodes=>{
       const before=nodes.filter(node=>node.getClientRects().length).map(node=>{
         const s=getComputedStyle(node);
         return {node,font:parseFloat(s.fontSize),line:parseFloat(s.lineHeight),spacing:parseFloat(s.letterSpacing)};
@@ -139,7 +139,7 @@ async function applyAdaptation(page,mode){
     return;
   }
   if(mode==='user-text-spacing'){
-    await page.addStyleTag({content:'.fm-next-app :is(h1,h2,h3,p,small,button,label,li,span,strong){line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.fm-next-app p{margin-bottom:2em!important}'});
+    await page.addStyleTag({content:'.fm-next-app :is(h1,h2,h3,p,small,button,input,textarea,select,label,li,span,strong,.fm-next-match-place){line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}.fm-next-app p{margin-bottom:2em!important}'});
     return;
   }
   throw new Error('Unknown typography adaptation: '+mode);
