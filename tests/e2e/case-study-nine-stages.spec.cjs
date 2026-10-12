@@ -133,6 +133,9 @@ for(const width of [320,390,1440,1920]){
    }
    if(width===1920){
     console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+' '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
+    await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(n=>n.open=false));
+    await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+    console.log('CARD_QA_IMAGE '+(i+1)+'-'+width+'-closed '+(await page.screenshot({fullPage:true,animations:'disabled'})).toString('base64'));
    }
   }
   await testInfo.attach('card-typography-and-disclosure-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});
