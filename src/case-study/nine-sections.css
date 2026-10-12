@@ -659,8 +659,8 @@ html:has(.image-dialog[open]){overflow:hidden}
  .secondary-link:hover{background:#edf4ef;border-color:#91b39e}
 }
 @media(prefers-reduced-motion:no-preference){
- @keyframes cs-section-enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
- @keyframes cs-detail-enter{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+ @keyframes cs-section-enter{from{transform:translateY(4px)}to{transform:none}}
+ @keyframes cs-detail-enter{from{transform:translateY(3px)}to{transform:none}}
  .slide.on:not([hidden]){animation:cs-section-enter 180ms ease-out}
  .slide details[open]>.detail-body{animation:cs-detail-enter 180ms ease-out}
  #section-07 .evidence-preview{transition:box-shadow 140ms ease}
