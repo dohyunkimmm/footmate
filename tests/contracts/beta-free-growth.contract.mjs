@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 const migration=fs.readFileSync('supabase/migrations/20260921143648_beta_free_growth.sql','utf8');
 const hotfix=fs.readFileSync('supabase/migrations/20260922035936_beta_push_cancel_hotfix.sql','utf8');
+const fkIndexMigration=fs.readFileSync('supabase/migrations/20261012003739_beta_fk_index_hardening_20261012.sql','utf8');
 const growth=fs.readFileSync('src/beta/growth.js','utf8');
 const html=fs.readFileSync('beta.html','utf8');
 
@@ -39,5 +40,17 @@ for(const token of ['realtime/v1/websocket','postgres_changes','Live catalog','j
 assert.ok(!growth.includes('Math.random'),'live recommendation must remain deterministic');
 assert.ok(html.includes('/src/beta/growth.css?v=1'));
 assert.ok(html.includes("import('/src/beta/growth.js?v=1')"));
+
+
+// Keep the applied advisor-driven FK indexes represented in versioned migrations.
+for(const [index,table,column] of [
+  ['beta_match_feedback_match_idx','beta_match_feedback','match_id'],
+  ['beta_waitlist_user_idx','beta_waitlist','user_id']
+]){
+  assert.ok(
+    new RegExp(`create index if not exists ${index}\\s+on public\\.${table} \\(\\s*${column}\\s*\\)`,'i').test(fkIndexMigration),
+    `missing additive FK covering index for ${table}.${column}`
+  );
+}
 
 console.log('beta free growth contracts: PASS');
