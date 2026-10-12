@@ -632,7 +632,7 @@ html:has(.image-dialog[open]){overflow:hidden}
 :root{--text:#34433b;--muted:#56675d}
 #section-07 .evidence-preview{position:relative}
 #section-07 .evidence-preview::after{
- content:'확대 ↗';position:absolute;right:10px;bottom:10px;
+ content:'확대 ↗';position:absolute;right:10px;top:10px;
  padding:7px 10px;border:1px solid #b8ccbf;border-radius:8px;
  background:#fff;color:var(--green);font-size:12px;font-weight:700;line-height:1.4;
  pointer-events:none;box-shadow:0 2px 5px rgba(15,52,36,.08);
