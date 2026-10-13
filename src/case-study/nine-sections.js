@@ -126,10 +126,11 @@
     if(wireIndex<0)return;
     const target=wireIndex+offset;
     if(target<0||target>=wirePreviews.length)return;
+    const focusedButton=document.activeElement;
     showImage(wirePreviews[target]);
     // Keep focus usable when the current navigation button becomes disabled.
-    if(document.activeElement===imagePrev&&imagePrev.disabled)imageNext.focus();
-    if(document.activeElement===imageNext&&imageNext.disabled)imagePrev.focus();
+    if(focusedButton===imagePrev&&imagePrev.disabled)imageNext.focus();
+    if(focusedButton===imageNext&&imageNext.disabled)imagePrev.focus();
   }
   imagePrev.addEventListener('click',()=>moveImage(-1));
   imageNext.addEventListener('click',()=>moveImage(1));
