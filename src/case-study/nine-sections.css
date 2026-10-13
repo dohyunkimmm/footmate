@@ -647,3 +647,18 @@ html:has(.image-dialog[open]){overflow:hidden}
   .viewer>.track>.slide{width:100%;min-height:0;padding-block:32px}
   .viewer>.cs-controls{width:100%}
 }
+
+/* Balance the five wireframes as one desktop sequence and centered wrapped rows. */
+@media(min-width:801px){
+  #section-07 .wireframe-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:16px}
+  #section-07 .wireframe-record{flex:0 0 calc((100% - 32px)/3)}
+}
+@media(min-width:801px) and (max-width:1100px){
+  #section-07 .wireframe-record{flex-basis:calc((100% - 16px)/2)}
+}
+@media(min-width:1400px){
+  #section-07 .wireframe-grid{gap:12px}
+  #section-07 .wireframe-record{flex-basis:calc((100% - 48px)/5);padding:14px 12px}
+  #section-07 .wireframe-record>.evidence-preview{margin-top:14px}
+  #section-07 .evidence-preview::after{right:6px;top:6px;padding:5px 7px;font-size:11px}
+}
