@@ -662,3 +662,11 @@ html:has(.image-dialog[open]){overflow:hidden}
   #section-07 .wireframe-record>.evidence-preview{margin-top:14px}
   #section-07 .evidence-preview::after{right:6px;top:6px;padding:5px 7px;font-size:11px}
 }
+
+/* Consistent spacing for peer cards; let each row size to its own content. */
+#section-04 .priority-grid{gap:16px}
+#section-04 .priority-grid>.priority-card{margin-bottom:0}
+@media(min-width:801px){
+  #main .slide:not(#section-01) .card-grid{gap:16px}
+  #section-05 .ia-branches,#section-09 .ai-contract,#section-11 .reflection-bottom{gap:16px}
+}
