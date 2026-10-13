@@ -670,3 +670,37 @@ html:has(.image-dialog[open]){overflow:hidden}
   #main .slide:not(#section-01) .card-grid{gap:16px}
   #section-05 .ia-branches,#section-09 .ai-contract,#section-11 .reflection-bottom{gap:16px}
 }
+
+/* Reader UI: numbered screens, connected exceptions and documented QA results. */
+.wireframe-step{margin-bottom:6px;color:#38634e}
+.image-dialog{max-height:calc(100svh - 32px);overflow:hidden}
+.image-dialog[open]{display:flex;flex-direction:column}
+.image-dialog-header{flex-shrink:0;gap:16px}
+.image-dialog-position{margin-bottom:4px}
+.image-dialog-caption{flex-shrink:0;margin:0;padding:12px 22px;color:var(--muted);font-size:14px;line-height:1.8;background:var(--soft);border-bottom:1px solid var(--line)}
+.image-dialog .image-dialog-body{flex:1;min-height:0;overflow:auto}
+.image-dialog-navigation{flex-shrink:0;display:flex;justify-content:space-between;gap:12px;padding:12px 18px;border-top:1px solid var(--line);background:#fff}
+.image-dialog-navigation button{padding:10px 14px;min-height:44px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--green);font-size:13px;font-weight:700}
+.image-dialog-navigation button:not(:disabled):hover{background:#eaf1ec;border-color:#91b39e}
+#section-06 .flow-step-button{display:block;width:100%;padding:6px 0;margin:0;border:0;background:transparent;color:var(--ink);text-align:left;border-radius:4px}
+#section-06 .flow-step-button strong{font-size:13px}
+#section-06 .flow-gate-track>div{padding:0;background:#fff}
+#section-06 .flow-gate-button{display:block;width:100%;height:100%;padding:12px;border:0;background:transparent;color:var(--text);text-align:left}
+#section-06 .flow-gate-button strong{font-size:13px;line-height:1.8}
+#section-06 .flow-gate-button>span:not(.flow-gate-step){font-size:12px;line-height:1.8;margin-top:5px}
+#section-06 .flow-gate-button>.flow-gate-step{font-size:11px;margin-bottom:6px;color:#38634e}
+#section-06 .flow>li.flow-linked,#section-06 .flow-gate-track>div.flow-linked{background:#edf5e8;border-color:#39735a;box-shadow:inset 0 0 0 1px #39735a}
+#section-06 .flow-step-button:hover,#section-06 .flow-gate-button:hover{background:#edf4ef}
+#section-06 .flow-selection-status{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+#section-10 .qa-case-number{display:block;margin-bottom:7px;color:#38634e;font-size:11px}
+#section-10 .qa-evidence-table tbody th{color:var(--ink)}
+#section-10 .qa-evidence-table .qa-confirmed-result{background:#f0f6ed;border-left:3px solid #91b39e}
+#section-10 .qa-confirmed-result strong{font-weight:600;color:var(--green);line-height:1.8}
+@media(max-width:800px){
+ .image-dialog-caption{padding:10px 16px;font-size:13px}
+ .image-dialog-navigation{padding:10px 12px}
+ .image-dialog-header>div{min-width:0}
+ .image-dialog-header h2{overflow-wrap:anywhere}
+ .image-dialog-close{flex-shrink:0}
+ #section-10 .qa-evidence-table .qa-confirmed-result{margin-top:8px;padding:12px;border-radius:8px}
+}

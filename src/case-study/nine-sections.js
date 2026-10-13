@@ -85,21 +85,137 @@
     cell.setAttribute('aria-label',qaLabels[index+1]+' · '+cell.textContent.trim());
   }));
   track.querySelectorAll('.table-wrap:not(.qa-evidence-table) table').forEach(table=>{const labels=[...table.querySelectorAll('thead th')].map(n=>n.textContent.trim());table.querySelectorAll('tbody tr').forEach(row=>row.querySelectorAll('td').forEach((cell,index)=>cell.dataset.label=labels[index+1]));});
+  // Numbered wireframes share one viewer, while evidence images retain a single-image view.
+  const wirePreviews=[...track.querySelectorAll('#section-07 .evidence-preview')];
+  wirePreviews.forEach((preview,index)=>{
+    const record=preview.closest('.wireframe-record');
+    const number=document.createElement('span');
+    number.className='wireframe-step eyebrow';
+    number.textContent=String(index+1).padStart(2,'0')+' / 05';
+    record.prepend(number);
+  });
   const imageDialog=document.createElement('dialog');
   imageDialog.className='image-dialog';
   imageDialog.setAttribute('aria-labelledby','image-dialog-title');
-  imageDialog.innerHTML='<div class="image-dialog-header"><h2 id="image-dialog-title">화면 확대</h2><button type="button" class="image-dialog-close" autofocus>닫기 ×</button></div><div class="image-dialog-body" tabindex="0" role="region" aria-label="확대 이미지"><img alt=""></div>';
+  imageDialog.innerHTML='<div class="image-dialog-header"><div><span class="image-dialog-position eyebrow" aria-live="polite" hidden></span><h2 id="image-dialog-title">화면 확대</h2></div><button type="button" class="image-dialog-close" autofocus>닫기 ×</button></div><p class="image-dialog-caption" hidden></p><div class="image-dialog-body" tabindex="0" role="region" aria-label="확대 이미지"><img alt=""></div><div class="image-dialog-navigation" hidden><button type="button" class="image-dialog-prev" aria-label="이전 와이어프레임">← 이전 화면</button><button type="button" class="image-dialog-next" aria-label="다음 와이어프레임">다음 화면 →</button></div>';
   document.body.appendChild(imageDialog);
-  imageDialog.querySelector('.image-dialog-close').addEventListener('click',()=>imageDialog.close());
-  document.addEventListener('click',event=>{
-    const preview=event.target.closest('.evidence-preview');
-    if(!preview)return;
+  const imagePosition=imageDialog.querySelector('.image-dialog-position');
+  const imageCaption=imageDialog.querySelector('.image-dialog-caption');
+  const imageNavigation=imageDialog.querySelector('.image-dialog-navigation');
+  const imagePrev=imageDialog.querySelector('.image-dialog-prev');
+  const imageNext=imageDialog.querySelector('.image-dialog-next');
+  let imageOrigin=null;
+  let wireIndex=-1;
+  function showImage(preview){
+    wireIndex=wirePreviews.indexOf(preview);
+    const gallery=wireIndex>=0;
     imageDialog.querySelector('h2').textContent=preview.dataset.imageTitle;
     const expanded=imageDialog.querySelector('img');
     expanded.src=preview.dataset.image;
     expanded.alt=preview.dataset.imageTitle;
-    imageDialog.showModal();
+    imagePosition.hidden=imageCaption.hidden=imageNavigation.hidden=!gallery;
+    if(gallery){
+      imagePosition.textContent=String(wireIndex+1).padStart(2,'0')+' / 05';
+      imageCaption.textContent=preview.closest('.wireframe-record').querySelector('p').textContent;
+      imagePrev.disabled=wireIndex===0;
+      imageNext.disabled=wireIndex===wirePreviews.length-1;
+    }
     imageDialog.querySelector('.image-dialog-body').scrollTop=0;
+  }
+  function moveImage(offset){
+    if(wireIndex<0)return;
+    const target=wireIndex+offset;
+    if(target<0||target>=wirePreviews.length)return;
+    const focusedButton=document.activeElement;
+    showImage(wirePreviews[target]);
+    // Keep focus usable when the current navigation button becomes disabled.
+    if(focusedButton===imagePrev&&imagePrev.disabled)imageNext.focus();
+    if(focusedButton===imageNext&&imageNext.disabled)imagePrev.focus();
+  }
+  imagePrev.addEventListener('click',()=>moveImage(-1));
+  imageNext.addEventListener('click',()=>moveImage(1));
+  imageDialog.addEventListener('keydown',event=>{
+    if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing)return;
+    if(wireIndex>=0&&(event.key==='ArrowLeft'||event.key==='ArrowRight')){
+      event.preventDefault();
+      event.stopPropagation();
+      moveImage(event.key==='ArrowRight'?1:-1);
+    }
+  });
+  imageDialog.querySelector('.image-dialog-close').addEventListener('click',()=>imageDialog.close());
+  imageDialog.addEventListener('close',()=>{
+    if(imageOrigin?.isConnected)imageOrigin.focus({preventScroll:true});
+    wireIndex=-1;
+  });
+  document.addEventListener('click',event=>{
+    const preview=event.target.closest('.evidence-preview');
+    if(!preview)return;
+    imageOrigin=preview;
+    showImage(preview);
+    imageDialog.showModal();
+    imageDialog.querySelector('.image-dialog-close').focus();
+  });
+  // Connect actual exception descriptions to their numbered task steps.
+  const flowSteps=[...track.querySelectorAll('#section-06 .flow>li')];
+  const flowGates=[...track.querySelectorAll('#section-06 .flow-gate-track>div')];
+  const gateSteps=[[3,4],[4],[3,5]];
+  const flowStatus=document.createElement('p');
+  flowStatus.className='flow-selection-status small-copy';
+  flowStatus.setAttribute('aria-live','polite');
+  flowStatus.textContent='단계나 분기 기준을 선택하면 연결된 경로가 함께 강조됩니다.';
+  track.querySelector('#section-06 .flow-decision-gate').appendChild(flowStatus);
+  function selectFlow(step,gate){
+    flowSteps.forEach((item,index)=>{
+      const active=step===index+1||(gate!==null&&gateSteps[gate].includes(index+1));
+      item.classList.toggle('flow-linked',active);
+      item.querySelector('button').setAttribute('aria-pressed',String(active));
+    });
+    flowGates.forEach((item,index)=>{
+      const active=gate===index||(step!==null&&gateSteps[index].includes(step));
+      item.classList.toggle('flow-linked',active);
+      item.querySelector('button').setAttribute('aria-pressed',String(active));
+    });
+    if(gate!==null)flowStatus.textContent=gateSteps[gate].map(n=>String(n).padStart(2,'0')).join(' · ')+' 단계 연결 · '+flowGates[gate].querySelector('span').textContent;
+    else{
+      const related=flowGates.filter((_,i)=>gateSteps[i].includes(step)).map(item=>item.querySelector('strong').textContent);
+      flowStatus.textContent=String(step).padStart(2,'0')+' 단계 · '+(related.length?related.join(' / '):'별도 예외 분기 없이 다음 단계로 이어집니다.');
+    }
+  }
+  flowSteps.forEach((item,index)=>{
+    const title=item.querySelector('strong');
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='flow-step-button';
+    button.setAttribute('aria-pressed','false');
+    button.setAttribute('aria-label',String(index+1).padStart(2,'0')+' 단계 · '+title.textContent);
+    title.replaceWith(button);
+    button.appendChild(title);
+    button.addEventListener('click',()=>selectFlow(index+1,null));
+  });
+  flowGates.forEach((item,index)=>{
+    const badge=document.createElement('span');
+    badge.className='flow-gate-step eyebrow';
+    badge.textContent=gateSteps[index].map(n=>String(n).padStart(2,'0')).join(' · ')+' 단계';
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='flow-gate-button';
+    button.setAttribute('aria-pressed','false');
+    button.append(badge,...item.childNodes);
+    item.appendChild(button);
+    button.addEventListener('click',()=>selectFlow(null,index));
+  });
+  // Emphasize recorded QA changes without presenting them as user outcome metrics.
+  qaTable.querySelectorAll('tbody tr').forEach((row,index)=>{
+    const title=row.querySelector('th');
+    const number=document.createElement('span');
+    number.className='qa-case-number eyebrow';
+    number.textContent='CASE '+String(index+1).padStart(2,'0');
+    title.prepend(number);
+    const result=row.querySelectorAll('td')[1];
+    result.classList.add('qa-confirmed-result');
+    const text=document.createElement('strong');
+    text.textContent=result.textContent;
+    result.replaceChildren(text);
   });
   const slides = [...track.children];
   const prev = document.querySelector('.btn-prev');
