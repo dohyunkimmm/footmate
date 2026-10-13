@@ -791,3 +791,6 @@ body{background:var(--cs-canvas)}
  #section-08 .table-wrap tbody tr{padding:16px 14px;margin-top:12px;background:#fff;border:1px solid var(--cs-edge);border-radius:12px;box-shadow:var(--cs-shadow)}
  #section-08 .table-wrap td:before{color:#486451}
 }
+
+/* Keep selected navigation readable on the light mobile surface. */
+.toc-item.on :is(.toc-n,.toc-t,.toc-s){color:#0b4231}
