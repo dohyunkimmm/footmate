@@ -194,3 +194,68 @@ for(const reducedMotion of ['no-preference','reduce']){
   await testInfo.attach('motion-settings',{body:JSON.stringify({reducedMotion,viewport:'1920x1080',settled:true}),contentType:'application/json'});
  });
 }
+
+test('wireframe gallery moves through five screens and restores the opening card',async({page})=>{
+ await page.goto('/#section-07');
+ const opening=page.getByRole('button',{name:'홈 와이어프레임 확대',exact:true});
+ await opening.click();
+ await expect(page.getByRole('dialog',{name:'홈 와이어프레임',exact:true})).toBeVisible();
+ await expect(page.locator('.image-dialog-position')).toHaveText('01 / 05');
+ await expect(page.getByRole('button',{name:'이전 와이어프레임',exact:true})).toBeDisabled();
+ for(let index=1;index<5;index++){
+  await page.getByRole('button',{name:'다음 와이어프레임',exact:true}).click();
+  await expect(page.locator('.image-dialog-position')).toHaveText(String(index+1).padStart(2,'0')+' / 05');
+ }
+ await expect(page.getByRole('dialog',{name:'MY 와이어프레임',exact:true})).toBeVisible();
+ await expect(page.getByRole('button',{name:'다음 와이어프레임',exact:true})).toBeDisabled();
+ await page.keyboard.press('ArrowLeft');
+ await expect(page.getByRole('dialog',{name:'참가 확인 와이어프레임',exact:true})).toBeVisible();
+ await expect(page).toHaveURL(/#section-07$/);
+ await page.keyboard.press('Escape');
+ await expect(page.locator('.image-dialog')).not.toBeVisible();
+ await expect(opening).toBeFocused();
+});
+
+test('single evidence image does not display wireframe gallery controls',async({page})=>{
+ await page.goto('/');
+ await page.locator('#section-01 .evidence-preview').click();
+ await expect(page.locator('.image-dialog')).toBeVisible();
+ await expect(page.locator('.image-dialog-navigation')).toBeHidden();
+ await expect(page.locator('.image-dialog-caption')).toBeHidden();
+ await page.keyboard.press('Escape');
+ await expect(page.locator('#section-01 .evidence-preview')).toBeFocused();
+});
+
+test('task steps and exception buttons connect their numbered paths',async({page})=>{
+ await page.goto('/#section-06');
+ const steps=page.locator('#section-06 .flow-step-button');
+ const gates=page.locator('#section-06 .flow-gate-button');
+ await steps.nth(3).click();
+ await expect(gates.nth(0)).toHaveAttribute('aria-pressed','true');
+ await expect(gates.nth(1)).toHaveAttribute('aria-pressed','true');
+ await expect(gates.nth(2)).toHaveAttribute('aria-pressed','false');
+ await gates.nth(2).focus();await page.keyboard.press('Enter');
+ await expect(steps.nth(2)).toHaveAttribute('aria-pressed','true');
+ await expect(steps.nth(4)).toHaveAttribute('aria-pressed','true');
+ await expect(steps.nth(3)).toHaveAttribute('aria-pressed','false');
+ await expect(page.locator('.flow-selection-status')).toContainText('03 · 05');
+ await expect(page).toHaveURL(/#section-06$/);
+});
+
+for(const width of [390,1440]){
+ test('reader enhancements remain usable and accessible at '+width+'px',async({page})=>{
+  await page.setViewportSize({width,height:1080});await page.goto('/#section-07');
+  await page.getByRole('button',{name:'경기 상세 와이어프레임 확대',exact:true}).click();
+  await expect(page.locator('.image-dialog-caption')).toContainText('추천 이유');
+  expect(await page.locator('.image-dialog').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
+  await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
+  let scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
+  await page.keyboard.press('Escape');
+  await page.locator('.toc-item').nth(5).click();await page.locator('.flow-step-button').nth(2).click();
+  scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
+  await page.locator('.toc-item').nth(9).click();
+  await expect(page.locator('.qa-confirmed-result')).toHaveCount(3);
+  await expect(page.locator('#qa-table-hint')).toContainText('전환율·만족도 개선 성과를 의미하지 않음');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ });
+}
