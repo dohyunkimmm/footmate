@@ -780,7 +780,6 @@ body{background:var(--cs-canvas)}
 .image-dialog-caption,.image-dialog-body{background:#f1f5ee}
 @media(min-width:801px){
  .sb-brand{border-bottom-color:var(--cs-edge)}
- #main .slide:not(#section-01) .story-card{background:#fff}
 }
 @media(max-width:800px){
  .sidebar{background:#fff;border-bottom-color:var(--cs-edge)}
