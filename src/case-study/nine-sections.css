@@ -767,7 +767,7 @@ body{background:var(--cs-canvas)}
 #section-09 .ai-contract>.story-card:nth-child(3) .eyebrow{color:#d2ff73}
 #section-09 .ai-contract>.story-card:nth-child(4){background:#f1f7e7;border-top:3px solid #b9df72}
 #section-09>.card-grid>.story-card{background:#fff}
-#section-10 .qa-case-number{display:inline-flex;padding:3px 7px;border-radius:6px;background:#eaf2e7}
+#section-10 .qa-case-number{display:inline-flex;padding:3px 7px;margin:0 8px 0 0;vertical-align:middle;border-radius:6px;background:#eaf2e7}
 #section-10 .qa-evidence-table .qa-confirmed-result{background:#eaf3e5;border-left-color:#84a88a}
 #section-11>.card-grid>.story-card{background:#fff}
 #section-11 .reflection-bottom>.story-card{background:#fff}
@@ -805,3 +805,8 @@ body{font-size:var(--cs-body-size);line-height:1.8}
  .portfolio-task-grid p,.detail-body,.detail-body>p:not(.small-copy):not(.source-note),.source-overview),
 #main .slide .table-wrap :is(th,td),
 #section-06 .flow li>span:not(.flow-number){font-size:var(--cs-body-size);line-height:1.8}
+
+/* Give desktop sections a little more space below the top bar. */
+@media(min-width:801px){
+  #main .slide{padding-top:48px}
+}
