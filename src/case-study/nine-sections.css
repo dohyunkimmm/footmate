@@ -794,3 +794,11 @@ body{background:var(--cs-canvas)}
 
 /* Keep selected navigation readable on the light mobile surface. */
 .toc-item.on :is(.toc-n,.toc-t,.toc-s){color:#0b4231}
+
+/* Compact desktop table of contents: one English title per row. */
+@media(min-width:801px){
+  .toc-item{align-items:center;padding-inline:10px;gap:8px}
+  .toc-n{flex:0 0 16px;padding-top:0;line-height:1.5;font-variant-numeric:tabular-nums}
+  .toc-t{font-size:12px;line-height:1.5;white-space:nowrap}
+  .toc-s{display:none}
+}
