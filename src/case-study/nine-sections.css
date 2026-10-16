@@ -56,12 +56,11 @@
 }
 .skip-link:not(:focus){clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden}
 
-/* Balance desktop navigation across the space between the brand and footer. */
+/* Keep desktop navigation at a stable rhythm below the brand. */
 @media(min-width:801px){
   .sidebar{display:flex;flex-direction:column}
   .sb-brand,.sidebar-foot{flex-shrink:0}
-  /* Grow rows from 58px to 68px and gaps from 0 to 9px as viewport height allows. */
-  .toc{display:grid;flex:0 0 auto;grid-template-rows:repeat(11,minmax(clamp(48px,calc(9px + 4svh),58px),auto));row-gap:clamp(0px,calc(-38.4px + 5svh),9px);align-content:start;padding:8px 0;margin-block:auto}
+  .toc{display:grid;flex:0 0 auto;grid-auto-rows:minmax(58px,auto);row-gap:4px;align-content:start;padding:12px 0;margin:0}
   .toc-item{align-items:center;padding-top:10px;padding-bottom:10px}
   .toc-n{padding-top:0}
   .sidebar-foot{margin:0}
@@ -794,3 +793,16 @@ body{background:var(--cs-canvas)}
 
 /* Keep selected navigation readable on the light mobile surface. */
 .toc-item.on :is(.toc-n,.toc-t,.toc-s){color:#0b4231}
+
+
+/* Share one narrative text size across sections; retain headings and supporting labels. */
+:root{--cs-body-size:14px}
+body{font-size:var(--cs-body-size);line-height:1.8}
+#main .slide :is(.lead,.problem-statement p,.story-card p,.priority-card p,
+ .decision-row p:not(.small-copy),.persona-panel dd,.jtbd-panel p,
+ .journey-map p,.journey-checkpoints p,.ia-branches ul,.demo-panel p,
+ .callout p,.closing-note p,.next-list p:not(.small-copy),.reflection-bottom ul,
+ .wireframe-record>p:not(.small-copy):not(.wireframe-step),.decision-proof dd,
+ .portfolio-task-grid p,.detail-body,.detail-body>p:not(.small-copy):not(.source-note),.source-overview),
+#main .slide .table-wrap :is(th,td),
+#section-06 .flow li>span:not(.flow-number){font-size:var(--cs-body-size);line-height:1.8}
