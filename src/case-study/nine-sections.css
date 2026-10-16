@@ -61,8 +61,8 @@
   .sidebar{display:flex;flex-direction:column}
   .sb-brand,.sidebar-foot{flex-shrink:0}
   .toc{display:grid;flex:0 0 auto;grid-auto-rows:minmax(48px,auto);row-gap:4px;align-content:start;padding:12px 0;margin:0}
-  .toc-item{align-items:center;padding-top:10px;padding-bottom:10px}
-  .toc-n{padding-top:0}
+  .toc-item{display:grid;grid-template-columns:20px minmax(0,1fr);column-gap:10px;align-items:center;padding:10px 16px}
+  .toc-n{padding-top:0;text-align:center;font-variant-numeric:tabular-nums;line-height:1.5}
   .sidebar-foot{margin:0}
 }
 
@@ -454,7 +454,6 @@ html:has(.image-dialog[open]){overflow:hidden}
 
 /* Desktop title review: retain copy and shell; let compact headings read on one line. */
 @media(min-width:1400px){
-  .toc-item{padding-inline:8px;gap:8px}
   .section-head h1{font-size:32px;text-wrap:wrap}
   #section-01 .section-head h1{font-size:28px}
   .section-head h1 .cs-title-break{display:none}
