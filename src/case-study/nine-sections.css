@@ -61,7 +61,7 @@
   .sidebar{display:flex;flex-direction:column}
   .sb-brand,.sidebar-foot{flex-shrink:0}
   /* Grow rows from 58px to 68px and gaps from 0 to 9px as viewport height allows. */
-  .toc{display:grid;flex:0 0 auto;grid-template-rows:repeat(11,minmax(clamp(48px,calc(9px + 4svh),58px),auto));row-gap:clamp(0px,calc(-38.4px + 5svh),9px);align-content:start;padding:8px 0;margin-block:auto}
+  .toc{display:grid;flex:0 0 auto;grid-template-rows:repeat(11,minmax(44px,auto));row-gap:4px;align-content:start;padding:12px 0;margin-block:0}
   .toc-item{align-items:center;padding-top:10px;padding-bottom:10px}
   .toc-n{padding-top:0}
   .sidebar-foot{margin:0}
