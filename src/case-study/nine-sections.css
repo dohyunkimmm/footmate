@@ -637,11 +637,11 @@ html:has(.image-dialog[open]){overflow:hidden}
  }
 }
 
-/* Center each desktop section between the header and reader controls. */
+/* Keep desktop section headings at a consistent top position. */
 @media(min-width:801px){
   .viewer{display:flex;flex-direction:column;min-height:calc(100svh - 3px)}
   .viewer>.topbar,.viewer>.cs-controls{flex-shrink:0}
-  .viewer>.track{flex:1;display:grid;align-items:center;min-width:0}
+  .viewer>.track{flex:1;display:grid;align-items:start;align-content:start;min-width:0}
   .viewer>.track>.slide{width:100%;min-height:0;padding-block:32px}
   .viewer>.cs-controls{width:100%}
 }
