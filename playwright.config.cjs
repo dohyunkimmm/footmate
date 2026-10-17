@@ -5,7 +5,7 @@ const externalBaseURL = process.env.BASE_URL || '';
 module.exports = defineConfig({
   testDir: './tests/e2e',
   // Retired 13-section specs are preserved in Git history, not this test tree.
-  // Current nine-stage acceptance is covered by case-study-nine-stages.spec.cjs.
+  // Current 11-section acceptance is covered by case-study-eleven-stages.spec.cjs.
   timeout: 30_000,
   expect: { timeout: 7_000 },
   fullyParallel: false,
