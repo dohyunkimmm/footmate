@@ -10,6 +10,20 @@
 - 검증 경계: #638 시점에 정확한 Production 최종 QA 성공은 아직 입증되지 않았으므로 모델 연결 및 전체 Production Smoke 합격을 주장하지 않음. 운영 검증 코드의 primary/fallback 순서와 브라우저 검사·회귀 계약을 현재 API 기본값과 일치시킨 뒤 동일 SHA/운영 상태를 재검증해야 함.
 - Scope: `/demo` AI 검색 및 규칙 기반 대체 검색만 변경. `/beta`, 결제/인증, 사용자 데이터, 현재 11개 섹션 Case Study의 구성과 평가 근거는 변경하지 않음.
 
+## 2026-10-18 — Production AI 검사 정합성 복구 · #639
+
+- QA/문서 PR [#639](https://github.com/dohyunkimmm/footmate/pull/639) · main squash merge `5309a8deb4ac6e76c6dd545d2c4a6444d5900579`. 운영 API의 primary `openai/gpt-5.4-nano` / fallback `openai/gpt-5.4-mini` 설정에 HTTP Smoke, AI inference, Production browser의 기대값을 일치시키고 원본 API 기본값과 검사 스크립트의 정합성 계약을 추가.
+- 실제 [PR 검증 run 39077777285](https://github.com/dohyunkimmm/footmate/actions/runs/39077777285) completed/success: Regression 36, Browser E2E + axe, strict Production HTTP Smoke, 실제 Gateway 추론(`openai/gpt-5.4-nano`, `fallbackUsed=false`), Chromium 15건 및 release journeys 8건 PASS. 해당 검증은 `#639` PR SHA와 운영 URL의 조합이며, 병합된 새 main SHA의 Production 배포 상태는 별도 main QA와 대조해야 한다.
+- 코드 범위: 검증 테스트·회귀 계약·역사적 릴리스 문서 및 현행/과거 Case Study 참조만 수정. AI 서버 구현, Demo/Beta 사용자 상태, 결제·인증·데이터베이스는 수정하지 않음.
+
+## 2026-10-12~13 — Case Study 11개 섹션 전환 · 당시 변경 이력
+
+- [#616](https://github.com/dohyunkimmm/footmate/pull/616) · merge `e8597e9f5870a449c63200bbfdf89bd5d594cca4`: 공개 `/`의 이전 9단계를 11개 섹션으로 재구성. 문제/리서치/페르소나/우선순위/IA/복구/화면/정책/AI/검증/회고로 분리하고 Demo 구현에서 재구성한 와이어프레임 5개·Figma 원본을 증빙으로 연결. 실제 베타 사용자 성과나 출시 효과를 주장하지 않음.
+- [#617](https://github.com/dohyunkimmm/footmate/pull/617) · merge `098c96e441a952f0ff5ef27a429ebd85f5bf09fd`: 카드·펼침 UI·모바일 정책 표·와이어프레임 정리. [#618](https://github.com/dohyunkimmm/footmate/pull/618) · merge `fcc9e31cb76475b2fdc1a8451a65926310ee8095`: 1920px 화면 시각 위계·본문 폭 조정.
+- [#619](https://github.com/dohyunkimmm/footmate/pull/619) · merge `ce75db785bb1809a6bfe2d5a4897a398940a658a`: 타이포그래피, 간격 및 모션 감소 대응. [#620](https://github.com/dohyunkimmm/footmate/pull/620) · merge `75c9ae2a39de00bef5192a8ec7b65a3441060182`: 당시 미사용 Case Study CSS 제거.
+- 적용 경계: 이 항목은 위 PR의 당시 변경 사실이다. 현재 공개 섹션 구성/수용 기준은 [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md), `index.html`, `src/case-study/nine-sections.{js,css}` 및 `tests/e2e/case-study-eleven-stages.spec.cjs`를 따른다. 과거 9/13단계 문서는 이력으로 보존하고 최신 Case Study UI 변경을 이 당시 코드로 되돌리지 않는다.
+- 검증 경계: 사용자 과업 기록, 개발 QA, 계측 예정 KPI는 서로 다른 증거 수준이며 출시 성과·개선율의 인과를 임의로 주장하지 않는다.
+
 ## 2026-10-10 — Release App P0–P2 flow 개선·운영 검증 완료
 
 - Scope: `/app` 신규/재방문 routing을 canonical session에 따라 Welcome/Setup → Home 또는 MY로 복귀. 기존 legacy `schedule` → MY 호환 유지; 명시적 체험 초기화는 별도 기능.
