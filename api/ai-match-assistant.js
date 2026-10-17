@@ -93,7 +93,7 @@ function applySemanticGuardrails(message,candidate){
   let changed=false;
   const time=userText.match(/(오전|오후|새벽)\s*12\s*(?:시(?:\s*(\d{1,2})\s*분?)?|:(\d{2}))\s*(?:이후|후|넘어서|넘어)/);
   if(time){
-    const minute=Number(time[3]||time[4]||0);
+    const minute=Number(time[2]||time[3]||0);
     if(minute<=59){
       const corrected=(time[1]==='오후'?'12':'00')+':'+String(minute).padStart(2,'0');
       if(result.afterTime!==corrected){result.afterTime=corrected;changed=true}
