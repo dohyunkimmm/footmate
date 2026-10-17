@@ -1,5 +1,7 @@
 # Case Study · 포트폴리오 P0–P2 개선 · 2026-10-10
 
+> **과거 9단계 적용 기록** · 현재 공개 Case Study는 11개 섹션이며, 현행 구성과 검증 기준은 [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) 및 `tests/e2e/case-study-eleven-stages.spec.cjs`를 우선합니다. 아래는 2026-10-10 당시 변경 이력으로 보존합니다.
+
 목적: 이력서를 별도로 제출하는 프로젝트 포트폴리오. 채용 연락, 이력서 CTA, 직무 랜딩은 포함하지 않음. 기존 9단계 목차와 색상·딥링크·이미지 확대·샘플 앱 경계를 유지.
 
 ## P0 · 판단과 구현/검증 근거의 연결
