@@ -1,6 +1,6 @@
 const GATEWAY_URL='https://ai-gateway.vercel.sh/v1/responses';
-const MODEL=process.env.FOOTMATE_AI_MODEL||'openai/gpt-5.4-mini';
-const FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'openai/gpt-5.4-nano';
+const MODEL=process.env.FOOTMATE_AI_MODEL||'openai/gpt-5.4-nano';
+const FALLBACK_MODEL=process.env.FOOTMATE_AI_FALLBACK_MODEL||'openai/gpt-5.4-mini';
 const VERSION='5.1.1';
 const LIMIT_WINDOW_MS=5*60*1000;
 const LIMIT_MAX=10;
@@ -86,6 +86,33 @@ function normalizeResult(candidate={}){
   const reply=typeof candidate.reply==='string'&&candidate.reply.trim()?candidate.reply.trim().slice(0,180):'요청을 경기 검색 조건으로 정리했어요.';
   return {intent,region,position,level,maxPrice,maxDistanceMin,afterTime,reply};
 }
+// Repair only exact, unambiguous constraints that can be verified from the input.
+function applySemanticGuardrails(message,candidate){
+  const result=normalizeResult(candidate);
+  const userText=String(message||'');
+  let changed=false;
+  const time=userText.match(/(오전|오후|새벽)\s*12\s*(?:시(?:\s*(\d{1,2})\s*분?)?|:(\d{2}))\s*(?:이후|후|넘어서|넘어)/);
+  if(time){
+    const minute=Number(time[3]||time[4]||0);
+    if(minute<=59){
+      const corrected=(time[1]==='오후'?'12':'00')+':'+String(minute).padStart(2,'0');
+      if(result.afterTime!==corrected){result.afterTime=corrected;changed=true}
+    }
+  }
+  const afterExclusion=userText.match(/(?:말고|빼고|제외하고|제외한|제외)\s*([^,.!?]+)/);
+  if(afterExclusion){
+    const tail=afterExclusion[1];
+    const positive=[
+      [/골키퍼|키퍼|\bGK\b/i,'GK'],
+      [/미드필더|\bMF\b/i,'MF'],
+      [/포워드|공격수|\bFW\b/i,'FW'],
+      [/수비수|수비|디펜더|\bDF\b/i,'DF']
+    ].find(([pattern])=>pattern.test(tail));
+    if(positive&&result.position!==positive[1]){result.position=positive[1];changed=true}
+  }
+  if(changed)result.reply='요청하신 시간·포지션 조건을 검색에 반영했어요.';
+  return result;
+}
 function gatewayErrorType(payload){return typeof payload?.error?.type==='string'?payload.error.type:null}
 function supportsStrictSchema(model){return /^openai\//.test(model)&&String(process.env.FOOTMATE_AI_STRICT_SCHEMA||'auto').toLowerCase()!=='false'}
 function shouldTryFallback(attempt){
@@ -123,6 +150,8 @@ module.exports=async function handler(req,res){
     'Date expressions such as 오늘, 내일, 주말 are not supported. Ignore them rather than inventing a date constraint.',
     'If a constraint is not present, return null. Keep current preferences only as context; do not copy them into constraints unless the user asks to keep/refine them.',
     'Convert Korean price expressions such as 2만원 이하 to integer KRW. Convert time such as 8시 이후 to HH:MM. If the user says 가까운 경기 without a number, use maxDistanceMin 20.',
+    '오전 12시 이후 means 00:00 midnight; 오전 12시 30분 이후 means 00:30. 오후 12시 이후 means 12:00 noon.',
+    'Respect explicit negative conditions: 수비수 제외하고 골키퍼 -> GK; 골키퍼 말고 공격수 -> FW.',
     'reply must be one short Korean sentence describing only the interpreted constraints, never claiming a specific match exists or is available.'
   ].join(' ');
   const input=`현재 설정: ${JSON.stringify(preferences)}\n사용자 요청: ${message}`;
@@ -156,5 +185,5 @@ module.exports=async function handler(req,res){
   if(!text)return send(res,502,{mode:'unavailable',error:'ai_empty_output',retryable:true,model:attempt.model});
   const parsed=parseOutputText(text);
   if(!parsed)return send(res,502,{mode:'unavailable',error:'ai_invalid_output',retryable:true,model:attempt.model});
-  return send(res,200,{version:VERSION,mode:'connected-ai',provider:'vercel-ai-gateway',model:attempt.model,fallbackUsed:usedFallback,result:normalizeResult(parsed)});
+  return send(res,200,{version:VERSION,mode:'connected-ai',provider:'vercel-ai-gateway',model:attempt.model,fallbackUsed:usedFallback,result:applySemanticGuardrails(message,parsed)});
 };
