@@ -36,3 +36,21 @@ test('Case Study demo CTA detection accepts JS-escaped and literal HTML quotes',
   assert.equal(hasCaseStudyDemoCta(String.raw`<a href=\"/demo\">Try demo</a>`),true);
   assert.equal(hasCaseStudyDemoCta('<a href="/other">Try demo</a>'),false);
 });
+
+test('Production AI model assertions stay aligned with the API defaults',()=>{
+  const root=resolve(__dirname,'../..');
+  const api=readFileSync(resolve(root,'api/ai-match-assistant.js'),'utf8');
+  const primary=api.match(/const MODEL=process\.env\.FOOTMATE_AI_MODEL\|\|'([^']+)'/)?.[1];
+  const fallback=api.match(/const FALLBACK_MODEL=process\.env\.FOOTMATE_AI_FALLBACK_MODEL\|\|'([^']+)'/)?.[1];
+  assert.ok(primary,'API primary model default missing');
+  assert.ok(fallback,'API fallback model default missing');
+  assert.notEqual(primary,fallback);
+  const http=readFileSync(resolve(root,'tests/production-smoke.cjs'),'utf8');
+  const inference=readFileSync(resolve(root,'tests/production-ai.cjs'),'utf8');
+  const browser=readFileSync(resolve(root,'tests/e2e/production-app.spec.cjs'),'utf8');
+  assert.ok(http.includes(`api.model==='${primary}'`),'HTTP smoke primary model differs from API');
+  assert.ok(http.includes(`api.fallbackModel==='${fallback}'`),'HTTP smoke fallback model differs from API');
+  assert.ok(inference.includes(`FOOTMATE_EXPECTED_AI_MODEL||'${primary}'`),'Inference smoke primary model differs from API');
+  assert.ok(inference.includes(`FOOTMATE_EXPECTED_AI_FALLBACK_MODEL||'${fallback}'`),'Inference smoke fallback model differs from API');
+  assert.ok(browser.includes(`expect(health.model).toBe('${primary}')`),'Browser smoke model differs from API');
+});

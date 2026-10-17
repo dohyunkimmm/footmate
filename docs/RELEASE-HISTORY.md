@@ -2,6 +2,14 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+## 2026-10-18 — AI 검색 해석·기본 모델 경계 정정
+
+- Runtime PR [#637](https://github.com/dohyunkimmm/footmate/pull/637) · main `d392ad381f6ee1d35e947bff3414bbbff8f67465`: 브라우저 규칙 기반 복구에서 시간(저녁/밤·시각), 복합 금액, 지역·포지션 제외 표현을 보완. 추천 순위 소유권은 변경하지 않음.
+- Runtime PR [#638](https://github.com/dohyunkimmm/footmate/pull/638) · main `3f5c855f1490a1025d0a59bc3ea6329187d6a89f`: 실제 Gateway 가용성에 맞춰 API 기본 primary를 `openai/gpt-5.4-nano`, fallback을 `openai/gpt-5.4-mini`로 변경(환경변수 재설정 가능). 자연어의 오전/오후 12시 및 제외 이후 명시된 포지션을 원문 기준으로 보정. AI는 검색 조건만 해석하고 실제 후보·순위·추천 이유는 규칙 엔진이 결정.
+- Main CI: #637 [run 39067104801](https://github.com/dohyunkimmm/footmate/actions/runs/39067104801) completed/success. #638 [run 39068475971](https://github.com/dohyunkimmm/footmate/actions/runs/39068475971)에서 Regression 36 및 Browser E2E + axe는 success. Production HTTP Smoke는 이전 모델 `mini`를 primary로 고정한 검사 코드의 `Error: AI primary model`에서 중단돼 이후 AI inference/Chromium Production 검사는 실행되지 않음.
+- 검증 경계: #638 시점에 정확한 Production 최종 QA 성공은 아직 입증되지 않았으므로 모델 연결 및 전체 Production Smoke 합격을 주장하지 않음. 운영 검증 코드의 primary/fallback 순서와 브라우저 검사·회귀 계약을 현재 API 기본값과 일치시킨 뒤 동일 SHA/운영 상태를 재검증해야 함.
+- Scope: `/demo` AI 검색 및 규칙 기반 대체 검색만 변경. `/beta`, 결제/인증, 사용자 데이터, 현재 11개 섹션 Case Study의 구성과 평가 근거는 변경하지 않음.
+
 ## 2026-10-10 — Release App P0–P2 flow 개선·운영 검증 완료
 
 - Scope: `/app` 신규/재방문 routing을 canonical session에 따라 Welcome/Setup → Home 또는 MY로 복귀. 기존 legacy `schedule` → MY 호환 유지; 명시적 체험 초기화는 별도 기능.

@@ -33,7 +33,7 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   const health=await api.json();
   expect(health.version).toBe('5.1.1');
   expect(health.provider).toBe('vercel-ai-gateway');
-  expect(health.model).toBe('openai/gpt-5.4-mini');
+  expect(health.model).toBe('openai/gpt-5.4-nano');
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.5.0');
   await expect(page.locator('.toc-item')).toHaveCount(11);
