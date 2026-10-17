@@ -34,12 +34,33 @@ function normalizeResult(candidate={}){
 function fallbackParse(message){
   const text=String(message||'').trim();
   let region=null,position=null,level=null,maxPrice=null,maxDistanceMin=null,afterTime=null;
-  if(/인계|권선|매탄/.test(text))region='수원 · 인계';else if(/영통|망포|광교/.test(text))region='수원 · 영통';else if(/기흥|보정|죽전/.test(text))region='용인 · 기흥';else if(/강남|서초|송파|잠실/.test(text))region='서울 · 강남';
-  if(/미드필더|\bMF\b/i.test(text))position='MF';else if(/포워드|공격수|\bFW\b/i.test(text))position='FW';else if(/수비|디펜더|\bDF\b/i.test(text))position='DF';else if(/골키퍼|키퍼|\bGK\b/i.test(text))position='GK';
-  if(/중급\+|중급 이상|빠른 템포/.test(text))level='중급+';else if(/초중급/.test(text))level='초중급';else if(/입문|초보/.test(text))level='입문';else if(/중급/.test(text))level='중급';
-  const manwon=text.match(/(\d+(?:\.\d+)?)\s*만\s*원?/),won=text.match(/(\d{4,5})\s*원/);if(manwon)maxPrice=Math.round(Number(manwon[1])*10000);else if(won)maxPrice=Number(won[1]);
-  const distance=text.match(/(\d{1,2})\s*분\s*(?:이내|안|거리)?/);if(distance&&/(가까|거리|이동|분 이내|분 안)/.test(text))maxDistanceMin=Number(distance[1]);else if(/가까운|가까이|멀지/.test(text))maxDistanceMin=20;
-  const time=text.match(/(\d{1,2})\s*시(?:\s*(\d{1,2})\s*분)?\s*(?:이후|후|넘어서|넘어)/);if(time){const hour=Math.min(23,Number(time[1])),minute=Math.min(59,Number(time[2]||0));afterTime=`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`}
+  // Ignore explicit exclusions before extracting positive constraints.
+  const positive=text.replace(/(?:수원|인계|권선|매탄|영통|망포|광교|기흥|보정|죽전|강남|서초|송파|잠실|서울|용인|미드필더|포워드|공격수|수비수|수비|디펜더|골키퍼|키퍼|MF|FW|DF|GK)\s*(?:은|는|을|를)?\s*(?:빼고|제외하고|말고|제외)/gi,' ');
+  const locations=[[/인계|권선|매탄/,'수원 · 인계'],[/영통|망포|광교/,'수원 · 영통'],[/기흥|보정|죽전/,'용인 · 기흥'],[/강남|서초|송파|잠실/,'서울 · 강남']];
+  for(const [pattern,value] of locations){if(pattern.test(positive)){region=value;break}}
+  const positions=[[/미드필더|\bMF\b/i,'MF'],[/포워드|공격수|\bFW\b/i,'FW'],[/수비수|수비|디펜더|\bDF\b/i,'DF'],[/골키퍼|키퍼|\bGK\b/i,'GK']];
+  for(const [pattern,value] of positions){if(pattern.test(positive)){position=value;break}}
+  if(/중급\+|중급 이상|빠른 템포/.test(positive))level='중급+';
+  else if(/초중급/.test(positive))level='초중급';
+  else if(/입문|초보|초급/.test(positive))level='입문';
+  else if(/중급/.test(positive))level='중급';
+  const composite=positive.match(/(\d+)\s*만\s*(\d{1,4})\s*(?:천)?\s*원?/);
+  const manwon=positive.match(/(\d+(?:\.\d+)?)\s*만\s*원?/),won=positive.match(/(\d{4,6})\s*원/);
+  if(composite){
+    const rest=Number(composite[2]);
+    maxPrice=Number(composite[1])*10000+(composite[0].includes('천')?rest*1000:rest<10?rest*1000:rest);
+  }else if(manwon)maxPrice=Math.round(Number(manwon[1])*10000);
+  else if(won)maxPrice=Number(won[1]);
+  const distance=positive.match(/(\d{1,2})\s*분\s*(?:이내|안|거리)?/);
+  if(distance&&/(가까|거리|이동|분 이내|분 안)/.test(positive))maxDistanceMin=Number(distance[1]);
+  else if(/가까운|가까이|멀지/.test(positive))maxDistanceMin=20;
+  const time=positive.match(/(?:(오전|오후|아침|저녁|밤|새벽)\s*)?(\d{1,2})(?:\s*시(?:\s*(\d{1,2})\s*분?)?|:(\d{2}))\s*(?:이후|후|넘어서|넘어)/);
+  if(time){
+    let hour=Number(time[2]),minute=Number(time[3]||time[4]||0);
+    if((time[1]==='오후'||time[1]==='저녁'||time[1]==='밤')&&hour>=1&&hour<=11)hour+=12;
+    if((time[1]==='오전'||time[1]==='새벽')&&hour===12)hour=0;
+    if(hour<=23&&minute<=59)afterTime=String(hour).padStart(2,'0')+':'+String(minute).padStart(2,'0');
+  }
   return normalizeResult({intent:'search',region,position,level,maxPrice,maxDistanceMin,afterTime,reply:'AI 연결을 사용할 수 없어 기본 조건 해석으로 전환했어요.'});
 }
 async function requestAi(message,preferences){
