@@ -1,4 +1,4 @@
-/* FootMate Case Study · eleven-section narrative (legacy filename). Sources: Notion project page,
+/* FootMate Case Study · nine-stage narrative. Sources: Notion project page,
    SERVICE-PLANNING-EVIDENCE, USER-TEST-EVIDENCE and RELEASE-HISTORY. */
 (() => {
   'use strict';
