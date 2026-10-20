@@ -24,6 +24,13 @@ FootMate v6는 `/demo`을 개별 기능 데모가 아니라 **Find → Decide �
 - **P2 / MY·다음 경기:** MY의 현재 경기 상태는 유지하되 중복되는 `참가 확정 → 경기 당일 → 경기 후` 보조 설명은 펼침 영역으로 정리합니다. postgame 피드백이 기존 return history에 `completed: true`로 저장되고 `matchStage: postgame`이면 같은 `joinedMatchId`는 후속 Home 추천/Discover 결과에서 표시하지 않습니다. 저장된 경기 기록이나 기존 추천 로직 자체를 삭제·변경하지 않습니다.
 - **상태·경계:** `footmate:session`, `footmate:v5.1:ai`, `footmate:v5.2:discover-ai-snapshot`, `footmate:return`과 기존 domain/repository ownership을 재사용합니다. `/beta`, `/beta/operator`, Case Study, 실제 PG, 서버 간 계정 동기화는 이번 변경 범위가 아닙니다.
 
+## AI 자연어 검색 보정 · 2026-10-18
+
+- **검색 조건:** 저녁·밤·구체적 시각, 오전/오후 12시(분 단위 포함), 복합 금액, 지역·포지션 제외 표현을 사용자 요청 기준으로 해석합니다. 제외 조건과 뒤이은 명시적 포지션 요청이 함께 있으면 원문의 최종 명시적 의도를 기준으로 보정합니다.
+- **대체 해석:** Gateway 오류 시 브라우저 규칙 기반 검색이 시간·금액·제외 조건을 가능한 범위에서 복구합니다. 실제 경기 후보·순위·추천 이유는 결정론적 검색 로직이 계속 담당합니다.
+- **모델 기본값:** `openai/gpt-5.4-nano` primary, `openai/gpt-5.4-mini` fallback. 환경변수 `FOOTMATE_AI_MODEL`·`FOOTMATE_AI_FALLBACK_MODEL`로 덮어쓸 수 있어 운영 모델이 항상 이 기본값이라는 뜻은 아닙니다.
+- **검증 경계:** [Release History](RELEASE-HISTORY.md)의 #637~#639를 참고합니다. #638의 Production Smoke 모델 기대값 불일치는 #639에서 정정했고 해당 PR SHA/운영 URL로 실제 Gateway 추론을 검증했습니다. 후속 `main` SHA 배포 검증과는 구분하며, `/beta`, 결제·인증·서버 데이터 범위는 변경되지 않았습니다.
+
 ## State ownership
 
 - Matching / deterministic recommendation ownership은 기존 domain을 유지한다. 레벨 차이가 2단계 이상이면 높은 총점이 있어도 사용자-facing fit을 `경기 강도 차이 확인`으로 표시해 mismatch를 숨기지 않는다.
