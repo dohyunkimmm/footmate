@@ -116,6 +116,7 @@
 ## 10. 개인정보 / 보안
 
 - browser에는 publishable key만 둔다. service-role credential을 넣지 않는다.
+- AI 검색(`/api/ai-match-assistant`)의 기존 5분 요청 제한은 Function 인스턴스 메모리 기준이며, 분산 인스턴스 전체에 대한 보호가 아니다. 운영 트래픽·비용 제한은 Vercel Firewall/WAF의 해당 API 경로 별도 제한과 함께 검증한다.
 - 운영자 권한은 `public.operators` allowlist + TOTP MFA(AAL2) + RLS/RPC 내부 권한 재검증으로 보호한다.
 - MFA QR/설정 키는 운영자 본인 Authenticator 등록에만 사용하고 로그·문서·채팅에 남기지 않는다.
 - audit payload에는 email/name을 저장하지 않는다.
@@ -161,3 +162,12 @@ Pilot 변경은 변경 영향에 맞춰 다음 순서를 따른다.
 최종 runtime 또는 수동 Production QA가 확정된 뒤에는 [docs/README.md](README.md)의 공통 sync-up 순서를 따른다: README → Release History/Correction → Runbook(운영 절차 변경 시) → Notion(장기 제품 사실 변경 시) → Case Study(설명·핵심 흐름·근거에 실질적 변경이 있을 때) → 상충하는 `pending` / `미검증` / `별도 확인 대상` 문구 검색 → QA/merge. 단순한 Beta 운영·시각 수정만으로 Case Study를 중복 업데이트하지 않는다.
 
 Render는 backup/alternate deployment이며 모든 변경의 완료 조건이 아니다.
+
+## 14. 적용된 Supabase 마이그레이션 보존
+
+운영 프로젝트의 `supabase_migrations` 기록에는 아래 4개 버전이 **모두 적용된 이력**으로 존재한다. 각 쌍의 SQL 내용은 같지만 버전은 다르다.
+
+- `20260922012426_beta_push_media.sql` / `20260922013306_beta_push_media.sql`
+- `20260922012607_beta_push_worker_schedule.sql` / `20260922013447_beta_push_worker_schedule.sql`
+
+저장소 크기 정리를 이유로 어느 한쪽을 임의 삭제하거나 마이그레이션 이력을 직접 수정하지 않는다. 먼저 모든 연결 환경(운영·개발·복구)의 적용 버전과 재구축 방법을 검증하고, 기존 버전을 보존한 상태에서 새 마이그레이션부터 중복을 방지한다. 운영 스키마를 수정해야 할 때는 별도의 순방향 마이그레이션으로 처리한다.
