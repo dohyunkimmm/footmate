@@ -72,6 +72,7 @@ Demo의 선택 경기·참가 기록은 Beta 계정으로 이전되지 않습니
 
 ## 자세한 문서
 
+- [저장소 운영·브랜치 보호·남은 과제](docs/REPO-OPERATIONS.md) — 2026-10-22 GitHub/Vercel 검증 스냅샷
 - [문서 전체 목록](docs/README.md) · [Release App 상세](docs/RELEASE-APP.md)
 - [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md) · [사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)
 - [릴리스·QA 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
