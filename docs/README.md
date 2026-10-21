@@ -14,6 +14,8 @@
 
 ## Current release engineering docs
 
+- [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — 2026-10-22 브랜치 Ruleset, GitHub Actions, Vercel 배포, 적용 마이그레이션 보존 및 플랫폼 WAF 미완료 현황
+
 FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 같습니다.
 
 - [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
