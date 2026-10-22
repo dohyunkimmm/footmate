@@ -6,12 +6,19 @@
 
 | 영역 | 관측 결과 | 근거 |
 | --- | --- | --- |
-| 기본 브랜치 | `main` / 기준 SHA `85b9dd6c8e1918f2c9ce865fdda448f11c91552e` | [main](https://github.com/dohyunkimmm/footmate/commits/main) |
+| 기본 브랜치 | `main` / 문서 갱신 직전 기준 SHA `60fd6a5face8869f9ebbcfcf3ae944b889af17de` | [main](https://github.com/dohyunkimmm/footmate/commits/main) |
 | 브랜치 보호 | `Protect main` [Ruleset #22835628](https://github.com/dohyunkimmm/footmate/settings/rules/22835628) **active**; PR 필수, 강제 푸시·삭제 제한, strict 최신 브랜치 검사 | GitHub ruleset 조회 |
 | 필수 상태 검사 | 정확한 검사명 `Regression 36`, `Browser E2E + axe` (둘 다 통과) | [main CI](https://github.com/dohyunkimmm/footmate/actions/runs/39617435276) |
-| 배포 | 같은 SHA의 Vercel Production 배포 **READY** 및 `Production Smoke` 성공 | [Production Smoke](https://github.com/dohyunkimmm/footmate/actions/runs/39617435276) |
+| 배포 | 이전 런타임 SHA `85b9dd6`의 Vercel Production **READY** 및 `Production Smoke` 성공. 최신 문서-only SHA `60fd6a5`의 신규 Production 배포는 **CANCELED**, 해당 SHA에서 smoke는 **SKIPPED**. 새 런타임 배포 성공으로 오인 금지 | [기존 런타임 Smoke](https://github.com/dohyunkimmm/footmate/actions/runs/39617435276) · [docs sync PR #647](https://github.com/dohyunkimmm/footmate/pull/647) |
 | 적용된 Beta SQL 마이그레이션 | 중복처럼 보이는 **이미 적용된** 4개 마이그레이션은 이력 보존; 삭제·수정·재적용 금지. 운영 가이드만 보강 | [PR #644](https://github.com/dohyunkimmm/footmate/pull/644) |
 | 의존성 | `@vercel/oidc` 4.0.1 반영 | [PR #646](https://github.com/dohyunkimmm/footmate/pull/646) |
+
+## 2026-10-22 검증 이후 동기화
+
+- [문서 동기화 PR #647](https://github.com/dohyunkimmm/footmate/pull/647) 병합으로 운영 문서와 README 연결이 최신 `main`에 반영됐습니다. 해당 `main` SHA `60fd6a5`의 `Change Impact` / `Docs-only QA`는 **SUCCESS**, `Regression 36` / `Browser E2E + axe` / `Production Smoke`는 문서 변경이므로 **SKIPPED**입니다. 그 직전 런타임 SHA `85b9dd6`에서는 필수 회귀·브라우저 검사와 Production Smoke 모두 통과했습니다.
+- Vercel에서 최신 문서 커밋 `60fd6a5`의 production deployment는 **CANCELED**, 이전 런타임 SHA `85b9dd6`의 배포는 **READY**였습니다. 문서 갱신만으로 새 런타임 배포 성공을 주장하지 않습니다.
+- [Ruleset #22835628](https://github.com/dohyunkimmm/footmate/settings/rules/22835628) **active**, 정확한 필수 검사 `Regression 36` / `Browser E2E + axe`, `strict=true`를 재조회했습니다.
+- Vercel의 활성 Firewall/Seawall 구성 조회는 `404: Seawall Config not found`를 반환했습니다. 이 응답은 규칙 부재를 확정하는 근거가 아니므로 **대시보드의 실제 저장·활성 상태는 별도 확인 필요**로 취급합니다. [WAF 이슈 #645](https://github.com/dohyunkimmm/footmate/issues/645)는 미완료 유지.
 
 ## 진행 중 / 외부 운영 확인 필요
 
