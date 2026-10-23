@@ -1,5 +1,6 @@
 import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
 import {rankRecommendations} from '../platform/domain/recommendation.js';
+import {matchingAssessment} from '../platform/domain/recommendation.js';
 
 const root=document.getElementById('footmate-next');
 if(root){
@@ -44,6 +45,7 @@ if(root){
 
   function card(item,index,scope='home'){
     const match=item.match;
+    const assessment=matchingAssessment(match,readSession());
     // Home and Discover intentionally share one visible match-card metadata hierarchy.
     const homeMeta=scope==='home';
     return `<button type="button" class="fm-next-match-card" data-action="open-match" data-match-id="${match.id}" data-recommendation-score="${item.score}" data-recommendation-region="${match.region}" aria-label="${match.place} 상세 보기">
@@ -52,6 +54,7 @@ if(root){
         <div class="fm-next-match-place">${match.place}</div>
       </div>
       <div class="fm-next-match-body">
+        <div class="fm-match-assessment" data-match-assessment>${assessment.strengths.length?`<span><b>맞는 점</b> ${assessment.strengths.join(' · ')}</span>`:''}${assessment.cautions.length?`<span class="fm-match-caution"><b>확인할 점</b> ${assessment.cautions.join(' · ')}</span>`:''}</div>
         <div class="fm-next-match-tags"><span class="fm-next-tag fm-next-tag--strong">${item.fit}</span><span class="fm-next-tag">예시 ${match.distance}</span><span class="fm-next-tag"${homeMeta?' style="display:inline-flex"':''}>${item.spotLabel}</span><span class="fm-next-tag" style="${homeMeta?'display:inline-flex;':''}margin-left:auto;white-space:nowrap">${match.level}</span></div>
         <div class="fm-next-match-footer"><div><small>${match.format} · ${match.duration}</small></div><div class="fm-next-price"><span class="fm-next-price-sample">샘플</span> ${money(match.price)}</div></div>
       </div>

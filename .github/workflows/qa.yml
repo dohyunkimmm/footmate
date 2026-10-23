@@ -125,6 +125,8 @@ jobs:
         run: node scripts/check-app-performance-budget.cjs
       - name: Run platform regression contracts
         run: node tests/contracts/platform.contract.mjs
+      - name: Check player-to-match suitability facts
+        run: node tests/contracts/matching.contract.mjs
       - name: Run release candidate contracts
         run: node tests/contracts/release-candidate.contract.mjs
       - name: Run connected platform contracts

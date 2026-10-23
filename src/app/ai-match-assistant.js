@@ -1,4 +1,5 @@
 import {MATCHES,NEXT_STORAGE_KEY,createState} from './data.js';
+import {matchingAssessment} from '../platform/domain/recommendation.js';
 import {footmatePlatform} from '../platform/application/platform.js';
 
 const VERSION='5.1.1';
@@ -78,7 +79,7 @@ async function requestAi(message,preferences){
 // The existing recommendation engine remains the owner of ranking in both presentations.
 function deterministicResults(result,state,limit=3){
   const effective={...state,region:result.region||state.region,position:result.position||state.position,level:result.level||state.level};
-  const ranked=typeof window.__FOOTMATE_RECOMMENDATION__?.rank==='function'?window.__FOOTMATE_RECOMMENDATION__.rank(effective):MATCHES.map((match,index)=>({id:match.id,score:100-index,fit:match.fit,reasons:match.reasons.map(reason=>reason.title)}));
+  const ranked=typeof window.__FOOTMATE_RETURN__?.rank==='function'?window.__FOOTMATE_RETURN__.rank(effective):typeof window.__FOOTMATE_RECOMMENDATION__?.rank==='function'?window.__FOOTMATE_RECOMMENDATION__.rank(effective):MATCHES.map((match,index)=>({id:match.id,score:100-index,fit:match.fit,reasons:match.reasons.map(reason=>reason.title)}));
   const byId=new Map(MATCHES.map(match=>[match.id,match]));const threshold=timeMinutes(result.afterTime);
   return ranked.map(item=>({item,match:byId.get(item.id)})).filter(({match})=>{if(!match)return false;if(result.region&&match.region!==result.region)return false;if(result.position&&Number(match.positionSlots?.[result.position]||0)<=0)return false;if(result.maxPrice!=null&&match.price>result.maxPrice)return false;if(result.maxDistanceMin!=null&&match.distanceMin>result.maxDistanceMin)return false;if(threshold!=null){const minutes=matchTimeMinutes(match);if(minutes!=null&&minutes<threshold)return false}return true}).slice(0,limit);
 }
@@ -140,8 +141,8 @@ if(root){
     if(submit)submit.setAttribute('aria-label','AI로 찾기');
 
     if(isHome){
-      setText(title,'AI에게 원하는 경기를 검색해보세요.');
-      setText(copy,'AI가 자연어 조건을 해석하고 기존 추천 엔진이 맞는 경기 순위를 계산합니다.');
+      setText(title,'원하는 매칭 조건을 말해보세요.');
+      setText(copy,'시간·가격처럼 꼭 맞출 조건을 말하면 AI가 정리해요. 경기 강도·포지션을 함께 보고 맞는 경기를 찾아요.');
       if(input&&input.placeholder!=='예: 8시 이후, 가까운 중급 MF')input.placeholder='예: 8시 이후, 가까운 중급 MF';
       setText(submit,'AI로 찾기');
       examples.forEach(button=>{button.hidden=false;button.style.minHeight='44px'});
@@ -292,7 +293,7 @@ function configureHome(screen){
     let scope=assistant.querySelector('[data-desktop-ai-scope]');
     if(!scope){scope=document.createElement('p');scope.className='fm-desktop-ai-scope';scope.dataset.desktopAiScope='true';assistant.querySelector('.fm-ai-form')?.before(scope)}
     const profile=readState();
-    text(scope,`기본 추천 프로필: ${profile.region} · ${profile.position} · ${profile.level}. 아래 추천은 이 프로필 기준이며, AI 검색 조건은 경기 찾기에서 별도로 적용합니다.`);
+    text(scope,`내 매칭 기준: ${profile.region} · ${profile.position} · ${profile.level}. 추가 요청은 경기 찾기 결과에 적용돼요.`);
     assistant.querySelectorAll('[data-ai-example]').forEach(example=>{example.hidden=false;example.classList.add('fm-ia-suggestion');if(!example.hasAttribute('aria-pressed'))example.setAttribute('aria-pressed','false');example.style.minHeight='44px'});
     assistant.querySelector('.fm-ai-examples')?.setAttribute('aria-label','바로 실행할 AI 경기 검색 예시');
     const conditions=assistant.querySelector('[data-ai-conditions]');
@@ -320,8 +321,8 @@ function configureHome(screen){
     context.classList.toggle('fm-ia-selection-summary',!generic);
   }
   const head=screen.querySelector(':scope > .fm-next-section-head');
-  text(head?.querySelector('h2'),matchMedia('(min-width:960px)').matches?'내 조건에 맞는 추천':'For You');
-  text(head?.querySelector('p'),'내 설정을 기준으로 고른 추천 경기예요.');
+  text(head?.querySelector('h2'),'내 조건에 맞는 매칭');
+  text(head?.querySelector('p'),'맞는 점과 확인할 점을 보고 경기를 선택하세요.');
   const headAction=head?.querySelector('[data-action="nav-discover"]');
   if(matchMedia('(min-width:960px)').matches){
     text(context?.querySelector('[data-action="nav-discover"]'),'경기 목록 보기');
@@ -331,6 +332,7 @@ function configureHome(screen){
   const list=screen.querySelector(':scope > .fm-next-list');
   if(list){
     list.dataset.iaRole='personalized-recommendations';
+    if(assistant&&list.nextElementSibling!==assistant)list.after(assistant);
     const completedId=finishedMatchId();
     list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>{
       const completed=Boolean(completedId&&node.dataset.matchId===completedId);
@@ -355,9 +357,11 @@ function ensureSummary(screen,saved,active,zero=false){
   const labels=conditionLabels(saved.result),message=displayMessage(saved.message);
   const level=saved.result.level||'';
   const levelEditor=active?`<label class="fm-ia-ai-level-label" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;font-size:12px;font-weight:700;color:#355646">AI가 해석한 경기 레벨<select data-ia-correct-level aria-label="AI가 해석한 경기 레벨 수정" style="min-height:44px;max-width:52%;padding:6px 10px;border:1px solid #8da99a;border-radius:10px;background:#fff;color:#183f2c"><option value="">레벨 제한 없음</option>${LEVELS.map(value=>`<option value="${value}" ${value===level?'selected':''}>${value==='초중급'?'초급':value==='중급+'?'고급':value}</option>`).join('')}</select></label>`:'';
-  const relax=active&&zero&&nextRelaxation(saved.result)?`<button type="button" data-ia-action="relax-ai">${nextRelaxation(saved.result).label} 조건 완화</button>`:'';
-  const sig=JSON.stringify([active,zero,message,labels]);
-  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?'AI 조회 결과':'최근 AI 조회 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>${levelEditor}</div><div class="fm-discovery-ai-summary__actions">${relax}<button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'AI 조건 해제':'AI 조건 다시 적용'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
+  const relax=active&&zero?RELAX_FIELDS.filter(([key])=>saved.result[key]!=null).map(([key,label])=>`<button type="button" data-ia-action="relax-ai" data-relax-field="${key}">${label} 조건 완화</button>`).join(''):'';
+  const sig=JSON.stringify([active,zero,message,labels,saved.mode]);
+  const source=saved.mode==='connected-ai'?'AI가 해석한 조건':'기본 검색으로 해석한 조건';
+  const policy=active?'<p class="fm-match-policy">지역·시간·가격·거리·포지션은 입력한 제한을 적용해요. 경기 강도는 가까운 수준부터 비교하며 차이는 카드에서 확인할 수 있어요.</p>':'';
+  const markup=`<div class="fm-discovery-ai-summary__copy"><small>${active?source:'최근 매칭 조건'}</small><b>${escapeHtml(message)}</b><div class="fm-discovery-ai-summary__chips">${labels.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>${levelEditor}${policy}${zero?'<p class="fm-match-policy">유지할 조건은 그대로 두고, 넓혀도 괜찮은 조건을 직접 선택하세요.</p>':''}</div><div class="fm-discovery-ai-summary__actions">${relax}<button type="button" data-ia-action="${active?'show-all':'apply-ai'}">${active?'AI 조건 해제':'AI 조건 다시 적용'}</button><button type="button" data-ia-action="edit-ai">조건 다시 입력</button></div>`;
   if(summary.dataset.iaSignature===sig)return;
   summary.dataset.iaSignature=sig;summary.innerHTML=markup;
 }
@@ -371,8 +375,10 @@ function configureDiscover(screen){
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="discover"],.fm-ai-card[data-ai-assistant]');
   if(assistant){hidden(assistant,true);assistant.dataset.iaHidden='duplicate-assistant'}
   const saved=snapshot(),active=scopeActive();
-  const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'AI 조회 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
-  const allowed=active&&saved?.result?new Set(deterministicResults(normalizeResult(saved.result),readState(),Infinity).map(entry=>entry.match.id)):null;
+  const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'내 조건 매칭 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
+  const entries=active&&saved?.result?deterministicResults(normalizeResult(saved.result),readState(),Infinity):null;
+  const allowed=entries?new Set(entries.map(entry=>entry.match.id)):null;
+  const base=readState(),effective=active&&saved?.result?{...base,region:saved.result.region||base.region,position:saved.result.position||base.position,level:saved.result.level||base.level}:base;
   const cards=[...screen.querySelectorAll('.fm-next-list .fm-next-match-card')];let visible=0;
   const completedId=finishedMatchId();
   cards.forEach(node=>{
@@ -382,6 +388,12 @@ function configureDiscover(screen){
     if(completed)node.style.setProperty('display','none','important');
     else if(node.style.getPropertyValue('display')==='none'&&node.style.getPropertyPriority('display')==='important')node.style.removeProperty('display');
     node.dataset.iaAiMatch=matches&&allowed?'true':'false';if(matches)visible++;
+    const match=MATCHES.find(item=>item.id===node.dataset.matchId);
+    if(match){const assessment=matchingAssessment(match,effective);let panel=node.querySelector('[data-match-assessment]');
+      if(!panel){panel=document.createElement('div');panel.className='fm-match-assessment';panel.dataset.matchAssessment='true';node.querySelector('.fm-next-match-body')?.prepend(panel)}
+      const markup=`${assessment.strengths.length?`<span><b>맞는 점</b> ${escapeHtml(assessment.strengths.join(' · '))}</span>`:''}${assessment.cautions.length?`<span class="fm-match-caution"><b>확인할 점</b> ${escapeHtml(assessment.cautions.join(' · '))}</span>`:''}`;
+      if(panel&&panel.innerHTML!==markup)panel.innerHTML=markup;
+    }
   });
   const empty=ensureEmpty(screen);hidden(empty,!(active&&saved?.result&&visible===0));hidden(screen.querySelector('.fm-next-list'),Boolean(active&&saved?.result&&visible===0));
   text(screen.querySelector('.fm-discovery-count'),active&&saved?.result?`AI 결과 ${visible}개`:`${visible}개 경기`);
@@ -396,7 +408,7 @@ root.addEventListener('pointerdown',event=>{const example=event.target.closest('
 root.addEventListener('submit',event=>{if(event.target.closest('[data-screen="home"] [data-ai-form]')&&searchIntent!=='example')searchIntent='submit'},true);
 root.addEventListener('click',event=>{
   const action=event.target.closest('[data-ia-action]');
-  if(action){if(action.dataset.iaAction==='show-all'){setScope(false);enhance()}else if(action.dataset.iaAction==='apply-ai'){setScope(true);enhance()}else if(action.dataset.iaAction==='relax-ai'){const field=nextRelaxation(snapshot()?.result||{});if(field)updateAiConditions({[field.key]:null})}else if(action.dataset.iaAction==='edit-ai'){sessionStorage.setItem(FOCUS_KEY,'1');root.querySelector('[data-screen="discover"] [data-action="nav-home"]')?.click()}}
+  if(action){if(action.dataset.iaAction==='show-all'){setScope(false);enhance()}else if(action.dataset.iaAction==='apply-ai'){setScope(true);enhance()}else if(action.dataset.iaAction==='relax-ai'){const selected=RELAX_FIELDS.find(([key])=>key===action.dataset.relaxField);if(selected&&snapshot()?.result?.[selected[0]]!=null)updateAiConditions({[selected[0]]:null})}else if(action.dataset.iaAction==='edit-ai'){sessionStorage.setItem(FOCUS_KEY,'1');root.querySelector('[data-screen="discover"] [data-action="nav-home"]')?.click()}}
   if(event.target.closest('[data-action="reset-flow"]')){sessionStorage.removeItem(SNAPSHOT_KEY);sessionStorage.removeItem(SCOPE_KEY);sessionStorage.removeItem(FOCUS_KEY)}
 },true);
 root.addEventListener('change',event=>{
