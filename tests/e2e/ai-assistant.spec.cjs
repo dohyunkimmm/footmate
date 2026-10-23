@@ -9,6 +9,31 @@ async function chooseSetupDefaultIfNeeded(page){
   if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
 }
 const AxeBuilder=require('@axe-core/playwright').default;
+test('matching facts lead Home and failed AI examples disclose the rules source',async({page})=>{
+  await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await setup(page);
+  const home=page.locator('[data-screen="home"]');
+  await expect(home.getByRole('heading',{name:'내 조건에 맞는 매칭'})).toBeVisible();
+  await expect(home.locator('[data-match-assessment]').first()).toContainText('맞는 점');
+  expect(await home.evaluate(n=>Boolean(n.querySelector('.fm-next-list').compareDocumentPosition(n.querySelector('.fm-ai-card'))&Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  await home.locator('[data-ai-example]').first().click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-ia-ai-summary]')).toContainText('기본 검색으로 해석한 조건');
+  await expect(page.locator('[data-screen="discover"] [data-match-assessment]').first()).toContainText('맞는 점');
+});
+
+test('zero-match recovery lets the user relax price while preserving time and position',async({page})=>{
+  await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({mode:'connected-ai',result:{intent:'search',region:null,position:'GK',level:'중급',maxPrice:5000,maxDistanceMin:null,afterTime:'23:59',reply:'조건 확인'}})}));
+  await setup(page);
+  await page.getByLabel('찾고 싶은 경기 조건').fill('23시 59분 이후 5000원 이하 GK');
+  await page.getByRole('button',{name:'AI로 찾기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.getByRole('button',{name:'가격 조건 완화'})).toBeVisible();
+  await page.getByRole('button',{name:'가격 조건 완화'}).click();
+  const result=await page.evaluate(()=>window.__FOOTMATE_REAL_APP_IA__.assistant.result);
+  expect(result.maxPrice).toBeNull();expect(result.afterTime).toBe('23:59');expect(result.position).toBe('GK');
+  await expect(page.locator('[data-ia-ai-empty]')).toBeVisible();
+});
 async function setup(page){await page.goto('/demo',{waitUntil:'domcontentloaded'});await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()});await page.reload({waitUntil:'domcontentloaded'});await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible();await expect(page.locator('[data-ai-assistant="5.1.1"]')).toBeVisible()}
 
 test('v5.1.1 AI Match Assistant falls back to rules when local API is unavailable',async({page})=>{await setup(page);await page.getByLabel('찾고 싶은 경기 조건').fill('20분 안쪽에서 GK 자리 있는 경기');await page.getByRole('button',{name:'AI로 찾기'}).click();await expect(page.locator('[data-ai-mode]')).toHaveText('Rules fallback');await expect(page.locator('[data-screen="home"]')).toBeVisible();await expect(page.locator('[data-ai-conditions]')).toContainText('GK');await expect(page.locator('[data-ai-conditions]')).toContainText('20분 이내');await expect(page.locator('.fm-ai-result').first()).toBeHidden();await expect(page.locator('.fm-product-ai-retry')).toBeVisible();const runtime=await page.evaluate(()=>({version:window.__FOOTMATE_AI__?.version,mode:window.__FOOTMATE_AI__?.mode,rankingOwner:window.__FOOTMATE_AI__?.rankingOwner,timeout:window.__FOOTMATE_AI__?.requestTimeoutMs,hitl:window.__FOOTMATE_AI__?.hitl}));expect(runtime).toEqual({version:'5.1.1',mode:'rules-fallback',rankingOwner:'deterministic recommendation engine',timeout:7000,hitl:['join','payment']})});

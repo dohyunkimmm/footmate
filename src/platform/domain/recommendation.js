@@ -56,3 +56,14 @@ export function recommendationFor(match,state){
 export function rankRecommendations(matches,state){
   return [...matches].map(match=>recommendationFor(match,state)).sort((a,b)=>a.fitTier-b.fitTier||b.score-a.score||(a.match.distanceMin||99)-(b.match.distanceMin||99)||a.match.id.localeCompare(b.match.id));
 }
+
+// Explain player-to-match compatibility using catalog facts, never generated claims.
+export function matchingAssessment(match,state){
+  const item=recommendationFor(match,state);
+  const strengths=[],cautions=[];
+  (item.exactRegion?strengths:cautions).push(item.exactRegion?'선호 지역 일치':'선호 지역 밖의 대안');
+  const gap=levelGap(match.level,state.level);
+  (gap===0?strengths:cautions).push(gap===0?'설정한 경기 강도 일치':`경기 강도 ${gap}단계 차이`);
+  (item.slotCount>0?strengths:cautions).push(item.slotCount>0?`${state.position} 참가 가능`:`${state.position} 자리 마감`);
+  return {strengths,cautions};
+}

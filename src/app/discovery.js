@@ -85,8 +85,11 @@ function clearPersistedDiscovery(){
 }
 
 function recommendationRows(state){
+  const ai=window.__FOOTMATE_REAL_APP_IA__;
+  const conditions=ai?.aiScope?ai.assistant?.result:null;
+  const effective=conditions?{...state,region:conditions.region||state.region,position:conditions.position||state.position,level:conditions.level||state.level}:state;
   const api=window.__FOOTMATE_RECOMMENDATION__;
-  const ranked=api?.rank?.(state)||[];
+  const ranked=window.__FOOTMATE_RETURN__?.rank?.(effective)||api?.rank?.(effective)||[];
   if(ranked.length){
     return ranked.map(row=>({
       ...row,
@@ -133,7 +136,7 @@ function sortedRows(state){
   }else if(filters.sort==='closing'){
     rows.sort((a,b)=>((a.match.capacity||0)-(a.match.joined||0))-((b.match.capacity||0)-(b.match.joined||0))||b.score-a.score||a.id.localeCompare(b.id));
   }else{
-    rows.sort((a,b)=>b.score-a.score||(a.match.distanceMin||99)-(b.match.distanceMin||99)||a.id.localeCompare(b.id));
+    rows.sort((a,b)=>(a.fitTier??3)-(b.fitTier??3)||b.score-a.score||(a.match.distanceMin||99)-(b.match.distanceMin||99)||a.id.localeCompare(b.id));
   }
   return rows;
 }
@@ -312,7 +315,7 @@ function apply(){
   if(!screen)return;
   const state=readSession();
   const ai=window.__FOOTMATE_REAL_APP_IA__;
-  const signature=[state.region,state.position,state.level,...Object.values(filters),ai?.aiScope?ai.assistant?.result?.position:''].join('|');
+  const signature=[state.region,state.position,state.level,...Object.values(filters),ai?.aiScope?JSON.stringify(ai.assistant?.result):''].join('|');
   if(screen.dataset.fmDiscoverySignature===signature)return;
   applying=true;
   screen.dataset.fmDiscoverySignature=signature;
