@@ -212,6 +212,12 @@ jobs:
           node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Run 11-section Case Study navigation, responsive and accessibility gate
         run: npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
+      - name: Preserve Case Study screen evidence before the next browser run
+        if: always()
+        run: |
+          mkdir -p verification/case-study-qa
+          if [ -d test-results ]; then cp -R test-results verification/case-study-qa/; fi
+          if [ -d playwright-report ]; then cp -R playwright-report verification/case-study-qa/; fi
       - name: Run release browser, beta, AI, accessibility and visual gates
         run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs tests/e2e/beta-core.spec.cjs tests/e2e/beta-operator.spec.cjs tests/e2e/beta-readiness.spec.cjs tests/e2e/beta-email-reliability.spec.cjs tests/e2e/beta-free-growth.spec.cjs tests/e2e/beta-auth-mfa.spec.cjs tests/e2e/beta-push-media.spec.cjs tests/e2e/ai-assistant.spec.cjs tests/e2e/discovery.spec.cjs tests/e2e/decision.spec.cjs tests/e2e/platform.spec.cjs tests/e2e/visual-p1-secondary-hierarchy.spec.cjs tests/e2e/real-app-white-surface.spec.cjs tests/e2e/visual-p0-finish.spec.cjs tests/e2e/p0-usability-trust.spec.cjs tests/e2e/welcome-position.spec.cjs tests/e2e/welcome-source-layout.spec.cjs tests/e2e/desktop-auth-horizontal-lock.spec.cjs tests/e2e/typography-real-app.spec.cjs
       - name: Build typography QA JSON and Markdown evidence
@@ -233,6 +239,7 @@ jobs:
             verification/typography-qa-summary.json
             verification/typography-qa-summary.md
             verification/p1-desktop-qa/
+            verification/case-study-qa/
           if-no-files-found: warn
           retention-days: 14
 
