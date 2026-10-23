@@ -2,6 +2,13 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+## 2026-10-24 — Case Study 화면 근거와 AI 매칭 흐름 동기화
+
+- 이전 매칭 개선 PR [#650](https://github.com/dohyunkimmm/footmate/pull/650)은 main `02a74bba39433f26694bcaf87e3fe1fae73730ff`에 병합됐고, 해당 커밋의 [운영 QA](https://github.com/dohyunkimmm/footmate/actions/runs/40013802631)는 Regression 36 / Browser E2E + axe / Production Smoke 모두 SUCCESS입니다. 아래 ‘변경 브랜치’ 기록은 당시 상태입니다.
+- 최신 main QA의 모바일 Home 캡처로 Case Study 대표 이미지를 갱신하고, Home·Discover 와이어프레임을 맞춤 경기·근거 우선 배치와 AI 조건 해석·정정·선택적 조건 완화 흐름으로 맞춥니다. Figma 링크는 이전 원본이며 이번 코드 기반 와이어프레임과 구분합니다.
+- AI 연결 응답·규칙 기반 복구·결과 없음·가격만 완화하는 기존 E2E에서 캡처를 남깁니다. 연결 응답 UI 캡처는 고정된 테스트 응답이며 실제 AI 모델 호출 검증은 Production Smoke와 구분합니다.
+- 이번 이미지·문서 변경의 배포 상태는 해당 PR과 CI 결과를 기준으로 확인합니다. 사용자 매칭 효과·물리기기 재검증은 추가 실시하지 않았습니다.
+
 ## 2026-10-23 — 개인 → 경기 매칭 중심 개선 · 변경 브랜치
 
 - 제품 중심을 AI 검색에서 개인과 경기의 매칭으로 정리. AI 조건 해석·규칙 기반 순위·사용자 참가 확정의 책임은 유지합니다.
