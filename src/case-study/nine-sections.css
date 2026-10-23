@@ -810,3 +810,7 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 @media(min-width:801px){
   #main .slide{padding-top:48px}
 }
+
+/* Current evidence keeps the captured viewport ratio without cropping. */
+#section-01 .product-figure img[src*="recommendation-home"]{aspect-ratio:auto;object-fit:contain}
+.ai-workflow-evidence .product-figure img{height:auto;max-height:680px;object-fit:contain}

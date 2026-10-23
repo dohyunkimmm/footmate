@@ -16,10 +16,10 @@ for(const width of [320,390,800,1440,1920]){
    await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 11`);
    await expect(page.locator('.toc-item').nth(i)).toHaveAttribute('aria-current','step');
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+   await slide.locator('details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
    for(const image of await slide.locator('img').all()){
     await image.scrollIntoViewIfNeeded();await expect.poll(()=>image.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
    }
-   await slide.locator('details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
    const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
    await page.waitForTimeout(200);
    if(width===1920)await testInfo.attach(`section-${i+1}-${width}`,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
@@ -82,7 +82,11 @@ for(const width of [1440,1920]){
  test(`desktop shell and original image ratio remain at ${width}px`,async({page})=>{
   await page.setViewportSize({width,height:1080});await page.goto('/');
   const box=await page.locator('.fm-cs-shell').boundingBox();expect(box.width).toBe(1360);expect(Math.abs(box.x-(width-1360)/2)).toBeLessThan(2);
-  await expect(page.locator('#section-01 .product-figure img')).toHaveCSS('aspect-ratio','1 / 2');
+  const evidenceImage=page.locator('#section-01 .product-figure img');
+  await expect.poll(()=>evidenceImage.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+  const ratio=await evidenceImage.evaluate(n=>({rendered:n.getBoundingClientRect().width/n.getBoundingClientRect().height,original:n.naturalWidth/n.naturalHeight}));
+  expect(Math.abs(ratio.rendered-ratio.original)).toBeLessThan(0.01);
+  await expect(evidenceImage).toHaveCSS('object-fit','contain');
   await expect(page.locator('.sidebar')).toHaveCSS('width','220px');
   for(let i=0;i<11;i++){
    await page.locator('.toc-item').nth(i).click();await expect(page.locator('.slide:visible .section-head h1')).toHaveCSS('font-size',i===0?'28px':'32px');
