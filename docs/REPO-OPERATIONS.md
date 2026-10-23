@@ -18,11 +18,19 @@
 - [문서 동기화 PR #647](https://github.com/dohyunkimmm/footmate/pull/647) 병합으로 운영 문서와 README 연결이 최신 `main`에 반영됐습니다. 해당 `main` SHA `60fd6a5`의 `Change Impact` / `Docs-only QA`는 **SUCCESS**, `Regression 36` / `Browser E2E + axe` / `Production Smoke`는 문서 변경이므로 **SKIPPED**입니다. 그 직전 런타임 SHA `85b9dd6`에서는 필수 회귀·브라우저 검사와 Production Smoke 모두 통과했습니다.
 - Vercel에서 최신 문서 커밋 `60fd6a5`의 production deployment는 **CANCELED**, 이전 런타임 SHA `85b9dd6`의 배포는 **READY**였습니다. 문서 갱신만으로 새 런타임 배포 성공을 주장하지 않습니다.
 - [Ruleset #22835628](https://github.com/dohyunkimmm/footmate/settings/rules/22835628) **active**, 정확한 필수 검사 `Regression 36` / `Browser E2E + axe`, `strict=true`를 재조회했습니다.
-- Vercel의 활성 Firewall/Seawall 구성 조회는 `404: Seawall Config not found`를 반환했습니다. 이 응답은 규칙 부재를 확정하는 근거가 아니므로 **대시보드의 실제 저장·활성 상태는 별도 확인 필요**로 취급합니다. [WAF 이슈 #645](https://github.com/dohyunkimmm/footmate/issues/645)는 미완료 유지.
+- 2026-10-23 기준 사용자가 Vercel WAF 관찰 규칙을 생성·게시했으며, Vercel 감사 이벤트에서 `footmate-ai-rate-limit` **active 규칙 삽입 및 Firewall config version 1 publish**를 확인했습니다. 아래 'WAF 1단계 종료'의 증거와 검증 한계를 따릅니다.
+
+## 2026-10-23 Vercel WAF 1단계 배포·운영 종료 기록
+
+- **배포됨(감사 이벤트 확인):** 사용자가 Vercel 대시보드에서 `footmate-ai-rate-limit`을 설정·Publish 완료. Vercel `firewall-config-promoted` 이벤트(2026-10-23 11:28 KST)에 이 프로젝트의 Firewall **version #1** 게시 및 규칙 `rule_footmate_ai_rate_limit_cXJt9l`(`active=true`, `rules.insert`) 기록이 있습니다.
+- **설정 의도(사용자 입력 기준):** `POST /api/ai-match-assistant`, IP별 **5분에 10회**, 제한 초과 시 **Log(관찰 전용)**. Vercel API `GET /v1/security/firewall/config/active` 및 `/1`에서 계속 `404 Seawall Config not found`를 반환하여 **정확한 조건·시간·후속 액션은 API로 독립 검증하지 못했습니다**. Publish 사실은 별도 감사 이벤트로 확인됐습니다.
+- **초기 안전성:** 설정 직후 Vercel에서 이 API의 최근 30분 집계 런타임 오류 클러스터는 없었으며 사용자는 화면에서 문제를 발견하지 않았다고 확인했습니다. 이는 **WAF 매칭/초과 로그 발생 또는 오탐 없는 운영을 증명하지 않으며**, 해당 기간에 관련 요청이 있었는지도 알 수 없습니다.
+- **정리 기준:** 관찰 규칙 **게시·기본 확인 작업**은 여기서 종료합니다. 실제 차단(429), 공유 IP 오탐, 인스턴스 간 전역 rate-limit 효과 및 비용·트래픽 영향은 **검증/적용하지 않았으므로 완료로 기록하지 않습니다**. 필요해질 때 별도 보호 강화 작업으로 진행하세요. 현재 규칙은 사용자 설정대로 Log 단계로 유지합니다.
+- 추적 기록: [운영 WAF 이슈 #645](https://github.com/dohyunkimmm/footmate/issues/645).
 
 ## 진행 중 / 외부 운영 확인 필요
 
-1. **분산 요청 제한 — 미완료**: [#645](https://github.com/dohyunkimmm/footmate/issues/645). `POST /api/ai-match-assistant`는 현재 애플리케이션 인스턴스별 메모리 제한(기본 IP 10회/5분, 인스턴스 집계 60회/5분)을 적용하지만 서버리스 인스턴스 간 공유되지 않습니다. Vercel Firewall/WAF에서 범위·플랜 제한을 확인하고 `log`로 먼저 관측한 후 차단 정책을 점진 도입해야 합니다. **WAF rate-limit 적용 완료로 기재하지 않습니다.**
+1. **WAF 관찰 규칙 게시 — 1단계 완료**: [#645](https://github.com/dohyunkimmm/footmate/issues/645). 아래 2026-10-23 기록 참조. 앱 자체의 `Map` 제한(기본 IP 10회/5분, 인스턴스 집계 60회/5분)은 인스턴스 간 공유되지 않습니다. Vercel 규칙 게시와 실제 전역 초과 차단·효과 확인은 별개이며, **강제 차단(429) 및 다중 인스턴스 영향 검증은 미실시**입니다.
 2. **Git 용량·이력 및 브랜치 위생 — 미완료**: [#525](https://github.com/dohyunkimmm/footmate/issues/525). 릴리스 SHA를 깨는 `main` force rewrite, 미병합 브랜치 일괄 삭제를 하지 않습니다.
 3. **Supabase Security/RLS Advisor 후속**: [#611](https://github.com/dohyunkimmm/footmate/issues/611). 별도 운영 검증이 필요합니다.
 4. **미병합 UI PR**: [#630](https://github.com/dohyunkimmm/footmate/pull/630)과 [#631](https://github.com/dohyunkimmm/footmate/pull/631)은 현재 `main` 반영 사항으로 기술하지 않습니다.
