@@ -23,7 +23,7 @@ test('desktop entry focuses on app identity and explains the sample after starti
   await expect(context).toBeVisible();
   await expect(context).toContainText('풋살');
   await expect(context).toContainText('실제 결제는 발생하지 않습니다');
-  await expect(page.locator('[data-desktop-ai-scope]')).toContainText('기본 추천 프로필');
+  await expect(page.locator('[data-desktop-ai-scope]')).toContainText('내 매칭 기준');
   await expect(page.getByRole('heading',{name:'내 조건에 맞는 매칭'})).toBeVisible();
   await openDetail(page);
   await page.getByRole('button',{name:'이전 화면',exact:true}).click();
