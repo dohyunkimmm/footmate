@@ -29,3 +29,5 @@ html,body{background:#f7f8f7}.fm-beta-shell{width:min(560px,100%);padding:20px 1
 .fm-beta-match[data-pending-match="true"]{border:2px solid #437c43}
 
 .fm-beta-ai-label{display:inline-block;margin-left:8px;padding:3px 6px;border-radius:6px;background:#e5f1df;color:#35652f;font-size:11px;font-weight:700;vertical-align:middle}
+
+.fm-beta-growth-grid{grid-template-columns:minmax(0,1fr)}

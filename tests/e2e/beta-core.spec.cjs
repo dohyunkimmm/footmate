@@ -4,7 +4,7 @@ const AxeBuilder=require('@axe-core/playwright').default;
 const origin='https://beta.example.supabase.co';
 const matchId='11111111-1111-4111-8111-111111111111';
 const userId='22222222-2222-4222-8222-222222222222';
-const baseMatch={id:matchId,title:'영통 금요일 저녁 경기',venue_name:'영통 풋살장',area_label:'영통',address:'경기도 수원시 영통구',region:'수원 · 영통',level:'초중급',starts_at:'2099-09-25T20:00:00+09:00',price_krw:0,capacity_total:12,joined_count:8,remaining_spots:4,format_label:'6 vs 6',surface:'인조잔디',duration_minutes:80,status:'open',match_slots:[{position:'MF',capacity_total:4,joined_count:3,remaining_spots:1},{position:'FW',capacity_total:3,joined_count:2,remaining_spots:1},{position:'DF',capacity_total:4,joined_count:2,remaining_spots:2},{position:'GK',capacity_total:1,joined_count:1,remaining_spots:0}]};
+const baseMatch={id:matchId,title:'영통 금요일 저녁 경기',venue_name:'영통 풋살장',area_label:'영통',address:'경기도 수원시 영통구',region:'수원 · 영통',level:'초중급',positions:['MF','FW','DF','GK'],starts_at:'2099-09-25T20:00:00+09:00',price_krw:0,capacity_total:12,joined_count:8,remaining_spots:4,format_label:'6 vs 6',surface:'인조잔디',duration_minutes:80,status:'open',match_slots:[{position:'MF',capacity_total:4,joined_count:3,remaining_spots:1},{position:'FW',capacity_total:3,joined_count:2,remaining_spots:1},{position:'DF',capacity_total:4,joined_count:2,remaining_spots:2},{position:'GK',capacity_total:1,joined_count:1,remaining_spots:0}]};
 
 function fulfill(route,payload,status=200){return route.fulfill({status,contentType:'application/json',body:JSON.stringify(payload)})}
 
@@ -186,7 +186,7 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.locator('.fm-beta-catalog')).toBeHidden();
   await expect(page.getByLabel('이메일')).toBeHidden();
   await expect(page.getByRole('textbox',{name:'원하는 경기 조건'})).toHaveCount(0);
-  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(2);
+  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(5);
   await page.screenshot({path:testInfo.outputPath('choice-first-390.png'),fullPage:true});
   await page.getByLabel('풋살',{exact:true}).check();
   await page.getByLabel('활동 지역').selectOption('수원 · 영통');
@@ -226,7 +226,7 @@ test('sport choices do not relax conditions and AI failure keeps real matches us
   await mockBackend(page,{preferences:false});
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{error:'unavailable'},503));
   await page.goto('/demo');
-  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(2);
+  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(5);
   await page.getByLabel('축구',{exact:true}).check();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
@@ -250,7 +250,7 @@ test('AI can reorder eligible real candidates without introducing unknown cards'
   await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[baseMatch,{...baseMatch,id:secondId,title:'두 번째 풋살 경기'}]));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:[secondId,'invented',matchId]}));
   await page.goto('/demo');
-  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(2);
+  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(5);
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
   await expect(page.locator('.fm-beta-match')).toHaveCount(2);

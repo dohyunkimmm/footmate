@@ -79,7 +79,7 @@ async function submitFeedback(form){const data=new FormData(form);busy=true;rend
 function recommendPanel(){
  const p=draft||preferences||{};
  const options=(values,value,empty)=>`<option value="">${empty}</option>${values.map(([v,label])=>`<option value="${esc(v)}" ${value===v?'selected':''}>${esc(label)}</option>`).join('')}`;
- const regions=[...new Set([p.region,...matches.map(m=>m.region)].filter(Boolean))].sort();
+ const regions=[...new Set([p.region,'수원 · 영통','수원 · 인계','용인 · 기흥','서울 · 강남',...matches.map(m=>m.region)].filter(Boolean))].sort();
  if(!editing&&preferences){const labels=[p.sport==='football'?'축구':p.sport==='futsal'?'풋살':'종목 전체',p.region||'지역 전체',p.level,p.position,p.afterTime?`${p.afterTime} 이후`:''].filter(Boolean);return `<section class="fm-beta-preferences-summary" aria-label="추천 조건"><div><strong>나에게 맞는 경기</strong>${aiOrder.length?'<span class="fm-beta-ai-label">AI 추천</span>':''}<p>${esc(labels.join(' · '))}</p></div><button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button>${message?`<p class="fm-beta-search-status" role="status">${esc(message)}</p>`:''}</section>`}
  return `<section class="fm-beta-panel fm-beta-preferences"><h2>어떤 경기를 즐기세요?</h2><form data-growth-form="recommend" class="fm-beta-preference-form">
  <fieldset class="fm-beta-sport"><legend>종목</legend>${[['','모두'],['football','축구'],['futsal','풋살']].map(([v,label])=>`<label><input type="radio" name="sport" value="${v}" ${(p.sport||'')===v?'checked':''}><span>${label}</span></label>`).join('')}</fieldset>
