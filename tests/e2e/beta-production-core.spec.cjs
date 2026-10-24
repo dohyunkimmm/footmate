@@ -11,7 +11,7 @@ test('closed beta production connects to Supabase without browser errors',async(
   await expect(page).toHaveTitle('FootMate | Closed Beta');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
-  await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
   expect(errors).toEqual([]);
 });
 

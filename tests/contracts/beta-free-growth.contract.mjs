@@ -54,3 +54,23 @@ for(const [index,table,column] of [
 }
 
 console.log('beta free growth contracts: PASS');
+
+// Demo fixtures must stay usable without creating live matches or participations.
+const demoMemory=new Map();
+globalThis.location={pathname:'/demo'};
+globalThis.localStorage={getItem:key=>demoMemory.get(key)||null,setItem:(key,value)=>demoMemory.set(key,value)};
+globalThis.window={dispatchEvent(){}};
+const demo=await import('../../src/beta/demo-catalog.js');
+const before=demo.demoCatalog('demo-user');
+assert.equal(before.length,8);
+assert.equal(before.filter(m=>m.format_label==='11 vs 11').length,3);
+assert.ok(before.every(m=>m.is_demo&&new Date(m.starts_at)>new Date()));
+assert.ok(before.every(m=>m.capacity_total===m.match_slots.reduce((n,s)=>n+s.capacity_total,0)));
+const target=before[0],spots=target.match_slots.find(s=>s.position==='MF').remaining_spots;
+demo.joinDemoMatch('demo-user',target.id,'MF');
+assert.equal(demo.demoParticipations('demo-user').filter(p=>p.status==='confirmed').length,1);
+assert.equal(demo.demoCatalog('demo-user').find(m=>m.id===target.id).match_slots.find(s=>s.position==='MF').remaining_spots,spots-1);
+assert.equal(demo.demoParticipations('other-user').length,0);
+demo.cancelDemoMatch('demo-user',target.id);
+assert.equal(demo.demoCatalog('demo-user').find(m=>m.id===target.id).match_slots.find(s=>s.position==='MF').remaining_spots,spots);
+console.log('PASS isolated demo catalog, future dates, user-scoped join and cancellation');

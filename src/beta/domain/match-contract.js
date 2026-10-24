@@ -65,7 +65,8 @@ export function normalizeBetaMatch(row={}){
     surface:text(row.surface),
     durationMin,
     status:text(row.status),
-    source:'connected-beta'
+    isDemo:row.is_demo===true,
+    source:row.is_demo===true?'demo-catalog':'connected-beta'
   });
 }
 

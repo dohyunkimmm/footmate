@@ -50,11 +50,12 @@ async function mock(page){
 
 test('live beta growth surfaces rank real matches, waitlist and collect feedback',async({page})=>{
  await install(page);const backend=await mock(page);await page.goto('/beta',{waitUntil:'domcontentloaded'});
- await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
  await expect(page.locator('[data-beta-growth-host]')).toHaveAttribute('data-realtime-state','connected');
- await page.getByLabel('활동 지역').selectOption('수원 · 영통');
- await page.getByLabel('실력',{exact:true}).selectOption('중급');
- await page.locator('[data-growth-form="recommend"] select[name="position"]').selectOption('MF');
+ await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
+ await page.getByRole('button',{name:'다음',exact:true}).click();
+ await page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:'중급',exact:true}).check();
+ await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
  await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toBeVisible();
  await page.getByRole('button',{name:'대기 신청'}).click();
