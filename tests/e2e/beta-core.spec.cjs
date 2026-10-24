@@ -9,6 +9,7 @@ const baseMatch={id:matchId,title:'영통 금요일 저녁 경기',venue_name:'�
 function fulfill(route,payload,status=200){return route.fulfill({status,contentType:'application/json',body:JSON.stringify(payload)})}
 
 async function mockBackend(page,{empty=false,preferences=true}={}){
+  await page.addInitScript(()=>sessionStorage.setItem('footmate:beta:entered:v1','1'));
   if(preferences)await page.addInitScript(()=>localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'',region:'',level:'',position:'',afterTime:''})));
   let joined=false;
   let deleted=false;
@@ -111,6 +112,7 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
   await page.locator('[data-action="open-account"]').click();
+  await page.getByRole('button',{name:'설정',exact:true}).click();
   await page.getByText('개인정보 안내',{exact:true}).click();
   await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
@@ -258,7 +260,9 @@ test('AI can reorder eligible real candidates without introducing unknown cards'
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
-  await expect(page.locator('.fm-beta-match')).toHaveCount(2);
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await page.getByRole('navigation',{name:'추천 경기 페이지'}).getByRole('button',{name:'다음',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',matchId);
   await page.reload();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
 });
@@ -323,6 +327,7 @@ test('choice-first recommendations keep demo home populated and participation is
   expect(writes).toEqual([]);
   await page.getByRole('button',{name:'MY',exact:true}).click();
   await expect(page.getByRole('button',{name:'프로필 저장',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
   await expect(page.locator('.fm-beta-catalog')).toBeHidden();
   await page.getByRole('button',{name:'추천',exact:true}).click();
   await expect(page.locator('.fm-beta-catalog')).toBeVisible();
@@ -355,4 +360,28 @@ test('choice-first recommendations keep OAuth login in Beta home with the select
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
   await expect(page.locator(`.fm-beta-match[data-match-id="${selected}"][data-pending-match="true"]`)).toBeVisible();
   expect(backend.isJoined()).toBe(false);
+});
+
+test('original FootMate opening leads to social login and returns to browsing without scrolling',async({page},testInfo)=>{
+  await mockBackend(page,{preferences:false});
+  await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
+  await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/demo');
+  const opening=page.locator('[data-screen="welcome"]');
+  await expect(opening.locator('.fm-app-entry-name')).toHaveText('FootMate');
+  await expect(opening.locator('.fm-app-entry-logo')).toBeVisible();
+  await expect(opening.locator('.fm-app-entry-name')).toHaveCSS('font-size','32px');
+  await expect(opening.getByRole('button',{name:'로그인하고 시작하기',exact:true})).toBeInViewport();
+  expect(await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
+  await page.screenshot({path:testInfo.outputPath('restored-opening-390.png'),fullPage:true});
+  await opening.getByRole('button',{name:'로그인하고 시작하기',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
+  await expect(page.getByLabel('이메일')).toBeVisible();
+  await page.screenshot({path:testInfo.outputPath('restored-login-390.png'),fullPage:true});
+  await page.getByRole('button',{name:'앱 시작 화면',exact:true}).click();
+  await expect(opening).toBeVisible();
+  await opening.getByRole('button',{name:'경기 먼저 둘러보기',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
 });

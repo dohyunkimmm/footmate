@@ -38,7 +38,8 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
   const settings=await settingsResponse.json();
   expect(settings.external.google).toBe(true);expect(settings.external.kakao).toBe(true);
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
-  await page.locator('[data-action="open-account"]').click();
+  await expect(page.locator('[data-screen="welcome"] .fm-app-entry-name')).toHaveText('FootMate');
+  await page.getByRole('button',{name:'로그인하고 시작하기',exact:true}).click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
 });
