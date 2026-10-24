@@ -59,9 +59,11 @@ test('live beta growth surfaces rank real matches, waitlist and collect feedback
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
  await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toBeVisible();
  await page.getByRole('button',{name:'내 경기',exact:true}).click();
+ await page.getByRole('button',{name:'대기',exact:true}).click();
  await page.getByRole('button',{name:'대기 신청'}).click();
  await expect.poll(()=>backend.queued()).toBe(true);
  await expect(page.getByRole('button',{name:'대기 취소'})).toBeVisible();
+ await page.getByRole('button',{name:'참석 이력',exact:true}).click();
  await expect(page.getByRole('heading',{name:'참석 이력 · 경기 후 피드백'})).toBeVisible();
  await page.locator('[data-growth-form="feedback"] button').click();
  await expect.poll(()=>backend.submitted()).toBe(true);
