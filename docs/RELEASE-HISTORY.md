@@ -2,13 +2,15 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
-## 2026-10-24 — 출시된 Beta를 앱 진입 기준으로 정정 · 검증 중
+## 2026-10-24 — 출시 Beta 공개 진입·UI 정리 운영 반영 완료 · #655
 
 - 사용자 정정에 따라 공개 /demo는 체험용 프로토타입이 아니라 기존 서버 연결 Beta를 엽니다. 기존 프로토타입은 /prototype으로 분리하며 관련 회귀 검사는 그 경로에서 보존합니다.
 - 카카오·구글 OAuth, 서버 세션·프로필·경기·참가·취소·피드백 연동을 유지합니다. 새로운 인증 제공자·DB 권한·환경변수는 추가하거나 변경하지 않습니다.
 - 긴 서비스/백엔드 소개와 체험 선택 메뉴를 제거하고 실제 AI 검색·경기 목록·로그인·내 경기·계정 관리만 남깁니다. PC에서도 최대 560px 앱형 한 열을 사용합니다.
 - 실제 Beta AI는 실제 공개 경기로 후보를 정합니다. 거리 데이터가 없을 때 미적용을 알리고, 해석 실패 시 기존 목록을 유지합니다. 프로토타입의 조건 정정/완화·피드백 보정 증거를 현재 Beta 기능으로 오인하지 않도록 Case Study에 구분합니다.
-- 기존 프로토타입 시각 기준은 변경하지 않습니다. 출시 Beta 공개 진입·OAuth provider URL·실제 서버 경기 경로·반응형 검증은 진행 중이며 운영 배포 완료가 아닙니다.
+- [PR #655](https://github.com/dohyunkimmm/footmate/pull/655) · main `9d97cb582b88a62f1bf8134f27a1737d2ef93bb0`에 병합했습니다. [PR QA 40085073184](https://github.com/dohyunkimmm/footmate/actions/runs/40085073184): 회귀, Case Study 28개, Chromium 128개와 기존 프로토타입 WebKit 6개 PASS. 실제 Beta의 공개 진입·OAuth URL·서버 흐름·320–1920px 표시를 Chromium에서 검증했습니다. 프로토타입 시각 기준·비교 허용치는 그대로입니다.
+- [main QA 40085778279](https://github.com/dohyunkimmm/footmate/actions/runs/40085778279) 전체 SUCCESS: exact 운영 HTTP·실제 AI 추론·Chromium·출시 여정 PASS. 공개 /demo의 실제 Beta 진입 및 Google/Kakao 활성화와 버튼 노출도 확인했습니다. OAuth 계정의 실로그인 완료를 이번 자동 검사에서 수행한 것은 아닙니다.
+- Vercel Production `dpl_48WpE125mwqvQDZXrktebYri6JYW` READY, 공식 alias `footmate-black.vercel.app`와 위 runtime SHA를 대조했습니다. 노션 PRD·Service Flow·AI Workflow·포트폴리오 카드 2곳의 현행 설명도 같은 출시 Beta 기준으로 정정했습니다. 매칭 만족도·전환 개선을 입증하는 사용자 검증은 별도입니다.
 
 ## 2026-10-24 — Demo 복원 시각 기준 승인 · #654
 
