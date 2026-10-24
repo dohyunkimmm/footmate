@@ -13,6 +13,7 @@ if(root){
   let participations=[];
   let matchById=new Map();
   let notifications=[];
+  let notificationPage=0;
   let localNotice=null;
   let suppressMutations=false;
 
@@ -127,13 +128,14 @@ if(root){
   function injectNotifications(){
     const aside=root.querySelector('.fm-beta-grid aside');
     if(!aside)return;
-    const signature=notifications.map(item=>`${item.id}:${item.read_at||''}:${item.created_at||''}`).join('|');
+    notificationPage=Math.min(notificationPage,Math.max(0,notifications.length-1));
+    const signature=notificationPage+'|'+notifications.map(item=>`${item.id}:${item.read_at||''}:${item.created_at||''}`).join('|');
     const existing=aside.querySelector('[data-readiness-notifications]');
     if(existing?.dataset.readinessSignature===signature)return;
     existing?.remove();
     const unread=notifications.filter(item=>!item.read_at).length;
-    const body=notifications.length?notifications.map(item=>`<div class="fm-beta-participation" style="margin-top:8px"><strong>${esc(item.title)}</strong><p>${esc(item.body)}</p><div class="fm-beta-actions" style="margin-top:8px"><span>${esc(format(item.created_at))}</span>${item.read_at?'':`<button class="fm-beta-link" type="button" data-readiness-action="read-notification" data-notification-id="${esc(item.id)}">확인</button>`}</div></div>`).join(''):`<div class="fm-beta-empty"><strong>새 알림이 없습니다.</strong>참가·취소·체크인·경기 종료 상태가 이곳에 기록됩니다.</div>`;
-    aside.insertAdjacentHTML('beforeend',`<div class="fm-beta-panel" data-readiness-notifications><div class="fm-beta-panel-head"><div><h3>운영 알림</h3><p>실제 참가 상태에서 생성된 in-app 알림입니다.</p></div>${unread?`<span class="fm-beta-badge">미확인 ${unread}</span>`:''}</div>${body}</div>`);
+    const body=notifications.length?notifications.slice(notificationPage,notificationPage+1).map(item=>`<div class="fm-beta-participation" style="margin-top:8px"><strong>${esc(item.title)}</strong><p>${esc(item.body)}</p><div class="fm-beta-actions" style="margin-top:8px"><span>${esc(format(item.created_at))}</span>${item.read_at?'':`<button class="fm-beta-link" type="button" data-readiness-action="read-notification" data-notification-id="${esc(item.id)}">확인</button>`}</div></div>`).join(''):`<div class="fm-beta-empty"><strong>새 알림이 없습니다.</strong>참가·취소·체크인·경기 종료 상태가 이곳에 기록됩니다.</div>`;
+    aside.insertAdjacentHTML('beforeend',`<div class="fm-beta-panel" data-readiness-notifications><div class="fm-beta-panel-head"><div><h3>운영 알림</h3><p>실제 참가 상태에서 생성된 in-app 알림입니다.</p></div>${unread?`<span class="fm-beta-badge">미확인 ${unread}</span>`:''}</div>${body}${notifications.length>1?`<nav class="fm-beta-demo-pager" aria-label="알림 페이지"><button class="fm-beta-button" type="button" data-readiness-action="notification-prev" ${notificationPage===0?'disabled':''}>이전</button><span>${notificationPage+1} / ${notifications.length}</span><button class="fm-beta-button" type="button" data-readiness-action="notification-next" ${notificationPage===notifications.length-1?'disabled':''}>다음</button></nav>`:''}</div>`);
     const panel=aside.querySelector('[data-readiness-notifications]');
     if(panel)panel.dataset.readinessSignature=signature;
   }
@@ -160,6 +162,7 @@ if(root){
     const target=event.target.closest('[data-readiness-action]');
     if(!target||!client)return;
     const action=target.dataset.readinessAction;
+    if(action==='notification-prev'||action==='notification-next'){notificationPage=Math.max(0,notificationPage+(action==='notification-next'?1:-1));enhance();return}
     if(action==='forgot-password'||action==='resend-signup'){
       const email=currentEmail();
       if(!email){notice('이메일을 입력한 뒤 다시 시도해주세요.','error');root.querySelector('#beta-auth-panel input[name="email"]')?.focus();return}
