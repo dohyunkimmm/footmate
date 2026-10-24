@@ -62,6 +62,7 @@ test('authenticated beta user can enable Web Push and upload a profile image',as
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await page.locator('[data-action="open-account"]').click();
+  await page.getByRole('button',{name:'설정',exact:true}).click();
   await expect(page.getByRole('button',{name:'브라우저 알림 켜기'})).toBeVisible();
   await page.getByRole('button',{name:'브라우저 알림 켜기'}).click();
   await expect.poll(()=>pushStored).toBe(true);
