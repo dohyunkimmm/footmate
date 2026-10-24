@@ -167,7 +167,7 @@ module.exports=async function handler(req,res){
   }
   const input=recommending?JSON.stringify({preferences,selectedConditions:message,candidates}):`현재 설정: ${JSON.stringify(preferences)}\n사용자 요청: ${message}`;
   async function requestModel(model){
-    const requestBody={model,instructions,input,max_output_tokens:300,reasoning:{effort:'none'}};
+    const requestBody={model,instructions,input,max_output_tokens:recommending?700:300,reasoning:{effort:'none'}};
     if(supportsStrictSchema(model))requestBody.text={format:{type:'json_schema',name:'footmate_match_constraints',strict:true,schema}};
     else requestBody.instructions+=` Return only one JSON object with exactly these keys: ${Object.keys(schema.properties).join(', ')}. Use null for unknown values. Do not wrap the JSON in markdown.`;
     const controller=new AbortController();

@@ -6,7 +6,7 @@ const POSITIONS={MF:'MF · 미드필더',FW:'FW · 공격수',DF:'DF · 수비�
 if(root){
 let config=null,profile=null,matches=[],participations=[],waitlist=[],feedback=[],recommendation=null;
 const PREFERENCES_KEY='footmate:beta:preferences:v1';
-let preferences=null,editing=true,aiOrder=[];
+let preferences=null,draft=null,editing=true,aiOrder=[];
 try{const saved=JSON.parse(localStorage.getItem(PREFERENCES_KEY)||'null');if(saved&&['football','futsal',''].includes(saved.sport)&&['','입문','초중급','중급','중급+'].includes(saved.level)&&['','MF','FW','DF','GK'].includes(saved.position)&&['','09:00','14:00','18:00','20:00'].includes(saved.afterTime)&&typeof saved.region==='string'){preferences=saved;editing=false}}catch{}
 let realtimeState='connecting',socket=null,heartbeat=null,reconnectTimer=null,busy=false,message='',refreshTimer=null;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]||c));
@@ -61,25 +61,26 @@ function publishRecommendations(){
 }
 async function recommend(form){
  const data=new FormData(form);
- preferences={sport:String(data.get('sport')||''),region:String(data.get('region')||''),level:String(data.get('level')||''),position:String(data.get('position')||''),afterTime:String(data.get('afterTime')||'')};
+ draft=null;preferences={sport:String(data.get('sport')||''),region:String(data.get('region')||''),level:String(data.get('level')||''),position:String(data.get('position')||''),afterTime:String(data.get('afterTime')||'')};
  try{localStorage.setItem(PREFERENCES_KEY,JSON.stringify(preferences))}catch{}
  editing=false;busy=true;message='';aiOrder=[];publishRecommendations();render();
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),9000);
  const labels=[preferences.sport==='football'?'축구':preferences.sport==='futsal'?'풋살':'',preferences.region,preferences.level,preferences.position,preferences.afterTime?`${preferences.afterTime} 이후`:''].filter(Boolean);
  try{
-  const res=await fetch('/api/ai-match-assistant',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task:'recommend',candidates:rank(preferences).slice(0,12).map(({m})=>({id:m.id,region:m.region,level:m.level,startsAt:m.starts_at,format:m.format_label,remaining:m.remaining_spots,positionSpots:preferences.position?slotLeft(m,preferences.position):m.remaining_spots,price:m.price_krw})),message:labels.join(' ')||'조건 제한 없이 경기 추천',preferences:{region:preferences.region||null,position:preferences.position||null,level:preferences.level||null}})});
+  const res=await fetch('/api/ai-match-assistant',{method:'POST',signal:controller.signal,headers:{'content-type':'application/json'},body:JSON.stringify({task:'recommend',candidates:rank(preferences).slice(0,12).map(({m})=>({id:m.id,region:m.region,level:m.level,startsAt:m.starts_at,format:m.format_label,remaining:m.remaining_spots,positionSpots:preferences.position?slotLeft(m,preferences.position):m.remaining_spots,price:m.price_krw})),message:labels.join(' ')||'조건 제한 없이 경기 추천',preferences:{region:preferences.region||null,position:preferences.position||null,level:preferences.level||null}})});
   const body=await res.json();if(!res.ok||!Array.isArray(body?.rankedMatchIds))throw new Error('unavailable');
   // Explicit choices remain authoritative. AI must not add or relax conditions the user did not select.
   aiOrder=body.rankedMatchIds;try{localStorage.setItem('footmate:beta:ranking:v1',JSON.stringify({conditions:JSON.stringify(preferences),ids:aiOrder}))}catch{}publishRecommendations();
  }catch{message='AI 연결이 지연되어 선택한 조건으로 찾았어요.'}
- finally{busy=false;render()}
+ finally{clearTimeout(timeout);busy=false;render()}
 }
 async function waitlistAction(id,cancel){busy=true;render();try{if(cancel)await rpc('cancel_beta_waitlist',{p_match_id:id});else{if(!profile?.position)throw new Error('선호 포지션을 먼저 설정해주세요.');await rpc('join_beta_waitlist',{p_match_id:id,p_position:profile.position})}message=cancel?'대기 신청을 취소했습니다.':'대기 신청했습니다. 빈 자리가 생기면 자동 참가 전환됩니다.';await loadState()}catch(e){message=String(e?.message||e)}finally{busy=false;render()}}
 async function submitFeedback(form){const data=new FormData(form);busy=true;render();try{await rpc('submit_beta_match_feedback',{p_match_id:form.dataset.matchId,p_difficulty:Number(data.get('difficulty')),p_satisfaction:Number(data.get('satisfaction')),p_repeat_intent:data.get('repeatIntent')==='on',p_note:String(data.get('note')||'')||null});message='경기 후 피드백을 저장했습니다.';await loadState()}catch(e){message=String(e?.message||e)}finally{busy=false;render()}}
 function recommendPanel(){
- const p=preferences||{};
+ const p=draft||preferences||{};
  const options=(values,value,empty)=>`<option value="">${empty}</option>${values.map(([v,label])=>`<option value="${esc(v)}" ${value===v?'selected':''}>${esc(label)}</option>`).join('')}`;
  const regions=[...new Set([p.region,...matches.map(m=>m.region)].filter(Boolean))].sort();
- if(!editing&&preferences){const labels=[p.sport==='football'?'축구':p.sport==='futsal'?'풋살':'종목 전체',p.region||'지역 전체',p.level,p.position,p.afterTime?`${p.afterTime} 이후`:''].filter(Boolean);return `<section class="fm-beta-preferences-summary" aria-label="추천 조건"><div><strong>나에게 맞는 경기</strong><p>${esc(labels.join(' · '))}</p></div><button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button>${message?`<p class="fm-beta-search-status" role="status">${esc(message)}</p>`:''}</section>`}
+ if(!editing&&preferences){const labels=[p.sport==='football'?'축구':p.sport==='futsal'?'풋살':'종목 전체',p.region||'지역 전체',p.level,p.position,p.afterTime?`${p.afterTime} 이후`:''].filter(Boolean);return `<section class="fm-beta-preferences-summary" aria-label="추천 조건"><div><strong>나에게 맞는 경기</strong>${aiOrder.length?'<span class="fm-beta-ai-label">AI 추천</span>':''}<p>${esc(labels.join(' · '))}</p></div><button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button>${message?`<p class="fm-beta-search-status" role="status">${esc(message)}</p>`:''}</section>`}
  return `<section class="fm-beta-panel fm-beta-preferences"><h2>어떤 경기를 즐기세요?</h2><form data-growth-form="recommend" class="fm-beta-preference-form">
  <fieldset class="fm-beta-sport"><legend>종목</legend>${[['','모두'],['football','축구'],['futsal','풋살']].map(([v,label])=>`<label><input type="radio" name="sport" value="${v}" ${(p.sport||'')===v?'checked':''}><span>${label}</span></label>`).join('')}</fieldset>
  <label class="fm-beta-field"><span>활동 지역</span><select name="region">${options(regions.map(v=>[v,v]),p.region,'지역 전체')}</select></label>
@@ -92,6 +93,7 @@ function historyPanel(){if(!accessToken())return'';const attended=participations
 function render(){const shell=root.querySelector('.fm-beta-shell');if(!shell)return;let host=shell.querySelector('[data-beta-growth-host]');if(!host){host=document.createElement('div');host.dataset.betaGrowthHost='true';shell.querySelector('.fm-beta-footer')?.before(host)}host.dataset.realtimeState=realtimeState;host.innerHTML=`<div class="fm-beta-growth-grid">${waitlistPanel()}${historyPanel()}</div>`;host.dataset.realtimeState=realtimeState;const main=shell.querySelector('[data-beta-main]');if(main){let search=main.querySelector('[data-beta-ai-entry]');if(!search){search=document.createElement('div');search.dataset.betaAiEntry='true';main.prepend(search)}search.innerHTML=recommendPanel()}}
 function baseRefresh(){clearTimeout(refreshTimer);refreshTimer=setTimeout(()=>{root.querySelector('[data-action="refresh"]')?.click();loadState().catch(()=>{})},300)}
 function connectRealtime(){if(!config||socket||document.visibilityState==='hidden')return;const url=config.url.replace(/^http/,'ws')+`/realtime/v1/websocket?apikey=${encodeURIComponent(config.publishableKey)}&vsn=1.0.0`;let ref=1;realtimeState='connecting';render();socket=new WebSocket(url);socket.onopen=()=>{socket.send(JSON.stringify({topic:'realtime:footmate-beta-growth',event:'phx_join',payload:{config:{broadcast:{self:false},presence:{key:''},postgres_changes:TABLES.map((table,i)=>({event:'*',schema:'public',table,id:i+1}))},access_token:accessToken()||config.publishableKey},ref:String(ref++)}));heartbeat=setInterval(()=>socket?.readyState===1&&socket.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:String(ref++)})),25000)};socket.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event==='phx_reply'&&d.payload?.status==='ok'){realtimeState='connected';render()}if(d.event==='postgres_changes')baseRefresh()}catch{}};socket.onclose=()=>{clearInterval(heartbeat);heartbeat=null;socket=null;realtimeState='error';render();clearTimeout(reconnectTimer);reconnectTimer=setTimeout(connectRealtime,2500)};socket.onerror=()=>{realtimeState='error';render()}}
+root.addEventListener('change',e=>{const form=e.target.closest('[data-growth-form="recommend"]');if(form)draft=Object.fromEntries(new FormData(form))});
 root.addEventListener('submit',e=>{const f=e.target.closest('[data-growth-form]');if(!f)return;e.preventDefault();if(f.dataset.growthForm==='recommend')recommend(f);else submitFeedback(f)});
 root.addEventListener('click',e=>{const t=e.target.closest('[data-growth-action]');if(!t)return;if(t.dataset.growthAction==='edit-preferences'){editing=true;root.dataset.betaRecommendationsReady='false';render();root.querySelector('[data-beta-ai-entry] h2')?.scrollIntoView({block:'start',behavior:'smooth'});return}waitlistAction(t.dataset.matchId,t.dataset.growthAction==='cancel-waitlist')});
 const observer=new MutationObserver(()=>{if(root.querySelector('.fm-beta-shell')&&!root.querySelector('[data-beta-growth-host]'))render()});observer.observe(root,{childList:true,subtree:true});

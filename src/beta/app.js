@@ -95,7 +95,7 @@ if(root){
     if(!session||!user){
       const signup=authMode==='signup';
       return `<div class="fm-beta-panel" id="beta-auth-panel">
-        <div class="fm-beta-panel-head"><div><h2>${signup?'회원가입':'로그인'}</h2><p>${signup?'경기 참가 정보를 저장할 계정을 만듭니다.':''}</p></div></div>
+        <div class="fm-beta-panel-head"><div><h2 tabindex="-1">${signup?'회원가입':'로그인'}</h2><p>${signup?'경기 참가 정보를 저장할 계정을 만듭니다.':''}</p></div></div>
         <form class="fm-beta-stack" data-form="auth">
           ${signup?`<label class="fm-beta-field"><span>이름 · 선택</span><input name="displayName" autocomplete="name" maxlength="40" placeholder="풋살러 이름"></label>`:''}
           <label class="fm-beta-field"><span>이메일</span><input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
@@ -311,7 +311,7 @@ if(root){
       if(action==='focus-auth'){pendingMatchId=target.dataset.matchId||'';sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId)}
       authOpen=true;render();root.querySelector('#beta-auth-panel h2, #beta-auth-panel input')?.focus();window.scrollTo({top:0,behavior:'smooth'});return;
     }
-    if(action==='close-account'){authOpen=false;render();return} 
+    if(action==='close-account'){authOpen=false;render();root.querySelector('[data-pending-match] button, [data-action="open-account"]')?.focus();return} 
     if(action==='retry-backend'){boot();return}
     if(action==='refresh'){
       run(async()=>{await refreshData();setNotice(matchesError?matchesError:'경기와 참가 상태를 새로고침했습니다.',matchesError?'error':'success')});return;
