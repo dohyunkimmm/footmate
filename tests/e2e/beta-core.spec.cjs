@@ -55,7 +55,7 @@ async function serious(page){
 test('closed beta signs in, joins atomically, restores session and cancels',async({page})=>{
   const backend=await mockBackend(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
-  await expect(page).toHaveTitle('FootMate | Closed Beta');
+  await expect(page).toHaveTitle('FootMate | Demo');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
   await expect(page.getByText('영통 금요일 저녁 경기')).toBeVisible();
