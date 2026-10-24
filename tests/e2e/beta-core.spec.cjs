@@ -258,7 +258,9 @@ test('AI can reorder eligible real candidates without introducing unknown cards'
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
-  await expect(page.locator('.fm-beta-match')).toHaveCount(2);
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await page.getByRole('navigation',{name:'추천 경기 페이지'}).getByRole('button',{name:'다음',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',matchId);
   await page.reload();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
 });
@@ -323,6 +325,7 @@ test('choice-first recommendations keep demo home populated and participation is
   expect(writes).toEqual([]);
   await page.getByRole('button',{name:'MY',exact:true}).click();
   await expect(page.getByRole('button',{name:'프로필 저장',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
   await expect(page.locator('.fm-beta-catalog')).toBeHidden();
   await page.getByRole('button',{name:'추천',exact:true}).click();
   await expect(page.locator('.fm-beta-catalog')).toBeVisible();
