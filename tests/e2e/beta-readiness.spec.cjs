@@ -77,6 +77,7 @@ test('beta participation exposes policy, check-in and notifications',async({page
   await expect(page.getByText(/체크인이 완료됐습니다/)).toBeVisible();
   expect(backend.checked()).toBe(true);
   await page.getByRole('button',{name:'MY',exact:true}).click();
+  await page.getByRole('button',{name:'알림',exact:true}).click();
   await expect(page.getByRole('heading',{name:'운영 알림'})).toBeVisible();
   await page.getByRole('button',{name:'확인'}).click();
   expect(backend.read()).toBe(true);
