@@ -73,7 +73,7 @@ test('search preferences survive detail and reload without replacing the base pr
   await page.getByRole('button',{name:'AI로 찾기'}).click();
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   await expect(page.locator('[data-ia-ai-summary]')).toContainText('현재 적용 조건');
-  await page.locator('[data-screen="discover"] [data-action="open-match"][data-match-id="maetan-2030"]').click();
+  await page.locator('[data-screen="discover"] .fm-next-match-card[data-match-id="maetan-2030"]').click();
   for(const reload of [false,true]){
     if(reload)await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
     await expect(page.locator('[data-screen="detail"]')).toBeVisible();
