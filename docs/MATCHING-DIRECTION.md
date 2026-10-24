@@ -24,4 +24,4 @@
 
 ## 반영 상태
 
-PR #655에서 공개 진입과 UI를 실제 출시 Beta 기준으로 정정 중이다. 실제 사용자 효과 검증과 운영 확인은 GitHub PR 및 Release History를 따른다.
+PR #655로 공개 진입과 UI를 실제 출시 Beta 기준으로 정정하고 운영에 반영했다. runtime 9d97cb5의 PR QA 40085073184와 main QA 40085778279는 모두 통과했다. 실제 사용자 효과 검증은 별도이며 운영 근거는 Release History를 따른다.
