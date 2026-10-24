@@ -78,7 +78,7 @@ test('search preferences survive detail and reload without replacing the base pr
     if(reload)await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
     await expect(page.locator('[data-screen="detail"]')).toBeVisible();
     await expect(page.locator('[data-join-position] button[aria-pressed="true"]')).toContainText('GK');
-    await expect(page.locator('.fm-join-position-note')).not.toContainText('마감');
+    await expect(page.locator('.fm-join-position-note[role="status"]')).not.toContainText('마감');
     await expect(page.locator('[data-decision-section="fit"]')).toContainText('GK 1자리 남음');
     await expect(page.locator('[data-decision-section="fit"]')).not.toContainText('MF 자리는 현재 마감');
     const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')));
