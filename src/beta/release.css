@@ -59,3 +59,33 @@ html,body{background:#f7f8f7}.fm-beta-shell{width:min(560px,100%);padding:20px 1
 .fm-beta-app-nav .fm-icon{font-size:20px}
 .fm-beta-more{display:block;width:100%;margin-top:16px}
 @media(max-width:430px){.fm-beta-shell{padding-bottom:100px}}
+
+/* Demo is a viewport-sized app; the case study keeps its document layout. */
+html:has([data-beta-demo="true"]),body:has([data-beta-demo="true"]){height:100%;overflow:hidden}
+[data-beta-demo="true"]{height:100dvh;min-height:0;overflow:hidden}
+[data-beta-demo="true"] .fm-beta-shell{height:100%;min-height:0;display:flex;flex-direction:column;padding-bottom:max(12px,env(safe-area-inset-bottom));overflow:hidden}
+[data-beta-demo="true"] .fm-beta-topbar{flex-shrink:0;position:static;margin-bottom:8px}
+[data-beta-demo="true"] .fm-beta-grid{flex:1;min-height:0;gap:0;overflow:hidden}
+[data-beta-demo="true"] .fm-beta-grid>aside:has(.fm-beta-account-view[hidden]){display:none}
+[data-beta-demo="true"] [data-beta-main]{display:flex;flex:1;min-height:0;flex-direction:column}
+[data-beta-demo="true"] .fm-beta-catalog{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px}
+[data-beta-demo="true"] .fm-beta-panel-head{margin-bottom:8px}
+[data-beta-demo="true"] .fm-beta-match-list{flex:1;min-height:0}
+[data-beta-demo="true"] .fm-beta-match{padding:12px;min-height:0}
+[data-beta-demo="true"] .fm-beta-match-cover{height:clamp(48px,12dvh,100px);margin-bottom:10px}
+[data-beta-demo="true"] .fm-beta-match-reason{margin-bottom:8px}
+[data-beta-demo="true"] .fm-beta-meta{margin-top:8px}
+[data-beta-demo="true"] .fm-beta-match-actions{margin-top:8px;padding-top:8px}
+[data-beta-demo="true"] .fm-beta-preferences-summary{padding:6px 2px}
+[data-beta-demo="true"] .fm-beta-footer{flex-shrink:0;margin-top:8px}
+.fm-beta-demo-pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;margin-top:10px}
+.fm-beta-demo-pager span{font-size:13px;color:#53645a}
+[data-beta-demo="true"][data-beta-auth-open="true"] .fm-beta-grid>aside{flex:1;min-height:0}
+[data-beta-demo="true"] .fm-beta-match-top{display:flex}
+[data-beta-demo="true"] .fm-beta-badge{margin-top:0}
+@media(max-height:700px){
+[data-beta-demo="true"] .fm-beta-match-cover{height:42px;margin-bottom:6px}
+[data-beta-demo="true"] .fm-beta-match-cover i{top:0;height:40px}
+[data-beta-demo="true"] .fm-beta-footer{display:none}
+[data-beta-demo="true"] .fm-beta-panel{padding:12px}
+}
