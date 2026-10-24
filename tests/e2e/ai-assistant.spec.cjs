@@ -55,3 +55,57 @@ test('v5.1.1 AI request timeout recovers to deterministic rules and restores con
 test('v5.1.1 internal resume restores saved AI mode consistently while fresh entry still resets',async({page})=>{await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({version:'5.1.1',mode:'connected-ai',provider:'vercel-ai-gateway',model:'openai/gpt-5.4-mini',fallbackUsed:false,result:{intent:'search',region:'수원 · 인계',position:'MF',level:'중급',maxPrice:null,maxDistanceMin:20,afterTime:null,reply:'수원 인계의 가까운 중급 MF 조건으로 정리했어요.'}})}));await setup(page);await page.getByLabel('찾고 싶은 경기 조건').fill('수원 인계에서 가까운 중급 MF 경기');await page.getByRole('button',{name:'AI로 찾기'}).click();await expect(page.locator('[data-screen="discover"]')).toBeVisible();await expect(page.locator('[data-ai-mode]')).toHaveText('AI connected');await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});await expect(page.locator('[data-ai-assistant="5.1.1"]')).toHaveCount(1);await expect(page.locator('[data-ai-mode]')).toHaveText('AI connected');expect(await page.evaluate(()=>window.__FOOTMATE_AI__.mode)).toBe('connected-ai')});
 
 test('v5.1.1 AI assistant remains accessible and responsive',async({page})=>{for(const width of [320,375,390,430]){await page.setViewportSize({width,height:780});await setup(page);expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);await page.evaluate(()=>{localStorage.clear();sessionStorage.clear()})}const axe=await new AxeBuilder({page}).include('[data-ai-assistant]').withTags(['wcag2a','wcag2aa']).analyze();expect(axe.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([])});
+
+test('fallback separates clock minutes from travel minutes and maps beginner consistently',async({page})=>{
+  await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await setup(page);
+  await page.getByLabel('찾고 싶은 경기 조건').fill('오후 8시 30분 이후 15분 이내 초급 MF 경기');
+  await page.getByRole('button',{name:'AI로 찾기'}).click();
+  await expect(page.locator('[data-ai-mode]')).toHaveText('Rules fallback');
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:v5.1:ai')));
+  expect(saved.result).toMatchObject({afterTime:'20:30',maxDistanceMin:15,level:'초중급',position:'MF'});
+});
+
+test('search preferences survive detail and reload without replacing the base profile',async({page})=>{
+  await page.route('**/api/ai-match-assistant',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({mode:'connected-ai',result:{intent:'search',region:'수원 · 인계',position:'GK',level:'초중급',maxPrice:null,maxDistanceMin:null,afterTime:null,reply:'인계 초급 GK'}})}));
+  await setup(page);
+  await page.getByLabel('찾고 싶은 경기 조건').fill('인계 초급 GK 경기');
+  await page.getByRole('button',{name:'AI로 찾기'}).click();
+  await expect(page.locator('[data-screen="discover"]')).toBeVisible();
+  await expect(page.locator('[data-ia-ai-summary]')).toContainText('현재 적용 조건');
+  await page.locator('[data-screen="discover"] .fm-next-match-card[data-match-id="maetan-2030"]').click();
+  for(const reload of [false,true]){
+    if(reload)await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
+    await expect(page.locator('[data-screen="detail"]')).toBeVisible();
+    await expect(page.locator('[data-join-position] button[aria-pressed="true"]')).toContainText('GK');
+    await expect(page.locator('.fm-join-position-note[role="status"]')).not.toContainText('마감');
+    await expect(page.locator('[data-decision-section="fit"]')).toContainText('GK 1자리 남음');
+    await expect(page.locator('[data-decision-section="fit"]')).not.toContainText('MF 자리는 현재 마감');
+    const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')));
+    expect(session).toMatchObject({region:'수원 · 영통',position:'MF',level:'중급',selectedJoinPosition:'GK'});
+  }
+});
+
+test('320px matching heading keeps its action on one line and facts readable',async({page},testInfo)=>{
+  await page.setViewportSize({width:320,height:900});
+  await setup(page);
+  const home=page.locator('[data-screen="home"]');
+  const action=home.locator('.fm-next-section-head button').first();
+  expect(await action.evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);return range.getClientRects().length})).toBe(1);
+  expect(await home.locator('[data-match-assessment]').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(13);
+  await home.screenshot({path:testInfo.outputPath('matching-home-320.png'),animations:'disabled'});
+});
+
+test('1920px PC compares two matches and keeps Detail sections below its hero',async({page},testInfo)=>{
+  await page.setViewportSize({width:1920,height:1080});await setup(page);
+  const app=page.locator('.fm-next-app');
+  expect(await app.evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(1000);
+  const cards=page.locator('[data-screen="home"] .fm-next-match-card');
+  const boxes=await cards.evaluateAll(nodes=>nodes.slice(0,2).map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width}}));
+  expect(Math.abs(boxes[0].y-boxes[1].y)).toBeLessThan(2);expect(boxes[1].x).toBeGreaterThan(boxes[0].x+boxes[0].width);
+  await page.screenshot({path:testInfo.outputPath('pc-matching-home-1920.png'),animations:'disabled'});
+  await cards.first().click();await expect(page.locator('[data-decision-section="fit"]')).toBeVisible();
+  const layout=await page.locator('[data-screen="detail"]').evaluate(el=>({hero:el.querySelector('.fm-next-detail-hero').getBoundingClientRect().bottom,fit:el.querySelector('[data-decision-section="fit"]').getBoundingClientRect().top,overflow:document.documentElement.scrollWidth-innerWidth}));
+  expect(layout.fit).toBeGreaterThanOrEqual(layout.hero);expect(layout.overflow).toBeLessThanOrEqual(1);
+  await page.screenshot({path:testInfo.outputPath('pc-matching-detail-1920.png'),animations:'disabled'});
+});

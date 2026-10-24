@@ -26,6 +26,11 @@ async function toHome(page){
   await chooseDefault(page);await page.getByRole('button',{name:'다음'}).click();
   await chooseDefault(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
+  // Home is enhanced in animation-frame observers; measure after final density styles.
+  await expect(page.locator('[data-screen="home"] .fm-next-match-card').first()).toHaveAttribute('data-product-density','home');
+  await expect(page.locator('[data-screen="home"] .fm-ai-card')).toHaveAttribute('data-ia-role','primary-assistant');
+  await page.waitForLoadState('load');
+  await page.evaluate(async()=>{await document.fonts.ready;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))});
 }
 async function toDetail(page){
   await page.locator('[data-screen="home"] .fm-next-match-card').first().click();

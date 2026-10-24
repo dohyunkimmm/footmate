@@ -58,10 +58,10 @@ async function aiFilters(page,capture=async()=>{}){
   await page.getByLabel('가격').selectOption('11000');
   await page.getByRole('button',{name:'결과 보기',exact:true}).click();
   await expect(cards).toHaveCount(2);
-  await page.getByRole('button',{name:'AI 조건 해제',exact:true}).click();
+  await page.getByRole('button',{name:'검색 조건 해제',exact:true}).click();
   await expect(cards).toHaveCount(3);
   expect(new URL(page.url()).searchParams.get('d_price')).toBe('11000');
-  await page.getByRole('button',{name:'AI 조건 다시 적용',exact:true}).click();
+  await page.getByRole('button',{name:'검색 조건 다시 적용',exact:true}).click();
   await expect(cards).toHaveCount(2);
   await page.locator('[data-discovery-action="open-filters"]').click();
   await page.getByLabel('포지션').selectOption('MF');

@@ -101,6 +101,8 @@ if(root){
   }
 
   function patchDetail(state,ranked){
+    state=window.__FOOTMATE_DECISION__?.preferencesFor?.(state)||state;
+    ranked=rank(state);
     const screen=root.querySelector('[data-screen="detail"]');
     if(!screen)return;
     const item=ranked.find(entry=>entry.match.id===state.selectedMatchId);

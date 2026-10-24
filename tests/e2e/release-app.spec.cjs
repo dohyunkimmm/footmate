@@ -161,7 +161,7 @@ test('Release App flattens desktop Detail into one decision surface',async({page
   expect(geometry.shadow).toBe('none');
   expect(geometry.background).toBe('rgba(0, 0, 0, 0)');
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:17000});
+  await expect.soft(page).toHaveScreenshot('v6-release-detail-1440.png',{...shot,maxDiffPixels:17000});
   expect(errs).toEqual([]);
 });
 
@@ -174,12 +174,12 @@ test('Release App replaces simulated payment with free join and hands ownership 
   await expect(join.locator('[data-v6-hidden-payment="true"]')).toBeHidden();
   await expect(page.getByRole('button',{name:'무료로 참가 확정'})).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-join-1440.png',{...shot,maxDiffPixels:4700});
+  await expect.soft(page).toHaveScreenshot('v6-release-join-1440.png',{...shot,maxDiffPixels:4700});
   await page.getByRole('button',{name:'무료로 참가 확정'}).click();
   await waitForReleaseReady(page);
   await expect(page.locator('[data-screen="success"]')).toBeVisible();
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-success-1440.png',shot);
+  await expect.soft(page).toHaveScreenshot('v6-release-success-1440.png',shot);
   const snapshot=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:participation')||'{}'));
   expect(snapshot.amount).toBe(0);
   expect(snapshot.paymentMethod).toBe('none');
@@ -197,7 +197,7 @@ test('Release App replaces simulated payment with free join and hands ownership 
   expect(hierarchy.profile).toBeGreaterThanOrEqual(36);
   expect(hierarchy.settings).toBeGreaterThanOrEqual(36);
   await page.mouse.move(1,1);
-  await expect(page).toHaveScreenshot('v6-release-my-upcoming-1440.png',{...shot,maxDiffPixels:20500});
+  await expect.soft(page).toHaveScreenshot('v6-release-my-upcoming-1440.png',{...shot,maxDiffPixels:20500});
   expect(errs).toEqual([]);
 });
 
@@ -245,7 +245,7 @@ test('Home lifecycle closes Return and hands the next action back to Discover',a
   const lifecycle=page.locator('[data-v6-lifecycle="upcoming"]');
   await expect(lifecycle).toBeVisible();
   await page.mouse.move(1,1);
-  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',{...shot,maxDiffPixels:900});
+  if(!productionSmoke)await expect.soft(page).toHaveScreenshot('v6-release-home-upcoming-1440.png',{...shot,maxDiffPixels:900});
   await lifecycle.getByRole('button',{name:'내 경기 보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
   await seedSession(page,{route:'profile',matchStage:'postgame'});
@@ -256,14 +256,14 @@ test('Home lifecycle closes Return and hands the next action back to Discover',a
   await panel.getByRole('button',{name:'평가 저장'}).click();
   await expect(page.locator('[data-v6-return="saved"]')).toBeVisible();
   await page.mouse.move(1,1);
-  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-my-postgame-1440.png',{...shot,maxDiffPixels:5000});
+  if(!productionSmoke)await expect.soft(page).toHaveScreenshot('v6-release-my-postgame-1440.png',{...shot,maxDiffPixels:5000});
   await seedSession(page,{route:'home',matchStage:'postgame'});
   const complete=page.locator('[data-v6-lifecycle="complete"]');
   await expect(complete).toBeVisible();
   await expect(complete).toContainText('경기 기록을 저장했어요.');
   await page.mouse.move(1,1);
   // Reviewed visual delta: the completed match is excluded from the next recommendations.
-  if(!productionSmoke)await expect(page).toHaveScreenshot('v6-release-home-complete-1440.png',{...shot,maxDiffPixels:6300});
+  if(!productionSmoke)await expect.soft(page).toHaveScreenshot('v6-release-home-complete-1440.png',{...shot,maxDiffPixels:6300});
   await complete.getByRole('button',{name:'다음 경기 찾기'}).click();
   await waitForReleaseReady(page);
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
@@ -276,20 +276,20 @@ test('Release App mobile changed surfaces match approved visual baselines',async
   const matchId=await page.locator('[data-screen="home"] .fm-next-match-card').first().getAttribute('data-match-id');
   await seedSession(page,{route:'home',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'upcoming'});
   await expect(page.locator('[data-v6-lifecycle="upcoming"]')).toBeVisible();
-  await expect(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',{...shot,maxDiffPixels:1600});
+  await expect.soft(page.locator('[data-screen="home"]')).toHaveScreenshot('v6-release-home-upcoming-390.png',{...shot,maxDiffPixels:1600});
 
   await seedSession(page,{route:'home',signedIn:false,joinedMatchId:null,matchStage:'discover'});
   await openDetail(page);await reachJoin(page);
-  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',{...shot,maxDiffPixels:4800});
+  await expect.soft(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-390.png',{...shot,maxDiffPixels:4800});
 
   await page.clock.install({time:new Date('2026-10-01T21:56:00.000Z')});
   await page.evaluate(({matchId})=>localStorage.setItem('footmate:v4:matchday',JSON.stringify({matchId,status:'upcoming',startsAt:new Date(Date.now()+10*60000).toISOString()})),{matchId});
   await seedSession(page,{route:'profile',signedIn:true,joinedMatchId:matchId,selectedMatchId:matchId,matchStage:'matchday'});
-  await expect(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-matchday-390.png',{...shot,maxDiffPixels:9000});
+  await expect.soft(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-matchday-390.png',{...shot,maxDiffPixels:9000});
 
   await seedSession(page,{route:'profile',matchStage:'postgame'});
   await expect(page.locator('[data-v6-return="draft"]')).toBeVisible();
-  await expect(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-postgame-390.png',{...shot,maxDiffPixels:10000});
+  await expect.soft(page.locator('[data-screen="profile"]')).toHaveScreenshot('v6-release-my-postgame-390.png',{...shot,maxDiffPixels:10000});
   expect(errs).toEqual([]);
 });
 
@@ -297,7 +297,7 @@ test('Release App 320px Join keeps the compact visual contract',async({page})=>{
   const errs=await openCleanApp(page,{width:320,height:844});
   await setupToHome(page);await openDetail(page);await reachJoin(page);
   await expectNoHorizontalOverflow(page);
-  await expect(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-320.png',{...shot,maxDiffPixels:5100});
+  await expect.soft(page.locator('[data-screen="checkout"]')).toHaveScreenshot('v6-release-join-320.png',{...shot,maxDiffPixels:5100});
   expect(errs).toEqual([]);
 });
 
@@ -449,7 +449,7 @@ test('Flow P1 edits interpreted AI level and progressively relaxes empty results
     localStorage.setItem('footmate:v5.1:ai',JSON.stringify(saved));
   },saved);
   await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
-  const select=page.getByRole('combobox',{name:'AI가 해석한 경기 레벨 수정'});
+  const select=page.getByRole('combobox',{name:'해석된 경기 강도 수정'});
   await expect(select).toHaveValue('입문');
   await select.selectOption('초중급');
   await expect(select).toHaveValue('초중급');

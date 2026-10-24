@@ -40,6 +40,8 @@ export const PERFORMANCE_BUDGET=Object.freeze({
 
 export const RUNTIME_PERFORMANCE_BUDGET=Object.freeze({
   shellMaxWidthPx:560,
+  desktopShellMaxWidthPx:1120,
+  desktopBreakpointPx:1600,
   maxHorizontalOverflowPx:1,
   screenReadyMs:4000
 });

@@ -40,6 +40,10 @@ async function invoke(options){const req=request(options);const res=response();a
     const guarded=await invoke({method:'POST',body:{message:'아무 경기',preferences:{}},ip:'10.0.1.5'});
     assert.equal(guarded.statusCode,200);assert.equal(guarded.body.result.region,null);assert.equal(guarded.body.result.position,null);assert.equal(guarded.body.result.level,null);assert.equal(guarded.body.result.maxPrice,50000);assert.equal(guarded.body.result.maxDistanceMin,5);assert.equal(guarded.body.result.afterTime,null);
 
+    global.fetch=async()=>({ok:true,status:200,json:async()=>({output_text:JSON.stringify({intent:'search',region:'수원 · 인계',position:'GK',level:'입문',maxPrice:null,maxDistanceMin:null,afterTime:null,reply:'입문 경기'})})});
+    const beginner=await invoke({method:'POST',body:{message:'인계 초급 GK 경기'},ip:'10.0.8.1'});
+    assert.equal(beginner.statusCode,200);assert.equal(beginner.body.result.level,'초중급');assert.ok(!beginner.body.result.reply.includes('입문'));
+
     let calls=0;
     global.fetch=async(_url,options)=>{calls+=1;const payload=JSON.parse(options.body);assert.deepEqual(payload.reasoning,{effort:'none'});if(calls===1){assert.equal(payload.model,'openai/gpt-5.4-nano');return{ok:false,status:404,json:async()=>({error:{type:'model_not_found',message:'Model not found'}})}}assert.equal(payload.model,'openai/gpt-5.4-mini');assert.equal(payload.text?.format?.type,'json_schema');return{ok:true,status:200,json:async()=>({output_text:'```json\n{"intent":"search","region":"수원 · 인계","position":"MF","level":"초중급","maxPrice":18000,"maxDistanceMin":20,"afterTime":"20:00","reply":"provider fallback으로 조건을 해석했어요."}\n```'})}};
     const fallback=await invoke({method:'POST',body:{message:'인계에서 초중급 MF 경기',preferences:{}},ip:'10.0.1.6'});
