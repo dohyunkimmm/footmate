@@ -95,3 +95,17 @@ test('320px matching heading keeps its action on one line and facts readable',as
   expect(await home.locator('[data-match-assessment]').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(13);
   await home.screenshot({path:testInfo.outputPath('matching-home-320.png'),animations:'disabled'});
 });
+
+test('1920px PC compares two matches and keeps Detail sections below its hero',async({page},testInfo)=>{
+  await page.setViewportSize({width:1920,height:1080});await setup(page);
+  const app=page.locator('.fm-next-app');
+  expect(await app.evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(1000);
+  const cards=page.locator('[data-screen="home"] .fm-next-match-card');
+  const boxes=await cards.evaluateAll(nodes=>nodes.slice(0,2).map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width}}));
+  expect(Math.abs(boxes[0].y-boxes[1].y)).toBeLessThan(2);expect(boxes[1].x).toBeGreaterThan(boxes[0].x+boxes[0].width);
+  await page.screenshot({path:testInfo.outputPath('pc-matching-home-1920.png'),animations:'disabled'});
+  await cards.first().click();await expect(page.locator('[data-decision-section="fit"]')).toBeVisible();
+  const layout=await page.locator('[data-screen="detail"]').evaluate(el=>({hero:el.querySelector('.fm-next-detail-hero').getBoundingClientRect().bottom,fit:el.querySelector('[data-decision-section="fit"]').getBoundingClientRect().top,overflow:document.documentElement.scrollWidth-innerWidth}));
+  expect(layout.fit).toBeGreaterThanOrEqual(layout.hero);expect(layout.overflow).toBeLessThanOrEqual(1);
+  await page.screenshot({path:testInfo.outputPath('pc-matching-detail-1920.png'),animations:'disabled'});
+});
