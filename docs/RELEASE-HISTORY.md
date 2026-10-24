@@ -2,6 +2,14 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+## 2026-10-24 — 1920px PC 매칭·Case Study 운영 반영 완료 · #652
+
+- [PR #652](https://github.com/dohyunkimmm/footmate/pull/652)를 main `dee099d42f3cac2ae4ee7ae70b7ba972804c595e`에 squash 병합했습니다. 아래 구현·검증 중 기록은 당시 상태입니다.
+- [PR QA 40076349963](https://github.com/dohyunkimmm/footmate/actions/runs/40076349963): Regression 36, Case Study 28/28, Chromium 128/128, Mobile WebKit 6/6 PASS. 타이포그래피 23개 시나리오, 56/56 PNG 무결성, gate/diagnostic 문제 0건. 사용자 승인한 시각 기준 6장을 반영했고 비교 허용치는 유지했습니다.
+- [병합 후 운영 QA 40076931223](https://github.com/dohyunkimmm/footmate/actions/runs/40076931223): Regression / Browser E2E + axe / Production Smoke 모두 SUCCESS. exact 배포 대조, HTTP, 실제 AI 추론, 운영 Chromium 및 release journeys PASS.
+- Vercel Production `dpl_9vw4bgTeEJctZZsbabfEcyUziEzS` READY, 공식 `footmate-black.vercel.app`의 커밋은 위 main SHA와 일치합니다. 연결된 Chrome에서도 운영 1920px 앱 폭 1120px·두 열·가로 넘침 없음, 실제 ‘인계 초급 GK’ 해석·상세 GK 유지, Case Study PC 대표 이미지와 Home/Discover 와이어프레임을 확인했습니다.
+- 사용자 가치 검증·물리기기 재검증은 별도입니다. 무료 참가/체험 계정은 샘플 데이터와 브라우저 로컬 상태이며 실제 예약·결제가 아닙니다.
+
 ## 2026-10-24 — PR #652 시각 기준 승인
 
 - 김도현의 대화 승인(“진행해”, 한국 시간 2026-10-24)에 따라 직접 검토한 변경 화면 6장을 새 기준으로 반영합니다: AI 연결 결과 390px, Home/Discover 390px, 참가 전·완료 후 Home 1440px, 참가 전 Home 390px.
