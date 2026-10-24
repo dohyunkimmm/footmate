@@ -141,7 +141,6 @@ test('closed beta recovers from backend config failure',async({page})=>{
   await expect(page.getByRole('button',{name:'연결 다시 시도'})).toBeVisible();
   await page.getByRole('button',{name:'연결 다시 시도'}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
-  await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.getByText('지금 참가할 수 있는 경기가 없어요.')).toBeVisible();
 });
 
@@ -181,9 +180,10 @@ test('choice-first recommendations keep the selected match and position through 
   await page.route('**/api/ai-match-assistant',route=>{requests.push(route.request().postDataJSON());return fulfill(route,{mode:'connected-ai',rankedMatchIds:[matchId,'invented-id']})});
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo');
-  await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?'})).toBeVisible();
-  await expect(page.locator('.fm-beta-catalog')).toBeHidden();
+  await page.goto('/beta');
+  await expect(page.getByRole('heading',{name:'추천 경기',exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-catalog')).toBeVisible();
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await expect(page.getByLabel('이메일')).toBeHidden();
   await expect(page.getByRole('textbox',{name:'원하는 경기 조건'})).toHaveCount(0);
   await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(5);
@@ -225,7 +225,8 @@ test('choice-first recommendations keep the selected match and position through 
 test('sport choices do not relax conditions and AI failure keeps real matches usable',async({page})=>{
   await mockBackend(page,{preferences:false});
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{error:'unavailable'},503));
-  await page.goto('/demo');
+  await page.goto('/beta');
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(5);
   await page.getByLabel('축구',{exact:true}).check();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
@@ -249,11 +250,57 @@ test('AI can reorder eligible real candidates without introducing unknown cards'
   const secondId='77777777-7777-4777-8777-777777777777';
   await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[baseMatch,{...baseMatch,id:secondId,title:'두 번째 풋살 경기'}]));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:[secondId,'invented',matchId]}));
-  await page.goto('/demo');
+  await page.goto('/beta');
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(5);
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
   await expect(page.locator('.fm-beta-match')).toHaveCount(2);
   await page.reload();
   await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
+});
+
+test('choice-first recommendations keep demo home populated and participation isolated',async({page},testInfo)=>{
+  await mockBackend(page,{preferences:false});
+  const writes=[];
+  await page.route(origin+'/rest/v1/rpc/**',route=>{if(/join_match_position|cancel_participation/.test(route.request().url())){writes.push(route.request().url());return fulfill(route,{error:'demo must not call live participation RPC'},500)}return fulfill(route,null)});
+  await page.route(origin+'/auth/v1/token?**',route=>{
+    const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
+    return fulfill(route,{access_token:token,refresh_token:'demo-auth-refresh',expires_in:3600,user:{id:userId,email:'beta@example.com'}});
+  });
+  await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
+  await page.route('**/api/ai-match-assistant',route=>{const body=route.request().postDataJSON();return fulfill(route,{mode:'connected-ai',rankedMatchIds:body.candidates.map(m=>m.id).reverse()})});
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/demo');
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
+  await expect(page.locator('.fm-beta-match')).toHaveCount(8);
+  await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?'})).toHaveCount(0);
+  await expect(page.getByLabel('이메일')).toBeHidden();
+  await expect(page.locator('.fm-beta-match-cover small')).toHaveText(Array(8).fill('데모 경기'));
+  await page.screenshot({path:testInfo.outputPath('recommendation-home-390.png'),fullPage:true});
+  await page.getByRole('button',{name:'풋살',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(5);
+  await expect(page.locator('.fm-beta-ai-label')).toBeVisible();
+  const selected=await page.locator('.fm-beta-match').first().getAttribute('data-match-id');
+  await page.locator('.fm-beta-match').first().getByRole('button',{name:'참가하기',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
+  await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.locator(`.fm-beta-match[data-match-id="${selected}"]`).getByRole('button',{name:'MF로 참가'}).click();
+  await expect(page.getByText('MF 데모 참가를 완료했어요.',{exact:true})).toBeVisible();
+  expect(writes).toEqual([]);
+  await page.reload();
+  await expect(page.getByRole('button',{name:'참가 취소',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'참가 취소',exact:true}).click();
+  await expect(page.getByText('데모 참가를 취소했어요.',{exact:true})).toBeVisible();
+  expect(writes).toEqual([]);
+  expect(await serious(page)).toEqual([]);
+  for(const width of [320,1920]){
+    await page.setViewportSize({width,height:900});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+    expect(await page.locator('.fm-beta-shell').evaluate(el=>el.getBoundingClientRect().width)).toBeLessThanOrEqual(560);
+    await page.screenshot({path:testInfo.outputPath('recommendation-home-'+width+'.png'),fullPage:true});
+  }
 });

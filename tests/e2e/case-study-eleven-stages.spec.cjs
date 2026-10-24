@@ -39,7 +39,7 @@ test('section history, keyboard, deep links and reload retain their contract',as
 
 test('released Beta is linked and prototype wireframes are disclosed',async({page})=>{
  await page.goto('/');await expect(page.locator('#section-01 a[href="/demo"]')).toHaveCount(1);
- await expect(page.locator('#section-01')).toContainText('조건 선택 → 경기 추천 → 참가 시 카카오·구글 로그인');
+ await expect(page.locator('#section-01')).toContainText('추천 홈 → 조건 조정 → 참가 시 카카오·구글 로그인');
  await page.locator('.toc-item').nth(6).click();await expect(page.locator('#section-07 .wireframe-record')).toHaveCount(5);
  await expect(page.locator('#section-07')).toContainText('초기 프로토타입 와이어프레임');
  await expect(page.locator('#section-07 a[href*="figma.com/design/rvhwFauZFBsSnvHYitohgC"]')).toHaveCount(1);

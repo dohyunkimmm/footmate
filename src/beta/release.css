@@ -5,7 +5,7 @@ html,body{background:#f7f8f7}.fm-beta-shell{width:min(560px,100%);padding:20px 1
 
 /* Choice-first discovery; authentication opens only on request or participation. */
 [hidden]{display:none!important}
-[data-beta-recommendations-ready="false"] .fm-beta-catalog{display:none}
+
 [data-beta-auth-open="true"] [data-beta-main]{display:none}
 [data-beta-auth-open="true"] [data-beta-growth-host]{display:none}
 .fm-beta-account-view[hidden]+:empty{display:none}
@@ -31,3 +31,11 @@ html,body{background:#f7f8f7}.fm-beta-shell{width:min(560px,100%);padding:20px 1
 .fm-beta-ai-label{display:inline-block;margin-left:8px;padding:3px 6px;border-radius:6px;background:#e5f1df;color:#35652f;font-size:11px;font-weight:700;vertical-align:middle}
 
 .fm-beta-growth-grid{grid-template-columns:minmax(0,1fr)}
+
+.fm-beta-match-cover{position:relative;height:112px;border-radius:14px;margin-bottom:16px;overflow:hidden;color:#fff;background:repeating-linear-gradient(90deg,#285c42 0,#285c42 38px,#316b4e 38px,#316b4e 76px)}
+.fm-beta-match-cover:before{content:"";position:absolute;inset:12px 28px;border:1px solid #ffffff75;border-radius:2px}.fm-beta-match-cover:after{content:"";position:absolute;top:12px;bottom:12px;left:50%;border-left:1px solid #ffffff75}
+.fm-beta-match-cover i{position:absolute;left:calc(50% - 23px);top:33px;width:46px;height:46px;border:1px solid #ffffff75;border-radius:50%}
+.fm-beta-match-cover span,.fm-beta-match-cover small{position:absolute;z-index:1;top:12px;padding:5px 8px;background:#123822;border-radius:7px;font-size:12px;font-weight:700}.fm-beta-match-cover span{left:12px}.fm-beta-match-cover small{right:12px}
+.fm-beta-demo-slots{font-size:13px;color:#53645a}.fm-beta-demo-slots summary{padding:10px 0;cursor:pointer}.fm-beta-demo-slots .fm-beta-slots{margin-top:8px}
+
+.fm-beta-sport-tabs{display:flex;gap:8px;flex-basis:100%;margin-bottom:10px}.fm-beta-sport-tabs button{font:inherit;font-weight:700;border:1px solid #d1ded3;background:#fff;color:#405647;padding:8px 20px;border-radius:999px;cursor:pointer}.fm-beta-sport-tabs button[aria-pressed="true"]{background:#123c28;border-color:#123c28;color:white}.fm-beta-demo-record{display:block;color:#53645a;margin-bottom:6px;font-size:12px}
