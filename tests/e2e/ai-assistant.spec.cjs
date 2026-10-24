@@ -79,6 +79,8 @@ test('search preferences survive detail and reload without replacing the base pr
     await expect(page.locator('[data-screen="detail"]')).toBeVisible();
     await expect(page.locator('[data-join-position] button[aria-pressed="true"]')).toContainText('GK');
     await expect(page.locator('.fm-join-position-note')).not.toContainText('마감');
+    await expect(page.locator('[data-decision-section="fit"]')).toContainText('GK 1자리 남음');
+    await expect(page.locator('[data-decision-section="fit"]')).not.toContainText('MF 자리는 현재 마감');
     const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:session')));
     expect(session).toMatchObject({region:'수원 · 영통',position:'MF',level:'중급',selectedJoinPosition:'GK'});
   }

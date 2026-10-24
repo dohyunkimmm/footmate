@@ -376,8 +376,8 @@ function configureDiscover(screen){
   const assistant=screen.querySelector('.fm-ai-card[data-product-ai="discover"],.fm-ai-card[data-ai-assistant]');
   if(assistant){hidden(assistant,true);assistant.dataset.iaHidden='duplicate-assistant'}
   const saved=snapshot(),active=scopeActive();
-  const baseTags=screen.querySelector('[aria-label="현재 검색 조건"]');
-  if(baseTags){baseTags.classList.toggle('fm-match-base-secondary',Boolean(active&&saved?.result));text(baseTags.querySelector('.fm-next-base-label'),active&&saved?.result?'기본 프로필 · 참고':'기본 추천')}
+  const baseTags=screen.querySelector('[data-base-profile],[aria-label="현재 검색 조건"]');
+  if(baseTags){baseTags.dataset.baseProfile='true';baseTags.setAttribute('aria-label',active&&saved?.result?'기본 프로필 참고':'현재 검색 조건');baseTags.classList.toggle('fm-match-base-secondary',Boolean(active&&saved?.result));text(baseTags.querySelector('.fm-next-base-label'),active&&saved?.result?'기본 프로필 · 참고':'기본 추천')}
   const head=screen.querySelector('.fm-next-section-head');const showingAiResult=Boolean(active&&saved?.result);if(head){hidden(head,!showingAiResult);head.style.display=showingAiResult?'flex':'none'}text(head?.querySelector('h1'),showingAiResult?'내 조건 매칭 결과':'');text(head?.querySelector('p'),showingAiResult?'조회 결과를 필터와 정렬로 조정할 수 있어요.':'');
   const entries=active&&saved?.result?deterministicResults(normalizeResult(saved.result),readState(),Infinity):null;
   const allowed=entries?new Set(entries.map(entry=>entry.match.id)):null;
