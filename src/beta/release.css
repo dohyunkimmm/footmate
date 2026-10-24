@@ -159,3 +159,22 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 
 [data-beta-app="true"][data-beta-view="my"] [data-beta-main],
 [data-beta-app="true"][data-beta-view="matches"] [data-beta-main]{display:none}
+
+@media(max-height:740px){
+[data-beta-app="true"] .fm-beta-shell{padding-top:10px}
+[data-beta-app="true"][data-beta-guest="false"] .fm-beta-shell{padding-bottom:78px}
+[data-beta-app="true"] [data-beta-ai-entry]{margin-bottom:6px}
+[data-beta-app="true"] .fm-beta-preferences-summary{padding:2px}
+[data-beta-app="true"] .fm-beta-preferences-summary strong{font-size:17px}
+[data-beta-app="true"] .fm-beta-preferences-summary p{margin-top:3px}
+[data-beta-app="true"] .fm-beta-catalog{padding:10px}
+[data-beta-app="true"] .fm-beta-panel-head{margin-bottom:6px}
+[data-beta-app="true"] .fm-beta-panel-head .fm-beta-button{min-height:36px}
+[data-beta-app="true"] .fm-beta-match{padding:10px}
+[data-beta-app="true"] .fm-beta-meta{margin-top:6px;gap:5px}
+[data-beta-app="true"] .fm-beta-meta>span{padding:4px 6px}
+[data-beta-app="true"] .fm-beta-slots{margin-top:6px;gap:5px}
+[data-beta-app="true"] .fm-beta-slot{padding:6px}
+[data-beta-app="true"] .fm-beta-match-actions{margin-top:6px;padding-top:6px}
+[data-beta-app="true"] .fm-beta-demo-pager{margin-top:6px}
+}
