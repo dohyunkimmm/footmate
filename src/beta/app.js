@@ -187,6 +187,7 @@ if(root){
   }
 
   function render(){
+    try{root.dataset.betaOnboarding=String(!JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null'))}catch{root.dataset.betaOnboarding='true'}
     root.dataset.betaCatalogSource=isDemoEntry?'demo':'server';
     root.dataset.betaAuthOpen=String(authOpen);
     root.dataset.betaGuest=String(!session||!user);

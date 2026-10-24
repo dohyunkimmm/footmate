@@ -1,3 +1,4 @@
+import {isDemoEntry} from './demo-catalog.js';
 import {loadBetaBackendConfig,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {createBetaReadinessClient} from './infrastructure/supabase-readiness.js';
 
@@ -76,6 +77,7 @@ if(root){
   }
 
   async function refreshState({force=false}={}){
+    if(isDemoEntry)return;
     const session=readSession();
     if(!client||!session?.accessToken||refreshing)return;
     if(!force&&Date.now()-lastRefresh<5000)return;
@@ -141,11 +143,12 @@ if(root){
     injectRecoveryActions();
     injectRecoveryPanel();
     injectNotice();
-    if(readSession()?.accessToken){injectParticipationReadiness();injectNotifications();void refreshState()}
+    if(!isDemoEntry&&readSession()?.accessToken){injectParticipationReadiness();injectNotifications();void refreshState()}
     queueMicrotask(()=>{suppressMutations=false});
   }
 
   function scheduleOwnEmailDispatch(){
+    if(isDemoEntry)return;
     const session=readSession();
     if(!client||!session?.accessToken)return;
     for(const delay of [1200,4000]){
