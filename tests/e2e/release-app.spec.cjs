@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
 
@@ -74,7 +75,7 @@ async function openCleanApp(page,viewport={width:1440,height:900}){
   // Stabilize display dates without changing session or participation timestamps.
   if(!productionSmoke)await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize(viewport);
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await waitForReleaseReady(page);
@@ -397,7 +398,7 @@ test('portfolio recommendation prioritizes level-fit and playable role before re
 
 test('portfolio guided reviewer route describes current app and Beta boundaries',async({page})=>{
   await page.setViewportSize({width:1440,height:900});
-  await page.goto('/demo?mode=guided');
+  await page.goto('/prototype?mode=guided');
   await expect(page.getByRole('complementary',{name:'Case Study Guide'})).toBeVisible();
   const guide=page.locator('.fm-next-guide');
   await expect(guide).toContainText('포트폴리오 심사용 v6');
@@ -419,7 +420,7 @@ test('portfolio guided reviewer route describes current app and Beta boundaries'
 test('Demo starts with app identity and resumes returning players without repeating setup',async({page})=>{
   const errs=await openCleanApp(page,{width:390,height:844});
   await setupToHome(page);
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
   await page.getByRole('button',{name:/저장된 설정으로 바로 추천 보기/}).click();
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
@@ -429,7 +430,7 @@ test('Demo starts with app identity and resumes returning players without repeat
     const key='footmate:session',s=JSON.parse(localStorage.getItem(key)||'{}');
     localStorage.setItem(key,JSON.stringify({...s,route:'profile',joinedMatchId:matchId,signedIn:true,matchStage:'upcoming'}));
   },matchId);
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
   await page.getByRole('button',{name:'내 경기 이어보기'}).click();
   await expect(page.locator('[data-screen="profile"]')).toBeVisible();
@@ -498,7 +499,7 @@ test('Demo keeps local join separate from an explicit actual-service handoff',as
   await expectAxeClean(page,'[data-screen="auth"]');
   await page.getByRole('button',{name:'체험 로그인으로 계속'}).click();
   await expect(page.locator('[data-screen="checkout"]')).toBeVisible();
-  await expect(page).toHaveURL(/\/demo/);
+  await expect(page).toHaveURL(/\/prototype/);
   await expectNoHorizontalOverflow(page);
   expect(errs).toEqual([]);
 });
@@ -603,5 +604,5 @@ test('retired app entry forwards to demo without a duplicate app screen or cache
   }
   await page.goto('/app?mode=guided#welcome',{waitUntil:'domcontentloaded'});
   await expect(page).toHaveURL(/\/demo\?mode=guided#welcome$/);
-  await expect(page.locator('meta[name="footmate-release"]')).toHaveAttribute('content','6.0.0');
+  await expect(page.locator('#footmate-beta')).toBeVisible();
 });

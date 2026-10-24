@@ -12,7 +12,7 @@ if(root){
   let error='';
   let refreshing=false;
   let loadedToken='';
-  const FOOTER_COPY='Closed Beta · Supabase connected · In-app + Transactional email + Web Push connected · Payment = not connected';
+  const FOOTER_COPY='FootMate Beta · 무료 참가';
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]||char));
   const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};

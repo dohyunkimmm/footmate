@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {test,expect}=require('@playwright/test');
 
 async function chooseSetupDefaultIfNeeded(page){
@@ -9,7 +10,7 @@ async function chooseSetupDefaultIfNeeded(page){
   if(value)await setup.locator(`[data-action="choose-setup"][data-value="${value}"]`).click();
 }
 
-async function openClean(page){await page.goto('/demo',{waitUntil:'domcontentloaded'});await page.evaluate(()=>localStorage.clear())}
+async function openClean(page){await page.goto('/prototype',{waitUntil:'domcontentloaded'});await page.evaluate(()=>localStorage.clear())}
 async function setup(page){await page.getByRole('button',{name:/내 경기 찾아보기/}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:'다음'}).click();await chooseSetupDefaultIfNeeded(page);await page.getByRole('button',{name:/추천 경기 보기/}).click();await expect(page.locator('[data-screen="home"]')).toBeVisible()}
 
 test.beforeEach(async({page})=>{await openClean(page)});

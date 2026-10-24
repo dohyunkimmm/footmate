@@ -1,9 +1,10 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {test,expect}=require('@playwright/test');
 
 for(const width of [320,390,430,1440]){
   test(`Restored Welcome keeps the FootMate app identity and start actions usable at ${width}px`,async({page})=>{
     await page.setViewportSize({width,height:width===1440?900:844});
-    await page.goto('/demo',{waitUntil:'domcontentloaded'});
+    await page.goto('/prototype',{waitUntil:'domcontentloaded'});
     await page.evaluate(()=>localStorage.clear());
     await page.reload({waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');

@@ -1,10 +1,11 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {expect}=require('@playwright/test');
 const fixed=Date.parse('2026-09-27T10:00:00Z');
 const id='suwon-ingye-2000';
 async function seed(page,{offset=10,joined=true,status='upcoming',route='profile',legacy=false}={}){
   await page.setViewportSize({width:390,height:844});
   await page.clock.setFixedTime(new Date(fixed));
-  await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype?resume=1',{waitUntil:'domcontentloaded'});
   await page.evaluate(({offset,joined,status,route,legacy,fixed,id})=>{
     localStorage.clear();sessionStorage.clear();
     localStorage.setItem('footmate:v4:session',JSON.stringify({route,setupComplete:true,region:'수원 · 영통',position:'MF',level:'중급',signedIn:joined,joinedMatchId:joined?id:null,selectedMatchId:id,matchStage:'upcoming',userName:'도현'}));

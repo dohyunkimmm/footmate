@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const fs=require('fs');
 const {test,expect}=require('@playwright/test');
 
@@ -11,14 +12,14 @@ test('Demo entry uses the original ball and app identity before starting the jou
   expect(welcome).not.toContain('data-welcome-ai-copy');
 });
 
-for(const path of ['/demo','/app']){
+for(const path of ['/prototype']){
   test(`${path} ends at demo with app identity and preserves browsing/detail return`,async({page})=>{
     await page.setViewportSize({width:390,height:844});
     await page.goto(path,{waitUntil:'domcontentloaded'});
     await page.evaluate(()=>localStorage.clear());
     await page.reload({waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
-    await expect(page).toHaveURL(/\/demo(?:\?|$)/);
+    await expect(page).toHaveURL(/\/prototype(?:\?|$)/);
     await expect(page.locator('.fm-app-entry-name')).toHaveText('FootMate');
     await page.getByRole('button',{name:'경기 먼저 둘러보기'}).click();
     await expect(page.locator('[data-screen="discover"]')).toBeVisible();
@@ -29,7 +30,7 @@ for(const path of ['/demo','/app']){
 }
 
 test('Welcome login returns to the app start and then leads to setup, never checkout',async({page},testInfo)=>{
-  await page.goto('/demo');
+  await page.goto('/prototype');
   await page.evaluate(()=>localStorage.clear());
   await page.reload();
   await page.getByRole('button',{name:'로그인하고 시작하기'}).click();
@@ -41,7 +42,7 @@ test('Welcome login returns to the app start and then leads to setup, never chec
   await page.getByRole('button',{name:'체험 로그인으로 계속',exact:true}).click();
   await expect(page.locator('[data-screen="setup"]')).toBeVisible();
   await expect(page.locator('[data-screen="checkout"]')).toHaveCount(0);
-  await page.goto('/demo');
+  await page.goto('/prototype');
   await page.screenshot({path:testInfo.outputPath('welcome-login-entry.png'),animations:'disabled'});
   await page.getByRole('button',{name:'로그인 화면 보기',exact:true}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();

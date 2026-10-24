@@ -56,7 +56,7 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await expect(page).toHaveTitle('FootMate | Closed Beta');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
-  await expect(page.getByText('Supabase Connected',{exact:true})).toBeVisible();
+  await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
   await expect(page.getByText('영통 금요일 저녁 경기')).toBeVisible();
   await expect(page.getByRole('button',{name:'로그인 후 참가'})).toBeVisible();
   await expect(page.locator('.fm-beta-match a[href^="https://www.google.com/maps/search/"]')).toBeVisible();
@@ -105,6 +105,7 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.getByText('개인정보 안내',{exact:true}).click();
   await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
 
@@ -136,7 +137,7 @@ test('closed beta recovers from backend config failure',async({page})=>{
   await expect(page.getByRole('button',{name:'연결 다시 시도'})).toBeVisible();
   await page.getByRole('button',{name:'연결 다시 시도'}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
-  await expect(page.getByText('아직 공개된 실제 경기가 없습니다.')).toBeVisible();
+  await expect(page.getByText('지금 참가할 수 있는 경기가 없어요.')).toBeVisible();
 });
 
 test('closed beta stays responsive at release mobile widths',async({page})=>{
@@ -147,5 +148,24 @@ test('closed beta stays responsive at release mobile widths',async({page})=>{
     await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
+  }
+});
+
+test('released demo opens the connected Beta with useful actions only',async({page},testInfo)=>{
+  await mockBackend(page);
+  await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
+  for(const width of [1920,390]){
+    await page.setViewportSize({width,height:900});
+    await page.goto('/demo',{waitUntil:'domcontentloaded'});
+    await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+    await expect(page.locator('#footmate-next')).toHaveCount(0);
+    await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'AI 경기 찾기'})).toBeVisible();
+    await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
+    const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
+    expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
+    await page.evaluate(()=>document.fonts.ready);
+    await page.screenshot({path:testInfo.outputPath('released-beta-'+width+'.png'),fullPage:true,animations:'disabled'});
   }
 });
