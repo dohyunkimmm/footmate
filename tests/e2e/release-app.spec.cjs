@@ -449,7 +449,7 @@ test('Flow P1 edits interpreted AI level and progressively relaxes empty results
     localStorage.setItem('footmate:v5.1:ai',JSON.stringify(saved));
   },saved);
   await page.getByRole('button',{name:'경기 찾기',exact:true}).click();
-  const select=page.getByRole('combobox',{name:'AI가 해석한 경기 레벨 수정'});
+  const select=page.getByRole('combobox',{name:'해석된 경기 강도 수정'});
   await expect(select).toHaveValue('입문');
   await select.selectOption('초중급');
   await expect(select).toHaveValue('초중급');

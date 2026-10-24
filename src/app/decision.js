@@ -40,7 +40,9 @@ function normalize(candidate={}){
   const ids=new Set(MATCHES.map(match=>match.id));
   const saved=Array.isArray(candidate.savedMatchIds)?candidate.savedMatchIds.filter(id=>ids.has(id)):[];
   const compare=Array.isArray(candidate.compareMatchIds)?candidate.compareMatchIds.filter(id=>ids.has(id)).slice(0,MAX_COMPARE):[];
-  return {savedMatchIds:[...new Set(saved)],compareMatchIds:[...new Set(compare)]};
+  const context=candidate.selectionContext,prefs=context?.preferences;
+  const valid=context&&ids.has(context.matchId)&&MATCHES.some(m=>m.region===prefs?.region)&&['MF','FW','DF','GK'].includes(prefs?.position)&&['입문','초중급','중급','중급+'].includes(prefs?.level);
+  return {savedMatchIds:[...new Set(saved)],compareMatchIds:[...new Set(compare)],...(valid?{selectionContext:{matchId:context.matchId,preferences:{region:prefs.region,position:prefs.position,level:prefs.level}}}:{})};
 }
 
 function readDecision(){
@@ -65,6 +67,11 @@ function currentMatch(){const session=readSession();return matchById(session.sel
 function openSeats(match){return Math.max(0,Number(match.capacity||0)-Number(match.joined||0))}
 function isSaved(id){return state.savedMatchIds.includes(id)}
 function isCompared(id){return state.compareMatchIds.includes(id)}
+
+function preferencesForSelection(session){
+  const context=state.selectionContext;
+  return context?.matchId===session.selectedMatchId?{...session,...context.preferences}:session;
+}
 
 function recommendationRow(match,session){
   const rows=window.__FOOTMATE_RECOMMENDATION__?.rank?.(session)||[];
@@ -159,8 +166,8 @@ function patchDetail(){
   const screen=root?.querySelector('[data-screen="detail"]');
   if(!screen)return;
   const match=currentMatch();
-  const session=readSession();
-  const signature=`${DECISION_VERSION}|${match.id}|${state.savedMatchIds.join(',')}|${state.compareMatchIds.join(',')}`;
+  const session=preferencesForSelection(readSession());
+  const signature=`${DECISION_VERSION}|${match.id}|${session.region}|${session.position}|${session.level}|${state.savedMatchIds.join(',')}|${state.compareMatchIds.join(',')}`;
   if(screen.dataset.decisionSignature===signature)return;
   screen.dataset.decisionSignature=signature;
   screen.dataset.decisionVersion=DECISION_VERSION;
@@ -194,7 +201,7 @@ function openCompare(trigger){
   if(matches.length<2)return;
   closeCompare(false);
   lastCompareTrigger=trigger||null;
-  const session=readSession();
+  const session=preferencesForSelection(readSession());
   const overlay=document.createElement('div');
   overlay.className='fm-decision-dialog-backdrop';
   overlay.dataset.decisionDialog='compare';
@@ -258,13 +265,30 @@ function chooseCompareMatch(id){
   if(!match)return;
   if(mode==='real'){
     const session=readSession();
-    footmatePlatform.session.write({...session,selectedMatchId:id,route:'detail'});
+    const preferences=preferencesForSelection(session);
+    if(state.selectionContext?.matchId===session.selectedMatchId){state.selectionContext.matchId=id;persist()}
+    footmatePlatform.session.write({...session,selectedMatchId:id,selectedJoinPosition:preferences.position,route:'detail'});
   }
   closeCompare(false);
   const card=root.querySelector(`[data-action="open-match"][data-match-id="${CSS.escape(id)}"]`);
   if(card){card.click();return;}
   location.reload();
 }
+
+root?.addEventListener('click',event=>{
+  const card=event.target.closest('[data-action="open-match"][data-match-id]');
+  if(!card||mode!=='real')return;
+  const base=readSession(),ai=window.__FOOTMATE_REAL_APP_IA__;
+  const origin=card.closest('[data-screen]')?.dataset.screen;
+  const conditions=origin==='discover'&&ai?.aiScope?ai.assistant?.result:null;
+  const retained=origin==='detail'&&state.selectionContext?.matchId===base.selectedMatchId?state.selectionContext.preferences:null;
+  if(conditions||retained){
+    const prefs=retained||{region:conditions.region||base.region,position:conditions.position||base.position,level:conditions.level||base.level};
+    state.selectionContext={matchId:card.dataset.matchId,preferences:prefs};
+    card.dataset.joinPosition=prefs.position;
+  }else{delete state.selectionContext;delete card.dataset.joinPosition}
+  persist();
+},true);
 
 root?.addEventListener('click',event=>{
   const target=event.target.closest('[data-decision-action]');
@@ -302,6 +326,7 @@ if(root){observer.observe(root,{childList:true,subtree:true});patchDetail();}
 
 window.__FOOTMATE_DECISION__={
   version:DECISION_VERSION,
+  preferencesFor:preferencesForSelection,
   storageKey:DECISION_STORAGE_KEY,
   read:()=>({...state,savedMatchIds:[...state.savedMatchIds],compareMatchIds:[...state.compareMatchIds]}),
   showReviewerCompare:()=>{

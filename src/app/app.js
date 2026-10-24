@@ -270,7 +270,7 @@ function discoverView(){
 }
 
 function availableJoinPosition(match){
-  const preferred=state.position;
+  const preferred=window.__FOOTMATE_DECISION__?.preferencesFor?.(state)?.position||state.position;
   const explicit=state.selectedJoinPosition;
   if(explicit===null)return null;
   if(explicit&&Number(match.positionSlots?.[explicit]||0)>0)return explicit;
@@ -278,7 +278,7 @@ function availableJoinPosition(match){
   return Number(match.positionSlots?.[preferred]||0)>0?preferred:null;
 }
 function joinPositionChoices(match){
-  const chosen=availableJoinPosition(match),preferred=state.position;
+  const chosen=availableJoinPosition(match),preferred=window.__FOOTMATE_DECISION__?.preferencesFor?.(state)?.position||state.position;
   const preferredAvailable=Number(match.positionSlots?.[preferred]||0)>0;
   const warning=!preferredAvailable?'선호 포지션 '+preferred+' 자리가 마감됐어요. 다른 포지션은 직접 선택해야 참가할 수 있습니다.':chosen&&chosen!==preferred?'선호 포지션과 다른 '+chosen+'를 직접 선택했습니다. 참가 전에 한 번 더 확인해주세요.':'선택한 포지션과 남은 자리를 확인해주세요.';
   return `<section class="fm-next-detail-section fm-join-position" aria-label="참가 포지션 선택" data-join-position>
@@ -459,7 +459,7 @@ root.addEventListener('click',event=>{
   }
   if(action==='edit-setup'){const origin=mode==='real'?{route:state.route,scrollTop:root.querySelector('[data-screen]')?.scrollTop||0,region:state.region,position:state.position,level:state.level}:null;setState({route:'setup',setupStep:0,setupOrigin:origin});return;}
   if(action==='open-match'){
-    setState({selectedMatchId:target.dataset.matchId,selectedJoinPosition:undefined,route:'detail'});return;
+    setState({selectedMatchId:target.dataset.matchId,selectedJoinPosition:target.dataset.joinPosition||undefined,route:'detail'});return;
   }
   if(action==='detail-back'){setState({route:state.setupComplete||state.browseOnly?'discover':'home'});return;}
   if(action==='choose-join-position'){
