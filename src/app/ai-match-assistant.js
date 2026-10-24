@@ -333,7 +333,7 @@ function configureHome(screen){
   const list=screen.querySelector(':scope > .fm-next-list');
   if(list){
     list.dataset.iaRole='personalized-recommendations';
-    if(assistant&&list.nextElementSibling!==assistant)list.after(assistant);
+    if(assistant&&assistant.nextElementSibling!==head)head.before(assistant);
     const completedId=finishedMatchId();
     list.querySelectorAll('.fm-next-match-card').forEach((node,index)=>{
       const completed=Boolean(completedId&&node.dataset.matchId===completedId);

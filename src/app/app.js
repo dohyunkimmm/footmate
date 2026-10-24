@@ -144,7 +144,7 @@ function welcomeView(){
           ${state.setupComplete?button(state.joinedMatchId?'내 경기 이어보기':'저장된 설정으로 바로 추천 보기','continue-home','primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`):''}
           ${button(`내 경기 찾아보기 ${icon('arrow')}`,'start-setup',state.setupComplete?'secondary':'primary',`style="height:54px;min-height:54px;padding:0 20px;border-radius:16px"`)}
           ${button('경기 먼저 둘러보기','browse-matches','secondary')}
-          ${!state.signedIn?button('로그인하고 시작하기','welcome-sign-in','text'):''}
+          ${button(state.signedIn?'로그인 화면 보기':'로그인하고 시작하기','welcome-sign-in','text')}
         </div>
         <p class="fm-app-entry-note">경기와 참가는 무료 체험용이며 실제 결제는 없어요.</p>
       </div>
