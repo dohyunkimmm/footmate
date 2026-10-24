@@ -2,6 +2,18 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+## 2026-10-24 — 선택형 축구·풋살 추천과 참가 시 로그인 · #657 운영 반영
+
+- [PR #657](https://github.com/dohyunkimmm/footmate/pull/657) · runtime `c3e9fbcbd70fb3d91f327341e0fdacbce04a691f`를 운영에 반영했다. Vercel Production `dpl_G1EfHKf3Z73HdD3PAm43gAF2zy6S` READY와 공식 alias `footmate-black.vercel.app`를 대조했다.
+- 처음에는 종목·지역·실력·포지션·시간을 선택하고, 재방문에는 저장한 조건·추천 순서로 홈을 연다. 문장 입력을 제거하고 추천을 먼저 본 뒤 참가 시 기존 카카오·구글·이메일 인증을 연다. 로그인만으로 자동 참가하지 않는다.
+- 실제 적격 후보 최대 12개 안에서 AI가 추천 순서를 정한다. 알 수 없는/중복 ID는 제거하고 선택 조건·경기 사실·추천 이유는 데이터와 규칙으로 보호한다. AI 실패·시간 초과에는 선택 조건의 기본 결과를 유지한다.
+- 선택 경기와 포지션은 로그인·새로고침 후에도 유지한다. 프로필·사진·알림·계정 설정은 내 정보에서 열고, 데이터가 없는 대기·참석 이력 패널은 숨긴다. 서버 참가·취소·체크인·피드백과 기존 OAuth 설정·복귀 경로는 유지했다.
+- [PR QA 40089778193](https://github.com/dohyunkimmm/footmate/actions/runs/40089778193) SUCCESS: 회귀, 변경 흐름 단독 1개, Case Study 28개, Chromium 131개, 이전 프로토타입 WebKit 6개 PASS. 타이포그래피 23개 시나리오·56/56 PNG 무결성·문제 0건. 시각 기준과 허용치는 변경하지 않았다.
+- [변경 흐름 화면 근거](https://github.com/dohyunkimmm/footmate/actions/runs/40089778193/artifacts/12558537274)와 [전체 브라우저 근거](https://github.com/dohyunkimmm/footmate/actions/runs/40089778193/artifacts/12558398642)는 테스트 경기·인증 응답으로 검증한 화면이다. 실제 사용자 OAuth 로그인 완료를 뜻하지 않는다.
+- 실제 연결된 Chrome의 운영 1920px에서 앱 폭 560px·가로 넘침 없음, 선택형 첫 화면·조건 선택·재방문 복원·카카오/구글 버튼·로그인 열기/복귀와 Case Study 선택형 AI 설명을 확인했다. 현재 공개 경기 데이터는 비어 있어 운영 UI에는 경기 없음이 표시된다. 실제 참가 전체 흐름은 위 테스트 데이터로 검증했다.
+- 병합 후 [운영 자동 검사 40090378235](https://github.com/dohyunkimmm/footmate/actions/runs/40090378235)의 결과는 PR QA와 별도로 확인한다. 구현 QA·서버 연결 확인을 매칭 만족도·전환 개선이나 실제 사용자 로그인 완료로 해석하지 않는다.
+- 노션 PRD·Service Flow·AI Workflow·포트폴리오 본문도 같은 선택형 흐름으로 맞추며 제목·썸네일·카드 형식은 유지한다. 이전 자연어 프로토타입과 기존 배포 기록은 별도로 보존한다.
+
 ## 2026-10-24 — 출시 Beta 공개 진입·UI 정리 운영 반영 완료 · #655
 
 - 사용자 정정에 따라 공개 /demo는 체험용 프로토타입이 아니라 기존 서버 연결 Beta를 엽니다. 기존 프로토타입은 /prototype으로 분리하며 관련 회귀 검사는 그 경로에서 보존합니다.

@@ -42,7 +42,7 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await page.locator('.slide:visible summary').click();
   await expect(page.locator('.slide:visible')).toContainText('사용자 직접 확정 · 자동 실행 제외');
   await page.locator('.toc-item').nth(8).click();
-  await expect(page.locator('.slide:visible')).toContainText('AI는 조건 해석 · 후보 순위와 근거는 규칙 엔진');
+  await expect(page.locator('.slide:visible')).toContainText('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서');
 });
 
 test('retired app URLs open the released connected Beta',async({page})=>{
