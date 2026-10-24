@@ -823,6 +823,6 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 #section-01 .product-figure{grid-column:2;grid-row:2;justify-content:center}
 #section-01>.card-grid{grid-column:1/-1;grid-row:3}
 #section-01 .product-figure .evidence-preview{width:100%;max-width:none}
-#section-01 .product-figure img{height:auto;aspect-ratio:16/9;object-fit:contain}
+#section-01 .product-figure img{height:auto;aspect-ratio:auto;object-fit:contain}
 }
 
