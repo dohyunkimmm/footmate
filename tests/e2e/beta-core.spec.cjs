@@ -141,6 +141,9 @@ test('closed beta recovers from backend config failure',async({page})=>{
   await expect(page.getByRole('button',{name:'연결 다시 시도'})).toBeVisible();
   await page.getByRole('button',{name:'연결 다시 시도'}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.getByText('지금 참가할 수 있는 경기가 없어요.')).toBeVisible();
 });
 
