@@ -208,8 +208,7 @@ if(root){
     return `<div class="fm-beta-shell fm-beta-opening" data-screen="welcome" data-welcome-entry="app"><div class="fm-app-entry">
       <div class="fm-app-entry-brand"><img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate 축구공 로고"><strong class="fm-app-entry-name">FootMate</strong><span class="fm-app-entry-tagline">나에게 맞는 풋살, 함께 뛰는 즐거움</span></div>
       <div class="fm-next-intro-copy"><h1>내 조건에 맞는 경기를<br>찾아보세요.</h1><p>실력·위치·포지션을 설정하면<br>맞는 경기를 추천해드려요.</p></div>
-      <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'내 경기 이어보기':'내 경기 찾아보기'} →</button><button class="fm-beta-button" type="button" data-action="opening-start">경기 먼저 둘러보기</button><button class="fm-beta-link" type="button" data-action="opening-login">${session&&user?'내 정보':'로그인하고 시작하기'}</button></div>
-      <p class="fm-app-entry-note">경기와 참가는 무료 체험용이며 실제 결제는 없어요.</p>
+      <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'계속하기':'시작하기'}</button></div>
     </div></div>`;
   }
 
@@ -354,7 +353,7 @@ if(root){
     if(action==='opening-start'||action==='opening-login'){
       openingOpen=false;sessionStorage.setItem('footmate:beta:entered:v1','1');
       if(session&&user){if(isDemoEntry){sessionStorage.setItem('footmate:beta:view:v1',action==='opening-login'?'my':'home');location.replace('/beta');return}setView(action==='opening-login'?'my':'home');return}
-      authOpen=action==='opening-login';render();return;
+      authOpen=true;render();return;
     }
     if(action==='demo-prev'||action==='demo-next'){demoPage=Math.max(0,demoPage+(action==='demo-next'?1:-1));render();return}
     if(action==='matches-tab'){matchesTab=target.dataset.tab;render();return}
@@ -368,13 +367,13 @@ if(root){
       if(action==='focus-auth'){pendingMatchId=target.dataset.matchId||'';sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId)}
       authOpen=true;render();root.querySelector('#beta-auth-panel h2, #beta-auth-panel input')?.focus();window.scrollTo({top:0,behavior:'smooth'});return;
     }
-    if(action==='close-account'){authOpen=false;render();root.querySelector('[data-pending-match] button, [data-action="open-account"]')?.focus();return} 
+    if(action==='close-account'){if(!session||!user){openingOpen=true;authOpen=false;render();return}authOpen=false;render();root.querySelector('[data-pending-match] button, [data-action="open-account"]')?.focus();return} 
     if(action==='retry-backend'){boot();return}
     if(action==='refresh'){
       run(async()=>{await refreshData();setNotice(matchesError?matchesError:'경기와 참가 상태를 새로고침했습니다.',matchesError?'error':'success')});return;
     }
     if(action==='signout'){
-      run(async()=>{try{await client.auth.signOut({accessToken:session.accessToken})}finally{clearSession();authOpen=true;setNotice('로그아웃했습니다.','success')}});return;
+      run(async()=>{try{await client.auth.signOut({accessToken:session.accessToken})}finally{clearSession();sessionStorage.removeItem('footmate:beta:entered:v1');authOpen=true;setNotice('로그아웃했습니다.','success')}});return;
     }
     if(action==='delete-account'){
       const confirmed=window.confirm('FootMate Closed Beta 계정 및 연동된 프로필·참가·알림 기록 삭제를 요청합니다. 이 작업은 되돌릴 수 없습니다. 다음 단계에서 삭제 문구를 다시 입력해야 합니다. 계속할까요?');
