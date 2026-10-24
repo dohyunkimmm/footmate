@@ -824,9 +824,5 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 #section-01>.card-grid{grid-column:1/-1;grid-row:3}
 #section-01 .product-figure .evidence-preview{width:100%;max-width:none}
 #section-01 .product-figure img{height:auto;aspect-ratio:16/9;object-fit:contain}
-#section-07 .wireframe-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
-#section-07 .wireframe-record{grid-column:span 2}
-#section-07 .wireframe-record:nth-child(-n+2){grid-column:span 3}
-#section-07 .wireframe-record:nth-child(-n+2) img{height:auto;aspect-ratio:1200/760;object-fit:contain}
 }
-@media(min-width:1200px){#section-07 .wireframe-record:nth-child(-n+2)>.evidence-preview{max-width:none;width:100%}}
+
