@@ -197,7 +197,7 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await expect.poll(()=>requests.length).toBe(1);
   expect(requests[0].task).toBe('recommend');expect(requests[0].candidates[0].id).toBe(matchId);
-  await expect(page.getByText('FW 1자리',{exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-match-reason')).toContainText('FW 1자리');
   await expect(page.getByLabel('이메일')).toBeHidden();
   expect(await serious(page)).toEqual([]);
   await page.screenshot({path:testInfo.outputPath('recommendations-390.png'),fullPage:true});
