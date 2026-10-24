@@ -30,7 +30,8 @@ if(root){
   let accountTab='profile';
   let openingOpen=isDemoEntry&&sessionStorage.getItem('footmate:beta:entered:v1')!=='1';
   let joinedPage=0;
-  function setView(next){view=next;sessionStorage.setItem('footmate:beta:view:v1',next);authOpen=false;render();window.scrollTo({top:0,behavior:'smooth'})}
+  let matchesTab='joined';
+  function setView(next){view=next;matchesTab='joined';sessionStorage.setItem('footmate:beta:view:v1',next);authOpen=false;render();window.scrollTo({top:0,behavior:'smooth'})}
   function exampleMatch(id){return matches.some(m=>m.id===id&&m.isDemo)||participations.some(p=>p.match_id===id&&p.is_demo)}
   let authOpen=Boolean(location.hash.includes('error')||sessionStorage.getItem('footmate:beta:social-auth-error:v1'));
   let recommendedIds=null,recommendationReasons={};
@@ -217,6 +218,7 @@ if(root){
     root.dataset.betaCatalogSource=matches.some(m=>m.isDemo)?'demo':'server';
     root.dataset.betaView=view;
     root.dataset.betaAccountTab=accountTab;
+    root.dataset.betaMatchesTab=matchesTab;
     root.dataset.betaAuthOpen=String(authOpen);
     root.dataset.betaGuest=String(!session||!user);
     root.dataset.betaRecommendationsReady=String(recommendedIds!==null);
@@ -227,6 +229,7 @@ if(root){
     root.innerHTML=`<div class="fm-beta-shell">
       <header class="fm-beta-topbar"><div class="fm-beta-brand"><button class="fm-beta-brand-home" type="button" data-action="opening" aria-label="앱 시작 화면"><img src="/src/app/assets/footmate-original.png" width="36" height="36" alt=""></button><h1>FootMate</h1><span class="fm-beta-live" data-beta-backend="${connected?'connected':backendState==='error'?'error':'connecting'}">${backendState==='error'?'연결 오류':'Demo'}</span></div><button class="fm-beta-link" type="button" data-action="open-account" ${authOpen?'hidden':''}>${session&&user?esc(profile?.display_name||'내 정보'):'로그인'}</button></header>
       
+      ${session&&user&&view==='matches'?`<nav class="fm-beta-account-tabs" aria-label="내 경기 메뉴">${[['joined','참가 경기'],['waitlist','대기'],['history','참석 이력']].map(([tab,label])=>`<button class="fm-beta-button" type="button" data-action="matches-tab" data-tab="${tab}" ${matchesTab===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`:''}
       ${notice?`<div class="fm-beta-note" data-tone="${esc(notice.tone)}" style="margin-bottom:18px">${esc(notice.message)}</div>`:''}
       ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>서버에 연결할 수 없어요.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside><div class="fm-beta-account-view" ${!(authOpen||(session&&user&&view==='my'))?'hidden':''}>${authOpen?'<button class="fm-beta-link fm-beta-back" type="button" data-action="close-account" aria-label="← 뒤로"><span class="fm-icon" aria-hidden="true">⬅️</span> 뒤로</button>':''}${session&&user?`<nav class="fm-beta-account-tabs" aria-label="내 정보 메뉴">${[['profile','프로필'],['notifications','알림'],['settings','설정']].map(([tab,label])=>`<button class="fm-beta-button" type="button" data-action="account-tab" data-tab="${tab}" ${accountTab===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`:''}${renderAuth()}</div><div class="fm-beta-joined-view">${renderParticipation()}</div></aside><section data-beta-main><div class="fm-beta-panel fm-beta-catalog"><div class="fm-beta-panel-head"><div><h2>추천 경기</h2><p>${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
       ${session&&user?`<nav class="fm-beta-app-nav" aria-label="Beta 메뉴">${[['home','추천','✨'],['matches','내 경기','🗓️'],['my','MY','👤']].map(([tab,label,icon])=>`<button type="button" data-action="navigate" data-view="${tab}" ${view===tab?'aria-current="page"':''}><i class="fm-icon" aria-hidden="true">${icon}</i><span>${label}</span></button>`).join('')}</nav>`:''}
@@ -354,6 +357,7 @@ if(root){
       authOpen=action==='opening-login';render();return;
     }
     if(action==='demo-prev'||action==='demo-next'){demoPage=Math.max(0,demoPage+(action==='demo-next'?1:-1));render();return}
+    if(action==='matches-tab'){matchesTab=target.dataset.tab;render();return}
     if(action==='account-tab'){accountTab=target.dataset.tab;render();return}
     if(action==='joined-prev'||action==='joined-next'){joinedPage=Math.max(0,joinedPage+(action==='joined-next'?1:-1));render();return}
     if(action==='navigate'){setView(target.dataset.view);return}
@@ -396,7 +400,7 @@ if(root){
           pendingMatchId='';sessionStorage.removeItem('footmate:beta:pending-match:v1');
           emitBetaMeasurement('join_succeeded',{matchId,flowId});
           await refreshData();
-          view='matches';sessionStorage.setItem('footmate:beta:view:v1',view);
+          view='matches';matchesTab='joined';sessionStorage.setItem('footmate:beta:view:v1',view);
           setNotice(example?`${position} 데모 참가를 완료했어요.`:`${position} 포지션으로 참가가 확정됐습니다.`,'success');
         }catch(error){
           emitBetaMeasurement('join_failed',{matchId,flowId});
