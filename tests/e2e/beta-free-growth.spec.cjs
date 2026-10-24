@@ -50,7 +50,7 @@ async function mock(page){
 
 test('live beta growth surfaces rank real matches, waitlist and collect feedback',async({page})=>{
  await install(page);const backend=await mock(page);await page.goto('/beta',{waitUntil:'domcontentloaded'});
- await expect(page.getByRole('heading',{name:'어떤 경기를 찾으세요?'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'AI 경기 찾기'})).toBeVisible();
  await expect(page.locator('[data-beta-growth-host]')).toHaveAttribute('data-realtime-state','connected');
  await page.getByLabel('원하는 경기 조건').fill('영통 MF 중급 저녁 경기');
  await page.getByRole('button',{name:'찾기'}).click();

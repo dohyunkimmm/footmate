@@ -161,7 +161,7 @@ test('released demo opens the connected Beta with useful actions only',async({pa
     await expect(page.locator('#footmate-next')).toHaveCount(0);
     await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
     await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
-    await expect(page.getByRole('heading',{name:'어떤 경기를 찾으세요?'})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'AI 경기 찾기'})).toBeVisible();
     await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
     const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
     expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
