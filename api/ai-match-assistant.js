@@ -91,6 +91,9 @@ function applySemanticGuardrails(message,candidate){
   const result=normalizeResult(candidate);
   const userText=String(message||'');
   let changed=false;
+  const levelText=userText.replace(/(?:초중급|초급|입문|초보|중급\+?|고급)\s*(?:은|는)?\s*(?:말고|제외하고|빼고)/g,'');
+  const explicitLevel=/초중급|초급/.test(levelText)?'초중급':/입문|초보/.test(levelText)?'입문':null;
+  if(explicitLevel&&result.level!==explicitLevel){result.level=explicitLevel;changed=true}
   const time=userText.match(/(오전|오후|새벽)\s*12\s*(?:시(?:\s*(\d{1,2})\s*분?)?|:(\d{2}))\s*(?:이후|후|넘어서|넘어)/);
   if(time){
     const minute=Number(time[2]||time[3]||0);
@@ -110,7 +113,7 @@ function applySemanticGuardrails(message,candidate){
     ].find(([pattern])=>pattern.test(tail));
     if(positive&&result.position!==positive[1]){result.position=positive[1];changed=true}
   }
-  if(changed)result.reply='요청하신 시간·포지션 조건을 검색에 반영했어요.';
+  if(changed)result.reply='요청하신 검색 조건을 반영했어요.';
   return result;
 }
 function gatewayErrorType(payload){return typeof payload?.error?.type==='string'?payload.error.type:null}
@@ -146,6 +149,7 @@ module.exports=async function handler(req,res){
     `Allowed regions: ${REGIONS.join(', ')}.`,
     `Allowed positions: ${POSITIONS.join(', ')}.`,
     `Allowed levels: ${LEVELS.join(', ')}.`,
+    'UI level labels: 초급 means 초중급; 입문 or 초보 means 입문; 고급 means 중급+. Do not map 초급 to 입문.',
     'Do not invent matches, prices, availability, addresses, rankings, dates, or user history.',
     'Date expressions such as 오늘, 내일, 주말 are not supported. Ignore them rather than inventing a date constraint.',
     'If a constraint is not present, return null. Keep current preferences only as context; do not copy them into constraints unless the user asks to keep/refine them.',

@@ -36,7 +36,7 @@ assert.ok(workflow.includes('Run Release App Mobile Safari/WebKit gate'));
 assert.ok(workflow.includes('tests/e2e/release-app.spec.cjs'));
 assert.ok(production.includes('data-product-detail'));
 assert.ok(PERFORMANCE_BUDGET.firstPartyCssBytes>0&&PERFORMANCE_BUDGET.firstPartyJsBytes>0);
-assert.deepEqual(RUNTIME_PERFORMANCE_BUDGET,{shellMaxWidthPx:560,maxHorizontalOverflowPx:1,screenReadyMs:4000});
+assert.deepEqual(RUNTIME_PERFORMANCE_BUDGET,{shellMaxWidthPx:560,desktopShellMaxWidthPx:1120,desktopBreakpointPx:1600,maxHorizontalOverflowPx:1,screenReadyMs:4000});
 
 const matches=[
   {id:'near',region:'수원 · 영통',area:'영통',level:'중급',positionSlots:{MF:2},distanceMin:10,spot:'2자리'},
