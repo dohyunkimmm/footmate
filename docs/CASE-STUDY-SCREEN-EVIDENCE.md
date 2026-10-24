@@ -28,3 +28,12 @@ Home·Discover SVG는 최신 화면의 정보 배치와 동작을 단순화한 �
 | `matching-rules-fallback.png` | `0278362d225ddbd4966b724d4bf9610980619eb7c5c4f69e80c3fea684be1add` |
 | `matching-zero-before.png` | `ebc2b668aa0833a781aa0f28f3cc2f04a0a47d3517dedbf3a58e40fd2350f8b9` |
 | `matching-zero-after.png` | `f94067b3bfc156a6bdf6295c977657b66378dcdc1ab0ca2e21c9791bb9924983` |
+
+## 1920px PC 우선 패치 · PR #652 · 검증 중
+
+- 대표 이미지를 `pc-matching-home.jpg`로 전환했습니다. 커밋 `cc3056cf191280d92d951d10a6ab3d78984b9926`의 Vercel 테스트 배포 `dpl_13YHDaNuPzFpNREeMTrKX1TePLHy`를 연결된 Chrome에서 직접 조작하고 1920px 폭으로 캡처했습니다. 테스트 배포의 검토 도구 표시가 포함된 원본이며 합성·문구 편집은 하지 않았습니다.
+- 1600px 이상에서 앱 최대 폭 1120px, 홈·경기 찾기의 두 열 비교를 우선합니다. 960–1599px와 모바일의 기존 흐름은 유지합니다. 홈·경기 찾기 SVG는 이 PC 구조를 단순화한 와이어프레임이며 실제 캡처와 구분합니다.
+- 직접 확인: 기본 MF 프로필을 유지한 GK 검색, 초급 해석, 상세의 GK 근거·선택, 내부 재진입/새로고침 유지. PC 상세의 제목/정보 겹침은 후속 `55053d6` 테스트 배포에서 해소를 확인했습니다.
+- 최종 CI, 승인된 기준 이미지 교체, main 병합 및 운영 배포는 별도이며 완료로 표시하지 않습니다.
+
+`pc-matching-home.jpg` SHA-256: `6ea4049c16c3ca0a1f8ef464af3fd73944c92380a2039b9c3d4cf8a79b8b1705`
