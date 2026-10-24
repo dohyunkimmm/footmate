@@ -67,6 +67,20 @@ async function invoke(options){const req=request(options);const res=response();a
     const denied=await invoke({method:'POST',body:{message:'가까운 경기',preferences:{}},ip:'10.0.1.7'});
     assert.equal(denied.statusCode,502);assert.equal(denied.body.error,'ai_gateway_error');assert.equal(denied.body.gatewayType,'access_denied');assert.equal(denied.body.model,'openai/gpt-5.4-mini');
 
+    global.fetch=async(_url,options)=>{
+      const payload=JSON.parse(options.body);
+      assert.deepEqual(payload.text.format.schema.required,['rankedMatchIds']);
+      assert.ok(payload.instructions.includes('never relax or add constraints'));
+      return{ok:true,status:200,json:async()=>({output_text:JSON.stringify({rankedMatchIds:['candidate-b','invented','candidate-b','candidate-a']})})};
+    };
+    const ranked=await invoke({method:'POST',body:{task:'recommend',message:'풋살 중급 MF',preferences:{level:'중급',position:'MF'},candidates:[{id:'candidate-a',level:'중급',remaining:4},{id:'candidate-b',level:'중급',remaining:2}]},ip:'10.0.11.1'});
+    assert.equal(ranked.statusCode,200);assert.deepEqual(ranked.body.rankedMatchIds,['candidate-b','candidate-a']);
+    global.fetch=async()=>({ok:true,status:200,json:async()=>({output_text:'{"rankedMatchIds":["invented"]}'})});
+    const invented=await invoke({method:'POST',body:{task:'recommend',message:'추천',candidates:[{id:'actual-match'}]},ip:'10.0.11.2'});
+    assert.equal(invented.statusCode,502);assert.equal(invented.body.error,'ai_invalid_ranking');
+    const none=await invoke({method:'POST',body:{task:'recommend',message:'추천',candidates:[]},ip:'10.0.11.3'});
+    assert.equal(none.statusCode,200);assert.deepEqual(none.body.rankedMatchIds,[]);
+
     const health=await invoke({method:'GET',ip:'10.0.1.8'});
     assert.equal(health.statusCode,200);assert.equal(health.body.version,'5.1.1');assert.equal(health.body.provider,'vercel-ai-gateway');assert.equal(health.body.model,'openai/gpt-5.4-nano');assert.equal(health.body.fallbackModel,'openai/gpt-5.4-mini');assert.equal(health.body.gatewayTimeoutMs,3000);assert.equal(health.body.reasoningEffort,'none');assert.equal(health.body.configured,true);
     console.log('PASS AI assistant contract');

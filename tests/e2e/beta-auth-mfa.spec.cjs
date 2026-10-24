@@ -20,6 +20,7 @@ test('beta exposes only configured Google and Kakao OAuth providers',async({page
     return fulfill(route,{message:`Unhandled ${url.pathname}`},500);
   });
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="open-account"]').click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
   const requestPromise=page.waitForRequest(request=>request.url().includes('/auth/v1/authorize?'));

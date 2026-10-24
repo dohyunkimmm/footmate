@@ -42,6 +42,7 @@ async function mockUser(page,{joined=true}={}){
 test('beta account recovery and verification resend',async({page})=>{
   const backend=await mockUser(page,{joined:false});
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="open-account"]').click();
   await expect(page.getByRole('button',{name:'비밀번호 찾기'})).toBeVisible();
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByRole('button',{name:'비밀번호 찾기'}).click();
@@ -67,7 +68,7 @@ test('beta participation exposes policy, check-in and notifications',async({page
   await installSession(page);
   const backend=await mockUser(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
-  await expect(page.getByText('Beta User')).toBeVisible();
+  await expect(page.locator('[data-action="open-account"]')).toHaveText('Beta User');
   await expect(page.getByText(/취소 마감/)).toBeVisible();
   await expect(page.getByRole('button',{name:'경기 체크인'})).toBeVisible();
   await expect(page.getByRole('heading',{name:'운영 알림'})).toBeVisible();

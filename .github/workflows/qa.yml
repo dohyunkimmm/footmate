@@ -210,6 +210,16 @@ jobs:
           node --check scripts/typography-qa-report.cjs
           node --test tests/contracts/typography-report.contract.cjs
           node --test tests/contracts/footmate-product-ux.contract.cjs
+      - name: Verify changed choice-to-login journey before full screen QA
+        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep"
+      - name: Upload changed journey screen evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: choice-first-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Run 11-section Case Study navigation, responsive and accessibility gate
         run: npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
       - name: Preserve Case Study screen evidence before the next browser run
