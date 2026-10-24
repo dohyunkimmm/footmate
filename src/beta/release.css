@@ -91,3 +91,16 @@ html:has([data-beta-demo="true"]),body:has([data-beta-demo="true"]){height:100%;
 [data-beta-demo="true"] .fm-beta-footer{display:none}
 [data-beta-demo="true"] .fm-beta-panel{padding:12px}
 }
+
+[data-beta-demo="true"][data-beta-auth-open="true"] [data-beta-main],
+[data-beta-demo="true"][data-beta-onboarding="true"] .fm-beta-catalog,
+[data-beta-demo="true"] [data-beta-main]:has(.fm-beta-preferences) .fm-beta-catalog{display:none}
+[data-beta-demo="true"] [data-beta-ai-entry]{flex-shrink:0}
+[data-beta-demo="true"] .fm-beta-grid>aside{flex-shrink:0}
+@media(max-height:700px){
+[data-beta-demo="true"] .fm-beta-onboarding h2{margin:12px 0;font-size:22px}
+[data-beta-demo="true"] .fm-beta-preference-form{gap:10px}
+[data-beta-demo="true"] .fm-beta-preferences h2{margin-bottom:12px}
+[data-beta-demo="true"] .fm-beta-choice-group span{padding:8px 10px}
+[data-beta-demo="true"] .fm-beta-back{margin-bottom:4px}
+}
