@@ -309,3 +309,24 @@ test('choice-first recommendations keep demo home populated and participation is
     await page.screenshot({path:testInfo.outputPath('recommendation-home-'+width+'.png'),fullPage:true});
   }
 });
+
+test('choice-first recommendations keep OAuth demo return on the selected game',async({page})=>{
+  const backend=await mockBackend(page);
+  await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
+  await page.route(origin+'/auth/v1/authorize?**',r=>fulfill(r,{oauth:'test redirect'}));
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.goto('/demo');
+  await expect(page.locator('.fm-beta-match')).toHaveCount(8);
+  const selected=await page.locator('.fm-beta-match').first().getAttribute('data-match-id');
+  await page.locator('.fm-beta-match').first().getByRole('button',{name:'참가하기',exact:true}).click();
+  const authorization=page.waitForRequest(r=>r.url().startsWith(origin+'/auth/v1/authorize?'));
+  await page.getByRole('button',{name:'Google로 계속하기'}).click();
+  const url=new URL((await authorization).url());expect(url.searchParams.get('redirect_to')).toContain('/beta');
+  await page.waitForURL(origin+'/**');
+  const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
+  await page.goto('/beta#access_token='+token+'&refresh_token=test-refresh&expires_in=3600');
+  await page.waitForURL('**/demo');
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
+  await expect(page.locator(`.fm-beta-match[data-match-id="${selected}"][data-pending-match="true"]`)).toBeVisible();
+  expect(backend.isJoined()).toBe(false);
+});
