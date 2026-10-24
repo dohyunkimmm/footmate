@@ -24,6 +24,8 @@ if(root){
   let lastSyncedAt=null;
   let view=['home','matches','my'].includes(sessionStorage.getItem('footmate:beta:view:v1'))?sessionStorage.getItem('footmate:beta:view:v1'):'home';
   let visibleLimit=8;
+  let demoPage=0;
+  root.dataset.betaDemo=String(isDemoEntry);
   function setView(next){view=next;sessionStorage.setItem('footmate:beta:view:v1',next);authOpen=false;render();window.scrollTo({top:0,behavior:'smooth'})}
   function exampleMatch(id){return matches.some(m=>m.id===id&&m.isDemo)||participations.some(p=>p.match_id===id&&p.is_demo)}
   let authOpen=Boolean(location.hash.includes('error')||sessionStorage.getItem('footmate:beta:social-auth-error:v1'));
@@ -187,6 +189,10 @@ if(root){
     if(!matches.length)return `<div class="fm-beta-empty"><strong>지금 참가할 수 있는 경기가 없어요.</strong><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>다시 확인</button></div>`;
     const visible=recommendedIds===null?matches:recommendedIds.map(id=>matches.find(m=>m.id===id)).filter(Boolean);
     if(!visible.length)return `<div class="fm-beta-empty"><strong>조건에 맞는 경기가 없어요.</strong></div>`;
+    if(isDemoEntry){
+      demoPage=Math.min(demoPage,visible.length-1);
+      return `<div class="fm-beta-match-list">${renderMatch(visible[demoPage])}</div><nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${visible.length}</span><button class="fm-beta-button" type="button" data-action="demo-next" ${demoPage===visible.length-1?'disabled':''}>다음</button></nav>`;
+    }
     return `<div class="fm-beta-match-list">${visible.slice(0,visibleLimit).map(renderMatch).join('')}</div>${visible.length>visibleLimit?'<button class="fm-beta-button fm-beta-more" data-action="more-matches" type="button">경기 더 보기</button>':''}`;
   }
 
@@ -322,6 +328,7 @@ if(root){
     const target=event.target.closest('[data-action]');
     if(!target)return;
     const action=target.dataset.action;
+    if(action==='demo-prev'||action==='demo-next'){demoPage=Math.max(0,demoPage+(action==='demo-next'?1:-1));render();return}
     if(action==='navigate'){setView(target.dataset.view);return}
     if(action==='more-matches'){visibleLimit+=8;render();return}
     if(action==='toggle-auth'){authMode=authMode==='signin'?'signup':'signin';setNotice(null);render();return}
@@ -393,7 +400,7 @@ if(root){
   });
 
   window.addEventListener('footmate:beta:recommendations',event=>{
-    recommendedIds=event.detail?.ids??null;recommendationReasons=event.detail?.reasons||{};
+    demoPage=0;recommendedIds=event.detail?.ids??null;recommendationReasons=event.detail?.reasons||{};
     render();
   });
   boot();
