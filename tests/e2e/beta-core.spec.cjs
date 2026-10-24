@@ -8,7 +8,8 @@ const baseMatch={id:matchId,title:'영통 금요일 저녁 경기',venue_name:'�
 
 function fulfill(route,payload,status=200){return route.fulfill({status,contentType:'application/json',body:JSON.stringify(payload)})}
 
-async function mockBackend(page,{empty=false}={}){
+async function mockBackend(page,{empty=false,preferences=true}={}){
+  if(preferences)await page.addInitScript(()=>localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'',region:'',level:'',position:'',afterTime:''})));
   let joined=false;
   let deleted=false;
   let profile={id:userId,display_name:'도현',region:'수원 · 영통',position:'MF',level:'초중급',created_at:'2099-01-01T00:00:00Z',updated_at:'2099-01-01T00:00:00Z'};
@@ -58,16 +59,17 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
   await expect(page.getByText('영통 금요일 저녁 경기')).toBeVisible();
-  await expect(page.getByRole('button',{name:'로그인 후 참가'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'참가하기'})).toBeVisible();
   await expect(page.locator('.fm-beta-match a[href^="https://www.google.com/maps/search/"]')).toBeVisible();
   await expect(page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]')).toHaveCount(0);
   await page.evaluate(()=>{window.__betaQaEvents=[];window.addEventListener('footmate:beta:measurement',e=>window.__betaQaEvents.push(e.detail));});
   expect(await serious(page)).toEqual([]);
 
+  await page.locator('[data-action="open-account"]').click();
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
-  await expect(page.getByText('도현')).toBeVisible();
+  await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');
   await expect(page.getByRole('button',{name:'MF로 참가'})).toBeVisible();
 
   await page.getByRole('button',{name:'MF로 참가'}).click();
@@ -83,7 +85,7 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await expect(page.getByRole('button',{name:'참가 취소'})).toBeVisible();
 
   await page.reload({waitUntil:'domcontentloaded'});
-  await expect(page.getByText('도현')).toBeVisible();
+  await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');
   await expect(page.getByRole('button',{name:'참가 취소'})).toBeVisible();
   await page.getByRole('button',{name:'참가 취소'}).click();
   await expect(page.getByText('참가를 취소했습니다. 잔여 자리가 복구됐습니다.')).toBeVisible();
@@ -96,6 +98,7 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
 test('closed beta enforces signup baseline and deletes account with explicit confirmation',async({page})=>{
   const backend=await mockBackend(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="open-account"]').click();
   await page.getByRole('button',{name:'처음이에요 · 가입하기'}).click();
   const signupPassword=page.getByLabel('비밀번호');
   await expect(signupPassword).toHaveAttribute('minlength','8');
@@ -105,6 +108,7 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.locator('[data-action="open-account"]').click();
   await page.getByText('개인정보 안내',{exact:true}).click();
   await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
@@ -118,7 +122,7 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   });
   await page.getByRole('button',{name:'계정·참가 데이터 삭제'}).click();
   await expect(page.getByText('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.')).toBeVisible();
-  await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeVisible();
+  await expect(page.locator('[data-action="open-account"]')).toHaveText('로그인');
   expect(backend.isDeleted()).toBe(true);
   expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:auth:v1'))).toBeNull();
   expect(await serious(page)).toEqual([]);
@@ -137,6 +141,7 @@ test('closed beta recovers from backend config failure',async({page})=>{
   await expect(page.getByRole('button',{name:'연결 다시 시도'})).toBeVisible();
   await page.getByRole('button',{name:'연결 다시 시도'}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.getByText('지금 참가할 수 있는 경기가 없어요.')).toBeVisible();
 });
 
@@ -159,13 +164,96 @@ test('released demo opens the connected Beta with useful actions only',async({pa
     await page.goto('/demo',{waitUntil:'domcontentloaded'});
     await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
     await expect(page.locator('#footmate-next')).toHaveCount(0);
-    await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
-    await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
-    await expect(page.getByRole('heading',{name:'AI 경기 찾기'})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
+    await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeHidden();
+    await expect(page.getByText('나에게 맞는 경기',{exact:true})).toBeVisible();
     await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
     const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
     expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
     await page.evaluate(()=>document.fonts.ready);
     await page.screenshot({path:testInfo.outputPath('released-beta-'+width+'.png'),fullPage:true,animations:'disabled'});
   }
+});
+
+test('choice-first recommendations keep the selected match and position through login',async({page},testInfo)=>{
+  const backend=await mockBackend(page,{preferences:false});
+  const requests=[];
+  await page.route('**/api/ai-match-assistant',route=>{requests.push(route.request().postDataJSON());return fulfill(route,{mode:'connected-ai',rankedMatchIds:[matchId,'invented-id']})});
+  await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/demo');
+  await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?'})).toBeVisible();
+  await expect(page.locator('.fm-beta-catalog')).toBeHidden();
+  await expect(page.getByLabel('이메일')).toBeHidden();
+  await expect(page.getByRole('textbox',{name:'원하는 경기 조건'})).toHaveCount(0);
+  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(2);
+  await page.screenshot({path:testInfo.outputPath('choice-first-390.png'),fullPage:true});
+  await page.getByLabel('풋살',{exact:true}).check();
+  await page.getByLabel('활동 지역').selectOption('수원 · 영통');
+  await page.getByLabel('실력',{exact:true}).selectOption('초중급');
+  await page.locator('[data-growth-form="recommend"] select[name="position"]').selectOption('FW');
+  await page.getByLabel('선호 시간').selectOption('18:00');
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await expect.poll(()=>requests.length).toBe(1);
+  expect(requests[0].task).toBe('recommend');expect(requests[0].candidates[0].id).toBe(matchId);
+  await expect(page.getByText('FW 1자리',{exact:true})).toBeVisible();
+  await expect(page.getByLabel('이메일')).toBeHidden();
+  expect(await serious(page)).toEqual([]);
+  await page.screenshot({path:testInfo.outputPath('recommendations-390.png'),fullPage:true});
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
+  await expect(page.locator('[data-beta-main]')).toBeHidden();
+  await page.screenshot({path:testInfo.outputPath('participation-login-390.png'),fullPage:true});
+  await page.getByRole('button',{name:'← 뒤로'}).click();
+  await expect(page.locator('.fm-beta-match[data-pending-match="true"]')).toBeVisible();
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByRole('button',{name:'FW로 참가'})).toBeVisible();
+  expect(backend.isJoined()).toBe(false); // Signing in must never submit participation.
+  await page.reload();
+  await expect(page.getByRole('button',{name:'FW로 참가'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?'})).toHaveCount(0);
+  const join=page.waitForRequest(r=>new URL(r.url()).pathname==='/rest/v1/rpc/join_match_position');
+  await page.getByRole('button',{name:'FW로 참가'}).click();
+  expect((await join).postDataJSON().p_position).toBe('FW');
+  await expect.poll(()=>backend.isJoined()).toBe(true);
+});
+
+test('sport choices do not relax conditions and AI failure keeps real matches usable',async({page})=>{
+  await mockBackend(page,{preferences:false});
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{error:'unavailable'},503));
+  await page.goto('/demo');
+  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(2);
+  await page.getByLabel('축구',{exact:true}).check();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(0);
+  await page.locator('.fm-beta-preferences-summary').getByRole('button',{name:'조건 변경'}).click();
+  await page.getByLabel('풋살',{exact:true}).check();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.getByText('AI 연결이 지연되어 선택한 조건으로 찾았어요.')).toBeVisible();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  for(const width of [320,375,430,1920]){
+    await page.setViewportSize({width,height:900});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+    expect(await page.locator('.fm-beta-shell').evaluate(el=>el.getBoundingClientRect().width)).toBeLessThanOrEqual(560);
+  }
+  expect(await serious(page)).toEqual([]);
+});
+
+test('AI can reorder eligible real candidates without introducing unknown cards',async({page})=>{
+  await mockBackend(page,{preferences:false});
+  const secondId='77777777-7777-4777-8777-777777777777';
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[baseMatch,{...baseMatch,id:secondId,title:'두 번째 풋살 경기'}]));
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:[secondId,'invented',matchId]}));
+  await page.goto('/demo');
+  await expect(page.getByLabel('활동 지역').locator('option')).toHaveCount(2);
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
+  await expect(page.locator('.fm-beta-match')).toHaveCount(2);
+  await page.reload();
+  await expect(page.locator('.fm-beta-match').first()).toHaveAttribute('data-match-id',secondId);
 });

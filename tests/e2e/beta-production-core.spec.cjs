@@ -11,7 +11,7 @@ test('closed beta production connects to Supabase without browser errors',async(
   await expect(page).toHaveTitle('FootMate | Closed Beta');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
-  await expect(page.getByRole('heading',{name:'경기 목록',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?',exact:true})).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -37,6 +37,8 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
   expect(settingsResponse.ok()).toBe(true);
   const settings=await settingsResponse.json();
   expect(settings.external.google).toBe(true);expect(settings.external.kakao).toBe(true);
+  await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
+  await page.locator('[data-action="open-account"]').click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
 });

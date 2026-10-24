@@ -28,7 +28,7 @@ function rows(){return [
 async function mock(page){
  let queued=false,submitted=false;
  await page.route('**/api/beta-config',r=>fulfill(r,{connected:true,url:origin,publishableKey:'public-key'}));
- await page.route('**/api/ai-match-assistant',r=>fulfill(r,{mode:'connected-ai',model:'test-model',result:{intent:'search',region:'수원 · 영통',position:'MF',level:'중급',maxPrice:null,maxDistanceMin:null,afterTime:'19:00',reply:'영통 MF 중급 저녁 조건으로 찾았어요.'}}));
+ await page.route('**/api/ai-match-assistant',r=>fulfill(r,{rankedMatchIds:[fullMatch],mode:'connected-ai',model:'test-model',result:{intent:'search',region:'수원 · 영통',position:'MF',level:'중급',maxPrice:null,maxDistanceMin:null,afterTime:'19:00',reply:'영통 MF 중급 저녁 조건으로 찾았어요.'}}));
  await page.route(`${origin}/**`,async route=>{
   const req=route.request(),url=new URL(req.url());
   if(url.pathname==='/auth/v1/token')return fulfill(route,{access_token:req.postDataJSON?.()?.refresh_token?'access':'access',refresh_token:'refresh2',expires_in:3600,user:{id:userId,email:'beta@example.com'}});
@@ -50,11 +50,13 @@ async function mock(page){
 
 test('live beta growth surfaces rank real matches, waitlist and collect feedback',async({page})=>{
  await install(page);const backend=await mock(page);await page.goto('/beta',{waitUntil:'domcontentloaded'});
- await expect(page.getByRole('heading',{name:'AI 경기 찾기'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'어떤 경기를 즐기세요?'})).toBeVisible();
  await expect(page.locator('[data-beta-growth-host]')).toHaveAttribute('data-realtime-state','connected');
- await page.getByLabel('원하는 경기 조건').fill('영통 MF 중급 저녁 경기');
- await page.getByRole('button',{name:'찾기'}).click();
- await expect(page.getByText('1. 영통 마감 경기')).toBeVisible();
+ await page.getByLabel('활동 지역').selectOption('수원 · 영통');
+ await page.getByLabel('실력',{exact:true}).selectOption('중급');
+ await page.locator('[data-growth-form="recommend"] select[name="position"]').selectOption('MF');
+ await page.getByRole('button',{name:'추천 경기 보기'}).click();
+ await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toBeVisible();
  await page.getByRole('button',{name:'대기 신청'}).click();
  await expect.poll(()=>backend.queued()).toBe(true);
  await expect(page.getByRole('button',{name:'대기 취소'})).toBeVisible();
