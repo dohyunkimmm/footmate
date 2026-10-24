@@ -29,7 +29,8 @@ if(root){
     const url=new URL(`${config.url}/auth/v1/authorize`);
     url.searchParams.set('provider',provider);
     url.searchParams.set('redirect_to',redirectTo);
-    if(location.pathname.replace(/\/$/,'')==='/demo')sessionStorage.setItem('footmate:beta:demo-return:v1',JSON.stringify({expiresAt:Date.now()+15*60*1000}));
+    sessionStorage.setItem('footmate:beta:view:v1','home');
+    sessionStorage.removeItem('footmate:beta:demo-return:v1');
     location.assign(url.toString());
   }
 

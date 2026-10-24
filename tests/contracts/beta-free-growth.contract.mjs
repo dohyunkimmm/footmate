@@ -62,8 +62,10 @@ globalThis.localStorage={getItem:key=>demoMemory.get(key)||null,setItem:(key,val
 globalThis.window={dispatchEvent(){}};
 const demo=await import('../../src/beta/demo-catalog.js');
 const before=demo.demoCatalog('demo-user');
-assert.equal(before.length,8);
-assert.equal(before.filter(m=>m.format_label==='11 vs 11').length,3);
+assert.equal(before.length,24);
+assert.ok(before.every(demo.isFutsalMatch));
+assert.ok(before.every(m=>m.capacity_total===(m.format_label==='5 vs 5'?10:12)));
+for(const region of ['수원 · 영통','수원 · 인계','용인 · 기흥','서울 · 강남'])for(const level of ['입문','초중급','중급','중급+'])assert.ok(before.some(m=>m.region===region&&m.level===level&&new Date(new Date(m.starts_at).getTime()+9*3600000).getUTCHours()>=20));
 assert.ok(before.every(m=>m.is_demo&&new Date(m.starts_at)>new Date()));
 assert.ok(before.every(m=>m.capacity_total===m.match_slots.reduce((n,s)=>n+s.capacity_total,0)));
 const target=before[0],spots=target.match_slots.find(s=>s.position==='MF').remaining_spots;

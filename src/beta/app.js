@@ -1,4 +1,4 @@
-import {isDemoEntry,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch} from './demo-catalog.js';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch} from './demo-catalog.js';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
@@ -22,6 +22,10 @@ if(root){
   let busy=false;
   let notice=null;
   let lastSyncedAt=null;
+  let view=['home','matches','my'].includes(sessionStorage.getItem('footmate:beta:view:v1'))?sessionStorage.getItem('footmate:beta:view:v1'):'home';
+  let visibleLimit=8;
+  function setView(next){view=next;sessionStorage.setItem('footmate:beta:view:v1',next);authOpen=false;render();window.scrollTo({top:0,behavior:'smooth'})}
+  function exampleMatch(id){return matches.some(m=>m.id===id&&m.isDemo)||participations.some(p=>p.match_id===id&&p.is_demo)}
   let authOpen=Boolean(location.hash.includes('error')||sessionStorage.getItem('footmate:beta:social-auth-error:v1'));
   let recommendedIds=null,recommendationReasons={};
   let pendingMatchId=sessionStorage.getItem('footmate:beta:pending-match:v1')||'';
@@ -56,7 +60,7 @@ if(root){
     session=null;
     user=null;
     profile=null;
-    participations=[];
+    participations=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
   }
 
   function formatStart(value){
@@ -133,7 +137,7 @@ if(root){
       <div class="fm-beta-panel-head"><div><h3>내 경기</h3></div></div>
       ${confirmed.length?confirmed.map(item=>{
         const match=matches.find(candidate=>candidate.id===item.match_id);
-        return `<div class="fm-beta-participation">${isDemoEntry?'<small class="fm-beta-demo-record">데모 경기</small>':''}<strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
+        return `<div class="fm-beta-participation">${item.is_demo?'<small class="fm-beta-demo-record">데모 경기</small>':''}<strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
       }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>경기를 고른 뒤 포지션 자리까지 확인하고 참가할 수 있어요.</div>`}
     </div>`;
   }
@@ -151,7 +155,7 @@ if(root){
 
   function renderMatch(match){
     const p=profile||{};
-    const position=selectedPreferences().position||p.position||(isDemoEntry?'MF':'');
+    const position=selectedPreferences().position||p.position||(match.isDemo?'MF':'');
     const slot=position?Number(match.positionSlots[position]||0):null;
     const joined=participationFor(match.id);
     let label='참가하기';
@@ -167,8 +171,8 @@ if(root){
     }
     const availability=match.status==='full'||match.remaining<=0?'마감':`${match.remaining}자리 남음`;
     return `<article class="fm-beta-match ${match.isDemo?'fm-beta-match--demo':''}" data-match-id="${esc(match.id)}" ${pendingMatchId===match.id?'data-pending-match="true"':''}>
-      ${match.isDemo?`<div class="fm-beta-match-cover" aria-label="데모 경기"><span>${esc(match.format)} · ${/11/.test(match.format)?'축구':'풋살'}</span><small>데모 경기</small><i aria-hidden="true"></i></div>`:''}
-      ${recommendationReasons[match.id]?.length?`<p class="fm-beta-match-reason">${esc(recommendationReasons[match.id].join(' · '))}</p>`:''}
+      ${match.isDemo?`<div class="fm-beta-match-cover" aria-label="데모 경기"><span>${esc(match.format)} · 풋살</span><small>데모 경기</small><i aria-hidden="true"></i></div>`:''}
+      ${recommendationReasons[match.id]?.some(reason=>reason!=='무료 참가')?`<p class="fm-beta-match-reason">${esc(recommendationReasons[match.id].filter(reason=>reason!=='무료 참가').join(' · '))}</p>`:''}
       <div class="fm-beta-match-top"><div><h3>${esc(match.title)}</h3><div class="fm-beta-match-place"><i class="fm-icon" aria-hidden="true">📍</i>${esc(match.place)}${match.area?` · ${esc(match.area)}`:''}</div></div><span class="fm-beta-badge">${esc(availability)}</span></div>
       <div class="fm-beta-meta"><span><i class="fm-icon" aria-hidden="true">🕒</i>${esc(formatStart(match.startsAt))}</span><span>${esc(match.level)}</span><span>${esc(match.format||'경기')}</span><span>${esc(match.surface||'구장')}</span><span>${match.durationMin}분</span></div>
       ${match.isDemo?'<details class="fm-beta-demo-slots"><summary>모집 포지션</summary>':''}<div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${item}</b><span>${Number(match.positionSlots[item]||0)}자리</span></div>`).join('')}</div>
@@ -183,12 +187,13 @@ if(root){
     if(!matches.length)return `<div class="fm-beta-empty"><strong>지금 참가할 수 있는 경기가 없어요.</strong><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>다시 확인</button></div>`;
     const visible=recommendedIds===null?matches:recommendedIds.map(id=>matches.find(m=>m.id===id)).filter(Boolean);
     if(!visible.length)return `<div class="fm-beta-empty"><strong>조건에 맞는 경기가 없어요.</strong></div>`;
-    return `<div class="fm-beta-match-list">${visible.map(renderMatch).join('')}</div>`;
+    return `<div class="fm-beta-match-list">${visible.slice(0,visibleLimit).map(renderMatch).join('')}</div>${visible.length>visibleLimit?'<button class="fm-beta-button fm-beta-more" data-action="more-matches" type="button">경기 더 보기</button>':''}`;
   }
 
   function render(){
     try{root.dataset.betaOnboarding=String(!JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null'))}catch{root.dataset.betaOnboarding='true'}
-    root.dataset.betaCatalogSource=isDemoEntry?'demo':'server';
+    root.dataset.betaCatalogSource=matches.some(m=>m.isDemo)?'demo':'server';
+    root.dataset.betaView=view;
     root.dataset.betaAuthOpen=String(authOpen);
     root.dataset.betaGuest=String(!session||!user);
     root.dataset.betaRecommendationsReady=String(recommendedIds!==null);
@@ -198,7 +203,8 @@ if(root){
       <header class="fm-beta-topbar"><div class="fm-beta-brand"><img src="/src/app/assets/footmate-original.png" width="36" height="36" alt=""><h1>FootMate</h1><span class="fm-beta-live" data-beta-backend="${connected?'connected':backendState==='error'?'error':'connecting'}">${backendState==='error'?'연결 오류':'Beta'}</span></div><button class="fm-beta-link" type="button" data-action="open-account" ${authOpen?'hidden':''}>${session&&user?esc(profile?.display_name||'내 정보'):'로그인'}</button></header>
       
       ${notice?`<div class="fm-beta-note" data-tone="${esc(notice.tone)}" style="margin-bottom:18px">${esc(notice.message)}</div>`:''}
-      ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>Closed Beta backend에 연결할 수 없습니다.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside><div class="fm-beta-account-view" ${!authOpen?'hidden':''}>${authOpen?'<button class="fm-beta-link fm-beta-back" type="button" data-action="close-account" aria-label="← 뒤로"><span class="fm-icon" aria-hidden="true">⬅️</span> 뒤로</button>':''}${renderAuth()}</div>${renderParticipation()}</aside><section data-beta-main><div class="fm-beta-panel fm-beta-catalog"><div class="fm-beta-panel-head"><div><h2>추천 경기</h2><p>${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
+      ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>Closed Beta backend에 연결할 수 없습니다.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside><div class="fm-beta-account-view" ${!(authOpen||(session&&user&&view==='my'))?'hidden':''}>${authOpen?'<button class="fm-beta-link fm-beta-back" type="button" data-action="close-account" aria-label="← 뒤로"><span class="fm-icon" aria-hidden="true">⬅️</span> 뒤로</button>':''}${renderAuth()}</div><div class="fm-beta-joined-view">${renderParticipation()}</div></aside><section data-beta-main><div class="fm-beta-panel fm-beta-catalog"><div class="fm-beta-panel-head"><div><h2>추천 경기</h2><p>${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
+      ${session&&user?`<nav class="fm-beta-app-nav" aria-label="Beta 메뉴">${[['home','추천','✨'],['matches','내 경기','🗓️'],['my','MY','👤']].map(([tab,label,icon])=>`<button type="button" data-action="navigate" data-view="${tab}" ${view===tab?'aria-current="page"':''}><i class="fm-icon" aria-hidden="true">${icon}</i><span>${label}</span></button>`).join('')}</nav>`:''}
       <footer class="fm-beta-footer">${isDemoEntry?'FootMate Beta · 데모 경기':'FootMate Beta · 무료 참가'}</footer>
     </div>`;
   }
@@ -207,7 +213,10 @@ if(root){
     if(!client)return;
     try{
       matchesError=null;
-      matches=normalizeBetaMatches(isDemoEntry?demoCatalog(user?.id):await client.matches.list({limit:50}));
+      const rows=isDemoEntry?demoCatalog(user?.id):await client.matches.list({limit:50});
+      const futsal=(Array.isArray(rows)?rows:[]).filter(isFutsalMatch);
+      const live=futsal.some(m=>['open','full'].includes(m.status)&&new Date(m.starts_at)>new Date());
+      matches=normalizeBetaMatches(!isDemoEntry&&session&&user&&!live?[...futsal,...demoCatalog(user.id)]:futsal);
     }catch(error){
       matches=[];
       matchesError=friendlyError(error);
@@ -220,10 +229,10 @@ if(root){
     user=authUser;
     const [nextProfile,nextParticipations]=await Promise.all([
       client.profile.get({accessToken:session.accessToken,userId:user.id}),
-      isDemoEntry?Promise.resolve(demoParticipations(user.id)):client.participation.listMine({accessToken:session.accessToken})
+      isDemoEntry?Promise.resolve([]):client.participation.listMine({accessToken:session.accessToken})
     ]);
     profile=nextProfile;
-    participations=Array.isArray(nextParticipations)?nextParticipations:[];
+    participations=[...(Array.isArray(nextParticipations)?nextParticipations:[]),...demoParticipations(user.id)];
   }
 
   async function restoreAuth(){
@@ -260,6 +269,8 @@ if(root){
       backendState='connected';
       await Promise.all([loadMatches(),restoreAuth()]);
       if(session&&!profile)await loadPrivate();
+      if(session&&user&&isDemoEntry){sessionStorage.setItem('footmate:beta:view:v1','home');sessionStorage.removeItem('footmate:beta:demo-return:v1');location.replace('/beta');return}
+      if(session&&user)await loadMatches();
       if(!matchesError){
         lastSyncedAt=Date.now();
         emitBetaMeasurement('match_list_available');
@@ -286,13 +297,13 @@ if(root){
           if(data.get('dataNoticeAcknowledged')!=='on')throw new Error('실제 Beta 데이터 이용 안내 확인이 필요합니다.');
           const result=await client.auth.signUp({email,password,displayName:String(data.get('displayName')||'').trim()});
           if(result?.access_token){
-            writeSession(result);await loadPrivate();await loadMatches();authOpen=false;if(!matchesError)lastSyncedAt=Date.now();setNotice('가입과 로그인이 완료됐습니다. 프로필을 설정해주세요.','success');
+            writeSession(result);if(isDemoEntry){sessionStorage.setItem('footmate:beta:view:v1','home');sessionStorage.removeItem('footmate:beta:demo-return:v1');location.replace('/beta');return}await loadPrivate();await loadMatches();view='home';sessionStorage.setItem('footmate:beta:view:v1',view);authOpen=false;if(!matchesError)lastSyncedAt=Date.now();setNotice(null);window.dispatchEvent(new Event('footmate:beta:session-changed'));
           }else{
             authMode='signin';setNotice('가입 요청이 완료됐습니다. 확인 이메일이 온 경우 인증한 뒤 로그인해주세요.','success');
           }
         }else{
           const result=await client.auth.signIn({email,password});
-          writeSession(result);await loadPrivate();await loadMatches();authOpen=false;if(!matchesError)lastSyncedAt=Date.now();setNotice('로그인했습니다.','success');
+          writeSession(result);if(isDemoEntry){sessionStorage.setItem('footmate:beta:view:v1','home');sessionStorage.removeItem('footmate:beta:demo-return:v1');location.replace('/beta');return}await loadPrivate();await loadMatches();view='home';sessionStorage.setItem('footmate:beta:view:v1',view);authOpen=false;if(!matchesError)lastSyncedAt=Date.now();setNotice(null);window.dispatchEvent(new Event('footmate:beta:session-changed'));
         }
       });
     }
@@ -311,8 +322,11 @@ if(root){
     const target=event.target.closest('[data-action]');
     if(!target)return;
     const action=target.dataset.action;
+    if(action==='navigate'){setView(target.dataset.view);return}
+    if(action==='more-matches'){visibleLimit+=8;render();return}
     if(action==='toggle-auth'){authMode=authMode==='signin'?'signup':'signin';setNotice(null);render();return}
     if(action==='open-account'||action==='focus-auth'){
+      if(session&&user&&action==='open-account'){setView('my');return}
       if(action==='focus-auth'){pendingMatchId=target.dataset.matchId||'';sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId)}
       authOpen=true;render();root.querySelector('#beta-auth-panel h2, #beta-auth-panel input')?.focus();window.scrollTo({top:0,behavior:'smooth'});return;
     }
@@ -341,13 +355,15 @@ if(root){
       emitBetaMeasurement('join_attempt',{matchId,flowId});
       run(async()=>{
         try{
-          const position=selectedPreferences().position||profile?.position||(isDemoEntry?'MF':'');
+          const position=selectedPreferences().position||profile?.position||(exampleMatch(matchId)?'MF':'');
           if(!position)throw new Error('프로필에서 선호 포지션을 먼저 설정해주세요.');
-          if(isDemoEntry){joinDemoMatch(user.id,matchId,position)}else await client.participation.join({accessToken:session.accessToken,matchId,position});
+          const example=exampleMatch(matchId);
+          if(example){joinDemoMatch(user.id,matchId,position)}else await client.participation.join({accessToken:session.accessToken,matchId,position});
           pendingMatchId='';sessionStorage.removeItem('footmate:beta:pending-match:v1');
           emitBetaMeasurement('join_succeeded',{matchId,flowId});
           await refreshData();
-          setNotice(isDemoEntry?`${position} 데모 참가를 완료했어요.`:`${position} 포지션으로 참가가 확정됐습니다.`,'success');
+          view='matches';sessionStorage.setItem('footmate:beta:view:v1',view);
+          setNotice(example?`${position} 데모 참가를 완료했어요.`:`${position} 포지션으로 참가가 확정됐습니다.`,'success');
         }catch(error){
           emitBetaMeasurement('join_failed',{matchId,flowId});
           throw error;
@@ -357,9 +373,10 @@ if(root){
     if(action==='cancel'){
       const matchId=target.dataset.matchId;
       run(async()=>{
-        if(isDemoEntry){cancelDemoMatch(user.id,matchId)}else await client.participation.cancel({accessToken:session.accessToken,matchId});
+        const example=exampleMatch(matchId);
+        if(example){cancelDemoMatch(user.id,matchId)}else await client.participation.cancel({accessToken:session.accessToken,matchId});
         await refreshData();
-        setNotice(isDemoEntry?'데모 참가를 취소했어요.':'참가를 취소했습니다. 잔여 자리가 복구됐습니다.','success');
+        setNotice(example?'데모 참가를 취소했어요.':'참가를 취소했습니다. 잔여 자리가 복구됐습니다.','success');
       });
     }
   });

@@ -75,8 +75,9 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await page.getByRole('button',{name:'MF로 참가'}).click();
   await expect(page.getByText('MF 포지션으로 참가가 확정됐습니다.')).toBeVisible();
   expect(backend.isJoined()).toBe(true);
-  await expect(page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]')).toBeVisible();
-  const calendar=await page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]').getAttribute('href');
+  await expect(page.getByRole('navigation',{name:'Beta 메뉴'})).toBeVisible();
+  await expect(page.locator('.fm-beta-participation a[href^="https://calendar.google.com/"]')).toBeVisible();
+  const calendar=await page.locator('.fm-beta-participation a[href^="https://calendar.google.com/"]').getAttribute('href');
   expect(new URL(calendar).searchParams.get('dates')).toBe('20990925T110000Z/20990925T122000Z');
   const measure=await page.evaluate(()=>window.__betaQaEvents||[]);
   expect(measure.map(item=>item.event)).toEqual(['join_attempt','join_succeeded']);
@@ -91,6 +92,7 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await expect(page.getByText('참가를 취소했습니다. 잔여 자리가 복구됐습니다.')).toBeVisible();
   expect(backend.isJoined()).toBe(false);
   await expect(page.getByText('아직 참가한 경기가 없습니다.')).toBeVisible();
+  await page.getByRole('button',{name:'추천',exact:true}).click();
   await expect(page.getByText(/동기화/)).toBeVisible();
   expect(await serious(page)).toEqual([]);
 });
@@ -190,8 +192,7 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.getByRole('textbox',{name:'원하는 경기 조건'})).toHaveCount(0);
   await expect(page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio')).toHaveCount(5);
   await page.screenshot({path:testInfo.outputPath('choice-first-390.png'),fullPage:true});
-  await page.getByLabel('풋살',{exact:true}).check();
-  await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
+    await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:'초중급',exact:true}).check();
   await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'FW · 공격수',exact:true}).check();
@@ -225,17 +226,18 @@ test('choice-first recommendations keep the selected match and position through 
   await expect.poll(()=>backend.isJoined()).toBe(true);
 });
 
-test('sport choices do not relax conditions and AI failure keeps real matches usable',async({page})=>{
+test('futsal conditions stay explicit and AI failure keeps real matches usable',async({page})=>{
   await mockBackend(page,{preferences:false});
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{error:'unavailable'},503));
   await page.goto('/beta');
-  await page.getByRole('radio',{name:'축구',exact:true}).check();
+  await expect(page.getByRole('radio',{name:'축구',exact:true})).toHaveCount(0);
+  await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'서울 · 강남',exact:true}).check();
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
   await expect(page.locator('.fm-beta-match')).toHaveCount(0);
-  await page.locator('.fm-beta-preferences-summary').getByRole('button',{name:'조건 변경'}).click();
-  await page.getByLabel('풋살',{exact:true}).check();
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+  await page.getByRole('combobox',{name:'활동 지역',exact:true}).selectOption({label:'지역 전체'});
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.getByText('AI 연결이 지연되어 선택한 조건으로 찾았어요.')).toBeVisible();
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
@@ -262,7 +264,7 @@ test('AI can reorder eligible real candidates without introducing unknown cards'
 });
 
 test('choice-first recommendations keep demo home populated and participation isolated',async({page},testInfo)=>{
-  await mockBackend(page,{preferences:false});
+  await mockBackend(page,{preferences:false,empty:true});
   const writes=[];
   await page.route(origin+'/rest/v1/rpc/**',route=>{if(/join_match_position|cancel_participation/.test(route.request().url())){writes.push(route.request().url());return fulfill(route,{error:'demo must not call live participation RPC'},500)}return fulfill(route,null)});
   await page.route(origin+'/auth/v1/token?**',route=>{
@@ -287,8 +289,8 @@ test('choice-first recommendations keep demo home populated and participation is
   await expect(page.getByLabel('이메일')).toBeHidden();
   await expect(page.locator('.fm-beta-match-cover small')).toHaveText(Array(8).fill('데모 경기'));
   await page.screenshot({path:testInfo.outputPath('recommendation-home-390.png'),fullPage:true});
-  await page.getByRole('button',{name:'풋살',exact:true}).click();
-  await expect(page.locator('.fm-beta-match')).toHaveCount(5);
+  await expect(page.getByRole('button',{name:'축구',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('navigation',{name:'경기 종목'})).toHaveCount(0);
   await expect(page.locator('.fm-beta-ai-label')).toBeVisible();
   const selected=await page.locator('.fm-beta-match').first().getAttribute('data-match-id');
   await page.locator('.fm-beta-match').first().getByRole('button',{name:'참가하기',exact:true}).click();
@@ -296,6 +298,9 @@ test('choice-first recommendations keep demo home populated and participation is
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
   await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.waitForURL('**/beta');
+  await expect(page.getByRole('navigation',{name:'Beta 메뉴'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'추천',exact:true})).toHaveAttribute('aria-current','page');
   await page.locator(`.fm-beta-match[data-match-id="${selected}"]`).getByRole('button',{name:'MF로 참가'}).click();
   await expect(page.getByText('MF 데모 참가를 완료했어요.',{exact:true})).toBeVisible();
   expect(writes).toEqual([]);
@@ -304,6 +309,11 @@ test('choice-first recommendations keep demo home populated and participation is
   await page.getByRole('button',{name:'참가 취소',exact:true}).click();
   await expect(page.getByText('데모 참가를 취소했어요.',{exact:true})).toBeVisible();
   expect(writes).toEqual([]);
+  await page.getByRole('button',{name:'MY',exact:true}).click();
+  await expect(page.getByRole('button',{name:'프로필 저장',exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-catalog')).toBeHidden();
+  await page.getByRole('button',{name:'추천',exact:true}).click();
+  await expect(page.locator('.fm-beta-catalog')).toBeVisible();
   expect(await serious(page)).toEqual([]);
   for(const width of [320,1920]){
     await page.setViewportSize({width,height:900});
@@ -313,8 +323,8 @@ test('choice-first recommendations keep demo home populated and participation is
   }
 });
 
-test('choice-first recommendations keep OAuth demo return on the selected game',async({page})=>{
-  const backend=await mockBackend(page);
+test('choice-first recommendations keep OAuth login in Beta home with the selected game',async({page})=>{
+  const backend=await mockBackend(page,{empty:true});
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
   await page.route(origin+'/auth/v1/authorize?**',r=>fulfill(r,{oauth:'test redirect'}));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
@@ -328,7 +338,8 @@ test('choice-first recommendations keep OAuth demo return on the selected game',
   await page.waitForURL(origin+'/**');
   const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
   await page.goto('/beta#access_token='+token+'&refresh_token=test-refresh&expires_in=3600');
-  await page.waitForURL('**/demo');
+  await page.waitForURL('**/beta');
+  await expect(page.getByRole('navigation',{name:'Beta 메뉴'})).toBeVisible();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
   await expect(page.locator(`.fm-beta-match[data-match-id="${selected}"][data-pending-match="true"]`)).toBeVisible();
   expect(backend.isJoined()).toBe(false);
