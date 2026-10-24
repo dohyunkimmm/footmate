@@ -149,3 +149,10 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-opening .fm-app-entry-note{max-width:340px;margin:20px 0 0;text-align:center;font-size:12px;line-height:1.6;color:#607168}
 [data-beta-opening="true"] [data-beta-growth-host]{display:none}
 @media(max-height:650px){.fm-beta-opening .fm-app-entry{padding-top:16px;padding-bottom:16px}.fm-beta-opening .fm-app-entry-logo{width:80px;height:80px}.fm-beta-opening .fm-next-intro-copy{margin:16px 0}.fm-beta-opening .fm-app-entry-note{margin-top:12px}}
+
+[data-beta-app="true"] .fm-beta-shell>.fm-beta-account-tabs{margin-top:4px}
+[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="joined"] [data-beta-growth-host]{display:none}
+[data-beta-app="true"][data-beta-view="matches"]:not([data-beta-matches-tab="joined"]) .fm-beta-grid{display:none}
+[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="waitlist"] .fm-beta-growth-panel:has(.fm-beta-growth-history){display:none}
+[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="history"] .fm-beta-growth-panel:has(.fm-beta-growth-row){display:none}
+[data-beta-app="true"] .fm-beta-shell>.fm-beta-account-tabs{flex-shrink:0}
