@@ -198,7 +198,7 @@ if(root){
     if(!visible.length)return `<div class="fm-beta-empty"><strong>조건에 맞는 경기가 없어요.</strong></div>`;
     {
       demoPage=Math.min(demoPage,visible.length-1);
-      return `<div class="fm-beta-match-list">${renderMatch(visible[demoPage])}</div><nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${visible.length}</span><button class="fm-beta-button" type="button" data-action="demo-next" ${demoPage===visible.length-1?'disabled':''}>다음</button></nav>`;
+      return `<div class="fm-beta-match-list">${renderMatch(visible[demoPage])}</div>${visible.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${visible.length}</span><button class="fm-beta-button" type="button" data-action="demo-next" ${demoPage===visible.length-1?'disabled':''}>다음</button></nav>`:''}`;
     }
     return `<div class="fm-beta-match-list">${visible.slice(0,visibleLimit).map(renderMatch).join('')}</div>${visible.length>visibleLimit?'<button class="fm-beta-button fm-beta-more" data-action="more-matches" type="button">경기 더 보기</button>':''}`;
   }
