@@ -1,5 +1,7 @@
 # FootMate Release App v6
 
+> 이 문서는 이전 로컬 프로토타입(/prototype)의 구현 기록입니다. 공개 /demo는 기존 서버 연결 Beta(/beta)를 엽니다. 현재 출시 앱의 인증·경기·참가 상태는 서버를 기준으로 하며, 아래 프로토타입 상태·화면을 현재 베타와 혼동하지 않습니다. 적용 상태는 PR #655 및 Release History를 따릅니다.
+
 ## Goal
 
 FootMate v6는 `/demo`을 개별 기능 데모가 아니라 **Find → Decide → Join → Play → Return**이 한 제품 안에서 끝나는 Release App으로 정리한다.

@@ -1,15 +1,15 @@
 # FootMate Documentation
 
-현재 제품 설명의 Source of Truth는 repository root `README.md`, Release App `/demo`, Closed Beta `/beta`와 현재 GitHub/Production 상태입니다. 버전 번호는 사용자-facing 제품명으로 쓰지 않고 GitHub release engineering과 검증 이력에서만 관리합니다.
+현재 제품 설명의 Source of Truth는 repository root `README.md`, 출시 Beta `/demo`·`/beta`와 현재 GitHub/Production 상태입니다. 버전 번호는 사용자-facing 제품명으로 쓰지 않고 GitHub release engineering과 검증 이력에서만 관리합니다.
 
 ## Current product
 
 - Root `README.md` — 현재 제품 가치, 사용자 여정, AI Agent Workflow, 연동/미연동 경계, release readiness 기준
-- Release App `/demo` — AI 추천·경기 탐색·참가 흐름의 단일 진입 경로. 경기 데이터는 샘플이며 실제 경기 참가·결제 없음
-- Closed Beta `/beta` — 실제 서버에 연결된 계정·경기·참가 상태를 사용하는 무료 베타 서비스. 실제 결제 없음
+- 출시 Beta `/demo` — 실제 Google/Kakao·이메일 인증, AI 경기 탐색과 서버 참가 기록을 사용하는 앱
+- `/beta` — 같은 출시 앱과 OAuth 복귀 경로. 실제 결제 없음\n- `/prototype` — 이전 로컬 프로토타입과 회귀 검증 기록
 - Closed Beta Operator `/beta/operator` — allowlisted + TOTP MFA 운영자 경로
-- Guided `/demo?mode=guided` — 설명이 포함된 리뷰 흐름
-- Evidence `/demo?mode=evidence` — 구현·검증 근거 확인용 흐름
+- Guided `/prototype?mode=guided` — 설명이 포함된 리뷰 흐름
+- Evidence `/prototype?mode=evidence` — 구현·검증 근거 확인용 흐름
 - Case Study `/` — 리뷰어용 11개 섹션 설명 화면. 01에서 Interactive Demo와 Closed Beta를 구분해 안내한다. 현재 `src/case-study/nine-sections.{js,css}`에서 직접 로드하며 해당 E2E·접근성·수동 시각 QA로 검증한다. 이전 13단계 생성 번들과 미사용 코드 경로는 정리했으며 현재 표시·검증은 11개 섹션 기준이다.
 
 ## Current release engineering docs

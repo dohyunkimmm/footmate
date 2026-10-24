@@ -53,7 +53,7 @@ if(root){
       existing.textContent=localNotice.message;
       return;
     }
-    const hero=root.querySelector('.fm-beta-hero');
+    const hero=root.querySelector('.fm-beta-topbar')||root.querySelector('.fm-beta-hero');
     if(!hero)return;
     hero.insertAdjacentHTML('afterend',`<div class="fm-beta-note" data-readiness-notice data-tone="${esc(localNotice.tone)}" style="margin-bottom:18px">${esc(localNotice.message)}</div>`);
     const node=root.querySelector('[data-readiness-notice]');
@@ -70,7 +70,7 @@ if(root){
 
   function injectRecoveryPanel(){
     if(!recoveryPending()||!readSession()?.accessToken)return;
-    const hero=root.querySelector('.fm-beta-hero');
+    const hero=root.querySelector('.fm-beta-topbar')||root.querySelector('.fm-beta-hero');
     if(!hero||root.querySelector('[data-readiness-recovery]'))return;
     hero.insertAdjacentHTML('afterend',`<div class="fm-beta-panel" data-readiness-recovery style="margin-bottom:18px"><div class="fm-beta-panel-head"><div><h2>새 비밀번호 설정</h2><p>복구 링크가 확인됐습니다. 새 비밀번호를 설정하면 현재 기기에서 로그인 상태를 이어갑니다.</p></div></div><form class="fm-beta-stack" data-readiness-form="update-password"><label class="fm-beta-field"><span>새 비밀번호</span><input name="password" type="password" autocomplete="new-password" minlength="${BETA_SIGNUP_PASSWORD_MIN_LENGTH}" required placeholder="${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상"></label><label class="fm-beta-field"><span>새 비밀번호 확인</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="${BETA_SIGNUP_PASSWORD_MIN_LENGTH}" required></label><button class="fm-beta-button fm-beta-button--primary" type="submit">비밀번호 변경</button></form></div>`);
   }
