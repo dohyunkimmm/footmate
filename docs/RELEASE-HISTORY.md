@@ -2,6 +2,11 @@
 
 현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
 
+## 2026-10-24 — PR #652 시각 기준 승인
+
+- 김도현의 대화 승인(“진행해”, 한국 시간 2026-10-24)에 따라 직접 검토한 변경 화면 6장을 새 기준으로 반영합니다: AI 연결 결과 390px, Home/Discover 390px, 참가 전·완료 후 Home 1440px, 참가 전 Home 390px.
+- 기준은 QA run 40071378376 / head 3035378의 actual PNG이며, 비교 허용치는 변경하지 않습니다. 기능 검사 통과와 구분하여 전체 Chromium·Mobile WebKit 및 병합 후 운영 검증은 후속 CI로 확인합니다.
+
 ## 2026-10-24 — 1920px PC 우선 · 구현/검증 중
 
 - PR #652에 PC 앱 최대 1120px·두 열 경기 비교·상세 분할과 Case Study 대표 PC 캡처·Home/Discover 와이어프레임·PC 우선 검증 설명을 추가했습니다.
