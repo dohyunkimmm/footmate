@@ -28,7 +28,7 @@ for(const path of ['/demo','/app']){
   });
 }
 
-test('Welcome login returns to the app start and then leads to setup, never checkout',async({page})=>{
+test('Welcome login returns to the app start and then leads to setup, never checkout',async({page},testInfo)=>{
   await page.goto('/demo');
   await page.evaluate(()=>localStorage.clear());
   await page.reload();
@@ -42,6 +42,8 @@ test('Welcome login returns to the app start and then leads to setup, never chec
   await expect(page.locator('[data-screen="setup"]')).toBeVisible();
   await expect(page.locator('[data-screen="checkout"]')).toHaveCount(0);
   await page.goto('/demo');
+  await page.screenshot({path:testInfo.outputPath('welcome-login-entry.png'),animations:'disabled'});
   await page.getByRole('button',{name:'로그인 화면 보기',exact:true}).click();
   await expect(page.locator('[data-screen="auth"]')).toBeVisible();
+  await page.screenshot({path:testInfo.outputPath('welcome-login-screen.png'),animations:'disabled'});
 });

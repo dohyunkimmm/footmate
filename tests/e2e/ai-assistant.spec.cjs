@@ -101,7 +101,7 @@ test('1920px keeps the compact app and AI entry before its single-column matches
   const app=page.locator('.fm-next-app');
   expect(await app.evaluate(el=>el.getBoundingClientRect().width)).toBeLessThanOrEqual(560);
   const cards=page.locator('[data-screen="home"] .fm-next-match-card');
-  const boxes=await cards.evaluateAll(nodes=>nodes.slice(0,2).map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width}}));
+  const boxes=await cards.evaluateAll(nodes=>nodes.slice(0,2).map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}}));
   expect(Math.abs(boxes[0].x-boxes[1].x)).toBeLessThan(2);expect(boxes[1].y).toBeGreaterThanOrEqual(boxes[0].y+boxes[0].height);
   await page.screenshot({path:testInfo.outputPath('pc-matching-home-1920.png'),animations:'disabled'});
   await cards.first().click();await expect(page.locator('[data-decision-section="fit"]')).toBeVisible();
