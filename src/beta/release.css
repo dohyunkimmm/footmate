@@ -68,7 +68,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 [data-beta-app="true"] .fm-beta-shell{height:100%;min-height:0;display:flex;flex-direction:column;padding-bottom:max(12px,env(safe-area-inset-bottom));overflow:hidden}
 [data-beta-app="true"] .fm-beta-topbar{flex-shrink:0;position:static;margin-bottom:8px}
 [data-beta-app="true"] .fm-beta-grid{flex:1;min-height:0;gap:0;overflow:hidden}
-[data-beta-app="true"] .fm-beta-grid>aside:has(.fm-beta-account-view[hidden]){display:none}
+[data-beta-app="true"][data-beta-guest="true"] .fm-beta-grid>aside:has(.fm-beta-account-view[hidden]){display:none}
 [data-beta-app="true"] [data-beta-main]{display:flex;flex:1;min-height:0;flex-direction:column}
 [data-beta-app="true"] .fm-beta-catalog{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px}
 [data-beta-app="true"] .fm-beta-panel-head{margin-bottom:8px}
