@@ -90,12 +90,12 @@ if(root){
     if(!session||!user){
       const signup=authMode==='signup';
       return `<div class="fm-beta-panel" id="beta-auth-panel">
-        <div class="fm-beta-panel-head"><div><h2>${signup?'Closed Beta 가입':'로그인'}</h2><p>${signup?'실제 참가 기록을 저장할 계정을 만듭니다.':'참가·취소 상태를 내 계정에 연결합니다.'}</p></div></div>
+        <div class="fm-beta-panel-head"><div><h2>${signup?'회원가입':'로그인'}</h2><p>${signup?'경기 참가 정보를 저장할 계정을 만듭니다.':''}</p></div></div>
         <form class="fm-beta-stack" data-form="auth">
           ${signup?`<label class="fm-beta-field"><span>이름 · 선택</span><input name="displayName" autocomplete="name" maxlength="40" placeholder="풋살러 이름"></label>`:''}
           <label class="fm-beta-field"><span>이메일</span><input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
           <label class="fm-beta-field"><span>비밀번호</span><input name="password" type="password" autocomplete="${signup?'new-password':'current-password'}" ${signup?`minlength="${BETA_SIGNUP_PASSWORD_MIN_LENGTH}"`:''} required placeholder="${signup?`${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상`:'비밀번호'}"></label>
-          ${signup?`<p class="fm-beta-form-hint" id="beta-password-hint">비밀번호는 최소 ${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상입니다. 실제 계정으로 Supabase Auth에 저장되며, 가입 확인 이메일이 필요할 수 있습니다.</p>
+          ${signup?`<p class="fm-beta-form-hint" id="beta-password-hint">비밀번호는 최소 ${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상입니다. 가입 후 이메일 인증이 필요할 수 있습니다.</p>
           <details class="fm-beta-data-details"><summary>가입 전 데이터 이용 안내</summary><p>이메일과 암호화된 로그인 정보, 선택한 이름과 경기·포지션·참가 기록이 실제 서버 계정과 연결됩니다. 결제는 연결하지 않았습니다.</p><p><a href="/beta-data-notice.html" target="_blank" rel="noopener noreferrer">Beta 데이터 이용 안내 전문 보기</a></p></details>
           <label class="fm-beta-consent"><input type="checkbox" name="dataNoticeAcknowledged" required> Beta의 실제 계정·참가 정보 처리 안내를 확인했습니다.</label>`:''}
           <button class="fm-beta-button fm-beta-button--primary" type="submit" ${busy?'disabled':''}>${busy?'<span class="fm-beta-spinner"></span>처리 중':signup?'가입하기':'로그인'}</button>
@@ -105,7 +105,7 @@ if(root){
     }
 
     const p=profile||{};
-    return `<div class="fm-beta-panel">
+    return `<div class="fm-beta-panel" id="beta-auth-panel">
       <div class="fm-beta-panel-head"><div class="fm-beta-user"><span class="fm-beta-avatar">${esc((p.display_name||user.email||'F').slice(0,1).toUpperCase())}</span><div><strong>${esc(p.display_name||'FootMate 사용자')}</strong><span>${esc(user.email||'')}</span></div></div><button class="fm-beta-link" type="button" data-action="signout">로그아웃</button></div>
       <form class="fm-beta-stack" data-form="profile">
         <label class="fm-beta-field"><span>이름</span><input name="displayName" maxlength="40" value="${esc(p.display_name||'')}" placeholder="풋살러 이름"></label>
@@ -114,7 +114,7 @@ if(root){
         <label class="fm-beta-field"><span>체감 레벨</span><select name="level"><option value="">선택해주세요</option>${LEVELS.map(level=>`<option value="${level}" ${p.level===level?'selected':''}>${level}</option>`).join('')}</select></label>
         <button class="fm-beta-button" type="submit" ${busy?'disabled':''}>프로필 저장</button>
       </form>
-      <div class="fm-beta-note" style="margin-top:12px">저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.</div>
+      
       <div class="fm-beta-actions" style="margin-top:12px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="delete-account" ${busy?'disabled':''}>계정·참가 데이터 삭제</button></div>
     </div>`;
   }
@@ -123,7 +123,7 @@ if(root){
     if(!session||!user)return '';
     const confirmed=participations.filter(item=>item.status==='confirmed');
     return `<div class="fm-beta-panel">
-      <div class="fm-beta-panel-head"><div><h3>내 참가</h3><p>Supabase에 저장된 현재 참가 상태입니다.</p></div></div>
+      <div class="fm-beta-panel-head"><div><h3>내 경기</h3></div></div>
       ${confirmed.length?confirmed.map(item=>{
         const match=matches.find(candidate=>candidate.id===item.match_id);
         return `<div class="fm-beta-participation"><strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
@@ -163,14 +163,14 @@ if(root){
       <div class="fm-beta-meta"><span>${esc(formatStart(match.startsAt))}</span><span>${esc(match.level)}</span><span>${esc(match.format||'경기')}</span><span>${esc(match.surface||'구장')}</span><span>${match.durationMin}분</span></div>
       <div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${item}</b><span>${Number(match.positionSlots[item]||0)}자리</span></div>`).join('')}</div>
       ${attendanceLinks(match,Boolean(joined))}
-      <div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'Beta 무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
+      <div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
     </article>`;
   }
 
   function renderMatches(){
-    if(backendState==='connecting')return `<div class="fm-beta-empty"><span class="fm-beta-spinner"></span>실제 경기 데이터를 연결하고 있습니다.</div>`;
+    if(backendState==='connecting')return `<div class="fm-beta-empty"><span class="fm-beta-spinner"></span>경기를 불러오는 중입니다.</div>`;
     if(matchesError)return `<div class="fm-beta-empty"><strong>경기 데이터를 불러오지 못했습니다.</strong>${esc(matchesError)}<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" data-action="refresh" type="button">다시 시도</button></div></div>`;
-    if(!matches.length)return `<div class="fm-beta-empty"><strong>아직 공개된 실제 경기가 없습니다.</strong><p>운영자가 실제 경기를 공개하면 이곳에 표시됩니다. 현재는 가입하더라도 참가할 경기가 없어요.</p><div class="fm-beta-actions" style="justify-content:center;flex-wrap:wrap;margin-top:14px"><a class="fm-beta-button fm-beta-empty-demo-link" href="/demo">샘플 경기 체험하기</a><button class="fm-beta-button" data-action="refresh" type="button">경기 다시 확인</button></div><p class="fm-beta-form-hint">샘플 체험 기록은 Beta 실제 참가 기록으로 이전되지 않습니다. 경기 오픈 알림 신청은 아직 제공하지 않습니다.</p></div>`;
+    if(!matches.length)return `<div class="fm-beta-empty"><strong>지금 참가할 수 있는 경기가 없어요.</strong><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>다시 확인</button></div>`;
     return `<div class="fm-beta-match-list">${matches.map(renderMatch).join('')}</div>`;
   }
 
@@ -178,11 +178,11 @@ if(root){
     root.dataset.betaState=backendState==='error'?'error':backendState==='connected'?'ready':'booting';
     const connected=backendState==='connected';
     root.innerHTML=`<div class="fm-beta-shell">
-      <header class="fm-beta-topbar"><div class="fm-beta-brand"><span class="fm-beta-mark">FM</span><span>FootMate</span></div><span class="fm-beta-live" data-beta-backend="${connected?'connected':backendState==='error'?'error':'connecting'}">${connected?'Supabase Connected':backendState==='error'?'Backend Error':'Connecting'}</span></header>
-      <section class="fm-beta-hero"><div class="fm-beta-hero-copy"><span class="fm-beta-eyebrow">Closed Beta · 실제 참가 데이터</span><h1>찾고,<br>자리 확인하고,<br>실제로 참가.</h1><p>이 경로는 sample catalog가 아니라 Supabase의 실제 경기·회원·참가 상태를 사용합니다. Beta 기간에는 결제 없이 무료 참가만 허용됩니다.</p></div><div class="fm-beta-status-card"><div><small>현재 연결 상태</small><strong>${connected?'Live backend':'연결 확인 중'}</strong></div><p>${session&&user?'로그인된 계정의 프로필과 참가 기록을 복구했습니다.':'경기 조회는 공개되어 있고, 참가하려면 이메일 계정으로 로그인합니다.'}</p></div></section>
+      <header class="fm-beta-topbar"><div class="fm-beta-brand"><img src="/src/app/assets/footmate-original.png" width="36" height="36" alt=""><h1>FootMate</h1><span class="fm-beta-live" data-beta-backend="${connected?'connected':backendState==='error'?'error':'connecting'}">${backendState==='error'?'연결 오류':'Beta'}</span></div><a class="fm-beta-link" href="#beta-auth-panel">${session&&user?'내 정보':'로그인'}</a></header>
+      
       ${notice?`<div class="fm-beta-note" data-tone="${esc(notice.tone)}" style="margin-bottom:18px">${esc(notice.message)}</div>`:''}
-      ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>Closed Beta backend에 연결할 수 없습니다.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside>${renderAuth()}${renderParticipation()}</aside><section><div class="fm-beta-panel"><div class="fm-beta-panel-head"><div><h2>실제 경기</h2><p>공개된 경기와 포지션별 잔여 자리를 DB에서 직접 읽습니다. · ${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
-      <footer class="fm-beta-footer">Closed Beta · 인증·경기·참가 상태 Supabase 연결 · 무료 참가/실제 PG 없음 · 이메일·Push는 별도 설정과 동의에 따라 제공</footer>
+      ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>Closed Beta backend에 연결할 수 없습니다.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside>${renderAuth()}${renderParticipation()}</aside><section data-beta-main><div class="fm-beta-panel"><div class="fm-beta-panel-head"><div><h2>경기 목록</h2><p>${esc(formatSync(lastSyncedAt))}</p></div><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>새로고침</button></div>${renderMatches()}</div></section></div>`}
+      <footer class="fm-beta-footer">FootMate Beta · 무료 참가</footer>
     </div>`;
   }
 

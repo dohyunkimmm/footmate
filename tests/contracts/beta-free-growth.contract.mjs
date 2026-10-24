@@ -35,7 +35,7 @@ assert.ok(hotfix.includes('perform public.require_beta_operator_aal2()'),'operat
 assert.ok(hotfix.includes("update public.beta_waitlist w\n  set status='canceled',canceled_at=now()\n  where w.match_id=p_match_id and w.status='queued'"),'waitlist cancellation must qualify match_id against the table alias');
 assert.ok(!hotfix.includes("where match_id=p_match_id and status='queued'"),'hotfix must not reintroduce the ambiguous unqualified match_id reference');
 
-for(const token of ['realtime/v1/websocket','postgres_changes','Live catalog','join_beta_waitlist','submit_beta_match_feedback','/api/ai-match-assistant'])
+for(const token of ['realtime/v1/websocket','postgres_changes','matchesConstraint','join_beta_waitlist','submit_beta_match_feedback','/api/ai-match-assistant'])
   assert.ok(growth.includes(token),`missing browser growth contract: ${token}`);
 assert.ok(!growth.includes('Math.random'),'live recommendation must remain deterministic');
 assert.ok(html.includes('/src/beta/growth.css?v=1'));

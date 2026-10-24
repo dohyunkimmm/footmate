@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {test,expect}=require('@playwright/test');
 
 async function chooseSetupDefaultIfNeeded(page){
@@ -22,7 +23,7 @@ async function openCleanApp(page,viewport){
   const errs=failures(page);
   await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize(viewport);
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');
@@ -33,7 +34,7 @@ async function openCleanApp(page,viewport){
 async function openPersonalizedWelcome(page,viewport){
   const errs=failures(page);
   await page.setViewportSize(viewport);
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
     localStorage.clear();
     localStorage.setItem('footmate:v4:session',JSON.stringify({route:'welcome',setupComplete:true,region:'서울 · 강남',position:'GK',level:'입문',signedIn:false,userName:'게스트'}));

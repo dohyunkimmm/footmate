@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 'use strict';
 
 const {test,expect}=require('@playwright/test');
@@ -6,7 +7,7 @@ const {inspectTypography,fontCoverage,applyAdaptation,captureTypographyScreen,re
 async function openCleanApp(page,width){
   await require('./sample-date-fixture.cjs')(page);
   await page.setViewportSize({width,height:900});
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>localStorage.clear());
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FOOTMATE_V5__?.version==='5.1.1');

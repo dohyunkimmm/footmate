@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {test,expect}=require('@playwright/test');
 
 async function chooseSetupDefaultIfNeeded(page){
@@ -22,7 +23,7 @@ function failures(page){
 async function openDiscover(page,width=390){
   const errs=failures(page);
   await page.setViewportSize({width,height:844});
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();history.replaceState({},'',location.pathname)});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:/내 경기 찾아보기/}).click();

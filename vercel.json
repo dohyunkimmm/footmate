@@ -17,7 +17,7 @@
   "rewrites": [
     {
       "source": "/demo",
-      "destination": "/app.html"
+      "destination": "/beta.html"
     },
     {
       "source": "/beta/operator",
@@ -26,6 +26,10 @@
     {
       "source": "/beta",
       "destination": "/beta.html"
+    },
+    {
+      "source": "/prototype",
+      "destination": "/app.html"
     }
   ],
   "redirects": [

@@ -37,8 +37,8 @@ if(root){
     const form=panel.querySelector('form[data-form="auth"]');if(!form)return;
     const enabled=['google','kakao'].filter(provider=>providers?.[provider]);
     const buttons=enabled.map(provider=>`<button class="fm-beta-button fm-beta-social-button" type="button" data-social-provider="${provider}">${provider==='google'?'Google':'Kakao'}로 계속하기</button>`).join('');
-    const status=enabled.length?buttons:'<small class="fm-beta-social-status">Google · Kakao 로그인은 provider 설정이 완료되면 자동으로 활성화됩니다.</small>';
-    const content=`<div class="fm-beta-social-divider"><span>또는</span></div>${authError?`<div class="fm-beta-note" data-tone="error">${esc(authError)}</div>`:''}${status}`;
+    const status=enabled.length?buttons:'<small class="fm-beta-social-status">소셜 로그인을 사용할 수 없어요. 이메일로 로그인해주세요.</small>';
+    const content=`${authError?`<div class="fm-beta-note" data-tone="error">${esc(authError)}</div>`:''}${status}`;
     const renderKey=`${enabled.join(',')}|${authError}`;
     const existing=panel.querySelector('[data-beta-social-auth]');
     if(existing){
@@ -47,7 +47,7 @@ if(root){
       existing.innerHTML=content;
       return;
     }
-    const toggle=form.querySelector('[data-action="toggle-auth"]');if(!toggle)return;
+    const toggle=form;if(!toggle)return;
     toggle.insertAdjacentHTML('beforebegin',`<div class="fm-beta-social" data-beta-social-auth data-render-key="${esc(renderKey)}">${content}</div>`);
   }
 

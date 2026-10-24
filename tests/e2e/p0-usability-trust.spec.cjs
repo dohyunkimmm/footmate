@@ -1,3 +1,4 @@
+// Archived prototype coverage; released Beta entry is covered by beta-core and production entry tests.
 const {test,expect}=require('@playwright/test');
 
 async function waitForApp(page){
@@ -8,7 +9,7 @@ async function waitForApp(page){
 
 async function openClean(page){
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype',{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{localStorage.clear();sessionStorage.clear();});
   await page.reload({waitUntil:'domcontentloaded'});
   await waitForApp(page);
@@ -62,14 +63,14 @@ test('Restored Welcome stays concise while AI interpretation and ranking ownersh
 test('frequent mobile chips and AI examples keep a 44px minimum touch target',async({page})=>{
   await openClean(page);
   await setSession(page,'home');
-  await page.goto('/demo?resume=1',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype?resume=1',{waitUntil:'domcontentloaded'});
   await waitForApp(page);
   await expect(page.locator('[data-screen="home"]')).toBeVisible();
   await expect(page.locator('[data-screen="home"] .fm-ai-examples button').first()).toBeVisible();
   await expectMinimumTouchTarget(page.locator('[data-screen="home"] .fm-ai-examples button:visible'));
 
   await setSession(page,'discover');
-  await page.goto('/demo?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
+  await page.goto('/prototype?resume=1&d_distance=20',{waitUntil:'domcontentloaded'});
   await waitForApp(page);
   await expect(page.locator('[data-screen="discover"]')).toBeVisible();
   await expect(page.locator('.fm-discovery-chip')).toHaveCount(1);
