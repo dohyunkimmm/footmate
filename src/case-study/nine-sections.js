@@ -233,8 +233,8 @@
     document.querySelector('.reader-position').textContent = `${position} · ${sections[current].name}`;
     document.querySelector('.pbar-fill').style.width = `${(current+1)/sections.length*100}%`;
     prev.disabled = current===0; next.disabled = current===sections.length-1;
-    prev.innerHTML = `<span aria-hidden="true">←</span><span><small>${current===0?'첫 섹션':'이전 섹션'}</small>${sections[Math.max(0,current-1)].name}</span>`;
-    next.innerHTML = `<span><small>${current===sections.length-1?'마지막 섹션':'다음 섹션'}</small>${sections[Math.min(sections.length-1,current+1)].name}</span><span aria-hidden="true">→</span>`;
+    prev.innerHTML = `<span class="fm-icon" aria-hidden="true">⬅️</span><span><small>${current===0?'첫 섹션':'이전 섹션'}</small>${sections[Math.max(0,current-1)].name}</span>`;
+    next.innerHTML = `<span><small>${current===sections.length-1?'마지막 섹션':'다음 섹션'}</small>${sections[Math.min(sections.length-1,current+1)].name}</span><span class="fm-icon" aria-hidden="true">➡️</span>`;
     const hash = `#section-${String(current+1).padStart(2,'0')}`;
     if(historyMode && location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',location.pathname+location.search+hash);
     if(innerWidth<=800) {
