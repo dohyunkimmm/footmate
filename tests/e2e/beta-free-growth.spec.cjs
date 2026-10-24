@@ -58,6 +58,7 @@ test('live beta growth surfaces rank real matches, waitlist and collect feedback
  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
  await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toBeVisible();
+ await page.getByRole('button',{name:'내 경기',exact:true}).click();
  await page.getByRole('button',{name:'대기 신청'}).click();
  await expect.poll(()=>backend.queued()).toBe(true);
  await expect(page.getByRole('button',{name:'대기 취소'})).toBeVisible();

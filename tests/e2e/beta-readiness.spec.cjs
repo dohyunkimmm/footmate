@@ -69,12 +69,15 @@ test('beta participation exposes policy, check-in and notifications',async({page
   const backend=await mockUser(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await expect(page.locator('[data-action="open-account"]')).toHaveText('Beta User');
+  await page.getByRole('button',{name:'내 경기',exact:true}).click();
   await expect(page.getByText(/취소 마감/)).toBeVisible();
   await expect(page.getByRole('button',{name:'경기 체크인'})).toBeVisible();
-  await expect(page.getByRole('heading',{name:'운영 알림'})).toBeVisible();
+  
   await page.getByRole('button',{name:'경기 체크인'}).click();
   await expect(page.getByText(/체크인이 완료됐습니다/)).toBeVisible();
   expect(backend.checked()).toBe(true);
+  await page.getByRole('button',{name:'MY',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'운영 알림'})).toBeVisible();
   await page.getByRole('button',{name:'확인'}).click();
   expect(backend.read()).toBe(true);
   expect(await serious(page)).toEqual([]);
