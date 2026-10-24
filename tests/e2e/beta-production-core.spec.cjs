@@ -8,7 +8,7 @@ test('closed beta production connects to Supabase without browser errors',async(
   page.on('console',message=>{if(message.type()==='error'&&!message.text().includes('Failed to load resource'))errors.push(`console.error: ${message.text()}`)});
   const response=await page.goto('/beta',{waitUntil:'domcontentloaded'});
   expect(response?.status()).toBe(200);
-  await expect(page).toHaveTitle('FootMate | Closed Beta');
+  await expect(page).toHaveTitle('FootMate | Demo');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
   await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();

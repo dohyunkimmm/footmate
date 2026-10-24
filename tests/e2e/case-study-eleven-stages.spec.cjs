@@ -37,7 +37,7 @@ test('section history, keyboard, deep links and reload retain their contract',as
  await page.reload();await expect(page).toHaveURL(/#section-01$/);await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0);
 });
 
-test('released Beta is linked and prototype wireframes are disclosed',async({page})=>{
+test('public Demo is linked and prototype wireframes are disclosed',async({page})=>{
  await page.goto('/');await expect(page.locator('#section-01 a[href="/demo"]')).toHaveCount(1);
  await expect(page.locator('#section-01')).toContainText('조건 선택 → AI 추천 → 참가 시 카카오·구글 로그인');
  await page.locator('.toc-item').nth(6).click();await expect(page.locator('#section-07 .wireframe-record')).toHaveCount(5);
