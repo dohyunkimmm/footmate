@@ -27,7 +27,7 @@ test('closed beta operator production route is connected but gated without a ses
   expect(errors).toEqual([]);
 });
 
-test('public demo uses the existing Beta OAuth providers',async({page,request},testInfo)=>{
+test('public demo uses the existing Beta OAuth providers',async({page,request})=>{
   await page.setViewportSize({width:390,height:844});
   await page.goto('/demo',{waitUntil:'domcontentloaded'});
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
@@ -45,15 +45,15 @@ test('public demo uses the existing Beta OAuth providers',async({page,request},t
   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
   await expect(page.locator('.fm-beta-preview-note')).toBeVisible();
   await expect(page.getByRole('button',{name:'상세 보기',exact:true})).toBeVisible();
-  await page.screenshot({path:testInfo.outputPath('production-design-home-390.png'),fullPage:true});
+  await page.screenshot({path:'test-results/production-design/production-design-home-390.png',fullPage:true});
   await page.getByRole('button',{name:'상세 보기',exact:true}).click();
   await expect(page.locator('.fm-beta-detail-body')).toBeVisible();
   const action=await page.getByRole('button',{name:'참가하기',exact:true}).boundingBox();
   expect(action.y+action.height).toBeLessThanOrEqual(844);
   expect(await page.evaluate(()=>document.documentElement.scrollHeight>innerHeight||document.documentElement.scrollWidth>innerWidth)).toBe(false);
-  await page.screenshot({path:testInfo.outputPath('production-design-detail-390.png'),fullPage:true});
+  await page.screenshot({path:'test-results/production-design/production-design-detail-390.png',fullPage:true});
   await page.getByRole('button',{name:'참가하기',exact:true}).click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
-  await page.screenshot({path:testInfo.outputPath('production-design-login-390.png'),fullPage:true});
+  await page.screenshot({path:'test-results/production-design/production-design-login-390.png',fullPage:true});
 });
