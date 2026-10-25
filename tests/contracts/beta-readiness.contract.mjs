@@ -43,7 +43,7 @@ assert.match(client,/operator_complete_match/);
 assert.match(betaBootstrap,/type'\)!=='recovery'/);
 assert.match(betaBootstrap,/footmate:beta:recovery:v1/);
 assert.match(beta,/비밀번호 찾기/);
-assert.match(beta,/가입 인증메일 다시 보내기/);
+assert.doesNotMatch(beta,/가입 인증메일 다시 보내기|resend-signup/);
 assert.match(beta,/경기 체크인/);
 assert.match(beta,/취소 마감/);
 assert.match(beta,/운영 알림/);
