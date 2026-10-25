@@ -320,6 +320,6 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 [data-beta-app="true"] .fm-beta-catalog .fm-beta-match-list{flex:0 0 auto}
 .fm-beta-catalog .fm-beta-preview-note>span{max-width:none}
 @media(max-height:620px){
-.fm-beta-catalog .fm-beta-slots,.fm-beta-catalog .fm-beta-demo-slots,.fm-beta-catalog .fm-beta-match-utilities{display:none}
+.fm-beta-catalog .fm-beta-slots,.fm-beta-catalog .fm-beta-demo-slots,.fm-beta-catalog .fm-beta-attendance-links{display:none}
 .fm-beta-catalog .fm-beta-match-actions{margin-top:8px;padding-top:8px}
 }
