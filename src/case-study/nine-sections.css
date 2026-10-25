@@ -841,10 +841,12 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 #section-07 .wireframe-record h2{font-size:18px}
 #section-07 .wireframe-record>p{margin-top:10px;font-size:14px}
 #section-07 .wireframe-record>.small-copy{margin-top:6px;padding-top:8px}
-#main .slide .evidence-preview img[src*="readable-demo-home"],
-#main .slide .evidence-preview img[src*="readable-demo-login"],
-#main .slide .evidence-preview img[src*="readable-demo-start"],
+#main .slide .evidence-preview img[src*="readable-demo-home"]{object-position:center 55%}
+#main .slide .evidence-preview img[src*="readable-demo-conditions"]{object-position:center 16%}
+#main .slide .evidence-preview img[src*="readable-demo-login"]{object-position:center 60%}
+#main .slide .evidence-preview img[src*="readable-demo-start"]{object-position:center 70%}
 #main .slide .evidence-preview img[src*="readable-demo-detail"]{object-position:center}
+#main #section-01 .product-figure img[src*="readable-demo-home"]{object-position:center}
 .ui-evidence-grid,.ui-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-block:20px;align-items:start}
 .ui-evidence{min-width:0;margin:0;padding:16px;border:1px solid var(--cs-edge);border-radius:14px;background:#fff}
 .ui-evidence h3{font-size:17px;line-height:1.7;margin:6px 0 12px;overflow-wrap:anywhere}
@@ -877,6 +879,7 @@ body{font-size:var(--cs-body-size);line-height:1.8}
  #section-07 .wireframe-record>.evidence-preview{max-width:360px}
  .ui-process{grid-template-columns:repeat(2,minmax(0,1fr))}
  .ui-process li{padding:12px}
+ #main .slide .evidence-preview img[src*="readable-demo-conditions"]{object-position:center 4%}
  .ui-compare-window{height:220px}
  .image-dialog-caption{font-size:13px}
 }
