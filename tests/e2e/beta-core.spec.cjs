@@ -463,11 +463,11 @@ for(const [width,height] of [[320,568],[390,844]]){
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await expect(page.getByRole('heading',{name:'영통 금요일 저녁 경기',exact:true})).toBeVisible();
   await expect(page.locator('.fm-beta-match')).toBeVisible();
-  await expect.poll(async()=>!!(await page.locator('.fm-beta-match').boundingBox())).toBe(true);
-  const card=await page.locator('.fm-beta-match').boundingBox();
-  const pager=await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).boundingBox();
-  expect(card.y+card.height).toBeLessThanOrEqual(pager.y+1);
-  expect(card.height).toBeLessThan(height*.75);
+  await expect.poll(async()=>{
+    const card=await page.locator('.fm-beta-match').boundingBox();
+    const pager=await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).boundingBox();
+    return !!card&&!!pager&&card.y+card.height<=pager.y+1&&card.height<height*.75;
+  }).toBe(true);
   await page.getByRole('button',{name:'상세 보기',exact:true}).click();
   const info=await page.locator('.fm-beta-detail-body').boundingBox();
   const action=await page.getByRole('button',{name:'참가하기',exact:true}).boundingBox();
