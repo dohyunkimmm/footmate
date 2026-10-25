@@ -91,8 +91,6 @@ jobs:
         run: node scripts/check-qa-toolchain.cjs
       - name: Check Cloudflare deploy impact classification
         run: node --test tests/contracts/cloudflare-deployment-impact.contract.cjs
-      - name: Check legacy Vercel preview compatibility
-        run: node --test tests/contracts/vercel-preview-deployment.contract.cjs
       - name: Check Production smoke source contract
         run: node --test tests/contracts/production-smoke.contract.cjs
       - name: Check Case Study bundle and asset versions

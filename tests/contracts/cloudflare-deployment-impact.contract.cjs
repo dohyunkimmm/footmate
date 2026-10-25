@@ -15,7 +15,7 @@ test('documentation-only updates use lightweight QA and no deployment', () => {
 test('new scripts, Worker, routing, lockfile, and UI changes require a Cloudflare deployment', () => {
   for (const file of ['worker/index.js', 'wrangler.jsonc', 'scripts/build-cloudflare.mjs',
                       'scripts/classify-cloudflare-impact.cjs', 'package-lock.json',
-                      'src/app/app.js', '.gitignore', 'vercel.json']) {
+                      'src/app/app.js', '.gitignore', 'api/beta-config.js']) {
     assert.deepEqual(classify([file]), { runtime: true, production: true, production_smoke: true }, file);
   }
 });
@@ -79,5 +79,17 @@ test('CI keeps explicit required check names and Cloudflare deploy ordering', ()
   assert.match(workflow, /name: Deploy Cloudflare/);
   assert.match(workflow, /name: Production Smoke/);
   assert.match(workflow, /needs\.deploy_cloudflare\.result == 'success'/);
-  assert.doesNotMatch(workflow, /FOOTMATE_VERCEL_CHANGED_FILES/);
+  assert.doesNotMatch(workflow, /FOOTMATE_VERCEL_CHANGED_FILES|vercel-preview-deployment|vercel-ignore-build/);
+});
+
+test('retired Vercel hosting files are absent while AI Gateway integration remains', () => {
+  const root=path.resolve(__dirname, '../..');
+  for (const file of ['vercel.json', 'scripts/vercel-ignore-build.cjs',
+                      'tests/contracts/vercel-preview-deployment.contract.cjs']) {
+    assert.equal(fs.existsSync(path.resolve(root,file)), false, file);
+  }
+  const gateway=fs.readFileSync(path.resolve(root,'api/ai-match-assistant.js'),'utf8');
+  const packageJson=JSON.parse(fs.readFileSync(path.resolve(root,'package.json'),'utf8'));
+  assert.match(gateway,/ai-gateway\.vercel\.sh/);
+  assert.equal(packageJson.dependencies['@vercel/oidc'],'4.0.1');
 });

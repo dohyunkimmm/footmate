@@ -63,3 +63,12 @@
 - `tests/production-smoke.cjs`와 `tests/production-ai.cjs`의 환경변수 미설정 기본 주소도 과거 Vercel에서 현재 공개 Cloudflare 주소(`https://footmate.fmate.workers.dev`)로 정정합니다. CI에서 지정하는 `FOOTMATE_PRODUCTION_URL`이 우선하는 계약은 유지하며, `tests/contracts/production-smoke.contract.cjs`에 재발 방지 단언을 추가합니다.
 - **Vercel 설정은 보존합니다.** 별도 확인한 Vercel `footmate` 프로젝트가 아직 존재하고 과거 `main`의 Production READY 배포·도메인을 보유합니다. Git 연동 해제 및 과거 도메인 이용 중단은 확인되지 않았습니다. 기존 `vercel.json`, `scripts/vercel-ignore-build.cjs`, Vercel preview 호환 계약은 이전 운영·자동 배포 경로를 깨지 않도록 분리 보존하고, 현재 CI 배포 판정에는 사용하지 않습니다.
 - `@vercel/oidc`는 `api/ai-match-assistant.js`의 AI Gateway 토큰 취득 코드에서 사용하므로 유지합니다. 잔여 Vercel 설정 삭제는 Git 연동 비활성화, 레거시 도메인 이용 여부, 회귀 대체 확인을 마친 뒤 별도 검토합니다.
+
+## 2026-10-26 · Vercel 저장소 전용 설정 퇴역 심사
+
+- 실제 Vercel Git 연결 컨텍스트를 조회한 결과 같은 팀의 `toolflow`, `mosigo`는 연결 프로젝트로 표시됐지만 `footmate`는 표시되지 않았습니다. **현재 해당 계정의 연결 목록에서 FootMate Git 연결이 확인되지 않음**을 의미하며, 향후 Git 재연결 가능성까지 없다는 의미는 아닙니다.
+- GitHub [PR #684](https://github.com/dohyunkimmm/footmate/pull/684)의 병합 SHA `44d80a45`에 대해 [Actions #40227264401](https://github.com/dohyunkimmm/footmate/actions/runs/40227264401)에서 Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke가 모두 성공했습니다. 현재 CI의 빌드 영향 판정은 `scripts/classify-cloudflare-impact.cjs`이고 더는 Vercel 스크립트를 호출하지 않습니다.
+- 이에 따라 저장소에서 `vercel.json`, `scripts/vercel-ignore-build.cjs`, `tests/contracts/vercel-preview-deployment.contract.cjs`를 제거하고, `qa.yml`의 구 Vercel 계약 실행 단계를 삭제합니다. `scripts/check-app-boundary.cjs`는 실제 Worker의 `/demo`, `/beta`, `/beta/operator`, `/prototype` 라우팅을 검사하고, `scripts/check-ai-boundary.cjs`는 `AI_RATE_LIMITER` 및 Wrangler 제한을 검증하도록 교체합니다. 기존 Vercel 프로젝트·과거 READY 프로덕션 배포·도메인은 **삭제하거나 일시 중지하지 않습니다.** 이는 저장소의 미사용 파일 정리이지, 실제 Vercel 서비스 종료가 아닙니다.
+- Vercel `footmate`의 기존 프로덕션 도메인 `footmate-black.vercel.app`이 여전히 등록되어 있고 과거 READY 배포가 존재합니다. Web Analytics가 비활성화됐으며 최근 30분 로그 그룹이 비어 있어 **과거 도메인의 이용자 0명 또는 OAuth 사용 중단은 입증되지 않았습니다.** `src/beta/social-auth.js`와 `src/beta/infrastructure/supabase.js`는 접속 origin을 인증 복귀 URL로 사용합니다. Supabase OAuth redirect 허용 목록은 별도로 검증해야 합니다.
+- `@vercel/oidc` 및 `api/ai-match-assistant.js`의 Vercel AI Gateway 참조는 **현재 AI 추론 의존성**으로 유지합니다. 위 변경이 포함된 PR의 전체 QA 및 병합 후 Cloudflare 배포·Smoke 결과는 성공한 실제 검사 결과에 따라서만 완료 처리합니다.
+- Vercel 외부 프로젝트의 실제 종료·도메인 리디렉션 또는 해제·OAuth 허용 목록 정리는 [이슈 #685](https://github.com/dohyunkimmm/footmate/issues/685)에서 사용 현황을 검증한 후 별도 실행합니다. 과거 2026-10-22~23 기록은 당시 이력으로 남깁니다.
