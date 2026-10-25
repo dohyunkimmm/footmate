@@ -35,7 +35,7 @@ function money(value){return new Intl.NumberFormat('ko-KR').format(value)+'원'}
 function icon(name,className='fm-next-icon'){
   if(name==='logo')return `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5c3.3-5.2 10.7-5.2 14 0"/><path d="M7.5 11.1 10 7.5h4l2.5 3.6"/><path d="M9.2 16.4h5.6"/><circle cx="12" cy="12" r="9"/></svg>`;
   const glyphs={arrow:'➡',back:'⬅',home:'🏠',search:'🔍',calendar:'📅',user:'👤',pin:'📍',level:'📊',position:'⚽',clock:'🕒',users:'👥',check:'✅',card:'💳',route:'🗺',chat:'💬',shield:'🛡',chevron:'➡',reset:'🔄',info:'ℹ',spark:'✨'};
-  return `<span class="${className} fm-icon" aria-hidden="true">${glyphs[name]||glyphs.info}</span>`;
+  return `<span class="${className} fm-icon" aria-hidden="true" data-icon="${glyphs[name]||glyphs.info}"></span>`;
 }
 
 function brand({dark=false,showTagline=true}={}){
