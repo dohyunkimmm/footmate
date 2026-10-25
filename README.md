@@ -64,7 +64,9 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 자세한 문서
 
-- [저장소 운영·브랜치 보호·남은 과제](docs/REPO-OPERATIONS.md) — 2026-10-22 GitHub/Vercel 검증 스냅샷
-- [문서 전체 목록](docs/README.md) · [Release App 상세](docs/RELEASE-APP.md)
+- [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
+- [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md) · [11개 섹션 구성](docs/CASE-STUDY-ELEVEN-STAGES.md)
 - [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md) · [사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)
 - [릴리스·QA 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
+- [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
+- [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
