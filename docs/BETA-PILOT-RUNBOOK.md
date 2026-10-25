@@ -116,7 +116,7 @@
 ## 10. 개인정보 / 보안
 
 - browser에는 publishable key만 둔다. service-role credential을 넣지 않는다.
-- AI 검색(`/api/ai-match-assistant`)의 기존 5분 요청 제한은 Function 인스턴스 메모리 기준이며, 분산 인스턴스 전체에 대한 보호가 아니다. 운영 트래픽·비용 제한은 Vercel Firewall/WAF의 해당 API 경로 별도 제한과 함께 검증한다.
+- 현재 Cloudflare Worker의 `/api/ai-match-assistant` POST 요청은 `AI_RATE_LIMITER` 바인딩으로 검사한다(`worker/index.js`, `wrangler.jsonc` 참조). 운영에서 실제 429, 공유 IP 영향과 비용·트래픽 제한은 Cloudflare 설정 및 Production Smoke와 별도로 점검한다. 2026-10-23 Vercel WAF 기록은 과거 배포용이며 현재 Cloudflare 보안 정책의 검증 근거가 아니다.
 - 운영자 권한은 `public.operators` allowlist + TOTP MFA(AAL2) + RLS/RPC 내부 권한 재검증으로 보호한다.
 - MFA QR/설정 키는 운영자 본인 Authenticator 등록에만 사용하고 로그·문서·채팅에 남기지 않는다.
 - audit payload에는 email/name을 저장하지 않는다.
@@ -156,8 +156,8 @@
 
 Pilot 변경은 변경 영향에 맞춰 다음 순서를 따른다.
 
-- runtime / UI / domain / deployment 영향 변경: `branch → PR → Regression 36 / Browser E2E + axe → merge → 필요한 Supabase migration/Edge Function 적용 → Vercel Production verification → 실제 Beta path verification → 문서 sync`
-- docs / workflow-only non-runtime 변경: `branch → PR → Change Impact → Docs-only QA (git diff --check + connected-platform contract) → merge → 문서 consistency 확인`; runtime Regression / Browser E2E / Production Smoke는 영향이 없으면 skip한다.
+- runtime / UI / domain / deployment 영향 변경: `branch → PR → Regression 36 / Browser E2E + axe → merge → 필요한 Supabase migration/Edge Function 적용 → Deploy Cloudflare → Production Smoke → 실제 Beta path verification → 문서 sync`
+- docs-only 변경: `branch → PR → Change Impact → Docs-only QA (git diff --check + connected-platform contract) → merge → 문서 consistency 확인`; runtime Regression / Browser E2E / Production Smoke는 영향이 없으면 skip한다. CI 워크플로 변경은 docs-only가 아니므로 Regression 36 / Browser E2E + axe 및 필요 시 Production Smoke를 실행한다.
 
 최종 runtime 또는 수동 Production QA가 확정된 뒤에는 [docs/README.md](README.md)의 공통 sync-up 순서를 따른다: README → Release History/Correction → Runbook(운영 절차 변경 시) → Notion(장기 제품 사실 변경 시) → Case Study(설명·핵심 흐름·근거에 실질적 변경이 있을 때) → 상충하는 `pending` / `미검증` / `별도 확인 대상` 문구 검색 → QA/merge. 단순한 Beta 운영·시각 수정만으로 Case Study를 중복 업데이트하지 않는다.
 
