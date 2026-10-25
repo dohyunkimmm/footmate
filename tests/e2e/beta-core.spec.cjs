@@ -31,6 +31,7 @@ async function mockBackend(page,{empty=false,preferences=true}={}){
     if(url.pathname==='/rest/v1/profiles'&&request.method()==='PATCH'){
       profile={...profile,...JSON.parse(request.postData()||'{}')};return fulfill(route,[profile]);
     }
+    if(url.pathname==='/rest/v1/beta_notifications')return fulfill(route,[]);
     if(url.pathname==='/rest/v1/participations')return fulfill(route,joined?[{id:'p-1',match_id:matchId,position:'MF',status:'confirmed',joined_at:'2099-01-01T00:00:00Z',canceled_at:null,created_at:'2099-01-01T00:00:00Z',updated_at:'2099-01-01T00:00:00Z'}]:[]);
     if(url.pathname==='/rest/v1/matches'){
       if(empty)return fulfill(route,[]);
