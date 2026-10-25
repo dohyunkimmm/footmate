@@ -202,8 +202,9 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-remember-email{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0;font-size:13px;color:#68796f;cursor:pointer;min-height:28px}
 .fm-beta-remember-email input{width:16px;height:16px;margin:0;accent-color:#173c2c}
 .fm-beta-auth-card form>.fm-beta-link{justify-content:center;min-height:34px;font-size:13px;font-weight:500}
-.fm-beta-auth-card [data-readiness-auth-actions]{justify-content:center!important;gap:8px 16px!important}
-.fm-beta-auth-card [data-readiness-auth-actions] .fm-beta-link{min-height:30px;font-size:12px;font-weight:500}
+.fm-beta-account-links{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:14px;margin-top:6px;white-space:nowrap}
+.fm-beta-account-links>span{color:#d1d8d3;font-size:12px}
+.fm-beta-auth-card .fm-beta-account-links .fm-beta-link{min-height:34px;font-size:13px;font-weight:500;padding:0;color:#53645a}
 .fm-beta-auth-card [data-beta-social-auth]{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin-top:24px;margin-bottom:0}
 .fm-beta-auth-card .fm-beta-social-divider{flex:0 0 100%;margin-bottom:12px}
 .fm-beta-auth-card .fm-beta-social-button{display:grid;place-items:center;width:48px;height:48px;min-height:48px;padding:0;border-radius:50%;border:1px solid #dbe1dd;font-size:22px}

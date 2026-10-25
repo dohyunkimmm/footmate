@@ -102,7 +102,7 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   const backend=await mockBackend(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="open-account"]').click();
-  await page.getByRole('button',{name:'처음이에요 · 가입하기'}).click();
+  await page.getByRole('button',{name:'회원가입',exact:true}).click();
   const signupPassword=page.getByLabel('비밀번호');
   await expect(signupPassword).toHaveAttribute('minlength','8');
   await expect(signupPassword).toHaveAttribute('placeholder','8자 이상');

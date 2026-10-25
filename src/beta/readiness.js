@@ -64,12 +64,6 @@ if(root){
 
   function currentEmail(){return String(root.querySelector('#beta-auth-panel input[name="email"]')?.value||'').trim()}
 
-  function injectRecoveryActions(){
-    const form=root.querySelector('#beta-auth-panel form[data-form="auth"]');
-    if(!form||form.querySelector('[data-readiness-auth-actions]'))return;
-    form.insertAdjacentHTML('beforeend',`<div data-readiness-auth-actions class="fm-beta-actions" style="justify-content:flex-start;gap:12px;flex-wrap:wrap"><button class="fm-beta-link" type="button" data-readiness-action="forgot-password">비밀번호 찾기</button><button class="fm-beta-link" type="button" data-readiness-action="resend-signup">가입 인증메일 다시 보내기</button></div>`);
-  }
-
   function injectRecoveryPanel(){
     if(!recoveryPending()||!readSession()?.accessToken)return;
     const hero=root.querySelector('.fm-beta-topbar')||root.querySelector('.fm-beta-hero');
@@ -142,7 +136,6 @@ if(root){
 
   function enhance(){
     suppressMutations=true;
-    injectRecoveryActions();
     injectRecoveryPanel();
     injectNotice();
     if(!isDemoEntry&&readSession()?.accessToken){injectParticipationReadiness();injectNotifications();void refreshState()}
@@ -163,14 +156,13 @@ if(root){
     if(!target||!client)return;
     const action=target.dataset.readinessAction;
     if(action==='notification-prev'||action==='notification-next'){notificationPage=Math.max(0,notificationPage+(action==='notification-next'?1:-1));enhance();return}
-    if(action==='forgot-password'||action==='resend-signup'){
+    if(action==='forgot-password'){
       const email=currentEmail();
       if(!email){notice('이메일을 입력한 뒤 다시 시도해주세요.','error');root.querySelector('#beta-auth-panel input[name="email"]')?.focus();return}
       target.disabled=true;
       try{
         const redirectTo=`${location.origin}/beta`;
-        if(action==='forgot-password'){await client.auth.recover({email,redirectTo});notice('비밀번호 재설정 이메일을 요청했습니다. 메일의 복구 링크를 확인해주세요.','success')}
-        else{await client.auth.resendSignup({email,redirectTo});notice('가입 인증메일을 다시 요청했습니다. 받은편지함과 스팸함을 확인해주세요.','success')}
+        await client.auth.recover({email,redirectTo});notice('비밀번호 재설정 이메일을 요청했습니다. 메일의 복구 링크를 확인해주세요.','success')
       }catch(error){notice(String(error?.message||'이메일 요청을 처리하지 못했습니다.'),'error')}
       target.disabled=false;return;
     }

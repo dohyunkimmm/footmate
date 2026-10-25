@@ -39,7 +39,7 @@ async function mockUser(page,{joined=true}={}){
   return {recover:()=>recover,resend:()=>resend,password:()=>password,checked:()=>checked,read:()=>read};
 }
 
-test('beta account recovery and verification resend',async({page})=>{
+test('beta account recovery without verification resend',async({page})=>{
   const backend=await mockUser(page,{joined:false});
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="open-account"]').click();
@@ -48,8 +48,8 @@ test('beta account recovery and verification resend',async({page})=>{
   await page.getByRole('button',{name:'비밀번호 찾기'}).click();
   await expect(page.getByText(/비밀번호 재설정 이메일을 요청했습니다/)).toBeVisible();
   expect(backend.recover()).toBe(1);
-  await page.getByRole('button',{name:'가입 인증메일 다시 보내기'}).click();
-  expect(backend.resend()).toBe(1);
+  await expect(page.getByRole('button',{name:'가입 인증메일 다시 보내기'})).toHaveCount(0);
+  expect(backend.resend()).toBe(0);
   expect(await serious(page)).toEqual([]);
 });
 

@@ -119,7 +119,7 @@ if(root){
           <label class="fm-beta-consent"><input type="checkbox" name="dataNoticeAcknowledged" required> Beta의 실제 계정·참가 정보 처리 안내를 확인했습니다.</label>`:''}
           ${!signup?`<label class="fm-beta-remember-email"><input name="rememberEmail" type="checkbox" ${localStorage.getItem('footmate:beta:remember-email:v1')?'checked':''}><span>아이디 저장</span></label>`:''}
           <button class="fm-beta-button fm-beta-button--primary" type="submit" ${busy?'disabled':''}>${busy?'<span class="fm-beta-spinner"></span>처리 중':signup?'가입하기':'로그인'}</button>
-          <button class="fm-beta-link" type="button" data-action="toggle-auth">${signup?'이미 계정이 있어요 · 로그인':'처음이에요 · 가입하기'}</button>
+          ${signup?'<button class="fm-beta-link" type="button" data-action="toggle-auth">이미 계정이 있어요 · 로그인</button>':'<nav class="fm-beta-account-links" aria-label="계정 도움말"><button class="fm-beta-link" type="button" data-readiness-action="forgot-password">비밀번호 찾기</button><span aria-hidden="true">|</span><button class="fm-beta-link" type="button" data-action="toggle-auth">회원가입</button></nav>'}
         </form>
       </div>`;
     }
