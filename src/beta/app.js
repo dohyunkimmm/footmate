@@ -25,6 +25,7 @@ if(root){
   let view=['home','matches','my'].includes(sessionStorage.getItem('footmate:beta:view:v1'))?sessionStorage.getItem('footmate:beta:view:v1'):'home';
   let visibleLimit=8;
   let demoPage=0;
+  let previewExpanded=false;
   root.dataset.betaDemo=String(isDemoEntry);
   root.dataset.betaApp='true';
   let accountTab='profile';
@@ -70,7 +71,7 @@ if(root){
     localStorage.removeItem(SESSION_KEY);
     session=null;
     user=null;
-    profile=null;
+    profile=null;closeDetail();
     participations=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
   }
 
@@ -204,10 +205,10 @@ if(root){
     if(!visible.length)return `<div class="fm-beta-empty"><strong>조건에 맞는 경기가 없어요.</strong></div>`;
 
     const guest=!session||!user;
-    const preview=guest?visible.slice(0,3):visible;
+    const preview=guest&&!previewExpanded?visible.slice(0,3):visible;
     demoPage=Math.min(demoPage,preview.length-1);
-    const gatedNext=guest&&demoPage===preview.length-1&&visible.length>preview.length;
-    return `${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${preview.length}개 미리보기</span><button class="fm-beta-link" type="button" data-action="unlock-preview">가입하고 계속하기</button></div>`:''}<div class="fm-beta-match-list">${renderMatch(preview[demoPage])}</div>${preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'unlock-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'전체 추천 보기':'다음'}</button></nav>`:''}`;
+    const gatedNext=guest&&!previewExpanded&&demoPage===preview.length-1&&visible.length>preview.length;
+    return `${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${previewExpanded?'전체 보기':`${preview.length}개 미리보기`}</span><button class="fm-beta-link" type="button" data-action="unlock-preview">가입하고 계속하기</button></div>`:''}<div class="fm-beta-match-list">${renderMatch(preview[demoPage])}</div>${preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'expand-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'전체 추천 보기':'다음'}</button></nav>`:''}`;
   }
 
 
@@ -391,6 +392,7 @@ if(root){
     if(action==='navigate'){setView(target.dataset.view);return}
     if(action==='more-matches'){visibleLimit+=8;render();return}
     if(action==='toggle-auth'){authMode=authMode==='signin'?'signup':'signin';setNotice(null);render();return}
+    if(action==='expand-preview'){previewExpanded=true;render();return}
     if(action==='unlock-preview'){authEntry='results';authOpen=true;render();root.querySelector('#beta-auth-panel h2, #beta-auth-panel input')?.focus();return}
     if(action==='open-account'||action==='focus-auth'){
       authEntry='results';
