@@ -351,7 +351,7 @@ if(root){
     const action=target.dataset.action;
     if(action==='opening'){openingOpen=true;authOpen=false;render();return}
     if(action==='opening-start'||action==='opening-login'){
-      openingOpen=false;sessionStorage.setItem('footmate:beta:entered:v1','1');
+      openingOpen=false;sessionStorage.setItem('footmate:beta:entered:v1','auth');
       if(session&&user){if(isDemoEntry){sessionStorage.setItem('footmate:beta:view:v1',action==='opening-login'?'my':'home');location.replace('/beta');return}setView(action==='opening-login'?'my':'home');return}
       authOpen=true;render();return;
     }
