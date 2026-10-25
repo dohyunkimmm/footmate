@@ -47,3 +47,10 @@
 ## 관련 저장소
 
 [mosigo 운영 현황](https://github.com/dohyunkimmm/mosigo/blob/main/docs/REPO-OPERATIONS.md) · [onboardos 운영 현황](https://github.com/dohyunkimmm/onboardos/blob/main/docs/REPO-OPERATIONS.md)
+
+## 2026-10-26 · 안전 클렌징 점검
+
+- `.gitignore`: `node_modules/`, `dist/`, `.dev.vars*` 중복을 제거하고 `.env`/ `.env.*`와 중복되는 포괄 규칙 `.env*`를 하나만 둡니다. `!.env.example`은 마지막 환경파일 규칙 다음에 배치해 **예제 파일만 예외**로 적용합니다. 실제 환경값 파일이나 기존 배포 파일은 변경하지 않습니다.
+- **`vercel.json`은 현재 삭제하지 않습니다.** 공식 배포는 Cloudflare Workers로 이동했지만 기존 Vercel 프로젝트가 남아 있으며 `tests/contracts/vercel-preview-deployment.contract.cjs`에서 설정 파일을 읽습니다. `.github/workflows/qa.yml`의 변경 영향 판정은 `scripts/vercel-ignore-build.cjs`를 사용하고, Regression 36도 이전 Vercel preview 계약을 검사합니다. 무작정 삭제하면 CI/과거 배포 경로 검증을 깰 수 있습니다.
+- Vercel 설정·스크립트·QA 계약 제거는 **Vercel Git 자동 배포 중단 여부 확인 → Cloudflare 기준 변경 영향 판정과 테스트로 교체 → 회귀 및 Production Smoke 검증**을 별도 PR로 진행할 때 판단합니다. `@vercel/oidc`는 AI Gateway 토큰 취득 경로에서 참조되므로 Vercel 호스팅 이관을 이유로 삭제하지 않습니다.
+- 본 점검은 `src/`, `worker/`, `supabase/`와 배포 설정을 변경하지 않습니다. `.gitignore`와 운영 문서만 수정하며, 실제 CI 분류·결과는 PR과 병합 후 워크플로에서 확인합니다.
