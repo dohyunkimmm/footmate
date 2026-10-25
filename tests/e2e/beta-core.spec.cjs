@@ -213,8 +213,9 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.locator('[data-beta-main]')).toBeHidden();
   await page.screenshot({path:testInfo.outputPath('participation-login-390.png'),fullPage:true});
   await page.getByRole('button',{name:'← 뒤로'}).click();
-  await expect(page.locator('.fm-beta-match[data-pending-match="true"]')).toBeVisible();
-  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await expect(page.locator('[data-screen="welcome"]')).toBeVisible();
+  await expect(page.getByRole('button',{name:/둘러보기/})).toHaveCount(0);
+  await page.getByRole('button',{name:'시작하기',exact:true}).click();
   await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
   await expect(page.getByRole('button',{name:'FW로 참가'})).toBeVisible();
