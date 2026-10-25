@@ -478,5 +478,19 @@ for(const [width,height] of [[320,568],[390,844]]){
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth||document.documentElement.scrollHeight>innerHeight)).toBe(false);
   expect(await serious(page)).toEqual([]);
   await page.screenshot({path:testInfo.outputPath('design-qa-detail-'+width+'.png'),fullPage:true});
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일',{exact:true}).fill('beta@example.com');
+  await page.getByLabel('비밀번호',{exact:true}).fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByRole('button',{name:'MF로 참가',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
+  const signedInAction=await page.getByRole('button',{name:'MF로 참가',exact:true}).boundingBox();
+  const appNav=await page.getByRole('navigation',{name:'Beta 메뉴',exact:true}).boundingBox();
+  expect(signedInAction.y+signedInAction.height).toBeLessThanOrEqual(appNav.y);
+  await page.screenshot({path:testInfo.outputPath('design-qa-home-signed-in-'+width+'.png'),fullPage:true});
+  await page.getByRole('button',{name:'MY',exact:true}).click();
+  await expect(page.getByRole('button',{name:'프로필 저장',exact:true})).toBeVisible();
+  expect(await serious(page)).toEqual([]);
+  await page.screenshot({path:testInfo.outputPath('design-qa-my-'+width+'.png'),fullPage:true});
  });
 }
