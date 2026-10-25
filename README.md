@@ -24,9 +24,9 @@
 - **이전 프로토타입 Guided Mode:** `/prototype`에서 당시 추천·비교·마감·MY 동선을 보존합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
-**주요 링크:** [Case Study](https://footmate-black.vercel.app/) · [FootMate Demo](https://footmate-black.vercel.app/demo)
+**주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
-**체험 안내:** [6단계 Guided Mode](https://footmate-black.vercel.app/prototype?mode=guided)는 단계별 안내용이며, `/prototype?mode=evidence`는 구현·검증 근거 확인용입니다.
+**체험 안내:** [6단계 Guided Mode](https://footmate.fmate.workers.dev/prototype?mode=guided)는 단계별 안내용이며, `/prototype?mode=evidence`는 구현·검증 근거 확인용입니다.
 
 ## 주요 경험
 
