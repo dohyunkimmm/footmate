@@ -363,7 +363,7 @@ test('choice-first recommendations keep OAuth login in Beta home with the select
 });
 
 
-test('FootMate conditions and limited results precede reference login and retain preferences',async({page},testInfo)=>{
+test('FootMate results expand without signup and participation retains preferences',async({page},testInfo)=>{
   await mockBackend(page,{preferences:false,empty:true});
   await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
@@ -388,6 +388,9 @@ test('FootMate conditions and limited results precede reference login and retain
   const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.screenshot({path:testInfo.outputPath('recommendation-preview-390.png'),fullPage:true});
   await pager.getByRole('button',{name:'전체 추천 보기',exact:true}).click();
+  await expect(page.locator('.fm-beta-preview-note')).toContainText('전체 보기');
+  await expect(page.getByLabel('이메일',{exact:true})).toBeHidden();
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
   const email=page.getByLabel('이메일',{exact:true});
