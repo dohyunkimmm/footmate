@@ -25,7 +25,6 @@
 
 **주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
-
 ## 주요 경험
 
 - **조건 선택·추천:** 첫 방문에는 ① 활동 지역 ② 실력·포지션·시간을 짧게 선택합니다. 데모에는 예시 경기가 준비되어 있으며, 재방문에는 저장한 조건의 추천 홈을 엽니다.
