@@ -257,3 +257,6 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-detail .fm-beta-slots{margin-top:12px}
 .fm-beta-detail .fm-beta-slot{padding:10px 4px}
 }
+
+/* Typography QA: keep availability and status copy readable at app widths. */
+.fm-beta-live,.fm-beta-ai-label,.fm-beta-badge,.fm-beta-slot span{font-size:12px;line-height:1.5}
