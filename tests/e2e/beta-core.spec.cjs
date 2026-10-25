@@ -454,3 +454,28 @@ test('mobile match detail keeps selection through login and returns to app navig
   await page.getByRole('button',{name:'추천',exact:true}).click();
   await expect(page.getByRole('heading',{name:'추천 경기',exact:true})).toBeVisible();
 });
+
+for(const [width,height] of [[320,568],[390,844]]){
+ test('design QA keeps compact cards and a reachable detail action '+width,async({page},testInfo)=>{
+  await page.setViewportSize({width,height});
+  await mockBackend(page);
+  await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await expect(page.getByRole('heading',{name:'영통 금요일 저녁 경기',exact:true})).toBeVisible();
+  const card=await page.locator('.fm-beta-match').boundingBox();
+  const pager=await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).boundingBox();
+  expect(card.y+card.height).toBeLessThanOrEqual(pager.y+1);
+  expect(card.height).toBeLessThan(height*.75);
+  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+  const info=await page.locator('.fm-beta-detail-body').boundingBox();
+  const action=await page.getByRole('button',{name:'참가하기',exact:true}).boundingBox();
+  expect(info.y+info.height).toBeLessThan(action.y);
+  expect(action.y+action.height).toBeLessThanOrEqual(height);
+  await page.getByRole('button',{name:'모집 포지션',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail .fm-beta-slot')).toHaveCount(4);
+  const slotAction=await page.getByRole('button',{name:'참가하기',exact:true}).boundingBox();
+  expect(slotAction.y+slotAction.height).toBeLessThanOrEqual(height);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth||document.documentElement.scrollHeight>innerHeight)).toBe(false);
+  expect(await serious(page)).toEqual([]);
+  await page.screenshot({path:testInfo.outputPath('design-qa-detail-'+width+'.png'),fullPage:true});
+ });
+}
