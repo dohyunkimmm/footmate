@@ -404,7 +404,7 @@ test('FootMate conditions and limited results precede reference login and retain
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',selected);
   await page.getByRole('button',{name:'참가하기',exact:true}).click();
   await email.fill('beta@example.com');
-  await page.getByRole('checkbox',{name:'이메일 저장',exact:true}).check();
+  await page.getByRole('checkbox',{name:'아이디 저장',exact:true}).check();
   await page.getByLabel('비밀번호',{exact:true}).fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
   await page.waitForURL('**/beta');
