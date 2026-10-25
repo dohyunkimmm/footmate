@@ -90,6 +90,6 @@ test('retired Vercel hosting files are absent while AI Gateway integration remai
   }
   const gateway=fs.readFileSync(path.resolve(root,'api/ai-match-assistant.js'),'utf8');
   const packageJson=JSON.parse(fs.readFileSync(path.resolve(root,'package.json'),'utf8'));
-  assert.match(gateway,/ai-gateway\\.vercel\\.sh/);
+  assert.match(gateway,/ai-gateway\.vercel\.sh/);
   assert.equal(packageJson.dependencies['@vercel/oidc'],'4.0.1');
 });
