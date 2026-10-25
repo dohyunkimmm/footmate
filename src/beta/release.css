@@ -311,3 +311,5 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 
 .fm-beta-catalog>.fm-beta-panel-head .fm-beta-button.fm-beta-refresh{width:44px;min-height:44px;padding:0;border-radius:13px}
 .fm-beta-detail-body h3{font-size:20px;line-height:1.4}
+
+.fm-beta-button.fm-beta-refresh .fm-icon{font-size:18px}
