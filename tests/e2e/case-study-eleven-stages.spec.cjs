@@ -60,7 +60,7 @@ test('research, QA improvements and policy evidence have separate responsibiliti
 
 test('wireframe enlargement preserves section and restores keyboard focus',async({page})=>{
  await page.goto('/#section-07');const preview=page.locator('#section-07 .evidence-preview').first();await preview.click();
- const dialog=page.getByRole('dialog',{name:'홈 와이어프레임',exact:true});await expect(dialog).toBeVisible();
+ const dialog=page.getByRole('dialog',{name:'홈 · 현재 Demo 화면',exact:true});await expect(dialog).toBeVisible();
  await expect(dialog.locator('img')).toHaveAttribute('src',await preview.getAttribute('data-image'));
  await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
  await page.keyboard.press('ArrowRight');await expect(page).toHaveURL(/#section-07$/);
@@ -201,19 +201,19 @@ for(const reducedMotion of ['no-preference','reduce']){
 
 test('wireframe gallery moves through five screens and restores the opening card',async({page})=>{
  await page.goto('/#section-07');
- const opening=page.getByRole('button',{name:'홈 와이어프레임 확대',exact:true});
+ const opening=page.getByRole('button',{name:'홈 · 현재 Demo 화면 확대',exact:true});
  await opening.click();
- await expect(page.getByRole('dialog',{name:'홈 와이어프레임',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'홈 · 현재 Demo 화면',exact:true})).toBeVisible();
  await expect(page.locator('.image-dialog-position')).toHaveText('01 / 05');
  await expect(page.getByRole('button',{name:'이전 와이어프레임',exact:true})).toBeDisabled();
  for(let index=1;index<5;index++){
   await page.getByRole('button',{name:'다음 와이어프레임',exact:true}).click();
   await expect(page.locator('.image-dialog-position')).toHaveText(String(index+1).padStart(2,'0')+' / 05');
  }
- await expect(page.getByRole('dialog',{name:'MY 와이어프레임',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'시작 화면 · 현재 Demo 화면',exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'다음 와이어프레임',exact:true})).toBeDisabled();
  await page.keyboard.press('ArrowLeft');
- await expect(page.getByRole('dialog',{name:'참가 확인 와이어프레임',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'참가 시 로그인 · 현재 Demo 화면',exact:true})).toBeVisible();
  await expect(page).toHaveURL(/#section-07$/);
  await page.keyboard.press('Escape');
  await expect(page.locator('.image-dialog')).not.toBeVisible();
@@ -249,8 +249,8 @@ test('task steps and exception buttons connect their numbered paths',async({page
 for(const width of [390,1440]){
  test('reader enhancements remain usable and accessible at '+width+'px',async({page})=>{
   await page.setViewportSize({width,height:1080});await page.goto('/#section-07');
-  await page.getByRole('button',{name:'경기 상세 와이어프레임 확대',exact:true}).click();
-  await expect(page.locator('.image-dialog-caption')).toContainText('추천 이유');
+  await page.getByRole('button',{name:'경기 상세 · 현재 Demo 화면 확대',exact:true}).click();
+  await expect(page.locator('.image-dialog-caption')).toContainText('경기 정보·모집 포지션');
   expect(await page.locator('.image-dialog').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
   let scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
