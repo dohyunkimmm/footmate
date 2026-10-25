@@ -282,7 +282,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-detail .fm-beta-match-actions .fm-beta-price{font-size:16px;line-height:1.5}
 .fm-beta-detail .fm-beta-match-actions .fm-beta-button{min-height:48px}
 .fm-beta-detail .fm-beta-account-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:15px;background:#e9efea}
-.fm-beta-detail .fm-beta-account-tabs .fm-beta-button{min-height:40px;border:0;border-radius:11px;background:transparent;color:#64736a;font-size:14px;font-weight:600}
+.fm-beta-detail .fm-beta-account-tabs .fm-beta-button{min-height:40px;border:0;border-radius:11px;background:transparent;color:#53645a;font-size:14px;font-weight:600}
 .fm-beta-detail .fm-beta-account-tabs [aria-current="page"]{background:#fff;color:#173c2c;box-shadow:0 1px 4px #123c2814}
 .fm-beta-detail .fm-beta-slots{gap:8px}
 .fm-beta-detail .fm-beta-slot{border-color:#e4ebe5;background:#f6f9f6}
