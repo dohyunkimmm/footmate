@@ -34,7 +34,7 @@ if(root){
 
   function tinyIcon(name){
     const glyphs={pin:'📍',level:'📊',position:'⚽',clock:'🕒',spark:'✨'};
-    return `<span class="fm-next-icon fm-icon" aria-hidden="true">${glyphs[name]||'ℹ'}</span>`;
+    return `<span class="fm-next-icon fm-icon" aria-hidden="true" data-icon="${glyphs[name]||'ℹ'}"></span>`;
   }
 
   function card(item,index,scope='home'){
