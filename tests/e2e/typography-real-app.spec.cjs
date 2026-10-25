@@ -79,7 +79,7 @@ for(const width of [320,375,390,430,560,699,700,960,1366,1440,1920]){
 
 for(const width of [390,1440]){
   test('Interactive Demo forced fallback font '+width+'px',async({page},testInfo)=>{
-    await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//,route=>route.abort());
+    await page.route(/^https:\/\/cdn\.jsdelivr\.net\/gh\/(orioncactus\/pretendard|toss\/tossface)@/,route=>route.abort());
     await openCleanApp(page,width);
     const fonts=await fontCoverage(page);
     await toHome(page);
