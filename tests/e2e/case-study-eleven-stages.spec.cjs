@@ -203,7 +203,7 @@ test('wireframe gallery moves through five screens and restores the opening card
  await page.goto('/#section-07');
  const opening=page.getByRole('button',{name:'홈 · 현재 Demo 화면 확대',exact:true});
  await opening.click();
- await expect(page.getByRole('dialog',{name:'홈 와이어프레임',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'홈 · 현재 Demo 화면',exact:true})).toBeVisible();
  await expect(page.locator('.image-dialog-position')).toHaveText('01 / 05');
  await expect(page.getByRole('button',{name:'이전 와이어프레임',exact:true})).toBeDisabled();
  for(let index=1;index<5;index++){
