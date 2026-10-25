@@ -114,7 +114,7 @@ async function inspectTypography(page,selector){
 
 async function fontCoverage(page){
   return page.evaluate(async()=>{
-    const faces=await Promise.all([['Inter','700','FootMate'],['Noto Sans KR','400','경기 참가'],['Noto Sans KR','700','경기 참가']].map(async ([family,weight,text])=>{
+    const faces=await Promise.all([['Pretendard Variable','700','FootMate'],['Pretendard Variable','400','경기 참가'],['Pretendard Variable','700','경기 참가'],['Tossface','400','📍']].map(async ([family,weight,text])=>{
       let loaded=[];try{loaded=await document.fonts.load(weight+' 16px "'+family+'"',text);}catch{}
       return {family,weight,loaded:loaded.length>0&&loaded.every(face=>face.status==='loaded')};
     }));
