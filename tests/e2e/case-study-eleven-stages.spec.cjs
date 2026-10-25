@@ -225,7 +225,7 @@ test('single evidence image does not display wireframe gallery controls',async({
  await page.locator('#section-01 .evidence-preview').click();
  await expect(page.locator('.image-dialog')).toBeVisible();
  await expect(page.locator('.image-dialog-navigation')).toBeHidden();
- await expect(page.locator('.image-dialog-caption')).toBeHidden();
+ await expect(page.locator('.image-dialog-caption')).toContainText('원본 크기');
  await page.keyboard.press('Escape');
  await expect(page.locator('#section-01 .evidence-preview')).toBeFocused();
 });
@@ -263,3 +263,36 @@ for(const width of [390,1440]){
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  });
 }
+
+for(const width of [320,390,1440,1920]){
+ test('readable evidence keeps app pixels legible at '+width+'px',async({page})=>{
+  await page.setViewportSize({width,height:1080});await page.goto('/#section-07');
+  const images=page.locator('#section-07 .wireframe-record img');
+  await expect(images).toHaveCount(5);
+  for(const img of await images.all()){
+   await img.scrollIntoViewIfNeeded();
+   await expect.poll(()=>img.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+   const metrics=await img.evaluate(n=>({natural:n.naturalWidth,rendered:n.getBoundingClientRect().width,ratio:n.getBoundingClientRect().width/n.getBoundingClientRect().height,original:n.naturalWidth/n.naturalHeight}));
+   expect(metrics.natural).toBeLessThanOrEqual(560);
+   expect(Math.abs(metrics.ratio-metrics.original)).toBeLessThan(0.01);
+   if(width>=1440)expect(metrics.rendered/metrics.natural).toBeGreaterThanOrEqual(0.8);
+  }
+  await page.locator('#section-07 .evidence-preview').first().click();
+  const expanded=page.locator('.image-dialog-body img');
+  expect(await expanded.evaluate(n=>n.getBoundingClientRect().width/n.naturalWidth)).toBeGreaterThanOrEqual(1);
+  expect(await page.getByRole('dialog').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
+  await expect(page.locator('.image-dialog-caption')).toContainText('좌우로 이동');
+  await page.keyboard.press('Escape');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ });
+}
+test('same-source readability comparison retains original and cropped evidence',async({page})=>{
+ await page.setViewportSize({width:1920,height:1080});await page.goto('/#section-10');
+ const before=page.locator('.ui-compare-window img'),after=page.locator('.ui-compare .evidence-preview img');
+ await before.scrollIntoViewIfNeeded();await expect.poll(()=>before.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+ await after.scrollIntoViewIfNeeded();await expect.poll(()=>after.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+ expect(await before.evaluate(n=>n.naturalWidth)).toBe(1920);
+ expect(await after.evaluate(n=>n.naturalWidth)).toBe(560);
+ await expect(page.locator('#section-10')).toContainText('같은 캡처·같은 경기·같은 문구');
+ for(const number of ['05','06','08','09'])expect(await page.locator('#section-'+number+' .ui-evidence img').count()).toBeGreaterThanOrEqual(2);
+});
