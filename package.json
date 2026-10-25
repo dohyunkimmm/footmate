@@ -9,11 +9,16 @@
     "qa:release": "node scripts/check-release-version.cjs",
     "qa:toolchain": "node scripts/check-qa-toolchain.cjs",
     "sync:case-study-assets": "node scripts/sync-case-study-assets.cjs",
-    "qa:case-study-assets": "node scripts/sync-case-study-assets.cjs --check"
+    "qa:case-study-assets": "node scripts/sync-case-study-assets.cjs --check",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
+    "deploy:cloudflare": "npm run build:cloudflare && wrangler deploy"
   },
   "qaToolchain": {
     "node": "24",
     "playwright": "1.55.1",
     "axeCorePlaywright": "4.10.2"
+  },
+  "devDependencies": {
+    "wrangler": "^4.152.0"
   }
 }

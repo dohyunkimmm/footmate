@@ -253,11 +253,44 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+
+  deploy_cloudflare:
+    name: Deploy Cloudflare
+    needs: [impact, regression, browser_e2e, docs_only]
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.impact.result == 'success' &&
+      needs.impact.outputs.production == 'true' &&
+      needs.regression.result == 'success' &&
+      needs.browser_e2e.result == 'success' &&
+      needs.docs_only.result == 'skipped'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Build Cloudflare assets
+        run: npm run build:cloudflare
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
   production_smoke:
     name: Production Smoke
-    needs: [impact, regression, browser_e2e, docs_only]
-    # Validate test-only changes against existing Production before merge.
-    # Same-repository PRs are eligible only when no production asset changes.
+    needs: [impact, regression, browser_e2e, docs_only, deploy_cloudflare]
     if: >-
       always() &&
       (github.event_name == 'push' ||
@@ -266,44 +299,62 @@ jobs:
         needs.impact.outputs.production == 'false')) &&
       needs.impact.result == 'success' &&
       needs.impact.outputs.production_smoke == 'true' &&
-      (needs.regression.result == 'success' || needs.regression.result == 'skipped') &&
-      (needs.browser_e2e.result == 'success' || needs.browser_e2e.result == 'skipped') &&
-      (needs.docs_only.result == 'success' || needs.docs_only.result == 'skipped')
+      (needs.regression.result == 'success' ||
+       needs.regression.result == 'skipped') &&
+      (needs.browser_e2e.result == 'success' ||
+       needs.browser_e2e.result == 'skipped') &&
+      (needs.docs_only.result == 'success' ||
+       needs.docs_only.result == 'skipped') &&
+      (github.event_name != 'push' ||
+       needs.impact.outputs.production != 'true' ||
+       needs.deploy_cloudflare.result == 'success')
+
     runs-on: ubuntu-latest
+
+    env:
+      FOOTMATE_PRODUCTION_URL: ${{ vars.FOOTMATE_CLOUDFLARE_URL }}
+      BASE_URL: ${{ vars.FOOTMATE_CLOUDFLARE_URL }}
+      FOOTMATE_STRICT_PRODUCTION: 'true'
+      PRODUCTION_SMOKE: '1'
+
     steps:
       - uses: actions/checkout@v7
+
       - uses: actions/setup-node@v7
-        with: {node-version: '24', package-manager-cache: false}
-      - name: Wait for exact Vercel deployment
-        if: needs.impact.outputs.production == 'true'
-        env: {GH_TOKEN: "${{ github.token }}"}
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Check Cloudflare URL
         run: |
-          for attempt in $(seq 1 42); do
-            state="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/status" --jq '[.statuses[]|select(.context=="Vercel")][0].state // ""')"
-            [ "$state" = success ] && exit 0
-            if [ "$state" = failure ] || [ "$state" = error ]; then exit 1; fi
-            sleep 10
-          done
-          exit 1
-      - name: Run exact Production HTTP smoke
-        env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
+          if [ -z "$FOOTMATE_PRODUCTION_URL" ]; then
+            echo "Missing FOOTMATE_CLOUDFLARE_URL"
+            exit 1
+          fi
+
+      - name: Run Production HTTP smoke
         run: node tests/production-smoke.cjs
-      - name: Run exact Production AI inference
-        env: {FOOTMATE_PRODUCTION_URL: https://footmate-black.vercel.app, FOOTMATE_STRICT_PRODUCTION: 'true'}
+
+      - name: Run Production AI inference
         run: node tests/production-ai.cjs
+
       - name: Install Production browser dependencies
         run: |
           PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
           AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run exact Production Chromium smoke
-        env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test tests/e2e/production-app.spec.cjs tests/e2e/beta-production-core.spec.cjs tests/e2e/beta-production-readiness.spec.cjs
-      - name: Run exact Production release journeys
-        env: {BASE_URL: https://footmate-black.vercel.app, PRODUCTION_SMOKE: '1', FOOTMATE_STRICT_PRODUCTION: 'true'}
-        run: npx playwright test --project=chromium tests/e2e/release-app.spec.cjs --grep "Release App free Join failure is recoverable without leaving a stuck button|Home lifecycle closes Return and hands the next action back to Discover|Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+
+      - name: Run Production Chromium smoke
+        run: |
+          npx playwright test tests/e2e/production-app.spec.cjs tests/e2e/beta-production-core.spec.cjs tests/e2e/beta-production-readiness.spec.cjs
+
+      - name: Run Production release journeys
+        run: |
+          npx playwright test --project=chromium tests/e2e/release-app.spec.cjs --grep "Release App free Join failure is recoverable without leaving a stuck button|Home lifecycle closes Return and hands the next action back to Discover|Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+
       - name: Upload Production browser evidence
         if: always()
         uses: actions/upload-artifact@v6

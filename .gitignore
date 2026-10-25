@@ -13,3 +13,9 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+dist/
+.dev.vars*
+.env*
+node_modules/
+dist/
+.dev.vars*
