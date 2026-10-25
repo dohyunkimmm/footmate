@@ -3,8 +3,7 @@ playwright-report/
 test-results/
 coverage/
 .vercel/
-.env
-.env.*
+.env*
 !.env.example
 .DS_Store
 Thumbs.db
@@ -13,9 +12,5 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
-dist/
-.dev.vars*
-.env*
-node_modules/
 dist/
 .dev.vars*
