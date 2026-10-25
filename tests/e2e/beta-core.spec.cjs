@@ -362,7 +362,7 @@ test('choice-first recommendations keep OAuth login in Beta home with the select
   expect(backend.isJoined()).toBe(false);
 });
 
-test('original FootMate opening leads to social login and returns to browsing without scrolling',async({page},testInfo)=>{
+test('FootMate opening has one start action and requires login before setup',async({page},testInfo)=>{
   await mockBackend(page,{preferences:false});
   await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
@@ -372,16 +372,22 @@ test('original FootMate opening leads to social login and returns to browsing wi
   await expect(opening.locator('.fm-app-entry-name')).toHaveText('FootMate');
   await expect(opening.locator('.fm-app-entry-logo')).toBeVisible();
   await expect(opening.locator('.fm-app-entry-name')).toHaveCSS('font-size','32px');
-  await expect(opening.getByRole('button',{name:'로그인하고 시작하기',exact:true})).toBeInViewport();
+  await expect(opening.getByRole('button',{name:'시작하기',exact:true})).toBeInViewport();
   expect(await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
   await page.screenshot({path:testInfo.outputPath('restored-opening-390.png'),fullPage:true});
-  await opening.getByRole('button',{name:'로그인하고 시작하기',exact:true}).click();
+  await opening.getByRole('button',{name:'시작하기',exact:true}).click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
   await expect(page.getByLabel('이메일')).toBeVisible();
   await page.screenshot({path:testInfo.outputPath('restored-login-390.png'),fullPage:true});
   await page.getByRole('button',{name:'앱 시작 화면',exact:true}).click();
   await expect(opening).toBeVisible();
-  await opening.getByRole('button',{name:'경기 먼저 둘러보기',exact:true}).click();
+  await expect(opening.getByRole('button')).toHaveCount(1);
+  await expect(page.getByRole('button',{name:/둘러보기|내 경기 찾아보기/})).toHaveCount(0);
+  await opening.getByRole('button',{name:'시작하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.waitForURL('**/beta');
   await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
 });
