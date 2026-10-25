@@ -142,7 +142,7 @@ function sortedRows(state){
 }
 
 function money(value){return new Intl.NumberFormat('ko-KR').format(value)+'원'}
-function iconSpark(){return '<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.3 4.2L17.5 9l-4.2 1.8L12 15l-1.3-4.2L6.5 9l4.2-1.8z"/></svg>'}
+function iconSpark(){return '<span class="fm-next-icon fm-icon" aria-hidden="true">✨</span>'}
 
 function spotLabel(match,state){
   const ai=window.__FOOTMATE_REAL_APP_IA__;
