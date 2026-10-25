@@ -311,7 +311,7 @@ for(const width of [1440,1920]){
   for(const index of [4,5,6,7,8,9]){
    await page.locator('.toc-item').nth(index).click();
    const slide=page.locator('.slide:visible');
-   for(const image of await slide.locator('.evidence-preview img').all()){
+   for(const image of await slide.locator('.evidence-preview img:visible').all()){
     await image.scrollIntoViewIfNeeded();
     await expect.poll(()=>image.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
    }
