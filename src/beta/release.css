@@ -347,7 +347,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-slot span{font-size:14px;line-height:1.6}
 .fm-beta-slot span strong{font-size:18px;color:#203d2d;margin-right:2px}
 .fm-beta-opening .fm-app-entry-logo{width:88px;height:88px;margin-bottom:8px}
-.fm-beta-opening .fm-app-entry-name{font-size:28px}
+.fm-beta-opening .fm-app-entry-name{font-size:32px}
 .fm-beta-opening .fm-next-intro-copy{margin:32px 0 24px}
 .fm-beta-opening .fm-next-intro-copy p{font-size:16px;line-height:1.65}
 @media(max-width:360px){.fm-beta-detail .fm-beta-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.fm-beta-detail-facts>div{grid-template-columns:72px minmax(0,1fr);gap:8px}}
