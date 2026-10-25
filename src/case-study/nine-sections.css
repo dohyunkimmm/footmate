@@ -837,7 +837,7 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 #section-07 .wireframe-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
 #section-07 .wireframe-record{min-width:0;width:auto;padding:14px;flex:auto}
 #section-07 .wireframe-record>.evidence-preview{width:100%;max-width:360px;margin:12px auto 0;overflow:hidden}
-#section-07 .wireframe-record img{width:100%;height:auto;max-height:280px;aspect-ratio:auto;object-fit:cover}
+#main #section-07 .wireframe-record img{width:100%;height:280px;max-height:280px;aspect-ratio:auto;object-fit:cover}
 #section-07 .wireframe-record h2{font-size:18px}
 #section-07 .wireframe-record>p{margin-top:10px;font-size:14px}
 #section-07 .wireframe-record>.small-copy{margin-top:6px;padding-top:8px}

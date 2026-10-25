@@ -311,6 +311,10 @@ for(const width of [1440,1920]){
   for(const index of [4,5,6,7,8,9]){
    await page.locator('.toc-item').nth(index).click();
    const slide=page.locator('.slide:visible');
+   for(const image of await slide.locator('.evidence-preview img').all()){
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(()=>image.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+   }
    const metrics=await slide.evaluate(s=>({section:s.id,height:s.getBoundingClientRect().height,images:[...s.querySelectorAll('.evidence-preview img')].filter(n=>n.getClientRects().length).map(n=>n.getBoundingClientRect().height)}));
    expect(metrics.images.length).toBeGreaterThan(0);
    expect(metrics.images.every(h=>h<=280)).toBe(true);
