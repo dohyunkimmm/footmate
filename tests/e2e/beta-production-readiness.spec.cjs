@@ -12,7 +12,7 @@ test('real beta readiness controls load on production',async({page})=>{
   await expect(page.getByRole('button',{name:'비밀번호 찾기'})).toBeHidden();
   await page.locator('[data-action="open-account"]').click();
   await expect(page.getByRole('button',{name:'비밀번호 찾기'})).toBeVisible();
-  await expect(page.getByRole('button',{name:'가입 인증메일 다시 보내기'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'회원가입',exact:true})).toBeVisible();
   expect(errors).toEqual([]);
 });
 
