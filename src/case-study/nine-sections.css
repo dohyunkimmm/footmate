@@ -868,3 +868,8 @@ body{font-size:var(--cs-body-size);line-height:1.8}
  .ui-compare .evidence-preview img{height:auto;max-height:none}
  .image-dialog-caption{font-size:13px}
 }
+
+/* Current production evidence uses the unedited 390px QA viewport. */
+#section-01 .product-figure .evidence-preview{max-width:440px}
+.ui-evidence-grid{align-items:start}
+.image-dialog-body img[src*="readability-baseline-"]{width:560px;min-width:560px;max-width:none;height:auto;object-fit:contain}
