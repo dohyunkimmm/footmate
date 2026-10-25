@@ -1,4 +1,4 @@
-const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate-black.vercel.app').replace(/\/$/,'');
+const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate.fmate.workers.dev').replace(/\/$/,'');
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
 const primaryModel=process.env.FOOTMATE_EXPECTED_AI_MODEL||'openai/gpt-5.4-nano';
 const fallbackModel=process.env.FOOTMATE_EXPECTED_AI_FALLBACK_MODEL||'openai/gpt-5.4-mini';
