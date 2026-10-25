@@ -80,7 +80,7 @@ function recommendationRow(match,session){
 
 function icon(name){
   const glyphs={bookmark:'🔖',compare:'⚖',check:'✅',users:'👥',shield:'🛡',place:'🏟',close:'❌'};
-  return `<span class="fm-decision-icon fm-icon" aria-hidden="true" data-icon="${glyphs[name]||glyphs.check}"></span>`;
+  return `<i class="fm-decision-icon fm-icon" aria-hidden="true" data-icon="${glyphs[name]||glyphs.check}"></i>`;
 }
 
 function positionBalance(match){
