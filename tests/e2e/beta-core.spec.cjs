@@ -363,7 +363,7 @@ test('choice-first recommendations keep OAuth login in Beta home with the select
 });
 
 
-test('FootMate conditions and limited results precede reference login and retain preferences',async({page},testInfo)=>{
+test('FootMate results expand without signup and participation retains preferences',async({page},testInfo)=>{
   await mockBackend(page,{preferences:false,empty:true});
   await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
@@ -388,6 +388,9 @@ test('FootMate conditions and limited results precede reference login and retain
   const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.screenshot({path:testInfo.outputPath('recommendation-preview-390.png'),fullPage:true});
   await pager.getByRole('button',{name:'전체 추천 보기',exact:true}).click();
+  await expect(page.locator('.fm-beta-preview-note')).toContainText('전체 보기');
+  await expect(page.getByLabel('이메일',{exact:true})).toBeHidden();
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
   const email=page.getByLabel('이메일',{exact:true});
@@ -413,4 +416,41 @@ test('FootMate conditions and limited results precede reference login and retain
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).position)).toBe('MF');
   expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:remember-email:v1'))).toBe('beta@example.com');
   expect(await serious(page)).toEqual([]);
+});
+
+test('mobile match detail keeps selection through login and returns to app navigation',async({page})=>{
+  await page.setViewportSize({width:390,height:700});
+  const backend=await mockBackend(page);
+  await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'경기 상세',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'영통 금요일 저녁 경기',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'모집 포지션',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail .fm-beta-slot')).toHaveCount(4);
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'경기 상세',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'경기 상세',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'MF로 참가',exact:true})).toBeVisible();
+  expect(backend.isJoined()).toBe(false);
+  const bounds=await page.getByRole('button',{name:'MF로 참가',exact:true}).boundingBox();
+  expect(bounds.y+bounds.height).toBeLessThanOrEqual(700);
+  expect(await page.evaluate(()=>document.documentElement.scrollHeight>innerHeight)).toBe(false);
+  expect(await serious(page)).toEqual([]);
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'추천 경기',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+  await page.getByRole('button',{name:'MF로 참가',exact:true}).click();
+  expect(backend.isJoined()).toBe(true);
+  await expect(page.getByRole('navigation',{name:'Beta 메뉴',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'참가 취소',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'MY',exact:true}).click();
+  await expect(page.getByRole('button',{name:'프로필 저장',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'추천',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'추천 경기',exact:true})).toBeVisible();
 });
