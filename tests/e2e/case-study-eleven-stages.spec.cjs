@@ -79,14 +79,14 @@ for(const width of [320,390]){
 }
 
 for(const width of [1440,1920]){
- test(`desktop shell and original image ratio remain at ${width}px`,async({page})=>{
+ test(`desktop shell and balanced overview preview remain at ${width}px`,async({page})=>{
   await page.setViewportSize({width,height:1080});await page.goto('/');
   const box=await page.locator('.fm-cs-shell').boundingBox();expect(box.width).toBe(1360);expect(Math.abs(box.x-(width-1360)/2)).toBeLessThan(2);
   const evidenceImage=page.locator('#section-01 .product-figure img');
   await expect.poll(()=>evidenceImage.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
   const ratio=await evidenceImage.evaluate(n=>({rendered:n.getBoundingClientRect().width/n.getBoundingClientRect().height,original:n.naturalWidth/n.naturalHeight}));
-  expect(Math.abs(ratio.rendered-ratio.original)).toBeLessThan(0.01);
-  await expect(evidenceImage).toHaveCSS('object-fit','contain');
+  expect(await evidenceImage.evaluate(n=>n.getBoundingClientRect().height)).toBeLessThanOrEqual(420);
+  await expect(evidenceImage).toHaveCSS('object-fit','cover');
   await expect(page.locator('.sidebar')).toHaveCSS('width','220px');
   for(let i=0;i<11;i++){
    await page.locator('.toc-item').nth(i).click();await expect(page.locator('.slide:visible .section-head h1')).toHaveCSS('font-size',i===0?'28px':'32px');
@@ -265,17 +265,17 @@ for(const width of [390,1440]){
 }
 
 for(const width of [320,390,1440,1920]){
- test('readable evidence keeps app pixels legible at '+width+'px',async({page})=>{
+ test('compact previews retain native-size enlargement at '+width+'px',async({page})=>{
   await page.setViewportSize({width,height:1080});await page.goto('/#section-07');
   const images=page.locator('#section-07 .wireframe-record img');
   await expect(images).toHaveCount(5);
   for(const img of await images.all()){
    await img.scrollIntoViewIfNeeded();
    await expect.poll(()=>img.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
-   const metrics=await img.evaluate(n=>({natural:n.naturalWidth,rendered:n.getBoundingClientRect().width,ratio:n.getBoundingClientRect().width/n.getBoundingClientRect().height,original:n.naturalWidth/n.naturalHeight}));
+   const metrics=await img.evaluate(n=>({natural:n.naturalWidth,height:n.getBoundingClientRect().height}));
    expect(metrics.natural).toBeLessThanOrEqual(560);
-   expect(Math.abs(metrics.ratio-metrics.original)).toBeLessThan(0.01);
-   if(width>=1440)expect(metrics.rendered/metrics.natural).toBeGreaterThanOrEqual(0.8);
+   expect(metrics.height).toBeLessThanOrEqual(280);
+   await expect(img).toHaveCSS('object-fit','cover');
   }
   await page.locator('#section-07 .evidence-preview').first().click();
   const expanded=page.locator('.image-dialog-body img');
@@ -296,3 +296,32 @@ test('same-source readability comparison retains original and cropped evidence',
  await expect(page.locator('#section-10')).toContainText('같은 캡처·같은 경기·같은 문구');
  for(const number of ['05','06','08','09'])expect(await page.locator('#section-'+number+' .ui-evidence img').count()).toBeGreaterThanOrEqual(2);
 });
+
+for(const width of [1440,1920]){
+ test('image composition follows text height and limits section length at '+width+'px',async({page},testInfo)=>{
+  await page.setViewportSize({width,height:1080});await page.goto('/');
+  const overview=await page.locator('#section-01').evaluate(s=>{
+   const text=s.querySelector('.overview-grid>div').getBoundingClientRect(),figure=s.querySelector('.product-figure').getBoundingClientRect();
+   return {text:text.height,figure:figure.height,height:s.getBoundingClientRect().height};
+  });
+  expect(Math.abs(overview.figure-overview.text)).toBeLessThanOrEqual(2);
+  expect(overview.figure).toBeLessThan(560);
+  expect(overview.height).toBeLessThan(1100);
+  const report=[{section:1,...overview}];
+  for(const index of [4,5,6,7,8,9]){
+   await page.locator('.toc-item').nth(index).click();
+   const slide=page.locator('.slide:visible');
+   for(const image of await slide.locator('.evidence-preview img:visible').all()){
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(()=>image.evaluate(n=>n.complete&&n.naturalWidth>0)).toBe(true);
+   }
+   const metrics=await slide.evaluate(s=>({section:s.id,height:s.getBoundingClientRect().height,images:[...s.querySelectorAll('.evidence-preview img')].filter(n=>n.getClientRects().length).map(n=>n.getBoundingClientRect().height)}));
+   expect(metrics.images.length).toBeGreaterThan(0);
+   expect(metrics.images.every(h=>h<=280)).toBe(true);
+   if(index===6)expect(metrics.height).toBeLessThan(2800);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+   report.push(metrics);
+  }
+  await testInfo.attach('composition-and-scroll-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});
+ });
+}
