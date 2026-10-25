@@ -54,3 +54,11 @@ test('Production AI model assertions stay aligned with the API defaults',()=>{
   assert.ok(inference.includes(`FOOTMATE_EXPECTED_AI_FALLBACK_MODEL||'${fallback}'`),'Inference smoke fallback model differs from API');
   assert.ok(browser.includes(`expect(health.model).toBe('${primary}')`),'Browser smoke model differs from API');
 });
+
+test('production smoke defaults to current Cloudflare host',()=>{
+  for (const filename of ['production-smoke.cjs','production-ai.cjs']) {
+    const source=readFileSync(resolve(__dirname,'..',filename),'utf8');
+    assert.match(source,/FOOTMATE_PRODUCTION_URL\|\|'https:\/\/footmate\.fmate\.workers\.dev'/,filename);
+    assert.doesNotMatch(source,/FOOTMATE_PRODUCTION_URL\|\|'https:\/\/footmate-black\.vercel\.app'/,filename);
+  }
+});
