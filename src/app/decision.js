@@ -79,16 +79,8 @@ function recommendationRow(match,session){
 }
 
 function icon(name){
-  const paths={
-    bookmark:'<path d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.8L6 20V5a1 1 0 0 1 1-1Z"/>',
-    compare:'<path d="M8 5h10M8 9h7M6 3v8M16 15H6M16 19H9M18 13v8"/>',
-    check:'<path d="m5 12.5 4.2 4L19 7"/>',
-    users:'<circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3.5 19c.4-3.3 2.5-5.2 5.5-5.2s5.1 1.9 5.5 5.2M14.5 15c2.6-.5 4.8 1 5.4 3.6"/>',
-    shield:'<path d="M12 3 19 6v5c0 4.5-2.7 7.5-7 10-4.3-2.5-7-5.5-7-10V6z"/><path d="m9 12 2 2 4-4"/>',
-    place:'<path d="M4 19h16M6 19V8l6-4 6 4v11M9 11h2M13 11h2M9 15h2M13 15h2"/>',
-    close:'<path d="m7 7 10 10M17 7 7 17"/>'
-  };
-  return `<svg class="fm-decision-icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name]||paths.check}</svg>`;
+  const glyphs={bookmark:'🔖',compare:'⚖',check:'✅',users:'👥',shield:'🛡',place:'🏟',close:'❌'};
+  return `<span class="fm-decision-icon fm-icon" aria-hidden="true">${glyphs[name]||glyphs.check}</span>`;
 }
 
 function positionBalance(match){
