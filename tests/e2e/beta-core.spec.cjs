@@ -459,6 +459,7 @@ for(const [width,height] of [[320,568],[390,844]]){
  test('design QA keeps compact cards and a reachable detail action '+width,async({page},testInfo)=>{
   await page.setViewportSize({width,height});
   await mockBackend(page);
+  await page.route(origin+'/rest/v1/matches**',route=>fulfill(route,[baseMatch,{...baseMatch,id:'11111111-1111-4111-8111-222222222222',title:'다음 풋살 경기'}]));
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await expect(page.getByRole('heading',{name:'영통 금요일 저녁 경기',exact:true})).toBeVisible();
   const card=await page.locator('.fm-beta-match').boundingBox();
