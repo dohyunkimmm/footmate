@@ -31,6 +31,7 @@ async function mockBackend(page,{empty=false,preferences=true}={}){
     if(url.pathname==='/rest/v1/profiles'&&request.method()==='PATCH'){
       profile={...profile,...JSON.parse(request.postData()||'{}')};return fulfill(route,[profile]);
     }
+    if(url.pathname==='/rest/v1/beta_notifications')return fulfill(route,[]);
     if(url.pathname==='/rest/v1/participations')return fulfill(route,joined?[{id:'p-1',match_id:matchId,position:'MF',status:'confirmed',joined_at:'2099-01-01T00:00:00Z',canceled_at:null,created_at:'2099-01-01T00:00:00Z',updated_at:'2099-01-01T00:00:00Z'}]:[]);
     if(url.pathname==='/rest/v1/matches'){
       if(empty)return fulfill(route,[]);
@@ -454,3 +455,45 @@ test('mobile match detail keeps selection through login and returns to app navig
   await page.getByRole('button',{name:'추천',exact:true}).click();
   await expect(page.getByRole('heading',{name:'추천 경기',exact:true})).toBeVisible();
 });
+
+for(const [width,height] of [[320,568],[390,844]]){
+ test('design QA keeps compact cards and a reachable detail action '+width,async({page},testInfo)=>{
+  await page.setViewportSize({width,height});
+  await mockBackend(page);
+  await page.route(origin+'/rest/v1/matches**',route=>fulfill(route,[baseMatch,{...baseMatch,id:'11111111-1111-4111-8111-222222222222',title:'다음 풋살 경기'}]));
+  await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await expect(page.getByRole('heading',{name:'영통 금요일 저녁 경기',exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-match')).toBeVisible();
+  await expect.poll(async()=>{
+    const card=await page.locator('.fm-beta-match').boundingBox();
+    const pager=await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).boundingBox();
+    return !!card&&!!pager&&card.y+card.height<=pager.y+1&&card.height<height*.75;
+  }).toBe(true);
+  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+  const info=await page.locator('.fm-beta-detail-body').boundingBox();
+  const action=await page.getByRole('button',{name:'참가하기',exact:true}).boundingBox();
+  expect(info.y+info.height).toBeLessThan(action.y);
+  expect(action.y+action.height).toBeLessThanOrEqual(height);
+  await page.getByRole('button',{name:'모집 포지션',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail .fm-beta-slot')).toHaveCount(4);
+  const slotAction=await page.getByRole('button',{name:'참가하기',exact:true}).boundingBox();
+  expect(slotAction.y+slotAction.height).toBeLessThanOrEqual(height);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth||document.documentElement.scrollHeight>innerHeight)).toBe(false);
+  expect(await serious(page)).toEqual([]);
+  await page.screenshot({path:testInfo.outputPath('design-qa-detail-'+width+'.png'),fullPage:true});
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일',{exact:true}).fill('beta@example.com');
+  await page.getByLabel('비밀번호',{exact:true}).fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByRole('button',{name:'MF로 참가',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
+  const signedInAction=await page.getByRole('button',{name:'MF로 참가',exact:true}).boundingBox();
+  const appNav=await page.getByRole('navigation',{name:'Beta 메뉴',exact:true}).boundingBox();
+  expect(signedInAction.y+signedInAction.height).toBeLessThanOrEqual(appNav.y);
+  await page.screenshot({path:testInfo.outputPath('design-qa-home-signed-in-'+width+'.png'),fullPage:true});
+  await page.getByRole('button',{name:'MY',exact:true}).click();
+  await expect(page.getByRole('button',{name:'프로필 저장',exact:true})).toBeVisible();
+  expect(await serious(page)).toEqual([]);
+  await page.screenshot({path:testInfo.outputPath('design-qa-my-'+width+'.png'),fullPage:true});
+ });
+}
