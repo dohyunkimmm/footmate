@@ -7,7 +7,7 @@ const CORS_HEADERS={
 };
 const RESEND_ENDPOINT='https://api.resend.com/emails';
 const DEFAULT_FROM='FootMate <auth@footmate.dynv6.net>';
-const DEFAULT_BETA_URL='https://footmate-black.vercel.app/beta';
+const DEFAULT_BETA_URL='https://footmate.fmate.workers.dev/beta';
 const MAX_BATCH=10;
 const MAX_ATTEMPTS=5;
 const BACKOFF_SECONDS=[60,300,900,3600];
