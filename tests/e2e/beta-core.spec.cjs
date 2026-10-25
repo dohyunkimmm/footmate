@@ -462,6 +462,8 @@ for(const [width,height] of [[320,568],[390,844]]){
   await page.route(origin+'/rest/v1/matches**',route=>fulfill(route,[baseMatch,{...baseMatch,id:'11111111-1111-4111-8111-222222222222',title:'다음 풋살 경기'}]));
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
   await expect(page.getByRole('heading',{name:'영통 금요일 저녁 경기',exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-match')).toBeVisible();
+  await expect.poll(async()=>!!(await page.locator('.fm-beta-match').boundingBox())).toBe(true);
   const card=await page.locator('.fm-beta-match').boundingBox();
   const pager=await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).boundingBox();
   expect(card.y+card.height).toBeLessThanOrEqual(pager.y+1);
