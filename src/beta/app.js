@@ -117,7 +117,7 @@ if(root){
           ${signup?`<p class="fm-beta-form-hint" id="beta-password-hint">비밀번호는 최소 ${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상입니다. 가입 후 이메일 인증이 필요할 수 있습니다.</p>
           <details class="fm-beta-data-details"><summary>가입 전 데이터 이용 안내</summary><p>이메일과 암호화된 로그인 정보, 선택한 이름과 경기·포지션·참가 기록이 실제 서버 계정과 연결됩니다. 결제는 연결하지 않았습니다.</p><p><a href="/beta-data-notice.html" target="_blank" rel="noopener noreferrer">Beta 데이터 이용 안내 전문 보기</a></p></details>
           <label class="fm-beta-consent"><input type="checkbox" name="dataNoticeAcknowledged" required> Beta의 실제 계정·참가 정보 처리 안내를 확인했습니다.</label>`:''}
-          ${!signup?`<label class="fm-beta-remember-email"><input name="rememberEmail" type="checkbox" ${localStorage.getItem('footmate:beta:remember-email:v1')?'checked':''}><span>이메일 저장</span></label>`:''}
+          ${!signup?`<label class="fm-beta-remember-email"><input name="rememberEmail" type="checkbox" ${localStorage.getItem('footmate:beta:remember-email:v1')?'checked':''}><span>아이디 저장</span></label>`:''}
           <button class="fm-beta-button fm-beta-button--primary" type="submit" ${busy?'disabled':''}>${busy?'<span class="fm-beta-spinner"></span>처리 중':signup?'가입하기':'로그인'}</button>
           <button class="fm-beta-link" type="button" data-action="toggle-auth">${signup?'이미 계정이 있어요 · 로그인':'처음이에요 · 가입하기'}</button>
         </form>
