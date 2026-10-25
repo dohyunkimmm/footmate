@@ -45,6 +45,9 @@ for(const source of [userSender,worker]){
   assert.match(source,/email_delivery_status:'accepted'/);
   assert.match(source,/DOCTYPE html/);
   assert.match(source,/FootMate Closed Beta 열기/);
+  assert.match(source,/const DEFAULT_BETA_URL='https:\/\/footmate\.fmate\.workers\.dev\/beta';/);
+  assert.match(source,/Deno\.env\.get\('FOOTMATE_BETA_URL'\)\)\|\|DEFAULT_BETA_URL/);
+  assert.doesNotMatch(source,/footmate-black\.vercel\.app/);
 }
 assert.match(userSender,/withSupabase\(\{auth:'user'\}/);
 assert.match(worker,/withSupabase\(\{auth:'none'\}/);
