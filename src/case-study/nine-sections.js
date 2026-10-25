@@ -109,7 +109,7 @@
   function showImage(preview){
     wireIndex=wirePreviews.indexOf(preview);
     const gallery=wireIndex>=0;
-    const readable=preview.dataset.image.includes('readable-demo-');
+    const readable=preview.dataset.image.includes('readable-demo-')||preview.dataset.image.includes('readability-baseline-');
     imageDialog.querySelector('h2').textContent=preview.dataset.imageTitle;
     const expanded=imageDialog.querySelector('img');
     expanded.src=preview.dataset.image;

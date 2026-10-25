@@ -225,7 +225,7 @@ test('single evidence image does not display wireframe gallery controls',async({
  await page.locator('#section-01 .evidence-preview').click();
  await expect(page.locator('.image-dialog')).toBeVisible();
  await expect(page.locator('.image-dialog-navigation')).toBeHidden();
- await expect(page.locator('.image-dialog-caption')).toBeHidden();
+ await expect(page.locator('.image-dialog-caption')).toContainText('원본 크기');
  await page.keyboard.press('Escape');
  await expect(page.locator('#section-01 .evidence-preview')).toBeFocused();
 });

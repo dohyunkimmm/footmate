@@ -873,3 +873,6 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 #section-01 .product-figure .evidence-preview{max-width:440px}
 .ui-evidence-grid{align-items:start}
 .image-dialog-body img[src*="readability-baseline-"]{width:560px;min-width:560px;max-width:none;height:auto;object-fit:contain}
+
+/* Keep at least 80% of 560px evidence at the 1440px desktop breakpoint. */
+@media(min-width:801px){#section-07 .wireframe-record{padding:16px}#section-07 .wireframe-grid{gap:20px}}
