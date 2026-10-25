@@ -876,3 +876,5 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 
 /* Keep at least 80% of 560px evidence at the 1440px desktop breakpoint. */
 @media(min-width:801px){#section-07 .wireframe-record{padding:16px}#section-07 .wireframe-grid{gap:20px}}
+
+.ui-fragment .evidence-preview img[src*="-actions.png"]{height:auto;max-height:none;object-fit:contain;object-position:center}
