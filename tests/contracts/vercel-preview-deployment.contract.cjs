@@ -84,13 +84,14 @@ test('Preview selection does not depend on a retired one-off branch',()=>{
   assert.match(source,/Failing open so Production deployment is not accidentally skipped/);
 });
 
-test('Workflow and Dependabot configuration changes must receive full regression QA',()=>{
+test('Cloudflare classifies workflow and Dependabot updates as full regression QA',()=>{
   const workflow=fs.readFileSync(path.resolve(__dirname,'../../.github/workflows/qa.yml'),'utf8');
-  const classification=workflow.match(/runtime=false[\s\S]*?for file in \$changed_files; do([\s\S]*?)\n\s+done/);
-  assert.ok(classification,'CI change-impact classification missing');
-  assert.match(classification[1],/README\.md\|docs\/\*/);
-  assert.match(classification[1],/\.github\/pull_request_template\.md/);
-  assert.doesNotMatch(classification[1],/\.github\/\*(?:\||\))/,'broad .github glob would incorrectly skip full QA');
+  const {classify}=require('../../scripts/classify-cloudflare-impact.cjs');
+  assert.deepEqual(classify(['.github/workflows/qa.yml']),
+    {runtime:true,production:false,production_smoke:true});
+  assert.deepEqual(classify(['.github/dependabot.yml']),
+    {runtime:true,production:false,production_smoke:false});
+  assert.match(workflow,/FOOTMATE_CHANGED_FILES="\$changed_files" node scripts\/classify-cloudflare-impact\.cjs/);
   assert.match(workflow,/Validate npm lockfile against a clean install[\s\S]*?npm ci --ignore-scripts --no-audit --no-fund/);
 });
 

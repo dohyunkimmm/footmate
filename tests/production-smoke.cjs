@@ -1,4 +1,4 @@
-const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate-black.vercel.app').replace(/\/$/,'');
+const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate.fmate.workers.dev').replace(/\/$/,'');
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
 const release=require('../package.json').version;
 const {readFileSync}=require('node:fs');

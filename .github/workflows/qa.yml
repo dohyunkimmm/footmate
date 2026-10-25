@@ -41,29 +41,7 @@ jobs:
           fi
 
           changed_files="$(git diff --name-only "$base" "$head")"
-          runtime=false
-          for file in $changed_files; do
-            case "$file" in
-              README.md|docs/*|.github/pull_request_template.md|*.md) ;;
-              *) runtime=true ;;
-            esac
-          done
-
-          production=true
-          if FOOTMATE_VERCEL_CHANGED_FILES="$changed_files" node scripts/vercel-ignore-build.cjs; then
-            production=false
-          fi
-
-          production_smoke="$production"
-          for file in $changed_files; do
-            case "$file" in
-              tests/production-*.cjs|tests/e2e/production-app.spec.cjs|tests/e2e/beta-production-*.spec.cjs|tests/e2e/helpers/priority-ux.cjs|tests/e2e/release-app.spec.cjs|.github/workflows/qa.yml) production_smoke=true ;;
-            esac
-          done
-
-          echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
-          echo "production=$production" >> "$GITHUB_OUTPUT"
-          echo "production_smoke=$production_smoke" >> "$GITHUB_OUTPUT"
+          FOOTMATE_CHANGED_FILES="$changed_files" node scripts/classify-cloudflare-impact.cjs >> "$GITHUB_OUTPUT"
 
   docs_only:
     name: Docs-only QA
@@ -111,7 +89,9 @@ jobs:
         run: node scripts/check-release-version.cjs
       - name: Check QA toolchain contract
         run: node scripts/check-qa-toolchain.cjs
-      - name: Check Vercel preview build selection contract
+      - name: Check Cloudflare deploy impact classification
+        run: node --test tests/contracts/cloudflare-deployment-impact.contract.cjs
+      - name: Check legacy Vercel preview compatibility
         run: node --test tests/contracts/vercel-preview-deployment.contract.cjs
       - name: Check Production smoke source contract
         run: node --test tests/contracts/production-smoke.contract.cjs
