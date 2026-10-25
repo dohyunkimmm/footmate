@@ -9,7 +9,7 @@
 - Pretendard/Tossface와 앱 560px·Case Study 1920px 우선 기준을 유지한다. 운영 배포와 검증 결과는 해당 PR의 최종 상태로 확인하며 이 항목만으로 배포 완료를 주장하지 않는다.
 
 
-현재 앱 진입 주소는 [FootMate Demo](https://footmate-black.vercel.app/demo)입니다. 이전 주소는 별도 앱 화면 없이 Demo로 이동합니다. 아래 과거 기록의 주소는 당시 배포 상태를 보존한 것입니다.
+현재 공개 대표 주소는 루트 README에 기록된 [FootMate Demo](https://footmate.fmate.workers.dev/demo)와 [Case Study](https://footmate.fmate.workers.dev/)입니다. 이전 `footmate-black.vercel.app` 주소는 과거 Vercel 배포 기록에 속합니다. 아래 날짜·PR·SHA별 기록은 당시 검증 범위를 보존하며, 최신 배포 상태는 현재 GitHub Actions에서 따로 확인합니다.
 
 ## 2026-10-24 — 첫 조건 선택 유지·예시 경기로 데모 흐름 복구 · #659
 
