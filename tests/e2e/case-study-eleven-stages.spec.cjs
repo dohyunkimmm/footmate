@@ -250,7 +250,7 @@ for(const width of [390,1440]){
  test('reader enhancements remain usable and accessible at '+width+'px',async({page})=>{
   await page.setViewportSize({width,height:1080});await page.goto('/#section-07');
   await page.getByRole('button',{name:'경기 상세 · 현재 Demo 화면 확대',exact:true}).click();
-  await expect(page.locator('.image-dialog-caption')).toContainText('추천 이유');
+  await expect(page.locator('.image-dialog-caption')).toContainText('경기 정보·모집 포지션');
   expect(await page.locator('.image-dialog').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
   let scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
