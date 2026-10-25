@@ -33,31 +33,9 @@ function setState(patch,{renderNow=true}={}){
 function money(value){return new Intl.NumberFormat('ko-KR').format(value)+'원'}
 
 function icon(name,className='fm-next-icon'){
-  const common=`class="${className}" viewBox="0 0 24 24" aria-hidden="true"`;
-  const icons={
-    logo:`<svg ${common}><path d="M5 15.5c3.3-5.2 10.7-5.2 14 0"/><path d="M7.5 11.1 10 7.5h4l2.5 3.6"/><path d="M9.2 16.4h5.6"/><circle cx="12" cy="12" r="9"/></svg>`,
-    arrow:`<svg ${common}><path d="M5 12h14"/><path d="m14 7 5 5-5 5"/></svg>`,
-    back:`<svg ${common}><path d="m15 18-6-6 6-6"/></svg>`,
-    home:`<svg ${common}><path d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>`,
-    search:`<svg ${common}><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>`,
-    calendar:`<svg ${common}><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/></svg>`,
-    user:`<svg ${common}><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c.5-4 3-6 6.5-6s6 2 6.5 6"/></svg>`,
-    pin:`<svg ${common}><path d="M12 21s6-5.1 6-11a6 6 0 1 0-12 0c0 5.9 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/></svg>`,
-    level:`<svg ${common}><path d="M5 19v-5M12 19V9M19 19V4"/></svg>`,
-    position:`<svg ${common}><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/></svg>`,
-    clock:`<svg ${common}><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>`,
-    users:`<svg ${common}><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3.5 19c.4-3.3 2.5-5.2 5.5-5.2s5.1 1.9 5.5 5.2M14.5 15c2.6-.5 4.8 1 5.4 3.6"/></svg>`,
-    check:`<svg ${common}><path d="m5 12.5 4.2 4L19 7"/></svg>`,
-    card:`<svg ${common}><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>`,
-    route:`<svg ${common}><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h3a3 3 0 0 0 3-3V9a3 3 0 0 1 3-3h-1"/></svg>`,
-    chat:`<svg ${common}><path d="M5 18.5 4 21l3.4-1.7A8.5 8.5 0 1 0 4 16"/></svg>`,
-    shield:`<svg ${common}><path d="M12 3 19 6v5c0 4.5-2.7 7.5-7 10-4.3-2.5-7-5.5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>`,
-    chevron:`<svg ${common}><path d="m9 6 6 6-6 6"/></svg>`,
-    reset:`<svg ${common}><path d="M5 7v5h5"/><path d="M6.3 16.5A7.5 7.5 0 1 0 5.5 8"/></svg>`,
-    info:`<svg ${common}><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>`,
-    spark:`<svg ${common}><path d="m12 3 1.3 4.2L17.5 9l-4.2 1.8L12 15l-1.3-4.2L6.5 9l4.2-1.8z"/><path d="m18 15 .7 2.3L21 18l-2.3.7L18 21l-.7-2.3L15 18l2.3-.7z"/></svg>`
-  };
-  return icons[name]||icons.info;
+  if(name==='logo')return `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5c3.3-5.2 10.7-5.2 14 0"/><path d="M7.5 11.1 10 7.5h4l2.5 3.6"/><path d="M9.2 16.4h5.6"/><circle cx="12" cy="12" r="9"/></svg>`;
+  const glyphs={arrow:'➡',back:'⬅',home:'🏠',search:'🔍',calendar:'📅',user:'👤',pin:'📍',level:'📊',position:'⚽',clock:'🕒',users:'👥',check:'✅',card:'💳',route:'🗺',chat:'💬',shield:'🛡',chevron:'➡',reset:'🔄',info:'ℹ',spark:'✨'};
+  return `<i class="${className} fm-icon" aria-hidden="true" data-icon="${glyphs[name]||glyphs.info}"></i>`;
 }
 
 function brand({dark=false,showTagline=true}={}){

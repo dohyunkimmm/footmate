@@ -33,14 +33,8 @@ if(root){
   function money(value){return new Intl.NumberFormat('ko-KR').format(value)+'원'}
 
   function tinyIcon(name){
-    const body={
-      pin:'<path d="M12 21s6-5.1 6-11a6 6 0 1 0-12 0c0 5.9 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/>',
-      level:'<path d="M5 19v-5M12 19V9M19 19V4"/>',
-      position:'<circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/>',
-      clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/>',
-      spark:'<path d="m12 3 1.3 4.2L17.5 9l-4.2 1.8L12 15l-1.3-4.2L6.5 9l4.2-1.8z"/>'
-    }[name]||'<circle cx="12" cy="12" r="8"/>';
-    return `<svg class="fm-next-icon" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+    const glyphs={pin:'📍',level:'📊',position:'⚽',clock:'🕒',spark:'✨'};
+    return `<i class="fm-next-icon fm-icon" aria-hidden="true" data-icon="${glyphs[name]||'ℹ'}"></i>`;
   }
 
   function card(item,index,scope='home'){
