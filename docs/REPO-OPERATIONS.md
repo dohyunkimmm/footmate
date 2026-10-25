@@ -60,5 +60,6 @@
 - 공식 GitHub Actions 배포 판단은 `scripts/classify-cloudflare-impact.cjs`로 분리합니다. `.github/workflows/qa.yml`의 `Change Impact`는 전체 `git diff` 파일 목록을 전달해 `runtime`·`production`·`production_smoke`의 **정확한 불리언**을 출력합니다. 목록이 비어 있거나 비정상적이면 검증·배포를 건너뛰지 않는 보수적 기본값을 사용합니다.
 - `README.md`·`docs/` 등 문서 전용은 경량 QA, 테스트 파일은 회귀 QA, 런타임·Worker·Wrangler·빌드 스크립트 변경은 전체 QA와 Cloudflare 배포 대상으로 분류합니다. Production Smoke 검증 코드나 워크플로만 바뀌면 기존 배포를 대상으로 Smoke를 실행할 수 있으나 무조건 새 배포를 생성하지 않습니다.
 - 새 분류 계약은 `tests/contracts/cloudflare-deployment-impact.contract.cjs`에 추가합니다. 병합 전 `Regression 36`·`Browser E2E + axe`, 병합 후 해당 커밋의 `Deploy Cloudflare`·`Production Smoke`를 각각 확인합니다. 이 항목은 검사 완료 전에는 결과를 주장하지 않습니다.
+- `tests/production-smoke.cjs`와 `tests/production-ai.cjs`의 환경변수 미설정 기본 주소도 과거 Vercel에서 현재 공개 Cloudflare 주소(`https://footmate.fmate.workers.dev`)로 정정합니다. CI에서 지정하는 `FOOTMATE_PRODUCTION_URL`이 우선하는 계약은 유지하며, `tests/contracts/production-smoke.contract.cjs`에 재발 방지 단언을 추가합니다.
 - **Vercel 설정은 보존합니다.** 별도 확인한 Vercel `footmate` 프로젝트가 아직 존재하고 과거 `main`의 Production READY 배포·도메인을 보유합니다. Git 연동 해제 및 과거 도메인 이용 중단은 확인되지 않았습니다. 기존 `vercel.json`, `scripts/vercel-ignore-build.cjs`, Vercel preview 호환 계약은 이전 운영·자동 배포 경로를 깨지 않도록 분리 보존하고, 현재 CI 배포 판정에는 사용하지 않습니다.
 - `@vercel/oidc`는 `api/ai-match-assistant.js`의 AI Gateway 토큰 취득 코드에서 사용하므로 유지합니다. 잔여 Vercel 설정 삭제는 Git 연동 비활성화, 레거시 도메인 이용 여부, 회귀 대체 확인을 마친 뒤 별도 검토합니다.
