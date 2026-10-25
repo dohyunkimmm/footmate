@@ -58,7 +58,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 기술과 검증
 
-- **기술:** JavaScript, Vercel AI Gateway, Supabase(Auth·Postgres·Realtime·Storage), Resend, Web Push
+- **기술:** JavaScript, Cloudflare Workers(배포·API), Vercel AI Gateway(AI 추론), Supabase(Auth·Postgres·Realtime·Storage), Resend, Web Push
 - **검증:** 회귀 테스트, Playwright 브라우저 E2E·시각 회귀, axe 접근성, 모바일 WebKit
 - **릴리스:** 제품 식별자 `v6.0.0`. 코드 변경은 영향에 맞는 QA와 배포 검증을 거치며, 문서만 변경할 때는 경량 QA를 적용합니다.
 
