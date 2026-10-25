@@ -229,3 +229,31 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 [data-beta-guest="true"] .fm-beta-demo-slots summary{padding-top:6px;padding-bottom:6px}
 .fm-beta-auth-card[data-auth-mode="signup"] .fm-beta-login-brand img{display:none}
 .fm-beta-auth-card[data-auth-mode="signup"] .fm-beta-login-brand{margin-bottom:16px}
+
+/* Match decisions open as app screens; preserve the original shell width. */
+[data-beta-detail="true"] [data-beta-growth-host]{display:none}
+[data-beta-app="true"] .fm-beta-detail{gap:12px}
+.fm-beta-detail-header{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;flex-shrink:0;min-height:48px}
+.fm-beta-detail-header h1{margin:0;text-align:center;font-size:18px;line-height:1.4}
+.fm-beta-detail-header .fm-beta-link{display:grid;place-items:center;min-height:44px}
+.fm-beta-detail .fm-beta-account-tabs{margin:0}
+.fm-beta-detail-hint{margin:0;font-size:13px;line-height:1.5;color:#53645a}
+[data-beta-app="true"] .fm-beta-detail>.fm-beta-match{display:flex;flex-direction:column;flex:1;border-radius:20px;padding:18px;background:white}
+.fm-beta-detail .fm-beta-match-actions{margin-top:auto;padding-top:16px}
+.fm-beta-detail .fm-beta-match-actions .fm-beta-button{min-width:140px}
+.fm-beta-detail[data-detail-tab="info"] .fm-beta-demo-slots,.fm-beta-detail[data-detail-tab="info"] .fm-beta-slots{display:none}
+.fm-beta-detail[data-detail-tab="slots"] .fm-beta-match-cover,.fm-beta-detail[data-detail-tab="slots"] .fm-beta-meta,.fm-beta-detail[data-detail-tab="slots"] .fm-beta-match-reason{display:none}
+.fm-beta-detail .fm-beta-demo-slots summary{display:none}
+.fm-beta-detail .fm-beta-slots{margin-top:24px;gap:10px}
+.fm-beta-detail .fm-beta-slot{padding:16px 6px}
+.fm-beta-detail .fm-beta-match-place{margin-top:8px}
+.fm-beta-detail .fm-beta-meta{margin-top:20px;gap:8px}
+.fm-beta-detail .fm-beta-match-cover{height:clamp(48px,15dvh,120px);margin-bottom:16px}
+@media(max-height:700px){
+[data-beta-app="true"] .fm-beta-detail{gap:8px}
+[data-beta-app="true"] .fm-beta-detail>.fm-beta-match{padding:12px}
+.fm-beta-detail .fm-beta-match-cover{height:48px;margin-bottom:8px}
+.fm-beta-detail .fm-beta-meta{margin-top:10px}
+.fm-beta-detail .fm-beta-slots{margin-top:12px}
+.fm-beta-detail .fm-beta-slot{padding:10px 4px}
+}
