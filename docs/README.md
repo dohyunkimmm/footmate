@@ -1,52 +1,55 @@
 # FootMate Documentation
 
-현재 제품 설명의 Source of Truth는 repository root `README.md`, 출시 Beta `/demo`·`/beta`와 현재 GitHub/Production 상태입니다. 버전 번호는 사용자-facing 제품명으로 쓰지 않고 GitHub release engineering과 검증 이력에서만 관리합니다.
+현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 이 목록은 **2026-10-26 문서 색인 점검** 결과이며, 별도의 실시간 운영 가용성 검증을 뜻하지 않습니다. 제품 버전 번호는 사용자 화면 이름이 아니라 릴리스·검증 이력에 사용합니다.
 
-## Current product
+## 현재 제품·운영 기준
 
-- Root `README.md` — 현재 제품 가치, 사용자 여정, AI Agent Workflow, 연동/미연동 경계, release readiness 기준
-- 출시 Beta `/demo` — 실제 Google/Kakao·이메일 인증, AI 경기 탐색과 서버 참가 기록을 사용하는 앱
-- `/beta` — 같은 출시 앱과 OAuth 복귀 경로. 실제 결제 없음\n- `/prototype` — 이전 로컬 프로토타입과 회귀 검증 기록
-- Closed Beta Operator `/beta/operator` — allowlisted + TOTP MFA 운영자 경로
-- Guided `/prototype?mode=guided` — 설명이 포함된 리뷰 흐름
-- Evidence `/prototype?mode=evidence` — 구현·검증 근거 확인용 흐름
-- Case Study `/` — 리뷰어용 11개 섹션 설명 화면. 01에서 Interactive Demo와 Closed Beta를 구분해 안내한다. 현재 `src/case-study/nine-sections.{js,css}`에서 직접 로드하며 해당 E2E·접근성·수동 시각 QA로 검증한다. 이전 13단계 생성 번들과 미사용 코드 경로는 정리했으며 현재 표시·검증은 11개 섹션 기준이다.
+- [루트 README](../README.md) — 제품 가치, `Find → Decide → Join → Play → Return`, 공개 화면·데이터·AI 책임 경계
+- [MATCHING-DIRECTION.md](MATCHING-DIRECTION.md) — **현행 풋살 매칭 방향**: 활동 지역 → 실력·포지션·시간 → 추천 미리보기 → 참가 시 로그인 → `/beta`
+- [Case Study `/`](https://footmate.fmate.workers.dev/) — 11개 섹션의 설명·근거. 현재 구현은 `src/case-study/nine-sections.{js,css}`이고, 파일명은 과거 호환 이름
+- [FootMate Demo `/demo`](https://footmate.fmate.workers.dev/demo) — 로그인 전 풋살 조건 선택·예시 경기/추천 미리보기. 인증 후 `/beta`로 진입
+- `/beta` — 인증 후 추천·내 경기·MY. 실제 서버 경기·참가를 우선하고, 실제 모집이 없을 때는 명시된 예시 경기/브라우저 기록과 분리
+- `/beta/operator` — 허용된 운영자 전용 TOTP MFA 경로
+- `/prototype` — 이전 로컬 프로토타입 보관용. Guided/Evidence 등 과거 실험 흐름은 현행 공개 앱 기준으로 사용하지 않음
 
-## Current release engineering docs
+## 운영·릴리스 핵심 문서
 
-- [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — 2026-10-22 브랜치 Ruleset, GitHub Actions, Vercel 배포, 적용 마이그레이션 보존 및 플랫폼 WAF 미완료 현황
+- [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — **2026-10-22~23 당시** GitHub Ruleset·Vercel 배포·WAF·마이그레이션 보존 기록. **현행 Cloudflare 운영 상태의 최신 보고서가 아님**
+- [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — 날짜·PR·SHA별 구현·검증·배포 기록. 이전 Vercel/Render 및 이후 변경 기록을 각각의 시점 기준으로 해석
+- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 당시 기록을 보존하며 이후 바뀐 승인·해석 기준 구분
+- [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — 연결된 Beta 운영·알림 복구·QA 데이터 정리
+- [BETA-MEASUREMENT-READINESS.md](BETA-MEASUREMENT-READINESS.md) — 실제 이용자 지표의 표본·코호트·측정 인정 기준
+- [PRODUCT-UX-P0-P2.md](PRODUCT-UX-P0-P2.md) — 2026-10-10 P0–P2 개선·검증 기록. 과거 Demo IA의 현재 적용 여부는 루트 README와 최근 구현을 우선
+- [RELEASE-APP.md](RELEASE-APP.md) — **이전 로컬 프로토타입 Release App v6의 구현·QA 이력**. 현재 `/demo` 내비게이션·인증 기준으로 오인하지 않음
 
-FootMate에서 현재 직접 유지하는 release/product 문서는 아래와 같습니다.
+현재 배포 워크플로는 [`.github/workflows/qa.yml`](../.github/workflows/qa.yml)의 **Deploy Cloudflare / Production Smoke**를 확인합니다. 문서 인덱스를 갱신했다는 이유만으로 운영 배포·실사용 성과를 새로 검증했다고 표기하지 않습니다.
 
-- [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — verified durable release history, exact runtime SHA, QA, Vercel/Render verification
-- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 이후 검증에서 정정된 범위/승인 기준. 기존 Release History와 충돌하면 더 최신 correction이 현재 기준
-- [RELEASE-APP.md](RELEASE-APP.md) — current Release App v6 IA, 재방문 Home/MY 복귀, AI 조건 정정·제로결과 완화, 무료 참가, MY/Return 및 QA contract
-- [PRODUCT-UX-P0-P2.md](PRODUCT-UX-P0-P2.md) — P0–P2 신뢰·탐색·MY 개선 수용 기준, 구현/검증 증거, Beta 기능 경계
-- [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — Closed Beta 실제 운영, transactional email 관측·복구, Pilot QA/정리 기준
-- [BETA-MEASUREMENT-READINESS.md](BETA-MEASUREMENT-READINESS.md) — Validation Metric을 실제 Beta Measured Result로 전환하기 위한 계측·표본·판정 기준
+## 2026-10-10 Release App 내부 Notion 동기화 이력
 
-## Release App 내부 Notion 기준
-
-- [FootMate AI 기능 확장 PRD](https://app.notion.com/p/3cf21460c9348184bfbad953b0a1b305) — 현재 Release App P0–P2 수용 기준과 운영 검증 상태. 이전 배포 실패 기록은 당시의 이력으로 보존
+- [FootMate AI 기능 확장 PRD](https://app.notion.com/p/3cf21460c9348184bfbad953b0a1b305) — 당시 Release App P0–P2 수용 기준과 운영 검증 상태. 이전 배포 실패 기록은 당시의 이력으로 보존
 - [FootMate Service Flow · Data Quality](https://app.notion.com/p/3cf21460c934815c89bed8f7ee337092) — 신규/재방문 분기, 상태·데이터 소유권, AI 조건 수정·제로결과 완화, MY/Return 일관성
 - [FootMate 기능정의서 · AI Agent Workflow](https://app.notion.com/p/3cf21460c934815799a4fd44af094cee) — AI inference의 조건 소유권과 deterministic search 경계
 
-위 3개 비공개 내부 문서는 PR #577 운영 반영 결과를 기준으로 2026-10-10 동기화했으며, GitHub의 [문서 동기화 PR #578](https://github.com/dohyunkimmm/footmate/pull/578)에서 변경 검증을 추적합니다. 장기 제품 계약은 Notion, 정확한 릴리스 커밋·QA·배포 이력은 GitHub [RELEASE-HISTORY.md](RELEASE-HISTORY.md)를 기준으로 합니다.
+위 3개 비공개 내부 문서는 PR #577 운영 반영 결과를 기준으로 2026-10-10 동기화했으며, GitHub의 [문서 동기화 PR #578](https://github.com/dohyunkimmm/footmate/pull/578)에서 변경 검증을 추적합니다. 이는 2026-10-10 당시 동기화 기록입니다. 이번 GitHub 문서 색인 정리는 비공개 Notion의 최신 내용을 재검증하거나 수정한 작업이 아닙니다. 릴리스 커밋·QA·배포 이력은 GitHub [RELEASE-HISTORY.md](RELEASE-HISTORY.md)를 기준으로 확인합니다.
 
-## Evidence docs
+## 현재 근거·품질 문서
 
-- [SERVICE-PLANNING-EVIDENCE.md](SERVICE-PLANNING-EVIDENCE.md) — 역할·목표·우선순위·대안·8개 KPI 측정 설계와 검증 한계
-- [USER-TEST-EVIDENCE.md](USER-TEST-EVIDENCE.md) — 같은 교육과정을 수강한 교육생 6명의 iOS·Android 탐색·가입 과업, 반복 검증 방식과 해석 한계
-- [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) — 현재 11개 섹션 구성·근거 경계와 검증 기준
-- [CASE-STUDY-NINE-STAGES.md](CASE-STUDY-NINE-STAGES.md) — 과거 9단계 구성 이력(현재 승인 기준 아님)
-- [CASE-STUDY-TYPOGRAPHY-QA.md](CASE-STUDY-TYPOGRAPHY-QA.md) — 과거 9단계 글자 크기·행 정렬·대체 폰트·텍스트 확대 QA
-- [CASE-STUDY-VISUAL-QA.md](CASE-STUDY-VISUAL-QA.md) — 과거 9단계 시각 위계·이미지 확대·모바일 근거 읽기 QA
-- [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — 과거 13단계 Case Study copy QA 정정 이력(현재 11개 섹션 acceptance 아님)
+- [SERVICE-PLANNING-EVIDENCE.md](SERVICE-PLANNING-EVIDENCE.md) — 역할·우선순위·설계 가정 및 KPI 8개 측정 설계·한계
+- [USER-TEST-EVIDENCE.md](USER-TEST-EVIDENCE.md) — 교육생 6명·가입/탐색 과업 8회의 관찰 범위와 해석 한계
+- [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) — 현행 11개 섹션 구성 및 E2E 기준
+- [CASE-STUDY-SCREEN-EVIDENCE.md](CASE-STUDY-SCREEN-EVIDENCE.md) — 2026-10-25 Demo·Case Study 원본 캡처의 출처와 가독성 검증 범위
+- [TYPOGRAPHY-QA-V2.md](TYPOGRAPHY-QA-V2.md) — 타이포그래피 QA 시나리오·증거 무결성·수동 검토 경계
 
-## Historical Case Study references
+## 과거 구성·개선 기록 (보존, 현재 승인 기준 아님)
 
-- [CASE-STUDY-5.2-COMPOSITION.md](CASE-STUDY-5.2-COMPOSITION.md) — 이전 13단계 페이지 구성·로컬 검증 기록. 현재 11개 섹션의 표시·QA 기준으로 사용하지 않는다.
-- [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md)의 이전 Case Study 항목 역시 당시 승인 사실로만 해석한다. 현재 승인 기준은 `CASE-STUDY-ELEVEN-STAGES.md`, 현재 E2E 및 `main`의 검증 결과를 우선한다. 과거 릴리스 기록은 당시 기준으로 보존한다.
+- [CASE-STUDY-NINE-STAGES.md](CASE-STUDY-NINE-STAGES.md) — 과거 9단계 구성
+- [CASE-STUDY-PORTFOLIO-P0-P2.md](CASE-STUDY-PORTFOLIO-P0-P2.md) — 과거 9단계 포트폴리오 개선 근거
+- [CASE-STUDY-TYPOGRAPHY-QA.md](CASE-STUDY-TYPOGRAPHY-QA.md) — 과거 9단계 타이포그래피 검사
+- [CASE-STUDY-VISUAL-QA.md](CASE-STUDY-VISUAL-QA.md) — 과거 9단계 이미지·시각 위계 검사
+- [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — 과거 13단계 문구 정정
+- [CASE-STUDY-5.2-COMPOSITION.md](CASE-STUDY-5.2-COMPOSITION.md) — 과거 13단계 구성 기록
+
+Case Study의 현행 구조와 캡처는 `CASE-STUDY-ELEVEN-STAGES.md`, `CASE-STUDY-SCREEN-EVIDENCE.md`, 최근 E2E와 `main` 상태를 우선합니다. 릴리스 이력과 이미 적용된 SQL 마이그레이션은 파일명이나 내용 유사성만으로 삭제·이동하지 않습니다.
 
 ## Impact-aware QA
 

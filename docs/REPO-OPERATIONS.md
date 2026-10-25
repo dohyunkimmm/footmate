@@ -1,6 +1,8 @@
 # FootMate — 저장소 운영·보호 상태
 
 > 점검 기준일: **2026-10-22 (KST)**. 이 문서는 GitHub Ruleset, PR, GitHub Actions, Vercel 배포의 관측 스냅샷입니다. 제품 요구사항/릴리스 이력은 [docs/README.md](README.md)와 [RELEASE-HISTORY.md](RELEASE-HISTORY.md)를 우선합니다. CI 성공과 Production 검증은 별도 사실입니다.
+>
+> **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
 
 ## 확인 완료
 
