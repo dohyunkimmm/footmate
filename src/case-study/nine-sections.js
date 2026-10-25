@@ -228,7 +228,7 @@
   const prev = document.querySelector('.btn-prev');
   const next = document.querySelector('.btn-next');
   let current = 0;
-  function fromUrl() { const match = location.hash.match(/^#section-(\d{1,2})$/); return match ? Number(match[1])-1 : 0; }
+  function fromUrl() { const match = location.hash.match(/^#section-(\d{1,2})$/); return match ? Number(match[1])-1 : (history.state?.caseStudySection ?? 0); }
   function goTo(index, {historyMode='push', focus=true}={}) {
     if(imageDialog.open)imageDialog.close();
     current = Math.max(0, Math.min(sections.length-1, Number(index)||0));
@@ -242,8 +242,11 @@
     prev.disabled = current===0; next.disabled = current===sections.length-1;
     prev.innerHTML = `<span class="fm-icon" aria-hidden="true">⬅️</span><span><small>${current===0?'첫 섹션':'이전 섹션'}</small>${sections[Math.max(0,current-1)].name}</span>`;
     next.innerHTML = `<span><small>${current===sections.length-1?'마지막 섹션':'다음 섹션'}</small>${sections[Math.min(sections.length-1,current+1)].name}</span><span class="fm-icon" aria-hidden="true">➡️</span>`;
-    const hash = `#section-${String(current+1).padStart(2,'0')}`;
-    if(historyMode && location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',location.pathname+location.search+hash);
+    // Keep section history without exposing fragment identifiers in the address.
+    const cleanUrl = location.pathname + location.search;
+    if(historyMode && (historyMode==='replace' || history.state?.caseStudySection!==current || location.hash)) {
+      history[historyMode==='replace'?'replaceState':'pushState']({...history.state,caseStudySection:current},'',cleanUrl);
+    }
     if(innerWidth<=800) {
       const button=toc.querySelectorAll('button')[current];
       const buttonRect=button.getBoundingClientRect();
