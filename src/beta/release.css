@@ -178,3 +178,48 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 [data-beta-app="true"] .fm-beta-match-actions{margin-top:6px;padding-top:6px}
 [data-beta-app="true"] .fm-beta-demo-pager{margin-top:6px}
 }
+
+/* Login reference: centered form, account links and circular social actions. */
+[data-beta-guest="true"][data-beta-auth-open="true"]{background:#fff}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell{justify-content:center;background:#fff;padding:24px 20px}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-topbar,
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-footer{display:none}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-grid{flex:0 1 auto;display:block;width:100%;overflow:visible}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-grid>aside{width:100%}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-account-view{width:min(380px,100%);margin:auto;position:relative}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-back{margin:0 0 4px;color:#53645a;font-size:13px}
+.fm-beta-auth-card{border:0!important;border-radius:0!important;background:#fff!important;padding:0!important;box-shadow:none!important}
+.fm-beta-login-brand{text-align:center;margin-bottom:28px}
+.fm-beta-login-brand img{display:block;width:96px;height:96px;object-fit:contain;margin:0 auto 8px}
+.fm-beta-login-brand strong{display:block;font-size:32px;line-height:1.25;font-weight:800;letter-spacing:-.03em;color:#173c2c}
+.fm-beta-login-brand p{margin:16px 0 0;font-size:13px;line-height:1.6;color:#647368}
+.fm-beta-auth-card[data-auth-mode="signin"]>.fm-beta-panel-head,
+.fm-beta-auth-card[data-auth-mode="signin"] .fm-beta-field>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.fm-beta-auth-card form.fm-beta-stack{gap:10px}
+.fm-beta-auth-card .fm-beta-field input{height:50px;border:1px solid #cbd3cf;border-radius:8px;padding:0 12px;font-size:14px}
+.fm-beta-auth-card .fm-beta-field input::placeholder{color:#8d9b93}
+.fm-beta-auth-card form>.fm-beta-button--primary{width:100%;min-height:52px;border-radius:10px;margin-top:8px}
+.fm-beta-remember-email{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0;font-size:13px;color:#68796f;cursor:pointer;min-height:28px}
+.fm-beta-remember-email input{width:16px;height:16px;margin:0;accent-color:#173c2c}
+.fm-beta-auth-card form>.fm-beta-link{justify-content:center;min-height:34px;font-size:13px;font-weight:500}
+.fm-beta-auth-card [data-readiness-auth-actions]{justify-content:center!important;gap:8px 16px!important}
+.fm-beta-auth-card [data-readiness-auth-actions] .fm-beta-link{min-height:30px;font-size:12px;font-weight:500}
+.fm-beta-auth-card [data-beta-social-auth]{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin-top:24px;margin-bottom:0}
+.fm-beta-auth-card .fm-beta-social-divider{flex:0 0 100%;margin-bottom:12px}
+.fm-beta-auth-card .fm-beta-social-button{display:grid;place-items:center;width:48px;height:48px;min-height:48px;padding:0;border-radius:50%;border:1px solid #dbe1dd;font-size:22px}
+.fm-beta-auth-card .fm-beta-social-button[data-social-provider="kakao"]{background:#fee500;border-color:#fee500}
+.fm-beta-social-button svg{width:24px;height:24px}
+.fm-beta-social-name{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-height:740px){
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell{padding-top:12px;padding-bottom:12px}
+.fm-beta-login-brand{margin-bottom:16px}
+.fm-beta-login-brand img{width:64px;height:64px;margin-bottom:4px}
+.fm-beta-login-brand p{margin-top:10px}
+.fm-beta-auth-card [data-beta-social-auth]{margin-top:14px;gap:12px}
+.fm-beta-auth-card .fm-beta-social-divider{margin-bottom:4px}
+.fm-beta-auth-card[data-auth-mode="signup"] .fm-beta-login-brand img{display:none}
+}
+
+.fm-beta-preview-note{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-shrink:0;font-size:12px;color:#53645a}
+.fm-beta-preview-note .fm-beta-link{font-size:12px;min-height:32px;white-space:nowrap}
+@media(max-width:360px){.fm-beta-preview-note{align-items:flex-start}.fm-beta-preview-note>span{max-width:150px;line-height:1.5}}
