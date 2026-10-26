@@ -111,8 +111,10 @@ if(root){
   function renderAuth(){
     if(!session||!user){
       const signup=authMode==='signup';
+      const pending=matches.find(match=>match.id===pendingMatchId);
       return `<div class="fm-beta-panel fm-beta-auth-card" id="beta-auth-panel" data-auth-mode="${signup?'signup':'signin'}">
         <div class="fm-beta-login-brand"><img src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate 축구공 로고"><strong>FootMate</strong><p>로그인하고 함께 뛸 경기를 찾아보세요.</p></div>
+        ${pending?`<section class="fm-beta-auth-match" aria-label="참가할 경기"><span>참가할 경기</span><strong>${esc(pending.title)}</strong><p>${esc(formatStart(pending.startsAt))}${selectedPreferences().position?` · ${esc(POSITION_LABELS[selectedPreferences().position]||selectedPreferences().position)}`:''}</p><p>로그인 후 이 경기의 참가를 이어갈 수 있어요. 로그인만으로 참가가 확정되지는 않아요.</p></section>`:''}
         <div class="fm-beta-panel-head"><div><h2 tabindex="-1">${signup?'회원가입':'로그인'}</h2><p>${signup?'경기 참가 정보를 저장할 계정을 만듭니다.':''}</p></div></div>
         <form class="fm-beta-stack" data-form="auth">
           ${signup?`<label class="fm-beta-field"><span>이름 · 선택</span><input name="displayName" autocomplete="name" maxlength="40" placeholder="풋살러 이름"></label>`:''}
