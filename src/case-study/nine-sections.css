@@ -885,3 +885,17 @@ body{font-size:var(--cs-body-size);line-height:1.8}
 /* Current Demo wireframes show their full structure without cropping. */
 #main #section-07 .wireframe-record img[src*="current-wireframe-"]{object-fit:contain;object-position:center;background:#fff}
 .image-dialog-body img[src*="current-wireframe-"]{width:560px;min-width:560px;max-width:none;height:auto;object-fit:contain}
+
+/* Equal-scale wireframes form two centered desktop rows. */
+@media(min-width:1200px){
+ #section-07 .wireframe-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;align-items:stretch}
+ #section-07 .wireframe-record{flex:0 0 calc((100% - 32px)/3);display:flex;flex-direction:column;min-width:0;padding:12px}
+ #section-07 .wireframe-record>.evidence-preview{margin-top:10px;max-width:none}
+ #main #section-07 .wireframe-record img[src*="current-wireframe-"]{height:auto;aspect-ratio:390/360;max-height:280px}
+ #section-07 .wireframe-record>p{font-size:13px;line-height:1.7;margin-top:8px}
+ #section-07 .wireframe-record>.small-copy{margin-top:auto;padding-top:8px}
+ #section-07 .wireframe-record>p:not(.small-copy):not(.wireframe-step){margin-bottom:8px}
+ #section-07 .wireframe-record h2{font-size:17px}
+ #section-07>.section-head{margin-bottom:18px}
+ #section-07>.source-note,#section-07>.small-copy{margin-top:16px}
+}
