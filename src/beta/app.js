@@ -402,6 +402,7 @@ if(root){
       authEntry='results';
       if(session&&user&&action==='open-account'){setView('my');return}
       if(action==='focus-auth'){pendingMatchId=target.dataset.matchId||'';sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId)}
+      else{pendingMatchId='';sessionStorage.removeItem('footmate:beta:pending-match:v1')}
       authOpen=true;render();root.querySelector('#beta-auth-panel h2, #beta-auth-panel input')?.focus();window.scrollTo({top:0,behavior:'smooth'});return;
     }
     if(action==='close-account'){if((!session||!user)&&authEntry==='opening'){openingOpen=true;authOpen=false;render();return}authOpen=false;render();root.querySelector('[data-pending-match] button, [data-action="open-account"]')?.focus();return} 
