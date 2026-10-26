@@ -1,4 +1,4 @@
-import {pickUnseenRecommendation} from './domain/recommendation-discovery.js';
+import {matchesRecommendationConditions,pickUnseenRecommendation} from './domain/recommendation-discovery.js';
 import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch} from './demo-catalog.js';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
@@ -204,12 +204,21 @@ if(root){
     </article>`;
   }
 
+  function recommendationMatches(){
+    const conditions=selectedPreferences();
+    const available=matches.filter(match=>isFutsalMatch(match)&&matchesRecommendationConditions({
+      ...match,remaining_spots:match.remaining,starts_at:match.startsAt,price_krw:match.price,
+      positions:Object.keys(match.positionSlots),match_slots:Object.entries(match.positionSlots).map(([position,remaining_spots])=>({position,remaining_spots}))
+    },conditions));
+    return recommendedIds===null?available:recommendedIds.map(id=>available.find(match=>match.id===id)).filter(Boolean);
+  }
+
   function renderMatches(){
     if(recommendationBusy)return '<div class="fm-beta-empty" role="status"><span class="fm-beta-spinner"></span>선택한 조건으로 추천을 준비하고 있어요.</div>';
     if(backendState==='connecting')return `<div class="fm-beta-empty"><span class="fm-beta-spinner"></span>경기를 불러오는 중입니다.</div>`;
     if(matchesError)return `<div class="fm-beta-empty"><strong>경기 데이터를 불러오지 못했습니다.</strong>${esc(matchesError)}<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" data-action="refresh" type="button">다시 시도</button></div></div>`;
     if(!matches.length)return `<div class="fm-beta-empty"><strong>지금 참가할 수 있는 경기가 없어요.</strong><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>다시 확인</button></div>`;
-    const visible=recommendedIds===null?matches:recommendedIds.map(id=>matches.find(m=>m.id===id)).filter(Boolean);
+    const visible=recommendationMatches();
     if(!visible.length)return `<div class="fm-beta-empty"><strong>조건에 맞는 경기가 없어요.</strong></div>`;
 
     const guest=!session||!user;
@@ -401,7 +410,7 @@ if(root){
     }
     if(action==='random-recommendation'||action==='restart-discovery'){
       if(recommendationBusy)return;
-      const eligible=(recommendedIds===null?matches:recommendedIds.map(id=>matches.find(match=>match.id===id)).filter(Boolean));
+      const eligible=recommendationMatches();
       if(action==='restart-discovery'){
         const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
         seenRecommendations=new Set(current?[current]:[]);

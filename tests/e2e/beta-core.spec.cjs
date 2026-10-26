@@ -647,3 +647,17 @@ test('refreshing recommendations preserves the viewed match and discovery histor
   await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',id);
   await expect(page.getByText('조건에 맞는 경기를 모두 봤어요.',{exact:true})).toBeVisible();
 });
+
+test('a refreshed full position cannot be drawn from stale recommendation IDs',async({page})=>{
+  await mockBackend(page);
+  await page.addInitScript(()=>localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'수원 · 영통',level:'초중급',position:'MF',afterTime:''})));
+  let full=false;
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[full?{...baseMatch,match_slots:baseMatch.match_slots.map(slot=>slot.position==='MF'?{...slot,remaining_spots:0}:slot)}:baseMatch,{...baseMatch,id:'available-second',title:'남은 자리 있는 경기'}]));
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:[matchId,'available-second']}));
+  await page.goto('/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',matchId);
+  full=true;
+  await page.getByRole('button',{name:'새로고침',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id','available-second');
+  await expect(page.getByRole('button',{name:'다른 경기 추천',exact:true})).toHaveCount(0);
+});
