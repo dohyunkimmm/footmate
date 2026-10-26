@@ -396,7 +396,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-recommendation-body{min-height:0;overflow-y:auto;overscroll-behavior-y:contain;scrollbar-width:thin}
 .fm-beta-catalog .fm-beta-match-actions{flex-shrink:0;margin-top:10px;padding-top:10px}
 [data-beta-app="true"] .fm-beta-catalog .fm-beta-match-cover{height:56px;margin-bottom:10px}
-.fm-beta-catalog>.fm-beta-panel-head p,.fm-beta-preferences-summary>div>p{display:none}
+.fm-beta-preferences-summary>div>p{display:none}
 .fm-beta-catalog .fm-beta-demo-pager{margin-top:8px;padding-top:0}
 .fm-beta-discovery{flex-shrink:0;margin-top:10px}
 .fm-beta-discovery-note{flex-shrink:0}
