@@ -666,6 +666,7 @@ test('a refreshed full position cannot be drawn from stale recommendation IDs',a
 });
 
 test('random discovery keeps the drawn demo match through participation login',async({page})=>{
+  await page.addInitScript(()=>{Math.random=()=>0.999999;});
   const backend=await mockBackend(page,{empty:true});
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
   await page.goto('/demo');
