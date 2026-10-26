@@ -1,5 +1,12 @@
 # FootMate Release History
 
+## 2026-10-26 — 현행 풋살 경로와 로그인 맥락 · 확인된 기준
+
+- 문서 정리 직전 `main`은 `e29134aac02da85b4529d41ddb642099c489ff19`이며, [main Actions #40295186529](https://github.com/dohyunkimmm/footmate/actions/runs/40295186529)에서 `Regression 36`, `Browser E2E + axe`, `Deploy Cloudflare`, `Production Smoke`가 모두 **SUCCESS**였다. 이는 해당 커밋의 자동 게이트·배포 검사 결과이며 실제 이용자 OAuth 로그인, 외부 운영 설정 전체에 대한 수동 검증을 뜻하지 않는다.
+- [PR #700](https://github.com/dohyunkimmm/footmate/pull/700)은 일반 로그인에 과거 참가 경기 안내가 남는 문제를 수정하고, 선택 경기 참가 맥락과 일반 로그인 맥락을 구분하는 E2E를 추가했다.
+- 현재 공개 `/demo`·`/beta`는 Cloudflare Worker에서 `beta.html`로 연결하며 `/prototype`은 `app.html`로 분리한다. 풋살 전용 조건 선택, 후보 내 AI 추천, 참가 시 로그인과 기존 서버 참가·취소는 루트 [README](../README.md) 및 [매칭 방향](MATCHING-DIRECTION.md)을 현재 설명 기준으로 삼는다.
+- 아래의 「구현 검증 중」, Vercel URL·READY, 과거 축구/풋살 혼합 데모 및 9·13단계 화면 기록은 **각 작성 시점의 이력**으로 보존하며 현행 `main`의 완료 여부를 덮어쓰지 않는다. 운영·배포 상태는 해당 SHA의 최신 Actions 결과를 별도로 확인한다.
+
 ## 풋살 전용과 로그인 이후 Beta 앱 흐름 정정 · 구현 검증 중
 
 - 축구 선택·종목 탭·11인제 예시를 제거하고 활동 지역 → 실력·포지션·시간의 첫 선택 흐름을 유지한다.
