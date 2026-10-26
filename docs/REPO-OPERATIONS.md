@@ -72,3 +72,11 @@
 - Vercel `footmate`의 기존 프로덕션 도메인 `footmate-black.vercel.app`이 여전히 등록되어 있고 과거 READY 배포가 존재합니다. Web Analytics가 비활성화됐으며 최근 30분 로그 그룹이 비어 있어 **과거 도메인의 이용자 0명 또는 OAuth 사용 중단은 입증되지 않았습니다.** `src/beta/social-auth.js`와 `src/beta/infrastructure/supabase.js`는 접속 origin을 인증 복귀 URL로 사용합니다. Supabase OAuth redirect 허용 목록은 별도로 검증해야 합니다.
 - `@vercel/oidc` 및 `api/ai-match-assistant.js`의 Vercel AI Gateway 참조는 **현재 AI 추론 의존성**으로 유지합니다. 위 변경이 포함된 PR의 전체 QA 및 병합 후 Cloudflare 배포·Smoke 결과는 성공한 실제 검사 결과에 따라서만 완료 처리합니다.
 - Vercel 외부 프로젝트의 실제 종료·도메인 리디렉션 또는 해제·OAuth 허용 목록 정리는 [이슈 #685](https://github.com/dohyunkimmm/footmate/issues/685)에서 사용 현황을 검증한 후 별도 실행합니다. 과거 2026-10-22~23 기록은 당시 이력으로 남깁니다.
+
+## 2026-10-26 · 현행 Cloudflare 운영 및 Vercel 퇴역 진행 상태 정정
+
+- **현행 기준:** [이슈 #685](https://github.com/dohyunkimmm/footmate/issues/685)에 따르면 FootMate 공식 호스팅은 Cloudflare Workers이고, 사용자가 구 Vercel 호스팅을 사용하지 않으며 Supabase의 관련 리디렉션 설정을 정리했다고 확인했다. Supabase Auth 설정값을 연결 도구로 직접 재조회해 독립 검증했다는 뜻은 아니다.
+- 구 Vercel FootMate 프로젝트에는 `Pause Project` 명령을 실행했으며 후속 조회에서 `live=false`였다. Git 연결 목록에 FootMate는 확인되지 않았다. **프로젝트 영구 삭제는 아직 완료가 확인되지 않았고, 소유자의 대시보드 최종 승인이 남았다.** 실행하거나 삭제된 것으로 표현하지 않는다.
+- `send-beta-notification-email`·`process-beta-email-outbox`의 기본 Beta URL은 [PR #687](https://github.com/dohyunkimmm/footmate/pull/687) 및 이슈 #685 기록에 따라 Cloudflare 주소로 변경됐다. 운영 배포 소스와 GitHub 파일의 일치가 확인됐으나 환경변수 설정값과 실 이메일 발송 성공은 검증되지 않았다.
+- 구 Vercel Git 재연결·OAuth 허용 목록을 **미확인이라서 퇴역 보류해야 한다**는 위 과거 지침은 사용자 운영 확인과 이슈 #685의 정정 기록으로 대체한다. 과거 READY·WAF·배포 증빙 자체는 해당 시점 이력으로 보존한다.
+- AI Gateway 사용과 `@vercel/oidc` 의존성은 호스팅 퇴역과 별도이므로 유지한다. 문서 동기화 직전 `main` SHA `e29134aac02da85b4529d41ddb642099c489ff19`의 [Actions #40295186529](https://github.com/dohyunkimmm/footmate/actions/runs/40295186529)는 Regression/Browser/Deploy Cloudflare/Production Smoke 모두 SUCCESS였다. 후속 변경은 별도 검사로 확인한다.
