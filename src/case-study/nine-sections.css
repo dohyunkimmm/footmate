@@ -899,3 +899,7 @@ body{font-size:var(--cs-body-size);line-height:1.8}
  #section-07>.section-head{margin-bottom:18px}
  #section-07>.source-note,#section-07>.small-copy{margin-top:16px}
 }
+
+/* Keep the enlargement hint outside the drawing. */
+#section-07 .evidence-preview::after{content:none}
+#section-07 .wireframe-record>h2::after{content:"확대 ↗";float:right;font-size:12px;font-weight:600;line-height:2.2;color:var(--green)}
