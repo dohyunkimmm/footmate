@@ -3,7 +3,7 @@ import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,c
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
-import {emitBetaMeasurement} from './measurement-events.js';
+import {emitBetaMeasurement,emitDiscoveryMeasurement} from './measurement-events.js';
 
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -43,6 +43,7 @@ if(root){
   let recommendedIds=null,recommendationReasons={};
   let recommendationBusy=false,recommendationConditions='',recommendationAnchorId='';
   let seenRecommendations=new Set();
+  let lastMeasuredRecommendation='';
   let pendingMatchId=sessionStorage.getItem('footmate:beta:pending-match:v1')||'';
   function selectedPreferences(){try{return JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null')||{}}catch{return{}}}
 
@@ -226,6 +227,7 @@ if(root){
     demoPage=Math.min(demoPage,preview.length-1);
     const current=preview[demoPage];
     seenRecommendations.add(current.id);
+    if(!openingOpen&&!authOpen&&view==='home'&&!detailMatchId){const key=recommendationConditions+'|'+current.id;if(key!==lastMeasuredRecommendation){lastMeasuredRecommendation=key;emitDiscoveryMeasurement('recommendation_viewed',{resultCount:visible.length});}}
     const exhausted=visible.every(match=>seenRecommendations.has(match.id));
     const discovery=visible.length>1?`<div class="fm-beta-discovery"><p role="status">${exhausted?'조건에 맞는 경기를 모두 봤어요.':'조건은 유지하고, 아직 보지 않은 경기를 추천해요.'}</p><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${exhausted?'restart-discovery':'random-recommendation'}">${exhausted?'다시 둘러보기':'다른 경기 추천'}</button></div>`:'<p class="fm-beta-discovery-note">조건에 맞는 경기는 1개예요. 필터를 바꾸면 다른 경기를 찾을 수 있어요.</p>';
     const gatedNext=guest&&!previewExpanded&&demoPage===preview.length-1&&visible.length>preview.length;
@@ -324,6 +326,7 @@ if(root){
     await loadMatches();
     if(session)await loadPrivate();
     if(!matchesError)lastSyncedAt=Date.now();
+    window.dispatchEvent(new Event('footmate:beta:catalog-refreshed'));
   }
 
   async function run(task){
@@ -396,7 +399,7 @@ if(root){
     const target=event.target.closest('[data-action]');
     if(!target)return;
     const action=target.dataset.action;
-    if(action==='match-detail'){detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();return}
+    if(action==='match-detail'){emitDiscoveryMeasurement('match_detail_opened');detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();return}
     if(action==='detail-back'){closeDetail();render();return}
     if(action==='detail-tab'){detailTab=target.dataset.tab;render();return}
     if(action==='setup-position'){setView('my');accountTab='profile';render();return}
@@ -416,7 +419,7 @@ if(root){
         seenRecommendations=new Set(current?[current]:[]);
       }
       const next=pickUnseenRecommendation(eligible.map(match=>match.id),seenRecommendations);
-      if(next){previewExpanded=true;demoPage=eligible.findIndex(match=>match.id===next);render();root.querySelector('.fm-beta-discovery button')?.focus();}
+      if(next){emitDiscoveryMeasurement('recommendation_redrawn',{resultCount:eligible.length});previewExpanded=true;demoPage=eligible.findIndex(match=>match.id===next);render();root.querySelector('.fm-beta-discovery button')?.focus();}
       return;
     }
     if(action==='demo-prev'||action==='demo-next'){demoPage=Math.max(0,demoPage+(action==='demo-next'?1:-1));render();return}
