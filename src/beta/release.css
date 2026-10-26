@@ -355,3 +355,13 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 
 /* Keep preference actions reachable in short viewports without scrolling the app shell. */
 [data-beta-app="true"] [data-beta-main]:has(.fm-beta-preferences){overflow-y:auto;overscroll-behavior-y:contain;scroll-padding-block:12px;padding-bottom:12px}
+
+/* Preserve selected match context at authentication without clipping short screens. */
+.fm-beta-auth-match{margin:0 0 18px;padding:14px 16px;border:1px solid #dce5dd;border-radius:14px;background:#f3f7f3;text-align:left;overflow-wrap:anywhere}
+.fm-beta-auth-match>span{font-size:12px;font-weight:600;color:#52645a}
+.fm-beta-auth-match>strong{display:block;margin-top:4px;font-size:16px;line-height:1.5;color:#203d2d}
+.fm-beta-auth-match p{margin:6px 0 0;font-size:13px;line-height:1.6;color:#52645a}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell:has(.fm-beta-auth-match){justify-content:flex-start;overflow-y:auto;overscroll-behavior-y:contain}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell:has(.fm-beta-auth-match) .fm-beta-grid{flex:0 0 auto}
+.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand{margin-bottom:18px}
+@media(max-height:740px){.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand img{width:48px;height:48px}.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand p{display:none}}

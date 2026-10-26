@@ -173,7 +173,7 @@ test('released demo opens the connected Beta with useful actions only',async({pa
     await expect(page.locator('#footmate-next')).toHaveCount(0);
     await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
     await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeHidden();
-    await expect(page.getByText('나에게 맞는 경기',{exact:true})).toBeVisible();
+    await expect(page.getByText('전체 경기 둘러보기',{exact:true})).toBeVisible();
     await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
     const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
     expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
@@ -497,3 +497,33 @@ for(const [width,height] of [[320,568],[390,844]]){
   await page.screenshot({path:testInfo.outputPath('design-qa-my-'+width+'.png'),fullPage:true});
  });
 }
+
+test('recommendation labels distinguish unrestricted browse and selected conditions',async({page})=>{
+ await mockBackend(page);
+ await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:[matchId]}));
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ const summary=page.getByRole('region',{name:'추천 조건',exact:true});
+ await expect(summary).toContainText('전체 경기 둘러보기');
+ await expect(summary.locator('.fm-beta-ai-label')).toHaveCount(0);
+ await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+ await page.getByRole('combobox',{name:'실력',exact:true}).selectOption('초중급');
+ await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
+ await expect(summary).toContainText('나에게 맞는 경기');
+ await expect(summary.locator('.fm-beta-ai-label')).toHaveText('AI 추천');
+});
+
+test('participation login explains selected match and stays scrollable on a short screen',async({page})=>{
+ await page.setViewportSize({width:320,height:480});
+ await mockBackend(page);
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'참가하기',exact:true}).click();
+ const context=page.getByRole('region',{name:'참가할 경기',exact:true});
+ await expect(context).toContainText(baseMatch.title);
+ await expect(context).toContainText('로그인만으로 참가가 확정되지는 않아요.');
+ await expect(context).toContainText('9월');
+ await page.getByRole('button',{name:'로그인',exact:true}).scrollIntoViewIfNeeded();
+ await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeInViewport();
+ expect(await serious(page)).toEqual([]);
+ await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
+ await expect(page.getByRole('heading',{name:baseMatch.title,exact:true})).toBeVisible();
+});
