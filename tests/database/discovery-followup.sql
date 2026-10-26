@@ -24,7 +24,7 @@ do $$begin
  begin perform public.operator_discovery_metrics(now());raise exception 'QA:MFA bypass';exception when others then if sqlerrm<>'MFA_REQUIRED' then raise;end if;end;
 end;$$;
 select set_config('request.jwt.claims',json_build_object('sub',current_setting('qa.discovery_other'),'role','authenticated','aal','aal2')::text,true);
-do $$begin if (select sum(events) from public.operator_discovery_metrics(now()))<>1 then raise exception 'QA:pilot aggregate incorrect';end if;end;$$;
+do $$begin if (select coalesce(sum(events),0) from public.operator_discovery_metrics(now()))<>1 then raise exception 'QA:pilot aggregate incorrect';end if;end;$$;
 select set_config('request.jwt.claims',json_build_object('sub',current_setting('qa.discovery_uid'),'role','authenticated','aal','aal1')::text,true);
 update public.discovery_consents set enabled=false where user_id=auth.uid();
 do $$begin if exists(select 1 from public.discovery_events) then raise exception 'QA:withdrawal did not delete';end if;end;$$;

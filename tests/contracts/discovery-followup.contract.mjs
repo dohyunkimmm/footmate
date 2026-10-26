@@ -11,6 +11,7 @@ assert.deepEqual(personalizeRecommendations(candidates,[interest,interest]).map(
 assert.deepEqual(personalizeRecommendations(candidates,[{...interest,scope:'demo'}]),candidates);
 assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'too_far',venue:'A'},{...interest,kind:'too_far',venue:'A'}]).map(m=>m.id),['b','a','c']);
 assert.deepEqual(new Set(personalizeRecommendations(candidates,[interest]).map(m=>m.id)),new Set(candidates.map(m=>m.id)));
+assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'different_time',hour:'20'},{...interest,kind:'different_time',hour:'20'}]).map(m=>m.id),['b','a','c']);
 assert.equal(chooseOpeningVariant(null,'quick'),'control');
 assert.equal(chooseOpeningVariant('quick','control'),'quick');
 assert.equal(chooseOpeningVariant('compare',null,()=>0.9),'quick');
