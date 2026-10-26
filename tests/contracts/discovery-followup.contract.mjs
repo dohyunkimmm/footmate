@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import {normalizeReactions,personalizeRecommendations,chooseOpeningVariant} from '../../src/beta/domain/discovery-followup.js';
+import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus,queueDiscoveryMeasurement} from '../../src/beta/discovery-transport.js';
+
+const now=Date.now(),at=now-1000;
+assert.equal(normalizeReactions([{matchId:'a',kind:'interested',at:now+1000},{matchId:'b',kind:'bad',at},{matchId:'c',kind:'interested',at:now-31*86400000}]).length,0);
+assert.equal(normalizeReactions(Array.from({length:60},(_,i)=>({matchId:String(i),kind:'interested',at}))).length,50);
+const candidates=[{id:'a',place:'A',startsAt:'2099-01-01T20:00:00+09:00'},{id:'b',place:'B',startsAt:'2099-01-01T21:00:00+09:00'},{id:'c',place:'B',startsAt:'2099-01-01T22:00:00+09:00'}];
+const interest={matchId:'past',kind:'interested',venue:'B',at,scope:'live'};
+assert.deepEqual(personalizeRecommendations(candidates,[interest,interest]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(personalizeRecommendations(candidates,[{...interest,scope:'demo'}]),candidates);
+assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'too_far',venue:'A'},{...interest,kind:'too_far',venue:'A'}]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(new Set(personalizeRecommendations(candidates,[interest]).map(m=>m.id)),new Set(candidates.map(m=>m.id)));
+assert.equal(chooseOpeningVariant(null,'quick'),'control');
+assert.equal(chooseOpeningVariant('quick','control'),'quick');
+assert.equal(chooseOpeningVariant('compare',null,()=>0.9),'quick');
+assert.equal(chooseOpeningVariant('compare','quick',()=>0),'quick');
+
+const config={url:'https://example.invalid',publishableKey:'public'},uid='11111111-1111-4111-8111-111111111111';
+const root={dataset:{betaCatalogSource:'server',betaGuest:'false'}};
+globalThis.document={getElementById:()=>root};
+let calls=[],enabled=false,fail=false;
+globalThis.fetch=async(url,options={})=>{
+ calls.push({url,options});if(fail)throw new Error('offline');
+ if(!options.method)return new Response(JSON.stringify([{enabled}]));
+ return new Response(null,{status:201});
+};
+const record={eventId:uid,discoveryFlowId:uid,event:'match_detail_opened',source:'connected-beta',variant:'quick',matchId:uid,email:'never transmit',region:'never transmit'};
+const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
+await configureDiscoveryTransport(config,'','');queueDiscoveryMeasurement(record);await tick();assert.equal(calls.length,0);
+await configureDiscoveryTransport(config,uid,'token');queueDiscoveryMeasurement(record);await tick();assert.equal(calls.length,1);
+await setDiscoveryConsent(true);assert.equal(discoveryTransportStatus().enabled,true);
+queueDiscoveryMeasurement({...record,source:'demo'});root.dataset.betaCatalogSource='demo';queueDiscoveryMeasurement(record);root.dataset.betaCatalogSource='server';
+queueDiscoveryMeasurement({...record,matchId:'demo-example'});queueDiscoveryMeasurement({...record,event:'unsupported'});await tick();assert.equal(calls.filter(c=>c.url.includes('discovery_events')).length,0);
+queueDiscoveryMeasurement(record);await tick();const row=JSON.parse(calls.at(-1).options.body)[0];assert.deepEqual(Object.keys(row).sort(),['event_id','session_id','event_name','variant','match_id'].sort());
+assert.equal(row.variant,'quick');
+await setDiscoveryConsent(false);assert.equal(discoveryTransportStatus().enabled,false);const count=calls.length;queueDiscoveryMeasurement(record);await tick();assert.equal(calls.length,count);
+enabled=true;await configureDiscoveryTransport(config,uid,'token');fail=true;queueDiscoveryMeasurement(record);await tick();await configureDiscoveryTransport(null,'','');fail=false;queueDiscoveryMeasurement(record);await tick();assert.equal(discoveryTransportStatus().enabled,false);
+let finish;
+globalThis.fetch=()=>new Promise(resolve=>finish=resolve);
+const configuring=configureDiscoveryTransport(config,uid,'token');await configureDiscoveryTransport(null,'','');finish(new Response('[{"enabled":true}]'));await configuring;assert.equal(discoveryTransportStatus().enabled,false);
+console.log('PASS reaction scope/expiry/order/candidate fidelity, stable comparison assignment, consent gating, privacy allowlist, withdrawal, failure and account-switch isolation');
