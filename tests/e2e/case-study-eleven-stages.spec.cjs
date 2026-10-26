@@ -12,7 +12,7 @@ for(const width of [320,390,800,1440,1920]){
   for(let i=0;i<titles.length;i++){
    await page.locator('.toc-item').nth(i).click();const slide=page.locator('.slide:visible');
    await expect(slide).toHaveCount(1);await expect(slide).toHaveAttribute('aria-label',titles[i]);
-   await expect(page).toHaveURL(new RegExp(`#section-${String(i+1).padStart(2,'0')}$`));
+   expect(new URL(page.url()).hash).toBe('');
    await expect(page.locator('.topbar-count')).toHaveText(`${String(i+1).padStart(2,'0')} / 11`);
    await expect(page.locator('.toc-item').nth(i)).toHaveAttribute('aria-current','step');
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
@@ -31,10 +31,10 @@ for(const width of [320,390,800,1440,1920]){
 test('section history, keyboard, deep links and reload retain their contract',async({page})=>{
  await page.goto('/#section-05');await expect(page.locator('.slide:visible')).toHaveAttribute('aria-label','IA & Navigation');
  await page.locator('.btn-next').click();await expect(page.locator('.slide:visible')).toHaveAttribute('aria-label','Flowchart & Recovery');await expect(page.locator('.slide:visible h1')).toBeFocused();
- await page.goBack();await expect(page.locator('.slide:visible')).toHaveAttribute('aria-label','IA & Navigation');
+ await page.goBack();expect(new URL(page.url()).hash).toBe('');await expect(page.locator('.slide:visible')).toHaveAttribute('aria-label','IA & Navigation');
  await page.keyboard.press('ArrowLeft');await expect(page.locator('.slide:visible')).toHaveAttribute('aria-label','Scope & Priorities');
  await page.locator('.slide:visible summary').click();await expect(page.locator('.slide:visible details')).toHaveAttribute('open','');
- await page.reload();await expect(page).toHaveURL(/#section-01$/);await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0);
+ await page.reload();expect(new URL(page.url()).hash).toBe('');await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0);
 });
 
 test('public Demo is linked and prototype wireframes are disclosed',async({page})=>{
@@ -63,7 +63,7 @@ test('wireframe enlargement preserves section and restores keyboard focus',async
  const dialog=page.getByRole('dialog',{name:'홈 · 현재 Demo 화면',exact:true});await expect(dialog).toBeVisible();
  await expect(dialog.locator('img')).toHaveAttribute('src',await preview.getAttribute('data-image'));
  await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
- await page.keyboard.press('ArrowRight');await expect(page).toHaveURL(/#section-07$/);
+ await page.keyboard.press('ArrowRight');expect(new URL(page.url()).hash).toBe('');
  const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
  await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(preview).toBeFocused();
 });
@@ -191,7 +191,7 @@ for(const reducedMotion of ['no-preference','reduce']){
   await page.locator('#section-08 summary').press('Enter');
   await expect(page.locator('#section-08 details')).not.toHaveAttribute('open','');
   await page.locator('.btn-next').click();
-  await expect(page).toHaveURL(/#section-09$/);
+  expect(new URL(page.url()).hash).toBe('');
   await expect(page.locator('#section-09 h1')).toBeFocused();
   await expect.poll(()=>page.locator('#section-09').evaluate(n=>n.getAnimations({subtree:true}).filter(a=>a.playState==='running').length)).toBe(0);
   expect(await page.evaluate(()=>scrollX)).toBe(0);
@@ -214,7 +214,7 @@ test('wireframe gallery moves through five screens and restores the opening card
  await expect(page.getByRole('button',{name:'다음 와이어프레임',exact:true})).toBeDisabled();
  await page.keyboard.press('ArrowLeft');
  await expect(page.getByRole('dialog',{name:'참가 시 로그인 · 현재 Demo 화면',exact:true})).toBeVisible();
- await expect(page).toHaveURL(/#section-07$/);
+ expect(new URL(page.url()).hash).toBe('');
  await page.keyboard.press('Escape');
  await expect(page.locator('.image-dialog')).not.toBeVisible();
  await expect(opening).toBeFocused();
@@ -243,7 +243,7 @@ test('task steps and exception buttons connect their numbered paths',async({page
  await expect(steps.nth(4)).toHaveAttribute('aria-pressed','true');
  await expect(steps.nth(3)).toHaveAttribute('aria-pressed','false');
  await expect(page.locator('.flow-selection-status')).toContainText('03 · 05');
- await expect(page).toHaveURL(/#section-06$/);
+ expect(new URL(page.url()).hash).toBe('');
 });
 
 for(const width of [390,1440]){
