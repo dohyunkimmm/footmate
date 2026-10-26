@@ -42,8 +42,8 @@ async function loadState(){
   const fingerprint=recommendationFingerprint(matches,preferences);
   let cached=null;try{cached=JSON.parse(localStorage.getItem('footmate:beta:ranking:v1')||'null')}catch{}
   aiOrder=validRecommendationCache(cached,fingerprint)?cached.ids:[];
-  publishRecommendations();render();
   if(!busy&&!aiOrder.length)void rankWithAI();
+  else{publishRecommendations();render()}
  }else render();
 
 }
