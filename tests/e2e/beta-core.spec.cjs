@@ -716,3 +716,51 @@ test('enhanced discovery reuses valid rankings, expires them and separates demo 
  await page.evaluate(()=>{const key='footmate:beta:ranking:v1';const value=JSON.parse(localStorage.getItem(key));value.createdAt=Date.now()-300001;localStorage.setItem(key,JSON.stringify(value))});
  await page.reload();await expect.poll(()=>calls).toBe(2);
 });
+
+test('discovery followup stores explicit reactions and clears them without expanding filters',async({page})=>{
+ await mockBackend(page);
+ await page.goto('/demo');
+ await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await page.locator('.fm-beta-reaction-panel summary').click();
+ await page.getByRole('button',{name:'관심 있어요',exact:true}).click();
+ await page.locator('.fm-beta-reaction-panel summary').click();
+ await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','true');
+ const saved=await page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('footmate:beta:reactions:')).map(k=>JSON.parse(localStorage.getItem(k))).flat());
+ expect(saved).toHaveLength(1);expect(saved[0].scope).toBe('demo');
+ await page.getByRole('button',{name:'추천 반응 초기화',exact:true}).click();
+ await page.locator('.fm-beta-reaction-panel summary').click();
+ await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','false');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).region)).toBe('');
+});
+
+test('discovery followup comparison allows direct setup and preserves default intro',async({page})=>{
+ await mockBackend(page,{preferences:false});
+ await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
+ await page.goto('/demo?opening=quick');
+ await expect(page.locator('.fm-beta-opening')).toHaveCount(0);
+ await expect(page.locator('form[data-growth-form="recommend"]')).toBeVisible();
+ await page.goto('/demo?opening=control');
+ await expect(page.locator('.fm-beta-opening')).toBeVisible();
+});
+
+test('discovery followup sends real events only after consent and stops on withdrawal',async({page})=>{
+ await mockBackend(page);let enabled=false;const sent=[];
+ await page.route(`${origin}/rest/v1/discovery_consents**`,route=>{
+  if(route.request().method()==='GET')return fulfill(route,[{enabled}]);
+  enabled=route.request().postDataJSON().enabled;return route.fulfill({status:201,body:''});
+ });
+ await page.route(`${origin}/rest/v1/discovery_events**`,route=>{sent.push(...route.request().postDataJSON());return route.fulfill({status:201,body:''})});
+ await page.goto('/beta');await page.locator('[data-action="open-account"]').click();
+ await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');await page.getByRole('button',{name:'로그인',exact:true}).click();
+ await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');expect(sent).toHaveLength(0);
+ const consent=async()=>{
+  await page.locator('[data-action="open-account"]').click();await page.getByRole('button',{name:'설정',exact:true}).click();
+  await page.getByText('추천 개선 통계 참여 · 선택',{exact:true}).click();await page.locator('[data-action="discovery-consent"]').click();
+ };
+ await consent();await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여 해제');
+ await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await expect.poll(()=>sent.some(e=>e.event_name==='match_detail_opened'&&e.match_id===matchId)).toBe(true);
+ await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();await consent();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여하기');const count=sent.length;
+ await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();expect(sent).toHaveLength(count);
+});

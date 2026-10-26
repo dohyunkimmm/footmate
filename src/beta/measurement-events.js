@@ -1,3 +1,4 @@
+import {queueDiscoveryMeasurement} from './discovery-transport.js';
 // Beta measurement v1: privacy-preserving, in-browser events only.
 // Transport and validated pilot cohorts must be explicitly connected before KPI reporting.
 const EVENT_NAMES=new Set(['match_list_available','join_attempt','join_succeeded','join_failed','directions_opened','calendar_opened']);
@@ -29,13 +30,14 @@ export function emitBetaMeasurement(name,context={}){
 
 
 export const DISCOVERY_MEASUREMENT_EVENT='footmate:beta:discovery-measurement';
-const DISCOVERY_EVENTS=new Set(['filters_applied','recommendation_requested','recommendation_completed','recommendation_viewed','recommendation_redrawn','match_detail_opened']);
+const DISCOVERY_EVENTS=new Set(['filters_applied','recommendation_requested','recommendation_completed','recommendation_viewed','recommendation_redrawn','match_detail_opened','entry_viewed','reaction_submitted']);
 const DISCOVERY_KEY='footmate:beta:discovery-events:v1';
 export function createDiscoveryMeasurement(name,context={},scope='beta'){
   if(!DISCOVERY_EVENTS.has(name))throw new TypeError('Unsupported discovery event');
   const event={schemaVersion:1,event:name,source:scope==='demo'?'demo':'connected-beta',cohort:scope==='demo'?'demo':'unclassified',occurredAt:new Date().toISOString()};
   for(const key of ['filterCount','candidateCount','resultCount','durationMs'])if(Number.isFinite(context[key])&&context[key]>=0)event[key]=Math.min(1000000,Math.floor(context[key]));
   if(['ai','rules'].includes(context.mode))event.mode=context.mode;
+  if(typeof context.matchId==='string'&&/^[0-9a-f-]{36}$/i.test(context.matchId))event.matchId=context.matchId;
   return Object.freeze(event);
 }
 export function emitDiscoveryMeasurement(name,context={}){
@@ -53,7 +55,8 @@ function recordDiscoveryEvent(payload){
     const flowKey='footmate:beta:discovery-flow:v1';
     let flowId=sessionStorage.getItem(flowKey);if(!flowId){flowId=crypto.randomUUID();sessionStorage.setItem(flowKey,flowId)}
     const scope=payload.source==='demo'||payload.matchId?.startsWith('demo-')||location.pathname.replace(/\/$/,'')==='/demo'?'demo':'beta';
-    const recorded={...payload,discoveryFlowId:flowId,source:scope==='demo'?'demo':payload.source,cohort:scope==='demo'?'demo':'unclassified'};
+    const recorded={...payload,eventId:crypto.randomUUID(),variant:sessionStorage.getItem('footmate:beta:opening-variant:v1')==='quick'?'quick':'control',discoveryFlowId:flowId,source:scope==='demo'?'demo':payload.source,cohort:scope==='demo'?'demo':'unclassified'};
     sessionStorage.setItem(DISCOVERY_KEY,JSON.stringify([...rows.slice(-199),recorded]));
+    queueDiscoveryMeasurement(recorded);
   }catch{}
 }
