@@ -57,7 +57,8 @@ test('live beta growth surfaces rank real matches, waitlist and collect feedback
  await page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:'중급',exact:true}).check();
  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
- await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toBeVisible();
+ await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toHaveCount(0);
+ await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'내 경기',exact:true}).click();
  await page.getByRole('button',{name:'대기',exact:true}).click();
  await page.getByRole('button',{name:'대기 신청'}).click();
@@ -71,3 +72,4 @@ test('live beta growth surfaces rank real matches, waitlist and collect feedback
  const result=await new AxeBuilder({page}).include('.fm-beta').withTags(['wcag2a','wcag2aa']).analyze();
  expect(result.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([]);
 });
+

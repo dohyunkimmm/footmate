@@ -365,3 +365,39 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 [data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell:has(.fm-beta-auth-match) .fm-beta-grid{flex:0 0 auto}
 .fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand{margin-bottom:18px}
 @media(max-height:740px){.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand img{width:48px;height:48px}.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand p{display:none}}
+
+
+/* Discovery keeps filters and results together, with a separate action from refresh. */
+.fm-beta-quick-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex-basis:100%;width:100%}
+.fm-beta-quick-filters details{min-width:0}
+.fm-beta-quick-filters summary{cursor:pointer;padding:9px 10px;min-height:44px;border:1px solid #ccd9cd;border-radius:12px;background:#fff;font-size:13px;line-height:1.6;color:#203d2d;overflow-wrap:anywhere}
+.fm-beta-quick-filters summary:focus-visible{outline:3px solid #346b33;outline-offset:2px}
+.fm-beta-quick-filters details[open]{grid-column:1/-1}
+.fm-beta-quick-filters form{padding:10px 2px}
+.fm-beta-quick-filters .fm-beta-choice-group span{padding:9px 12px}
+.fm-beta-filter-recovery{display:flex;flex-wrap:wrap;gap:8px;flex-basis:100%}
+.fm-beta-discovery{display:grid;gap:8px;margin-top:12px}
+.fm-beta-discovery p,.fm-beta-discovery-note{margin:0;font-size:13px;line-height:1.6;color:#52645a}
+.fm-beta-discovery>.fm-beta-button{width:100%;min-height:48px}
+.fm-beta-discovery-note{margin-top:12px}
+.fm-beta-opening-preview{width:100%;max-width:340px;margin:0 0 20px;padding:14px 16px;border:1px solid #d6e3cd;border-radius:16px;background:#ffffffb8;color:#203d2d}
+.fm-beta-opening-preview small{font-size:12px;color:#52645a}
+.fm-beta-opening-preview h2{margin:6px 0;font-size:17px;line-height:1.4}
+.fm-beta-opening-preview p{margin:4px 0;font-size:13px;line-height:1.6}
+.fm-beta-opening .fm-app-entry{overflow-y:auto;justify-content:safe center}
+[data-beta-app="true"] [data-beta-main]:has(.fm-beta-quick-filters details[open]){overflow-y:auto;overscroll-behavior-y:contain}
+[data-beta-app="true"] [data-beta-main]:has(.fm-beta-quick-filters details[open]) .fm-beta-catalog{flex-shrink:0}
+@media(max-height:740px){.fm-beta-opening .fm-next-intro-copy{margin:16px 0}.fm-beta-opening-preview{margin-bottom:12px;padding:10px 14px}}
+
+/* Keep discovery, paging and participation visible; only card facts scroll. */
+[data-beta-app="true"] .fm-beta-catalog{overflow:hidden}
+[data-beta-app="true"] .fm-beta-catalog .fm-beta-match-list{flex:1;min-height:120px;overflow:hidden}
+[data-beta-app="true"] .fm-beta-catalog .fm-beta-match{display:flex;flex-direction:column;height:100%;min-height:0}
+.fm-beta-recommendation-body{min-height:0;overflow-y:auto;overscroll-behavior-y:contain;scrollbar-width:thin}
+.fm-beta-catalog .fm-beta-match-actions{flex-shrink:0;margin-top:10px;padding-top:10px}
+[data-beta-app="true"] .fm-beta-catalog .fm-beta-match-cover{height:56px;margin-bottom:10px}
+.fm-beta-preferences-summary>div>p{display:none}
+.fm-beta-catalog .fm-beta-demo-pager{margin-top:8px;padding-top:0}
+.fm-beta-discovery{flex-shrink:0;margin-top:10px}
+.fm-beta-discovery-note{flex-shrink:0}
+[data-beta-app="true"] [data-beta-main]:has(.fm-beta-quick-filters details[open]) .fm-beta-catalog{flex:0 0 400px}

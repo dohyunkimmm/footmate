@@ -1,3 +1,4 @@
+import {matchesRecommendationConditions,pickUnseenRecommendation} from './domain/recommendation-discovery.js';
 import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch} from './demo-catalog.js';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
@@ -40,6 +41,8 @@ if(root){
   function exampleMatch(id){return matches.some(m=>m.id===id&&m.isDemo)||participations.some(p=>p.match_id===id&&p.is_demo)}
   let authOpen=Boolean(location.hash.includes('error')||sessionStorage.getItem('footmate:beta:social-auth-error:v1'));
   let recommendedIds=null,recommendationReasons={};
+  let recommendationBusy=false,recommendationConditions='',recommendationAnchorId='';
+  let seenRecommendations=new Set();
   let pendingMatchId=sessionStorage.getItem('footmate:beta:pending-match:v1')||'';
   function selectedPreferences(){try{return JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null')||{}}catch{return{}}}
 
@@ -189,7 +192,7 @@ if(root){
     }
     const availability=match.status==='full'||match.remaining<=0?'마감':`${match.remaining}자리 남음`;
     return `<article class="fm-beta-match ${match.isDemo?'fm-beta-match--demo':''}" data-match-id="${esc(match.id)}" ${pendingMatchId===match.id?'data-pending-match="true"':''}>
-      ${detail?'<div class="fm-beta-detail-body">':''}
+      <div class="${detail?'fm-beta-detail-body':'fm-beta-recommendation-body'}" ${detail?'':'tabindex="0" role="group" aria-label="추천 경기 정보"'}>
       ${match.isDemo?`<div class="fm-beta-match-cover" aria-label="데모 경기"><span>${esc(match.format)} · 풋살</span><small>데모 경기</small><i aria-hidden="true"></i></div>`:''}
       ${recommendationReasons[match.id]?.some(reason=>reason!=='무료 참가')?`<p class="fm-beta-match-reason">${esc(recommendationReasons[match.id].filter(reason=>reason!=='무료 참가').join(' · '))}</p>`:''}
       <div class="fm-beta-match-top"><div><h3>${esc(match.title)}</h3><div class="fm-beta-match-place"><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>${esc(match.place)}${match.area?` · ${esc(match.area)}`:''}</div></div><span class="fm-beta-badge">${esc(availability)}</span></div>
@@ -197,22 +200,36 @@ if(root){
       ${match.isDemo?'<details class="fm-beta-demo-slots"><summary>모집 포지션</summary>':''}<div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${({MF:"미드필더",FW:"공격수",DF:"수비수",GK:"골키퍼"})[item]} <small>${item}</small></b><span><strong>${Number(match.positionSlots[item]||0)}</strong>자리</span></div>`).join('')}</div>
       ${match.isDemo?'</details>':''}${attendanceLinks(match,Boolean(joined))}
       ${detail?`<dl class="fm-beta-detail-facts"><div><dt>경기 일시</dt><dd>${esc(formatStart(match.startsAt))}</dd></div><div><dt>경기 장소</dt><dd>${esc(match.place)}${match.area?` · ${esc(match.area)}`:''}</dd></div><div><dt>경기 방식</dt><dd>${esc(match.format||'경기')} · ${match.durationMin}분 · ${esc(match.surface||'구장')}</dd></div><div><dt>권장 실력</dt><dd>${esc(match.level)}</dd></div></dl>`:''}
-      ${detail?'</div>':''}<div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span>${!detail?`<button class="fm-beta-button" type="button" data-action="match-detail" data-match-id="${esc(match.id)}">상세 보기</button>`:''}<button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
+      </div><div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span>${!detail?`<button class="fm-beta-button" type="button" data-action="match-detail" data-match-id="${esc(match.id)}">상세 보기</button>`:''}<button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
     </article>`;
   }
 
+  function recommendationMatches(){
+    const conditions=selectedPreferences();
+    const available=matches.filter(match=>isFutsalMatch(match)&&matchesRecommendationConditions({
+      ...match,remaining_spots:match.remaining,starts_at:match.startsAt,price_krw:match.price,
+      positions:Object.keys(match.positionSlots),match_slots:Object.entries(match.positionSlots).map(([position,remaining_spots])=>({position,remaining_spots}))
+    },conditions));
+    return recommendedIds===null?available:recommendedIds.map(id=>available.find(match=>match.id===id)).filter(Boolean);
+  }
+
   function renderMatches(){
+    if(recommendationBusy)return '<div class="fm-beta-empty" role="status"><span class="fm-beta-spinner"></span>선택한 조건으로 추천을 준비하고 있어요.</div>';
     if(backendState==='connecting')return `<div class="fm-beta-empty"><span class="fm-beta-spinner"></span>경기를 불러오는 중입니다.</div>`;
     if(matchesError)return `<div class="fm-beta-empty"><strong>경기 데이터를 불러오지 못했습니다.</strong>${esc(matchesError)}<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" data-action="refresh" type="button">다시 시도</button></div></div>`;
     if(!matches.length)return `<div class="fm-beta-empty"><strong>지금 참가할 수 있는 경기가 없어요.</strong><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>다시 확인</button></div>`;
-    const visible=recommendedIds===null?matches:recommendedIds.map(id=>matches.find(m=>m.id===id)).filter(Boolean);
+    const visible=recommendationMatches();
     if(!visible.length)return `<div class="fm-beta-empty"><strong>조건에 맞는 경기가 없어요.</strong></div>`;
 
     const guest=!session||!user;
     const preview=guest&&!previewExpanded?visible.slice(0,3):visible;
     demoPage=Math.min(demoPage,preview.length-1);
+    const current=preview[demoPage];
+    seenRecommendations.add(current.id);
+    const exhausted=visible.every(match=>seenRecommendations.has(match.id));
+    const discovery=visible.length>1?`<div class="fm-beta-discovery"><p role="status">${exhausted?'조건에 맞는 경기를 모두 봤어요.':'조건은 유지하고, 아직 보지 않은 경기를 추천해요.'}</p><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${exhausted?'restart-discovery':'random-recommendation'}">${exhausted?'다시 둘러보기':'다른 경기 추천'}</button></div>`:'<p class="fm-beta-discovery-note">조건에 맞는 경기는 1개예요. 필터를 바꾸면 다른 경기를 찾을 수 있어요.</p>';
     const gatedNext=guest&&!previewExpanded&&demoPage===preview.length-1&&visible.length>preview.length;
-    return `${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${previewExpanded?'전체 보기':`${preview.length}개 미리보기`}</span></div>`:''}<div class="fm-beta-match-list">${renderMatch(preview[demoPage])}</div>${preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'expand-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'전체 추천 보기':'다음'}</button></nav>`:''}`;
+    return `${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${previewExpanded?'전체 보기':`${preview.length}개 미리보기`}</span></div>`:''}<div class="fm-beta-match-list">${renderMatch(current)}</div>${discovery}${preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'expand-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'전체 추천 보기':'다음'}</button></nav>`:''}`;
   }
 
 
@@ -229,9 +246,11 @@ if(root){
   }
 
   function renderOpening(){
+    const example=matches.find(match=>match.isDemo&&match.status==='open'&&match.remaining>0&&new Date(match.startsAt)>new Date());
     return `<div class="fm-beta-shell fm-beta-opening" data-screen="welcome" data-welcome-entry="app"><div class="fm-app-entry">
       <div class="fm-app-entry-brand"><img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate 축구공 로고"><strong class="fm-app-entry-name">FootMate</strong><span class="fm-app-entry-tagline">나에게 맞는 풋살, 함께 뛰는 즐거움</span></div>
-      <div class="fm-next-intro-copy"><h1>내 조건에 맞는 경기를<br>찾아보세요.</h1><p>실력·위치·포지션을 설정하면<br>맞는 경기를 추천해드려요.</p></div>
+      <div class="fm-next-intro-copy"><h1>조건만 고르면,<br>함께 뛸 경기를 추천해요.</h1><p>지역·실력·포지션·시간을 고르고<br>조건에 맞는 다른 경기도 만나보세요.</p></div>
+      ${example?`<section class="fm-beta-opening-preview" aria-label="추천 예시"><small>추천 예시 · 데모 경기</small><h2>${esc(example.title)}</h2><p>${esc(example.place)} · ${esc(example.level)}</p><p>${esc(formatStart(example.startsAt))}</p></section>`:''}
       <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'계속하기':'내 조건으로 추천받기'}</button></div>
     </div></div>`;
   }
@@ -389,6 +408,17 @@ if(root){
       if(!authOpen&&!isDemoEntry){location.assign('/demo');return}
       render();return;
     }
+    if(action==='random-recommendation'||action==='restart-discovery'){
+      if(recommendationBusy)return;
+      const eligible=recommendationMatches();
+      if(action==='restart-discovery'){
+        const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
+        seenRecommendations=new Set(current?[current]:[]);
+      }
+      const next=pickUnseenRecommendation(eligible.map(match=>match.id),seenRecommendations);
+      if(next){previewExpanded=true;demoPage=eligible.findIndex(match=>match.id===next);render();root.querySelector('.fm-beta-discovery button')?.focus();}
+      return;
+    }
     if(action==='demo-prev'||action==='demo-next'){demoPage=Math.max(0,demoPage+(action==='demo-next'?1:-1));render();return}
     if(action==='matches-tab'){matchesTab=target.dataset.tab;render();return}
     if(action==='account-tab'){accountTab=target.dataset.tab;render();return}
@@ -468,8 +498,30 @@ if(root){
   });
 
   window.addEventListener('footmate:beta:recommendations',event=>{
-    demoPage=0;recommendedIds=event.detail?.ids??null;recommendationReasons=event.detail?.reasons||{};
+    const focusedFilter=document.activeElement?.id;
+    const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
+    const conditions=event.detail?.conditions||'';
+    const firstRecommendation=!recommendationConditions;
+    const changed=conditions!==recommendationConditions;
+    recommendationConditions=conditions;
+    recommendationBusy=Boolean(event.detail?.busy);
+    recommendedIds=event.detail?.ids??null;recommendationReasons=event.detail?.reasons||{};
+    if(changed){
+      demoPage=0;previewExpanded=false;seenRecommendations.clear();
+      recommendationAnchorId=firstRecommendation&&recommendedIds?.includes(pendingMatchId)?pendingMatchId:'';
+      if(recommendationAnchorId){demoPage=recommendedIds.indexOf(recommendationAnchorId);if(demoPage>=3)previewExpanded=true;}
+    }
+    else{
+      if(recommendationBusy&&current)recommendationAnchorId=current;
+      const anchor=recommendationAnchorId||current;
+      if(anchor&&recommendedIds?.includes(anchor)){demoPage=recommendedIds.indexOf(anchor);if(demoPage>=3)previewExpanded=true;}
+    }
+    if(!recommendationBusy)recommendationAnchorId='';
+    // Ranking updates must not replace an active detail, login or account view.
+    if(detailMatchId||authOpen||openingOpen||view!=='home')return;
     render();
+    // Growth restores its controls after the base view is rendered.
+    if(focusedFilter?.startsWith('quick-filter-'))queueMicrotask(()=>document.getElementById(focusedFilter)?.focus());
   });
   boot();
 }
