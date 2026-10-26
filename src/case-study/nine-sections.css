@@ -881,3 +881,7 @@ body{font-size:var(--cs-body-size);line-height:1.8}
  .ui-compare-window{height:220px}
  .image-dialog-caption{font-size:13px}
 }
+
+/* Current Demo wireframes show their full structure without cropping. */
+#main #section-07 .wireframe-record img[src*="current-wireframe-"]{object-fit:contain;object-position:center;background:#fff}
+.image-dialog-body img[src*="current-wireframe-"]{width:560px;min-width:560px;max-width:none;height:auto;object-fit:contain}
