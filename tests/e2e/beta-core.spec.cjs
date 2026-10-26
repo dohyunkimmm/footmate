@@ -541,11 +541,12 @@ test('general login clears abandoned match context while a new participation kee
  await page.getByRole('button',{name:'로그인',exact:true}).click();
  await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toHaveCount(0);
  expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:pending-match:v1'))).toBeNull();
+ await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
+ await page.getByRole('button',{name:'참가하기',exact:true}).click();
+ await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toContainText(next.title);
+ await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
+ await page.getByRole('button',{name:'로그인',exact:true}).click();
  await page.reload();
  await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toHaveCount(0);
- // Reopen the current match's participation flow after the general login.
- const back=page.getByRole('button',{name:'← 뒤로',exact:true});
- if(await back.isVisible())await back.click();
- await page.getByRole('button',{name:'참가하기',exact:true}).click();
- await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toContainText(await page.evaluate(()=>{const id=sessionStorage.getItem('footmate:beta:pending-match:v1');return id==='11111111-1111-4111-8111-222222222222'?'다음 풋살 경기':'영통 금요일 저녁 경기'}));
+ expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:pending-match:v1'))).toBeNull();
 });
