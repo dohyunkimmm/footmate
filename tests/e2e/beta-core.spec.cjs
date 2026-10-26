@@ -550,3 +550,100 @@ test('general login clears abandoned match context while a new participation kee
  await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toHaveCount(0);
  expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:pending-match:v1'))).toBeNull();
 });
+
+
+test('random discovery keeps filters, avoids repeats and never calls AI for another draw',async({page})=>{
+  await mockBackend(page);
+  const eligible=[0,1,2,3].map(i=>({...baseMatch,id:`random-${i}`,title:`조건 일치 경기 ${i}`}));
+  const ineligible=[{...baseMatch,id:'full',status:'full',remaining_spots:0},{...baseMatch,id:'past',starts_at:'2000-01-01T00:00:00Z'}];
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[...eligible,...ineligible]));
+  const requests=[];
+  await page.route('**/api/ai-match-assistant',route=>{requests.push(route.request().postDataJSON());return fulfill(route,{mode:'connected-ai',rankedMatchIds:eligible.map(m=>m.id)})});
+  await page.goto('/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id','random-0');
+  const seen=new Set(['random-0']);
+  const conditions=await page.evaluate(()=>localStorage.getItem('footmate:beta:preferences:v1'));
+  for(let i=0;i<3;i++){
+    await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
+    const id=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+    expect(seen.has(id)).toBe(false);expect(eligible.map(m=>m.id)).toContain(id);seen.add(id);
+  }
+  await expect(page.getByText('조건에 맞는 경기를 모두 봤어요.',{exact:true})).toBeVisible();
+  const last=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+  await page.getByRole('button',{name:'다시 둘러보기',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',last);
+  expect(requests).toHaveLength(1);
+  expect(requests[0].candidates.map(m=>m.id)).toEqual(eligible.map(m=>m.id));
+  expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:preferences:v1'))).toBe(conditions);
+});
+
+test('quick filters update results in place and zero results offer explicit recovery',async({page})=>{
+  await mockBackend(page);
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await page.locator('#quick-filter-position').click();
+  await page.getByRole('group',{name:'빠른 포지션',exact:true}).getByRole('radio',{name:'GK · 골키퍼',exact:true}).check();
+  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'전체 조건 해제',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'전체 조건 해제',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await page.locator('#quick-filter-afterTime').click();
+  await page.getByRole('group',{name:'빠른 선호 시간',exact:true}).getByRole('radio',{name:'저녁 8시 이후',exact:true}).check();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await page.locator('#quick-filter-region').click();
+  await page.getByRole('group',{name:'빠른 활동 지역',exact:true}).getByRole('radio',{name:'서울 · 강남',exact:true}).check();
+  await expect(page.getByRole('button',{name:'시간 조건 해제',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'시간 조건 해제',exact:true}).click();
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')));
+  expect(saved.region).toBe('서울 · 강남');expect(saved.afterTime).toBe('');
+  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'전체 조건 해제',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  for(const width of [320,375,390,430,1440]){
+    await page.setViewportSize({width,height:844});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+    await expect(page.getByRole('button',{name:'상세 보기',exact:true})).toBeInViewport();
+  }
+  expect(await serious(page)).toEqual([]);
+});
+
+test('AI loading hides provisional cards and late responses cannot overwrite a newer filter',async({page})=>{
+  await mockBackend(page,{preferences:false});
+  const second={...baseMatch,id:'second-region',region:'서울 · 강남',title:'강남 경기'};
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[baseMatch,second]));
+  const pending=[];
+  await page.route('**/api/ai-match-assistant',route=>{pending.push(route)});
+  await page.goto('/beta');
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
+  await expect.poll(()=>pending.length).toBe(1);
+  await expect(page.getByText('선택한 조건으로 추천을 준비하고 있어요.',{exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-match')).toHaveCount(0);
+  await page.locator('#quick-filter-region').click();
+  await page.getByRole('group',{name:'빠른 활동 지역',exact:true}).getByRole('radio',{name:'서울 · 강남',exact:true}).check();
+  await expect.poll(()=>pending.length).toBe(2);
+  await fulfill(pending[1],{mode:'connected-ai',rankedMatchIds:['invented',second.id]});
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',second.id);
+  await fulfill(pending[0],{mode:'connected-ai',rankedMatchIds:[matchId]});
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',second.id);
+  await expect(page.locator('#quick-filter-region')).toBeFocused();
+});
+
+test('refreshing recommendations preserves the viewed match and discovery history',async({page})=>{
+  await mockBackend(page);
+  const rows=[baseMatch,{...baseMatch,id:'second',title:'두 번째 경기'},{...baseMatch,id:'third',title:'세 번째 경기'}];
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,rows));
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:rows.map(m=>m.id)}));
+  await page.goto('/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
+  const id=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+  await page.getByRole('button',{name:'새로고침',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',id);
+  await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',id);
+  await expect(page.getByText('조건에 맞는 경기를 모두 봤어요.',{exact:true})).toBeVisible();
+});

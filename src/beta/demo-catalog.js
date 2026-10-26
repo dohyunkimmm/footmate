@@ -7,7 +7,7 @@ const templates=[
  ['영통 주말 풋살','수원 · 영통','영통 데모 풋살장','초중급','6 vs 6',18],
  ['기흥 저녁 풋살','용인 · 기흥','기흥 데모 풋살장','중급','6 vs 6',20],
  ['강남 퇴근 후 풋살','서울 · 강남','강남 데모 풋살장','초중급','5 vs 5',21],
- ['영통 초보 풋살','수원 · 영통','영통 데모 풋살장','중급','6 vs 6',20],
+ ['영통 초보 풋살','수원 · 영통','영통 데모 풋살장','입문','6 vs 6',20],
  ['기흥 처음 시작하는 풋살','용인 · 기흥','기흥 데모 풋살장','입문','6 vs 6',19],
  ['인계 주말 풋살','수원 · 인계','인계 데모 풋살장','초중급','6 vs 6',18]
 ];
@@ -47,3 +47,4 @@ export function joinDemoMatch(userId,matchId,position){
  window.dispatchEvent(new Event('footmate:beta:demo-changed'));
 }
 export function cancelDemoMatch(userId,matchId){localStorage.setItem(KEY,JSON.stringify(read().map(p=>p.user_id===userId&&p.match_id===matchId?{...p,status:'canceled'}:p)));window.dispatchEvent(new Event('footmate:beta:demo-changed'))}
+

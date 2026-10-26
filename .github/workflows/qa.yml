@@ -103,6 +103,8 @@ jobs:
         run: node scripts/check-app-performance-budget.cjs
       - name: Run platform regression contracts
         run: node tests/contracts/platform.contract.mjs
+      - name: Check filtered discovery and non-repeating recommendations
+        run: node tests/contracts/recommendation-discovery.contract.mjs
       - name: Check player-to-match suitability facts
         run: node tests/contracts/matching.contract.mjs
       - name: Run release candidate contracts
