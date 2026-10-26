@@ -501,17 +501,24 @@ if(root){
     const focusedFilter=document.activeElement?.id;
     const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
     const conditions=event.detail?.conditions||'';
+    const firstRecommendation=!recommendationConditions;
     const changed=conditions!==recommendationConditions;
     recommendationConditions=conditions;
     recommendationBusy=Boolean(event.detail?.busy);
     recommendedIds=event.detail?.ids??null;recommendationReasons=event.detail?.reasons||{};
-    if(changed){demoPage=0;previewExpanded=false;seenRecommendations.clear();recommendationAnchorId='';}
+    if(changed){
+      demoPage=0;previewExpanded=false;seenRecommendations.clear();
+      recommendationAnchorId=firstRecommendation&&recommendedIds?.includes(pendingMatchId)?pendingMatchId:'';
+      if(recommendationAnchorId){demoPage=recommendedIds.indexOf(recommendationAnchorId);if(demoPage>=3)previewExpanded=true;}
+    }
     else{
       if(recommendationBusy&&current)recommendationAnchorId=current;
       const anchor=recommendationAnchorId||current;
       if(anchor&&recommendedIds?.includes(anchor)){demoPage=recommendedIds.indexOf(anchor);if(demoPage>=3)previewExpanded=true;}
     }
     if(!recommendationBusy)recommendationAnchorId='';
+    // Ranking updates must not replace an active detail, login or account view.
+    if(detailMatchId||authOpen||openingOpen||view!=='home')return;
     render();
     // Growth restores its controls after the base view is rendered.
     if(focusedFilter?.startsWith('quick-filter-'))queueMicrotask(()=>document.getElementById(focusedFilter)?.focus());

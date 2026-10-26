@@ -191,7 +191,7 @@ jobs:
           node --test tests/contracts/typography-report.contract.cjs
           node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Verify changed choice-to-login journey before full screen QA
-        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position"
+        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection"
       - name: Upload changed journey screen evidence
         if: always()
         uses: actions/upload-artifact@v6

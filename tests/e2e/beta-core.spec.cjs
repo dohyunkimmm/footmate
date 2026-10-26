@@ -439,8 +439,10 @@ test('mobile match detail keeps selection through login and returns to app navig
   await expect(page.getByRole('heading',{name:'경기 상세',exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'MF로 참가',exact:true})).toBeVisible();
   expect(backend.isJoined()).toBe(false);
-  const bounds=await page.getByRole('button',{name:'MF로 참가',exact:true}).boundingBox();
-  expect(bounds.y+bounds.height).toBeLessThanOrEqual(700);
+  await expect.poll(async()=>{
+    const bounds=await page.getByRole('button',{name:'MF로 참가',exact:true}).boundingBox();
+    return Boolean(bounds&&bounds.y+bounds.height<=700);
+  }).toBe(true);
   expect(await page.evaluate(()=>document.documentElement.scrollHeight>innerHeight)).toBe(false);
   expect(await serious(page)).toEqual([]);
   await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
@@ -661,4 +663,20 @@ test('a refreshed full position cannot be drawn from stale recommendation IDs',a
   await page.getByRole('button',{name:'새로고침',exact:true}).click();
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id','available-second');
   await expect(page.getByRole('button',{name:'다른 경기 추천',exact:true})).toHaveCount(0);
+});
+
+test('random discovery keeps the drawn demo match through participation login',async({page})=>{
+  const backend=await mockBackend(page,{empty:true});
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.goto('/demo');
+  await expect(page.getByRole('button',{name:'다른 경기 추천',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
+  const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.waitForURL('**/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',selected);
+  expect(backend.isJoined()).toBe(false);
 });
