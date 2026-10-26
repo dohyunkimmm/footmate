@@ -173,7 +173,7 @@ test('released demo opens the connected Beta with useful actions only',async({pa
     await expect(page.locator('#footmate-next')).toHaveCount(0);
     await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
     await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeHidden();
-    await expect(page.getByText('나에게 맞는 경기',{exact:true})).toBeVisible();
+    await expect(page.getByText('전체 경기 둘러보기',{exact:true})).toBeVisible();
     await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
     const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
     expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
@@ -521,8 +521,8 @@ test('participation login explains selected match and stays scrollable on a shor
  await expect(context).toContainText(baseMatch.title);
  await expect(context).toContainText('로그인만으로 참가가 확정되지는 않아요.');
  await expect(context).toContainText('9월');
- await page.getByRole('button',{name:'Google로 계속하기'}).scrollIntoViewIfNeeded();
- await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeInViewport();
+ await page.getByRole('button',{name:'로그인',exact:true}).scrollIntoViewIfNeeded();
+ await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeInViewport();
  expect(await serious(page)).toEqual([]);
  await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
  await expect(page.getByRole('heading',{name:baseMatch.title,exact:true})).toBeVisible();
