@@ -527,3 +527,25 @@ test('participation login explains selected match and stays scrollable on a shor
  await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
  await expect(page.getByRole('heading',{name:baseMatch.title,exact:true})).toBeVisible();
 });
+
+test('general login clears abandoned match context while a new participation keeps its own selection',async({page})=>{
+ await mockBackend(page);
+ const next={...baseMatch,id:'11111111-1111-4111-8111-222222222222',title:'다음 풋살 경기'};
+ await page.route(origin+'/rest/v1/matches**',route=>fulfill(route,[baseMatch,next]));
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'참가하기',exact:true}).click();
+ await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toContainText(baseMatch.title);
+ await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
+ await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).getByRole('button',{name:'다음',exact:true}).click();
+ await expect(page.getByRole('heading',{name:next.title,exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'로그인',exact:true}).click();
+ await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toHaveCount(0);
+ expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:pending-match:v1'))).toBeNull();
+ await page.reload();
+ await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toHaveCount(0);
+ // Reopen the current match's participation flow after the general login.
+ const back=page.getByRole('button',{name:'← 뒤로',exact:true});
+ if(await back.isVisible())await back.click();
+ await page.getByRole('button',{name:'참가하기',exact:true}).click();
+ await expect(page.getByRole('region',{name:'참가할 경기',exact:true})).toContainText(await page.evaluate(()=>{const id=sessionStorage.getItem('footmate:beta:pending-match:v1');return id==='11111111-1111-4111-8111-222222222222'?'다음 풋살 경기':'영통 금요일 저녁 경기'}));
+});
