@@ -352,3 +352,6 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-opening .fm-next-intro-copy p{font-size:16px;line-height:1.65}
 @media(max-width:360px){.fm-beta-detail .fm-beta-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.fm-beta-detail-facts>div{grid-template-columns:72px minmax(0,1fr);gap:8px}}
 @media(max-height:700px){.fm-beta-catalog .fm-beta-demo-pager{margin-top:16px;padding-top:0}.fm-beta-detail-facts{gap:10px;margin-top:16px;padding-top:16px}.fm-beta-opening .fm-app-entry-logo{width:64px;height:64px}.fm-beta-opening .fm-next-intro-copy{margin:20px 0}}
+
+/* Keep preference actions reachable in short viewports without scrolling the app shell. */
+[data-beta-app="true"] [data-beta-main]:has(.fm-beta-preferences){overflow-y:auto;overscroll-behavior-y:contain;scroll-padding-block:12px;padding-bottom:12px}
