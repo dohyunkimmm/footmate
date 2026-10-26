@@ -53,7 +53,7 @@ test('research, QA improvements and policy evidence have separate responsibiliti
  await page.locator('.toc-item').nth(7).click();await expect(page.locator('#section-08 table')).toHaveCount(2);
  await page.locator('#section-08 summary').click();await expect(page.locator('#section-08')).toContainText('경기별 취소 마감');
  await page.locator('.toc-item').nth(9).click();await expect(page.locator('#section-10 .qa-evidence-table tbody tr')).toHaveCount(3);
- await expect(page.locator('#section-10')).toContainText('사용자 과업 검증에서 직접 도출된 결과로 연결하지 않습니다');
+ await expect(page.locator('#section-10')).toContainText('사용자 과업 검증에서 직접 도출된 결과와는 구분');
  await expect(page.locator('#section-10 .portfolio-method-details')).toHaveCount(0);
  await expect(page.locator('#section-10')).not.toContainText('8개 KPI');
 });
@@ -326,3 +326,17 @@ for(const width of [1440,1920]){
   await testInfo.attach('composition-and-scroll-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});
  });
 }
+
+// Narrative headings retain their wording; supporting copy uses concise endings.
+test('supporting copy avoids sentence endings across all eleven sections',async({page})=>{
+ await page.goto('/');
+ const endings=await page.locator('.slide').evaluateAll(sections=>sections.flatMap(section=>[...section.querySelectorAll('p,figcaption,td,li,dd,blockquote')].filter(n=>/다[.!?]/.test(n.textContent)).map(n=>({section:section.id,text:n.textContent.trim()}))));
+ expect(endings).toEqual([]);
+ await page.locator('#section-01 .evidence-preview').click();
+ await expect(page.locator('.image-dialog-caption')).not.toContainText(/다[.!?]/);
+ await page.keyboard.press('Escape');
+ await page.locator('.toc-item').nth(5).click();
+ await expect(page.locator('.flow-selection-status')).not.toContainText(/다[.!?]/);
+ await page.locator('.flow-step-button').first().click();
+ await expect(page.locator('.flow-selection-status')).not.toContainText(/다[.!?]/);
+});
