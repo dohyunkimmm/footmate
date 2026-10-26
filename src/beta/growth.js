@@ -66,7 +66,7 @@ async function recommend(form){
 async function applyPreferences(next){
  draft=null;initialRecommendationRequested=true;preferences={...next,sport:'futsal'};
  try{localStorage.setItem(PREFERENCES_KEY,JSON.stringify(preferences))}catch{}
- editing=false;emitDiscoveryMeasurement('filters_applied',{filterCount:Object.entries(preferences).filter(([key,value])=>key!=='sport'&&value).length});await rankWithAI();
+ editing=false;emitDiscoveryMeasurement('filters_applied',{isDemo:matches.length>0&&matches.every(m=>m.is_demo),filterCount:Object.entries(preferences).filter(([key,value])=>key!=='sport'&&value).length});await rankWithAI();
 }
 async function rankWithAI(){
  if(!preferences)return;
@@ -74,7 +74,7 @@ async function rankWithAI(){
  const controller=new AbortController();activeRecommendationController=controller;const timeout=setTimeout(()=>controller.abort(),9000);
  const fingerprint=recommendationFingerprint(matches,preferences);
  const candidates=diverseRecommendationCandidates(rank(preferences));
- const started=Date.now();emitDiscoveryMeasurement('recommendation_requested',{candidateCount:candidates.length});
+ const started=Date.now();emitDiscoveryMeasurement('recommendation_requested',{candidateCount:candidates.length,isDemo:candidates.length>0&&candidates.every(row=>row.m.is_demo)});
  const labels=['풋살',preferences.region,preferences.level,preferences.position,preferences.afterTime?`${preferences.afterTime} 이후`:''].filter(Boolean);
  try{
   if(!candidates.length)return;
@@ -86,7 +86,7 @@ async function rankWithAI(){
   aiOrder=[...new Set(body.rankedMatchIds.filter(id=>allowed.has(id)))];if(!aiOrder.length)throw new Error('invalid-ranking');
   try{localStorage.setItem('footmate:beta:ranking:v1',JSON.stringify({conditions:JSON.stringify(preferences),ids:aiOrder,fingerprint,createdAt:Date.now()}))}catch{}publishRecommendations();
  }catch{if(requestId===recommendationRequestId)message='AI 연결이 지연되어 선택한 조건으로 찾았어요.'}
- finally{clearTimeout(timeout);if(requestId===recommendationRequestId){busy=false;publishRecommendations();render();emitDiscoveryMeasurement('recommendation_completed',{resultCount:recommendation?.ranked.length||0,durationMs:Date.now()-started,mode:aiOrder.length?'ai':'rules'});}}
+ finally{clearTimeout(timeout);if(requestId===recommendationRequestId){busy=false;publishRecommendations();render();emitDiscoveryMeasurement('recommendation_completed',{resultCount:recommendation?.ranked.length||0,durationMs:Date.now()-started,isDemo:recommendation?.ranked.length>0&&recommendation.ranked.every(row=>row.m.is_demo),mode:aiOrder.length?'ai':'rules'});}}
 }
 async function waitlistAction(id,cancel){busy=true;render();try{if(cancel)await rpc('cancel_beta_waitlist',{p_match_id:id});else{if(!profile?.position)throw new Error('선호 포지션을 먼저 설정해주세요.');await rpc('join_beta_waitlist',{p_match_id:id,p_position:profile.position})}message=cancel?'대기 신청을 취소했습니다.':'대기 신청했습니다. 빈 자리가 생기면 자동 참가 전환됩니다.';await loadState()}catch(e){message=String(e?.message||e)}finally{busy=false;render()}}
 async function submitFeedback(form){const data=new FormData(form);busy=true;render();try{await rpc('submit_beta_match_feedback',{p_match_id:form.dataset.matchId,p_difficulty:Number(data.get('difficulty')),p_satisfaction:Number(data.get('satisfaction')),p_repeat_intent:data.get('repeatIntent')==='on',p_note:String(data.get('note')||'')||null});message='경기 후 피드백을 저장했습니다.';await loadState()}catch(e){message=String(e?.message||e)}finally{busy=false;render()}}

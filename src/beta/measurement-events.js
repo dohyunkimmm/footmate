@@ -39,7 +39,7 @@ export function createDiscoveryMeasurement(name,context={},scope='beta'){
   return Object.freeze(event);
 }
 export function emitDiscoveryMeasurement(name,context={}){
-  const scope=typeof location!=='undefined'&&location.pathname.replace(/\/$/,'')==='/demo'?'demo':'beta';
+  const scope=context.isDemo===true||(typeof location!=='undefined'&&location.pathname.replace(/\/$/,'')==='/demo')?'demo':'beta';
   const payload=createDiscoveryMeasurement(name,context,scope);
   recordDiscoveryEvent(payload);
   if(typeof window!=='undefined')window.dispatchEvent(new window.CustomEvent(DISCOVERY_MEASUREMENT_EVENT,{detail:payload}));
@@ -52,7 +52,7 @@ function recordDiscoveryEvent(payload){
     let rows=JSON.parse(sessionStorage.getItem(DISCOVERY_KEY)||'[]');if(!Array.isArray(rows))rows=[];
     const flowKey='footmate:beta:discovery-flow:v1';
     let flowId=sessionStorage.getItem(flowKey);if(!flowId){flowId=crypto.randomUUID();sessionStorage.setItem(flowKey,flowId)}
-    const scope=location.pathname.replace(/\/$/,'')==='/demo'?'demo':'beta';
+    const scope=payload.source==='demo'||payload.matchId?.startsWith('demo-')||location.pathname.replace(/\/$/,'')==='/demo'?'demo':'beta';
     const recorded={...payload,discoveryFlowId:flowId,source:scope==='demo'?'demo':payload.source,cohort:scope==='demo'?'demo':'unclassified'};
     sessionStorage.setItem(DISCOVERY_KEY,JSON.stringify([...rows.slice(-199),recorded]));
   }catch{}
