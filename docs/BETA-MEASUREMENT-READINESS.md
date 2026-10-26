@@ -70,3 +70,8 @@ Measured Result는 아래 조건을 모두 만족할 때만 공개합니다.
 - 충분한 표본·비교 설계가 없으면 인과적 표현인 “개선했다”, “증가시켰다”를 사용하지 않습니다.
 
 세부 KPI의 분자·분모·관찰 기준은 [`SERVICE-PLANNING-EVIDENCE.md`](./SERVICE-PLANNING-EVIDENCE.md)를 기준으로 유지합니다.
+
+
+## 탐색 계측 구현 보완 · 2026-10-27
+필터 적용·추천 요청/완료·카드 노출·다시 추천·상세 진입과 참가 이벤트를 탭의 탐색 ID로 연결해 sessionStorage에 최대 200개 보관합니다. 탐색 채널은 `footmate:beta:discovery-measurement`입니다. Demo는 source/cohort를 demo로, Beta는 cohort를 unclassified로 유지합니다. 이메일·인증 토큰·지역 조건 원문은 수집하지 않습니다.
+브라우저 내 계측 준비이며 서버 전송·분석 대시보드·실제 사용자 성과 집계는 미연결입니다. KPI 미측정 상태를 유지합니다.

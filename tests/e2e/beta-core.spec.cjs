@@ -681,3 +681,38 @@ test('random discovery keeps the drawn demo match through participation login',a
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',selected);
   expect(backend.isJoined()).toBe(false);
 });
+
+test('enhanced discovery applies Seoul dates and exclusive start-time bounds',async({page})=>{
+ await mockBackend(page);
+ await page.clock.setFixedTime(new Date('2026-10-26T15:00:00Z'));
+ const rows=[{...baseMatch,id:'today-match',starts_at:'2026-10-27T20:00:00+09:00'},{...baseMatch,id:'tomorrow-match',starts_at:'2026-10-28T21:00:00+09:00'}];
+ await page.route(origin+'/rest/v1/matches?**',r=>fulfill(r,rows));
+ await page.route('**/api/ai-match-assistant',r=>fulfill(r,{rankedMatchIds:r.request().postDataJSON().candidates.map(m=>m.id)}));
+ await page.goto('/beta');
+ await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+ await page.locator('#quick-filter-afterTime').click();
+ await page.getByRole('group',{name:'빠른 경기 날짜',exact:true}).getByRole('radio',{name:'내일',exact:true}).click();
+ await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id','tomorrow-match');
+ await page.locator('#quick-filter-afterTime').click();
+ await page.getByRole('group',{name:'빠른 시작 시간 상한',exact:true}).getByRole('radio',{name:'저녁 6시 전 시작',exact:true}).click();
+ await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'시간 조건 해제',exact:true}).click();
+ await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id','tomorrow-match');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).dateWindow)).toBe('tomorrow');
+});
+
+test('enhanced discovery reuses valid rankings, expires them and separates demo measurement',async({page})=>{
+ await mockBackend(page);
+ let calls=0;
+ await page.route('**/api/ai-match-assistant',r=>{calls++;return fulfill(r,{rankedMatchIds:r.request().postDataJSON().candidates.map(m=>m.id)})});
+ await page.goto('/demo');await expect(page.getByRole('button',{name:'다른 경기 추천',exact:true})).toBeVisible();
+ await expect.poll(()=>calls).toBe(1);
+ await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
+ const local=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('footmate:beta:discovery-events:v1')));
+ expect(local.some(e=>e.event==='recommendation_redrawn')).toBe(true);
+ expect(local.every(e=>e.source==='demo'&&e.cohort==='demo')).toBe(true);
+ expect(local.every(e=>!('email' in e)&&!('access_token' in e))).toBe(true);
+ await page.reload();await expect(page.locator('.fm-beta-match')).toHaveCount(1);expect(calls).toBe(1);
+ await page.evaluate(()=>{const key='footmate:beta:ranking:v1';const value=JSON.parse(localStorage.getItem(key));value.createdAt=Date.now()-300001;localStorage.setItem(key,JSON.stringify(value))});
+ await page.reload();await expect.poll(()=>calls).toBe(2);
+});
