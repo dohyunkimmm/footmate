@@ -14,8 +14,9 @@ export function personalizeRecommendations(matches,reactions){
    if(r.kind==='too_far'&&r.venue===match.place)signal-=1;
    if(r.kind==='different_time'&&r.hour===hour)signal-=1;
   }
-  return {match,index,score:index-Math.max(-3,Math.min(3,signal))};
- }).sort((a,b)=>a.score-b.score||a.index-b.index).map(r=>r.match);
+  const weight=Math.max(-3,Math.min(3,signal));
+  return {match,index,signal:weight,score:index-weight};
+ }).sort((a,b)=>a.score-b.score||b.signal-a.signal||a.index-b.index).map(r=>r.match);
 }
 export function chooseOpeningVariant(value,stored,random=Math.random){
  if(value==='control'||value==='quick')return value;

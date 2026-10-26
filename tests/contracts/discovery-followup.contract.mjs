@@ -7,11 +7,13 @@ assert.equal(normalizeReactions([{matchId:'a',kind:'interested',at:now+1000},{ma
 assert.equal(normalizeReactions(Array.from({length:60},(_,i)=>({matchId:String(i),kind:'interested',at}))).length,50);
 const candidates=[{id:'a',place:'A',startsAt:'2099-01-01T20:00:00+09:00'},{id:'b',place:'B',startsAt:'2099-01-01T21:00:00+09:00'},{id:'c',place:'B',startsAt:'2099-01-01T22:00:00+09:00'}];
 const interest={matchId:'past',kind:'interested',venue:'B',at,scope:'live'};
-assert.deepEqual(personalizeRecommendations(candidates,[interest,interest]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(personalizeRecommendations(candidates,[interest]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'too_far',venue:'A'}]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(personalizeRecommendations(candidates,[interest,interest]).map(m=>m.id),['b','c','a']);
 assert.deepEqual(personalizeRecommendations(candidates,[{...interest,scope:'demo'}]),candidates);
-assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'too_far',venue:'A'},{...interest,kind:'too_far',venue:'A'}]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'too_far',venue:'A'},{...interest,kind:'too_far',venue:'A'}]).map(m=>m.id),['b','c','a']);
 assert.deepEqual(new Set(personalizeRecommendations(candidates,[interest]).map(m=>m.id)),new Set(candidates.map(m=>m.id)));
-assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'different_time',hour:'20'},{...interest,kind:'different_time',hour:'20'}]).map(m=>m.id),['b','a','c']);
+assert.deepEqual(personalizeRecommendations(candidates,[{...interest,kind:'different_time',hour:'20'},{...interest,kind:'different_time',hour:'20'}]).map(m=>m.id),['b','c','a']);
 assert.equal(chooseOpeningVariant(null,'quick'),'control');
 assert.equal(chooseOpeningVariant('quick','control'),'quick');
 assert.equal(chooseOpeningVariant('compare',null,()=>0.9),'quick');
