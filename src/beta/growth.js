@@ -57,7 +57,7 @@ function publishRecommendations(){
  const ranked=preferences?rank({...preferences,sport:'futsal'}):null;
  if(ranked&&aiOrder.length){const positions=new Map(aiOrder.map((id,i)=>[id,i]));ranked.sort((a,b)=>(positions.get(a.m.id)??999)-(positions.get(b.m.id)??999))}
  recommendation=preferences?{ranked}:null;
- window.dispatchEvent(new CustomEvent('footmate:beta:recommendations',{detail:{conditions:JSON.stringify(preferences),busy,reactions:feedback.filter(f=>f.repeat_intent===true).map(f=>{const m=matches.find(m=>m.id===f.match_id&&!m.is_demo);return m?{matchId:m.id,kind:'interested',venue:m.venue_name,at:Date.parse(f.updated_at||f.created_at),scope:'live'}:null}).filter(Boolean),ids:ranked?.map(x=>x.m.id)??null,reasons:Object.fromEntries((ranked||[]).map(x=>[x.m.id,x.reasons]))}}));
+ window.dispatchEvent(new CustomEvent('footmate:beta:recommendations',{detail:{conditions:JSON.stringify(preferences),busy,reactions:feedback.filter(f=>f.repeat_intent===true).map(f=>{const m=matches.find(m=>m.id===f.match_id&&!m.is_demo);return m?{matchId:m.id,userId:f.user_id,kind:'interested',venue:m.venue_name,at:Date.parse(f.updated_at||f.created_at),scope:'live'}:null}).filter(Boolean),ids:ranked?.map(x=>x.m.id)??null,reasons:Object.fromEntries((ranked||[]).map(x=>[x.m.id,x.reasons]))}}));
 }
 async function recommend(form){
  const data=new FormData(form);

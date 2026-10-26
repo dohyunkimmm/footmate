@@ -84,7 +84,7 @@ if(root){
     localStorage.removeItem(SESSION_KEY);
     session=null;
     user=null;
-    profile=null;closeDetail();
+    profile=null;serverReactions=[];closeDetail();
     void configureDiscoveryTransport(null,'','');
     participations=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
   }
@@ -229,7 +229,7 @@ if(root){
       positions:Object.keys(match.positionSlots),match_slots:Object.entries(match.positionSlots).map(([position,remaining_spots])=>({position,remaining_spots}))
     },conditions));
     const ordered=recommendedIds===null?available:recommendedIds.map(id=>available.find(match=>match.id===id)).filter(Boolean);
-    return personalizeRecommendations(ordered,[...reactions(false),...reactions(true),...serverReactions]);
+    return personalizeRecommendations(ordered,[...reactions(false),...reactions(true),...serverReactions.filter(r=>user&&r.userId===user.id)]);
   }
 
   function renderMatches(){
