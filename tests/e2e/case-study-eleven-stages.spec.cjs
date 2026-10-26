@@ -1,7 +1,7 @@
 // Current eleven-section Case Study contract.
 const {test,expect}=require('@playwright/test');
 const AxeBuilder=require('@axe-core/playwright').default;
-const titles=['Overview & Problem','User Research','Persona & Journey','Scope & Priorities','IA & Navigation','Flowchart & Recovery','Wireframe & Screens','Functions & Policies','AI & Prototype','Validation & UX','Reflection & Next'];
+const titles=['Overview & Problem','User Research','Persona & Journey','Scope & Priorities','IA & Navigation','Flowchart & Recovery','UI 화면과 동작 명세','Functions & Policies','AI & Prototype','Validation & UX','Reflection & Next'];
 
 for(const width of [320,390,800,1440,1920]){
  test(`eleven-section navigation, evidence and accessibility at ${width}px`,async({page},testInfo)=>{
