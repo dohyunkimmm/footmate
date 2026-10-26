@@ -39,7 +39,7 @@ for(const token of ['realtime/v1/websocket','postgres_changes','matchesConstrain
   assert.ok(growth.includes(token),`missing browser growth contract: ${token}`);
 assert.ok(!growth.includes('Math.random'),'live recommendation must remain deterministic');
 assert.ok(html.includes('/src/beta/growth.css?v=1'));
-assert.ok(html.includes("import('/src/beta/growth.js?v=1')"));
+assert.ok(html.includes("import('/src/beta/growth.js?v=2')"));
 
 
 // Keep the applied advisor-driven FK indexes represented in versioned migrations.

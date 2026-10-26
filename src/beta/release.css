@@ -274,7 +274,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-match-cover i{top:50%;transform:translateY(-50%)}
 .fm-beta-catalog .fm-beta-match-actions{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8px;margin-top:14px;padding-top:14px}
 .fm-beta-catalog .fm-beta-match-actions .fm-beta-button{padding-inline:12px}
-.fm-beta-catalog .fm-beta-demo-pager{margin-top:auto;padding-top:16px}
+.fm-beta-catalog .fm-beta-demo-pager{margin-top:24px;padding-top:0}
 .fm-beta-demo-pager>.fm-beta-button{min-width:64px}
 [data-beta-app="true"] .fm-beta-detail>.fm-beta-match{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;gap:16px}
 .fm-beta-detail-body{flex:0 1 auto;min-height:0;padding:16px;border:1px solid #dde6df;border-radius:20px;background:#fff;box-shadow:0 4px 16px #123c2808}
@@ -323,3 +323,45 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-catalog .fm-beta-slots,.fm-beta-catalog .fm-beta-demo-slots,.fm-beta-catalog .fm-beta-attendance-links{display:none}
 .fm-beta-catalog .fm-beta-match-actions{margin-top:8px;padding-top:8px}
 }
+
+/* Visual QA: readable metadata and content-adjacent paging with scroll fallback. */
+[data-beta-app="true"] .fm-beta-catalog{overflow-y:auto;overscroll-behavior-y:contain;padding-bottom:8px}
+[data-beta-app="true"] .fm-beta-catalog .fm-beta-match-list{flex:0 0 auto}
+.fm-beta-catalog .fm-beta-demo-pager{flex-shrink:0}
+.fm-beta-match-place,.fm-beta-panel-head p,.fm-beta-preview-note,.fm-beta-detail-hint,
+.fm-beta-preferences-summary p,.fm-beta-field>span{font-size:14px;line-height:1.6;color:#52645a}
+.fm-beta-match h3,.fm-beta-detail-body h3{letter-spacing:-.025em;word-break:keep-all;overflow-wrap:anywhere}
+.fm-beta-meta>span{font-size:13px;line-height:1.5}
+.fm-beta-meta>span:first-child{flex-basis:100%;padding:0;background:transparent;color:#203d2d;font-size:15px;font-weight:700}
+.fm-beta-ui-icon{display:inline-block;width:18px;height:18px;flex-shrink:0;vertical-align:-3px;margin-right:5px}
+.fm-beta-refresh .fm-beta-ui-icon,.fm-beta-detail-header .fm-beta-ui-icon{width:20px;height:20px;margin:0}
+.fm-beta-detail-body{overflow-y:auto;overscroll-behavior-y:contain}
+.fm-beta-detail-facts{display:grid;gap:16px;margin:24px 0 0;padding-top:20px;border-top:1px solid #e4ebe5}
+.fm-beta-detail-facts>div{display:grid;grid-template-columns:80px minmax(0,1fr);gap:12px;font-size:14px;line-height:1.6}
+.fm-beta-detail-facts dt{color:#52645a}
+.fm-beta-detail-facts dd{margin:0;color:#203d2d;font-weight:600;overflow-wrap:anywhere}
+.fm-beta-detail[data-detail-tab="info"] .fm-beta-meta,
+.fm-beta-detail[data-detail-tab="slots"] .fm-beta-detail-facts{display:none}
+.fm-beta-slot b{font-size:13px;line-height:1.5;word-break:keep-all}
+.fm-beta-slot b small{display:block;color:#52645a;font-size:12px;font-weight:500}
+.fm-beta-slot span{font-size:14px;line-height:1.6}
+.fm-beta-slot span strong{font-size:18px;color:#203d2d;margin-right:2px}
+.fm-beta-opening .fm-app-entry-logo{width:88px;height:88px;margin-bottom:8px}
+.fm-beta-opening .fm-app-entry-name{font-size:32px}
+.fm-beta-opening .fm-next-intro-copy{margin:32px 0 24px}
+.fm-beta-opening .fm-next-intro-copy p{font-size:16px;line-height:1.65}
+@media(max-width:360px){.fm-beta-detail .fm-beta-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.fm-beta-detail-facts>div{grid-template-columns:72px minmax(0,1fr);gap:8px}}
+@media(max-height:700px){.fm-beta-catalog .fm-beta-demo-pager{margin-top:16px;padding-top:0}.fm-beta-detail-facts{gap:10px;margin-top:16px;padding-top:16px}.fm-beta-opening .fm-app-entry-logo{width:64px;height:64px}.fm-beta-opening .fm-next-intro-copy{margin:20px 0}}
+
+/* Keep preference actions reachable in short viewports without scrolling the app shell. */
+[data-beta-app="true"] [data-beta-main]:has(.fm-beta-preferences){overflow-y:auto;overscroll-behavior-y:contain;scroll-padding-block:12px;padding-bottom:12px}
+
+/* Preserve selected match context at authentication without clipping short screens. */
+.fm-beta-auth-match{margin:0 0 18px;padding:14px 16px;border:1px solid #dce5dd;border-radius:14px;background:#f3f7f3;text-align:left;overflow-wrap:anywhere}
+.fm-beta-auth-match>span{font-size:12px;font-weight:600;color:#52645a}
+.fm-beta-auth-match>strong{display:block;margin-top:4px;font-size:16px;line-height:1.5;color:#203d2d}
+.fm-beta-auth-match p{margin:6px 0 0;font-size:13px;line-height:1.6;color:#52645a}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell:has(.fm-beta-auth-match){justify-content:flex-start;overflow-y:auto;overscroll-behavior-y:contain}
+[data-beta-guest="true"][data-beta-auth-open="true"] .fm-beta-shell:has(.fm-beta-auth-match) .fm-beta-grid{flex:0 0 auto}
+.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand{margin-bottom:18px}
+@media(max-height:740px){.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand img{width:48px;height:48px}.fm-beta-auth-card:has(.fm-beta-auth-match) .fm-beta-login-brand p{display:none}}

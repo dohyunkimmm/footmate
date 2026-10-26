@@ -53,14 +53,14 @@ test('research, QA improvements and policy evidence have separate responsibiliti
  await page.locator('.toc-item').nth(7).click();await expect(page.locator('#section-08 table')).toHaveCount(2);
  await page.locator('#section-08 summary').click();await expect(page.locator('#section-08')).toContainText('경기별 취소 마감');
  await page.locator('.toc-item').nth(9).click();await expect(page.locator('#section-10 .qa-evidence-table tbody tr')).toHaveCount(3);
- await expect(page.locator('#section-10')).toContainText('사용자 과업 검증에서 직접 도출된 결과로 연결하지 않습니다');
+ await expect(page.locator('#section-10')).toContainText('사용자 과업 검증에서 직접 도출된 결과와는 구분');
  await expect(page.locator('#section-10 .portfolio-method-details')).toHaveCount(0);
  await expect(page.locator('#section-10')).not.toContainText('8개 KPI');
 });
 
 test('wireframe enlargement preserves section and restores keyboard focus',async({page})=>{
  await page.goto('/#section-07');const preview=page.locator('#section-07 .evidence-preview').first();await preview.click();
- const dialog=page.getByRole('dialog',{name:'홈 · 현재 Demo 화면',exact:true});await expect(dialog).toBeVisible();
+ const dialog=page.getByRole('dialog',{name:'홈 · 와이어프레임',exact:true});await expect(dialog).toBeVisible();
  await expect(dialog.locator('img')).toHaveAttribute('src',await preview.getAttribute('data-image'));
  await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
  await page.keyboard.press('ArrowRight');expect(new URL(page.url()).hash).toBe('');
@@ -201,19 +201,19 @@ for(const reducedMotion of ['no-preference','reduce']){
 
 test('wireframe gallery moves through five screens and restores the opening card',async({page})=>{
  await page.goto('/#section-07');
- const opening=page.getByRole('button',{name:'홈 · 현재 Demo 화면 확대',exact:true});
+ const opening=page.getByRole('button',{name:'홈 · 와이어프레임 확대',exact:true});
  await opening.click();
- await expect(page.getByRole('dialog',{name:'홈 · 현재 Demo 화면',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'홈 · 와이어프레임',exact:true})).toBeVisible();
  await expect(page.locator('.image-dialog-position')).toHaveText('01 / 05');
  await expect(page.getByRole('button',{name:'이전 와이어프레임',exact:true})).toBeDisabled();
  for(let index=1;index<5;index++){
   await page.getByRole('button',{name:'다음 와이어프레임',exact:true}).click();
   await expect(page.locator('.image-dialog-position')).toHaveText(String(index+1).padStart(2,'0')+' / 05');
  }
- await expect(page.getByRole('dialog',{name:'시작 화면 · 현재 Demo 화면',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'시작 화면 · 와이어프레임',exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'다음 와이어프레임',exact:true})).toBeDisabled();
  await page.keyboard.press('ArrowLeft');
- await expect(page.getByRole('dialog',{name:'참가 시 로그인 · 현재 Demo 화면',exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:'참가 시 로그인 · 와이어프레임',exact:true})).toBeVisible();
  expect(new URL(page.url()).hash).toBe('');
  await page.keyboard.press('Escape');
  await expect(page.locator('.image-dialog')).not.toBeVisible();
@@ -249,7 +249,7 @@ test('task steps and exception buttons connect their numbered paths',async({page
 for(const width of [390,1440]){
  test('reader enhancements remain usable and accessible at '+width+'px',async({page})=>{
   await page.setViewportSize({width,height:1080});await page.goto('/#section-07');
-  await page.getByRole('button',{name:'경기 상세 · 현재 Demo 화면 확대',exact:true}).click();
+  await page.getByRole('button',{name:'경기 상세 · 와이어프레임 확대',exact:true}).click();
   await expect(page.locator('.image-dialog-caption')).toContainText('경기 정보·모집 포지션');
   expect(await page.locator('.image-dialog').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   await expect(page.getByRole('button',{name:'닫기 ×',exact:true})).toBeFocused();
@@ -275,7 +275,8 @@ for(const width of [320,390,1440,1920]){
    const metrics=await img.evaluate(n=>({natural:n.naturalWidth,height:n.getBoundingClientRect().height}));
    expect(metrics.natural).toBeLessThanOrEqual(560);
    expect(metrics.height).toBeLessThanOrEqual(280);
-   await expect(img).toHaveCSS('object-fit','cover');
+   await expect(img).toHaveCSS('object-fit','contain');
+   await expect(img).toHaveAttribute('src',/current-wireframe-.*\.svg$/);
   }
   await page.locator('#section-07 .evidence-preview').first().click();
   const expanded=page.locator('.image-dialog-body img');
@@ -325,3 +326,17 @@ for(const width of [1440,1920]){
   await testInfo.attach('composition-and-scroll-audit',{body:JSON.stringify(report,null,2),contentType:'application/json'});
  });
 }
+
+// Narrative headings retain their wording; supporting copy uses concise endings.
+test('supporting copy avoids sentence endings across all eleven sections',async({page})=>{
+ await page.goto('/');
+ const endings=await page.locator('.slide').evaluateAll(sections=>sections.flatMap(section=>[...section.querySelectorAll('p,figcaption,td,li,dd,blockquote')].filter(n=>/다[.!?]/.test(n.textContent)).map(n=>({section:section.id,text:n.textContent.trim()}))));
+ expect(endings).toEqual([]);
+ await page.locator('#section-01 .evidence-preview').click();
+ await expect(page.locator('.image-dialog-caption')).not.toContainText(/다[.!?]/);
+ await page.keyboard.press('Escape');
+ await page.locator('.toc-item').nth(5).click();
+ await expect(page.locator('.flow-selection-status')).not.toContainText(/다[.!?]/);
+ await page.locator('.flow-step-button').first().click();
+ await expect(page.locator('.flow-selection-status')).not.toContainText(/다[.!?]/);
+});

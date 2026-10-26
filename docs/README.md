@@ -2,6 +2,20 @@
 
 현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 이 목록은 **2026-10-26 문서 색인 점검** 결과이며, 별도의 실시간 운영 가용성 검증을 뜻하지 않습니다. 제품 버전 번호는 사용자 화면 이름이 아니라 릴리스·검증 이력에 사용합니다.
 
+## 저장소 폴더 안내 (`main` 기준)
+
+| 경로 | 역할 |
+| --- | --- |
+| `src/app/`, `src/platform/`, `src/domain/`, `src/shared/` | 보관 중인 프로토타입·공유 도메인·플랫폼 코드 |
+| `src/beta/` | 현재 공개 `/demo`·`/beta` 앱과 인증·서버 연동 |
+| `src/case-study/` | 현재 11개 섹션 Case Study와 화면 근거 이미지 (`nine-sections`는 호환 파일명) |
+| `api/`, `worker/` | AI/API 구현과 Cloudflare Workers 진입점 |
+| `supabase/` | Edge Function·적용 이력이 있는 SQL 마이그레이션 (임의 삭제·이름 변경 금지) |
+| `tests/`, `scripts/`, `.github/` | 계약·브라우저 QA, 빌드/검증 스크립트, CI 워크플로 |
+| `docs/` | 현행 안내·운영 기록·과거 검증 근거 (아래 목록으로 상태 구분) |
+
+실행 코드와 기존 링크·스냅샷·SQL 이력을 유지하기 위해 이번 정리는 폴더 이동이 아니라 문서 색인과 참조 정합성을 기준으로 합니다. 공개 Case Study에서 참조하는 원본 `docs/` 문서는 Cloudflare 정적 빌드에 포함되지 않으므로 GitHub의 `main/docs/` 원본 링크로 연결합니다.
+
 ## 현재 제품·운영 기준
 
 - [루트 README](../README.md) — 제품 가치, `Find → Decide → Join → Play → Return`, 공개 화면·데이터·AI 책임 경계
@@ -57,7 +71,8 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 - runtime/product 변경: `Regression 36` + `Browser E2E + axe`를 실행하고, `main` push에서 필요한 `Production Smoke`까지 수행한다.
 - UI/UX/layout 변경: 승인된 픽셀 기준을 보유한 Product 화면은 Playwright `toHaveScreenshot()`으로 실제 화면과 비교하고, baseline 생성만으로 PASS 처리하지 않는다. 현재 11개 섹션 Case Study는 전용 E2E·geometry·axe와 캡처 수동 검토로 검증하며, 캡처만으로 픽셀 baseline 통과를 주장하지 않는다.
-- docs/workflow-only 변경: `Change Impact`가 non-runtime으로 분류하면 `Docs-only QA`에서 `git diff --check`와 documentation-facing connected-platform contract를 실행하고 무거운 Regression/Browser E2E/Production Smoke는 skip한다.
+- docs-only 변경: `README.md`·`docs/` 등의 변경은 `Change Impact`에서 non-runtime으로 분류되며, `Docs-only QA`가 `git diff --check`, connected-platform·release-app 문서 계약을 실행한다. 이때 Regression/Browser E2E/Production Smoke는 skip한다.
+- workflow-only 변경: `.github/workflows/qa.yml`은 현행 `classify-cloudflare-impact.cjs`에서 runtime 영향으로 분류된다. 회귀·브라우저 검사를 실행하고, 새 Cloudflare 배포 없이 기존 운영 대상 `Production Smoke`를 실행할 수 있다. 따라서 문서 전용과 동일한 경량 QA라고 표현하지 않는다.
 - `queued` / `in_progress`는 실패나 stuck을 의미하지 않으며, 실제 failure/cancel/timeout 또는 progress 정지 근거가 있을 때만 이상 상태로 판단한다.
 
 ## Final sync-up rule

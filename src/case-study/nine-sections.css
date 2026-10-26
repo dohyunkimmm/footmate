@@ -728,8 +728,6 @@ body{background:var(--cs-canvas)}
 #main .slide .table-wrap tbody tr:nth-child(even){background:#f9fbf8}
 #main .slide .table-wrap tbody th{color:var(--ink)}
 #section-01 .product-figure{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 85% 10%,rgba(210,255,115,.32),transparent 55%),#eaf1e8;border-color:#d0dfd1;box-shadow:0 8px 24px rgba(21,55,37,.07)}
-#section-01 .product-figure:before{content:'';position:absolute;inset:24px 18px 52px;border:1px solid rgba(73,119,87,.17);border-radius:9px;pointer-events:none;z-index:-1}
-#section-01 .product-figure:after{content:'';position:absolute;width:110px;height:110px;left:calc(50% - 55px);top:calc(50% - 70px);border:1px solid rgba(73,119,87,.17);border-radius:50%;pointer-events:none;z-index:-1}
 #section-01 .product-figure .evidence-preview{box-shadow:0 8px 20px rgba(21,55,37,.09);border-radius:18px;background:#fff}
 #section-01>.card-grid>.story-card{background:#fff;border-top:3px solid #abc7ad}
 #section-02>.card-grid>.story-card:first-child{background:#edf5e9;border-top:3px solid #84a88a}
@@ -883,3 +881,25 @@ body{font-size:var(--cs-body-size);line-height:1.8}
  .ui-compare-window{height:220px}
  .image-dialog-caption{font-size:13px}
 }
+
+/* Current Demo wireframes show their full structure without cropping. */
+#main #section-07 .wireframe-record img[src*="current-wireframe-"]{object-fit:contain;object-position:center;background:#fff}
+.image-dialog-body img[src*="current-wireframe-"]{width:560px;min-width:560px;max-width:none;height:auto;object-fit:contain}
+
+/* Equal-scale wireframes form two centered desktop rows. */
+@media(min-width:1200px){
+ #section-07 .wireframe-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;align-items:stretch}
+ #section-07 .wireframe-record{flex:0 0 calc((100% - 32px)/3);display:flex;flex-direction:column;min-width:0;padding:12px}
+ #section-07 .wireframe-record>.evidence-preview{margin-top:10px;max-width:none}
+ #main #section-07 .wireframe-record img[src*="current-wireframe-"]{height:auto;aspect-ratio:390/360;max-height:280px}
+ #section-07 .wireframe-record>p{font-size:13px;line-height:1.7;margin-top:8px}
+ #section-07 .wireframe-record>.small-copy{margin-top:auto;padding-top:8px}
+ #section-07 .wireframe-record>p:not(.small-copy):not(.wireframe-step){margin-bottom:8px}
+ #section-07 .wireframe-record h2{font-size:17px}
+ #section-07>.section-head{margin-bottom:18px}
+ #section-07>.source-note,#section-07>.small-copy{margin-top:16px}
+}
+
+/* Keep the enlargement hint outside the drawing. */
+#section-07 .evidence-preview::after{content:none}
+#section-07 .wireframe-record>h2::after{content:"확대 ↗";float:right;font-size:12px;font-weight:600;line-height:2.2;color:var(--green)}
