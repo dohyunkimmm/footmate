@@ -4,6 +4,13 @@
 >
 > **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
 
+## 2026-10-27 · 남은 Security Advisor 경고의 운영 검증
+
+- [보안 Advisor 결정 기록](SUPABASE-SECURITY-ADVISOR-2026-10-27.md)과 [RPC 실제 거부 검증 SQL](../tests/database/definer-rpc-readonly-guards.sql)을 추가했습니다. 운영 DB에서 `BEGIN READ ONLY … ROLLBACK` 성공: `SECURITY DEFINER` 20개 중 `anon` 실행 0, 전체 명시적 `search_path` 확인, `operator_*` 10개 전부 일반 사용자/AAL2에서는 `OPERATOR_REQUIRED`, 운영자/AAL1에서는 `MFA_REQUIRED`, 8개 사용자 호출 경로는 UID 누락 시 `AUTH_REQUIRED`를 확인했습니다. 이는 **모의 JWT + DB role 검사**이며 실제 서명된 Auth 토큰 통합 테스트는 아닙니다.
+- Supabase 조직 API의 실제 요금제는 **Free / tier_free**로 확인했습니다. 유출 비밀번호 보호 기능은 공식 문서상 Pro 이상에서 이용할 수 있으므로 비용 승인·플랜 변경 없이 이를 활성화했다고 주장하지 않습니다. `auth_leaked_password_protection` 경고는 별도 의사결정이 필요합니다.
+- `pg_net`는 `public` 설치이며 설치 버전 `relocatable=false`를 확인했습니다. `net` 스키마의 anon/authenticated USAGE 및 GET/POST EXECUTE 권한도 존재하므로 PostgREST 노출 여부·Cron 의존성·권한 변경 영향을 확인하지 않고 이동·재설치·REVOKE하지 않습니다. `extension_in_public` 경고는 남아 있습니다.
+- Git 브랜치는 [로컬 읽기 전용 patch-equivalence 감사](../tests/tools/branch-hygiene.cjs)를 추가했습니다. `docs/compact-demo-release-654`는 2026-10-27 `main 136bb9b`에서 `ahead=0, behind=55`를 재확인했으나 Git ref는 변경하지 않았습니다. 이전 121개/behind 52 수치는 그 당시 관측값입니다.
+
 ## 2026-10-27 · RLS 성능 적용 및 안전성 재검증
 
 - [PR #713](https://github.com/dohyunkimmm/footmate/pull/713)을 squash 병합(`a2037df7`). [PR QA #40502212534](https://github.com/dohyunkimmm/footmate/actions/runs/40502212534)의 `Regression 36` 및 `Browser E2E + axe` 통과. 운영 Supabase에는 `apply_migration`으로 `optimize_beta_operator_rls_jwt`를 적용했으며 **실제 migration version은 `20261027122602`**입니다. 버전관리 SQL은 [동일한 타임스탬프 파일](../supabase/migrations/20261027122602_optimize_beta_operator_rls_jwt.sql)로 맞췄습니다.
