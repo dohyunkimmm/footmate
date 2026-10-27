@@ -54,6 +54,12 @@ assert.ok(!operator.includes('src="/src/beta/operator.js?v=1"'),'base operator c
 for(const token of ['/auth/v1/factors','/challenge','/verify','aal2','operatorMembership'])
   assert.ok(mfa.includes(token),`missing operator browser MFA contract: ${token}`);
 assert.ok(mfa.includes("await import('/src/beta/operator.js?v=1')"),'operator console loads only after MFA decision');
+assert.ok(mfa.includes("return aal==='aal1'||aal==='aal2'?aal:null"),'operator AAL parsing must reject missing and unsupported claims');
+assert.ok(mfa.includes("if(aal!=='aal1')"),'unsupported operator AAL must fail closed');
+assert.ok(mfa.includes("localStorage.removeItem(SESSION_KEY)"),'invalid operator session must be cleared');
+assert.ok(mfa.includes("root.dataset.operatorState='session-invalid'"),'invalid operator session needs explicit recovery state');
+assert.ok(!mfa.includes("aal===null||aal==='aal2'"),'unknown AAL must never launch the operator console');
+
 assert.ok(mfa.includes("await import('/src/beta/operator-polish.js?v=1')"),'operator UX polish must load after the guarded console');
 for(const token of ['qrImageSource','data:image/svg+xml;charset=utf-8','encodeURIComponent(raw.slice(svgStart))','설정 키 · 시간 기반(TOTP)'])
   assert.ok(mfa.includes(token),`missing safe MFA QR/fallback contract: ${token}`);
