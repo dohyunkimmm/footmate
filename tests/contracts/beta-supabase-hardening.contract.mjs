@@ -35,7 +35,7 @@ for(const required of [
   "'matches', 'match_slots', 'participations'",
   "'profiles', 'beta_operation_events'"
 ])assert.ok(readOnlyAudit.includes(required),`missing read-only RLS audit contract: ${required}`);
-assert.doesNotMatch(readOnlyAudit,/^\\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke|execute|call|do|begin|commit)\\b/im,
+assert.doesNotMatch(readOnlyAudit,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke|execute|call|do|begin|commit)\b/im,
   'advisor triage must remain read-only and must not mutate production schema');
 
 console.log('PASS beta Supabase hardening contracts');
