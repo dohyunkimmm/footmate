@@ -193,7 +193,7 @@ jobs:
           node --test tests/contracts/typography-report.contract.cjs
           node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Verify changed choice-to-login journey before full screen QA
-        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup"
+        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup|discovery hotfix"
       - name: Upload changed journey screen evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -293,6 +293,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+
     env:
       FOOTMATE_PRODUCTION_URL: ${{ vars.FOOTMATE_CLOUDFLARE_URL }}
       BASE_URL: ${{ vars.FOOTMATE_CLOUDFLARE_URL }}
@@ -326,8 +330,10 @@ jobs:
           AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
           npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
 
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Verify Production browser image
+        run: |
+          node -e "if (require('./package.json').qaToolchain.playwright !== '1.55.1') throw new Error('Update the Production Playwright image with qaToolchain.playwright')"
+          node scripts/check-qa-toolchain.cjs
 
       - name: Run Production Chromium smoke
         run: |
