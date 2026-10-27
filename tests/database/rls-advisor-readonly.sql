@@ -44,8 +44,8 @@ union all
 select 'rls_policies_direct_jwt_call', count(*),
   count(*) filter (
     where (coalesce(qual, '') || coalesce(with_check, '')) ~
-      '(^|[^a-z_.])auth\\.jwt\\(\\)'
+      '(^|[^a-z_.])auth\.jwt\(\)'
       and (coalesce(qual, '') || coalesce(with_check, '')) !~
-      'select[[:space:]]+auth\\.jwt\\(\\)'
+      'select[[:space:]]+auth\.jwt\(\)'
   )
 from affected_policies;
