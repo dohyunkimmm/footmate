@@ -1,5 +1,11 @@
 # FootMate — 저장소 운영·보호 상태
 
+## 2026-10-28 · 실제 단일 Git 브랜치 정리 결과
+
+- [PR #718](https://github.com/dohyunkimmm/footmate/pull/718) 병합으로 검증된 구형 ref 하나를 삭제하는 CI를 추가했습니다. [Actions #40597913047](https://github.com/dohyunkimmm/footmate/actions/runs/40597913047) SUCCESS 및 GitHub API 재조회에서 `docs/compact-demo-release-654` **실제 삭제 확인**. PR #654 병합 SHA·ahead 0·보호 없음·열린 PR 없음·tip SHA 재검사 후 정확히 하나만 삭제했습니다.
+- [기존 저장소 전체 브랜치 스냅샷](BRANCH-REFS-2026-10-28.csv)은 **삭제 직전 자료**로 보존됩니다. `main` 이력/다른 refs는 재작성하지 않았습니다. 남은 브랜치 patch-equivalence/외부 참조 검사 및 저장소 크기 검증 전 [이슈 #525](https://github.com/dohyunkimmm/footmate/issues/525)은 닫지 않습니다.
+- 예전 섹션의 '삭제하지 않았다' 문구는 과거 점검 시점의 기록이며 이 1건의 최신 Git ref 삭제 결과를 대신하지 않습니다.
+
 > 점검 기준일: **2026-10-22 (KST)**. 이 문서는 GitHub Ruleset, PR, GitHub Actions, Vercel 배포의 관측 스냅샷입니다. 제품 요구사항/릴리스 이력은 [docs/README.md](README.md)와 [RELEASE-HISTORY.md](RELEASE-HISTORY.md)를 우선합니다. CI 성공과 Production 검증은 별도 사실입니다.
 >
 > **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
