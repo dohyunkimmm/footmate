@@ -438,3 +438,6 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 @keyframes fm-beta-preview-enter{from{opacity:.5;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.fm-beta-preview-card{animation:none}}
 @media(max-height:740px){.fm-beta-opening .fm-beta-opening-preview{padding:8px 10px}.fm-beta-preview-card{padding:8px 10px}.fm-beta-preview-steps{margin-bottom:6px}}
+
+.fm-beta-preferences-summary .fm-beta-quick-filters>.fm-beta-filter-count{display:block;font-size:12px;margin:0 0 2px}
+@media(max-height:760px){[data-beta-app="true"] .fm-beta-catalog .fm-beta-match-cover{display:none}}
