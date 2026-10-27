@@ -1,0 +1,72 @@
+name: Audit all Git branch patches (read only)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/audit-branch-patches.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: github.repository == 'dohyunkimmm/footmate' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Fetch remote branches without changing remote refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          git rev-parse --verify refs/remotes/origin/main
+          count="$(git for-each-ref --format='%(refname:short)' refs/remotes/origin | grep -Ec '^origin/' || true)"
+          if [ "$count" -lt 100 ]; then
+            echo "::error::Incomplete branch ref inventory: $count"; exit 1
+          fi
+          echo "Read-only branch audit: $count remote refs fetched (including main)."
+
+      - name: Audit patches and exact tree equality
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p verification/git-branch-audit
+          node tests/tools/branch-hygiene.cjs > verification/git-branch-audit/patches.tsv
+          printf 'branch\thead_sha\tidentical_tree\n' > verification/git-branch-audit/tree-equality.tsv
+          while IFS= read -r branch; do
+            if [ "$branch" = 'origin/main' ] || [ "$branch" = 'origin/HEAD' ]; then continue; fi
+            sha="$(git rev-parse "$branch")"
+            if git diff --quiet origin/main "$branch"; then
+              equal='true'
+            else
+              equal='false'
+            fi
+            printf '%s\t%s\t%s\n' "$branch" "$sha" "$equal" >> verification/git-branch-audit/tree-equality.tsv
+          done < <(git for-each-ref --format='%(refname:short)' refs/remotes/origin | grep -E '^origin/' | sort)
+
+          echo '### Non-destructive Git branch audit' >> "$GITHUB_STEP_SUMMARY"
+          awk -F '\t' 'NR>1{total++; if($6=="patch-equivalent-review")patch++; if($6=="ancestry-contained-review")ancestor++; if($6=="unique-patches-preserve")unique++} END{printf "Compared %d refs; ancestry-contained %d, patch-equivalent review %d, unique patches %d.\n",total,ancestor,patch,unique}' verification/git-branch-audit/patches.tsv | tee -a "$GITHUB_STEP_SUMMARY"
+          awk -F '\t' 'NR>1&&$3=="true"{print $1" "$2; count++} END{printf "Identical working trees: %d\n",count+0}' verification/git-branch-audit/tree-equality.tsv | tee -a "$GITHUB_STEP_SUMMARY"
+          echo 'Exact-tree matches (if any) require PR, external-ref and object-retention review before deletion.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Patch-equivalent review candidates (never an automatic deletion permit):'
+          awk -F '\t' 'NR>1&&$6=="patch-equivalent-review"{print $0}' verification/git-branch-audit/patches.tsv | head -40
+          echo 'Exact-tree matches:'
+          awk -F '\t' 'NR>1&&$3=="true"{print $0}' verification/git-branch-audit/tree-equality.tsv
+          git count-objects -v
+
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v6
+        with:
+          name: full-git-branch-patch-audit
+          path: verification/git-branch-audit/*.tsv
+          retention-days: 30
