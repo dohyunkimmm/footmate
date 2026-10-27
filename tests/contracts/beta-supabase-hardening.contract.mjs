@@ -96,4 +96,40 @@ for(const required of [
 assert.doesNotMatch(rpcGuards,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\b/im,
   'Definer RPC negative tests must remain read-only and must not mutate production state');
 
+
+const pgNetReadOnly=await readFile(new URL('../database/pgnet-boundary-readonly.sql',import.meta.url),'utf8');
+assert.match(pgNetReadOnly,/^begin read only;/im);
+assert.match(pgNetReadOnly,/^rollback;/im);
+assert.match(pgNetReadOnly,/^set local statement_timeout/im);
+for(const required of [
+  "'footmate-beta-email-outbox'",
+  "'footmate-beta-push-outbox'",
+  "'footmate-beta-match-reminders'",
+  "active and username='postgres'",
+  "'configure_beta_email_worker_schedule'",
+  "'configure_beta_push_worker_schedule'",
+  "not has_function_privilege('anon',p.oid,'EXECUTE')",
+  "'anon','authenticated'",
+  "has_function_privilege('anon',p.oid,'EXECUTE')"
+])assert.ok(pgNetReadOnly.includes(required),'missing pg_net read-only audit: '+required);
+assert.doesNotMatch(pgNetReadOnly,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke|call|execute)\b/im,
+  'pg_net audit must not alter privileges, worker state or queued requests');
+assert.doesNotMatch(pgNetReadOnly,/net\.http_(?:get|post|delete)\s*\(/i,
+  'pg_net read-only audit must not send outbound HTTP requests');
+
+const branchManifest=await readFile(new URL('../../docs/BRANCH-REFS-2026-10-28.csv',import.meta.url),'utf8');
+const branchLines=branchManifest.trim().split('\n');
+assert.equal(branchLines.shift(),'branch,head_sha,protected');
+assert.equal(branchLines.length,122,'branch snapshot must retain all 122 observed refs');
+const branchRefs=new Map();
+for(const line of branchLines){
+  const match=/^"([^"]+)","([0-9a-f]{40})","(true|false)"$/.exec(line);
+  assert.ok(match,'malformed immutable ref snapshot row');
+  assert.ok(!branchRefs.has(match[1]),'duplicate branch snapshot ref');
+  branchRefs.set(match[1],{sha:match[2],protected:match[3]==='true'});
+}
+assert.equal(branchRefs.get('main')?.protected,true);
+assert.equal(branchRefs.get('docs/compact-demo-release-654')?.sha,
+  '81819f79d011f084c2f1aaf87d398aacae089438');
+
 console.log('PASS beta Supabase hardening contracts');
