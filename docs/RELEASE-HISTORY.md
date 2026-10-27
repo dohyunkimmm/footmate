@@ -1,5 +1,14 @@
 # FootMate Release History
 
+## 2026-10-27 — 추천 탐색 후속·동의형 통계·시각 안정성 (현재 확인)
+
+- [PR #703](https://github.com/dohyunkimmm/footmate/pull/703): 서울 날짜 기준 오늘·내일·주말, 시작 시간 상한, 5분 추천 캐시 및 구장별 후보 선택. AI는 조건에 맞는 최대 12개 후보에서 순서를 정하며 경기 사실·필터 조건을 생성하거나 완화하지 않는다.
+- [PR #704](https://github.com/dohyunkimmm/footmate/pull/704): 관심/다른 시간/다른 구장 추천 반응과 사용자·데모별 브라우저 보관, 명시적 동의 후 실제 경기 탐색 이벤트 전송 및 운영자 집계, 첫 화면 control/quick/compare 비교 경로. 테스트·미분류 계정은 실제 이용자 KPI에서 제외하며 전환 성과는 아직 측정하지 않았다.
+- [PR #705](https://github.com/dohyunkimmm/footmate/pull/705)·[#706](https://github.com/dohyunkimmm/footmate/pull/706): 통계 해제 실패 복구, 저장 공간 부족 시 수집 차단, 계정·토큰 갱신 시 대기열 관리와 Mobile Safari QA. 서버 기록 삭제는 성공 응답을 받기 전 완료로 주장하지 않는다.
+- [PR #707](https://github.com/dohyunkimmm/footmate/pull/707)–[#709](https://github.com/dohyunkimmm/footmate/pull/709): 필터 수·전체 초기화 조작, 추천 반응의 선택/해제·초점/스크롤 유지, 경기 정보 시각 위계, 초기 추천 준비 후 복원 테스트. QA 개선을 실사용 전환 효과로 해석하지 않는다.
+- 최종 확인한 `main` [`bf3aa1238589e70e1ab046256f273824aba8c980`](https://github.com/dohyunkimmm/footmate/commit/bf3aa1238589e70e1ab046256f273824aba8c980)의 [Actions #40490413086](https://github.com/dohyunkimmm/footmate/actions/runs/40490413086): Change Impact, Regression 36, Browser E2E + axe, Deploy Cloudflare, Production Smoke **모두 SUCCESS**. 자동 테스트·배포 검사 결과로서 실제 파일럿 표본, 외부 인증·환경 설정의 수동 검증을 대신하지 않는다.
+- 최종 상태 설명은 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), [Beta 측정 준비 기준](BETA-MEASUREMENT-READINESS.md), [문서 색인](README.md)을 우선한다. 과거 Vercel 배포·미완료 서술은 당시 이력으로 보존하며 현행 운영 지시는 [저장소 운영 기록](REPO-OPERATIONS.md) 상단과 열린 이슈를 따른다.
+
 ## 2026-10-26 — 현행 풋살 경로와 로그인 맥락 · 확인된 기준
 
 - 문서 정리 직전 `main`은 `e29134aac02da85b4529d41ddb642099c489ff19`이며, [main Actions #40295186529](https://github.com/dohyunkimmm/footmate/actions/runs/40295186529)에서 `Regression 36`, `Browser E2E + axe`, `Deploy Cloudflare`, `Production Smoke`가 모두 **SUCCESS**였다. 이는 해당 커밋의 자동 게이트·배포 검사 결과이며 실제 이용자 OAuth 로그인, 외부 운영 설정 전체에 대한 수동 검증을 뜻하지 않는다.
