@@ -33,6 +33,20 @@ Other 120 branches, including historical `noop-*`, `docs/*`, `qa/*`, `fix/*`, an
 - Historical Git tree spot checks: `2049edc8` and `489ad73f`: 269 blobs / **5.20 MiB** each; `bf3aa123`: 282 blobs / **6.32 MiB**; `e5105a2f`: 284 blobs / **6.33 MiB**. Reported GitHub repository size in the latest check: **139,469 KiB (136.20 MiB)**. These samples do not quantify reachable and unreachable object storage, so no shrinkage guarantee is possible.
 - The original 121-branch inventory is an earlier snapshot; later PR branches may add refs. Do not use the old counts as a live branch deletion list.
 
+## Reproducible patch-equivalence audit (read-only)
+
+Use [`tests/tools/branch-hygiene.cjs`](../tests/tools/branch-hygiene.cjs) in a **full local Git clone** with already-fetched `origin/*` remote-tracking refs:
+
+```bash
+git fetch origin '+refs/heads/*:refs/remotes/origin/*'
+node tests/tools/branch-hygiene.cjs > branch-review.tsv
+```
+
+The script only reads local refs through `git rev-list` and `git cherry`. Its TSV includes `ahead`, `behind`, `patch_unique` and `patch_equivalent`; **it never deletes or rewrites refs**. A branch with `patch_unique=0` but `ahead>0` is **not automatically safe**: binary changes, deleted files, merges, external references and history retention must be checked separately. Branch counts depend on when refs were fetched and can change after PRs.
+
+- Latest GitHub comparison at `main 136bb9b335993ec1c9c20616f6883873324f9a71`: `docs/compact-demo-release-654` **ahead 0 / behind 55**, tip unchanged `81819f79d011f084c2f1aaf87d398aacae089438`. It remains a qualified manual deletion candidate, not a deleted branch.
+- The GitHub connector does not expose a branch ref DELETE action. Do not replace deletion with `update_ref` or force-push: either would distort historical refs. Require a separate user-authorized GitHub CLI/UI action with the safeguards recorded in [#525](https://github.com/dohyunkimmm/footmate/issues/525#issuecomment-6441702777).
+
 ## Required follow-up before closing #525
 
 1. Confirm `docs/compact-demo-release-654` is unreferenced by automated/manual work, then repeat `main...branch` comparison. Delete it through authorized GitHub UI/CLI only after that check.
