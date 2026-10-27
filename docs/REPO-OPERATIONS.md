@@ -4,6 +4,11 @@
 >
 > **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
 
+## 2026-10-27 · 후속 감사 및 재현 가능한 검증
+
+- GitHub [브랜치 전수 감사](BRANCH-HYGIENE-2026-10-27.md): 122개 브랜치 중 `main` 제외 121개 전부의 ahead/behind를 재조회했습니다. `docs/compact-demo-release-654`만 `ahead_by=0`, `behind_by=52`이며, 나머지 120개는 고유 커밋이 있는 분기 상태입니다. Patch equivalence와 브랜치별 운영 의존성 확인 전 삭제하지 않습니다. 이 조사는 아래의 과거 “31개 표본, 모두 ahead>0” 판단을 **전수 점검 결과로 정정**합니다. 이번에 ref를 삭제하거나 `main`을 재작성하지 않았습니다.
+- Supabase [읽기 전용 보안/성능 쿼리](../tests/database/rls-advisor-readonly.sql)를 운영 DB에서 실행했습니다. 인증 사용자에게 실행 가능한 `SECURITY DEFINER` 함수 **20개 중 anon/PUBLIC 호출 가능 0개**, `operator_*` 함수 10개 중 `require_beta_operator_aal2` 가드 누락 0개, 대상 RLS 정책 14개 중 직접 `auth.jwt()` 호출 **11개**입니다. 이는 문자열·ACL 검사이며 실제 계정별 접근/부작용 검증을 대체하지 않습니다. `Regression 36`의 [beta Supabase 계약](../tests/contracts/beta-supabase-hardening.contract.mjs)이 감사 SQL의 읽기 전용 구조를 검사합니다. DB 변경, 마이그레이션 적용, 권한 변경은 하지 않았습니다.
+
 ## 2026-10-27 · 현행 점검 및 과거 지침 정정
 
 - GitHub `main` [`bf3aa123`](https://github.com/dohyunkimmm/footmate/commit/bf3aa1238589e70e1ab046256f273824aba8c980) 기준, [Actions #40490413086](https://github.com/dohyunkimmm/footmate/actions/runs/40490413086)의 Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke 모두 **SUCCESS**. 이는 해당 SHA의 CI/자동 운영 검증이며 OAuth·실제 이용자 성과의 수동 확인은 아닙니다.

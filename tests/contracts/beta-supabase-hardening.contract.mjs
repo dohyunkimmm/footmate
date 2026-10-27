@@ -23,4 +23,19 @@ for(const required of [
 assert.ok(!migration.includes('service_role'),'service-role credentials must not be embedded in hardening migration');
 assert.ok(!migration.includes('for all\nto authenticated'),'operator write policy must not overlap public SELECT');
 
+
+const readOnlyAudit=await readFile(new URL('../database/rls-advisor-readonly.sql',import.meta.url),'utf8');
+for(const required of [
+  "n.nspname = 'public'",
+  "has_function_privilege('authenticated', p.oid, 'EXECUTE')",
+  "has_function_privilege('anon', oid, 'EXECUTE')",
+  "aclexplode(coalesce(proacl, acldefault('f', proowner)))",
+  "position('require_beta_operator_aal2' in definition)",
+  "'rls_policies_direct_jwt_call'",
+  "'matches', 'match_slots', 'participations'",
+  "'profiles', 'beta_operation_events'"
+])assert.ok(readOnlyAudit.includes(required),`missing read-only RLS audit contract: ${required}`);
+assert.doesNotMatch(readOnlyAudit,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke|execute|call|do|begin|commit)\b/im,
+  'advisor triage must remain read-only and must not mutate production schema');
+
 console.log('PASS beta Supabase hardening contracts');
