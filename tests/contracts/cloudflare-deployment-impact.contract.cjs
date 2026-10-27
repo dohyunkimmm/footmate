@@ -101,7 +101,7 @@ test('retired Vercel hosting files are absent while AI Gateway integration remai
 
 test('local branch audit only observes refs and separates ancestry from patch equivalence', () => {
   const { parseAheadBehind, classify } = require('../tools/branch-hygiene.cjs');
-  assert.deepEqual(parseAheadBehind('55\\t0\\n'), { behind: 55, ahead: 0 });
+  assert.deepEqual(parseAheadBehind('55\t0\n'), { behind: 55, ahead: 0 });
   assert.deepEqual(parseAheadBehind('4  9'), { behind: 4, ahead: 9 });
   assert.throws(() => parseAheadBehind('not a count'), /Unexpected/);
   assert.equal(classify({ahead:0,patchUnique:0}), 'ancestry-contained-review');
