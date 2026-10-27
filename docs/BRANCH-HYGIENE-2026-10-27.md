@@ -1,5 +1,14 @@
 # FootMate Git branch hygiene audit — 2026-10-27
 
+## Superseding state · 2026-10-28 (verified deletion)
+
+- [PR #718](https://github.com/dohyunkimmm/footmate/pull/718) added a strict one-shot branch prune and merged as `main a4a6bfc2ad09de0f5b9a89314e54b220060fce20`.
+- The one-shot [GitHub Actions #40597913047](https://github.com/dohyunkimmm/footmate/actions/runs/40597913047) **finished SUCCESS** after validating exact tip SHA, PR #654 merge SHA, protected=false, ahead=0 and no open PR, then deleting the only target `docs/compact-demo-release-654` (SHA `81819f79d011f084c2f1aaf87d398aacae089438`).
+- Re-enumerated the GitHub branches API pages 1–3: **the deleted branch is absent**, and `main` was unchanged by the prune workflow. No force rewrite. The stored [2026-10-28 pre-cleanup SHA manifest](BRANCH-REFS-2026-10-28.csv) is an **historical record, not a current ref list**; its inclusion of that deleted branch is expected.
+- The **remaining diverged refs are not automatically safe to delete**. Continue patch-equivalence review using [local read-only audit script](../tests/tools/branch-hygiene.cjs), preserve relevant Git objects, and check external consumers. Issue [#525](https://github.com/dohyunkimmm/footmate/issues/525) stays open for those remaining tasks.
+
+The older branch statuses and deletion instructions below document **earlier snapshots** and have been superseded for this one now-deleted candidate.
+
 ## Inspection boundary
 
 - Base: `main` at `91beadd7fb6fb6a667466d4f5bff144f0f97f684`.
