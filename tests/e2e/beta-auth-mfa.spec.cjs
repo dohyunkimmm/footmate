@@ -130,3 +130,38 @@ test('new operator match pre-fills policy windows and keeps target mobile widths
   }
   expect(await serious(page,'.fm-operator')).toEqual([]);
 });
+
+
+for(const [scenario,accessToken] of [
+  ['missing AAL claim',jwt(operatorId,null)],
+  ['malformed JWT payload','x.not-valid-base64.y']
+]){
+  test(`operator ${scenario} fails closed and clears unusable session`,async({page})=>{
+    let privilegedReads=0, membershipReads=0;
+    await baseConfig(page);
+    await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{
+      key:'footmate:beta:auth:v1',
+      value:{accessToken:jwt(operatorId,'aal1'),refreshToken:'refresh-token',expiresAt:4102444800}
+    });
+    await page.route(`${origin}/**`,async route=>{
+      const url=new URL(route.request().url());
+      if(url.pathname==='/auth/v1/token')return fulfill(route,{
+        access_token:accessToken,refresh_token:'refreshed-token',expires_in:3600
+      });
+      if(url.pathname==='/rest/v1/operators'){membershipReads++;return fulfill(route,[{user_id:operatorId}])}
+      if(url.pathname.startsWith('/rest/v1/rpc/operator_')||url.pathname==='/rest/v1/matches'){
+        privilegedReads++;return fulfill(route,{message:'Operator access forbidden'},403);
+      }
+      return fulfill(route,{message:`Unhandled ${url.pathname}`},500);
+    });
+    await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
+    const root=page.locator('#footmate-beta-operator');
+    await expect(root).toHaveAttribute('data-operator-state','session-invalid');
+    await expect(page.getByRole('heading',{name:'운영자 세션 확인 실패'})).toBeVisible();
+    await expect(page.getByRole('link',{name:'Beta 로그인으로 돌아가기'})).toHaveAttribute('href','/beta');
+    expect(privilegedReads).toBe(0);
+    expect(membershipReads).toBe(0);
+    expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:auth:v1'))).toBeNull();
+    expect(await serious(page,'.fm-operator-mfa')).toEqual([]);
+  });
+}
