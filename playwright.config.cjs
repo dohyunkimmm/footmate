@@ -41,6 +41,13 @@ module.exports = defineConfig({
       name: 'webkit-mobile',
       testMatch: /release-app\.spec\.cjs/,
       use: { ...devices['iPhone 13'] }
+    },
+    {
+      name: 'webkit-beta-consent',
+      testMatch: /beta-core\.spec\.cjs/,
+      grep: /discovery followup sends real events|discovery hotfix preserves failed withdrawal|discovery qa/,
+      use: { ...devices['iPhone 13'] }
     }
   ]
 });
+
