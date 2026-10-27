@@ -26,6 +26,13 @@
 - `/beta/operator` — 허용된 운영자 전용 TOTP MFA 경로
 - `/prototype` — 이전 로컬 프로토타입 보관용. Guided/Evidence 등 과거 실험 흐름은 현행 공개 앱 기준으로 사용하지 않음
 
+## 2026-10-27 동기화 점검
+
+- 현재 확인한 `main`은 [`bf3aa123`](https://github.com/dohyunkimmm/footmate/commit/bf3aa1238589e70e1ab046256f273824aba8c980)입니다. [FootMate QA #40490413086](https://github.com/dohyunkimmm/footmate/actions/runs/40490413086)에서 Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke가 모두 성공했습니다. CI 결과는 실제 이용자 OAuth·통계 표본·외부 서비스 설정의 수동 검증을 뜻하지 않습니다.
+- PR [#703](https://github.com/dohyunkimmm/footmate/pull/703)–[#709](https://github.com/dohyunkimmm/footmate/pull/709)의 날짜·시간 선택, 추천 갱신, 중복 없는 다시 추천, 동의형 탐색 계측, 추천 반응 및 필터 조작 후속 변경을 현재 코드와 비교했습니다. 기능·데이터 수집 범위는 [매칭 방향](MATCHING-DIRECTION.md) 및 [Beta 측정 기준](BETA-MEASUREMENT-READINESS.md)을 우선합니다. 실제 전환 성과는 미측정입니다.
+- 잔여 외부·운영 작업은 [Vercel 프로젝트 영구 삭제 #685](https://github.com/dohyunkimmm/footmate/issues/685), [Supabase 보안·RLS 검토 #611](https://github.com/dohyunkimmm/footmate/issues/611), [브랜치/이력 위생 #525](https://github.com/dohyunkimmm/footmate/issues/525)입니다. 이력 삭제·보안 권한 변경을 문서 동기화만으로 완료 처리하지 않습니다. 과거 Vercel 파일 보존 안내의 현행 정정은 [저장소 운영 기록](REPO-OPERATIONS.md) 상단을 참조하세요.
+- 비공개 Notion 원본 및 외부 운영 설정은 이 GitHub 동기화 점검만으로 최신 일치가 확인된 것이 아닙니다.
+
 ## 운영·릴리스 핵심 문서
 
 - [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — **2026-10-22~23 당시** GitHub Ruleset·Vercel 배포·WAF·마이그레이션 보존 기록. **현행 Cloudflare 운영 상태의 최신 보고서가 아님**
