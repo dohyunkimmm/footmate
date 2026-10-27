@@ -401,3 +401,40 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-discovery{flex-shrink:0;margin-top:10px}
 .fm-beta-discovery-note{flex-shrink:0}
 [data-beta-app="true"] [data-beta-main]:has(.fm-beta-quick-filters details[open]) .fm-beta-catalog{flex:0 0 400px}
+.fm-beta-reaction-panel{margin-top:20px;padding:16px;border:1px solid #d9e4dc;border-radius:16px;background:#f6f9f5}
+.fm-beta-reaction-panel summary{cursor:pointer;font-size:14px;font-weight:700;color:#203d2d;min-height:28px}
+.fm-beta-reaction-panel p{font-size:13px;line-height:1.65;color:#52645a;margin:10px 0}
+.fm-beta-reaction-panel .fm-beta-actions{gap:8px}
+.fm-beta-reaction-panel .fm-beta-button{min-height:44px;flex:1 1 130px}
+.fm-beta-reaction-panel .fm-beta-button[aria-pressed="true"]{background:#dcefcf;border:2px solid #346b33;color:#123c28;font-weight:800}
+.fm-beta-reaction-panel .fm-beta-button[aria-pressed="true"]:before{content:"✓";margin-right:6px}
+.fm-beta-reaction-panel .fm-beta-link{flex-basis:100%;min-height:36px;text-align:left;font-size:12px}
+.fm-beta-reaction-panel [role="status"]{color:#285b35;font-weight:600}
+.fm-beta-detail .fm-beta-detail-body h3{font-size:24px;line-height:1.35;margin-bottom:8px}
+.fm-beta-detail .fm-beta-meta>span:first-child{font-size:16px;font-weight:750;color:#123c28;flex-basis:100%}
+.fm-beta-detail .fm-beta-detail-facts{gap:12px;margin-top:20px;padding-top:16px}
+.fm-beta-detail .fm-beta-detail-facts>div:first-child dd{font-size:16px;font-weight:750}
+.fm-beta-detail .fm-beta-badge{background:#e4f1d9;color:#234f2d;border:1px solid #b7d6a6;font-weight:750;white-space:nowrap}
+.fm-beta-match[data-match-tone="morning"] .fm-beta-match-cover{background:repeating-linear-gradient(90deg,#426a4e 0,#426a4e 38px,#527e59 38px,#527e59 76px)}
+.fm-beta-match[data-match-tone="day"] .fm-beta-match-cover{background:repeating-linear-gradient(90deg,#28715c 0,#28715c 38px,#348269 38px,#348269 76px)}
+.fm-beta-match[data-match-tone="evening"] .fm-beta-match-cover{background:repeating-linear-gradient(90deg,#203e39 0,#203e39 38px,#2c5148 38px,#2c5148 76px)}
+.fm-beta-match-reason{padding-left:10px;border-left:3px solid #82ac65;line-height:1.5}
+.fm-beta-filter-count{grid-column:1/-1;margin:0 0 2px;font-size:12px;color:#52645a}
+.fm-beta-quick-filters summary{display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none}
+.fm-beta-quick-filters summary::-webkit-details-marker{display:none}
+.fm-beta-quick-filters summary:after{content:"⌄";font-size:17px;flex-shrink:0;color:#52645a}
+.fm-beta-quick-filters details[open]>summary:after{content:"⌃"}
+.fm-beta-quick-filters details[data-filter-active="true"]>summary{background:#e8f3df;border-color:#7ca66a;color:#123c28;font-weight:700}
+.fm-beta-quick-filters details[open]>summary{outline:2px solid #346b33;outline-offset:-2px}
+.fm-beta-opening .fm-beta-opening-preview{padding:12px;box-shadow:0 8px 24px #203d2d0a}
+.fm-beta-preview-steps{display:flex;justify-content:space-between;gap:8px;list-style:none;padding:0;margin:0 0 10px;color:#52645a;font-size:11px;line-height:1.5;counter-reset:step}
+.fm-beta-preview-steps li{counter-increment:step}
+.fm-beta-preview-steps li:before{content:counter(step);display:inline-grid;place-items:center;width:17px;height:17px;margin-right:4px;border-radius:50%;background:#e0edda;color:#234f2d;font-weight:700}
+.fm-beta-preview-card{padding:12px 14px;border-left:4px solid #346b33;border-radius:10px;background:#edf4e8;animation:fm-beta-preview-enter .22s ease-out}
+.fm-beta-preview-card[data-match-tone="evening"]{background:#e7efeb;border-color:#2c5148}
+.fm-beta-preview-card[data-match-tone="day"]{background:#e6f3ed;border-color:#28715c}
+.fm-beta-preview-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;font-size:12px;color:#52645a}
+.fm-beta-preview-controls .fm-beta-link{min-height:36px;font-size:12px;font-weight:700}
+@keyframes fm-beta-preview-enter{from{opacity:.5;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.fm-beta-preview-card{animation:none}}
+@media(max-height:740px){.fm-beta-opening .fm-beta-opening-preview{padding:8px 10px}.fm-beta-preview-card{padding:8px 10px}.fm-beta-preview-steps{margin-bottom:6px}}

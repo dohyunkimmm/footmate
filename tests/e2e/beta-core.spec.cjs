@@ -374,7 +374,8 @@ test('FootMate results expand without signup and participation retains preferenc
   const opening=page.locator('[data-screen="welcome"]');
   await expect(opening.locator('.fm-app-entry-name')).toHaveText('FootMate');
   await expect(opening.locator('.fm-app-entry-name')).toHaveCSS('font-size','32px');
-  await expect(opening.getByRole('button')).toHaveCount(1);
+  await expect(opening.getByRole('button',{name:'내 조건으로 추천받기',exact:true})).toHaveCount(1);
+  await expect(opening.getByRole('button',{name:'다른 추천 예시 보기'})).toBeVisible();
   await opening.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
   await expect(page.getByLabel('이메일',{exact:true})).toBeHidden();
@@ -738,7 +739,8 @@ test('discovery followup stores explicit reactions and clears them without expan
  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
  await page.locator('.fm-beta-reaction-panel summary').click();
  await page.getByRole('button',{name:'관심 있어요',exact:true}).click();
- await page.locator('.fm-beta-reaction-panel summary').click();
+ await expect(page.locator('.fm-beta-reaction-panel')).toHaveAttribute('open','');
+ await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveCSS('background-color','rgb(220, 239, 207)');
  await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','true');
  const saved=await page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('footmate:beta:reactions:')).map(k=>JSON.parse(localStorage.getItem(k))).flat());
  expect(saved).toHaveLength(1);expect(saved[0].scope).toBe('demo');
@@ -866,4 +868,41 @@ for(const fallbackRemoval of [false,true])test(`discovery qa keeps collection of
  await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여 해제');
  await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();
  await expect.poll(()=>sent.length).toBeGreaterThan(count);
+});
+
+
+test('discovery visual design keeps preview, filters and selected reactions clear on mobile',async({page})=>{
+ await mockBackend(page);
+ await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
+ await page.emulateMedia({reducedMotion:'reduce'});
+ for(const width of [320,390]){
+  await page.setViewportSize({width,height:740});
+  await page.goto('/demo?opening=control');
+  const preview=page.getByRole('region',{name:'추천 예시',exact:true});
+  await expect(preview).toBeVisible();
+  const title=await preview.locator('h2').textContent();
+  await preview.getByRole('button',{name:'다른 추천 예시 보기'}).click();
+  await expect(preview.locator('h2')).not.toHaveText(title);
+  await expect(preview.locator('.fm-beta-preview-card')).toHaveCSS('animation-name','none');
+  await expect(page.getByRole('button',{name:'내 조건으로 추천받기',exact:true})).toBeInViewport();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ }
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+ await expect(page.locator('.fm-beta-filter-count')).toHaveText('원하는 조건을 골라보세요');
+ await page.locator('#quick-filter-level').click();
+ await page.getByRole('radio',{name:'중급',exact:true}).check();
+ await expect(page.locator('.fm-beta-filter-count')).toHaveText('조건 1개 선택됨');
+ await expect(page.locator('details[data-filter-active="true"]')).toHaveCount(1);
+ await expect(page.locator('#quick-filter-level')).toHaveCSS('background-color','rgb(232, 243, 223)');
+ await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-tone',/morning|day|evening/);
+ await expect(page.locator('.fm-beta-match-reason')).not.toBeEmpty();
+ await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await page.locator('.fm-beta-reaction-panel summary').click();
+ await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
+ await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','true');
+ await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','false');
+ await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
+ await page.locator('.fm-beta-reaction-panel summary').click();
+ await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','false');
+ expect(await serious(page)).toEqual([]);
 });
