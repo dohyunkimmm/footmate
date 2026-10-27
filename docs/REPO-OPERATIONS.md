@@ -4,6 +4,14 @@
 >
 > **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
 
+## 2026-10-27 · 현행 점검 및 과거 지침 정정
+
+- GitHub `main` [`bf3aa123`](https://github.com/dohyunkimmm/footmate/commit/bf3aa1238589e70e1ab046256f273824aba8c980) 기준, [Actions #40490413086](https://github.com/dohyunkimmm/footmate/actions/runs/40490413086)의 Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke 모두 **SUCCESS**. 이는 해당 SHA의 CI/자동 운영 검증이며 OAuth·실제 이용자 성과의 수동 확인은 아닙니다.
+- [PR #686](https://github.com/dohyunkimmm/footmate/pull/686) 병합으로 `vercel.json`, `scripts/vercel-ignore-build.cjs`, `tests/contracts/vercel-preview-deployment.contract.cjs`는 **현재 main에서 제거된 상태**입니다. 아래 10월 26일 초반의 “삭제하지 않는다/보존한다” 문장은 당시 안전 검토 이력이며 현행 작업 지시가 아닙니다. `@vercel/oidc`는 별개의 AI Gateway 의존성으로 유지합니다.
+- 아래 당시 “미병합 UI PR #630/#631” 항목은 현행 열린 PR을 뜻하지 않습니다. 두 PR은 **미병합 종료**되었고 현재 열린 PR은 0건(점검 시점 기준)입니다.
+- 현행 미완료 3건: [#685](https://github.com/dohyunkimmm/footmate/issues/685) Vercel 프로젝트 소유자의 **영구 삭제 확정**(중지 명령과 별개), [#611](https://github.com/dohyunkimmm/footmate/issues/611) Supabase Security/RLS Advisor의 권한 보존 검토, [#525](https://github.com/dohyunkimmm/footmate/issues/525) 브랜치 및 Git 이력 위생. 외부 삭제·DB 권한 변경·force push를 완료로 표기하지 않습니다.
+- 최근 제품 변경 #703–#709의 현재 설명은 [릴리스 이력](RELEASE-HISTORY.md)과 [측정 준비 기준](BETA-MEASUREMENT-READINESS.md)을 참조합니다. 아래 10월 22–26일 Vercel·QA 기록의 당시 관측 사실 자체는 보존합니다.
+
 ## 확인 완료
 
 | 영역 | 관측 결과 | 근거 |
