@@ -55,7 +55,7 @@ for(const token of ['/auth/v1/factors','/challenge','/verify','aal2','operatorMe
   assert.ok(mfa.includes(token),`missing operator browser MFA contract: ${token}`);
 assert.ok(mfa.includes("await import('/src/beta/operator.js?v=1')"),'operator console loads only after MFA decision');
 assert.ok(mfa.includes("return aal==='aal1'||aal==='aal2'?aal:null"),'operator AAL parsing must reject missing and unsupported claims');
-assert.ok(mfa.includes("if(aal!=='aal1')"),'unsupported operator AAL must fail closed');
+assert.ok(mfa.includes("if(aal!=='aal1'&&aal!=='aal2')"),'unsupported operator AAL must fail closed');
 assert.ok(mfa.includes("localStorage.removeItem(SESSION_KEY)"),'invalid operator session must be cleared');
 assert.ok(mfa.includes("root.dataset.operatorState='session-invalid'"),'invalid operator session needs explicit recovery state');
 assert.ok(!mfa.includes("aal===null||aal==='aal2'"),'unknown AAL must never launch the operator console');
