@@ -748,7 +748,7 @@ test('discovery followup stores explicit reactions and clears them without expan
  const saved=await page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('footmate:beta:reactions:')).map(k=>JSON.parse(localStorage.getItem(k))).flat());
  expect(saved).toHaveLength(1);expect(saved[0].scope).toBe('demo');
  await page.getByRole('button',{name:'추천 반응 초기화',exact:true}).click();
- await page.locator('.fm-beta-reaction-panel summary').click();
+ await expect(page.locator('.fm-beta-reaction-panel')).toHaveAttribute('open','');
  await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','false');
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).region)).toBe('');
 });
@@ -910,7 +910,49 @@ test('discovery qa visual design keeps preview, filters and selected reactions c
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toBeFocused();
  await page.screenshot({path:testInfo.outputPath('detail-selected.png')});
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
- await page.locator('.fm-beta-reaction-panel summary').click();
+ await expect(page.locator('.fm-beta-reaction-panel')).toHaveAttribute('open','');
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','false');
+ expect(await serious(page)).toEqual([]);
+});
+
+
+test('discovery qa followup keeps reaction rows and reset controls stable',async({page},testInfo)=>{
+ await mockBackend(page);
+ await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+ await page.addInitScript(()=>localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'',level:'중급',position:'',afterTime:''})));
+ await page.setViewportSize({width:320,height:740});
+ await page.goto('/demo');
+ await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-recommendations-ready','true');
+ await expect(page.locator('.fm-beta-filter-count')).toHaveText('조건 1개 선택됨');
+ const reset=page.getByRole('button',{name:'전체 조건 해제',exact:true});
+ await expect(reset).toHaveCount(1);await expect(reset).toBeVisible();
+ await reset.click();
+ await expect(page.locator('.fm-beta-filter-count')).toHaveText('원하는 조건을 골라보세요');
+ await expect(page.locator('#quick-filter-region')).toBeFocused();
+ await expect(page.locator('details[data-filter-active="true"]')).toHaveCount(0);
+ await page.screenshot({path:testInfo.outputPath('filters-reset-320.png')});
+ await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await page.locator('.fm-beta-reaction-panel summary').click();
+ const interested=page.getByRole('button',{name:'관심 있어요',exact:true});
+ await interested.click();await interested.click();
+ await expect(interested).toHaveAttribute('aria-pressed','false');
+ await expect(interested).toBeFocused();await expect(interested).toBeInViewport();
+ await expect(page.locator('.fm-beta-reaction-panel')).toHaveAttribute('open','');
+ await expect(page.getByText('선택한 반응이 없어요.',{exact:true})).toBeVisible();
+ for(const width of [320,390,430]){
+  await page.setViewportSize({width,height:740});
+  const boxes=await page.locator('[data-action="recommendation-reaction"]').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect();return {width:r.width,height:r.height,x:r.x}}));
+  expect(Math.max(...boxes.map(b=>b.width))-Math.min(...boxes.map(b=>b.width))).toBeLessThan(1);
+  expect(boxes.every(b=>b.height>=44)).toBe(true);
+  expect(Math.max(...boxes.map(b=>b.x))-Math.min(...boxes.map(b=>b.x))).toBeLessThan(1);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ }
+ await page.getByRole('button',{name:'다른 구장 원해요',exact:true}).click();
+ await page.getByRole('button',{name:'추천 반응 초기화',exact:true}).click();
+ await expect(page.locator('.fm-beta-reaction-panel')).toHaveAttribute('open','');
+ await expect(page.getByRole('button',{name:'추천 반응 초기화',exact:true})).toBeFocused();
+ await expect(page.getByRole('button',{name:'추천 반응 초기화',exact:true})).toBeInViewport();
+ await expect(page.locator('[data-action="recommendation-reaction"][aria-pressed="true"]')).toHaveCount(0);
+ await page.screenshot({path:testInfo.outputPath('reactions-cleared-430.png')});
  expect(await serious(page)).toEqual([]);
 });
