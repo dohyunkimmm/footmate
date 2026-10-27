@@ -441,3 +441,13 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 
 .fm-beta-preferences-summary .fm-beta-quick-filters>.fm-beta-filter-count{display:block;font-size:12px;margin:0 0 2px}
 @media(max-height:760px){[data-beta-app="true"] .fm-beta-catalog .fm-beta-match-cover{display:none}}
+
+/* Follow-up visual QA: consistent reaction rows and reachable filter reset. */
+.fm-beta-reaction-panel .fm-beta-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.fm-beta-reaction-panel .fm-beta-button{width:100%;min-height:44px;border-width:2px;font-weight:700;white-space:normal;line-height:1.5}
+.fm-beta-reaction-panel .fm-beta-link{min-height:44px}
+.fm-beta-filter-toolbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px}
+.fm-beta-filter-toolbar .fm-beta-filter-count{display:block;margin:0;font-size:12px;line-height:1.5;color:#52645a}
+.fm-beta-filter-toolbar .fm-beta-link{min-height:44px;padding:8px 2px;font-size:12px;font-weight:700;flex-shrink:0}
+.fm-beta-reaction-panel :is(summary,button):focus-visible,.fm-beta-filter-toolbar button:focus-visible,.fm-beta-preview-controls button:focus-visible{outline:3px solid #346b33;outline-offset:3px}
+.fm-beta-preview-controls .fm-beta-link{min-height:44px}

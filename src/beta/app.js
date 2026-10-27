@@ -232,7 +232,13 @@ if(root){
   function reactions(demo){try{return normalizeReactions(JSON.parse(localStorage.getItem(reactionKey(demo))||'[]'))}catch{return[]}}
   function reactionPanel(match){
     const selected=reactions(match.isDemo).find(r=>r.matchId===match.id)?.kind;
-    return `<details class="fm-beta-reaction-panel" ${selected?'open':''}><summary>추천 조정${selected?' · 선택 저장됨':''}</summary><p>내 선택은 이 브라우저와 계정의 추천 순서에 반영돼요. 선택 조건은 유지해요.</p><div class="fm-beta-actions">${[['interested','관심 있어요'],['different_time','다른 시간 원해요'],['too_far','다른 구장 원해요']].map(([kind,label])=>`<button type="button" class="fm-beta-button" data-action="recommendation-reaction" data-match-id="${esc(match.id)}" data-reaction="${kind}" aria-label="${label}" aria-pressed="${selected===kind}">${label}</button>`).join('')}<button type="button" class="fm-beta-link" data-action="clear-reactions">추천 반응 초기화</button></div>${selected?'<p role="status">선택을 저장했어요. 같은 버튼을 다시 누르면 해제돼요.</p>':''}</details>`;
+    return `<details class="fm-beta-reaction-panel" ${selected?'open':''}><summary>추천 조정${selected?' · 선택 저장됨':''}</summary><p>내 선택은 이 브라우저와 계정의 추천 순서에 반영돼요. 선택 조건은 유지해요.</p><div class="fm-beta-actions">${[['interested','관심 있어요'],['different_time','다른 시간 원해요'],['too_far','다른 구장 원해요']].map(([kind,label])=>`<button type="button" class="fm-beta-button" data-action="recommendation-reaction" data-match-id="${esc(match.id)}" data-reaction="${kind}" aria-label="${label}" aria-pressed="${selected===kind}">${label}</button>`).join('')}<button type="button" class="fm-beta-link" data-action="clear-reactions">추천 반응 초기화</button></div>${selected?'<p role="status">선택을 저장했어요. 같은 버튼을 다시 누르면 해제돼요.</p>':'<p role="status">선택한 반응이 없어요.</p>'}</details>`;
+  }
+
+  function restoreReactionInteraction(scrollTop,selector){
+    const panel=root.querySelector('.fm-beta-reaction-panel');if(panel)panel.open=true;
+    const body=root.querySelector('.fm-beta-detail-body');if(body)body.scrollTop=scrollTop;
+    root.querySelector(selector)?.focus({preventScroll:true});
   }
 
   function recommendationMatches(){
@@ -445,11 +451,14 @@ if(root){
       if(previous?.kind!==target.dataset.reaction)next.push({matchId:match.id,kind:target.dataset.reaction,venue:match.place,hour:new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Seoul',hour:'2-digit',hour12:false}).format(new Date(match.startsAt)),at:Date.now(),scope:match.isDemo?'demo':'live'});
       try{localStorage.setItem(reactionKey(match.isDemo),JSON.stringify(next.slice(-50)))}catch{setNotice('추천 반응을 저장하지 못했어요.','error')}
       emitDiscoveryMeasurement('reaction_submitted',{isDemo:match.isDemo,matchId:match.id});render();
-      const body=root.querySelector('.fm-beta-detail-body');if(body)body.scrollTop=reactionScroll;
-      root.querySelector(`[data-action="recommendation-reaction"][data-reaction="${reactionKind}"]`)?.focus({preventScroll:true});return;
+      restoreReactionInteraction(reactionScroll,`[data-action="recommendation-reaction"][data-reaction="${reactionKind}"]`);return;
     }
     if(action==='clear-reactions'){
-      const match=matches.find(m=>m.id===detailMatchId);if(match){localStorage.removeItem(reactionKey(match.isDemo));render();}return;
+      const match=matches.find(m=>m.id===detailMatchId);if(match){
+        const reactionScroll=root.querySelector('.fm-beta-detail-body')?.scrollTop||0;
+        try{localStorage.removeItem(reactionKey(match.isDemo))}catch{setNotice('추천 반응을 초기화하지 못했어요.','error')}
+        render();restoreReactionInteraction(reactionScroll,'[data-action="clear-reactions"]');
+      }return;
     }
     if(action==='match-detail'){emitDiscoveryMeasurement('match_detail_opened',{isDemo:matches.find(m=>m.id===target.dataset.matchId)?.isDemo,matchId:target.dataset.matchId});detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();return}
     if(action==='detail-back'){closeDetail();render();return}
