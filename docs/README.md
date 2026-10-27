@@ -35,6 +35,7 @@
 
 ## 운영·릴리스 핵심 문서
 
+- [BRANCH-HYGIENE-2026-10-27.md](BRANCH-HYGIENE-2026-10-27.md) — 121개 비기본 브랜치 전수 비교, 미삭제 안전 후보 및 용량 조사 한계
 - [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — **2026-10-22~23 당시** GitHub Ruleset·Vercel 배포·WAF·마이그레이션 보존 기록. **현행 Cloudflare 운영 상태의 최신 보고서가 아님**
 - [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — 날짜·PR·SHA별 구현·검증·배포 기록. 이전 Vercel/Render 및 이후 변경 기록을 각각의 시점 기준으로 해석
 - [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 당시 기록을 보존하며 이후 바뀐 승인·해석 기준 구분
