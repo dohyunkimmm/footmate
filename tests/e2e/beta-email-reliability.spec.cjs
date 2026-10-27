@@ -3,6 +3,7 @@ const AxeBuilder=require('@axe-core/playwright').default;
 
 const origin='https://beta.example.supabase.co';
 const operatorId='33333333-3333-4333-8333-333333333333';
+const operatorJwt=`x.${Buffer.from(JSON.stringify({sub:operatorId,aal:'aal2'})).toString('base64url')}.y`;
 const matchId='44444444-4444-4444-8444-444444444444';
 const fulfill=(route,payload,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(payload)});
 const serious=async page=>(await new AxeBuilder({page}).include('.fm-operator').withTags(['wcag2a','wcag2aa']).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact));
@@ -24,7 +25,7 @@ async function mockOperator(page){
   await page.route('**/api/beta-config',r=>fulfill(r,{connected:true,url:origin,publishableKey:'public-key'}));
   await page.route(`${origin}/**`,async route=>{
     const request=route.request(),url=new URL(request.url()),path=url.pathname+url.search;
-    if(path.startsWith('/auth/v1/token?grant_type=refresh_token'))return fulfill(route,{access_token:'operator-access',refresh_token:'refresh-token-2',expires_in:3600,user:{id:operatorId,email:'operator@example.com'}});
+    if(path.startsWith('/auth/v1/token?grant_type=refresh_token'))return fulfill(route,{access_token:operatorJwt,refresh_token:'refresh-token-2',expires_in:3600,user:{id:operatorId,email:'operator@example.com'}});
     if(url.pathname==='/auth/v1/user')return fulfill(route,{user:{id:operatorId,email:'operator@example.com'}});
     if(url.pathname==='/rest/v1/operators')return fulfill(route,[{user_id:operatorId,created_at:'2000-01-01T00:00:00Z'}]);
     if(url.pathname==='/rest/v1/matches')return fulfill(route,[match]);
