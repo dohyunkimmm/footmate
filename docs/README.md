@@ -39,6 +39,10 @@
 - [Supabase Security Advisor 판정](SUPABASE-SECURITY-ADVISOR-2026-10-27.md): authenticated SECURITY DEFINER RPC 권한 경계 검증, 남은 `pg_net` 경고 및 Free 플랜으로 제한된 유출 비밀번호 보호 안내. 경고를 억지로 없애려고 사용자 RPC/알림 Cron을 깨는 변경은 하지 않습니다.
 - [Git 브랜치 위생 감사](BRANCH-HYGIENE-2026-10-27.md): `ahead=0` 단일 후보 확인, 이력 차이가 있는 브랜치는 별도 patch-equivalence 감사로 보존. 브랜치 삭제나 `main` 이력 재작성은 완료되지 않았습니다.
 
+## 2026-10-28 · 브랜치 실제 정리 현황
+
+- [PR #718](https://github.com/dohyunkimmm/footmate/pull/718)로 [일회성 GitHub Actions](https://github.com/dohyunkimmm/footmate/actions/runs/40597913047) **SUCCESS** 후 `docs/compact-demo-release-654` 브랜치 1개 삭제를 API로 재확인했습니다. 안전 점검 증거는 [브랜치 위생 기록](BRANCH-HYGIENE-2026-10-27.md)에 반영했고, 남은 diverged 브랜치와 Git 용량 정리는 #525에서 계속합니다. pre-cleanup CSV는 당시 ref를 보존한 **기록**이지 실시간 브랜치 목록이 아닙니다.
+
 ## 2026-10-28 · 운영 안전성 후속
 
 - Supabase [pg_net 권한·Cron 읽기 전용 감사](../tests/database/pgnet-boundary-readonly.sql): 실행 중인 알림 Cron 3개와 `postgres` 실행 계정 검증. 비이동 확장과 기본 grant의 위험 때문에 임의의 `REVOKE`/재설치를 실행하지 않았으며 Data API 스키마 노출 여부는 소유자 대시보드 점검 대상으로 유지했습니다.
