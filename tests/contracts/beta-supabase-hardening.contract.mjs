@@ -78,4 +78,22 @@ for(const required of ['set local role anon','set local role authenticated',
 assert.doesNotMatch(rlsRoleQA,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\b/im,
   'RLS role QA must not mutate the database');
 
+
+const rpcGuards=await readFile(new URL('../database/definer-rpc-readonly-guards.sql',import.meta.url),'utf8');
+assert.match(rpcGuards,/^begin read only;/im);
+assert.match(rpcGuards,/^rollback;/im);
+for(const required of [
+  "has_function_privilege('anon',p.oid,'EXECUTE')",
+  "current_user<>'authenticated'",
+  "'nonoperator_aal2','qa.member_uid','aal2','OPERATOR_REQUIRED'",
+  "'operator_aal1','qa.operator_uid','aal1','MFA_REQUIRED'",
+  "'QA_MISSING_UID_COUNT:%'",
+  "'AUTH_REQUIRED'",
+  "public.discovery_event_budget_available() is distinct from false",
+  "if rejected<>10",
+  "if rejected<>8"
+])assert.ok(rpcGuards.includes(required),'missing Definer RPC read-only assertion: '+required);
+assert.doesNotMatch(rpcGuards,/^\\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\\b/im,
+  'Definer RPC negative tests must remain read-only and must not mutate production state');
+
 console.log('PASS beta Supabase hardening contracts');
