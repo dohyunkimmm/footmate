@@ -871,7 +871,7 @@ for(const fallbackRemoval of [false,true])test(`discovery qa keeps collection of
 });
 
 
-test('discovery visual design keeps preview, filters and selected reactions clear on mobile',async({page})=>{
+test('discovery qa visual design keeps preview, filters and selected reactions clear on mobile',async({page},testInfo)=>{
  await mockBackend(page);
  await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
  await page.emulateMedia({reducedMotion:'reduce'});
@@ -884,6 +884,7 @@ test('discovery visual design keeps preview, filters and selected reactions clea
   await preview.getByRole('button',{name:'다른 추천 예시 보기'}).click();
   await expect(preview.locator('h2')).not.toHaveText(title);
   await expect(preview.locator('.fm-beta-preview-card')).toHaveCSS('animation-name','none');
+  await page.screenshot({path:testInfo.outputPath(`opening-${width}.png`)});
   await expect(page.getByRole('button',{name:'내 조건으로 추천받기',exact:true})).toBeInViewport();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
@@ -901,6 +902,7 @@ test('discovery visual design keeps preview, filters and selected reactions clea
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','true');
  await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','false');
+ await page.screenshot({path:testInfo.outputPath('detail-selected.png')});
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
  await page.locator('.fm-beta-reaction-panel summary').click();
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','false');
