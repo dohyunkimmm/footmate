@@ -47,6 +47,12 @@ The script only reads local refs through `git rev-list` and `git cherry`. Its TS
 - Latest GitHub comparison at `main 136bb9b335993ec1c9c20616f6883873324f9a71`: `docs/compact-demo-release-654` **ahead 0 / behind 55**, tip unchanged `81819f79d011f084c2f1aaf87d398aacae089438`. It remains a qualified manual deletion candidate, not a deleted branch.
 - The GitHub connector does not expose a branch ref DELETE action. Do not replace deletion with `update_ref` or force-push: either would distort historical refs. Require a separate user-authorized GitHub CLI/UI action with the safeguards recorded in [#525](https://github.com/dohyunkimmm/footmate/issues/525#issuecomment-6441702777).
 
+## 2026-10-28 · full tip-SHA preservation snapshot
+
+- [`BRANCH-REFS-2026-10-28.csv`](BRANCH-REFS-2026-10-28.csv) records **all 122 branch refs** returned from GitHub branch API pages 1–3 (the third page was empty), with exact tip SHA and protected flag. Snapshot base `main 8ece33712326386b9d8cbc0cf89f93a8eb5e7e3c`. This is a **ref manifest, not a backup of all Git objects**; deleting a ref can still make historical blobs unreachable. Download a `git bundle`/clone before approved deletes.
+- The single previously verified ancestry-contained candidate `docs/compact-demo-release-654` still points at `81819f79d011f084c2f1aaf87d398aacae089438` and was **ahead 0 / behind 56** at this fixed base. No deletion has been executed; still check external consumers and the current upstream SHA before owner-authorized ref deletion.
+- Other branch rows in the CSV are **not** individually patch-equivalence-certified. Use [`branch-hygiene.cjs`](../tests/tools/branch-hygiene.cjs) in a full clone to produce per-ref `git cherry` evidence. Never treat the snapshot alone as a branch removal allowlist.
+
 ## Required follow-up before closing #525
 
 1. Confirm `docs/compact-demo-release-654` is unreferenced by automated/manual work, then repeat `main...branch` comparison. Delete it through authorized GitHub UI/CLI only after that check.
