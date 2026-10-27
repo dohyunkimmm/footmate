@@ -38,4 +38,44 @@ for(const required of [
 assert.doesNotMatch(readOnlyAudit,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke|execute|call|do|begin|commit)\b/im,
   'advisor triage must remain read-only and must not mutate production schema');
 
+
+const jwtMigration=await readFile(new URL('../../supabase/migrations/20261027121500_optimize_beta_operator_rls_jwt.sql',import.meta.url),'utf8');
+const expectedJwtPolicies=[
+  'beta_operation_events_operator_read',
+  'match_slots_authenticated_read',
+  'match_slots_operator_delete',
+  'match_slots_operator_insert',
+  'match_slots_operator_update',
+  'matches_authenticated_read',
+  'matches_operator_delete',
+  'matches_operator_insert',
+  'matches_operator_update',
+  'participations_authenticated_read',
+  'profiles_authenticated_read'
+];
+assert.equal((jwtMigration.match(/^alter policy /gm)||[]).length,expectedJwtPolicies.length,
+  'JWT performance migration must touch exactly 11 existing policies');
+for(const name of expectedJwtPolicies)
+  assert.ok(jwtMigration.includes('alter policy "'+name+'" on public.'),
+    'JWT performance migration must preserve policy name: '+name);
+assert.match(jwtMigration,/set local lock_timeout/);
+assert.match(jwtMigration,/RLS_INITPLAN_PRECONDITION_FAILED/);
+assert.match(jwtMigration,/RLS_INITPLAN_POSTCONDITION_FAILED/);
+assert.match(jwtMigration,/\(select auth\.jwt\(\)\)/,
+  'JWT helper must be statement-cached');
+assert.doesNotMatch(jwtMigration,/^\s*(?:drop policy|create policy|grant|revoke|alter table|create function)\b/im,
+  'JWT performance migration may not replace policies or alter grants');
+assert.match(jwtMigration,/^commit;\s*$/m);
+
+const rlsRoleQA=await readFile(new URL('../database/rls-operator-readonly-roles.sql',import.meta.url),'utf8');
+assert.match(rlsRoleQA,/^begin read only;/m);
+assert.match(rlsRoleQA,/^rollback;/m);
+for(const required of ['set local role anon','set local role authenticated',
+  "'aal', 'aal1'","'aal', 'aal2'",'RLS_QA_OPERATOR_AAL1_GUARD_BYPASS',
+  'RLS_QA_OPERATOR_AAL2_PROFILE_ACCESS_CHANGED',
+  'RLS_QA_MEMBER_AAL2_OPERATOR_GUARD_BYPASS','RLS_QA_PARTICIPANT_AAL1_OWNERSHIP_CHANGED'
+])assert.ok(rlsRoleQA.includes(required),'missing read-only RLS role QA: '+required);
+assert.doesNotMatch(rlsRoleQA,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\b/im,
+  'RLS role QA must not mutate the database');
+
 console.log('PASS beta Supabase hardening contracts');
