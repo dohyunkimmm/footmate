@@ -193,7 +193,7 @@ jobs:
           node --test tests/contracts/typography-report.contract.cjs
           node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Verify changed choice-to-login journey before full screen QA
-        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup|discovery hotfix"
+        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup|discovery hotfix|discovery qa"
       - name: Upload changed journey screen evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -217,6 +217,8 @@ jobs:
         run: node scripts/typography-qa-report.cjs
       - name: Run Release App Mobile Safari/WebKit gate without clearing Chromium evidence
         run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+      - name: Run Beta consent recovery on Mobile Safari
+        run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit-beta tests/e2e/beta-core.spec.cjs --grep "discovery followup sends real events|discovery hotfix preserves failed withdrawal|discovery qa"
       - name: Recheck saved typography PNG integrity before artifact upload
         if: always()
         run: node scripts/typography-qa-report.cjs

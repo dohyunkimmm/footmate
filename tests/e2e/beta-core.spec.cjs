@@ -780,7 +780,7 @@ test('discovery hotfix preserves failed withdrawal across reload until server ac
   await page.locator('[data-action="open-account"]').click();await page.getByRole('button',{name:'설정',exact:true}).click();
   await page.getByText('추천 개선 통계 참여 · 선택',{exact:true}).click();
  };
- await settings();await page.getByRole('button',{name:'통계 참여 해제',exact:true}).click();
+ await settings();await page.getByRole('button',{name:'서버 통계 참여 해제',exact:true}).click();
  await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('서버 통계 해제 재시도');
  expect(enabled).toBe(true);await page.reload();await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');
  await settings();await expect(page.getByRole('button',{name:'서버 통계 해제 재시도',exact:true})).toBeVisible();
@@ -807,4 +807,48 @@ test('discovery hotfix separates comparison assignment from default visits and s
  await page.reload();await expect(page.locator('.fm-beta-opening')).toBeVisible();
  await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+});
+
+for(const fallbackRemoval of [false,true])test(`discovery qa keeps collection off after quota failure and reload (${fallbackRemoval?'remove permit':'reserved slot'})`,async({page})=>{
+ await mockBackend(page);let enabled=false,withdrawFails=true;const sent=[];
+ await page.addInitScript(({fallbackRemoval})=>{
+  const original=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(key,value){
+   if(localStorage.getItem('footmate:qa:quota')==='1'&&(key.startsWith('footmate:beta:discovery-withdrawal:')||(fallbackRemoval&&key.startsWith('footmate:beta:discovery-permission:'))))throw new DOMException('Storage quota exceeded','QuotaExceededError');
+   return original.call(this,key,value);
+  };
+ },{fallbackRemoval});
+ await page.route(`${origin}/rest/v1/discovery_consents**`,route=>{
+  if(route.request().method()==='GET')return fulfill(route,[{enabled}]);
+  const next=route.request().postDataJSON().enabled;
+  if(!next&&withdrawFails)return fulfill(route,{message:'offline'},503);
+  enabled=next;return route.fulfill({status:201,body:''});
+ });
+ await page.route(`${origin}/rest/v1/discovery_events**`,route=>{sent.push(...route.request().postDataJSON());return route.fulfill({status:201,body:''})});
+ await page.goto('/beta');await page.locator('[data-action="open-account"]').click();
+ await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');await page.getByRole('button',{name:'로그인',exact:true}).click();
+ await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');
+ const settings=async()=>{
+  await page.locator('[data-action="open-account"]').click();await page.getByRole('button',{name:'설정',exact:true}).click();
+  await page.getByText('추천 개선 통계 참여 · 선택',{exact:true}).click();
+ };
+ await settings();await page.getByRole('button',{name:'통계 참여하기',exact:true}).click();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여 해제');
+ await page.evaluate(()=>localStorage.setItem('footmate:qa:quota','1'));
+ await page.getByText('추천 개선 통계 참여 · 선택',{exact:true}).click();
+ await page.getByRole('button',{name:'통계 참여 해제',exact:true}).click();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('서버 통계 해제 재시도');
+ await page.reload();await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');await settings();
+ const retryName=fallbackRemoval?'서버 통계 참여 해제':'서버 통계 해제 재시도';
+ await expect(page.getByRole('button',{name:retryName,exact:true})).toBeVisible();expect(enabled).toBe(true);
+ const count=sent.length;await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await page.waitForTimeout(100);expect(sent).toHaveLength(count);
+ await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();await settings();
+ await page.evaluate(()=>localStorage.setItem('footmate:qa:quota','0'));withdrawFails=false;
+ await page.getByRole('button',{name:retryName,exact:true}).click();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여하기');expect(enabled).toBe(false);
+ await page.getByText('추천 개선 통계 참여 · 선택',{exact:true}).click();await page.getByRole('button',{name:'통계 참여하기',exact:true}).click();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여 해제');
+ await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await expect.poll(()=>sent.length).toBeGreaterThan(count);
 });
