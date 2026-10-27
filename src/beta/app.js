@@ -232,7 +232,7 @@ if(root){
   function reactions(demo){try{return normalizeReactions(JSON.parse(localStorage.getItem(reactionKey(demo))||'[]'))}catch{return[]}}
   function reactionPanel(match){
     const selected=reactions(match.isDemo).find(r=>r.matchId===match.id)?.kind;
-    return `<details class="fm-beta-reaction-panel" ${selected?'open':''}><summary>추천 조정${selected?' · 선택 저장됨':''}</summary><p>내 선택은 이 브라우저와 계정의 추천 순서에 반영돼요. 선택 조건은 유지해요.</p><div class="fm-beta-actions">${[['interested','관심 있어요'],['different_time','다른 시간 원해요'],['too_far','다른 구장 원해요']].map(([kind,label])=>`<button type="button" class="fm-beta-button" data-action="recommendation-reaction" data-match-id="${esc(match.id)}" data-reaction="${kind}" aria-pressed="${selected===kind}">${label}</button>`).join('')}<button type="button" class="fm-beta-link" data-action="clear-reactions">추천 반응 초기화</button></div>${selected?'<p role="status">선택을 저장했어요. 같은 버튼을 다시 누르면 해제돼요.</p>':''}</details>`;
+    return `<details class="fm-beta-reaction-panel" ${selected?'open':''}><summary>추천 조정${selected?' · 선택 저장됨':''}</summary><p>내 선택은 이 브라우저와 계정의 추천 순서에 반영돼요. 선택 조건은 유지해요.</p><div class="fm-beta-actions">${[['interested','관심 있어요'],['different_time','다른 시간 원해요'],['too_far','다른 구장 원해요']].map(([kind,label])=>`<button type="button" class="fm-beta-button" data-action="recommendation-reaction" data-match-id="${esc(match.id)}" data-reaction="${kind}" aria-label="${label}" aria-pressed="${selected===kind}">${label}</button>`).join('')}<button type="button" class="fm-beta-link" data-action="clear-reactions">추천 반응 초기화</button></div>${selected?'<p role="status">선택을 저장했어요. 같은 버튼을 다시 누르면 해제돼요.</p>':''}</details>`;
   }
 
   function recommendationMatches(){
