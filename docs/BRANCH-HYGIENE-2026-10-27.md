@@ -25,6 +25,14 @@ Other 120 branches, including historical `noop-*`, `docs/*`, `qa/*`, `fix/*`, an
 - The difference does not identify the location or deletion safety of past blobs, objects, snapshots, or Git references. Repository-size fields and checked-out tree sizes are not directly comparable.
 - The investigation cannot measure recoverable Git objects or guarantee that deleting one ref will shrink GitHub storage.
 
+## Follow-up verification — 2026-10-27
+
+- On `main a2037df7`, `docs/compact-demo-release-654` remains **ahead 0 / behind 54** and points to `81819f79d011f084c2f1aaf87d398aacae089438`, the already-merged commit from [PR #654](https://github.com/dohyunkimmm/footmate/pull/654).
+- The only repository workflow in the current Git tree is `.github/workflows/qa.yml`, scoped to `main`; external automations and personal clones cannot be established from this scan.
+- The exact user-confirmed, guarded `gh` deletion sequence (branch SHA check, ahead=0, no open PR, explicit branch-name confirmation) is recorded in [issue #525](https://github.com/dohyunkimmm/footmate/issues/525#issuecomment-6441702777). The connected GitHub app lacks ref deletion, so the branch still exists. No deletion was attempted here.
+- Historical Git tree spot checks: `2049edc8` and `489ad73f`: 269 blobs / **5.20 MiB** each; `bf3aa123`: 282 blobs / **6.32 MiB**; `e5105a2f`: 284 blobs / **6.33 MiB**. Reported GitHub repository size in the latest check: **139,469 KiB (136.20 MiB)**. These samples do not quantify reachable and unreachable object storage, so no shrinkage guarantee is possible.
+- The original 121-branch inventory is an earlier snapshot; later PR branches may add refs. Do not use the old counts as a live branch deletion list.
+
 ## Required follow-up before closing #525
 
 1. Confirm `docs/compact-demo-release-654` is unreferenced by automated/manual work, then repeat `main...branch` comparison. Delete it through authorized GitHub UI/CLI only after that check.
