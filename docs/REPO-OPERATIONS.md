@@ -4,6 +4,13 @@
 >
 > **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
 
+## 2026-10-27 · RLS 성능 적용 및 안전성 재검증
+
+- [PR #713](https://github.com/dohyunkimmm/footmate/pull/713)을 squash 병합(`a2037df7`). [PR QA #40502212534](https://github.com/dohyunkimmm/footmate/actions/runs/40502212534)의 `Regression 36` 및 `Browser E2E + axe` 통과. 운영 Supabase에는 `apply_migration`으로 `optimize_beta_operator_rls_jwt`를 적용했으며 **실제 migration version은 `20261027122602`**입니다. 버전관리 SQL은 [동일한 타임스탬프 파일](../supabase/migrations/20261027122602_optimize_beta_operator_rls_jwt.sql)로 맞췄습니다.
+- 변경은 기존 **11개 정책의 `auth.jwt()` → `(select auth.jwt())` 최적화**에 한정합니다. 정책명·역할·허용 대상·운영자 AAL2·사용자별 소유권 검사·RPC 권한은 보존했습니다. 사전 마이그레이션 `ROLLBACK` 리허설 및 운영 반영 후 [읽기 전용 역할 테스트](../tests/database/rls-operator-readonly-roles.sql)(anon, 회원 AAL1/AAL2, 운영자 AAL1/AAL2, 참가자 AAL1) PASS.
+- 운영 DB 반영 후 Supabase Performance Advisor **`auth_rls_initplan` 11 → 0** 확인. `unused_index` INFO 8건은 안전 검증 없이 제거하지 않았습니다. Security Advisor의 `authenticated_security_definer_function_executable` 20 WARN, `extension_in_public` 1 WARN, `auth_leaked_password_protection` 1 WARN 및 no-policy INFO 2건은 여전히 별도 검토입니다.
+- 읽기 전용 테스트의 JWT는 SQL 역할에서 모의한 claim이며 실제 서명된 OAuth/JWT E2E를 증명하지 않습니다. 과거 이력·알림 Cron/pg_net·마이그레이션 수정·인덱스 제거 및 Git history rewrite는 하지 않았습니다.
+
 ## 2026-10-27 · 후속 감사 및 재현 가능한 검증
 
 - GitHub [브랜치 전수 감사](BRANCH-HYGIENE-2026-10-27.md): 122개 브랜치 중 `main` 제외 121개 전부의 ahead/behind를 재조회했습니다. `docs/compact-demo-release-654`만 `ahead_by=0`, `behind_by=52`이며, 나머지 120개는 고유 커밋이 있는 분기 상태입니다. Patch equivalence와 브랜치별 운영 의존성 확인 전 삭제하지 않습니다. 이 조사는 아래의 과거 “31개 표본, 모두 ahead>0” 판단을 **전수 점검 결과로 정정**합니다. 이번에 ref를 삭제하거나 `main`을 재작성하지 않았습니다.

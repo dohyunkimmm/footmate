@@ -39,7 +39,7 @@ assert.doesNotMatch(readOnlyAudit,/^\s*(?:insert|update|delete|alter|drop|create
   'advisor triage must remain read-only and must not mutate production schema');
 
 
-const jwtMigration=await readFile(new URL('../../supabase/migrations/20261027121500_optimize_beta_operator_rls_jwt.sql',import.meta.url),'utf8');
+const jwtMigration=await readFile(new URL('../../supabase/migrations/20261027122602_optimize_beta_operator_rls_jwt.sql',import.meta.url),'utf8');
 const expectedJwtPolicies=[
   'beta_operation_events_operator_read',
   'match_slots_authenticated_read',
