@@ -33,8 +33,15 @@
 - 후속 확인에서 [Vercel 프로젝트 영구 삭제 #685](https://github.com/dohyunkimmm/footmate/issues/685)는 Vercel 감사 이벤트와 삭제 후 API 조회로 검증한 뒤 **종료**했습니다. 현재 남은 두 이슈는 [Supabase 보안·RLS 검토 #611](https://github.com/dohyunkimmm/footmate/issues/611)과 [브랜치/이력 위생 #525](https://github.com/dohyunkimmm/footmate/issues/525)입니다. DB 권한 변경·브랜치 삭제·이력 강제 변경은 진행하지 않았습니다. 과거 운영 지침의 현재 해석은 [저장소 운영 기록](REPO-OPERATIONS.md) 상단을 참조합니다.
 - 2026-10-27 후속 점검에서 비공개 Notion [AI 기능 확장 PRD](https://app.notion.com/p/3cf21460c9348184bfbad953b0a1b305), [Service Flow · Data Quality](https://app.notion.com/p/3cf21460c934815c89bed8f7ee337092), [AI Agent Workflow](https://app.notion.com/p/3cf21460c934815799a4fd44af094cee)를 직접 비교·수정·재조회했습니다. 현재 `/demo`와 과거 `/prototype`을 구분하고 날짜·시간 필터/추천 반응/동의형 탐색 계측 기준을 반영했습니다. 이 세 문서 외의 전체 Notion·외부 OAuth·실제 이용자 성과는 일괄 검증한 것이 아닙니다.
 
+## 2026-10-27 보안·브랜치 후속 현행 상태
+
+- [PR #713](https://github.com/dohyunkimmm/footmate/pull/713)과 [#714](https://github.com/dohyunkimmm/footmate/pull/714)에서 운영 RLS 정책 11개의 JWT InitPlan 최적화 및 실제 Supabase migration version `20261027122602` 동기화를 완료했습니다. 이후 `auth_rls_initplan` 경고 0건, Cloudflare Production Smoke [#40505456839](https://github.com/dohyunkimmm/footmate/actions/runs/40505456839) SUCCESS입니다. 위의 “DB 권한 변경 없음” 문장은 **당시 문서 동기화 시점**을 설명하며 현행 정책 변경 여부가 아닙니다.
+- [Supabase Security Advisor 판정](SUPABASE-SECURITY-ADVISOR-2026-10-27.md): authenticated SECURITY DEFINER RPC 권한 경계 검증, 남은 `pg_net` 경고 및 Free 플랜으로 제한된 유출 비밀번호 보호 안내. 경고를 억지로 없애려고 사용자 RPC/알림 Cron을 깨는 변경은 하지 않습니다.
+- [Git 브랜치 위생 감사](BRANCH-HYGIENE-2026-10-27.md): `ahead=0` 단일 후보 확인, 이력 차이가 있는 브랜치는 별도 patch-equivalence 감사로 보존. 브랜치 삭제나 `main` 이력 재작성은 완료되지 않았습니다.
+
 ## 운영·릴리스 핵심 문서
 
+- [SUPABASE-SECURITY-ADVISOR-2026-10-27.md](SUPABASE-SECURITY-ADVISOR-2026-10-27.md) — 남은 Auth·RPC·pg_net 보안 경고와 운영별 제약·검증 범위
 - [BRANCH-HYGIENE-2026-10-27.md](BRANCH-HYGIENE-2026-10-27.md) — 121개 비기본 브랜치 전수 비교, 미삭제 안전 후보 및 용량 조사 한계
 - [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — **2026-10-22~23 당시** GitHub Ruleset·Vercel 배포·WAF·마이그레이션 보존 기록. **현행 Cloudflare 운영 상태의 최신 보고서가 아님**
 - [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — 날짜·PR·SHA별 구현·검증·배포 기록. 이전 Vercel/Render 및 이후 변경 기록을 각각의 시점 기준으로 해석

@@ -97,3 +97,19 @@ test('retired Vercel hosting files are absent while AI Gateway integration remai
   assert.equal(lock.packages[''].dependencies['@vercel/oidc'],version);
   assert.equal(lock.packages['node_modules/@vercel/oidc'].version,version);
 });
+
+
+test('local branch audit only observes refs and separates ancestry from patch equivalence', () => {
+  const { parseAheadBehind, classify } = require('../tools/branch-hygiene.cjs');
+  assert.deepEqual(parseAheadBehind('55\t0\n'), { behind: 55, ahead: 0 });
+  assert.deepEqual(parseAheadBehind('4  9'), { behind: 4, ahead: 9 });
+  assert.throws(() => parseAheadBehind('not a count'), /Unexpected/);
+  assert.equal(classify({ahead:0,patchUnique:0}), 'ancestry-contained-review');
+  assert.equal(classify({ahead:3,patchUnique:0}), 'patch-equivalent-review');
+  assert.equal(classify({ahead:3,patchUnique:1}), 'unique-patches-preserve');
+  const code=fs.readFileSync(path.resolve(__dirname,'../tools/branch-hygiene.cjs'),'utf8');
+  assert.match(code,/\['cherry', base, branch\]/);
+  assert.match(code,/\['rev-list', '--left-right', '--count'/);
+  assert.doesNotMatch(code,/execFileSync\('(?:gh|curl)'|git\(\['(?:push|reset|checkout|branch|update-ref|fetch)'/,
+    'branch audit must never mutate remote refs or fetch/change worktree');
+});
