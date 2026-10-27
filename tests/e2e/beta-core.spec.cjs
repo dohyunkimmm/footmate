@@ -701,6 +701,21 @@ test('enhanced discovery applies Seoul dates and exclusive start-time bounds',as
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).dateWindow)).toBe('tomorrow');
 });
 
+test('enhanced discovery keeps an open quick filter through AI completion',async({page})=>{
+ await mockBackend(page);let finishFirst,first=true;
+ await page.route('**/api/ai-match-assistant',async route=>{
+  if(first){first=false;await new Promise(resolve=>finishFirst=resolve)}
+  return fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)});
+ });
+ await page.goto('/demo');
+ await page.locator('#quick-filter-afterTime').click();
+ const tomorrow=page.getByRole('group',{name:'빠른 경기 날짜',exact:true}).getByRole('radio',{name:'내일',exact:true});
+ await expect(tomorrow).toBeVisible();await expect.poll(()=>Boolean(finishFirst)).toBe(true);
+ finishFirst();await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+ await expect(tomorrow).toBeVisible();await tomorrow.click();
+ await expect(page.locator('#quick-filter-afterTime')).toContainText('내일');
+});
+
 test('enhanced discovery reuses valid rankings, expires them and separates demo measurement',async({page})=>{
  await mockBackend(page);
  let calls=0;

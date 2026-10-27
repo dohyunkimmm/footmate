@@ -1,3 +1,4 @@
+import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {personalizeRecommendations,normalizeReactions,chooseOpeningVariant} from './domain/discovery-followup.js';
 import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus} from './discovery-transport.js';
 import {matchesRecommendationConditions,pickUnseenRecommendation} from './domain/recommendation-discovery.js';
@@ -539,6 +540,7 @@ if(root){
 
   window.addEventListener('footmate:beta:discovery-consent-changed',()=>render());
   window.addEventListener('footmate:beta:recommendations',event=>{
+    const openFilters=openQuickFilterIds(root);
     const focusedFilter=document.activeElement?.id;
     const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
     const conditions=event.detail?.conditions||'';
@@ -563,6 +565,7 @@ if(root){
     if(detailMatchId||authOpen||openingOpen||view!=='home')return;
     render();
     // Growth restores its controls after the base view is rendered.
+    if(!changed&&openFilters.length)queueMicrotask(()=>restoreQuickFilters(root,openFilters));
     if(focusedFilter?.startsWith('quick-filter-'))queueMicrotask(()=>document.getElementById(focusedFilter)?.focus());
   });
   boot();
