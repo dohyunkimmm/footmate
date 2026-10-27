@@ -13,6 +13,13 @@ Scope: production Supabase project `footmate-beta` (`iihitfjphowjplxzfxtn`), rea
 | `auth_leaked_password_protection` | **1 WARN** | Project organization is **`free` / `tier_free`** as reported by the connected Supabase organization API. Supabase documents breached-password rejection as a **Pro-and-above** feature. A billing plan change and Auth setting adjustment were **not** authorized/performed. See owner-only action below |
 | `unused_index` | **8 INFO** | Few beta rows and no workload observation; do not DROP indexes on the basis of this report |
 
+## 2026-10-28 · pg_net scheduled-job and privilege boundary follow-up
+
+- Ran [read-only pg_net boundary audit](../tests/database/pgnet-boundary-readonly.sql) against live `footmate-beta`. The email outbox, push outbox and match-reminder cron jobs were **all active** and ran as `postgres`; their two schedule-configuration wrappers accept `service_role` and reject `anon`/`authenticated`. The PostgreSQL `anon` and `authenticated` roles have `NOLOGIN`.
+- Installed `pg_net 0.20.4` remains **non-relocatable** in `public`; `net.http_get`, `net.http_post`, `net.http_delete`, and `net.worker_restart` expose effective EXECUTE in DB privilege catalogs to `anon`/`authenticated` through defaults. **This does not establish browser/Data API reachability:** Supabase documentation states `net` is *not exposed through the Data API by default*. Verify the project's actual exposed schema configuration separately in the Supabase Data API settings.
+- Supabase's [official pg_net ACL troubleshooting guidance](https://supabase.com/kb/troubleshooting/revoking-access-to-pg_net-objects-has-no-effect) states `supabase_admin` owns extension objects, so a `postgres` `REVOKE` can silently do nothing; revoking `PUBLIC` table grants can break pg_net's `postgres` cron worker. Do **not** generate a misleading no-op GRANT/REVOKE migration or drop/recreate the extension while these jobs are live. No privilege, extension, Cron or request-queue mutation occurred in this audit.
+- Safe follow-up: owner reviews exposed PostgREST schemas and controls any independently login-capable DB roles; if `net` is actually exposed to clients, treat that as an access-control incident requiring a supported Supabase remediation, not an automatic extension move. See [Supabase pg_net permissions](https://supabase.com/docs/guides/database/extensions/pg_net#permissions).
+
 ## Reproducible tests
 
 Run `tests/database/definer-rpc-readonly-guards.sql` through an authorized admin SQL editor on a **known compatible test fixture**. It uses a read-only transaction and deliberately never invokes any stateful function successfully. It checks:

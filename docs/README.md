@@ -39,6 +39,11 @@
 - [Supabase Security Advisor 판정](SUPABASE-SECURITY-ADVISOR-2026-10-27.md): authenticated SECURITY DEFINER RPC 권한 경계 검증, 남은 `pg_net` 경고 및 Free 플랜으로 제한된 유출 비밀번호 보호 안내. 경고를 억지로 없애려고 사용자 RPC/알림 Cron을 깨는 변경은 하지 않습니다.
 - [Git 브랜치 위생 감사](BRANCH-HYGIENE-2026-10-27.md): `ahead=0` 단일 후보 확인, 이력 차이가 있는 브랜치는 별도 patch-equivalence 감사로 보존. 브랜치 삭제나 `main` 이력 재작성은 완료되지 않았습니다.
 
+## 2026-10-28 · 운영 안전성 후속
+
+- Supabase [pg_net 권한·Cron 읽기 전용 감사](../tests/database/pgnet-boundary-readonly.sql): 실행 중인 알림 Cron 3개와 `postgres` 실행 계정 검증. 비이동 확장과 기본 grant의 위험 때문에 임의의 `REVOKE`/재설치를 실행하지 않았으며 Data API 스키마 노출 여부는 소유자 대시보드 점검 대상으로 유지했습니다.
+- GitHub [전체 브랜치 tip-SHA 스냅샷](BRANCH-REFS-2026-10-28.csv): 총 122개 ref·보호 여부를 보존했습니다. Git 객체 자체 백업/브랜치 삭제는 아닙니다.
+
 ## 운영·릴리스 핵심 문서
 
 - [SUPABASE-SECURITY-ADVISOR-2026-10-27.md](SUPABASE-SECURITY-ADVISOR-2026-10-27.md) — 남은 Auth·RPC·pg_net 보안 경고와 운영별 제약·검증 범위

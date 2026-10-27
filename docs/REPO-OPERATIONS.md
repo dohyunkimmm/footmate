@@ -4,6 +4,12 @@
 >
 > **배포 경로 변경 주의 (2026-10-25):** [PR #670](https://github.com/dohyunkimmm/footmate/pull/670)에서 Cloudflare Workers로 전환하고 [PR #671](https://github.com/dohyunkimmm/footmate/pull/671)에서 관련 Production Smoke를 수정했습니다. 현재 배포·검증 경로는 [GitHub Actions 워크플로](../.github/workflows/qa.yml)를 우선합니다. 아래 Vercel READY·WAF 기록은 **당시 운영 이력**이며 Cloudflare에서 같은 보호 정책이나 운영 상태가 검증됐다는 의미가 아닙니다.
 
+## 2026-10-28 · 추가 누락 작업 증거
+
+- Supabase 운영 DB [pg_net read-only 경계 감사](../tests/database/pgnet-boundary-readonly.sql)에서 이메일·푸시·경기 알림 Cron 3개 `active=true`, 실행 계정 `postgres`, 공개 앱이 아닌 `service_role`만 접근할 수 있는 스케줄 설정 함수 2개를 검증했습니다. 설치된 `pg_net`은 `supabase_admin` 소유의 비이동 확장이라 일반 `postgres`의 `REVOKE`가 효과가 없거나 Cron 의존성을 손상할 수 있습니다. [Supabase 공식 운영 지침](https://supabase.com/kb/troubleshooting/revoking-access-to-pg_net-objects-has-no-effect)에 따라 grant/extension/worker를 변경하지 않았습니다. 실제 Data API의 `net` 노출 여부는 Dashboard에서 추가 확인 대상입니다.
+- [브랜치 ref SHA 전수 스냅샷](BRANCH-REFS-2026-10-28.csv)에 총 **122개** 브랜치의 이름·현재 tip SHA·protected 필드를 기록했습니다. snapshot은 `git bundle` 백업이 아니며 삭제 증거도 아닙니다. 기존 ahead=0 후보를 최신 base에서 재확인했으며 ref 삭제·force push 없음.
+- 이전 PR #715 main `8ece337`의 [최종 Actions #40512585047](https://github.com/dohyunkimmm/footmate/actions/runs/40512585047)는 `SUCCESS`; 보안 Advisor 성능 `auth_rls_initplan=0`입니다.
+
 ## 2026-10-27 · 남은 Security Advisor 경고의 운영 검증
 
 - [보안 Advisor 결정 기록](SUPABASE-SECURITY-ADVISOR-2026-10-27.md)과 [RPC 실제 거부 검증 SQL](../tests/database/definer-rpc-readonly-guards.sql)을 추가했습니다. 운영 DB에서 `BEGIN READ ONLY … ROLLBACK` 성공: `SECURITY DEFINER` 20개 중 `anon` 실행 0, 전체 명시적 `search_path` 확인, `operator_*` 10개 전부 일반 사용자/AAL2에서는 `OPERATOR_REQUIRED`, 운영자/AAL1에서는 `MFA_REQUIRED`, 8개 사용자 호출 경로는 UID 누락 시 `AUTH_REQUIRED`를 확인했습니다. 이는 **모의 JWT + DB role 검사**이며 실제 서명된 Auth 토큰 통합 테스트는 아닙니다.
