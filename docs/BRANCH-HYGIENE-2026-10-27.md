@@ -1,3 +1,7 @@
+## Later full-clone audit · 2026-10-28
+
+A real full-history [120-branch patch/tree audit](BRANCH-PATCH-AUDIT-2026-10-28.md) was executed successfully by [Actions #40604043505](https://github.com/dohyunkimmm/footmate/actions/runs/40604043505): **0 ahead=0; 8 patch-equivalent review candidates (6 merged PRs, 2 unmerged/closed PRs); 112 with unique patches; 0 exact-tree equals**. No further branches were deleted. The earlier claim that remaining diverged branches had not been audited was accurate at that time and is superseded by this result. **Patch equivalence is not deletion authorization**; preserve old tip SHAs with a Git bundle and inspect external refs before any future ref deletion.
+
 # FootMate Git branch hygiene audit — 2026-10-27
 
 ## Superseding state · 2026-10-28 (verified deletion)
