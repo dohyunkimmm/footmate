@@ -202,6 +202,8 @@ jobs:
           path: test-results/
           if-no-files-found: warn
           retention-days: 14
+      - name: Run Beta consent recovery on Mobile Safari
+        run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit-beta tests/e2e/beta-core.spec.cjs --grep "discovery followup sends real events|discovery hotfix preserves failed withdrawal|discovery qa"
       - name: Run 11-section Case Study navigation, responsive and accessibility gate
         run: npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
       - name: Preserve Case Study screen evidence before the next browser run
@@ -217,8 +219,6 @@ jobs:
         run: node scripts/typography-qa-report.cjs
       - name: Run Release App Mobile Safari/WebKit gate without clearing Chromium evidence
         run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
-      - name: Run Beta consent recovery on Mobile Safari
-        run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit-beta tests/e2e/beta-core.spec.cjs --grep "discovery followup sends real events|discovery hotfix preserves failed withdrawal|discovery qa"
       - name: Recheck saved typography PNG integrity before artifact upload
         if: always()
         run: node scripts/typography-qa-report.cjs
