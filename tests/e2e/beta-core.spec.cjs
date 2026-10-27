@@ -873,6 +873,7 @@ for(const fallbackRemoval of [false,true])test(`discovery qa keeps collection of
 
 test('discovery qa visual design keeps preview, filters and selected reactions clear on mobile',async({page},testInfo)=>{
  await mockBackend(page);
+ await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
  await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
  await page.emulateMedia({reducedMotion:'reduce'});
  for(const width of [320,390]){
@@ -891,7 +892,7 @@ test('discovery qa visual design keeps preview, filters and selected reactions c
  await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
  await expect(page.locator('.fm-beta-filter-count')).toHaveText('원하는 조건을 골라보세요');
  await page.locator('#quick-filter-level').click();
- await page.getByRole('radio',{name:'중급',exact:true}).check();
+ await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'중급',exact:true}).click();
  await expect(page.locator('.fm-beta-filter-count')).toHaveText('조건 1개 선택됨');
  await expect(page.locator('details[data-filter-active="true"]')).toHaveCount(1);
  await expect(page.locator('#quick-filter-level')).toHaveCSS('background-color','rgb(232, 243, 223)');
