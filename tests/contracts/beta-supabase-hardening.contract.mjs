@@ -93,7 +93,7 @@ for(const required of [
   "if rejected<>10",
   "if rejected<>8"
 ])assert.ok(rpcGuards.includes(required),'missing Definer RPC read-only assertion: '+required);
-assert.doesNotMatch(rpcGuards,/^\\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\\b/im,
+assert.doesNotMatch(rpcGuards,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\b/im,
   'Definer RPC negative tests must remain read-only and must not mutate production state');
 
 console.log('PASS beta Supabase hardening contracts');
