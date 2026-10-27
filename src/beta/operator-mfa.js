@@ -91,17 +91,17 @@ if(root){
       config=await loadBetaBackendConfig();session=readSession();
       if(!session?.refreshToken){await launchConsole();return}
       try{await refreshSession()}catch{await launchConsole();return}
-      const membership=await operatorMembership();if(!membership){await launchConsole();return}
       const aal=parseAal(session.accessToken);
-      // Only valid Supabase AAL2 claims can open the operator console.
-      // DB operator policies remain authoritative; a missing/invalid claim must fail closed.
-      if(aal==='aal2'){await launchConsole();return}
-      if(aal!=='aal1'){
+      // Validate AAL before even requesting protected operator membership.
+      // Database operator RLS/RPC policies remain the authoritative enforcement.
+      if(aal!=='aal1'&&aal!=='aal2'){
         localStorage.removeItem(SESSION_KEY);session=null;
         root.dataset.operatorState='session-invalid';
         root.innerHTML='<div class="fm-beta-shell"><section class="fm-beta-panel fm-operator-mfa" aria-labelledby="operator-session-title"><h1 id="operator-session-title">운영자 세션 확인 실패</h1><p role="alert">유효한 인증 수준을 확인할 수 없습니다. Beta에서 다시 로그인해주세요.</p><a href="/beta" class="fm-beta-button fm-beta-button--primary">Beta 로그인으로 돌아가기</a></section></div>';
         return;
       }
+      const membership=await operatorMembership();if(!membership){await launchConsole();return}
+      if(aal==='aal2'){await launchConsole();return}
       user=await request('/auth/v1/user');factor=verifiedTotp();renderGate();
     }catch(e){error=String(e?.message||e);renderGate()}
   }
