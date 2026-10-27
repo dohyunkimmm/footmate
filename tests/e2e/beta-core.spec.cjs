@@ -642,8 +642,11 @@ test('refreshing recommendations preserves the viewed match and discovery histor
   await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,rows));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:rows.map(m=>m.id)}));
   await page.goto('/beta');
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-recommendations-ready','true');
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+  const initialId=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
+  await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',initialId);
   const id=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.getByRole('button',{name:'새로고침',exact:true}).click();
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',id);
