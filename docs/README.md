@@ -1,3 +1,7 @@
+## 2026-10-28 · Git branch full-clone patch audit
+
+- [BRANCH-PATCH-AUDIT-2026-10-28.md](BRANCH-PATCH-AUDIT-2026-10-28.md): 실제 `git cherry` 및 작업 트리 비교로 남은 120개 브랜치 검사 완료. 중복 패치 후보 8개(병합 PR 6, 미병합 종료 PR 2), 독립 패치 112개, 현재 main 동일 트리 0개. 추가 브랜치 삭제 없음. [감사 Actions](https://github.com/dohyunkimmm/footmate/actions/runs/40604043505) 및 제한 기간 TSV artifact 참조.
+
 # FootMate Documentation
 
 현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 이 목록은 **2026-10-27 문서 색인·구현 동기화 점검** 결과이며, 별도의 실시간 운영 가용성 검증을 뜻하지 않습니다. 제품 버전 번호는 사용자 화면 이름이 아니라 릴리스·검증 이력에 사용합니다.
