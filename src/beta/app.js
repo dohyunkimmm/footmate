@@ -33,13 +33,16 @@ if(root){
   root.dataset.betaApp='true';
   let accountTab='profile';
   const requestedOpening=new URL(location.href).searchParams.get('opening');
-  const openingVariant=chooseOpeningVariant(requestedOpening,sessionStorage.getItem('footmate:beta:opening-variant:v1'));
+  const comparisonEntry=requestedOpening==='compare';
+  const comparisonKey='footmate:beta:opening-comparison:v2';
+  const openingVariant=chooseOpeningVariant(requestedOpening,comparisonEntry?sessionStorage.getItem(comparisonKey):null);
+  if(comparisonEntry)sessionStorage.setItem(comparisonKey,openingVariant);
   const openingExperiment=['control','quick','compare'].includes(requestedOpening);
   const activeOpeningVariant=(isDemoEntry||openingExperiment)?openingVariant:(sessionStorage.getItem('footmate:beta:opening-variant:v1')||'control');
   sessionStorage.setItem('footmate:beta:opening-variant:v1',activeOpeningVariant);
   const entryStartedAt=Date.now();
   let serverReactions=[];
-  let openingOpen=openingVariant!=='quick'&&(isDemoEntry||openingExperiment)&&sessionStorage.getItem('footmate:beta:entered:v1')!=='1';
+  let openingOpen=openingVariant!=='quick'&&(isDemoEntry||openingExperiment)&&(comparisonEntry||sessionStorage.getItem('footmate:beta:entered:v1')!=='1');
   let joinedPage=0;
   let matchesTab='joined';
   let authEntry='results';
@@ -154,7 +157,7 @@ if(root){
         <label class="fm-beta-field"><span>선호 포지션</span><select name="position"><option value="">선택해주세요</option>${BETA_MATCH_POSITIONS.map(position=>`<option value="${position}" ${p.position===position?'selected':''}>${POSITION_LABELS[position]}</option>`).join('')}</select></label>
         <label class="fm-beta-field"><span>체감 레벨</span><select name="level"><option value="">선택해주세요</option>${LEVELS.map(level=>`<option value="${level}" ${p.level===level?'selected':''}>${level}</option>`).join('')}</select></label>
         <button class="fm-beta-button" type="submit" ${busy?'disabled':''}>프로필 저장</button>
-      </form><details class="fm-beta-data-details"><summary>추천 개선 통계 참여 · 선택</summary><p>로그인 후 실제 경기의 추천·상세·참가 흐름을 서버에 기록해요. 이메일·조건 원문은 보내지 않아요. 데모는 제외하며 참여 해제 시 서버 탐색 기록을 삭제해요.</p><button class="fm-beta-button" type="button" data-action="discovery-consent" ${busy?'disabled':''}>${discoveryTransportStatus().enabled?'통계 참여 해제':'통계 참여하기'}</button></details><details class="fm-beta-data-details"><summary>개인정보 안내</summary><p>저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.</p><a href="/beta-data-notice.html">자세히 보기</a></details>
+      </form><details class="fm-beta-data-details"><summary>추천 개선 통계 참여 · 선택</summary>${discoveryTransportStatus().withdrawalPending?'<p role="status">이 기기의 수집은 중지되어 있어요. 서버 기록 삭제는 아직 확인되지 않았어요. 해제를 재시도해주세요.</p>':''}<p>로그인 후 실제 경기의 추천·상세·참가 흐름을 서버에 기록해요. 이메일·조건 원문은 보내지 않아요. 데모는 제외하며 참여 해제 시 서버 탐색 기록을 삭제해요.</p><button class="fm-beta-button" type="button" data-action="discovery-consent" ${busy?'disabled':''}>${discoveryTransportStatus().withdrawalPending?'서버 통계 해제 재시도':discoveryTransportStatus().enabled?'통계 참여 해제':'통계 참여하기'}</button></details><details class="fm-beta-data-details"><summary>개인정보 안내</summary><p>저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.</p><a href="/beta-data-notice.html">자세히 보기</a></details>
       
       <div class="fm-beta-actions" style="margin-top:12px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="delete-account" ${busy?'disabled':''}>계정·참가 데이터 삭제</button></div>
     </div>`;
@@ -420,7 +423,7 @@ if(root){
     if(!target)return;
     const action=target.dataset.action;
     if(action==='discovery-consent'){
-      run(async()=>{await setDiscoveryConsent(!discoveryTransportStatus().enabled);setNotice(discoveryTransportStatus().enabled?'통계 참여를 시작했어요.':'통계 참여를 해제했어요.','success')});return;
+      run(async()=>{await setDiscoveryConsent(discoveryTransportStatus().withdrawalPending?false:!discoveryTransportStatus().enabled);setNotice(discoveryTransportStatus().enabled?'통계 참여를 시작했어요.':'통계 참여를 해제했어요.','success')});return;
     }
     if(action==='recommendation-reaction'){
       const match=matches.find(m=>m.id===target.dataset.matchId);if(!match)return;
@@ -534,6 +537,7 @@ if(root){
     run(async()=>{await refreshData()});
   });
 
+  window.addEventListener('footmate:beta:discovery-consent-changed',()=>render());
   window.addEventListener('footmate:beta:recommendations',event=>{
     const focusedFilter=document.activeElement?.id;
     const current=root.querySelector('.fm-beta-match')?.dataset.matchId;

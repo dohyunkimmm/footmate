@@ -764,3 +764,47 @@ test('discovery followup sends real events only after consent and stops on withd
  await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여하기');const count=sent.length;
  await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();expect(sent).toHaveLength(count);
 });
+
+test('discovery hotfix preserves failed withdrawal across reload until server acknowledgement',async({page})=>{
+ await mockBackend(page);let enabled=true,withdrawFails=true;const sent=[];
+ await page.route(`${origin}/rest/v1/discovery_consents**`,route=>{
+  if(route.request().method()==='GET')return fulfill(route,[{enabled}]);
+  if(withdrawFails)return fulfill(route,{message:'offline'},503);
+  enabled=route.request().postDataJSON().enabled;return route.fulfill({status:201,body:''});
+ });
+ await page.route(`${origin}/rest/v1/discovery_events**`,route=>{sent.push(...route.request().postDataJSON());return route.fulfill({status:201,body:''})});
+ await page.goto('/beta');await page.locator('[data-action="open-account"]').click();
+ await page.getByLabel('이메일').fill('beta@example.com');await page.getByLabel('비밀번호').fill('safe-password');await page.getByRole('button',{name:'로그인',exact:true}).click();
+ await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');
+ const settings=async()=>{
+  await page.locator('[data-action="open-account"]').click();await page.getByRole('button',{name:'설정',exact:true}).click();
+  await page.getByText('추천 개선 통계 참여 · 선택',{exact:true}).click();
+ };
+ await settings();await page.getByRole('button',{name:'통계 참여 해제',exact:true}).click();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('서버 통계 해제 재시도');
+ expect(enabled).toBe(true);await page.reload();await expect(page.locator('[data-action="open-account"]')).toHaveText('도현');
+ await settings();await expect(page.getByRole('button',{name:'서버 통계 해제 재시도',exact:true})).toBeVisible();
+ const count=sent.length;
+ await page.getByRole('button',{name:'추천',exact:true}).click();await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ expect(sent).toHaveLength(count);
+ await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();await settings();
+ withdrawFails=false;await page.getByRole('button',{name:'서버 통계 해제 재시도',exact:true}).click();
+ await expect(page.locator('[data-action="discovery-consent"]')).toHaveText('통계 참여하기');expect(enabled).toBe(false);
+});
+
+test('discovery hotfix separates comparison assignment from default visits and shows assigned intro',async({page})=>{
+ await mockBackend(page);
+ await page.addInitScript(()=>{
+  sessionStorage.setItem('footmate:beta:opening-variant:v1','control');
+  Math.random=()=>sessionStorage.getItem('footmate:beta:opening-comparison:v2')?0:.99;
+ });
+ await page.goto('/demo?opening=compare');
+ await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+ expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:opening-comparison:v2'))).toBe('quick');
+ await page.reload();await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+ expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:opening-comparison:v2'))).toBe('quick');
+ await page.evaluate(()=>sessionStorage.setItem('footmate:beta:opening-comparison:v2','control'));
+ await page.reload();await expect(page.locator('.fm-beta-opening')).toBeVisible();
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+ await expect(page.locator('.fm-beta-match')).toHaveCount(1);
+});

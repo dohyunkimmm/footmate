@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {normalizeReactions,personalizeRecommendations,chooseOpeningVariant} from '../../src/beta/domain/discovery-followup.js';
 import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus,queueDiscoveryMeasurement} from '../../src/beta/discovery-transport.js';
 
@@ -19,6 +20,7 @@ assert.equal(chooseOpeningVariant('quick','control'),'quick');
 assert.equal(chooseOpeningVariant('compare',null,()=>0.9),'quick');
 assert.equal(chooseOpeningVariant('compare','quick',()=>0),'quick');
 
+const storage=new Map();globalThis.localStorage={getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,String(v)),removeItem:k=>storage.delete(k)};
 const config={url:'https://example.invalid',publishableKey:'public'},uid='11111111-1111-4111-8111-111111111111';
 const root={dataset:{betaCatalogSource:'server',betaGuest:'false'}};
 globalThis.document={getElementById:()=>root};
@@ -43,3 +45,47 @@ let finish;
 globalThis.fetch=()=>new Promise(resolve=>finish=resolve);
 const configuring=configureDiscoveryTransport(config,uid,'token');await configureDiscoveryTransport(null,'','');finish(new Response('[{"enabled":true}]'));await configuring;assert.equal(discoveryTransportStatus().enabled,false);
 console.log('PASS reaction scope/expiry/order/candidate fidelity, stable comparison assignment, consent gating, privacy allowlist, withdrawal, failure and account-switch isolation');
+
+// A successful response must drain events accumulated while a request was in flight.
+let batches=[],withdrawFails=false,serverEnabled=true;
+globalThis.fetch=async(url,options={})=>{
+ if(url.includes('discovery_events')){batches.push(JSON.parse(options.body));return new Response(null,{status:201})}
+ if(options.method==='POST'){
+  if(withdrawFails)return new Response('{}',{status:503});
+  serverEnabled=JSON.parse(options.body).enabled;return new Response(null,{status:201});
+ }
+ return new Response(JSON.stringify([{enabled:serverEnabled}]));
+};
+const enqueue=()=>queueDiscoveryMeasurement({...record,eventId:crypto.randomUUID()});
+await configureDiscoveryTransport(config,uid,'token');
+for(let i=0;i<23;i++)enqueue();await tick();
+assert.equal(batches.flat().length,23);assert.ok(batches.every(b=>b.length<=10));
+withdrawFails=true;await assert.rejects(setDiscoveryConsent(false),/서버 기록 삭제는 확인되지/);
+assert.equal(discoveryTransportStatus().withdrawalPending,true);assert.equal(discoveryTransportStatus().enabled,false);
+const before=batches.flat().length;enqueue();await tick();assert.equal(batches.flat().length,before);
+// New module instance models a full reload, retaining only browser storage.
+const reloaded=await import('../../src/beta/discovery-transport.js?reload-withdrawal');
+await reloaded.configureDiscoveryTransport(config,uid,'token');
+assert.equal(reloaded.discoveryTransportStatus().enabled,false);assert.equal(reloaded.discoveryTransportStatus().withdrawalPending,true);
+await assert.rejects(reloaded.setDiscoveryConsent(true),/해제를 먼저 재시도/);
+withdrawFails=false;await reloaded.setDiscoveryConsent(false);
+assert.equal(serverEnabled,false);assert.equal(reloaded.discoveryTransportStatus().withdrawalPending,false);
+await reloaded.setDiscoveryConsent(true);assert.equal(reloaded.discoveryTransportStatus().enabled,true);
+// Failed event batches do not spin, and retry on the next user event.
+let posts=0,eventFails=true;
+globalThis.fetch=async(url,options={})=>{
+ if(url.includes('discovery_events')){posts++;return new Response(eventFails?'{}':null,{status:eventFails?503:201})}
+ return new Response('[{"enabled":true}]');
+};
+await reloaded.configureDiscoveryTransport(config,uid,'token');
+reloaded.queueDiscoveryMeasurement({...record,eventId:crypto.randomUUID()});await tick();await tick();assert.equal(posts,1);
+eventFails=false;reloaded.queueDiscoveryMeasurement({...record,eventId:crypto.randomUUID()});await tick();assert.equal(posts,2);
+console.log('PASS 23-event idle drain, bounded batches, failed withdrawal across reload, retry acknowledgement, explicit re-opt-in and no failure retry loop');
+
+const workflow=readFileSync(new URL('../../.github/workflows/qa.yml',import.meta.url),'utf8');
+const production=workflow.slice(workflow.indexOf('\n  production_smoke:'));
+const pins=JSON.parse(readFileSync(new URL('../../package.json',import.meta.url),'utf8')).qaToolchain;
+assert.ok(production.includes(`image: mcr.microsoft.com/playwright:v${pins.playwright}-noble`));
+assert.ok(!production.includes('playwright install'),'Production must use the installed browser image');
+assert.ok(production.includes('node scripts/check-qa-toolchain.cjs'));
+console.log('PASS Production browser image matches the package pin without apt/browser installation');
