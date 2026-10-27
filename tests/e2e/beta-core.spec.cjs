@@ -903,6 +903,8 @@ test('discovery qa visual design keeps preview, filters and selected reactions c
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','true');
  await expect(page.getByRole('button',{name:'관심 있어요',exact:true})).toHaveAttribute('aria-pressed','false');
+ await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toBeInViewport();
+ await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toBeFocused();
  await page.screenshot({path:testInfo.outputPath('detail-selected.png')});
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
  await page.locator('.fm-beta-reaction-panel summary').click();

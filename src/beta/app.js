@@ -438,11 +438,15 @@ if(root){
     }
     if(action==='recommendation-reaction'){
       const match=matches.find(m=>m.id===target.dataset.matchId);if(!match)return;
+      const reactionScroll=root.querySelector('.fm-beta-detail-body')?.scrollTop||0;
+      const reactionKind=target.dataset.reaction;
       const rows=reactions(match.isDemo),previous=rows.find(r=>r.matchId===match.id);
       const next=rows.filter(r=>r.matchId!==match.id);
       if(previous?.kind!==target.dataset.reaction)next.push({matchId:match.id,kind:target.dataset.reaction,venue:match.place,hour:new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Seoul',hour:'2-digit',hour12:false}).format(new Date(match.startsAt)),at:Date.now(),scope:match.isDemo?'demo':'live'});
       try{localStorage.setItem(reactionKey(match.isDemo),JSON.stringify(next.slice(-50)))}catch{setNotice('추천 반응을 저장하지 못했어요.','error')}
-      emitDiscoveryMeasurement('reaction_submitted',{isDemo:match.isDemo,matchId:match.id});render();return;
+      emitDiscoveryMeasurement('reaction_submitted',{isDemo:match.isDemo,matchId:match.id});render();
+      const body=root.querySelector('.fm-beta-detail-body');if(body)body.scrollTop=reactionScroll;
+      root.querySelector(`[data-action="recommendation-reaction"][data-reaction="${reactionKind}"]`)?.focus({preventScroll:true});return;
     }
     if(action==='clear-reactions'){
       const match=matches.find(m=>m.id===detailMatchId);if(match){localStorage.removeItem(reactionKey(match.isDemo));render();}return;
