@@ -113,3 +113,25 @@ test('local branch audit only observes refs and separates ancestry from patch eq
   assert.doesNotMatch(code,/execFileSync\('(?:gh|curl)'|git\(\['(?:push|reset|checkout|branch|update-ref|fetch)'/,
     'branch audit must never mutate remote refs or fetch/change worktree');
 });
+
+
+test('single-use branch pruning is SHA-guarded, main-only and scoped', () => {
+  const workflow=fs.readFileSync(path.resolve(__dirname,
+    '../../.github/workflows/prune-verified-merged-branch.yml'),'utf8');
+  assert.match(workflow,/^on:\n  push:\n    branches: \[main\]/m);
+  assert.match(workflow,/paths:\n      - \.github\/workflows\/prune-verified-merged-branch\.yml/);
+  assert.match(workflow,/github\.ref == 'refs\/heads\/main'/);
+  assert.match(workflow,/permissions:\n  contents: write\n  pull-requests: read/);
+  assert.match(workflow,/branch='docs\/compact-demo-release-654'/);
+  assert.match(workflow,/expected='81819f79d011f084c2f1aaf87d398aacae089438'/);
+  for(const gate of [
+    'if [[ "$current" != "$expected" ]]',
+    'if [[ "$merged" != "true" || "$merge_sha" != "$expected" ]]',
+    'if [[ "$protected" != "false" ]]',
+    'if [[ "$ahead" != "0" ]]',
+    'if [[ "$open_prs" != "0" ]]',
+    'if [[ "$again" != "$expected" ]]'
+  ])assert.ok(workflow.includes(gate),'branch deletion lacks safety gate: '+gate);
+  assert.match(workflow,/gh api --method DELETE "repos\/\$repo\/git\/refs\/heads\/\$branch"/);
+  assert.doesNotMatch(workflow,/workflow_dispatch:|pull_request:|--force|-f\s|update-ref/);
+});

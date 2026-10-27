@@ -1,0 +1,71 @@
+name: Prune verified merged legacy branch (one-time)
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/prune-verified-merged-branch.yml
+
+# Scoped to a single known SHA. Never run on pull_request or arbitrary refs.
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  prune:
+    if: github.repository == 'dohyunkimmm/footmate' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Revalidate and remove one ancestry-contained branch ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="$GITHUB_REPOSITORY"
+          branch='docs/compact-demo-release-654'
+          expected='81819f79d011f084c2f1aaf87d398aacae089438'
+          current="$(gh api "repos/$repo/git/ref/heads/$branch" --jq '.object.sha')"
+          if [[ "$current" != "$expected" ]]; then
+            echo "::error::Legacy branch tip changed; no deletion"
+            exit 1
+          fi
+
+          merged="$(gh api "repos/$repo/pulls/654" --jq '.merged')"
+          merge_sha="$(gh api "repos/$repo/pulls/654" --jq '.merge_commit_sha')"
+          if [[ "$merged" != "true" || "$merge_sha" != "$expected" ]]; then
+            echo "::error::PR #654 no longer matches verified squash merge"
+            exit 1
+          fi
+
+          protected="$(gh api "repos/$repo/branches/$branch" --jq '.protected')"
+          if [[ "$protected" != "false" ]]; then
+            echo "::error::Candidate branch is protected"
+            exit 1
+          fi
+
+          ahead="$(gh api "repos/$repo/compare/$GITHUB_SHA...$expected" --jq '.ahead_by')"
+          if [[ "$ahead" != "0" ]]; then
+            echo "::error::Legacy branch still contains unmerged commits"
+            exit 1
+          fi
+
+          open_prs="$(gh api "repos/$repo/pulls?state=open&per_page=100" --jq '[.[] | select(.head.ref == "docs/compact-demo-release-654")] | length')"
+          if [[ "$open_prs" != "0" ]]; then
+            echo "::error::An open pull request still references the branch"
+            exit 1
+          fi
+
+          # Second read narrows any race between auditing and deletion.
+          again="$(gh api "repos/$repo/git/ref/heads/$branch" --jq '.object.sha')"
+          if [[ "$again" != "$expected" ]]; then
+            echo "::error::Legacy branch moved while revalidating"
+            exit 1
+          fi
+
+          gh api --method DELETE "repos/$repo/git/refs/heads/$branch"
+          if gh api "repos/$repo/git/ref/heads/$branch" >/dev/null 2>&1; then
+            echo "::error::Branch still exists after delete API response"
+            exit 1
+          fi
+          echo "Deleted only $branch ($expected), already contained in main and merged as PR #654." >> "$GITHUB_STEP_SUMMARY"
