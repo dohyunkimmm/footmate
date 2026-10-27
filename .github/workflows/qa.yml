@@ -193,7 +193,7 @@ jobs:
           node --test tests/contracts/typography-report.contract.cjs
           node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Verify changed choice-to-login journey before full screen QA
-        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup|discovery hotfix"
+        run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup|discovery hotfix|discovery qa"
       - name: Upload changed journey screen evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -202,6 +202,8 @@ jobs:
           path: test-results/
           if-no-files-found: warn
           retention-days: 14
+      - name: Run Beta consent recovery on Mobile Safari
+        run: npx playwright test --project=webkit-beta-consent --output=test-results/playwright-webkit-beta tests/e2e/beta-core.spec.cjs --grep "discovery followup sends real events|discovery hotfix preserves failed withdrawal|discovery qa"
       - name: Run 11-section Case Study navigation, responsive and accessibility gate
         run: npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
       - name: Preserve Case Study screen evidence before the next browser run

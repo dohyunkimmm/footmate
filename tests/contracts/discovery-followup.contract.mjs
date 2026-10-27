@@ -58,6 +58,7 @@ globalThis.fetch=async(url,options={})=>{
 };
 const enqueue=()=>queueDiscoveryMeasurement({...record,eventId:crypto.randomUUID()});
 await configureDiscoveryTransport(config,uid,'token');
+await setDiscoveryConsent(true);
 for(let i=0;i<23;i++)enqueue();await tick();
 assert.equal(batches.flat().length,23);assert.ok(batches.every(b=>b.length<=10));
 withdrawFails=true;await assert.rejects(setDiscoveryConsent(false),/서버 기록 삭제는 확인되지/);
@@ -89,3 +90,67 @@ assert.ok(production.includes(`image: mcr.microsoft.com/playwright:v${pins.playw
 assert.ok(!production.includes('playwright install'),'Production must use the installed browser image');
 assert.ok(production.includes('node scripts/check-qa-toolchain.cjs'));
 console.log('PASS Production browser image matches the package pin without apt/browser installation');
+
+// Quota can reject a new withdrawal marker while existing account/auth storage remains readable.
+for(const fallbackRemoval of [false,true]){
+ const saved=new Map();let quota=false,withdrawalFails=true,server=false;
+ globalThis.localStorage={getItem:k=>saved.get(k)??null,removeItem:k=>saved.delete(k),setItem:(k,v)=>{
+  if(quota&&(k.includes('discovery-withdrawal')||(fallbackRemoval&&k.includes('discovery-permission'))))throw new Error('QuotaExceededError');
+  saved.set(k,String(v));
+ }};
+ globalThis.fetch=async(url,o={})=>{
+  if(o.method==='POST'){
+   const value=JSON.parse(o.body).enabled;
+   if(!value&&withdrawalFails)return new Response('{}',{status:503});
+   server=value;return new Response(null,{status:201});
+  }
+  return new Response(JSON.stringify([{enabled:server}]));
+ };
+ const mod=await import(`../../src/beta/discovery-transport.js?quota-start-${fallbackRemoval}`);
+ await mod.configureDiscoveryTransport(config,uid,'token');await mod.setDiscoveryConsent(true);
+ assert.equal(mod.discoveryTransportStatus().enabled,true);quota=true;
+ await assert.rejects(mod.setDiscoveryConsent(false));
+ const after=await import(`../../src/beta/discovery-transport.js?quota-reload-${fallbackRemoval}`);
+ await after.configureDiscoveryTransport(config,uid,'token');
+ assert.equal(after.discoveryTransportStatus().enabled,false);
+ if(fallbackRemoval)assert.equal(after.discoveryTransportStatus().serverEnabled,true);
+ else assert.equal(after.discoveryTransportStatus().withdrawalPending,true);
+ withdrawalFails=false;await after.setDiscoveryConsent(false);assert.equal(server,false);
+ quota=false;await after.setDiscoveryConsent(true);assert.equal(after.discoveryTransportStatus().enabled,true);
+}
+
+for(const firstFails of [false,true]){
+ const saved=new Map([['footmate:beta:discovery-permission:v2:'+uid,'enabled']]);
+ globalThis.localStorage={getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)};
+ let finishFirst,first=true;const delivered=[],auth=[];
+ globalThis.fetch=async(url,o={})=>{
+  if(!url.includes('discovery_events'))return new Response('[{"enabled":true}]');
+  const rows=JSON.parse(o.body);auth.push(o.headers.authorization);
+  if(first){first=false;return new Promise(resolve=>finishFirst=()=>{if(!firstFails)delivered.push(...rows);resolve(new Response(firstFails?'{}':null,{status:firstFails?401:201}))})}
+  delivered.push(...rows);return new Response(null,{status:201});
+ };
+ const mod=await import(`../../src/beta/discovery-transport.js?refresh-${firstFails}`);
+ await mod.configureDiscoveryTransport(config,uid,'old-token');
+ for(let i=0;i<3;i++)mod.queueDiscoveryMeasurement({...record,eventId:crypto.randomUUID()});
+ await mod.configureDiscoveryTransport(config,uid,'new-token');finishFirst();await tick();await tick();
+ assert.equal(new Set(delivered.map(r=>r.event_id)).size,3);
+ assert.equal(auth[0],'Bearer old-token');assert.equal(auth.at(-1),'Bearer new-token');
+}
+
+// Owner changes discard queued rows even if the old request fails after the switch.
+const secondUser='33333333-3333-4333-8333-333333333333';
+const saved=new Map([uid,secondUser].map(id=>['footmate:beta:discovery-permission:v2:'+id,'enabled']));
+globalThis.localStorage={getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)};
+let finishOld,first=true;const delivered=[];
+globalThis.fetch=async(url,o={})=>{
+ if(!url.includes('discovery_events'))return new Response('[{"enabled":true}]');
+ if(first){first=false;return new Promise(resolve=>finishOld=()=>resolve(new Response('{}',{status:401})))}
+ delivered.push({rows:JSON.parse(o.body),auth:o.headers.authorization});return new Response(null,{status:201});
+};
+const switched=await import('../../src/beta/discovery-transport.js?switch-in-flight');
+await switched.configureDiscoveryTransport(config,uid,'owner-a');
+for(let i=0;i<3;i++)switched.queueDiscoveryMeasurement({...record,eventId:crypto.randomUUID()});
+await switched.configureDiscoveryTransport(config,secondUser,'owner-b');
+const freshId=crypto.randomUUID();switched.queueDiscoveryMeasurement({...record,eventId:freshId});finishOld();await tick();await tick();
+assert.deepEqual(delivered.map(b=>b.auth),['Bearer owner-b']);assert.deepEqual(delivered.flatMap(b=>b.rows.map(r=>r.event_id)),[freshId]);
+console.log('PASS quota failure/reload with reserved-slot and removal fallback, explicit re-opt-in, same-owner refresh success/401 recovery, refreshed credentials and cross-owner in-flight isolation');
