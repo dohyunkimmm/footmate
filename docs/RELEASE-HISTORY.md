@@ -1,5 +1,14 @@
 # FootMate Release History
 
+## 2026-10-28 — 보안·Git 감사 후속 및 최신 QA 확인
+
+- [PR #713](https://github.com/dohyunkimmm/footmate/pull/713)–[#714](https://github.com/dohyunkimmm/footmate/pull/714): Supabase 운영 RLS 정책 11개의 JWT 조회를 최적화하고 실제 적용된 migration version `20261027122602`를 SQL 파일과 일치시켰다. 적용 후 `auth_rls_initplan` 경고 0건을 확인했으며, 이는 실제 서명 JWT 실계정 E2E 완료를 뜻하지 않는다.
+- [PR #715](https://github.com/dohyunkimmm/footmate/pull/715)–[#717](https://github.com/dohyunkimmm/footmate/pull/717): 운영자 RPC의 역할·AAL2 검사와 누락/잘못된 AAL 값의 사전 거부를 강화하고 모의 JWT·읽기 전용 DB 역할 및 계약 테스트를 수행했다. 실계정 인증·복구·갱신의 실제 서명 JWT E2E는 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에 미완료로 남긴다.
+- [PR #723](https://github.com/dohyunkimmm/footmate/pull/723) 및 [#725](https://github.com/dohyunkimmm/footmate/pull/725): 운영 Supabase Data API의 익명 요청에서 `net`·`extensions` 스키마가 406/PGRST106으로 비노출되고 읽기 전용 운영자 RPC가 401/42501로 거부되는 것을 기록했다. `pg_net` 설치 위치·Security Advisor 경고, 실계정 접근 통제 전체가 해결됐다고 주장하지 않는다. [개별 검토](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md)를 따른다.
+- [PR #718](https://github.com/dohyunkimmm/footmate/pull/718)–[#721](https://github.com/dohyunkimmm/footmate/pull/721): 이미 병합된 과거 브랜치 한 개의 제한적 삭제를 별도 확인했고, 남은 비기본 브랜치 120개를 패치 등가성으로 감사했다(동등 후보 8개, 독립 패치 112개). 8개 후보는 삭제 승인 대상이 아니며, 감사 결과를 일괄 정리 근거로 사용하지 않는다.
+- [PR #722](https://github.com/dohyunkimmm/footmate/pull/722)–[#725](https://github.com/dohyunkimmm/footmate/pull/725): 전체 참조 Git bundle의 복원 및 주요 SHA 검증을 문서화했다. GitHub Actions 임시 ZIP은 **2026-11-04 UTC 만료**이고 소유자 관리 영구 외부 백업·외부 SHA 참조 확인·추가 브랜치 삭제 승인은 미완료다([#525](https://github.com/dohyunkimmm/footmate/issues/525)). 1회성 커밋 마커 자동 번들 트리거는 제거하고 명시적 수동 실행만 유지한다.
+- 최신 `main` [`5f015f7`](https://github.com/dohyunkimmm/footmate/commit/5f015f7d3260c8165ffb22122ca5973d46f5e227)의 [FootMate QA #40616598843](https://github.com/dohyunkimmm/footmate/actions/runs/40616598843): Change Impact, Regression 36, Browser E2E + axe **SUCCESS**. Docs-only QA, Deploy Cloudflare, Production Smoke는 **SKIPPED**이므로 이 실행을 신규 운영 배포·스모크 성공으로 표현하지 않는다. 앞선 런타임 배포 성공은 아래 2026-10-27 항목에 해당한다.
+
 ## 2026-10-27 — 추천 탐색 후속·동의형 통계·시각 안정성 (현재 확인)
 
 - [PR #703](https://github.com/dohyunkimmm/footmate/pull/703): 서울 날짜 기준 오늘·내일·주말, 시작 시간 상한, 5분 추천 캐시 및 구장별 후보 선택. AI는 조건에 맞는 최대 12개 후보에서 순서를 정하며 경기 사실·필터 조건을 생성하거나 완화하지 않는다.

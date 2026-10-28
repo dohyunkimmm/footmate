@@ -4,10 +4,11 @@
 
 ## 2026-10-28 · 최종 후속 검증과 잔여 승인 항목
 
+- 최신 `main` [`5f015f7`](https://github.com/dohyunkimmm/footmate/commit/5f015f7d3260c8165ffb22122ca5973d46f5e227)의 [FootMate QA #40616598843](https://github.com/dohyunkimmm/footmate/actions/runs/40616598843)은 **Change Impact, Regression 36, Browser E2E + axe SUCCESS**입니다. Docs-only QA, Deploy Cloudflare, Production Smoke는 **SKIPPED**였으며, 새 운영 배포나 Production Smoke 성공을 뜻하지 않습니다.
 - 2026-10-28 감사 직전 검증된 `main` `435585341a9aa748ccb96883b39589862cba0ea3`의 [FootMate QA #40610280350](https://github.com/dohyunkimmm/footmate/actions/runs/40610280350)은 **Regression 36, Browser E2E + axe SUCCESS**. 이번 워크플로 전용 변경은 런타임 무영향이므로 Deploy Cloudflare / Production Smoke가 skipped. 이전 프로덕션 스모크 성공 기록을 이 실행의 성과로 오인하지 않습니다.
 - [Supabase 20 SECURITY DEFINER / 8 미사용 인덱스 개별 검토와 실제 API 응답](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md): `net`·`extensions` 스키마 REST 비노출(406/PGRST106), 읽기 전용 운영자 RPC 익명 요청 거부(401/42501). 이것은 확장 이동·RPC WARN 해결이나 실계정 JWT MFA/복구 E2E 완료를 뜻하지 않습니다. 실제 서명 JWT 실계정 QA 및 Pro 비용 결정을 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에 미완료로 유지합니다.
 - [Git 120개 브랜치 패치 감사 / 전체 참조 검증 백업 / 복원 및 삭제 효과 분석](BRANCH-PATCH-AUDIT-2026-10-28.md): [Actions #40610280210](https://github.com/dohyunkimmm/footmate/actions/runs/40610280210)의 ZIP 보관 만료는 **2026-11-04 UTC**. 별도 ChatGPT 파일 라이브러리 복사와 독립 복원·8개 tip SHA 검사를 완료했으나, **소유자 관리 영구 오프-GitHub 보관·외부 참조 검토·삭제 승인은 미완료**. 6개 병합 과거 후보를 가상 제거해도 대형 blob은 0개 해제되므로 크기 절감 명목의 브랜치 삭제는 권장하지 않습니다. [#525](https://github.com/dohyunkimmm/footmate/issues/525) 참고.
-- 1회성 대형 백업을 위해 쓰인 `[one-time-bundle]` push 마커 자동 실행은 정리 대상이므로 CI 설정에서 제거하며, 이후에는 명시적 수동 `workflow_dispatch` 요청만 7일 임시 bundle을 만듭니다. 실운영 데이터/권한/인증/요금제/원격 Git ref 및 `main` 이력을 변경하지 않습니다.
+- 1회성 대형 백업에 사용한 `[one-time-bundle]` push 마커 자동 실행은 CI 설정에서 제거했으며, 이후에는 명시적 수동 `workflow_dispatch` 요청만 7일 임시 bundle을 만듭니다. 실운영 데이터/권한/인증/요금제/원격 Git ref 및 `main` 이력을 변경하지 않습니다.
 
 # FootMate Documentation
 
