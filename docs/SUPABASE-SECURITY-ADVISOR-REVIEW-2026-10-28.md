@@ -1,6 +1,25 @@
 # Supabase Security/Performance Advisor — per-item review (2026-10-28)
 
-> Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a Data API exposure confirmation, a change approval, or a claim that the Advisor warnings are resolved.
+> Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a change approval, or a claim that the Advisor warnings are resolved. Later Data API exposure tests are documented below.
+
+## Subsequent live API / Auth evidence (2026-10-28; supersedes initial "not verified" caveat)
+
+The sections below retain the **initial static review** as historical evidence; the following negative checks were later performed against the real Supabase Data API using its **public anon JWT**, without any service-role key or configuration change:
+
+| Live request | Observed response | Interpretation |
+| --- | --- | --- |
+| GET `/rest/v1/matches?select=id&limit=0` with `Accept-Profile: public` | **200** / `[]` (request 104411) | Valid baseline against exposed `public` schema; zero rows requested |
+| Same URL and key with `Accept-Profile: net` | **406 / PGRST106**, `Invalid schema: net` (request 104412) | **`net` is not exposed by the live Data API at test time** |
+| Same URL and key with `Accept-Profile: extensions` | **406 / PGRST106**, `Invalid schema: extensions` (request 104415) | `extensions` is likewise not exposed through this Data API |
+| POST `/rest/v1/rpc/operator_discovery_metrics` with `{}` and public anon JWT | **401 / 42501**, `permission denied for function operator_discovery_metrics` (request 104418) | Anonymous execution of this read-only operator report RPC is denied at the real API boundary |
+
+This **closes the Data API `net` exposure verification task only**. It does **not** resolve the `extension_in_public` Advisor WARN: `pg_net` is non-relocatable and is used by the live email/push cron jobs. Their previous 24-hour execution audit recorded 1,440/1,440 success each (cron completion is not delivery confirmation). Database-level grants remain untouched; PostgreSQL grant visibility is not equivalent to Data API exposure. The public anon RPC rejection is not a signed **authenticated** operator/nonoperator AAL1/AAL2 test.
+
+Production Auth metadata without exposing identities: 4 user rows, 1 operator membership, 1 verified MFA factor, and an operator-associated AAL2 session record. Those preconditions are **not** real signed-token recovery/refresh or allow/deny E2E. `pg_stat_statements` also recorded normalized RPC statements; with `track_functions=none` those are not exact successful invocation counts.
+
+**Remaining owner-dependent gates:** (1) explicitly authorized real-account signed JWT tests, including AAL1 vs AAL2, nonoperator, recovery, refresh, and safe cross-user negative cases; (2) Pro billing authorization if leaked-password protection is required; (3) representative query/index workload evidence before any index drop. Do not modify production identities, credentials, API grants, or billing just to clear the Advisor.
+
+See [GitHub Issue #611](https://github.com/dohyunkimmm/footmate/issues/611) for the audit log and acceptance status. The initial table and separate-decision section below document the earlier review; where they say API exposure was unverified, **this follow-up is newer**.
 
 ## Evidence and limits
 
@@ -63,4 +82,4 @@ Before dropping any: collect representative non-sensitive SQL query patterns and
 
 ## Acceptance boundary
 
-This static, read-only **per-item assessment is complete**, but Issue #611 stays open. Required follow-up: authenticated session E2E, Data API exposed-schema confirmation, billing decision, and representative live caller/plan evidence. No schema, grants, data, secrets, account, or billing changes were performed.
+This static, read-only **per-item assessment is complete**, but Issue #611 stays open. Required follow-up: authenticated session E2E, billing decision, and representative live caller/query-plan evidence. Data API `net` and `extensions` non-exposure was independently confirmed in the later section above. No schema, grants, data, secrets, account, or billing changes were performed.

@@ -109,9 +109,8 @@ jobs:
             verification/git-history-footprint/candidate-refs.tsv
           retention-days: 30
 
-      # The [one-time-bundle] marker is an explicit, one-off merge action; ordinary pushes never build a large archive.
       - name: Create self-contained temporary Git bundle when explicitly requested
-        if: (github.event_name == 'workflow_dispatch' && inputs.make_temporary_bundle == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[one-time-bundle]'))
+        if: github.event_name == 'workflow_dispatch' && inputs.make_temporary_bundle == true
         shell: bash
         run: |
           set -euo pipefail
@@ -127,7 +126,7 @@ jobs:
           echo 'Temporary bundle verified. Download and retain it outside GitHub before considering any ref deletion.' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload temporary bundle (not an off-repository backup)
-        if: (github.event_name == 'workflow_dispatch' && inputs.make_temporary_bundle == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[one-time-bundle]'))
+        if: github.event_name == 'workflow_dispatch' && inputs.make_temporary_bundle == true
         uses: actions/upload-artifact@v6
         with:
           name: git-history-bundle-download-off-github

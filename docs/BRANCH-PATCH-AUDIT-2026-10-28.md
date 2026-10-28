@@ -1,5 +1,18 @@
 # Git branch patch-equivalence audit — 2026-10-28
 
+## Subsequent independently verified backup and deletion-benefit finding (2026-10-28)
+
+The original patch-equivalence matrix below remains a historical snapshot. Later [PR #722](https://github.com/dohyunkimmm/footmate/pull/722) added a reproducible Git history audit; [PR #724](https://github.com/dohyunkimmm/footmate/pull/724) generated an intentionally one-time, **verified full-ref** `git bundle` using [Actions #40610280210](https://github.com/dohyunkimmm/footmate/actions/runs/40610280210), on `main` SHA `435585341a9aa748ccb96883b39589862cba0ea3`.
+
+- Archive ZIP GitHub artifact [#12782910625](https://github.com/dohyunkimmm/footmate/actions/runs/40610280210/artifacts/12782910625): 142,816,059 bytes, expires **2026-11-04 UTC**; SHA-256 `6d9a02415fbae38d010369b17068619b2ab6128daca6460f0408983e58518be8`.
+- The ZIP was also copied into the private ChatGPT File Library; this is separate from the expiring Actions artifact, but **is not proof of owner-controlled durable external backup or retention guarantees**. Keep a separate durable owner-managed copy before authorizing branch deletion.
+- Independent clean bare-repository restore succeeded: 121 remote branch refs and one release tag recovered; `main` and **all eight candidate tip SHAs** matched; `git fsck --full --no-reflogs` passed. No remote branch ref changed.
+- A further **simulation on the restored repository** computed reachability excluding only the six patch-equivalent branches whose historical PRs merged: their unique reachable objects were **six commit objects, no blobs or trees** (sum of six `objectsize:disk` entries **435 bytes**, not actual reclaimable GitHub size). Excluding all eight instead would remove eight commits and one tree, **no blobs**; the two closed-unmerged branches **must remain preserved** absent explicit approval.
+- Deleting these candidate branches would not remove the large historical screenshot blobs retained by other refs/history. **Do not delete branches just to chase repository size; no `main` rewrite or bulk pruning.**
+- The single-use `[one-time-bundle]` *push trigger* has served its purpose and was retired in a subsequent cleanup PR. Manual `workflow_dispatch` with `make_temporary_bundle=true` remains as the opt-in rebuild path; it still creates a seven-day artifact, not an owner-retained backup.
+
+**Open gate:** independently owner-retain the verified archive, review any external reference to original SHAs, and obtain explicit deletion authorization. Without that, keep Issues [#525](https://github.com/dohyunkimmm/footmate/issues/525) and [#611](https://github.com/dohyunkimmm/footmate/issues/611) open where applicable.
+
 ## Verified full-clone results
 
 - **Source:** [GitHub Actions #40604043505](https://github.com/dohyunkimmm/footmate/actions/runs/40604043505) — `Audit all Git branch patches (read only)`, **SUCCESS**, on `main db418ff6768a2029134808da2a88b05905e931e5`.
