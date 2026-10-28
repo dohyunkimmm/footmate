@@ -1,5 +1,7 @@
 # FootMate Supabase Security Advisor · 2026-10-27 disposition
 
+> **Superseded for the exposed-schema check (2026-10-28):** Subsequent live PostgREST testing with a public anon JWT returned **200** for `Accept-Profile: public`, but **406/PGRST106** (`Invalid schema`) for `net` and `extensions`. A read-only operator metrics RPC rejected anonymous access with **401/42501**. The `pg_net` extension remains in `public` and the corresponding Advisor WARN remains. See [latest per-item review and live HTTP evidence](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md) and [Issue #611](https://github.com/dohyunkimmm/footmate/issues/611). The prose below is the **original historical assessment**, not the final Data API exposure status. Signed authenticated MFA/recovery E2E and billing authorization remain open.
+
 Scope: production Supabase project `footmate-beta` (`iihitfjphowjplxzfxtn`), read-only DB catalog and `BEGIN READ ONLY ... ROLLBACK` role tests. These tests exercise PostgreSQL roles with **simulated** JWT claims; they are **not** signed-token Auth API or browser/device integration tests.
 
 ## Live checks and findings
