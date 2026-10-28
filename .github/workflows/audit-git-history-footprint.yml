@@ -1,6 +1,10 @@
 name: Audit Git history footprint (read only)
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/audit-git-history-footprint.yml
   push:
     branches: [main]
     paths:
@@ -17,7 +21,7 @@ permissions:
 
 jobs:
   profile:
-    if: github.repository == 'dohyunkimmm/footmate' && github.ref == 'refs/heads/main'
+    if: github.repository == 'dohyunkimmm/footmate' && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request')
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
