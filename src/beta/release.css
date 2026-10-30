@@ -153,8 +153,8 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 [data-beta-app="true"] .fm-beta-shell>.fm-beta-account-tabs{margin-top:4px}
 [data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="joined"] [data-beta-growth-host]{display:none}
 [data-beta-app="true"][data-beta-view="matches"]:not([data-beta-matches-tab="joined"]) .fm-beta-grid{display:none}
-[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="waitlist"] .fm-beta-growth-panel:has(.fm-beta-growth-history){display:none}
-[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="history"] .fm-beta-growth-panel:has(.fm-beta-growth-row){display:none}
+[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="waitlist"] [data-beta-growth-panel="history"]{display:none}
+[data-beta-app="true"][data-beta-view="matches"][data-beta-matches-tab="history"] [data-beta-growth-panel="waitlist"]{display:none}
 [data-beta-app="true"] .fm-beta-shell>.fm-beta-account-tabs{flex-shrink:0}
 
 [data-beta-app="true"][data-beta-view="my"] [data-beta-main],
