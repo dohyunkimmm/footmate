@@ -1,6 +1,8 @@
 /* FootMate IT기획·전략기획 · independent case study */
 (() => {
 'use strict';
+// Restore native history scrolling when returning from the former paged reader.
+if ('scrollRestoration' in history) history.scrollRestoration='auto';
 const sections = [
   {
     "name": "추진 배경·검토 결론",
