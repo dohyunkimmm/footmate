@@ -14,7 +14,7 @@ function mount(){
    if(!session?.accessToken)throw new Error();
    const response=await fetch(config.url+'/rest/v1/rpc/operator_discovery_metrics',{method:'POST',headers:{apikey:config.publishableKey,authorization:'Bearer '+session.accessToken,'content-type':'application/json'},body:'{}',cache:'no-store'});
    if(!response.ok)throw new Error();const rows=await response.json();
-   if(!Array.isArray(rows)||!rows.length){output.textContent='표본 없음 · 기준선 N/A';return}
+   if(!Array.isArray(rows))throw new Error('Invalid metric response');
    const table=document.createElement('table');table.style.cssText='width:100%;font-size:13px;text-align:left';
    const head=table.createTHead().insertRow();for(const label of ['이벤트','첫 화면','세션','이용자','건수']){const th=document.createElement('th');th.textContent=label;head.append(th)}
    const body=table.createTBody();for(const row of rows){const tr=body.insertRow();for(const value of [labels[row.event_name]||'기타',row.variant==='quick'?'바로 선택':'기본',...['sessions','users','events'].map(k=>Number(row[k])||0)])tr.insertCell().textContent=String(value)}
@@ -30,7 +30,7 @@ function mount(){
    const note=document.createElement('p');note.textContent='동의한 pilot 계정만 포함합니다. 유효 이용자 또는 분모가 5 미만이면 N/A로 숨깁니다. 최초 측정은 개선률이 아닙니다.';output.append(note);
    const baselineTable=document.createElement('table');baselineTable.style.cssText='width:100%;font-size:13px;text-align:left';
    const header=baselineTable.createTHead().insertRow();for(const title of ['지표','분자','분모','비율']){const th=document.createElement('th');th.textContent=title;header.append(th)}
-   const labelByName={search_to_detail:'추천 노출 → 상세 진입',zero_result:'추천 결과 0건 비율',detail_to_join:'경기 상세 → 참가 완료'};
+   const labelByName={search_to_detail:'추천 노출 → 상세 진입',zero_result:'추천 결과 0건 비율',detail_to_join:'경기 상세 → 참가 완료',repeat_search_7d:'참석 후 7일 내 재탐색'};
    for(const item of Array.isArray(baselines)?baselines:[]){
     const tr=baselineTable.createTBody().insertRow();
     const rate=item.rate_percent===null||item.rate_percent===undefined?'N/A':Number(item.rate_percent).toFixed(2)+'%';
