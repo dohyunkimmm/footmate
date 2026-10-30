@@ -98,7 +98,7 @@ test('waitlist uses the selected recommendation position instead of an older pro
  await page.goto('/beta',{waitUntil:'domcontentloaded'});
  await page.getByRole('button',{name:'내 경기',exact:true}).click();
  await page.getByRole('button',{name:'대기',exact:true}).click();
- await expect(page.getByText('GK · 골키퍼')).toBeVisible();
+ await expect(page.locator('[data-beta-growth-panel="waitlist"] .fm-beta-growth-row')).toContainText('GK · 골키퍼');
  await page.getByRole('button',{name:'대기 신청'}).click();
  await expect.poll(()=>backend.lastWaitlistPosition()).toBe('GK');
 });
