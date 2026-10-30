@@ -88,6 +88,27 @@ begin
     and j.occurred_at>=d.occurred_at and j.occurred_at<d.occurred_at+interval '24 hours'
    ))::bigint,
    (select count(*) from detail_sessions)::bigint
+  union all
+  select 'repeat_search_7d',
+   (select count(*)
+    from public.participations p
+    join public.matches m on m.id=p.match_id
+    join eligible person on person.user_id=p.user_id
+    where p.status='confirmed' and p.checked_in_at is not null
+    and m.status='completed'
+    and m.starts_at>=v_since and m.starts_at<v_end-interval '7 days'
+    and exists(select 1 from events e where e.user_id=p.user_id
+     and e.event_name='recommendation_requested'
+     and e.occurred_at>m.starts_at and e.occurred_at<=m.starts_at+interval '7 days')
+   )::bigint,
+   (select count(*)
+    from public.participations p
+    join public.matches m on m.id=p.match_id
+    join eligible person on person.user_id=p.user_id
+    where p.status='confirmed' and p.checked_in_at is not null
+    and m.status='completed'
+    and m.starts_at>=v_since and m.starts_at<v_end-interval '7 days'
+   )::bigint
  )
  select totals.name,
   case when v_users>=5 and totals.d>=5 then totals.n else null end,
