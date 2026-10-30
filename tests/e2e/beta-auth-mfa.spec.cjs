@@ -63,6 +63,9 @@ test('operator aal1 session is blocked until verified TOTP upgrades to aal2',asy
       baselineReads++;
       expect(verified).toBe(true);
       expect(request.headers().authorization).toContain(jwt(operatorId,'aal2'));
+       const since=new Date(request.postDataJSON()?.p_since).getTime();
+       expect(Number.isFinite(since)).toBe(true);
+       expect(Math.abs((Date.now()-since)-21*24*60*60*1000)).toBeLessThan(10*1000);
       return fulfill(route,[{metric_name:'search_to_detail',numerator:null,denominator:null,eligible_users:null,rate_percent:null,window_start:'2026-10-01T00:00:00Z',window_end:'2026-10-22T00:00:00Z'}]);
     }
     return fulfill(route,{message:`Unhandled ${request.method()} ${url.pathname}`},500);
