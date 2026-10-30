@@ -17,3 +17,10 @@ details{border-block:1px solid var(--line);margin:24px 0}summary{padding:16px 4p
 @media(max-width:800px){body{font-size:15px}.fm-cs-shell{display:block}.sidebar{position:static;height:auto;padding:18px 16px 12px;border-right:0;border-bottom:1px solid var(--line);overflow:hidden}.sb-brand{padding:0;border:0;margin-bottom:14px}.sb-logo{font-size:25px}.sb-sub{font-size:12px;margin-top:3px}.toc{flex-direction:row;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:4px 0 8px}.toc-item{flex:0 0 auto;width:auto;white-space:nowrap;padding:10px 12px;gap:6px}.toc-n{flex:0 0 auto}.topbar{padding:16px 20px;font-size:12px}.slide{padding:26px 20px 36px}.section-head{margin-bottom:24px}h1{font-size:26px;letter-spacing:-.8px}h2{font-size:20px}.lead{font-size:16px}.project-facts{grid-template-columns:1fr;gap:4px}.decision{font-size:17px;padding-left:14px}.card-grid{grid-template-columns:1fr;gap:20px}.table-wrap{border:0;overflow:visible}table,caption,tbody{display:block;width:100%}caption{border-radius:6px;font-size:14px;padding:12px}thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}tbody tr{display:block;border:1px solid var(--line);border-radius:8px;margin-top:10px;padding:12px 14px}tbody th,tbody td{display:block;width:100%!important;padding:4px 0;border:0;font-size:14px}tbody th{font-size:15px;color:var(--green);margin-bottom:6px}tbody td:before{content:attr(data-label) " · ";color:#53675d;font-size:12px;font-weight:600}.architecture{grid-template-columns:1fr}.source-note{font-size:13px}.cs-controls{padding:16px 12px;grid-template-columns:1fr 1fr;gap:12px}.reader-center{grid-column:1/-1;grid-row:1}.cs-button{font-size:12px}.reader-position{font-size:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
+
+/* Typography QA: keep Korean words and amount/unit tokens intact where they fit. */
+.slide :is(p,li,th,td,caption,summary),.cs-button{word-break:keep-all;overflow-wrap:anywhere}
+@media(max-width:800px){
+ .cs-button{font-size:14px}
+ tbody td:before{font-size:13px}
+}
