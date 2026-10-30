@@ -52,3 +52,18 @@ test('200 percent text retains the full report without horizontal page overflow'
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  await expect(page.locator('.slide[hidden]')).toHaveCount(0);
 });
+
+test('continuous reader restores back navigation after a legacy manual-scroll session',async({page})=>{
+ await page.addInitScript(()=>{history.scrollRestoration='manual';});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.setViewportSize({width:1920,height:1080});
+ await page.goto('/');
+ expect(await page.evaluate(()=>history.scrollRestoration)).toBe('auto');
+ await page.locator('.toc-item').nth(0).click();
+ await page.locator('.toc-item').nth(8).click();
+ await expect(page.locator('.toc-item').nth(8)).toHaveAttribute('aria-current','location');
+ await page.goBack();
+ await expect(page).toHaveURL(/#section-01$/);
+ await expect(page.locator('.toc-item').nth(0)).toHaveAttribute('aria-current','location');
+ expect(await page.locator('#section-01').evaluate(n=>Math.abs(n.getBoundingClientRect().top))).toBeLessThan(40);
+});
