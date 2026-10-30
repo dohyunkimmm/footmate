@@ -97,3 +97,48 @@ test('normal-motion back and forward restore the section heading and keyboard fo
  await expect(page.locator('.toc-item').nth(8)).toHaveAttribute('aria-current','location');
  await expect(page.locator('#section-09 .section-title')).toBeInViewport();
 });
+
+
+test('expansion assumptions include added cost and supply loss without changing the base ledger',async({page},testInfo)=>{
+ await page.goto('/src/case-study/forecast.html#expansion');
+ const base=await page.locator('#kpis').innerText(),ledger=await page.locator('#monthly').innerText();
+ const result=page.locator('#expansion-result');
+ await expect(result).toContainText('2,880건');await expect(result).toContainText('-432,800원');await expect(result).toContainText('28곳');
+ await page.locator('#expansion-cost').fill('0');await expect(result).toContainText('107,200원');await expect(result).toContainText('23곳');
+ await page.locator('#expansion-reset').click();
+ await page.locator('#expansion-retention').fill('80');await expect(result).toContainText('-974,240원');
+ await page.locator('#expansion-share').fill('48');await expect(result).toContainText('1,843건');await expect(result).toContainText('-1,407,580원');
+ await page.locator('#expansion-retention').fill('0');await expect(result).toContainText('500곳 이내 미달');
+ await page.locator('#expansion-reset').click();await page.locator('#expansion-partners').fill('28');await expect(result).toContainText('5,640원');
+ await page.locator('#expansion-partners').fill('');await expect(result).toHaveText('입력 범위를 확인하세요.');
+ await page.locator('#expansion-partners').fill('23.5');await expect(result).toHaveText('입력 범위를 확인하세요.');
+ await page.locator('#expansion-reset').click();
+ expect(await page.locator('#kpis').innerText()).toBe(base);expect(await page.locator('#monthly').innerText()).toBe(ledger);
+ for(const width of [320,390,1440]){
+  await page.setViewportSize({width,height:1080});await page.locator('#expansion').scrollIntoViewIfNeeded();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await testInfo.attach('expansion-'+width,{body:await page.locator('#expansion').screenshot({animations:'disabled'}),contentType:'image/png'});
+ }
+ const scan=await new AxeBuilder({page}).include('#expansion').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
+});
+
+test('investment evidence exposes budget scope and separates missing data from unmet targets',async({page},testInfo)=>{
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#section-08');
+ await expect(page.locator('#section-08')).toContainText('현금 461만원');
+ for(const width of [390,1440]){
+  await page.setViewportSize({width,height:1080});
+  for(const id of ['#section-05','#section-06','#section-08']){
+   await page.locator(id+' details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
+   expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
+  }
+  for(const label of ['8주 자원 산정·승인 범위','목표 미달·자료 부족·중단 기준']){
+   const detail=page.locator('#section-08 details').filter({has:page.getByText(label,{exact:true})});
+   await testInfo.attach('investment-'+width+'-'+(label.startsWith('8주')?'budget':'decision'),{body:await detail.screenshot({animations:'disabled'}),contentType:'image/png'});
+  }
+ }
+ await expect(page.locator('#section-08')).toContainText('8,310,000원');
+ await expect(page.locator('#section-08')).toContainText('취소 전·전체 모집 채널 합산');
+ await expect(page.locator('#section-08')).toContainText('자료 부족');await expect(page.locator('#section-08')).toContainText('관측 미완료');
+ await expect(page.locator('#section-09')).toContainText('원본에는 반영되지 않았으며');
+ const scan=await new AxeBuilder({page}).include('#section-05').include('#section-06').include('#section-08').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
+});
