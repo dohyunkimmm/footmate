@@ -1,3 +1,10 @@
+## 2026-10-30 · 현행 문서 동기화 기준
+
+- **현재 공개 Case Study:** [PR #728](https://github.com/dohyunkimmm/footmate/pull/728)에서 IT기획·전략기획 **9개 섹션**으로 재구성됐습니다. 런타임 `index.html`의 `data-case-study-stages="9"` 및 `scripts/sync-case-study-assets.cjs` 검사도 9개를 요구합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 링크 호환을 위해 유지된 **파일명**으로, 본문은 현행 9개를 설명합니다. 현재 내용은 [전략 Case Study 근거](IT-STRATEGY-CASE-STUDY.md)를 우선합니다.
+- **Beta P2·P3:** [PR #727](https://github.com/dohyunkimmm/footmate/pull/727)의 실제 로그인 계정별 추천 조건 동기화와 파일럿 4종 KPI 기반이 운영 반영됐습니다. Supabase migration `20261030032856_beta_preferences_pilot_metrics` 적용·RLS 확인. 기존 7일 이벤트 통계와 21일 파일럿 KPI 기준선은 [측정 문서](BETA-MEASUREMENT-READINESS.md)에서 구분합니다. 파일럿 사용자 0명으로 실사용 개선률은 **N/A**입니다. 데모/게스트 추천 조건 및 추천 반응 전반을 기기 간 동기화하지 않습니다.
+- **운영 배포 근거:** P2·P3 병합 SHA `89dc541`의 [QA/Cloudflare/Production Smoke #40999197361](https://github.com/dohyunkimmm/footmate/actions/runs/40999197361) 및 전략 Case Study 병합 SHA `aae8f105`의 [QA/Cloudflare/Production Smoke #41001440621](https://github.com/dohyunkimmm/footmate/actions/runs/41001440621)은 모두 SUCCESS. 이 결과가 실제 인증된 테스트 계정 MFA 또는 실사용 KPI를 입증하지는 않습니다.
+- **보안 미완료:** [#611](https://github.com/dohyunkimmm/footmate/issues/611)의 실제 Supabase Auth 서명 JWT·AAL1/AAL2/TOTP·복구 실계정 E2E는 아직 검증되지 않았습니다. [PR #729](https://github.com/dohyunkimmm/footmate/pull/729)의 도구/모의 계약 QA와 실계정 수행은 구분합니다. Security Advisor의 authenticated SECURITY DEFINER 경고는 신규 KPI 함수 포함 **21건**이며 미해결입니다. 과거 20건 검토는 [2026-10-28 당시 스냅샷](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md)으로 보존합니다.
+
 ## 2026-10-28 · Git branch full-clone patch audit
 
 - [BRANCH-PATCH-AUDIT-2026-10-28.md](BRANCH-PATCH-AUDIT-2026-10-28.md): 실제 `git cherry` 및 작업 트리 비교로 남은 120개 브랜치 검사 완료. 중복 패치 후보 8개(병합 PR 6, 미병합 종료 PR 2), 독립 패치 112개, 현재 main 동일 트리 0개. 추가 브랜치 삭제 없음. [감사 Actions](https://github.com/dohyunkimmm/footmate/actions/runs/40604043505) 및 제한 기간 TSV artifact 참조.
@@ -12,7 +19,7 @@
 
 # FootMate Documentation
 
-현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 이 목록은 **2026-10-27 문서 색인·구현 동기화 점검** 결과이며, 별도의 실시간 운영 가용성 검증을 뜻하지 않습니다. 제품 버전 번호는 사용자 화면 이름이 아니라 릴리스·검증 이력에 사용합니다.
+현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 이 목록은 **2026-10-30 현행 기준과 10월 27~28일 역사적 점검** 기록이며, 별도의 실시간 운영 가용성 검증을 뜻하지 않습니다. 제품 버전 번호는 사용자 화면 이름이 아니라 릴리스·검증 이력에 사용합니다.
 
 ## 저장소 폴더 안내 (`main` 기준)
 
@@ -20,7 +27,7 @@
 | --- | --- |
 | `src/app/`, `src/platform/`, `src/domain/`, `src/shared/` | 보관 중인 프로토타입·공유 도메인·플랫폼 코드 |
 | `src/beta/` | 현재 공개 `/demo`·`/beta` 앱과 인증·서버 연동 |
-| `src/case-study/` | 현재 11개 섹션 Case Study와 화면 근거 이미지 (`nine-sections`는 호환 파일명) |
+| `src/case-study/` | 현재 9개 섹션 IT기획·전략기획 Case Study와 이전 화면 근거 이미지 (`nine-sections`는 호환 파일명) |
 | `api/`, `worker/` | AI/API 구현과 Cloudflare Workers 진입점 |
 | `supabase/` | Edge Function·적용 이력이 있는 SQL 마이그레이션 (임의 삭제·이름 변경 금지) |
 | `tests/`, `scripts/`, `.github/` | 계약·브라우저 QA, 빌드/검증 스크립트, CI 워크플로 |
@@ -32,7 +39,7 @@
 
 - [루트 README](../README.md) — 제품 가치, `Find → Decide → Join → Play → Return`, 공개 화면·데이터·AI 책임 경계
 - [MATCHING-DIRECTION.md](MATCHING-DIRECTION.md) — **현행 풋살 매칭 방향**: 활동 지역 → 실력·포지션·시간 → 추천 미리보기 → 참가 시 로그인 → `/beta`
-- [Case Study `/`](https://footmate.fmate.workers.dev/) — 11개 섹션의 설명·근거. 현재 구현은 `src/case-study/nine-sections.{js,css}`이고, 파일명은 과거 호환 이름
+- [Case Study `/`](https://footmate.fmate.workers.dev/) — IT기획·전략기획 9개 섹션의 설명·근거. 현재 구현은 `src/case-study/nine-sections.{js,css}`이고, 파일명은 과거 호환 이름
 - [FootMate Demo `/demo`](https://footmate.fmate.workers.dev/demo) — 로그인 전 풋살 조건 선택·예시 경기/추천 미리보기. 인증 후 `/beta`로 진입
 - `/beta` — 인증 후 추천·내 경기·MY. 실제 서버 경기·참가를 우선하고, 실제 모집이 없을 때는 명시된 예시 경기/브라우저 기록과 분리
 - `/beta/operator` — 허용된 운영자 전용 TOTP MFA 경로
@@ -86,7 +93,7 @@
 
 - [SERVICE-PLANNING-EVIDENCE.md](SERVICE-PLANNING-EVIDENCE.md) — 역할·우선순위·설계 가정 및 KPI 8개 측정 설계·한계
 - [USER-TEST-EVIDENCE.md](USER-TEST-EVIDENCE.md) — 교육생 6명·가입/탐색 과업 8회의 관찰 범위와 해석 한계
-- [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) — 현행 11개 섹션 구성 및 E2E 기준
+- [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) — 현행 9개 전략 섹션의 목차(과거 11개 구성 파일명 보존); 현재 E2E는 `index.html`의 9개 화면 기준
 - [CASE-STUDY-SCREEN-EVIDENCE.md](CASE-STUDY-SCREEN-EVIDENCE.md) — 2026-10-25 Demo·Case Study 원본 캡처의 출처와 가독성 검증 범위
 - [TYPOGRAPHY-QA-V2.md](TYPOGRAPHY-QA-V2.md) — 타이포그래피 QA 시나리오·증거 무결성·수동 검토 경계
 
@@ -106,7 +113,7 @@ Case Study의 현행 구조와 캡처는 `CASE-STUDY-ELEVEN-STAGES.md`, `CASE-ST
 GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 - runtime/product 변경: `Regression 36` + `Browser E2E + axe`를 실행하고, `main` push에서 필요한 `Production Smoke`까지 수행한다.
-- UI/UX/layout 변경: 승인된 픽셀 기준을 보유한 Product 화면은 Playwright `toHaveScreenshot()`으로 실제 화면과 비교하고, baseline 생성만으로 PASS 처리하지 않는다. 현재 11개 섹션 Case Study는 전용 E2E·geometry·axe와 캡처 수동 검토로 검증하며, 캡처만으로 픽셀 baseline 통과를 주장하지 않는다.
+- UI/UX/layout 변경: 승인된 픽셀 기준을 보유한 Product 화면은 Playwright `toHaveScreenshot()`으로 실제 화면과 비교하고, baseline 생성만으로 PASS 처리하지 않는다. 현재 9개 섹션 Case Study는 전용 E2E·geometry·axe와 캡처 수동 검토로 검증하며, 캡처만으로 픽셀 baseline 통과를 주장하지 않는다.
 - docs-only 변경: `README.md`·`docs/` 등의 변경은 `Change Impact`에서 non-runtime으로 분류되며, `Docs-only QA`가 `git diff --check`, connected-platform·release-app 문서 계약을 실행한다. 이때 Regression/Browser E2E/Production Smoke는 skip한다.
 - workflow-only 변경: `.github/workflows/qa.yml`은 현행 `classify-cloudflare-impact.cjs`에서 runtime 영향으로 분류된다. 회귀·브라우저 검사를 실행하고, 새 Cloudflare 배포 없이 기존 운영 대상 `Production Smoke`를 실행할 수 있다. 따라서 문서 전용과 동일한 경량 QA라고 표현하지 않는다.
 - `queued` / `in_progress`는 실패나 stuck을 의미하지 않으며, 실제 failure/cancel/timeout 또는 progress 정지 근거가 있을 때만 이상 상태로 판단한다.
@@ -119,6 +126,6 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 완료 사실이 새로 확정되면 과거 문서의 `별도 확인 대상`, `미검증`, `pending` 같은 표현과 충돌하지 않는지 반드시 다시 검색한다. 제품/배포 사실과 절차 문서가 모두 일치하기 전에는 최종 sync-up 완료로 표현하지 않는다. 과거 Release History 자체를 보존해야 하는 경우에는 `RELEASE-HISTORY-CORRECTIONS.md`에 supersession을 명시해 현재 해석을 분리한다.
 
-Case Study는 Product package release와 version-coupling하지 않는다. FootMate의 작은 visual polish, spacing, density, copy, screenshot baseline 변화만으로는 Case Study sync 사유로 보지 않는다. FootMate의 설명·기능 구조·핵심 flow·성과 근거·대표 화면이 materially 달라지면 Case Study sync 필요 여부를 점검한다. 사용자가 Case Study 수정을 명시적으로 요청한 경우에는 현재 11개 섹션 원본(`src/case-study/nine-sections.js`, `nine-sections.css`)을 수정하고, 변경된 `/` 화면의 동작·접근성·모바일 표시를 검증한다. 과거 13단계 생성 번들과 빌드 검사 의존성은 제거하며, 현재 11개 섹션의 진입점·버전 검사 및 E2E를 유지한다.
+Case Study는 Product package release와 version-coupling하지 않는다. FootMate의 작은 visual polish, spacing, density, copy, screenshot baseline 변화만으로는 Case Study sync 사유로 보지 않는다. FootMate의 설명·기능 구조·핵심 flow·성과 근거·대표 화면이 materially 달라지면 Case Study sync 필요 여부를 점검한다. 사용자가 Case Study 수정을 명시적으로 요청한 경우에는 현재 9개 섹션 원본(`src/case-study/nine-sections.js`, `nine-sections.css`)을 수정하고, 변경된 `/` 화면의 동작·접근성·모바일 표시를 검증한다. 과거 13단계 생성 번들과 빌드 검사 의존성은 제거하며, 현재 9개 섹션의 진입점·버전 검사 및 E2E를 유지한다.
 
 제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.
