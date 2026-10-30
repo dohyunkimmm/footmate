@@ -77,7 +77,6 @@ const sections = [
     if(index===current)return;
     current=index;
     links.forEach((link,i)=>{link.classList.toggle('on',i===index);if(i===index)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});
-    document.querySelector('.topbar-count').textContent=String(index+1).padStart(2,'0')+' / 09';
   }
   function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(updateCurrent);}}
   toc.addEventListener('click',event=>{
