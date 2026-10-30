@@ -12,7 +12,7 @@
 
 | 경로 | 설명 |
 | --- | --- |
-| `/` | 문제 정의·설계·검증 근거를 소개하는 Case Study |
+| `/` | 시장·사업성·IT 투자·운영 통제·성과관리를 검토하는 IT기획·전략기획 Case Study |
 | `/demo` | 로그인 전 조건 선택·풋살 추천 미리보기. 인증 후 /beta 홈으로 이동 |
 | `/beta` | 인증 후 추천·내 경기·MY. 실제 경기 우선, 없을 때 구분된 풋살 예시 경기 |
 | `/prototype` | 보관된 로컬 프로토타입(참고용) |
@@ -20,7 +20,7 @@
 
 **포트폴리오 검토 포인트**
 
-- **근거 화면:** Case Study에 실제 모바일 QA 캡처를 연결했습니다.
+- **케이스 스터디:** 시장·경쟁, 사업모델·손익, IT 투자·시스템 구조와 단계별 투자 판단을 9개 섹션으로 정리했습니다. 신규 사업 가정과 기존 구축·배포 근거를 구분합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
 **주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
@@ -66,9 +66,9 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 ## 자세한 문서
 
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
-- [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md) · [11개 섹션 구성](docs/CASE-STUDY-ELEVEN-STAGES.md)
-- [서비스 기획 근거](docs/SERVICE-PLANNING-EVIDENCE.md) · [사용자 검증 근거](docs/USER-TEST-EVIDENCE.md)
+- [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md) · [IT기획·전략기획 9개 섹션](docs/CASE-STUDY-ELEVEN-STAGES.md) · [사업 검토와 계산 근거](docs/IT-STRATEGY-CASE-STUDY.md)
 - [릴리스·QA 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
 - [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
 - [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
+
 
