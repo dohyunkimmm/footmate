@@ -39,10 +39,10 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.5.0');
   await expect(page.locator('.toc-item')).toHaveCount(9);
   await page.locator('.toc-item').nth(2).click();
-  await page.locator('.slide:visible summary').click();
-  await expect(page.locator('.slide:visible')).toContainText('사용자 직접 확정 · 자동 실행 제외');
+  await page.locator('#section-03 summary').click();
+  await expect(page.locator('#section-03')).toContainText('이용자의 명시적 확인');
   await page.locator('.toc-item').nth(6).click();
-  await expect(page.locator('.slide:visible')).toContainText('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서');
+  await expect(page.locator('#section-07')).toContainText('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서');
 });
 
 test('retired app URLs open the released connected Beta',async({page})=>{
