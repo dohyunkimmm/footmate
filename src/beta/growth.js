@@ -106,16 +106,21 @@ const FILTERS={
  position:{label:'포지션',short:'포지션',values:[['','상관없음'],...Object.entries(POSITIONS)]},
  afterTime:{label:'선호 시간',short:'시간',values:[['','시간 전체'],['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']]}
 };
+function regionChoices(){
+ const current=matches.filter(m=>['open','full'].includes(m.status)&&new Date(m.starts_at).getTime()>Date.now()).map(m=>m.region);
+ const known=FILTERS.region.values.slice(1).map(([value])=>value);
+ return [['','지역 전체'],...[...new Set([...known,...current].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko')).map(v=>[v,v])];
+}
 function choices(name,label,values,p,prefix=''){
  return `<fieldset class="fm-beta-choice-group"><legend>${esc(prefix+label)}</legend><div>${values.map(([value,text])=>`<label><input type="radio" name="${name}" value="${esc(value)}" aria-label="${esc(text)}" ${p[name]===value?'checked':''}><span>${esc(text)}</span></label>`).join('')}</div></fieldset>`;
 }
 function quickFilters(p){
  const selectedCount=['region','level','position','afterTime','beforeTime','dateWindow'].filter(name=>p[name]).length;
- return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개 선택됨`:'원하는 조건을 골라보세요'}</span>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}</div>${Object.entries(FILTERS).filter(([name])=>!['dateWindow','beforeTime'].includes(name)).map(([name,filter])=>`<details data-filter-active="${Boolean(p[name]||(name==='afterTime'&&(p.dateWindow||p.beforeTime)))}"><summary id="quick-filter-${name}">${esc(filter.short)} · ${esc(filter.values.find(([value])=>value===p[name])?.[1]||'전체')}${name==='afterTime'&&p.dateWindow?' · '+esc(FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1]||''):''}${name==='afterTime'&&p.beforeTime?' · '+esc(p.beforeTime)+' 전':''}</summary><form data-growth-form="quick-filter">${choices(name,filter.label,filter.values,p,'빠른 ')}${name==='afterTime'?choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p,'빠른 ')+choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p,'빠른 '):''}</form></details>`).join('')}</div>`;
+ return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개 선택됨`:'원하는 조건을 골라보세요'}</span>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}</div>${Object.entries(FILTERS).filter(([name])=>!['dateWindow','beforeTime'].includes(name)).map(([name,filter])=>`<details data-filter-active="${Boolean(p[name]||(name==='afterTime'&&(p.dateWindow||p.beforeTime)))}"><summary id="quick-filter-${name}">${esc(filter.short)} · ${esc(filter.values.find(([value])=>value===p[name])?.[1]||'전체')}${name==='afterTime'&&p.dateWindow?' · '+esc(FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1]||''):''}${name==='afterTime'&&p.beforeTime?' · '+esc(p.beforeTime)+' 전':''}</summary><form data-growth-form="quick-filter">${choices(name,filter.label,name==='region'?regionChoices():filter.values,p,'빠른 ')}${name==='afterTime'?choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p,'빠른 ')+choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p,'빠른 '):''}</form></details>`).join('')}</div>`;
 }
 function wizardPanel(){
  const p={...DEFAULT_PREFERENCES,...(draft||{})};
- const choice=(name)=>choices(name,FILTERS[name].label,FILTERS[name].values,p);
+ const choice=(name)=>choices(name,FILTERS[name].label,name==='region'?regionChoices():FILTERS[name].values,p);
  return `<section class="fm-beta-panel fm-beta-onboarding"><div class="fm-beta-onboarding-progress" aria-label="설정 ${wizardStep} / 2"><i class="is-active"></i><i class="${wizardStep===2?'is-active':''}"></i><span>${wizardStep} / 2</span></div><h2>${wizardStep===1?'어디서 뛸까요?':'어떻게 뛸까요?'}</h2><form data-growth-form="recommend" class="fm-beta-preference-form">${wizardStep===1?`${choice('region')}<button class="fm-beta-button fm-beta-button--primary" type="button" data-growth-action="next-setup">다음</button>`:`${choice('level')}${choice('position')}${choice('afterTime')}<button class="fm-beta-button fm-beta-button--primary" ${busy?'disabled':''}>추천 경기 보기</button><button class="fm-beta-link" type="button" data-growth-action="previous-setup" aria-label="← 이전"><span class="fm-icon" aria-hidden="true">⬅️</span> 이전</button>`}</form></section>`;
 }
 function moveWizard(form,step){draft={...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(new FormData(form))};wizardStep=step;render()}
