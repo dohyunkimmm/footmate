@@ -105,6 +105,13 @@ test('waitlist uses the selected recommendation position instead of an older pro
 
 test('authenticated recommendation conditions survive another browser-local reset',async({page})=>{
  await install(page);await mock(page);
+ // The shared mock refreshes into a placeholder token; preference sync requires a
+ // real JWT-shaped access token with the signed-in subject claim.
+ const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
+ await page.route(origin+'/auth/v1/token?**',route=>fulfill(route,{
+  access_token:token,refresh_token:'refresh2',expires_in:3600,
+  user:{id:userId,email:'beta@example.com'}
+ }));
  let saved=null;
  await page.route(origin+'/rest/v1/beta_user_preferences**',route=>{
   const request=route.request();
