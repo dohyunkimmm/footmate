@@ -118,6 +118,14 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
 
+  await page.evaluate(({userId})=>{
+    const key='footmate:beta:demo-participations:v1';
+    localStorage.setItem(key,JSON.stringify([
+      {user_id:userId,match_id:'demo-1-2099-01-01',status:'confirmed'},
+      {user_id:'33333333-3333-4333-8333-333333333333',match_id:'demo-2-2099-01-01',status:'confirmed'}
+    ]));
+    localStorage.setItem('footmate:beta:reactions:v1:'+userId+':demo','[]');
+  },{userId});
   let deletionDialog=0;
   page.on('dialog',async dialog=>{
     deletionDialog+=1;
@@ -129,6 +137,10 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await expect(page.getByText('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.')).toBeVisible();
   await expect(page.locator('[data-action="open-account"]')).toHaveText('로그인');
   expect(backend.isDeleted()).toBe(true);
+  const demoAfter=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:demo-participations:v1')||'[]'));
+  expect(demoAfter).toHaveLength(1);
+  expect(demoAfter[0].user_id).toBe('33333333-3333-4333-8333-333333333333');
+  expect(await page.evaluate(userId=>localStorage.getItem('footmate:beta:reactions:v1:'+userId+':demo'),userId)).toBeNull();
   expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:auth:v1'))).toBeNull();
   expect(await serious(page)).toEqual([]);
 });
