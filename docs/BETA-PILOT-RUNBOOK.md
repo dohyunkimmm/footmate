@@ -152,6 +152,13 @@
 - QA 데이터를 정리할 때 Production 사용자 데이터를 직접 SQL로 임의 변경하지 않는다. 제품 RPC/운영자 경로를 우선한다.
 - durable QA 결과는 `docs/RELEASE-HISTORY.md`에 남기고 일시적인 실패·재시도 대기는 기록하지 않는다.
 
+## 12-1. 2026-10-30 · 운영 파일럿 KPI와 실계정 MFA 사전 확인
+
+- P2·P3 운영 DB에는 migration `20261030032856_beta_preferences_pilot_metrics`가 적용됐습니다. 계정별 추천 조건 동기화는 인증 사용자 전용이며, 데모/게스트 조건은 로컬에 남고 동기화 실패 시에도 로컬 복구를 우선합니다.
+- 운영자 `operator_discovery_metrics`는 최근 **7일 이벤트 집계**, `operator_discovery_kpi_baseline`은 **21일 파일럿 KPI 기준선**입니다. 4개 KPI는 유효 사용자 또는 분모가 5명/5건 미만이면 N/A입니다. 현재 파일럿 지정 사용자 0명으로 개선률·전환 성과를 보고하지 않습니다. 계정의 통계 동의와 `pilot` 분류는 별도 조건이며 자동 등록하지 않습니다.
+- 실계정 보안 QA는 [#611](https://github.com/dohyunkimmm/footmate/issues/611)을 따릅니다. 모의 AAL1/AAL2·JWT 및 CI의 MFA 화면 QA 통과는 실제 Supabase Auth **서명 JWT**·운영자 TOTP·토큰 갱신/로그아웃/복구 실계정 E2E를 대체할 수 없습니다. 승인된 격리 테스트 계정 외 운영 계정은 변경하거나 비밀정보를 CI/이슈에 남기지 않습니다. [PR #729](https://github.com/dohyunkimmm/footmate/pull/729)의 전용 도구와 문서는 실계정 실행 전 준비물로만 취급합니다.
+- 배포 전에 DB 마이그레이션 적용 상태와 권한·RLS를 확인하고, PR CI가 완전 성공한 경우에만 `main` 병합 및 Cloudflare 배포를 진행합니다. 배포 후 Production Smoke를 확인합니다. DB 마이그레이션이 먼저 적용된 #727의 배포 이력을 과거 경계와 구분합니다.
+
 ## 13. Release gate
 
 Pilot 변경은 변경 영향에 맞춰 다음 순서를 따른다.

@@ -1,5 +1,13 @@
 # FootMate Release History
 
+## 2026-10-30 — P2·P3 운영 반영 및 IT기획·전략기획 Case Study 9개 섹션
+
+- [PR #727](https://github.com/dohyunkimmm/footmate/pull/727) squash 병합 `89dc54114cf047962c29a39af06dd1032e35896f`: 지역 선택 개선, 탈퇴/데모 참가 기록 격리, **실제 로그인 계정의 추천 조건 Supabase 동기화**(로컬 대체; 데모·게스트 제외), 운영자 파일럿 KPI 4종과 RLS·동의·표본 보호. Supabase 운영 migration `20261030032856_beta_preferences_pilot_metrics` 적용 및 신규 `beta_user_preferences` 테이블 정책 3개·RPC 접근권한 검증. 임의 사용자 데이터 삭제나 자동 파일럿 지정은 하지 않음.
+- 계측 경계: `operator_discovery_metrics`의 기존 **최근 7일 이벤트 집계**와 `operator_discovery_kpi_baseline`의 **최근 21일 파일럿 기준선**은 목적이 다르다. 신규 기준선은 추천 노출→상세, 0건 결과, 상세→참가, 참석 후 7일 재탐색 4종이고 동의한 `pilot` 계정만 포함한다. 고유 사용자·분모가 각각 최소 5 미만이면 결과를 N/A로 억제한다. 현재 실제 pilot 0명으로 지표 개선률·실사용 성과는 **미측정**.
+- PR #727 최종 [Actions #40998182912](https://github.com/dohyunkimmm/footmate/actions/runs/40998182912)와 병합된 `main`의 [Actions #40999197361](https://github.com/dohyunkimmm/footmate/actions/runs/40999197361): Regression 36·Browser E2E + axe·Cloudflare 배포·Production HTTP/AI/Chromium Smoke **SUCCESS**. 이는 모의·자동 검증과 실제 운영 서비스 상태 확인이며, 실제 TOTP/Auth 서명 JWT를 이용한 실계정 E2E 성공을 뜻하지 않는다.
+- [PR #728](https://github.com/dohyunkimmm/footmate/pull/728) squash 병합 `aae8f1050034f4743e2e4b6d2b354f941a908e8f`: 공개 `/` Case Study를 기존 서비스 UX 11개 섹션에서 **IT기획·전략기획 9개 섹션**으로 재구성. 시장·손익·투자 판단은 신규 검토/제안이고 기존 측정 성과로 소급하지 않는다. 병합 후 [Actions #41001440621](https://github.com/dohyunkimmm/footmate/actions/runs/41001440621)의 Regression 36·Browser E2E·Cloudflare Deploy·Production Smoke **SUCCESS**. 과거 파일 `CASE-STUDY-ELEVEN-STAGES.md`는 링크 호환용이고 현재 내용은 [IT-STRATEGY-CASE-STUDY.md](IT-STRATEGY-CASE-STUDY.md) 참조.
+- **남은 보안 Gate:** [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)의 승인된 실제 사용자/운영자 계정, Auth 서버 서명 JWT, 운영자 TOTP AAL1/AAL2 및 토큰 갱신·복구·로그아웃 E2E 미완료. [PR #729](https://github.com/dohyunkimmm/footmate/pull/729)에서 추가한 테스트 도구의 **모의 응답 계약 QA 통과**를 실제 서명 토큰 E2E 완료로 보지 않는다. Security Advisor authenticated SECURITY DEFINER WARN은 신규 KPI RPC 포함 **21건**, pg_net public WARN 1건, 유출 비밀번호 보호 WARN 1건을 미해결로 유지한다.
+
 ## 2026-10-28 — 보안·Git 감사 후속 및 최신 QA 확인
 
 - [PR #713](https://github.com/dohyunkimmm/footmate/pull/713)–[#714](https://github.com/dohyunkimmm/footmate/pull/714): Supabase 운영 RLS 정책 11개의 JWT 조회를 최적화하고 실제 적용된 migration version `20261027122602`를 SQL 파일과 일치시켰다. 적용 후 `auth_rls_initplan` 경고 0건을 확인했으며, 이는 실제 서명 JWT 실계정 E2E 완료를 뜻하지 않는다.
