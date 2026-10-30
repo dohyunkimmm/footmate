@@ -64,3 +64,39 @@ test('200 percent text and reduced motion do not hide business evidence',async({
  }
 });
 
+
+for(const width of [320,390,1440]){
+ test('typography preserves words and currency units at '+width+'px',async({page})=>{
+  await page.setViewportSize({width,height:1080});await page.goto('/');await page.evaluate(()=>document.fonts.ready);
+  for(let i=0;i<titles.length;i++){
+   await page.locator('.toc-item').nth(i).click();
+   await page.locator('.slide:visible details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
+   const failures=await page.locator('.slide:visible').evaluate(slide=>{
+    const failures=[],canvas=document.createElement('canvas'),context=canvas.getContext('2d');
+    for(const element of slide.querySelectorAll('p,li,th,td,caption,summary')){
+     if(!element.getClientRects().length)continue;
+     const style=getComputedStyle(element);context.font=style.font;
+     const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);let node;
+     while((node=walker.nextNode())){
+      const text=node.textContent;
+      for(const match of text.matchAll(/[−-]?\d[\d,]*(?:원|건|명|곳|회|주)|[가-힣]{2,}/gu)){
+       if(context.measureText(match[0]).width>element.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight))continue;
+       const range=document.createRange();range.setStart(node,match.index);range.setEnd(node,match.index+match[0].length);
+       const tops=[...range.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top));
+       if(new Set(tops).size>1)failures.push(match[0]+' splits inside '+element.tagName);
+      }
+     }
+    }
+    return failures;
+   });
+   expect(failures).toEqual([]);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  }
+  if(width<=800){
+   await expect(page.locator('.btn-next')).toHaveCSS('font-size','14px');
+   await page.locator('.toc-item').nth(4).click();
+   const labelSize=await page.locator('.slide:visible td').first().evaluate(n=>getComputedStyle(n,'::before').fontSize);
+   expect(labelSize).toBe('13px');
+  }
+ });
+}
