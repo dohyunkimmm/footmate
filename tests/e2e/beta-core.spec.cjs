@@ -115,7 +115,7 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await page.locator('[data-action="open-account"]').click();
   await page.getByRole('button',{name:'설정',exact:true}).click();
   await page.getByText('개인정보 안내',{exact:true}).click();
-  await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
+  await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태 · 로그인 중 선택한 추천 조건. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
 
   await page.evaluate(({userId})=>{
