@@ -22,6 +22,7 @@ if(root){
   let profile=null;
   let matches=[];
   let participations=[];
+  let participationMatchHistory=[];
   let matchesError=null;
   let busy=false;
   let notice=null;
@@ -91,7 +92,7 @@ if(root){
     user=null;
     profile=null;serverReactions=[];closeDetail();
     void configureDiscoveryTransport(null,'','');
-    participations=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
+    participations=[];participationMatchHistory=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
   }
 
   function formatStart(value){
@@ -167,14 +168,18 @@ if(root){
 
   function renderParticipation(){
     if(!session||!user)return '';
-    const confirmed=participations.filter(item=>item.status==='confirmed');
+    const confirmed=participations.filter(item=>{
+      if(item.status!=='confirmed')return false;
+      const match=matches.find(candidate=>candidate.id===item.match_id)||participationMatchHistory.find(candidate=>candidate.id===item.match_id);
+      return Boolean(match&&['open','full'].includes(match.status)&&new Date(match.startsAt).getTime()>Date.now());
+    });
     joinedPage=Math.min(joinedPage,Math.max(0,confirmed.length-1));
     return `<div class="fm-beta-panel">
       <div class="fm-beta-panel-head"><div><h3>내 경기</h3></div></div>
       ${confirmed.length?confirmed.slice(joinedPage,joinedPage+1).map(item=>{
-        const match=matches.find(candidate=>candidate.id===item.match_id);
+        const match=matches.find(candidate=>candidate.id===item.match_id)||participationMatchHistory.find(candidate=>candidate.id===item.match_id);
         return `<div class="fm-beta-participation">${item.is_demo?'<small class="fm-beta-demo-record">데모 경기</small>':''}<strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
-      }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>경기를 고른 뒤 포지션 자리까지 확인하고 참가할 수 있어요.</div>`}
+      }).join(''):`<div class="fm-beta-empty"><strong>예정된 참가 경기가 없습니다.</strong>참석했던 경기는 내 경기의 참석 이력에서 확인할 수 있어요.</div>`}
       ${confirmed.length>1?`<nav class="fm-beta-demo-pager" aria-label="내 경기 페이지"><button class="fm-beta-button" type="button" data-action="joined-prev" ${joinedPage===0?'disabled':''}>이전</button><span>${joinedPage+1} / ${confirmed.length}</span><button class="fm-beta-button" type="button" data-action="joined-next" ${joinedPage===confirmed.length-1?'disabled':''}>다음</button></nav>`:''}
     </div>`;
   }
@@ -304,7 +309,7 @@ if(root){
     root.dataset.betaAuthOpen=String(authOpen);
     root.dataset.betaGuest=String(!session||!user);
     root.dataset.betaRecommendationsReady=String(recommendedIds!==null);
-    root.dataset.betaState=backendState==='error'?'error':backendState==='connected'?'ready':'booting';
+    root.dataset.betaState=backendState==='error'?'error':['connected','preview'].includes(backendState)?'ready':'booting';
     const connected=backendState==='connected';
     root.dataset.betaOpening=String(openingOpen);
     root.dataset.betaDetail=String(Boolean(detailMatchId&&!authOpen&&view==='home'));
@@ -323,13 +328,15 @@ if(root){
   }
 
   async function loadMatches(){
-    if(!client)return;
+    if(!client&&!isDemoEntry)return;
     try{
       matchesError=null;
       const rows=isDemoEntry?demoCatalog(user?.id):await client.matches.list({limit:50});
       const futsal=(Array.isArray(rows)?rows:[]).filter(isFutsalMatch);
       const live=futsal.some(m=>['open','full'].includes(m.status)&&new Date(m.starts_at)>new Date());
-      matches=normalizeBetaMatches(!isDemoEntry&&session&&user&&!live?[...futsal,...demoCatalog(user.id)]:futsal);
+      const savedDemoIds=session&&user?new Set([pendingMatchId,...demoParticipations(user.id).filter(p=>p.status==='confirmed').map(p=>p.match_id)].filter(Boolean)):new Set();
+      const examples=!isDemoEntry&&session&&user?demoCatalog(user.id).filter(m=>!live||savedDemoIds.has(m.id)):[];
+      matches=normalizeBetaMatches([...futsal,...examples]);
     }catch(error){
       matches=[];
       matchesError=friendlyError(error);
@@ -345,8 +352,12 @@ if(root){
       isDemoEntry?Promise.resolve([]):client.participation.listMine({accessToken:session.accessToken})
     ]);
     profile=nextProfile;
+    const privateRows=Array.isArray(nextParticipations)?nextParticipations:[];
+    const missingIds=[...new Set(privateRows.filter(p=>p.status==='confirmed'||p.checked_in_at).map(p=>p.match_id).filter(id=>id&&!matches.some(m=>m.id===id)))];
+    const historyRows=!isDemoEntry&&missingIds.length?await client.matches.listByIds({matchIds:missingIds}).catch(()=>[]):[];
+    participationMatchHistory=normalizeBetaMatches(historyRows);
     await configureDiscoveryTransport(analyticsConfig,user.id,session.accessToken);
-    participations=[...(Array.isArray(nextParticipations)?nextParticipations:[]),...demoParticipations(user.id)];
+    participations=[...privateRows,...demoParticipations(user.id)];
   }
 
   async function restoreAuth(){
@@ -392,8 +403,17 @@ if(root){
       }
       setNotice(null);
     }catch(error){
-      backendState='error';
-      setNotice(friendlyError(error),'error');
+      if(isDemoEntry){
+        client=null;session=null;user=null;
+        matches=normalizeBetaMatches(demoCatalog());
+        matchesError=null;
+        lastSyncedAt=Date.now();
+        backendState='preview';
+        setNotice('예시 경기는 볼 수 있지만, 로그인과 참가에는 서버 연결이 필요해요.','info');
+      }else{
+        backendState='error';
+        setNotice(friendlyError(error),'error');
+      }
     }
     render();
     emitDiscoveryMeasurement('entry_viewed',{durationMs:Date.now()-entryStartedAt,isDemo:isDemoEntry||matches.some(m=>m.isDemo)});
@@ -407,6 +427,7 @@ if(root){
     if(form.dataset.form==='auth'){
       run(async()=>{
         setNotice(null);
+        if(!client)throw new Error('로그인 연결을 사용할 수 없어요. 서버 연결 후 다시 시도해주세요.');
         const email=String(data.get('email')||'').trim();
         const password=String(data.get('password')||'');
         if(authMode==='signin'){if(data.get('rememberEmail')==='on')localStorage.setItem('footmate:beta:remember-email:v1',email);else localStorage.removeItem('footmate:beta:remember-email:v1')}
