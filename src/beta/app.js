@@ -537,13 +537,14 @@ if(root){
       run(async()=>{
         const deletedUserId=user.id;
         await client.auth.deleteAccount({accessToken:session.accessToken});
+        let localCleanupFailed=false;
         try{
           clearDemoParticipations(deletedUserId);
           localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':demo');
           localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':live');
-        }catch{setNotice('서버 계정은 삭제됐으나 이 기기의 데모 기록은 삭제하지 못했습니다. 브라우저 저장 공간을 확인해주세요.','error')}
+        }catch{localCleanupFailed=true}
         clearSession();
-        setNotice('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.','success');
+        setNotice(localCleanupFailed?'서버 계정은 삭제했지만 이 기기의 데모 기록은 일부 남아 있을 수 있습니다. 브라우저 저장 공간을 확인해주세요.':'계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.',localCleanupFailed?'error':'success');
       });return;
     }
     if(action==='join'){
