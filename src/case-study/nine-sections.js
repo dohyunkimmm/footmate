@@ -1,288 +1,93 @@
-/* FootMate Case Study · 11-section narrative. Sources: Notion project page,
-   SERVICE-PLANNING-EVIDENCE, USER-TEST-EVIDENCE and RELEASE-HISTORY. */
+/* FootMate IT기획·전략기획 · 2026-10-30 */
 (() => {
-  'use strict';
-  const evidence = (file, label) => `<span class="evidence-record" role="listitem"><a href="https://github.com/dohyunkimmm/footmate/blob/main/docs/${file}" target="_blank" rel="noopener noreferrer" aria-label="${label} · 원본 기록 열기">${label} ↗</a></span>`;
-  const card = (label, title, body) => `<article class="story-card"><span class="eyebrow">${label}</span><h3>${title}</h3><p>${body}</p></article>`;
-  const grid = (...items) => `<div class="card-grid">${items.join('')}</div>`;
-  const head = (n, label, title, lead) => `<header class="section-head"><span class="eyebrow">${n} / ${label}</span><h1 tabindex="-1">${title.replaceAll('<br>', '<br class="cs-title-break"> ')}</h1><p class="lead">${lead}</p></header>`;
-  const note = text => `<p class="source-note">${text}</p>`;
-  const steps = items => `<ol class="flow">${items.map(([title, body], index) => `<li><span class="flow-number" aria-hidden="true">${String(index+1).padStart(2,'0')}</span><strong>${title}</strong><span>${body}</span></li>`).join('')}</ol>`;
-  const image = (file, alt, caption) => `<figure class="product-figure"><button class="evidence-preview" type="button" data-image="/src/case-study/evidence/${file}" data-image-title="${alt}" aria-label="${alt} · 화면 확대" aria-haspopup="dialog"><img src="/src/case-study/evidence/${file}" alt="${alt}" loading="lazy"></button><figcaption>${caption} <span class="image-view-hint" aria-hidden="true">· 확대 보기 ↗</span></figcaption></figure>`;
-  const sections = [
+'use strict';
+const sections = [
   {
-    "name": "Overview & Problem",
-    "sub": "Project & Design Goal",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">01 / OVERVIEW & PROBLEM</span><h1 tabindex=\"-1\">내 수준과 포지션에 맞는 경기 매칭.</h1><p class=\"lead\">활동 지역·실력·포지션·시간 선택 후 AI 추천 경기 확인 · 로그인 후 앱 홈의 추천·내 경기·MY로 연결 · 기존 카카오·구글 인증과 실제 경기 서버 기능 유지</p></header><div class=\"overview-grid\"><div><div class=\"project-facts\"><div><span>역할</span><strong>단독 기획 · UX 설계 · 구축</strong><p>프로토타입 · 과업 검증 · QA · 배포</p></div><div><span>기간</span><strong>2026.06.08–현재</strong><p>AI 실무과정에서 시작 · 수료 후 고도화</p></div></div><div class=\"problem-statement\"><span class=\"eyebrow\">PROBLEM STATEMENT · 설계 가설</span><h2>내게 맞는 경기 판단과 다음 매칭의 단절</h2><p>레벨·거리·포지션·잔여 자리 비교<br>불분명한 추천 근거 · 경기 후 다음 행동 부재</p></div><div class=\"experience-actions\" aria-label=\"체험 환경 선택\"><a class=\"primary-link\" href=\"/demo\">FootMate Demo 열기 <span aria-hidden=\"true\">↗</span></a></div><p class=\"small-copy experience-disclosure\">조건 선택 → AI 추천 → 참가 시 카카오·구글 로그인</p></div><figure class=\"product-figure\"><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-home.png\" data-image-title=\"현재 FootMate Demo의 추천 경기 화면\" aria-label=\"현재 FootMate Demo의 추천 경기 화면 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-home.png\" alt=\"현재 FootMate Demo의 추천 경기 화면\" loading=\"lazy\"></button><figcaption>현재 Demo 추천 화면 · 예시 경기 · 운영 화면 캡처 <span class=\"image-view-hint\" aria-hidden=\"true\">· 확대 보기 ↗</span></figcaption></figure></div><div class=\"card-grid\"><article class=\"story-card\"><span class=\"eyebrow\">DECISION 01</span><h3>가치 확인 후 인증</h3><p>추천·상세 먼저 탐색 · 참가 시 로그인</p></article><article class=\"story-card\"><span class=\"eyebrow\">DECISION 02</span><h3>점수보다 매칭 근거</h3><p>맞는 점·실력 차이·포지션 마감을 함께 확인</p></article><article class=\"story-card\"><span class=\"eyebrow\">DECISION 03</span><h3>중단 후 복구</h3><p>선택 유지 · 재시도</p></article></div>"
+    "name": "추진 배경·검토 결론",
+    "title": "풋살 경기 연결 사업의 실행 가능성을 검토하다",
+    "lead": "FootMate · IT기획·전략기획 포트폴리오",
+    "body": "<div class=\"project-facts\"><p><strong>김도현 · 단독 수행</strong><br>2026.06.08–현재 · 교육과정에서 시작해 개인 프로젝트로 지속 고도화</p><p><strong>실행 기반과 사업 검토를 연결</strong><br>요구사항·시스템·데이터·운영 정책 수립, 구현·배포·기술 검증을 수행하고 시장·수익성·투자 판단을 새로 분석</p></div>\n      <p class=\"decision\">검토 결론 · 초기에는 구장을 직접 확보해 경기를 운영하기보다, 기존 운영자의 모집 경기를 연결하는 제휴형 모델을 우선 검증한다.</p><div class=\"card-grid\"><article class=\"story-card\"><h2>시장·사업 판단</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. AI 기능 유무보다 모집 가능 경기와 참가 완료가 초기 사업의 핵심이다.</p></article><article class=\"story-card\"><h2>IT 실행 판단</h2><p>이미 구축한 인증·정원·참가·취소·체크인·운영자 기능을 활용하고, 유료 전환에 필요한 정산·결제는 별도 투자 단계로 분리한다.</p></article><article class=\"story-card\"><h2>투자 판단</h2><p>제안한 기준 시나리오에서는 월 손익이 적자다. 확장보다 제휴 조건·예약당 공헌이익·반복 참가를 먼저 확인한다.</p></article></div><a class=\"primary-link\" href=\"/demo\">FootMate Demo 열기 ↗</a><p class=\"source-note\">표기 기준 · 구현: 기존 프로젝트 근거 / 조사: 공개 출처 / 제안·가정: 이번 사업 검토에서 신규 작성. 사업 실적과 손익은 아직 측정 전이다.</p>"
   },
   {
-    "name": "User Research",
-    "sub": "Tasks & Findings",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">02 / USER RESEARCH</span><h1 tabindex=\"-1\">구체적인 행동 과업으로 탐색·가입 흐름을 확인했습니다.</h1><p class=\"lead\">교육생 6명에게 조건과 인증 방식을 나눠 요청한 소규모 과업 기반 사용성 검증</p></header><div class=\"card-grid\"><article class=\"story-card\"><span class=\"eyebrow\">PARTICIPANTS</span><h3>6명 · iOS 4 / Android 2</h3><p>같은 교육과정 수강생 · 숙련도·포지션 조건을 나눠 수행</p></article><article class=\"story-card\"><span class=\"eyebrow\">METHOD</span><h3>탐색·가입 과업 8회</h3><p>비회원 탐색·Kakao·Google·이메일 각 2회 · 일부 참여자 복수 수행</p></article><article class=\"story-card\"><span class=\"eyebrow\">LEARNING</span><h3>행동을 지정해 동선을 확인</h3><p>인증 방식·선택 유지·복귀 위치·모바일 차이를 관찰 단위로 정의</p></article></div><h2 class=\"block-title\">과업과 관찰 기준</h2><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"과업・확인한 동선・관찰 기준\"><table><thead><tr><th scope=\"col\">과업</th><th scope=\"col\">확인한 동선</th><th scope=\"col\">관찰 기준</th></tr></thead><tbody><tr><th scope=\"row\">비회원 탐색</th><td>조건 → 추천·목록 → 상세</td><td>가입 전 탐색의 연결</td></tr><tr><th scope=\"row\">소셜 가입</th><td>참가 맥락 → 인증 → 원래 동선</td><td>이전 경기·복귀 위치 유지</td></tr><tr><th scope=\"row\">이메일 가입</th><td>가입 → 인증 → 로그인</td><td>상태 변화·재진입·모바일 차이</td></tr></tbody></table></div><p class=\"source-note\">과업 수행 근거는 있음 · 참여자별 발화·발견 이슈·수정 연결은 미확정. 시장 대표 조사나 실제 이용 성과로 확대하지 않음.</p><details><summary>리서치에서 얻은 학습과 기록 한계</summary><div class=\"detail-body\"><p>자유 체험만으로는 문제 구간을 건너뛸 가능성 · 행동 과업 지정으로 같은 조건에서 동선별 막힘과 복귀 확인</p><p>개별 사용자 인사이트·발견 빈도의 임의 생성 제외 · 다음 검증은 과업 → 관찰 → 판단 → 수정 → 재검증을 하나의 기록으로 보존</p><a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/USER-TEST-EVIDENCE.md\" target=\"_blank\" rel=\"noopener noreferrer\">과업 검증 원본 기록 ↗</a></div></details>"
+    "name": "시장·경쟁 분석",
+    "title": "시장 전체보다 먼저 지역의 반복 참가 수요를 검증한다",
+    "lead": "축구·풋살 참여 기반은 확인하되, 유료 개인 참가 시장과 구분한다.",
+    "body": "<p>문화체육관광부의 국민생활체육조사는 축구·풋살을 생활체육 종목으로 다룬다. 이 자료는 종목 참여 기반의 근거이며, FootMate의 유료 고객 수나 매출 규모를 뜻하지 않는다. 개인 단위 경기 참가 서비스의 운영 사례는 공식 경쟁 서비스에서 확인했다.</p><div class=\"table-wrap\" role=\"region\" aria-label=\"초기 사업 기회와 검증 대상\" tabindex=\"0\"><table><caption>초기 사업 기회와 검증 대상</caption><thead><tr><th scope=\"col\">대상</th><th scope=\"col\">제안하는 가치</th><th scope=\"col\">확인할 조건</th></tr></thead><tbody><tr><th scope=\"row\">개인 참가자</th><td data-label=\"제안하는 가치\">팀을 구성하지 않고 지역·시간·수준에 맞는 모집 경기 선택</td><td data-label=\"확인할 조건\">예약 의향, 실제 참가, 30일 내 재참가</td></tr><tr><th scope=\"row\">기존 경기 운영자</th><td data-label=\"제안하는 가치\">모집 경기의 추가 노출과 잔여 자리 충원</td><td data-label=\"확인할 조건\">노출·예약 연동 허용, 정확한 정원 정보, 정산 조건</td></tr><tr><th scope=\"row\">초기 진입 지역</th><td data-label=\"제안하는 가치\">현재 샘플 지역인 수원·용인 중 공급 확보가 가능한 한 생활권부터 실증</td><td data-label=\"확인할 조건\">제휴 가능한 운영자·경기 시간·참가자 모집 경로</td></tr></tbody></table></div><div class=\"card-grid\"><article class=\"story-card\"><h2>우선 가설</h2><p>퇴근 후 또는 주말에 개인 참가를 원하는 이용자가 반복적으로 존재하고, 특정 생활권에 충분한 경기 공급이 있다.</p></article><article class=\"story-card\"><h2>실증 순서</h2><p>운영자 면담과 조건 확인 → 무료 참가 실증 → 유료 의향·가격 실험 → 반복 참가 확인. 공급이 확보되지 않으면 광고 확대를 보류한다.</p></article></div><p class=\"source-note\">근거 · <a href=\"https://www.mcst.go.kr/site/s_policy/subPolicy/sportstour/sportstour29.jsp\" target=\"_blank\" rel=\"noopener noreferrer\">문화체육관광부 2025년 국민생활체육조사 ↗</a></p><p class=\"source-note\">근거 · <a href=\"https://www.plabfootball.com/\" target=\"_blank\" rel=\"noopener noreferrer\">플랩풋볼 공식 서비스 ↗</a></p><p class=\"source-note\">초기 지역과 고객군은 신규 전략 제안이며, 운영자 계약·고객 수요가 확보됐다는 의미는 아니다.</p><h2 class=\"block-title\">경쟁과 진입 전략</h2><div class=\"table-wrap\" role=\"region\" aria-label=\"경쟁과 대안 비교\" tabindex=\"0\"><table><caption>경쟁과 대안 비교</caption><thead><tr><th scope=\"col\">대안</th><th scope=\"col\">공개 자료에서 확인한 내용</th><th scope=\"col\">FootMate의 대응</th></tr></thead><tbody><tr><th scope=\"row\">플랩풋볼</th><td data-label=\"공개 자료에서 확인한 내용\">소셜 매치·구장 예약과 레벨·매너·AI 팀 배정 관련 안내 제공</td><td data-label=\"FootMate의 대응\">AI 추천·수준 구분을 독점적 차별점으로 제시하지 않음</td></tr><tr><th scope=\"row\">퍼즐플레이</th><td data-label=\"공개 자료에서 확인한 내용\">경기 모집·기록·영상·랭크 기능과 유료 참가 경기 제공</td><td data-label=\"FootMate의 대응\">기록·영상 경쟁보다 특정 생활권의 모집 경기 연결과 운영 신뢰에 집중</td></tr><tr><th scope=\"row\">운영자 직접 모집</th><td data-label=\"공개 자료에서 확인한 내용\">제휴 검토 때 운영자별 기존 모집 채널·정원 관리·정산 방식을 확인할 대상</td><td data-label=\"FootMate의 대응\">수작업 부담과 추가 충원 효과를 실제 운영자 자료로 비교</td></tr><tr><th scope=\"row\">FootMate 제안</th><td data-label=\"공개 자료에서 확인한 내용\">조건에 맞는 실제 후보 안에서 AI 정렬, 서버 참가·정원·운영 기능 구축</td><td data-label=\"FootMate의 대응\">지역·파트너별 공급 정확도와 참가 완료를 검증한 뒤 확장</td></tr></tbody></table></div><div class=\"card-grid\"><article class=\"story-card\"><h2>진입 방식</h2><p>전국 단위 모집 경쟁 대신 한 생활권·일부 시간대로 범위를 제한한다. 초기 제휴는 모집 경기 등록과 참가 책임을 명확히 정하는 조건으로 검토한다.</p></article><article class=\"story-card\"><h2>차별성 검증</h2><p>추천 이유의 이해도만으로 끝내지 않고, 기본 정렬 대비 참가 완료·재참가·운영자 추가 충원을 비교한다. 우위가 확인되지 않으면 AI 투자를 축소한다.</p></article></div><p class=\"source-note\">근거 · <a href=\"https://www.plabfootball.com/faq?category=22\" target=\"_blank\" rel=\"noopener noreferrer\">플랩풋볼 레벨 안내 ↗</a></p><p class=\"source-note\">근거 · <a href=\"https://puzzleplay.kr/social/6aad8ee0db675fa1697b7300\" target=\"_blank\" rel=\"noopener noreferrer\">퍼즐플레이 공식 경기 사례 · 2026-10-03 참가비 15,000원 ↗</a></p><p class=\"source-note\">경쟁 정보 확인: 2026-10-30. 특정 경기 가격은 표본이며 시장 평균·제휴 가격으로 사용하지 않았다.</p>"
   },
   {
-    "name": "Persona & Journey",
-    "sub": "Context & User Tasks",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">03 / PERSONA & JOURNEY</span><h1 tabindex=\"-1\">사용자 상황을 탐색부터 재참여까지 연결했습니다.</h1><p class=\"lead\">Persona는 설계 가설 · 여정은 단계별 행동·막힘·설계 대응을 정리한 구조</p></header><details><summary>설계 Persona·JTBD</summary><div class=\"detail-body\"><div class=\"split\"><article class=\"persona-panel\"><span class=\"eyebrow\">DESIGN PERSONA · 검증 전 가설</span><h2>퇴근 후 한 경기를 고르는 플레이어</h2><dl><div><dt>이용 맥락</dt><dd>평일 저녁 · 주 1~2회 · 30분 안쪽 이동</dd></div><div><dt>선택 기준</dt><dd>레벨 · 거리 · 포지션 · 남은 자리</dd></div><div><dt>불안 요소</dt><dd>실력 차이 · 자리 마감 · 취소 규칙 · 경기 당일 변수</dd></div></dl></article><div class=\"jtbd-panel\"><span class=\"eyebrow\">JOB TO BE DONE</span><blockquote>퇴근 후 운동 시간 확보<br>일정·수준에 맞는 후보 판단<br>참가 확정 → 당일 준비</blockquote><p>맥락 → 선택 → 실행</p></div></div></div></details><div class=\"journey-map\" aria-label=\"설계 가설 기반 사용자 여정\"><article><span class=\"journey-number\">01</span><h2>Find · 탐색</h2><div><span class=\"eyebrow\">사용자 행동</span><p>오늘 갈 수 있는 경기 찾기</p></div><div class=\"pain\"><span class=\"eyebrow\">막힘 · 가설</span><p>시간·지역·레벨 비교 부담</p></div><div class=\"opportunity\"><span class=\"eyebrow\">설계 대응</span><p>AI 조건 해석 · 맞춤 경기 매칭</p></div></article><article><span class=\"journey-number\">02</span><h2>Decide · 판단</h2><div><span class=\"eyebrow\">사용자 행동</span><p>내게 맞는 후보 비교</p></div><div class=\"pain\"><span class=\"eyebrow\">막힘 · 가설</span><p>추천 이유·자리·취소 규칙이 불명확</p></div><div class=\"opportunity\"><span class=\"eyebrow\">설계 대응</span><p>맞는 점·확인할 점 · 상세 · 2경기 비교</p></div></article><article><span class=\"journey-number\">03</span><h2>Join · 참가</h2><div><span class=\"eyebrow\">사용자 행동</span><p>선택 경기에 참가 확정</p></div><div class=\"pain\"><span class=\"eyebrow\">막힘 · 가설</span><p>인증·확정 중단 시 선택 유실</p></div><div class=\"opportunity\"><span class=\"eyebrow\">설계 대응</span><p>참가 시 인증 · 선택 유지</p></div></article><article><span class=\"journey-number\">04</span><h2>Play · 경기</h2><div><span class=\"eyebrow\">사용자 행동</span><p>당일 준비하고 출석</p></div><div class=\"pain\"><span class=\"eyebrow\">막힘 · 가설</span><p>시간·체크인·변경 안내 재확인</p></div><div class=\"opportunity\"><span class=\"eyebrow\">설계 대응</span><p>MY · 당일 상태 · 체크인</p></div></article><article><span class=\"journey-number\">05</span><h2>Return · 재탐색</h2><div><span class=\"eyebrow\">사용자 행동</span><p>경험을 다음 선택에 반영</p></div><div class=\"pain\"><span class=\"eyebrow\">막힘 · 가설</span><p>경기 후 피드백과 다음 탐색이 분리됨</p></div><div class=\"opportunity\"><span class=\"eyebrow\">설계 대응</span><p>체감 난이도 피드백 · 다음 매칭 보정</p></div></article></div><p class=\"source-note\">예상 여정 · 감정 조사·점수화 미실시. 사용자 관찰 근거는 02에서 별도 확인.</p>"
+    "name": "사업모델·역할",
+    "title": "제휴형 중개를 우선하고 직접 운영은 조건부로 검토한다",
+    "lead": "누가 모집·운영·취소·정산 책임을 갖는지 먼저 정의한다.",
+    "body": "<div class=\"table-wrap\" role=\"region\" aria-label=\"사업모델 대안 평가 · 신규 검토\" tabindex=\"0\"><table><caption>사업모델 대안 평가 · 신규 검토</caption><thead><tr><th scope=\"col\">모델</th><th scope=\"col\">수익 구조</th><th scope=\"col\">비용·실행 부담</th><th scope=\"col\">판단</th></tr></thead><tbody><tr><th scope=\"row\">제휴형 경기 연결</th><td data-label=\"수익 구조\">완료 예약 거래액의 수수료</td><td data-label=\"비용·실행 부담\">운영자 공급 연동·고객 대응·정산 필요</td><td data-label=\"판단\">초기 실증 우선안</td></tr><tr><th scope=\"row\">직접 경기 운영</th><td data-label=\"수익 구조\">참가비 총액에서 운영 원가 차감</td><td data-label=\"비용·실행 부담\">구장 대관·매니저·인원 미달·날씨 취소 부담</td><td data-label=\"판단\">충원율과 운영 역량 확보 후 검토</td></tr><tr><th scope=\"row\">운영 도구 구독</th><td data-label=\"수익 구조\">운영자별 월 구독료</td><td data-label=\"비용·실행 부담\">업무 효율 가치·지불 의향 검증 필요</td><td data-label=\"판단\">후속 대안으로 보류</td></tr></tbody></table></div><div class=\"table-wrap\" role=\"region\" aria-label=\"제휴형 운영 책임 제안\" tabindex=\"0\"><table><caption>제휴형 운영 책임 제안</caption><thead><tr><th scope=\"col\">주체</th><th scope=\"col\">역할</th><th scope=\"col\">계약 전 확인</th></tr></thead><tbody><tr><th scope=\"row\">FootMate</th><td data-label=\"역할\">경기 노출·조건 추천·참가 기록·문의 접수·정산 대사</td><td data-label=\"계약 전 확인\">거래 주체, 결제·환불 책임, 수수료 정산 기준</td></tr><tr><th scope=\"row\">경기 운영자</th><td data-label=\"역할\">경기 개설·정원 원천 정보·현장 진행·취소 결정</td><td data-label=\"계약 전 확인\">인원 미달·기상·노쇼·안전 대응과 정보 갱신 책임</td></tr><tr><th scope=\"row\">참가자</th><td data-label=\"역할\">조건·정책 확인 후 직접 참가 확정</td><td data-label=\"계약 전 확인\">취소 기한·출석·환불 조건 확인</td></tr></tbody></table></div><details><summary>현재 제품과 유료 사업 제안의 구분</summary><div class=\"detail-body\"><p>현재 제품은 무료 참가 기반이며 실제 PG 결제·사업자 정산은 미연동이다. 유료 사업모델은 향후 제안으로, 결제 주체와 회계상 수익 인식은 계약·정산 구조 확인 후 확정한다.</p><p>사용자 직접 확정 · 자동 실행 제외. 로그인 또는 AI 추천만으로 참가·결제를 실행하지 않는다.</p></div></details>"
   },
   {
-    "name": "Scope & Priorities",
-    "sub": "MVP & Trade-offs",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">04 / SCOPE & PRIORITIES</span><h1 tabindex=\"-1\">맞는 경기 연결을 중심으로, 참가와 복구까지.</h1><p class=\"lead\">개인과 경기의 적합도·판단 근거를 중심으로 참가·복구·경기 후 경험 연결</p></header><div class=\"priority-grid\"><article class=\"priority-card\"><span class=\"priority-tag\">Must</span><h2>핵심 동선의 완결</h2><p>지역·레벨·포지션 적합도 → 근거 확인 → 사용자 선택 · 참가·상태 복구</p><p class=\"priority-reason\">우선 기준 · 매칭 판단과 참가 흐름의 완결</p></article><article class=\"priority-card\"><span class=\"priority-tag\">Should</span><h2>선택과 운영의 보조</h2><p>경기 후 피드백과 다음 매칭 · 저장·비교 · 대기열·알림</p><p class=\"priority-reason\">기능 구현 완료 · 이용 효과는 검증 전</p></article><article class=\"priority-card\"><span class=\"priority-tag\">Could</span><h2>검증 후 고도화</h2><p>플레이 성향 · 조건 우선순위 개인화 · 매칭 효과 검증</p><p class=\"priority-reason\">착수 기준 · 실제 이용 중 막힘 확인</p></article><article class=\"priority-card\"><span class=\"priority-tag\">Won’t · 이번 범위</span><h2>유보한 확장</h2><p>실제 결제 · 수익화 검증 · AI의 자동 참가 확정</p><p class=\"priority-reason\">현재 범위 · 무료 참가 · 사용자 최종 확정</p></article></div><p class=\"source-note\">현재 제품 기준의 우선순위 · 과거 회의·정량 점수 근거 없음</p><details><summary>현재 구현 범위와 Trade-off</summary><div class=\"detail-body\"><p><strong>이전 프로토타입 · 기능 체험</strong><br>AI로 입력 조건 해석 · 경기·잔여 자리는 체험용 데이터<br>참가·체크인·피드백 기록은 체험한 브라우저에 저장<br>이전 프로토타입에서 실제 인증은 Beta로 이동<br>체험 기록은 Closed Beta로 옮겨지지 않음</p><p><strong>실제 서버와 연결된 Beta</strong><br>로그인·경기·정원·참가·취소·대기·체크인·알림 연동<br>무료 참가 · 실제 결제·외부 분석 도구 미연동</p><p><strong>참가 결정</strong><br>사용자 직접 확정 · 자동 실행 제외</p></div></details>"
+    "name": "수요·공급 시나리오",
+    "title": "초기 확보 가능한 경기 공급으로 거래 규모를 계산한다",
+    "lead": "전국 시장점유율 대신 제휴 공급·시간대·충원율을 변수로 둔 상향식 계획.",
+    "body": "<p class=\"formula\">월 완료 예약 = 제휴 공급처 × 주간 운영 슬롯 × 4.33주 × 슬롯 정원 × 충원율</p><div class=\"table-wrap\" role=\"region\" aria-label=\"월 공급·거래 시나리오 · 모두 가정\" tabindex=\"0\"><table><caption>월 공급·거래 시나리오 · 모두 가정</caption><thead><tr><th scope=\"col\">변수</th><th scope=\"col\">보수</th><th scope=\"col\">기준</th><th scope=\"col\">확장</th></tr></thead><tbody><tr><th scope=\"row\">제휴 공급처</th><td data-label=\"보수\">2곳</td><td data-label=\"기준\">5곳</td><td data-label=\"확장\">8곳</td></tr><tr><th scope=\"row\">공급처당 주간 슬롯</th><td data-label=\"보수\">2회</td><td data-label=\"기준\">4회</td><td data-label=\"확장\">6회</td></tr><tr><th scope=\"row\">슬롯 정원</th><td data-label=\"보수\">18명</td><td data-label=\"기준\">18명</td><td data-label=\"확장\">18명</td></tr><tr><th scope=\"row\">충원율</th><td data-label=\"보수\">50%</td><td data-label=\"기준\">75%</td><td data-label=\"확장\">90%</td></tr><tr><th scope=\"row\">월 완료 예약 · 반올림</th><td data-label=\"보수\">312건</td><td data-label=\"기준\">1,169건</td><td data-label=\"확장\">3,367건</td></tr><tr><th scope=\"row\">건당 거래금액</th><td data-label=\"보수\">12,000원</td><td data-label=\"기준\">12,000원</td><td data-label=\"확장\">12,000원</td></tr><tr><th scope=\"row\">월 거래액</th><td data-label=\"보수\">3,744,000원</td><td data-label=\"기준\">14,028,000원</td><td data-label=\"확장\">40,404,000원</td></tr><tr><th scope=\"row\">수수료율 10% 가정 시 수익</th><td data-label=\"보수\">374,400원</td><td data-label=\"기준\">1,402,800원</td><td data-label=\"확장\">4,040,400원</td></tr></tbody></table></div><p>공급처는 구장 소유자가 아니라 경기 공급 계약을 체결할 운영 주체를 뜻한다. 같은 경기 중복 등록은 제외하고, 모든 예약이 제안된 수수료 대상이라는 가정이다. 완료 예약은 고유 이용자 수가 아니다.</p><details><summary>시장 규모 해석과 가정 교체 방법</summary><div class=\"detail-body\"><p>전국 유료 개인 참가 고객 수가 확인되지 않아 전국 TAM 금액을 임의 산출하지 않았다. 이번 투자 판단은 초기 공급 기반 거래 규모를 사용한다. 제휴 의향·주간 공급·실제 정원·충원율·객단가가 수집되면 각 입력을 관측값으로 교체한다.</p><p>12,000원과 수수료 10%는 FootMate의 사업 검토 가정이며 현재 판매 가격이나 체결 조건이 아니다. 예약은 계산식 결과를 정수 반올림한 뒤 거래액을 계산했다.</p></div></details>"
   },
   {
-    "name": "IA & Navigation",
-    "sub": "Information Structure",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">05 / IA &amp; NAVIGATION</span><h1 tabindex=\"-1\">메뉴와 화면의 연결을 실제 UI로 확인합니다.</h1><p class=\"lead\">현재 공개 Demo에서 조건 변경·추천·상세 탐색 우선 제공 · 참가 선택 시 로그인으로 연결 · 뒤로 가면 선택 경기로 복귀</p></header><div class=\"ia-tree\" aria-label=\"현재 공개 Demo의 화면 연결\"><div class=\"ia-root\">FootMate Demo</div><div class=\"ia-branches\"><article><h3>조건과 추천</h3><ul><li>시작 → 활동 지역 → 세부 조건 → 추천</li><li>조건 변경 → 지역·실력·포지션·시간</li><li>추천 경기 보기 → 추천 복귀</li></ul></article><article><h3>경기 상세</h3><ul><li>추천 카드 → 상세 보기</li><li>경기 정보 · 모집 포지션</li><li>추천으로 돌아가기</li></ul></article><article><h3>참가와 인증</h3><ul><li>참가하기 → 로그인</li><li>이메일 · Google · Kakao</li><li>뒤로 → 선택 경기 상세</li></ul></article></div></div><div class=\"ui-evidence-grid\"><figure class=\"ui-evidence ui-fragment ui-fragment--top\"><h3>추천 화면의 탐색 제어</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-home.png\" data-image-title=\"추천 화면의 탐색 제어\" aria-label=\"추천 화면의 탐색 제어 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-home.png\" alt=\"추천 화면의 탐색 제어 · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>상단의 조건 변경과 카드의 상세 보기로 다음 화면 이동</figcaption></figure><figure class=\"ui-evidence ui-fragment ui-fragment--top\"><h3>상세 화면의 복귀와 메뉴</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-detail.png\" data-image-title=\"상세 화면의 복귀와 메뉴\" aria-label=\"상세 화면의 복귀와 메뉴 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-detail.png\" alt=\"상세 화면의 복귀와 메뉴 · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>추천으로 돌아가기와 경기 정보·모집 포지션 메뉴 확인</figcaption></figure></div><p class=\"source-note\">로그인 전 공개 화면에서 확인한 연결 · 로그인 후 추천·내 경기·MY는 기존 Beta의 별도 화면 · 아래 이전 IA와 구분</p><details><summary>이전 프로토타입 IA 기록</summary><div class=\"detail-body\"><h2 class=\"block-title\">Information Architecture · 정보 구조</h2><div class=\"ia-tree\" aria-label=\"FootMate 아래 홈·경기 찾기·MY의 정보 구조\"><div class=\"ia-root\">FootMate</div><div class=\"ia-branches\"><article><h3>홈</h3><ul><li>맞춤 경기 · 매칭 근거</li><li>선호 조건 · 현재 경기</li><li>AI 추가 조건 입력</li></ul></article><article><h3>경기 찾기</h3><ul><li>목록 · 필터 · 정렬</li><li>경기 상세 · 저장</li><li>최대 2경기 비교</li></ul></article><article><h3>MY</h3><ul><li>내 경기 · 참가 전 빈 상태</li><li>참가 예정 · 경기 당일 · 완료</li><li>체크인 · 피드백 · 다음 탐색</li></ul></article></div></div><div class=\"card-grid\"><article class=\"story-card\"><span class=\"eyebrow\">HOME</span><h3>내 맞춤 경기와 매칭 근거</h3><p>맞춤 경기 먼저 · AI 추가 조건 · 현재 경기 이어보기</p></article><article class=\"story-card\"><span class=\"eyebrow\">DISCOVER</span><h3>조건 수정·전체 결과</h3><p>필터·정렬·비교·결과 없음 복구</p></article><article class=\"story-card\"><span class=\"eyebrow\">MY</span><h3>참가 기록과 다음 매칭</h3><p>참가 예정·당일·피드백·다음 추천</p></article></div></div></details>"
+    "name": "수익성·손익분기점",
+    "title": "기준 시나리오는 적자이며 예약당 이익이 투자 기준이다",
+    "lead": "거래액과 수수료 수익을 구분하고, 창업자 노동비용까지 별도로 반영한다.",
+    "body": "<div class=\"table-wrap\" role=\"region\" aria-label=\"제휴형 예약 1건의 단위 손익 · 가정\" tabindex=\"0\"><table><caption>제휴형 예약 1건의 단위 손익 · 가정</caption><thead><tr><th scope=\"col\">항목</th><th scope=\"col\">금액·계산</th><th scope=\"col\">의미</th></tr></thead><tbody><tr><th scope=\"row\">수수료 수익</th><td data-label=\"금액·계산\">12,000원 × 10% = 1,200원</td><td data-label=\"의미\">거래액 전체를 수익으로 보지 않음</td></tr><tr><th scope=\"row\">결제 비용 부담</th><td data-label=\"금액·계산\">12,000원 × 3% = 360원</td><td data-label=\"의미\">플랫폼이 거래액 기준 결제 비용을 부담하는 가정</td></tr><tr><th scope=\"row\">기타 변동비</th><td data-label=\"금액·계산\">500원</td><td data-label=\"의미\">고객 대응 150원 + 유입비 배부 300원 + IT·AI 50원</td></tr><tr><th scope=\"row\">예약당 공헌이익</th><td data-label=\"금액·계산\">1,200 − 360 − 500 = 340원</td><td data-label=\"의미\">고정비 차감 전</td></tr><tr><th scope=\"row\">월 고정비</th><td data-label=\"금액·계산\">600,000원</td><td data-label=\"의미\">현금비용 가정 · 다음 섹션에 구성</td></tr><tr><th scope=\"row\">창업자 노동비용</th><td data-label=\"금액·계산\">2,000,000원/월</td><td data-label=\"의미\">별도 기회비용 가정 · 급여 지급 실적 아님</td></tr></tbody></table></div><div class=\"table-wrap\" role=\"region\" aria-label=\"월 사업 손익 민감도 · 세전 단순 모형\" tabindex=\"0\"><table><caption>월 사업 손익 민감도 · 세전 단순 모형</caption><thead><tr><th scope=\"col\">항목</th><th scope=\"col\">보수 312건</th><th scope=\"col\">기준 1,169건</th><th scope=\"col\">확장 3,367건</th></tr></thead><tbody><tr><th scope=\"row\">공헌이익 합계</th><td data-label=\"보수 312건\">106,080원</td><td data-label=\"기준 1,169건\">397,460원</td><td data-label=\"확장 3,367건\">1,144,780원</td></tr><tr><th scope=\"row\">현금 기준 손익</th><td data-label=\"보수 312건\">−493,920원</td><td data-label=\"기준 1,169건\">−202,540원</td><td data-label=\"확장 3,367건\">544,780원</td></tr><tr><th scope=\"row\">창업자 노동비용 포함</th><td data-label=\"보수 312건\">−2,493,920원</td><td data-label=\"기준 1,169건\">−2,202,540원</td><td data-label=\"확장 3,367건\">−1,455,220원</td></tr></tbody></table></div><p class=\"decision\">현금 손익분기점 월 1,765건 · 창업자 노동비용 포함 월 7,648건. 수수료 8%면 건당 100원, 12%면 580원으로 바뀐다. 수수료 조건과 결제 비용 부담이 핵심 협상 변수다.</p><details><summary>직접 운영안과 계산 범위</summary><div class=\"detail-body\"><p>직접 운영 가정: 참가비 12,000원, 정원 18명, 구장 100,000원 + 매니저 40,000원 + 기타 고정 운영비 10,000원/경기. 건당 결제비 360원·변동비 500원을 차감하면 경기 단위 손익분기는 14명이다. 18명 충원 시 50,520원이 남고, 12명이면 16,320원 적자다. 월 고정비·창업자 노동비용은 별도다.</p><p>모든 비용·수수료는 신규 가정이다. 세금·보증금·개발 초기 투자·취소 손실·사고 보상은 이 단순 모형에 포함하지 않았다. 계약 견적과 실증 데이터로 교체한 후 최종 투자안을 확정한다.</p></div></details>"
   },
   {
-    "name": "Flowchart & Recovery",
-    "sub": "Tasks & Decision Gates",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">06 / FLOWCHART & RECOVERY</span><h1 tabindex=\"-1\">참가 순서와 중단·복구 분기를 함께 정의했습니다.</h1><p class=\"lead\">정상 흐름과 인증 취소·포지션 마감·확정 실패 시 다음 행동 명시</p></header><div class=\"ui-evidence-grid\"><figure class=\"ui-evidence \"><h3>01 · 조건 선택</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-conditions.png\" data-image-title=\"01 · 조건 선택\" aria-label=\"01 · 조건 선택 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-conditions.png\" alt=\"01 · 조건 선택 · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>지역·실력·포지션·시간 선택 후 추천으로 이동</figcaption></figure><figure class=\"ui-evidence ui-fragment ui-fragment--bottom\"><h3>02 · 참가 시 로그인</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-login.png\" data-image-title=\"02 · 참가 시 로그인\" aria-label=\"02 · 참가 시 로그인 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-login-actions.png\" alt=\"02 · 참가 시 로그인 · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>상세에서 참가하기 선택 후 표시되는 인증 화면 · 뒤로 가면 선택 경기로 복귀</figcaption></figure></div><h2 class=\"block-title\">User Task Flow · 참가 과업</h2><p class=\"flow-guide small-copy\">01 → 06 순서 · 아래 예외 경로는 인증·참가 단계에서 분기</p><ol class=\"flow\"><li><span class=\"flow-number\" aria-hidden=\"true\">01</span><strong>조건 설정</strong><span>활동 지역·실력·포지션·시간 선택</span></li><li><span class=\"flow-number\" aria-hidden=\"true\">02</span><strong>매칭 근거·상세 비교</strong><span>맞는 점·확인할 점·포지션 자리 확인</span></li><li><span class=\"flow-number\" aria-hidden=\"true\">03</span><strong>참가하기</strong><span>선택 포지션 확인 · 가입 필요 여부 확인</span></li><li><span class=\"flow-number\" aria-hidden=\"true\">04</span><strong>인증·복귀</strong><span>카카오·구글·이메일 로그인 후 선택 경기에서 참가 계속</span></li><li><span class=\"flow-number\" aria-hidden=\"true\">05</span><strong>무료 참가 확인</strong><span>사용자가 포지션과 무료 참가를 최종 확인</span></li><li><span class=\"flow-number\" aria-hidden=\"true\">06</span><strong>MY 내 경기</strong><span>당일·경기 후로 연결</span></li></ol><div class=\"flow-decision-gate\" aria-label=\"참가 과정의 실제 분기\"><span class=\"eyebrow\">DECISION GATES · 분기 기준</span><div class=\"flow-gate-track\"><div><strong>로그인 상태인가?</strong><span>인증 완료 시 04 단계 생략</span></div><div><strong>로그인을 취소했는가?</strong><span>선택한 경기를 유지하고 상세 화면으로 복귀</span></div><div><strong>포지션 마감 또는 참가 확정 실패인가?</strong><span>마감 시 다른 포지션 선택 · 실패 시 참가 여부 확인 후 재시도</span></div></div></div>"
+    "name": "IT 투자·시스템 구조",
+    "title": "기존 구축 자산을 활용하고 유료 전환 투자를 나눈다",
+    "lead": "전면 재개발보다 재사용·외부 서비스 활용·추가 구축의 경계를 정한다.",
+    "body": "<div class=\"table-wrap\" role=\"region\" aria-label=\"IT 도입과 구축 범위\" tabindex=\"0\"><table><caption>IT 도입과 구축 범위</caption><thead><tr><th scope=\"col\">영역</th><th scope=\"col\">현재 프로젝트 기반</th><th scope=\"col\">다음 투자 판단</th></tr></thead><tbody><tr><th scope=\"row\">인증·데이터</th><td data-label=\"현재 프로젝트 기반\">Supabase 인증·참가·정원·체크인·피드백 연동</td><td data-label=\"다음 투자 판단\">기존 구조 재사용, 접근 통제·복구 점검</td></tr><tr><th scope=\"row\">웹·API 배포</th><td data-label=\"현재 프로젝트 기반\">Cloudflare Workers 기반 배포</td><td data-label=\"다음 투자 판단\">배포·복구 절차와 사용량 예산 관리</td></tr><tr><th scope=\"row\">AI</th><td data-label=\"현재 프로젝트 기반\">Vercel AI Gateway와 적격 후보 내 정렬</td><td data-label=\"다음 투자 판단\">기본 정렬 대비 효과 확인 후 호출 예산 확대</td></tr><tr><th scope=\"row\">운영 알림</th><td data-label=\"현재 프로젝트 기반\">이메일·명시적 동의 기반 Web Push 연결</td><td data-label=\"다음 투자 판단\">실패·중복·재처리와 비용 모니터링</td></tr><tr><th scope=\"row\">유료 전환</th><td data-label=\"현재 프로젝트 기반\">실제 PG·사업자 정산 미연동</td><td data-label=\"다음 투자 판단\">운영자 계약과 손익 검증 후 결제·환불·대사 구축</td></tr></tbody></table></div><div class=\"table-wrap\" role=\"region\" aria-label=\"월 IT·운영 고정비 예산 · 견적 전 계획\" tabindex=\"0\"><table><caption>월 IT·운영 고정비 예산 · 견적 전 계획</caption><thead><tr><th scope=\"col\">항목</th><th scope=\"col\">가정 예산</th><th scope=\"col\">통제 방법</th></tr></thead><tbody><tr><th scope=\"row\">인프라 기본료·저장</th><td data-label=\"가정 예산\">150,000원</td><td data-label=\"통제 방법\">요청·저장 사용량과 경보 한도</td></tr><tr><th scope=\"row\">운영 도구</th><td data-label=\"가정 예산\">100,000원</td><td data-label=\"통제 방법\">필수 도구만 유지, 월별 재검토</td></tr><tr><th scope=\"row\">모니터링·관리</th><td data-label=\"가정 예산\">150,000원</td><td data-label=\"통제 방법\">고정 관리 업무 예산, 건별 대응비와 구분</td></tr><tr><th scope=\"row\">예비비</th><td data-label=\"가정 예산\">200,000원</td><td data-label=\"통제 방법\">예상 외 사용량·운영 보완</td></tr><tr><th scope=\"row\">합계</th><td data-label=\"가정 예산\">600,000원/월</td><td data-label=\"통제 방법\">기존 청구액이 아닌 사업 검토용 예산</td></tr></tbody></table></div><p>자체 구축은 정원·참가·정산 등 사업 규칙에 집중한다. 인증·메시징·결제 등 표준 기능은 외부 서비스 활용을 우선 검토하되, 장애 대응·데이터 반출·서비스 교체 가능성을 도입 조건으로 둔다.</p><p class=\"source-note\">근거 · <a href=\"https://github.com/dohyunkimmm/footmate/blob/main/README.md\" target=\"_blank\" rel=\"noopener noreferrer\">현재 구현·연동 범위 ↗</a></p><h2 class=\"block-title\">시스템·데이터 구조</h2><ol class=\"architecture\"><li><strong>이용자·운영자</strong><span>조건 선택·참가 요청 / 경기·참가 상태 관리</span></li><li><strong>웹·API</strong><span>Cloudflare Workers · 인증 확인·AI 요청·정적 자산 배포</span></li><li><strong>서버 데이터</strong><span>Supabase · 계정·경기·포지션 정원·참가·체크인·피드백</span></li><li><strong>외부 연동</strong><span>AI Gateway · 이메일 · Web Push / 향후 결제·정산</span></li></ol><div class=\"table-wrap\" role=\"region\" aria-label=\"주요 데이터와 관리 책임\" tabindex=\"0\"><table><caption>주요 데이터와 관리 책임</caption><thead><tr><th scope=\"col\">데이터</th><th scope=\"col\">관리 기준</th><th scope=\"col\">구현·추가 구분</th></tr></thead><tbody><tr><th scope=\"row\">경기·정원</th><td data-label=\"관리 기준\">운영자 등록, 실제 미래 경기·포지션 잔여 검증</td><td data-label=\"구현·추가 구분\">기존 서버 연동</td></tr><tr><th scope=\"row\">참가·취소</th><td data-label=\"관리 기준\">인증·권한·취소 기한과 정원 복원 확인</td><td data-label=\"구현·추가 구분\">기존 서버 연동</td></tr><tr><th scope=\"row\">예시 경기 기록</th><td data-label=\"관리 기준\">실제 참가·정원·알림을 변경하지 않는 체험 기록</td><td data-label=\"구현·추가 구분\">기존 격리 기준</td></tr><tr><th scope=\"row\">체크인·피드백</th><td data-label=\"관리 기준\">해당 참가·경기 상태에 연결</td><td data-label=\"구현·추가 구분\">기존 서버 연동</td></tr><tr><th scope=\"row\">결제·정산 원장</th><td data-label=\"관리 기준\">예약 ID·결제·환불·수수료·지급 상태 대사</td><td data-label=\"구현·추가 구분\">유료 전환 시 신규 구축</td></tr></tbody></table></div><p>유료 전환에서는 참가 상태와 결제 상태를 분리하고 중복 요청·환불·정산 불일치를 복구할 수 있어야 한다. 현재 무료 참가 동작을 결제 검증 완료로 해석하지 않는다.</p>"
   },
   {
-    "name": "Wireframe & Screens",
-    "sub": "Demo-based Specification",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">07 / WIREFRAMES &amp; SCREEN SPECIFICATION</span><h1 tabindex=\"-1\">와이어프레임으로 화면 구조와 동작을 정리했습니다.</h1><p class=\"lead\">현재 공개된 Demo의 추천·조건 설정·경기 상세·로그인·시작 화면을 기준으로 새로 구성 · 선과 도형으로 표현한 정보 배치와 주요 동작</p></header><div class=\"wireframe-grid\"><article class=\"wireframe-record\"><h2>홈</h2><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/current-wireframe-home.svg\" data-image-title=\"홈 · 와이어프레임\" aria-label=\"홈 · 와이어프레임 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/current-wireframe-home.svg\" alt=\"홈 화면 와이어프레임\" loading=\"lazy\"></button><p hidden>추천 조건과 예시 경기·잔여 자리·무료 참가 확인</p><p class=\"small-copy\" hidden>조건 변경 → 추천 갱신 / 상세 보기 → 경기 상세</p></article><article class=\"wireframe-record\"><h2>조건 설정</h2><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/current-wireframe-conditions.svg\" data-image-title=\"조건 설정 · 와이어프레임\" aria-label=\"조건 설정 · 와이어프레임 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/current-wireframe-conditions.svg\" alt=\"조건 설정 화면 와이어프레임\" loading=\"lazy\"></button><p hidden>활동 지역·실력·포지션·선호 시간 선택</p><p class=\"small-copy\" hidden>추천 경기 보기 / 닫으면 추천으로 복귀</p></article><article class=\"wireframe-record\"><h2>경기 상세</h2><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/current-wireframe-detail.svg\" data-image-title=\"경기 상세 · 와이어프레임\" aria-label=\"경기 상세 · 와이어프레임 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/current-wireframe-detail.svg\" alt=\"경기 상세 화면 와이어프레임\" loading=\"lazy\"></button><p hidden>경기 정보·모집 포지션 확인 후 참가 선택</p><p class=\"small-copy\" hidden>추천으로 돌아가기 / 미인증 참가 → 로그인</p></article><article class=\"wireframe-record\"><h2>참가 시 로그인</h2><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/current-wireframe-login.svg\" data-image-title=\"참가 시 로그인 · 와이어프레임\" aria-label=\"참가 시 로그인 · 와이어프레임 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/current-wireframe-login.svg\" alt=\"참가 시 로그인 화면 와이어프레임\" loading=\"lazy\"></button><p hidden>이메일·Google·Kakao로 기존 계정 로그인</p><p class=\"small-copy\" hidden>뒤로 → 선택 경기 상세 / 로그인만으로 자동 참가하지 않음</p></article><article class=\"wireframe-record\"><h2>시작 화면</h2><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/current-wireframe-start.svg\" data-image-title=\"시작 화면 · 와이어프레임\" aria-label=\"시작 화면 · 와이어프레임 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/current-wireframe-start.svg\" alt=\"시작 화면 와이어프레임\" loading=\"lazy\"></button><p hidden>내 조건으로 추천받기에서 경기 탐색 시작</p><p class=\"small-copy\" hidden>기존 조건이 있으면 저장한 조건의 추천 화면으로 연결</p></article></div><p class=\"small-copy\">현재 Demo를 바탕으로 새로 정리한 와이어프레임 · 개발 전 설계 기록과는 구분 · 실제 UI는 05·06·08·09에서 확인 · 초기 프로토타입 와이어프레임은 <a href=\"https://www.figma.com/design/rvhwFauZFBsSnvHYitohgC?node-id=3-2\" target=\"_blank\" rel=\"noopener noreferrer\">Figma 이전 와이어프레임 원본 ↗</a>에서 별도로 확인</p><details class=\"screen-spec-details\"><summary>화면별 표시·동작·예외 정의</summary><div class=\"detail-body\"><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"와이어프레임 명세\"><table><thead><tr><th scope=\"col\">화면</th><th scope=\"col\">표시·동작</th><th scope=\"col\">상태·예외</th></tr></thead><tbody><tr><th scope=\"row\">홈</th><td>추천 조건과 예시 경기·잔여 자리·무료 참가 확인</td><td>조건 변경 → 추천 갱신 / 상세 보기 → 경기 상세</td></tr><tr><th scope=\"row\">조건 설정</th><td>활동 지역·실력·포지션·선호 시간 선택</td><td>추천 경기 보기 / 닫으면 추천으로 복귀</td></tr><tr><th scope=\"row\">경기 상세</th><td>경기 정보·모집 포지션 확인 후 참가 선택</td><td>추천으로 돌아가기 / 미인증 참가 → 로그인</td></tr><tr><th scope=\"row\">참가 시 로그인</th><td>이메일·Google·Kakao로 기존 계정 로그인</td><td>뒤로 → 선택 경기 상세 / 로그인만으로 자동 참가하지 않음</td></tr><tr><th scope=\"row\">시작 화면</th><td>내 조건으로 추천받기에서 경기 탐색 시작</td><td>기존 조건이 있으면 저장한 조건의 추천 화면으로 연결</td></tr></tbody></table></div></div></details>"
+    "name": "운영 위험·통제",
+    "title": "추천·참가·운영 권한의 위험을 분리한다",
+    "lead": "사업 확장 전 데이터 정확도·접근 통제·서비스 복구의 책임을 정의한다.",
+    "body": "<div class=\"table-wrap\" role=\"region\" aria-label=\"위험과 운영 통제\" tabindex=\"0\"><table><caption>위험과 운영 통제</caption><thead><tr><th scope=\"col\">위험</th><th scope=\"col\">통제 방식</th><th scope=\"col\">확인·후속 과제</th></tr></thead><tbody><tr><th scope=\"row\">AI의 잘못된 경기 제시</th><td data-label=\"통제 방식\">선택 조건 검증 → 실제 경기 후보 → AI 추천 순서. 허용 후보 ID만 사용</td><td data-label=\"확인·후속 과제\">기존 구현 근거 · 후보·정원 사실은 서버 데이터로 검증</td></tr><tr><th scope=\"row\">AI 장애·비용 증가</th><td data-label=\"통제 방식\">기본 결과 유지, 호출 제한·캐시·대체 경로</td><td data-label=\"확인·후속 과제\">기존 구현 + 실사용당 비용 관측</td></tr><tr><th scope=\"row\">중복 참가·정원 불일치</th><td data-label=\"통제 방식\">서버 권한·정원·참가 상태 검사, 실패 후 상태 확인</td><td data-label=\"확인·후속 과제\">기존 구현 근거 · 동시 요청·복구 검증 지속</td></tr><tr><th scope=\"row\">운영자 권한 오용</th><td data-label=\"통제 방식\">허용 계정·MFA, 운영 역할과 상태 변경 기록</td><td data-label=\"확인·후속 과제\">기존 운영자 접근 통제 · 실계정 검증 범위 별도 관리</td></tr><tr><th scope=\"row\">공급 취소·노쇼</th><td data-label=\"통제 방식\">운영자 취소 기준·공지·대체 경기·문의 책임</td><td data-label=\"확인·후속 과제\">제휴 계약·실증 운영에서 확정할 정책</td></tr><tr><th scope=\"row\">결제·정산 오류</th><td data-label=\"통제 방식\">상태 분리·멱등 처리·거래 대사·환불 이력</td><td data-label=\"확인·후속 과제\">유료 전환 전 구축·검증 과제</td></tr></tbody></table></div><div class=\"card-grid\"><article class=\"story-card\"><h2>운영 책임</h2><p>개인 프로젝트의 구축·배포는 단독 수행했다. 외부 업체 계약·현장 운영 조직을 이미 관리한 사업으로 표현하지 않는다.</p></article><article class=\"story-card\"><h2>측정·개인정보</h2><p>동의·테스트 계정 제외·중복 제거 기준을 적용한다. 데모 기록과 실제 경기 기록, 기술 검증과 고객 성과를 구분한다.</p></article></div><p class=\"source-note\">근거 · <a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/BETA-PILOT-RUNBOOK.md\" target=\"_blank\" rel=\"noopener noreferrer\">Beta 운영 절차 ↗</a></p><p class=\"source-note\">근거 · <a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/RELEASE-HISTORY.md\" target=\"_blank\" rel=\"noopener noreferrer\">구현·배포·QA 이력 ↗</a></p>"
   },
   {
-    "name": "Functions & Policies",
-    "sub": "Requirements & Exceptions",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">08 / FUNCTIONS & POLICIES</span><h1 tabindex=\"-1\">기능의 입력·결과와 운영 기준을 함께 정의했습니다.</h1><p class=\"lead\">기능별 상태·예외·사용자 안내 명세 · Demo와 실제 서버 연결의 경계 구분</p></header><div class=\"ui-evidence-grid\"><figure class=\"ui-evidence ui-fragment ui-fragment--bottom\"><h3>참가 직전의 무료 참가 안내</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-detail.png\" data-image-title=\"참가 직전의 무료 참가 안내\" aria-label=\"참가 직전의 무료 참가 안내 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-detail-actions.png\" alt=\"참가 직전의 무료 참가 안내 · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>사용자가 참가하기를 직접 선택 · AI의 자동 참가 확정 제외</figcaption></figure><figure class=\"ui-evidence ui-fragment ui-fragment--bottom\"><h3>참가 맥락에서 기존 인증으로 연결</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-login.png\" data-image-title=\"참가 맥락에서 기존 인증으로 연결\" aria-label=\"참가 맥락에서 기존 인증으로 연결 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-login-actions.png\" alt=\"참가 맥락에서 기존 인증으로 연결 · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>이메일·Google·Kakao 인증 사용 · 뒤로 가기로 선택 경기 상세 복귀</figcaption></figure></div><p class=\"source-note\">UI에서 확인 가능한 참가·인증 동작 우선 제시 · 정원·취소 마감·체크인·개인정보 기준과 서버 처리 계약은 아래 명세에서 확인</p><details><summary>정원·취소·체크인·데이터 정책</summary><div class=\"detail-body\"><h2 class=\"block-title\">기능 명세</h2><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"기능・입력·처리·결과・정책·예외\"><table><thead><tr><th scope=\"col\">기능</th><th scope=\"col\">입력·처리·결과</th><th scope=\"col\">정책·예외</th></tr></thead><tbody><tr><th scope=\"row\">경기 탐색</th><td>지역·레벨·포지션·추가 조건 → 경기 매칭·판단 근거</td><td>실력 차이·포지션 마감 표시 / 조건은 사용자 수정</td></tr><tr><th scope=\"row\">저장·비교 · 초기 프로토타입</th><td>경기 ID 저장 → 재방문 복원·최대 2경기 비교</td><td>같은 경기 중복 비교 방지 / 닫은 뒤 초점 복귀</td></tr><tr><th scope=\"row\">참가</th><td>선택 경기·포지션 → 명시적 확인 → 성공 기록</td><td>AI 자동 참가 금지 / 처리 중 중복 요청 방지</td></tr><tr><th scope=\"row\">체크인</th><td>참가 경기 ID → 체크인 상태 기록</td><td>이전 프로토타입은 로컬 예시 / 실제 Beta는 확정 참가·오픈 시각 확인</td></tr><tr><th scope=\"row\">경기 후</th><td>경기 난이도·만족도·재참가 의향 → 서버 피드백 기록</td><td>완료 경기는 추천 후보에서 제외 / 피드백 기반 추천 개선은 검증 과제</td></tr></tbody></table></div><h2 class=\"block-title\">운영 정책</h2><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"정책・기준・사용자 안내·복구\"><table><thead><tr><th scope=\"col\">정책</th><th scope=\"col\">기준</th><th scope=\"col\">사용자 안내·복구</th></tr></thead><tbody><tr><th scope=\"row\">이전 프로토타입 범위</th><td>샘플 경기·자리·가격 / 실제 청구 0원</td><td>Demo 기록은 현재 브라우저에만 저장</td></tr><tr><th scope=\"row\">인증·참가</th><td>가치 확인 후 인증 / 사용자가 참가 확정</td><td>취소·중단 후 선택 경기와 동선 유지</td></tr><tr><th scope=\"row\">실제 Beta 참가·취소</th><td>포지션 정원·경기별 취소 마감·권한 검증</td><td>취소 시 정원 복원 / 마감 후 사용자 취소 차단</td></tr><tr><th scope=\"row\">체크인·알림</th><td>확정 참가와 체크인 오픈 시각 확인</td><td>알림 실패와 참가 상태를 분리해 복구</td></tr><tr><th scope=\"row\">개인정보·데이터</th><td>Demo: 기존 인증·예시 경기·별도로 저장되는 체험 기록 / Beta: 실제 서버의 참가 기록</td><td>체험 기록 이전·기기 간 동기화로 표현하지 않음</td></tr></tbody></table></div></div></details><p class=\"source-note\">Notion PRD·Service Flow·기능정의서와 GitHub 운영 문서의 현재 계약을 요약. 실제 운영 성과가 아니라 설계·구현 근거.</p>"
+    "name": "실행계획·성과관리",
+    "title": "8주 실증을 통해 다음 투자 여부를 결정한다",
+    "lead": "일정·목표·판단 기준은 새로 제안한 계획이며 과거 수행 실적이 아니다.",
+    "body": "<div class=\"table-wrap\" role=\"region\" aria-label=\"단계별 실행 계획 · 제안\" tabindex=\"0\"><table><caption>단계별 실행 계획 · 제안</caption><thead><tr><th scope=\"col\">단계</th><th scope=\"col\">주요 작업</th><th scope=\"col\">산출물·진행 조건</th></tr></thead><tbody><tr><th scope=\"row\">1–2주 · 공급 검증</th><td data-label=\"주요 작업\">후보 운영자 5곳 면담, 모집·정원·취소·수수료 책임 확인</td><td data-label=\"산출물·진행 조건\">제휴 의향과 공급 일정. 2곳 미만이면 지역·모델 재검토</td></tr><tr><th scope=\"row\">3–4주 · 무료 실증</th><td data-label=\"주요 작업\">실제 경기 등록·참가·취소·체크인·문의 처리</td><td data-label=\"산출물·진행 조건\">테스트 계정 제외 운영 기록과 실패·복구 목록</td></tr><tr><th scope=\"row\">5–8주 · 유료 검토</th><td data-label=\"주요 작업\">계약·결제·환불 책임 확정 후 가격·수수료·모집 실험</td><td data-label=\"산출물·진행 조건\">유료 요건 미충족 시 무료 실증 연장. 결제 전환을 일정만으로 강행하지 않음</td></tr><tr><th scope=\"row\">8주 이후 · 투자 심사</th><td data-label=\"주요 작업\">완료 예약·재참가·공헌이익·운영 시간 비교</td><td data-label=\"산출물·진행 조건\">확장·범위 축소·모델 전환·중단 중 선택</td></tr></tbody></table></div><div class=\"table-wrap\" role=\"region\" aria-label=\"투자 판단 지표와 제안 기준\" tabindex=\"0\"><table><caption>투자 판단 지표와 제안 기준</caption><thead><tr><th scope=\"col\">지표</th><th scope=\"col\">계산·관측 기준</th><th scope=\"col\">다음 판단</th></tr></thead><tbody><tr><th scope=\"row\">공급 충원율</th><td data-label=\"계산·관측 기준\">실제 참가 완료 수 ÷ 공개 모집 정원</td><td data-label=\"다음 판단\">목표 75%, 인원 미달 취소 별도 집계</td></tr><tr><th scope=\"row\">30일 재참가율</th><td data-label=\"계산·관측 기준\">첫 참가 후 30일 내 다시 완료한 고유 이용자 ÷ 관측기간 충족 이용자</td><td data-label=\"다음 판단\">초기 제안 30%, 충분한 30일 관측 전 결론 보류</td></tr><tr><th scope=\"row\">예약당 공헌이익</th><td data-label=\"계산·관측 기준\">수수료 수익 − 결제비 − 유입·지원·IT 변동비</td><td data-label=\"다음 판단\">실제 정산 표본에서 양수인지 확인</td></tr><tr><th scope=\"row\">참가 안정성</th><td data-label=\"계산·관측 기준\">실패·중복·정원 불일치와 복구 결과</td><td data-label=\"다음 판단\">중대한 데이터 오류가 남으면 공급 확대 중단</td></tr><tr><th scope=\"row\">AI 추가 가치</th><td data-label=\"계산·관측 기준\">기본 정렬 대비 참가 완료와 추가 비용</td><td data-label=\"다음 판단\">차이가 없으면 기본 정렬 우선</td></tr></tbody></table></div><p class=\"source-note\">기준값은 초기 투자 판단을 위한 제안이며 업계 평균이나 달성 실적이 아니다. 초기 이용자 100명 이상을 모집 목표로 두되, 통계적 효과 검증에 필요한 표본은 관측 전환율과 효과 크기로 별도 산정한다.</p>"
   },
   {
-    "name": "AI & Prototype",
-    "sub": "Interpretation & Control",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">09 / AI & INTERACTIVE PROTOTYPE</span><h1 tabindex=\"-1\">선택한 조건으로 후보를 찾고, AI가 추천 순서를 정합니다.</h1><p class=\"lead\">선택 조건 검증 → 실제 경기 후보 → AI 추천 순서 → 사용자 선택 → 참가 시 로그인·직접 확정. 추천 이유는 실제 경기와 포지션 자리에서 확인 · 사람 간 궁합·균형 팀 편성은 이번 범위에서 제외</p></header><div class=\"ui-evidence-grid\"><figure class=\"ui-evidence \"><span class=\"eyebrow\">01 · INPUT</span><h3>선택 조건이 입력이 됩니다.</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-conditions.png\" data-image-title=\"선택 조건이 입력이 됩니다.\" aria-label=\"선택 조건이 입력이 됩니다. · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-conditions.png\" alt=\"선택 조건이 입력이 됩니다. · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>활동 지역·실력·포지션·시간을 사용자가 직접 지정</figcaption></figure><figure class=\"ui-evidence \"><span class=\"eyebrow\">02 · OUTPUT</span><h3>추천 결과에서 직접 경기를 고릅니다.</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readable-demo-home.png\" data-image-title=\"추천 결과에서 직접 경기를 고릅니다.\" aria-label=\"추천 결과에서 직접 경기를 고릅니다. · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readable-demo-home.png\" alt=\"추천 결과에서 직접 경기를 고릅니다. · 실제 Demo 캡처\" loading=\"lazy\"></button><figcaption>적용 조건·경기 정보·잔여 자리 확인 후 상세 또는 참가 선택</figcaption></figure></div><ol class=\"ui-process\" aria-label=\"AI 추천의 책임 구분\"><li><strong>사용자 조건</strong><span>허용된 지역·실력·포지션·시간</span></li><li><strong>실제 후보</strong><span>조건 검증 · 완료·지난 경기 제외</span></li><li><strong>AI 순서</strong><span>전달한 후보 ID 안에서 추천</span></li><li><strong>사용자 확정</strong><span>조건 수정 · 참가 시 인증</span></li></ol><p class=\"source-note\">캡처는 조건 입력과 추천 결과 UI의 근거 · 화면 이미지는 실제 AI 호출 성공·추천 효과의 증거와는 구분</p><div class=\"card-grid\"><article class=\"story-card\"><span class=\"eyebrow\">GUARDRAIL</span><h3>경기 사실 생성 금지</h3><p>AI가 경기·자리·순위를 임의 생성하지 않음 · 허용 조건과 범위 검증</p></article><article class=\"story-card\"><span class=\"eyebrow\">RECOVERY</span><h3>AI 실패에도 탐색 유지</h3><p>모델 대체 경로 · 실패하면 선택 조건에 맞는 기본 순서 유지</p></article><article class=\"story-card\"><span class=\"eyebrow\">USER CONTROL</span><h3>선택 조건 유지·직접 확정</h3><p>조건 변경 · 참가할 때 로그인 · 로그인만으로 자동 참가하지 않음</p></article></div><p class=\"source-note\">AI 실제 연결·프로토타입 동작의 증빙 · 실제 출시·운영 성과와는 구분</p><details><summary>매칭 기준과 AI 역할 보기</summary><div class=\"detail-body\"><p>활동 지역·실력·포지션·시간 선택 후 실제 공개 경기에서 조건에 맞는 후보 탐색 · AI는 전달된 후보 안에서 추천 순서 결정 · 알 수 없는 경기 ID 제거 · 조건의 임의 완화와 이동시간·궁합 점수 생성 제외 · 공개된 Demo에서 조건·추천을 미리 확인한 뒤 로그인하면 Beta 홈으로 이동 · Beta는 추천·내 경기·MY로 구성 · 공개된 실제 풋살 경기가 없으면 표시가 붙은 예시 경기 24개 제공 · 예시 참가·취소는 계정별 브라우저 기록으로 구분 · 기존 카카오·구글 인증 유지 · 실제 Beta의 모집 경기·서버 참가 기록과 분리 · 선택 조건과 추천 순서는 브라우저에 저장</p><p>경기 후 피드백은 서버에 기록 · 피드백을 활용한 다음 추천 개선은 추가 검증 과제 · AI 모델 학습·사람 간 궁합 점수와는 구분</p></div></details><details><summary>이전 프로토타입의 AI 검색·복구 검증 기록</summary><div class=\"detail-body\"><p>현재 Demo 기준 와이어프레임은 07에서 확인 · 아래 캡처는 초기 프로토타입의 조건 해석·정정·복구 검증 이력을 보존한 과거 기록 · 아래 연결 응답 화면은 고정된 API 테스트 응답 · 실제 AI 모델 호출 성공 근거는 별도 운영 검사로 구분</p><div class=\"split ai-workflow-evidence\"><figure class=\"product-figure\"><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/matching-ai-results.png\" data-image-title=\"AI 해석 조건과 매칭 결과\" aria-label=\"AI 해석 조건과 매칭 결과 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/matching-ai-results.png\" alt=\"AI 해석 조건과 매칭 결과\" loading=\"lazy\"></button><figcaption>연결 응답 UI · 고정 테스트 응답 · 확대 보기 ↗</figcaption></figure><figure class=\"product-figure\"><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/matching-rules-fallback.png\" data-image-title=\"AI 실패 후 기본 검색으로 해석한 조건\" aria-label=\"AI 실패 후 기본 검색으로 해석한 조건 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/matching-rules-fallback.png\" alt=\"AI 실패 후 기본 검색으로 해석한 조건\" loading=\"lazy\"></button><figcaption>API 오류 상황 · 기본 검색 복구 · 확대 보기 ↗</figcaption></figure><figure class=\"product-figure\"><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/matching-zero-before.png\" data-image-title=\"결과 없음에서 완화할 조건 선택\" aria-label=\"결과 없음에서 완화할 조건 선택 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/matching-zero-before.png\" alt=\"결과 없음에서 완화할 조건 선택\" loading=\"lazy\"></button><figcaption>빈 결과 · 사용자가 완화 조건 선택 · 확대 보기 ↗</figcaption></figure><figure class=\"product-figure\"><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/matching-zero-after.png\" data-image-title=\"가격만 완화하고 시간과 포지션을 유지한 결과\" aria-label=\"가격만 완화하고 시간과 포지션을 유지한 결과 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/matching-zero-after.png\" alt=\"가격만 완화하고 시간과 포지션을 유지한 결과\" loading=\"lazy\"></button><figcaption>가격만 완화 · 나머지 조건 유지 · 확대 보기 ↗</figcaption></figure></div><p class=\"small-copy\">시나리오·커밋·원본 캡처 출처는 <a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/CASE-STUDY-SCREEN-EVIDENCE.md\" target=\"_blank\" rel=\"noopener noreferrer\">화면 근거 기록 ↗</a>에서 확인 · 샘플 경기·테스트 일정 · 실제 참가·매칭 효과와는 구분</p></div></details>"
-  },
-  {
-    "name": "Validation & UX",
-    "sub": "Tasks & QA Improvements",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">10 / VALIDATION & UX IMPROVEMENT</span><h1 tabindex=\"-1\">발견한 문제를 수정하고 같은 조건으로 확인했습니다.</h1><p class=\"lead\">Case Study는 1920px PC의 가독성·스크롤·확대 화면 우선 확인 · Beta 앱은 기존 앱형 폭에서 조건 선택·추천 순서·참가 시 로그인·선택 포지션 유지·모바일 표시 점검 · 아래 과거 QA 사례는 02의 사용자 과업 검증에서 직접 도출된 결과와는 구분</p></header><div class=\"validation-source-keys\"><span><b>로직</b> · 상태·예외 계약</span><span><b>브라우저</b> · 핵심 과업·복귀</span><span><b>화면</b> · 접근성·반응형</span></div><h2 class=\"block-title\">이번 가독성 개선 · 같은 캡처 비교</h2><div class=\"ui-compare\" aria-label=\"같은 원본 캡처의 표시 방식 전후 비교\"><figure class=\"ui-evidence\"><span class=\"eyebrow\">BEFORE · 전체 화면 축소</span><h3>여백까지 줄이면 UI가 작아집니다.</h3><div class=\"ui-compare-window\"><img src=\"/src/case-study/evidence/current-demo-home.png\" alt=\"수정 전: 1920px 원본 전체를 축소한 동일 경기 화면\" loading=\"lazy\"></div><figcaption>원본 폭 1920px · 앱 밖 빈 여백까지 함께 표시</figcaption></figure><figure class=\"ui-evidence\"><span class=\"eyebrow\">AFTER · 앱 영역 중심</span><h3>같은 캡처에서 앱 영역을 보여줍니다.</h3><button class=\"evidence-preview\" type=\"button\" data-image=\"/src/case-study/evidence/readability-baseline-home.png\" data-image-title=\"가독성 개선 후 · 같은 캡처의 앱 영역\" aria-label=\"가독성 개선 후 · 화면 확대\" aria-haspopup=\"dialog\"><img src=\"/src/case-study/evidence/readability-baseline-home.png\" alt=\"수정 후: 같은 원본의 가운데 앱 영역 560px만 표시\" loading=\"lazy\"></button><figcaption>같은 원본의 가운데 560px · 글자·경기 정보 합성 없음</figcaption></figure></div><p class=\"source-note\">같은 캡처·같은 경기·같은 문구의 표시 방식 비교 · 제품 기능·이용 성과의 전후 비교와는 구분 · 앱 영역 추출·카드 폭·확대 창의 실제 표시 크기 함께 점검</p><details class=\"qa-history\"><summary>이전 개발 QA · 문제·수정·재검증 기록</summary><div class=\"detail-body\"><div class=\"table-wrap qa-evidence-table\" tabindex=\"0\" role=\"region\" aria-label=\"개선·재검증 사례 표\" aria-describedby=\"qa-table-hint\"><table><caption class=\"sr-only\">개발 QA에서 확인한 개선과 재검증 기록</caption><thead><tr><th scope=\"col\">발견 문제</th><th scope=\"col\">수정</th><th scope=\"col\">재검증 결과</th></tr></thead><tbody><tr><th scope=\"row\">첫 추천까지 스크롤 부담</th><td>상단 여백·카드 밀도 조정</td><td>모바일 추천 카드 노출·가로 넘침 없음 확인</td></tr><tr><th scope=\"row\">참가 오류 후 복귀</th><td>오류 안내·재시도·경기 다시 선택</td><td>오류 후 재시도·경기 다시 선택 가능 확인</td></tr><tr><th scope=\"row\">필터 초기 색 대비</th><td>기본 상태에도 구분 색상 적용</td><td>기본 필터 구분·모바일 Safari 표시 확인</td></tr></tbody></table></div><p class=\"small-copy\" id=\"qa-table-hint\">구현 동작과 표시의 재검증 · 전환율·만족도 개선 성과를 의미하지 않음</p></div></details><details><summary>검증 방식·기록 보기</summary><div class=\"detail-body\"><p>상태·복구 회귀 / 브라우저 E2E / 키보드·axe / 반응형 / 모바일 WebKit<br>변경 후 같은 조건으로 핵심 동작과 화면을 재확인</p><p><a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/RELEASE-HISTORY.md\" target=\"_blank\" rel=\"noopener noreferrer\">개선·QA 이력 ↗</a></p></div></details><details><summary>추가할 매칭 검증 · 아직 미실시</summary><div class=\"detail-body\"><p>조건이 다른 두 사용자에게 적절한 경기와 확인할 차이를 고르게 한 뒤 선택·거절 이유 기록 · 포지션 마감·실력 차이·결과 없음에서 판단 가능 여부 확인</p><p>경기 후 피드백 전후의 추천·근거 비교 · 순위 유지 시 설명 가능 여부 확인 · 추천 수용·체감 적합도·재참여는 향후 측정 항목 · 기존 6명 과업·검색 28문장 검증의 성과와는 구분</p></div></details>"
-  },
-  {
-    "name": "Reflection & Next",
-    "sub": "Learning & Validation",
-    "html": "<header class=\"section-head\"><span class=\"eyebrow\">11 / REFLECTION & NEXT VALIDATION</span><h1 tabindex=\"-1\">매칭 이유를 이해하고, 경기 경험으로 다음 매칭을 검증합니다.</h1><p class=\"lead\">기획·프로토타입·과업 검증에서 얻은 학습과 남은 검증 과제 정리</p></header><div class=\"card-grid\"><article class=\"story-card\"><span class=\"eyebrow\">KEEP</span><h3>판단·실행 책임 분리</h3><p>선택 조건 검증 / AI 추천 순서 / 사용자 최종 확인</p></article><article class=\"story-card\"><span class=\"eyebrow\">LEARNED</span><h3>실패도 사용자 흐름</h3><p>인증 취소·정원 마감·중복 요청·알림 실패를 정상 경로와 함께 정의</p></article><article class=\"story-card\"><span class=\"eyebrow\">NEXT</span><h3>관찰과 수정 연결</h3><p>과업·관찰·판단·수정·재검증을 하나의 기록으로 보존</p></article></div><div class=\"split reflection-bottom\"><article class=\"story-card\"><span class=\"eyebrow\">LIMITS</span><h2>현재 근거의 범위</h2><ul><li>문제·Persona는 설계 가설</li><li>6명 과업 검증은 소규모 사용성 근거</li><li>실제 출시·전환 개선 성과는 제시하지 않음</li></ul></article><article class=\"closing-note\"><span class=\"eyebrow\">NEXT</span><h2>확인할 가설을 하나씩</h2><p>맞는 점·확인할 점 이해 → 추천 수용·거절 이유 → 경기 후 체감 적합도 → 다음 추천 변화를 과업별로 검증 · AI 검색 사용률·QA 통과와 매칭 성공률은 구분</p></article></div>"
+    "name": "종합 판단·근거",
+    "title": "구축 가능성 다음에는 공급과 단위 손익을 검증한다",
+    "lead": "IT 실행 경험을 근거로, 다음 사업 투자에서 확인할 조건을 제시한다.",
+    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>현재 확보한 기반</h2><p>인증·경기·참가·정원·체크인·운영자·AI 연동을 직접 구축하고 배포·기술 검증 기록을 관리했다.</p></article><article class=\"story-card\"><h2>이번 사업 분석의 결론</h2><p>제휴형 중개를 우선안으로 제시했다. 기준 시나리오의 현금 적자와 확장 시나리오의 노동비용 포함 적자를 확인해 무조건적인 확장을 유보한다.</p></article><article class=\"story-card\"><h2>다음 투자 조건</h2><p>공급 계약·실제 참가·반복 이용·양의 공헌이익·운영 안전성을 확인한다. 지표가 충족되지 않으면 수수료·가격·지역·사업모델을 조정한다.</p></article></div><div class=\"table-wrap\" role=\"region\" aria-label=\"분석과 실행 근거\" tabindex=\"0\"><table><caption>분석과 실행 근거</caption><thead><tr><th scope=\"col\">구분</th><th scope=\"col\">근거</th><th scope=\"col\">해석 범위</th></tr></thead><tbody><tr><th scope=\"row\">시장 조사</th><td data-label=\"근거\"><a href=\"https://www.mcst.go.kr/site/s_policy/subPolicy/sportstour/sportstour29.jsp\" target=\"_blank\" rel=\"noopener noreferrer\">2025년 국민생활체육조사 ↗</a></td><td data-label=\"해석 범위\">축구·풋살 참여 기반. 유료 개인 참가 시장 규모와 구분</td></tr><tr><th scope=\"row\">경쟁 조사</th><td data-label=\"근거\"><a href=\"https://www.plabfootball.com/faq?category=22\" target=\"_blank\" rel=\"noopener noreferrer\">플랩풋볼 ↗</a> · <a href=\"https://puzzleplay.kr/social/6aad8ee0db675fa1697b7300\" target=\"_blank\" rel=\"noopener noreferrer\">퍼즐플레이 공식 경기 ↗</a></td><td data-label=\"해석 범위\">공개 기능·표본 경기 가격. 시장 평균 아님</td></tr><tr><th scope=\"row\">구현 근거</th><td data-label=\"근거\"><a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/RELEASE-HISTORY.md\" target=\"_blank\" rel=\"noopener noreferrer\">릴리스·검증 이력 ↗</a> · <a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/BETA-PILOT-RUNBOOK.md\" target=\"_blank\" rel=\"noopener noreferrer\">운영 절차 ↗</a></td><td data-label=\"해석 범위\">연결·기능·배포 검증. 유료 사업 성과 아님</td></tr><tr><th scope=\"row\">사업 검토</th><td data-label=\"근거\"><a href=\"https://github.com/dohyunkimmm/footmate/blob/main/docs/IT-STRATEGY-CASE-STUDY.md\" target=\"_blank\" rel=\"noopener noreferrer\">시장·가정·손익 계산 근거 ↗</a></td><td data-label=\"해석 범위\">2026-10-30 신규 분석·제안. 실제 계약·실적 아님</td></tr></tbody></table></div><p class=\"closing\">FootMate · 시장과 사업모델을 검토하고, 필요한 IT 기반을 직접 구현한 개인 프로젝트.</p><a class=\"primary-link\" href=\"/demo\">구축한 Demo 확인 ↗</a>"
   }
 ];
-  const toc = document.querySelector('.toc');
-  const track = document.querySelector('.track');
-  const dots = document.querySelector('.dots');
-  toc.innerHTML = sections.map((s,i) => `<button class="toc-item" type="button" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-copy"><span class="toc-t">${s.name}</span></span></button>`).join('');
-  track.innerHTML = sections.map((s,i) => `<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-label="${s.name}" hidden>${s.html}</section>`).join('');
-  dots.innerHTML = sections.map((s,i) => `<button class="dot" type="button" data-index="${i}" aria-label="${i+1}번 섹션 · ${s.name}"></button>`).join('');
-  // Keep native table semantics when mobile rows switch to a vertical reading layout.
-  const qaTable=track.querySelector('.qa-evidence-table table');
-  qaTable.setAttribute('role','table');
-  qaTable.querySelectorAll('thead,tbody').forEach(group=>group.setAttribute('role','rowgroup'));
-  qaTable.querySelectorAll('tr').forEach(row=>row.setAttribute('role','row'));
-  qaTable.querySelectorAll('th').forEach(cell=>cell.setAttribute('role',cell.scope==='row'?'rowheader':'columnheader'));
-  const qaLabels=[...qaTable.querySelectorAll('thead th')].map(cell=>cell.textContent.trim());
-  qaTable.querySelectorAll('tbody tr').forEach(row=>row.querySelectorAll('td').forEach((cell,index)=>{
-    cell.dataset.label=qaLabels[index+1];
-    cell.setAttribute('role','cell');
-    cell.setAttribute('aria-label',qaLabels[index+1]+' · '+cell.textContent.trim());
-  }));
-  track.querySelectorAll('.table-wrap:not(.qa-evidence-table) table').forEach(table=>{const labels=[...table.querySelectorAll('thead th')].map(n=>n.textContent.trim());table.querySelectorAll('tbody tr').forEach(row=>row.querySelectorAll('td').forEach((cell,index)=>cell.dataset.label=labels[index+1]));});
-  // Numbered wireframes share one viewer, while evidence images retain a single-image view.
-  const wirePreviews=[...track.querySelectorAll('#section-07 .evidence-preview')];
-  wirePreviews.forEach((preview,index)=>{
-    const record=preview.closest('.wireframe-record');
-    const number=document.createElement('span');
-    number.className='wireframe-step eyebrow';
-    number.textContent=String(index+1).padStart(2,'0')+' / 05';
-    record.prepend(number);
-  });
-  const imageDialog=document.createElement('dialog');
-  imageDialog.className='image-dialog';
-  imageDialog.setAttribute('aria-labelledby','image-dialog-title');
-  imageDialog.innerHTML='<div class="image-dialog-header"><div><span class="image-dialog-position eyebrow" aria-live="polite" hidden></span><h2 id="image-dialog-title">화면 확대</h2></div><button type="button" class="image-dialog-close" autofocus>닫기 ×</button></div><p class="image-dialog-caption" hidden></p><div class="image-dialog-body" tabindex="0" role="region" aria-label="확대 이미지"><img alt=""></div><div class="image-dialog-navigation" hidden><button type="button" class="image-dialog-prev" aria-label="이전 와이어프레임">← 이전 화면</button><button type="button" class="image-dialog-next" aria-label="다음 와이어프레임">다음 화면 →</button></div>';
-  document.body.appendChild(imageDialog);
-  const imagePosition=imageDialog.querySelector('.image-dialog-position');
-  const imageCaption=imageDialog.querySelector('.image-dialog-caption');
-  const imageNavigation=imageDialog.querySelector('.image-dialog-navigation');
-  const imagePrev=imageDialog.querySelector('.image-dialog-prev');
-  const imageNext=imageDialog.querySelector('.image-dialog-next');
-  let imageOrigin=null;
-  let wireIndex=-1;
-  function showImage(preview){
-    wireIndex=wirePreviews.indexOf(preview);
-    const gallery=wireIndex>=0;
-    const readable=preview.dataset.image.includes('current-wireframe-')||preview.dataset.image.includes('readable-demo-')||preview.dataset.image.includes('readability-baseline-');
-    imageDialog.querySelector('h2').textContent=preview.dataset.imageTitle;
-    const expanded=imageDialog.querySelector('img');
-    expanded.src=preview.dataset.image;
-    expanded.alt=preview.dataset.imageTitle;
-    imagePosition.hidden=imageCaption.hidden=imageNavigation.hidden=!gallery;
-    if(gallery){
-      imagePosition.textContent=String(wireIndex+1).padStart(2,'0')+' / 05';
-      imageCaption.textContent=preview.closest('.wireframe-record').querySelector('p').textContent;
-      imagePrev.disabled=wireIndex===0;
-      imageNext.disabled=wireIndex===wirePreviews.length-1;
-    }
-    if(readable){
-      imageCaption.hidden=false;
-      const hint='원본 크기 표시 · 작은 화면에서는 이미지 영역을 좌우로 이동';
-      imageCaption.textContent=gallery?imageCaption.textContent+' · '+hint:hint;
-    }
-    imageDialog.querySelector('.image-dialog-body').scrollTop=0;
-    imageDialog.querySelector('.image-dialog-body').scrollLeft=0;
+  const toc=document.querySelector('.toc'),track=document.querySelector('.track'),dots=document.querySelector('.dots');
+  toc.innerHTML=sections.map((s,i)=>`<button class="toc-item" type="button" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></button>`).join('');
+  track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-label="${s.name}" hidden><header class="section-head"><span class="eyebrow">${String(i+1).padStart(2,'0')} / IT기획·전략기획</span><h1 tabindex="-1">${s.title}</h1><p class="lead">${s.lead}</p></header>${s.body}</section>`).join('');
+  dots.innerHTML=sections.map((s,i)=>`<button class="dot" type="button" data-index="${i}" aria-label="${i+1}번 섹션 · ${s.name}"></button>`).join('');
+  const slides=[...track.children],prev=document.querySelector('.btn-prev'),next=document.querySelector('.btn-next');
+  let current=0;
+  const fromUrl=()=>{const match=location.hash.match(/^#section-(\d{1,2})$/);return match?Number(match[1])-1:(history.state?.caseStudySection??0);};
+  function goTo(index,{historyMode='push',focus=true}={}){
+    current=Math.max(0,Math.min(sections.length-1,Number(index)||0));
+    slides.forEach((slide,i)=>{slide.hidden=i!==current;slide.classList.toggle('on',i===current);});
+    for(const group of [toc,dots])group.querySelectorAll('button').forEach((button,i)=>{button.classList.toggle('on',i===current);if(i===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
+    const position=String(current+1).padStart(2,'0')+' / '+String(sections.length).padStart(2,'0');
+    document.querySelector('.topbar-count').textContent=position;
+    document.querySelector('.reader-position').textContent=position+' · '+sections[current].name;
+    document.querySelector('.pbar-fill').style.width=((current+1)/sections.length*100)+'%';
+    prev.disabled=current===0;next.disabled=current===sections.length-1;
+    prev.textContent=current===0?'첫 섹션':'← '+sections[current-1].name;
+    next.textContent=current===sections.length-1?'마지막 섹션':sections[current+1].name+' →';
+    if(historyMode&&(historyMode==='replace'||history.state?.caseStudySection!==current||location.hash))history[historyMode==='replace'?'replaceState':'pushState']({...history.state,caseStudySection:current},'',location.pathname+location.search);
+    if(innerWidth<=800){const button=toc.children[current];toc.scrollTo({left:button.offsetLeft-toc.offsetLeft-(toc.clientWidth-button.offsetWidth)/2,behavior:'instant'});}
+    if(focus){slides[current].querySelector('h1').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
   }
-  function moveImage(offset){
-    if(wireIndex<0)return;
-    const target=wireIndex+offset;
-    if(target<0||target>=wirePreviews.length)return;
-    const focusedButton=document.activeElement;
-    showImage(wirePreviews[target]);
-    // Keep focus usable when the current navigation button becomes disabled.
-    if(focusedButton===imagePrev&&imagePrev.disabled)imageNext.focus();
-    if(focusedButton===imageNext&&imageNext.disabled)imagePrev.focus();
-  }
-  imagePrev.addEventListener('click',()=>moveImage(-1));
-  imageNext.addEventListener('click',()=>moveImage(1));
-  imageDialog.addEventListener('keydown',event=>{
-    if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing)return;
-    if(wireIndex>=0&&(event.key==='ArrowLeft'||event.key==='ArrowRight')){
-      event.preventDefault();
-      event.stopPropagation();
-      moveImage(event.key==='ArrowRight'?1:-1);
-    }
-  });
-  imageDialog.querySelector('.image-dialog-close').addEventListener('click',()=>imageDialog.close());
-  imageDialog.addEventListener('close',()=>{
-    if(imageOrigin?.isConnected)imageOrigin.focus({preventScroll:true});
-    wireIndex=-1;
-  });
-  document.addEventListener('click',event=>{
-    const preview=event.target.closest('.evidence-preview');
-    if(!preview)return;
-    imageOrigin=preview;
-    showImage(preview);
-    imageDialog.showModal();
-    imageDialog.querySelector('.image-dialog-close').focus();
-  });
-  // Connect actual exception descriptions to their numbered task steps.
-  const flowSteps=[...track.querySelectorAll('#section-06 .flow>li')];
-  const flowGates=[...track.querySelectorAll('#section-06 .flow-gate-track>div')];
-  const gateSteps=[[3,4],[4],[3,5]];
-  const flowStatus=document.createElement('p');
-  flowStatus.className='flow-selection-status small-copy';
-  flowStatus.setAttribute('aria-live','polite');
-  flowStatus.textContent='단계·분기 기준 선택 시 연결된 경로 함께 강조';
-  track.querySelector('#section-06 .flow-decision-gate').appendChild(flowStatus);
-  function selectFlow(step,gate){
-    flowSteps.forEach((item,index)=>{
-      const active=step===index+1||(gate!==null&&gateSteps[gate].includes(index+1));
-      item.classList.toggle('flow-linked',active);
-      item.querySelector('button').setAttribute('aria-pressed',String(active));
-    });
-    flowGates.forEach((item,index)=>{
-      const active=gate===index||(step!==null&&gateSteps[index].includes(step));
-      item.classList.toggle('flow-linked',active);
-      item.querySelector('button').setAttribute('aria-pressed',String(active));
-    });
-    if(gate!==null)flowStatus.textContent=gateSteps[gate].map(n=>String(n).padStart(2,'0')).join(' · ')+' 단계 연결 · '+flowGates[gate].querySelector('span').textContent;
-    else{
-      const related=flowGates.filter((_,i)=>gateSteps[i].includes(step)).map(item=>item.querySelector('strong').textContent);
-      flowStatus.textContent=String(step).padStart(2,'0')+' 단계 · '+(related.length?related.join(' / '):'별도 예외 분기 없이 다음 단계로 연결');
-    }
-  }
-  flowSteps.forEach((item,index)=>{
-    const title=item.querySelector('strong');
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='flow-step-button';
-    button.setAttribute('aria-pressed','false');
-    button.setAttribute('aria-label',String(index+1).padStart(2,'0')+' 단계 · '+title.textContent);
-    title.replaceWith(button);
-    button.appendChild(title);
-    button.addEventListener('click',()=>selectFlow(index+1,null));
-  });
-  flowGates.forEach((item,index)=>{
-    const badge=document.createElement('span');
-    badge.className='flow-gate-step eyebrow';
-    badge.textContent=gateSteps[index].map(n=>String(n).padStart(2,'0')).join(' · ')+' 단계';
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='flow-gate-button';
-    button.setAttribute('aria-pressed','false');
-    button.append(badge,...item.childNodes);
-    item.appendChild(button);
-    button.addEventListener('click',()=>selectFlow(null,index));
-  });
-  // Emphasize recorded QA changes without presenting them as user outcome metrics.
-  qaTable.querySelectorAll('tbody tr').forEach((row,index)=>{
-    const title=row.querySelector('th');
-    const number=document.createElement('span');
-    number.className='qa-case-number eyebrow';
-    number.textContent='CASE '+String(index+1).padStart(2,'0');
-    title.prepend(number);
-    const result=row.querySelectorAll('td')[1];
-    result.classList.add('qa-confirmed-result');
-    const text=document.createElement('strong');
-    text.textContent=result.textContent;
-    result.replaceChildren(text);
-  });
-  const slides = [...track.children];
-  const prev = document.querySelector('.btn-prev');
-  const next = document.querySelector('.btn-next');
-  let current = 0;
-  function fromUrl() { const match = location.hash.match(/^#section-(\d{1,2})$/); return match ? Number(match[1])-1 : (history.state?.caseStudySection ?? 0); }
-  function goTo(index, {historyMode='push', focus=true}={}) {
-    if(imageDialog.open)imageDialog.close();
-    current = Math.max(0, Math.min(sections.length-1, Number(index)||0));
-    slides.forEach((slide,i) => { slide.hidden = i!==current; slide.classList.toggle('on',i===current); });
-    toc.querySelectorAll('button').forEach((button,i) => { button.classList.toggle('on',i===current); if(i===current)button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current'); });
-    dots.querySelectorAll('button').forEach((button,i) => { button.classList.toggle('on',i===current); if(i===current)button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current'); });
-    const position = `${String(current+1).padStart(2,'0')} / ${String(sections.length).padStart(2,'0')}`;
-    document.querySelector('.topbar-count').textContent = position;
-    document.querySelector('.reader-position').textContent = `${position} · ${sections[current].name}`;
-    document.querySelector('.pbar-fill').style.width = `${(current+1)/sections.length*100}%`;
-    prev.disabled = current===0; next.disabled = current===sections.length-1;
-    prev.innerHTML = `<span class="fm-icon" aria-hidden="true">⬅️</span><span><small>${current===0?'첫 섹션':'이전 섹션'}</small>${sections[Math.max(0,current-1)].name}</span>`;
-    next.innerHTML = `<span><small>${current===sections.length-1?'마지막 섹션':'다음 섹션'}</small>${sections[Math.min(sections.length-1,current+1)].name}</span><span class="fm-icon" aria-hidden="true">➡️</span>`;
-    // Keep section history without exposing fragment identifiers in the address.
-    const cleanUrl = location.pathname + location.search;
-    if(historyMode && (historyMode==='replace' || history.state?.caseStudySection!==current || location.hash)) {
-      history[historyMode==='replace'?'replaceState':'pushState']({...history.state,caseStudySection:current},'',cleanUrl);
-    }
-    if(innerWidth<=800) {
-      const button=toc.querySelectorAll('button')[current];
-      const buttonRect=button.getBoundingClientRect();
-      const tocRect=toc.getBoundingClientRect();
-      toc.scrollTo({left:toc.scrollLeft+buttonRect.left-tocRect.left-(toc.clientWidth-buttonRect.width)/2,behavior:'instant'});
-    }
-    if(focus) { slides[current].querySelector('h1').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
-  }
-  document.addEventListener('click', event => { const button = event.target.closest('.toc-item,.dot'); if(button)goTo(button.dataset.index); });
-  prev.addEventListener('click', () => goTo(current-1));
-  next.addEventListener('click', () => goTo(current+1));
-  window.addEventListener('popstate', () => goTo(fromUrl(),{historyMode:null}));
-  window.addEventListener('hashchange', () => goTo(fromUrl(),{historyMode:'replace'}));
-  window.addEventListener('keydown', event => {
-    if(imageDialog.open)return;
-    if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing||event.target.closest('input,textarea,select,[contenteditable],summary,a,.table-wrap'))return;
-    if(event.key==='ArrowRight'||event.key==='ArrowLeft') { event.preventDefault(); goTo(current+(event.key==='ArrowRight'?1:-1)); }
-  });
-  window.goTo = goTo;
-  // Preserve the existing product behavior: refresh starts at Overview;
-  // direct links and browser history retain their requested section.
-  const reloaded = performance.getEntriesByType('navigation')[0]?.type==='reload';
-  if(reloaded)history.scrollRestoration='manual';
+  document.addEventListener('click',event=>{const button=event.target.closest('.toc-item,.dot');if(button)goTo(button.dataset.index);});
+  prev.addEventListener('click',()=>goTo(current-1));next.addEventListener('click',()=>goTo(current+1));
+  window.addEventListener('popstate',()=>goTo(fromUrl(),{historyMode:null}));
+  window.addEventListener('hashchange',()=>goTo(fromUrl(),{historyMode:'replace'}));
+  window.addEventListener('keydown',event=>{if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing||event.target.closest('input,textarea,select,[contenteditable],summary,a,.table-wrap'))return;if(['ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();goTo(current+(event.key==='ArrowRight'?1:-1));}});
+  window.goTo=goTo;
+  const reloaded=performance.getEntriesByType('navigation')[0]?.type==='reload';
+  history.scrollRestoration='manual';
   goTo(reloaded?0:fromUrl(),{historyMode:'replace',focus:false});
-  const navigationType=performance.getEntriesByType('navigation')[0]?.type;
-  if(navigationType!=='back_forward'){
-    history.scrollRestoration='manual';
-    const resetInitialScroll=()=>window.scrollTo({top:0,left:0,behavior:'instant'});
-    resetInitialScroll();
-    // Native fragment positioning runs after the initial script on navigation.
-    const resetAfterLoad=()=>requestAnimationFrame(()=>{
-      resetInitialScroll();
-      requestAnimationFrame(resetInitialScroll);
-    });
-    if(document.readyState==='complete')resetAfterLoad();
-    else window.addEventListener('load',resetAfterLoad,{once:true});
-  }
+  if(performance.getEntriesByType('navigation')[0]?.type!=='back_forward'){const reset=()=>window.scrollTo({top:0,left:0,behavior:'instant'});reset();window.addEventListener('load',()=>requestAnimationFrame(reset),{once:true});}
 })();
 

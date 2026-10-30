@@ -37,11 +37,11 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   expect(health.model).toBe('openai/gpt-5.4-nano');
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.5.0');
-  await expect(page.locator('.toc-item')).toHaveCount(11);
-  await page.locator('.toc-item').nth(3).click();
+  await expect(page.locator('.toc-item')).toHaveCount(9);
+  await page.locator('.toc-item').nth(2).click();
   await page.locator('.slide:visible summary').click();
   await expect(page.locator('.slide:visible')).toContainText('사용자 직접 확정 · 자동 실행 제외');
-  await page.locator('.toc-item').nth(8).click();
+  await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('.slide:visible')).toContainText('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서');
 });
 
@@ -165,3 +165,4 @@ const checkin=require('./helpers/checkin.cjs');
 test('Production shared check-in completion',async({page})=>checkin.persistence(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
 test('Production check-in eligibility and migration',async({page})=>checkin.gates(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
 test('Production check-in storage recovery',async({page})=>checkin.recovery(page,async(name,element)=>element.screenshot({path:test.info().outputPath(name+'.png'),animations:'disabled'})));
+
