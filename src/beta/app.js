@@ -542,6 +542,13 @@ if(root){
           clearDemoParticipations(deletedUserId);
           localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':demo');
           localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':live');
+          if(localStorage.getItem('footmate:beta:preferences-owner:v1')===deletedUserId){
+            localStorage.removeItem('footmate:beta:preferences-owner:v1');
+            localStorage.removeItem('footmate:beta:preferences:v1');
+            localStorage.removeItem('footmate:beta:ranking:v1');
+          }
+          sessionStorage.removeItem('footmate:beta:preferences-dirty:v1');
+          sessionStorage.removeItem('footmate:beta:discovery-events:v1');
         }catch{localCleanupFailed=true}
         clearSession();
         setNotice(localCleanupFailed?'서버 계정은 삭제했지만 이 기기의 데모 기록은 일부 남아 있을 수 있습니다. 브라우저 저장 공간을 확인해주세요.':'계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.',localCleanupFailed?'error':'success');
