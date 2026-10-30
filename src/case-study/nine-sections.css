@@ -14,7 +14,7 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 @media(min-width:801px){
  .sidebar{display:flex;flex-direction:column}
  .sb-brand{flex:none}
- .toc{flex:none;justify-content:flex-start;gap:6px}
+ .toc{flex:1;justify-content:space-between;gap:6px}
  .demo-link{flex:none;align-self:flex-start;margin-top:auto;margin-bottom:0;padding-top:24px}
 }
 
