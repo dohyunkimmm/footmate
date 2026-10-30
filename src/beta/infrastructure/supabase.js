@@ -179,6 +179,15 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
       query.set('limit',String(clampLimit(limit)));
       return request(`/rest/v1/matches?${query}`);
     },
+    listByIds:({matchIds=[]}={})=>{
+      const ids=[...new Set((Array.isArray(matchIds)?matchIds:[]).filter(id=>typeof id==='string'&&/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id)))].slice(0,50);
+      if(!ids.length)return Promise.resolve([]);
+      const query=new URLSearchParams();
+      query.set('select',MATCH_SELECT);
+      query.set('id',`in.(${ids.join(',')})`);
+      query.set('limit',String(ids.length));
+      return request(`/rest/v1/matches?${query}`);
+    },
     get:({matchId})=>{
       const query=new URLSearchParams();
       query.set('select',MATCH_SELECT);
@@ -214,7 +223,7 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
   const participation=Object.freeze({
     listMine:({accessToken})=>{
       const query=new URLSearchParams();
-      query.set('select','id,match_id,position,status,joined_at,canceled_at,created_at,updated_at');
+      query.set('select','id,match_id,position,status,joined_at,canceled_at,checked_in_at,created_at,updated_at');
       query.set('order','created_at.desc');
       return request(`/rest/v1/participations?${query}`,{accessToken:nonEmpty(accessToken,'access token')});
     },
