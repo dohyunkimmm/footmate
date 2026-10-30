@@ -67,3 +67,19 @@ test('continuous reader restores back navigation after a legacy manual-scroll se
  await expect(page.locator('.toc-item').nth(0)).toHaveAttribute('aria-current','location');
  expect(await page.locator('#section-01').evaluate(n=>Math.abs(n.getBoundingClientRect().top))).toBeLessThan(40);
 });
+
+test('normal-motion back and forward restore the section heading and keyboard focus',async({page})=>{
+ await page.setViewportSize({width:1920,height:1080});
+ await page.goto('/');
+ await page.locator('.toc-item').nth(0).click();
+ await page.locator('.toc-item').nth(8).click();
+ await expect(page.locator('.toc-item').nth(8)).toHaveAttribute('aria-current','location');
+ await page.goBack();
+ await expect(page.locator('#section-01 .section-title')).toBeFocused();
+ await expect(page.locator('.toc-item').nth(0)).toHaveAttribute('aria-current','location');
+ await expect.poll(()=>page.locator('#section-01').evaluate(n=>Math.abs(n.getBoundingClientRect().top))).toBeLessThan(40);
+ await page.goForward();
+ await expect(page.locator('#section-09 .section-title')).toBeFocused();
+ await expect(page.locator('.toc-item').nth(8)).toHaveAttribute('aria-current','location');
+ await expect(page.locator('#section-09 .section-title')).toBeInViewport();
+});

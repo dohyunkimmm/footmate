@@ -89,6 +89,17 @@ const sections = [
   window.addEventListener('scroll',schedule,{passive:true});
   window.addEventListener('resize',schedule);
   window.addEventListener('hashchange',schedule);
+  // History traversal must restore the fragment and keyboard focus together.
+  window.addEventListener('popstate',()=>{
+    requestAnimationFrame(()=>{
+      const slide=slides.find(section=>'#'+section.id===location.hash);
+      if(slide){
+        slide.scrollIntoView({behavior:'instant',block:'start'});
+        slide.querySelector('.section-title').focus({preventScroll:true});
+      }
+      schedule();
+    });
+  });
   window.addEventListener('pageshow',schedule);
   new ResizeObserver(schedule).observe(track);
   updateCurrent();
