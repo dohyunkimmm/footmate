@@ -130,3 +130,25 @@ test('authenticated recommendation conditions survive another browser-local rese
  await expect(page.locator('.fm-beta-preferences-summary')).toContainText('수원 · 영통');
  await expect(page.locator('.fm-beta-preferences-summary')).toContainText('GK');
 });
+
+test('switching accounts never uploads another account\'s local recommendation filters',async({page})=>{
+ await install(page);await mock(page);
+ const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
+ await page.route(origin+'/auth/v1/token?**',route=>fulfill(route,{
+  access_token:token,refresh_token:'refresh2',expires_in:3600,user:{id:userId,email:'beta@example.com'}
+ }));
+ await page.addInitScript(()=>{
+  localStorage.setItem('footmate:beta:preferences-owner:v1','33333333-3333-4333-8333-333333333333');
+  localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'수원 · 영통',level:'',position:'GK',afterTime:'',beforeTime:'',dateWindow:''}));
+  sessionStorage.setItem('footmate:beta:preferences-dirty:v1','1');
+ });
+ let posted=0;
+ await page.route(origin+'/rest/v1/beta_user_preferences**',route=>{
+  if(route.request().method()==='POST'){posted++;return fulfill(route,null,201)}
+  return fulfill(route,[{preferences:{sport:'futsal',region:'수원 · 영통',level:'',position:'MF',afterTime:'',beforeTime:'',dateWindow:''}}]);
+ });
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await expect(page.locator('.fm-beta-preferences-summary')).toContainText('MF');
+ expect(posted).toBe(0);
+ expect(await page.evaluate(()=>sessionStorage.getItem('footmate:beta:preferences-dirty:v1'))).toBeNull();
+});
