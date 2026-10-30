@@ -2,6 +2,7 @@ import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {emitDiscoveryMeasurement} from './measurement-events.js';
 import {matchesRecommendationConditions,recommendationFingerprint,validRecommendationCache,diverseRecommendationCandidates} from './domain/recommendation-discovery.js';
 import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations} from './demo-catalog.js';
+import {createPreferenceSyncClient,cleanSyncPreferences} from './preference-sync.js';
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
 const TABLES=['matches','match_slots','participations','beta_notifications','beta_waitlist','beta_match_feedback'];
@@ -10,6 +11,9 @@ const POSITIONS={MF:'MF · 미드필더',FW:'FW · 공격수',DF:'DF · 수비�
 if(root){
 let config=null,profile=null,matches=[],historyMatches=[],participations=[],waitlist=[],feedback=[],recommendation=null;
 const PREFERENCES_KEY='footmate:beta:preferences:v1';
+const PREF_OWNER_KEY='footmate:beta:preferences-owner:v1';
+const PREF_DIRTY_KEY='footmate:beta:preferences-dirty:v1';
+let syncedUser='',preferenceRevision=0;
 const DEFAULT_PREFERENCES={sport:'futsal',region:'',level:'',position:'',afterTime:'',beforeTime:'',dateWindow:''};
 let preferences=null,draft=null,editing=true,wizardStep=1,aiOrder=[],initialRecommendationRequested=false,activeRecommendationController=null,recommendationRequestId=0;
 try{const saved=JSON.parse(localStorage.getItem(PREFERENCES_KEY)||'null');if(saved&&['football','futsal',''].includes(saved.sport)&&['','입문','초중급','중급','중급+'].includes(saved.level)&&['','MF','FW','DF','GK'].includes(saved.position)&&['','09:00','14:00','18:00','20:00'].includes(saved.afterTime)&&typeof saved.region==='string'){preferences={...DEFAULT_PREFERENCES,...saved,sport:'futsal',dateWindow:['','today','tomorrow','weekend'].includes(saved.dateWindow)?saved.dateWindow:'',beforeTime:['','12:00','18:00','22:00'].includes(saved.beforeTime)?saved.beforeTime:''};editing=false}}catch{}
@@ -23,6 +27,43 @@ const headers=(auth=true)=>({apikey:config?.publishableKey||'',...(auth&&accessT
 async function request(path,{auth=true,...options}={}){const response=await fetch(`${config.url}${path}`,{...options,headers:{...headers(auth),...(options.headers||{})}});const data=await response.json().catch(()=>null);if(!response.ok)throw new Error(data?.message||data?.error_description||data?.error||`요청 실패 (${response.status})`);return data}
 const rpc=(name,params)=>request(`/rest/v1/rpc/${name}`,{method:'POST',headers:{'content-type':'application/json',prefer:'return=representation'},body:JSON.stringify(params||{})});
 async function loadConfig(){if(config)return;const res=await fetch('/api/beta-config',{cache:'no-store'});config=await res.json();if(!res.ok||!config?.connected)throw new Error('Beta backend config unavailable')}
+function preferenceClient(){return createPreferenceSyncClient(config)}
+async function syncAccountPreferences(){
+ if(isDemoEntry||!config||!accessToken())return;
+ const userId=jwtUserId();if(!userId||syncedUser===userId)return;
+ const token=accessToken(),revision=preferenceRevision;
+ syncedUser=userId;
+ try{
+  const remote=await preferenceClient().load({userId,accessToken:token});
+  if(userId!==jwtUserId())return;
+  const dirty=preferenceRevision!==revision||sessionStorage.getItem(PREF_DIRTY_KEY)==='1';
+  if(dirty&&preferences){
+   await preferenceClient().save({userId,accessToken:accessToken(),preferences});
+   sessionStorage.removeItem(PREF_DIRTY_KEY);
+  }else if(remote){
+   preferences=remote;editing=false;draft=null;
+   try{localStorage.setItem(PREFERENCES_KEY,JSON.stringify(remote))}catch{}
+  }else if(localStorage.getItem(PREF_OWNER_KEY)&&localStorage.getItem(PREF_OWNER_KEY)!==userId){
+   preferences=null;editing=true;draft=null;
+   try{localStorage.removeItem(PREFERENCES_KEY)}catch{}
+  }
+  try{localStorage.setItem(PREF_OWNER_KEY,userId)}catch{}
+ }catch{
+  syncedUser='';
+ }
+}
+async function saveAccountPreferences(){
+ if(isDemoEntry||!config||!accessToken()||!preferences)return;
+ const userId=jwtUserId(),token=accessToken(),snapshot=cleanSyncPreferences(preferences);
+ if(!userId||!snapshot)return;
+ try{
+  await preferenceClient().save({userId,accessToken:token,preferences:snapshot});
+  if(JSON.stringify(snapshot)===JSON.stringify(cleanSyncPreferences(preferences))){
+   sessionStorage.removeItem(PREF_DIRTY_KEY);
+   try{localStorage.setItem(PREF_OWNER_KEY,userId)}catch{}
+  }
+ }catch{message='추천 조건은 이 기기에 저장됐지만 다른 기기에는 아직 동기화되지 않았어요.';render()}
+}
 async function loadState(){
  if(!isDemoEntry)await loadConfig();
  const q='/rest/v1/matches?select=id,title,venue_name,area_label,address,region,level,positions,starts_at,price_krw,capacity_total,joined_count,remaining_spots,format_label,surface,duration_minutes,status,cancel_cutoff_at,check_in_opens_at,match_slots(position,capacity_total,joined_count,remaining_spots)&status=in.(open,full,completed)&order=starts_at.asc&limit=80';
@@ -43,9 +84,10 @@ async function loadState(){
    request('/rest/v1/beta_match_feedback?select=*&order=created_at.desc').catch(()=>[])
   ]);
   profile=rows[0]?.[0]||null;participations=rows[1]||[];waitlist=rows[2]||[];feedback=rows[3]||[];
+  await syncAccountPreferences();
   const checkedIds=[...new Set(participations.filter(p=>p.checked_in_at).map(p=>p.match_id).filter(id=>typeof id==='string'&&/^[0-9a-f-]{36}$/i.test(id)&&!matches.some(m=>m.id===id)))].slice(0,50);
   historyMatches=checkedIds.length?await request(`/rest/v1/matches?select=id,title,starts_at,status&id=in.(${checkedIds.join(',')})&limit=50`).catch(()=>[]):[];
- }else{profile=null;participations=[];waitlist=[];feedback=[];historyMatches=[]}
+ }else{syncedUser='';profile=null;participations=[];waitlist=[];feedback=[];historyMatches=[]}
  if(preferences){
   const fingerprint=recommendationFingerprint(matches,preferences);
   let cached=null;try{cached=JSON.parse(localStorage.getItem('footmate:beta:ranking:v1')||'null')}catch{}
@@ -72,8 +114,10 @@ async function recommend(form){
  return applyPreferences({...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(data)});
 }
 async function applyPreferences(next){
- draft=null;initialRecommendationRequested=true;preferences={...next,sport:'futsal'};
+ draft=null;initialRecommendationRequested=true;preferences=cleanSyncPreferences({...next,sport:'futsal'})||{...DEFAULT_PREFERENCES};
+ preferenceRevision++;sessionStorage.setItem(PREF_DIRTY_KEY,'1');
  try{localStorage.setItem(PREFERENCES_KEY,JSON.stringify(preferences))}catch{}
+ void saveAccountPreferences();
  editing=false;emitDiscoveryMeasurement('filters_applied',{isDemo:matches.length>0&&matches.every(m=>m.is_demo),filterCount:Object.entries(preferences).filter(([key,value])=>key!=='sport'&&value).length});await rankWithAI();
 }
 async function rankWithAI(){
@@ -148,7 +192,7 @@ root.addEventListener('click',e=>{const t=e.target.closest('[data-growth-action]
 const observer=new MutationObserver(()=>{if(root.querySelector('.fm-beta-shell')&&!root.querySelector('[data-beta-growth-host]'))render()});observer.observe(root,{childList:true,subtree:true});
 window.addEventListener('footmate:beta:catalog-refreshed',()=>{loadState().catch(()=>{})});
 window.addEventListener('footmate:beta:demo-changed',()=>{loadState().catch(()=>{})});
-window.addEventListener('footmate:beta:session-changed',()=>{initialRecommendationRequested=false;loadState().catch(()=>{})});
+window.addEventListener('footmate:beta:session-changed',()=>{syncedUser='';initialRecommendationRequested=false;loadState().catch(()=>{})});
 window.addEventListener('storage',e=>{if(e.key===SESSION_KEY){loadState().catch(()=>{});socket?.close()}});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){loadState().catch(()=>{});connectRealtime()}});
 (async()=>{try{if(!isDemoEntry)await loadConfig();await loadState();connectRealtime()}catch{realtimeState='error';render()}})();
