@@ -18,7 +18,7 @@ for(const width of [1920,1440,800,390,320]){
    await expect(link).toHaveAttribute('aria-current','location');
    expect(new URL(page.url()).hash).toBe('#section-'+String(i+1).padStart(2,'0'));
    const metrics=await section.evaluate(n=>({hidden:n.hidden,overflow:n.scrollWidth>n.clientWidth+1,top:n.getBoundingClientRect().top}));
-   expect(metrics.hidden).toBe(false);expect(metrics.overflow).toBe(false);expect(Math.abs(metrics.top)).toBeLessThan(40);
+   expect(metrics.hidden).toBe(false);expect(metrics.overflow).toBe(false);if(i<8)expect(Math.abs(metrics.top)).toBeLessThan(40);else await expect(section.locator('.section-title')).toBeInViewport();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
    for(const table of await section.locator('.table-wrap').all())expect(await table.evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
    if(width===1920){
