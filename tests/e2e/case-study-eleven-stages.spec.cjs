@@ -160,3 +160,12 @@ test('implementation decisions stay readable inside the case study',async({page}
  await expect(detail).toContainText('마지막 자리에 요청이 몰리거나');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
 });
+
+test('removed ledger ZIP stays unpublished while PPT and Excel remain available',async({request})=>{
+ const material=await request.get('/src/case-study/materials.html');expect(material.ok()).toBe(true);const html=await material.text();
+ expect(html).not.toContain('footmate_materials.zip');expect(html).not.toContain('원장·가정 포함 전체 자료 ZIP');
+ expect(html).toContain('downloads/footmate_report.pptx');expect(html).toContain('downloads/footmate_model.xlsx');
+ const removed=await request.get('/src/case-study/downloads/footmate_materials.zip');
+ expect(removed.headers()['content-type']||'').not.toMatch(/zip/i);
+ expect((await removed.body()).subarray(0,4).toString('hex')).not.toBe('504b0304');
+});
