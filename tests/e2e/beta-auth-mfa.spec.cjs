@@ -76,6 +76,7 @@ test('operator aal1 session is blocked until verified TOTP upgrades to aal2',asy
   await expect.poll(()=>verifyCount).toBe(1);
   await expect(page.locator('#footmate-beta-operator')).toHaveAttribute('data-operator-state','ready');
   expect(matchReads).toBeGreaterThan(0);
+  await page.getByText('추천 탐색 지표 · 실제 이용자',{exact:true}).click();
   await expect(page.locator('[data-load-discovery]')).toBeVisible();
   await page.locator('[data-load-discovery]').click();
   await expect.poll(()=>baselineReads).toBe(1);
