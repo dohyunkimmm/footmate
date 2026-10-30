@@ -179,7 +179,7 @@ if(root){
       ${confirmed.length?confirmed.slice(joinedPage,joinedPage+1).map(item=>{
         const match=matches.find(candidate=>candidate.id===item.match_id)||participationMatchHistory.find(candidate=>candidate.id===item.match_id);
         return `<div class="fm-beta-participation">${item.is_demo?'<small class="fm-beta-demo-record">데모 경기</small>':''}<strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
-      }).join(''):`<div class="fm-beta-empty"><strong>예정된 참가 경기가 없습니다.</strong>참석했던 경기는 내 경기의 참석 이력에서 확인할 수 있어요.</div>`}
+      }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>참석했던 경기는 내 경기의 참석 이력에서 확인할 수 있어요.</div>`}
       ${confirmed.length>1?`<nav class="fm-beta-demo-pager" aria-label="내 경기 페이지"><button class="fm-beta-button" type="button" data-action="joined-prev" ${joinedPage===0?'disabled':''}>이전</button><span>${joinedPage+1} / ${confirmed.length}</span><button class="fm-beta-button" type="button" data-action="joined-next" ${joinedPage===confirmed.length-1?'disabled':''}>다음</button></nav>`:''}
     </div>`;
   }
@@ -310,7 +310,7 @@ if(root){
     root.dataset.betaGuest=String(!session||!user);
     root.dataset.betaRecommendationsReady=String(recommendedIds!==null);
     root.dataset.betaState=backendState==='error'?'error':['connected','preview'].includes(backendState)?'ready':'booting';
-    const connected=backendState==='connected';
+    const connected=backendState==='connected'||backendState==='preview';
     root.dataset.betaOpening=String(openingOpen);
     root.dataset.betaDetail=String(Boolean(detailMatchId&&!authOpen&&view==='home'));
     if(openingOpen){root.innerHTML=renderOpening();return}
