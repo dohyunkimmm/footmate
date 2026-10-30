@@ -1009,3 +1009,15 @@ test('selected demo match stays available after sign-in even when live matches e
   await expect(page.getByText('MF 데모 참가를 완료했어요.')).toBeVisible();
   expect(backend.isJoined()).toBe(false);
 });
+
+test('new live venue region appears in the first-step location choices',async({page})=>{
+  await mockBackend(page,{preferences:false});
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[{...baseMatch,id:'77777777-7777-4777-8777-777777777777',title:'송파 저녁 풋살',region:'서울 · 송파',area_label:'송파'}]));
+  await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
+  await expect(page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'서울 · 송파',exact:true})).toBeVisible();
+  await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'서울 · 송파',exact:true}).check();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
+});
