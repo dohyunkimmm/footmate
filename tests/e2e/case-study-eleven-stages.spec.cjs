@@ -46,11 +46,13 @@ test('case study distinguishes implementation evidence from proposed business re
  for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
  await expect(page.locator('#section-08')).toContainText('계획이며 과거 수행 실적이 아니다');
  await expect(page.locator('#section-01')).toContainText('담당 범위 · 김도현');
- await expect(page.locator('#section-06')).toContainText('구현·기술 검증·사업 제안의 구분');
+ await expect(page.locator('#section-06')).toContainText('구현·검사·추가 과제');
  await expect(page.locator('#section-07 .transaction-flow')).toContainText('같은 트랜잭션');
- await expect(page.locator('#section-08')).toContainText('늦게 유입된 집단은 30일을 채운 뒤');
+ await expect(page.locator('#section-08')).toContainText('관측 완료자만 분모 포함');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
+ await expect(page.locator('#section-09')).toContainText('본문·첨부 기준값');
+ await expect(page.locator('#section-09')).toContainText('자동 재검사 수식이 아니다');
  for(const id of ['#section-01','#section-04','#section-05','#section-09']){
   await expect(page.locator(id)).toContainText('626건');
   await expect(page.locator(id)).toContainText('−387,160원');
