@@ -180,7 +180,7 @@ export function createSupabaseBetaClient({url,publishableKey,fetchImpl=globalThi
       return request(`/rest/v1/matches?${query}`);
     },
     listByIds:({matchIds=[]}={})=>{
-      const ids=[...new Set((Array.isArray(matchIds)?matchIds:[]).filter(id=>typeof id==='string'&&/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id)))].slice(0,50);
+      const ids=[...new Set((Array.isArray(matchIds)?matchIds:[]).filter(id=>typeof id==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))].slice(0,50);
       if(!ids.length)return Promise.resolve([]);
       const query=new URLSearchParams();
       query.set('select',MATCH_SELECT);
