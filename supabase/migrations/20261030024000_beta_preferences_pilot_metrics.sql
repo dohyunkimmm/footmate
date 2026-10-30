@@ -36,17 +36,10 @@ language plpgsql security definer
 set search_path=public,pg_temp
 as $$
 declare
- v_since timestamptz := greatest(least(coalesce(p_since,now()-interval '7 days'),now()),now()-interval '90 days');
+ v_since timestamptz := greatest(least(coalesce(p_since,now()-interval '21 days'),now()),now()-interval '90 days');
  v_end timestamptz := now();
- v_users bigint;
 begin
  perform public.require_beta_operator_aal2();
-
- select count(*) into v_users
- from public.discovery_cohorts c
- join public.discovery_consents consent on consent.user_id=c.user_id and consent.enabled
- where c.cohort='pilot'
- and not exists(select 1 from public.operators o where o.user_id=c.user_id);
 
  return query
  with eligible as (
@@ -70,15 +63,27 @@ begin
    user_id,session_id,match_id,occurred_at
   from events where event_name='match_detail_opened' and match_id is not null
   order by user_id,session_id,match_id,occurred_at
+ ), repeat_population as (
+  select p.user_id,m.starts_at
+  from public.participations p
+  join public.matches m on m.id=p.match_id
+  join eligible person on person.user_id=p.user_id
+  where p.status='confirmed' and p.checked_in_at is not null
+  and m.status='completed'
+  and m.starts_at>=v_since and m.starts_at<v_end-interval '7 days'
  ), totals as (
   select 'search_to_detail'::text name,
    (select count(*) from views v where exists (
     select 1 from events d where d.user_id=v.user_id and d.session_id=v.session_id
     and d.event_name='match_detail_opened' and d.occurred_at>=v.occurred_at
    ))::bigint n,
-   (select count(*) from views)::bigint d
+   (select count(*) from views)::bigint d,
+   (select count(distinct user_id) from views)::bigint u
   union all
-  select 'zero_result',count(*) filter(where result_count=0)::bigint,count(*)::bigint
+  select 'zero_result',
+   count(*) filter(where result_count=0)::bigint,
+   count(*)::bigint,
+   count(distinct user_id)::bigint
   from events where event_name='recommendation_completed' and result_count is not null
   union all
   select 'detail_to_join',
@@ -87,34 +92,23 @@ begin
     and j.match_id=d.match_id and j.event_name='join_succeeded'
     and j.occurred_at>=d.occurred_at and j.occurred_at<d.occurred_at+interval '24 hours'
    ))::bigint,
-   (select count(*) from detail_sessions)::bigint
+   (select count(*) from detail_sessions)::bigint,
+   (select count(distinct user_id) from detail_sessions)::bigint
   union all
   select 'repeat_search_7d',
-   (select count(*)
-    from public.participations p
-    join public.matches m on m.id=p.match_id
-    join eligible person on person.user_id=p.user_id
-    where p.status='confirmed' and p.checked_in_at is not null
-    and m.status='completed'
-    and m.starts_at>=v_since and m.starts_at<v_end-interval '7 days'
-    and exists(select 1 from events e where e.user_id=p.user_id
+   (select count(*) from repeat_population p where exists(
+     select 1 from events e where e.user_id=p.user_id
      and e.event_name='recommendation_requested'
-     and e.occurred_at>m.starts_at and e.occurred_at<=m.starts_at+interval '7 days')
-   )::bigint,
-   (select count(*)
-    from public.participations p
-    join public.matches m on m.id=p.match_id
-    join eligible person on person.user_id=p.user_id
-    where p.status='confirmed' and p.checked_in_at is not null
-    and m.status='completed'
-    and m.starts_at>=v_since and m.starts_at<v_end-interval '7 days'
-   )::bigint
+     and e.occurred_at>p.starts_at and e.occurred_at<=p.starts_at+interval '7 days'
+   ))::bigint,
+   (select count(*) from repeat_population)::bigint,
+   (select count(distinct user_id) from repeat_population)::bigint
  )
  select totals.name,
-  case when v_users>=5 and totals.d>=5 then totals.n else null end,
-  case when v_users>=5 and totals.d>=5 then totals.d else null end,
-  case when v_users>=5 then v_users else null end,
-  case when v_users>=5 and totals.d>=5 then round(100.0*totals.n/nullif(totals.d,0),2) else null end,
+  case when totals.u>=5 and totals.d>=5 then totals.n else null end,
+  case when totals.u>=5 and totals.d>=5 then totals.d else null end,
+  case when totals.u>=5 then totals.u else null end,
+  case when totals.u>=5 and totals.d>=5 then round(100.0*totals.n/nullif(totals.d,0),2) else null end,
   v_since,v_end
  from totals;
 end; $$;
