@@ -45,7 +45,7 @@ test('beta turns technical OAuth callback errors into user-facing copy',async({p
 });
 
 test('operator aal1 session is blocked until verified TOTP upgrades to aal2',async({page})=>{
-  let verified=false,challengeCount=0,verifyCount=0,matchReads=0;
+  let verified=false,challengeCount=0,verifyCount=0,matchReads=0,baselineReads=0;
   await baseConfig(page);
   await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:'footmate:beta:auth:v1',value:{accessToken:jwt(operatorId,'aal1'),refreshToken:'refresh-token',expiresAt:4102444800}});
   await page.route(`${origin}/**`,async route=>{
@@ -58,6 +58,13 @@ test('operator aal1 session is blocked until verified TOTP upgrades to aal2',asy
     if(url.pathname==='/rest/v1/matches'){matchReads++;return fulfill(route,[])}
     if(url.pathname==='/rest/v1/rpc/operator_beta_email_health')return fulfill(route,[]);
     if(url.pathname==='/rest/v1/rpc/operator_beta_funnel_metrics')return fulfill(route,[{}]);
+    if(url.pathname==='/rest/v1/rpc/operator_discovery_metrics')return fulfill(route,[{event_name:'recommendation_viewed',variant:'control',sessions:6,users:6,events:6}]);
+    if(url.pathname==='/rest/v1/rpc/operator_discovery_kpi_baseline'){
+      baselineReads++;
+      expect(verified).toBe(true);
+      expect(request.headers().authorization).toContain(jwt(operatorId,'aal2'));
+      return fulfill(route,[{metric_name:'search_to_detail',numerator:null,denominator:null,eligible_users:null,rate_percent:null,window_start:'2026-10-01T00:00:00Z',window_end:'2026-10-22T00:00:00Z'}]);
+    }
     return fulfill(route,{message:`Unhandled ${request.method()} ${url.pathname}`},500);
   });
   await page.goto('/beta/operator',{waitUntil:'domcontentloaded'});
@@ -69,6 +76,11 @@ test('operator aal1 session is blocked until verified TOTP upgrades to aal2',asy
   await expect.poll(()=>verifyCount).toBe(1);
   await expect(page.locator('#footmate-beta-operator')).toHaveAttribute('data-operator-state','ready');
   expect(matchReads).toBeGreaterThan(0);
+  await expect(page.locator('[data-load-discovery]')).toBeVisible();
+  await page.locator('[data-load-discovery]').click();
+  await expect.poll(()=>baselineReads).toBe(1);
+  await expect(page.getByText('실제 이용자 기준선 · 최근 21일')).toBeVisible();
+  await expect(page.getByText('N/A').first()).toBeVisible();
   expect(await serious(page,'.fm-operator')).toEqual([]);
 });
 
