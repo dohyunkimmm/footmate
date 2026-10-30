@@ -36,7 +36,11 @@ async function syncAccountPreferences(){
  try{
   const remote=await preferenceClient().load({userId,accessToken:token});
   if(userId!==jwtUserId())return;
-  const dirty=preferenceRevision!==revision||sessionStorage.getItem(PREF_DIRTY_KEY)==='1';
+  const previousOwner=localStorage.getItem(PREF_OWNER_KEY)||'';
+  const foreignOwner=Boolean(previousOwner&&previousOwner!==userId);
+  // Never upload a previous account's unsynced local preferences to another user.
+  if(foreignOwner)sessionStorage.removeItem(PREF_DIRTY_KEY);
+  const dirty=!foreignOwner&&(preferenceRevision!==revision||sessionStorage.getItem(PREF_DIRTY_KEY)==='1');
   if(dirty&&preferences){
    await preferenceClient().save({userId,accessToken:accessToken(),preferences});
    sessionStorage.removeItem(PREF_DIRTY_KEY);
