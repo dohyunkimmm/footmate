@@ -22,7 +22,8 @@ function mount(){
    // Rates are available only for consented pilot cohorts with at least five eligible
    // users and five denominator observations. A suppressed rate is not zero.
    const baselineResponse=await fetch(config.url+'/rest/v1/rpc/operator_discovery_kpi_baseline',{
-    method:'POST',headers:{apikey:config.publishableKey,authorization:'Bearer '+session.accessToken,'content-type':'application/json'},body:'{}',cache:'no-store'
+    method:'POST',headers:{apikey:config.publishableKey,authorization:'Bearer '+session.accessToken,'content-type':'application/json'},
+    body:JSON.stringify({p_since:new Date(Date.now()-21*24*60*60*1000).toISOString()}),cache:'no-store'
    });
    if(!baselineResponse.ok){const hint=document.createElement('p');hint.textContent='전환 기준선은 아직 사용할 수 없습니다. 데이터베이스 배포 상태를 확인해주세요.';output.append(hint);return}
    const baselines=await baselineResponse.json();
