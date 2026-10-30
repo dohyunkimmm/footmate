@@ -86,6 +86,19 @@ assert.ok(matchUrl.searchParams.get('starts_at').startsWith('gt.'));
 assert.ok(matchUrl.searchParams.get('select').includes('match_slots(position,capacity_total,joined_count,remaining_spots)'));
 assert.ok(matchUrl.searchParams.get('select').includes('duration_minutes'));
 
+const priorCalls=calls.length;
+const history=await client.matches.listByIds({matchIds:[connectedMatch.id,'demo-1-2099-01-01',connectedMatch.id]});
+assert.equal(history.length,1);
+const historyUrl=new URL(calls.at(-1).url);
+assert.equal(historyUrl.searchParams.get('id'),`in.(${connectedMatch.id})`);
+assert.equal(historyUrl.searchParams.get('status'),null,'history lookup must include completed matches');
+assert.equal(historyUrl.searchParams.get('limit'),'1');
+assert.deepEqual(await client.matches.listByIds({matchIds:['demo-1-2099-01-01']}),[]);
+assert.equal(calls.length,priorCalls+1,'demo IDs must never reach the real backend');
+await client.participation.listMine({accessToken:'access-token'});
+const participationUrl=new URL(calls.at(-1).url);
+assert.ok(participationUrl.searchParams.get('select').includes('checked_in_at'));
+
 const normalized=normalizeBetaMatch(connectedMatch);
 assert.equal(normalized.source,'connected-beta');
 assert.equal(normalized.place,'영통 풋살장');
