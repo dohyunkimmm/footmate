@@ -63,6 +63,30 @@ const sections = [
   const toc=document.querySelector('.toc'),track=document.querySelector('.track');
   toc.innerHTML=sections.map((s,i)=>`<a class="toc-item" href="#section-${String(i+1).padStart(2,'0')}" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></a>`).join('');
   track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-labelledby="heading-${i}"><header class="section-head"><span class="eyebrow">${String(i+1).padStart(2,'0')} / ${s.name}</span><${i===0?'h1':'h2'} class="section-title" id="heading-${i}" tabindex="-1">${s.title}</${i===0?'h1':'h2'}><p class="lead">${s.lead}</p></header>${s.body}</section>`).join('');
+  // Presentation metadata keeps table widths and key model values explicit.
+  track.querySelectorAll('table').forEach(table=>{
+    const headers=[...table.querySelectorAll('thead th')].map(cell=>cell.textContent.trim());
+    const caption=table.querySelector('caption')?.textContent || '';
+    const widths=headers.length===3 ? [20,40,40] : headers.length===4 ? [22,26,26,26] : null;
+    if(caption==='사업모델 비교') widths.splice(0,4,20,23,32,25);
+    if(caption==='사업모델 선택 기준') widths.splice(0,3,26,37,37);
+    if(caption==='8주 실증 설계안') widths.splice(0,3,25,39,36);
+    if(caption==='본문·첨부 기준값') widths.splice(0,3,24,40,36);
+    if(headers[0]==='관리 항목') widths.splice(0,4,18,30,16,36);
+    if(headers.length===6) table.classList.add('numeric-table');
+    if(widths){
+      const group=document.createElement('colgroup');
+      widths.forEach(width=>{const col=document.createElement('col');col.style.width=width+'%';group.append(col);});
+      table.insertBefore(group,table.querySelector('thead'));
+    }
+    if(headers[2]?.startsWith('기준') && headers[1]?.startsWith('보수')){
+      table.classList.add('scenario-table');
+      table.querySelectorAll('tr').forEach(row=>row.children[2]?.classList.add('baseline-cell'));
+    }
+    table.querySelectorAll('tbody tr').forEach(row=>{
+      if(['월 완료 예약 · 최종 반올림','예약당 공헌이익','현금 기준 손익','창업자 노동비용 포함'].includes(row.firstElementChild?.textContent.trim())) row.classList.add('key-result');
+    });
+  });
   // Keep one document heading and a consistent section/subheading hierarchy.
   track.querySelectorAll('.slide:not(:first-child) .story-card h2,.slide:not(:first-child) .block-title').forEach(heading=>{
     const subheading=document.createElement('h3');subheading.className=heading.className;
