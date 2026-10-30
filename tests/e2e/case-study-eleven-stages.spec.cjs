@@ -47,18 +47,22 @@ test('case study distinguishes implementation evidence from proposed business re
  for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
  await expect(page.locator('#section-08')).toContainText('계획이며 과거 수행 실적이 아니다');
  await expect(page.locator('#section-01')).toContainText('담당 범위 · 김도현');
- await expect(page.locator('#section-06')).toContainText('구현·검사·추가 과제');
- await expect(page.locator('#section-07 .transaction-flow')).toContainText('같은 트랜잭션');
+ await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
+ await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
+ await expect(page.locator('#section-06')).toContainText('가상 데이터');
+ await expect(page.locator('#section-06')).toContainText('실제 서버의 동시 요청 처리는 별도 검증');
+ await expect(page.locator('#section-07 .transaction-flow')).toContainText('정원 변경까지 한 번에 처리');
  await expect(page.locator('#section-08')).toContainText('관측 완료자만 분모 포함');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
- await expect(page.locator('#section-09')).toContainText('본문·첨부 기준값');
- await expect(page.locator('#section-09')).toContainText('자동 재검사 수식이 아니다');
+ await expect(page.locator('#section-09')).toContainText('발표자료·손익 모형 보기');
+ await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
+ await expect(page.locator('#section-09 .table-wrap')).toHaveCount(0);
  for(const id of ['#section-01','#section-04','#section-05','#section-09']){
   await expect(page.locator(id)).toContainText('626건');
-  await expect(page.locator(id)).toContainText('−387,160원');
+  if(id!=='#section-04')await expect(page.locator(id)).toContainText('−387,160원');
  }
- await expect(page.locator('#section-04 details').first()).toContainText('단순 모델은 최종 투자 판단에 사용하지 않는다');
+ await expect(page.locator('#section-04')).not.toContainText(/이전 단순|기존 1,169건/);
 });
 test('200 percent text retains the full report without horizontal page overflow',async({page})=>{
  await page.setViewportSize({width:1920,height:1080});await page.goto('/');
@@ -139,6 +143,20 @@ test('investment evidence exposes budget scope and separates missing data from u
  await expect(page.locator('#section-08')).toContainText('8,310,000원');
  await expect(page.locator('#section-08')).toContainText('취소 전·전체 모집 채널 합산');
  await expect(page.locator('#section-08')).toContainText('자료 부족');await expect(page.locator('#section-08')).toContainText('관측 미완료');
- await expect(page.locator('#section-09')).toContainText('원본에는 반영되지 않았으며');
  const scan=await new AxeBuilder({page}).include('#section-05').include('#section-06').include('#section-08').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
+});
+
+
+
+test('implementation decisions stay readable inside the case study',async({page},testInfo)=>{
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#section-06');
+ const detail=page.locator('#section-06 details').filter({has:page.getByText('참가·정원 관리의 설계 이유',{exact:true})});await detail.locator('summary').click();
+ for(const width of [390,1440]){
+  await page.setViewportSize({width,height:1080});
+  await testInfo.attach('inline-evidence-'+width,{body:await page.locator('#section-06 .table-wrap').filter({has:page.getByText('구현·검증 요약',{exact:true})}).screenshot({animations:'disabled'}),contentType:'image/png'});
+  await testInfo.attach('inline-decision-'+width,{body:await detail.screenshot({animations:'disabled'}),contentType:'image/png'});
+  expect(await page.locator('#section-06').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
+ }
+ await expect(detail).toContainText('마지막 자리에 요청이 몰리거나');
+ await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
 });
