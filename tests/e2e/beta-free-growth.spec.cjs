@@ -102,3 +102,24 @@ test('waitlist uses the selected recommendation position instead of an older pro
  await page.getByRole('button',{name:'대기 신청'}).click();
  await expect.poll(()=>backend.lastWaitlistPosition()).toBe('GK');
 });
+
+test('authenticated recommendation conditions survive another browser-local reset',async({page})=>{
+ await install(page);await mock(page);
+ let saved=null;
+ await page.route(origin+'/rest/v1/beta_user_preferences**',route=>{
+  const request=route.request();
+  if(request.method()==='POST'){saved=request.postDataJSON();return fulfill(route,null,201)}
+  return fulfill(route,saved?[saved]:[]);
+ });
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
+ await page.getByRole('button',{name:'다음',exact:true}).click();
+ await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'GK · 골키퍼',exact:true}).check();
+ await page.getByRole('button',{name:'추천 경기 보기'}).click();
+ await expect.poll(()=>saved?.preferences?.position).toBe('GK');
+ await expect.poll(()=>page.evaluate(()=>sessionStorage.getItem('footmate:beta:preferences-dirty:v1'))).toBeNull();
+ await page.evaluate(()=>localStorage.removeItem('footmate:beta:preferences:v1'));
+ await page.reload();
+ await expect(page.locator('.fm-beta-preferences-summary')).toContainText('수원 · 영통');
+ await expect(page.locator('.fm-beta-preferences-summary')).toContainText('GK');
+});
