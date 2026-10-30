@@ -48,3 +48,13 @@ export function joinDemoMatch(userId,matchId,position){
 }
 export function cancelDemoMatch(userId,matchId){localStorage.setItem(KEY,JSON.stringify(read().map(p=>p.user_id===userId&&p.match_id===matchId?{...p,status:'canceled'}:p)));window.dispatchEvent(new Event('footmate:beta:demo-changed'))}
 
+
+// Called only after confirmed server-side account deletion; other users' local previews stay intact.
+export function clearDemoParticipations(userId){
+ if(!userId)return;
+ const rows=read();
+ const next=rows.filter(p=>p.user_id!==userId);
+ if(next.length===rows.length)return;
+ localStorage.setItem(KEY,JSON.stringify(next));
+ window.dispatchEvent(new Event('footmate:beta:demo-changed'));
+}

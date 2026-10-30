@@ -115,9 +115,17 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await page.locator('[data-action="open-account"]').click();
   await page.getByRole('button',{name:'설정',exact:true}).click();
   await page.getByText('개인정보 안내',{exact:true}).click();
-  await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
+  await expect(page.getByText('저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태 · 로그인 중 선택한 추천 조건. 결제 정보와 메시지 내용은 저장하지 않습니다.')).toBeVisible();
   await expect(page.getByRole('button',{name:'계정·참가 데이터 삭제'})).toBeVisible();
 
+  await page.evaluate(({userId})=>{
+    const key='footmate:beta:demo-participations:v1';
+    localStorage.setItem(key,JSON.stringify([
+      {user_id:userId,match_id:'demo-1-2099-01-01',status:'confirmed'},
+      {user_id:'33333333-3333-4333-8333-333333333333',match_id:'demo-2-2099-01-01',status:'confirmed'}
+    ]));
+    localStorage.setItem('footmate:beta:reactions:v1:'+userId+':demo','[]');
+  },{userId});
   let deletionDialog=0;
   page.on('dialog',async dialog=>{
     deletionDialog+=1;
@@ -129,6 +137,10 @@ test('closed beta enforces signup baseline and deletes account with explicit con
   await expect(page.getByText('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.')).toBeVisible();
   await expect(page.locator('[data-action="open-account"]')).toHaveText('로그인');
   expect(backend.isDeleted()).toBe(true);
+  const demoAfter=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:demo-participations:v1')||'[]'));
+  expect(demoAfter).toHaveLength(1);
+  expect(demoAfter[0].user_id).toBe('33333333-3333-4333-8333-333333333333');
+  expect(await page.evaluate(userId=>localStorage.getItem('footmate:beta:reactions:v1:'+userId+':demo'),userId)).toBeNull();
   expect(await page.evaluate(()=>localStorage.getItem('footmate:beta:auth:v1'))).toBeNull();
   expect(await serious(page)).toEqual([]);
 });
@@ -955,4 +967,57 @@ test('discovery qa followup keeps reaction rows and reset controls stable',async
  await expect(page.locator('[data-action="recommendation-reaction"][aria-pressed="true"]')).toHaveCount(0);
  await page.screenshot({path:testInfo.outputPath('reactions-cleared-430.png')});
  expect(await serious(page)).toEqual([]);
+});
+
+test('demo recommendation preview survives an unavailable backend config',async({page})=>{
+  await page.addInitScript(()=>sessionStorage.setItem('footmate:beta:entered:v1','1'));
+  await page.route('**/api/beta-config',route=>fulfill(route,{connected:false,code:'BETA_BACKEND_NOT_CONFIGURED'},503));
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.locator('.fm-beta-match-cover small')).toHaveText('데모 경기');
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByText('로그인 연결을 사용할 수 없어요.',{exact:false})).toBeVisible();
+});
+
+test('selected demo match stays available after sign-in even when live matches exist',async({page})=>{
+  const backend=await mockBackend(page,{preferences:false});
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.route(origin+'/auth/v1/settings',route=>fulfill(route,{external:{google:true,kakao:true}}));
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+  expect(selected).toMatch(/^demo-/);
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.waitForURL('**/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',selected);
+  expect(backend.isJoined()).toBe(false);
+  await page.getByRole('button',{name:'MF로 참가'}).click();
+  await expect(page.getByText('MF 데모 참가를 완료했어요.')).toBeVisible();
+  expect(backend.isJoined()).toBe(false);
+});
+
+test('new live venue region appears in the first-step location choices',async({page})=>{
+  await mockBackend(page,{preferences:false});
+  await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[{...baseMatch,id:'77777777-7777-4777-8777-777777777777',title:'송파 저녁 풋살',region:'서울 · 송파',area_label:'송파'}]));
+  await page.goto('/beta',{waitUntil:'domcontentloaded'});
+  await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
+  await expect(page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'서울 · 송파',exact:true})).toBeVisible();
+  await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'서울 · 송파',exact:true}).check();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
 });

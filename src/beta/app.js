@@ -2,7 +2,7 @@ import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {personalizeRecommendations,normalizeReactions,chooseOpeningVariant} from './domain/discovery-followup.js';
 import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus} from './discovery-transport.js';
 import {matchesRecommendationConditions,pickUnseenRecommendation} from './domain/recommendation-discovery.js';
-import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch} from './demo-catalog.js';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
@@ -22,6 +22,7 @@ if(root){
   let profile=null;
   let matches=[];
   let participations=[];
+  let participationMatchHistory=[];
   let matchesError=null;
   let busy=false;
   let notice=null;
@@ -91,7 +92,7 @@ if(root){
     user=null;
     profile=null;serverReactions=[];closeDetail();
     void configureDiscoveryTransport(null,'','');
-    participations=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
+    participations=[];participationMatchHistory=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
   }
 
   function formatStart(value){
@@ -140,7 +141,7 @@ if(root){
           <label class="fm-beta-field"><span>이메일</span><input name="email" type="email" autocomplete="email" required placeholder="이메일" value="${esc(localStorage.getItem('footmate:beta:remember-email:v1')||'')}"></label>
           <label class="fm-beta-field"><span>비밀번호</span><input name="password" type="password" autocomplete="${signup?'new-password':'current-password'}" ${signup?`minlength="${BETA_SIGNUP_PASSWORD_MIN_LENGTH}"`:''} required placeholder="${signup?`${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상`:'비밀번호'}"></label>
           ${signup?`<p class="fm-beta-form-hint" id="beta-password-hint">비밀번호는 최소 ${BETA_SIGNUP_PASSWORD_MIN_LENGTH}자 이상입니다. 가입 후 이메일 인증이 필요할 수 있습니다.</p>
-          <details class="fm-beta-data-details"><summary>가입 전 데이터 이용 안내</summary><p>이메일과 암호화된 로그인 정보, 선택한 이름과 경기·포지션·참가 기록이 실제 서버 계정과 연결됩니다. 결제는 연결하지 않았습니다.</p><p><a href="/beta-data-notice.html" target="_blank" rel="noopener noreferrer">Beta 데이터 이용 안내 전문 보기</a></p></details>
+          <details class="fm-beta-data-details"><summary>가입 전 데이터 이용 안내</summary><p>이메일과 암호화된 로그인 정보, 선택한 이름·경기·포지션·참가 기록 및 로그인 중 고른 추천 조건이 실제 서버 계정과 연결됩니다. 결제는 연결하지 않았습니다.</p><p><a href="/beta-data-notice.html" target="_blank" rel="noopener noreferrer">Beta 데이터 이용 안내 전문 보기</a></p></details>
           <label class="fm-beta-consent"><input type="checkbox" name="dataNoticeAcknowledged" required> Beta의 실제 계정·참가 정보 처리 안내를 확인했습니다.</label>`:''}
           ${!signup?`<label class="fm-beta-remember-email"><input name="rememberEmail" type="checkbox" ${localStorage.getItem('footmate:beta:remember-email:v1')?'checked':''}><span>아이디 저장</span></label>`:''}
           <button class="fm-beta-button fm-beta-button--primary" type="submit" ${busy?'disabled':''}>${busy?'<span class="fm-beta-spinner"></span>처리 중':signup?'가입하기':'로그인'}</button>
@@ -159,7 +160,7 @@ if(root){
         <label class="fm-beta-field"><span>선호 포지션</span><select name="position"><option value="">선택해주세요</option>${BETA_MATCH_POSITIONS.map(position=>`<option value="${position}" ${p.position===position?'selected':''}>${POSITION_LABELS[position]}</option>`).join('')}</select></label>
         <label class="fm-beta-field"><span>체감 레벨</span><select name="level"><option value="">선택해주세요</option>${LEVELS.map(level=>`<option value="${level}" ${p.level===level?'selected':''}>${level}</option>`).join('')}</select></label>
         <button class="fm-beta-button" type="submit" ${busy?'disabled':''}>프로필 저장</button>
-      </form><details class="fm-beta-data-details"><summary>추천 개선 통계 참여 · 선택</summary>${discoveryTransportStatus().withdrawalPending?'<p role="status">이 기기의 수집은 중지되어 있어요. 서버 기록 삭제는 아직 확인되지 않았어요. 해제를 재시도해주세요.</p>':''}<p>로그인 후 실제 경기의 추천·상세·참가 흐름을 서버에 기록해요. 이메일·조건 원문은 보내지 않아요. 데모는 제외하며 참여 해제 시 서버 탐색 기록을 삭제해요.</p><button class="fm-beta-button" type="button" data-action="discovery-consent" ${busy?'disabled':''}>${discoveryTransportStatus().withdrawalPending?'서버 통계 해제 재시도':discoveryTransportStatus().enabled?'통계 참여 해제':'통계 참여하기'}</button>${discoveryTransportStatus().serverEnabled&&!discoveryTransportStatus().enabled&&!discoveryTransportStatus().withdrawalPending?'<p>이 브라우저의 수집은 중지되어 있어요. 서버의 통계 참여는 켜져 있어요. 이 브라우저에서 참여하거나 서버 참여를 해제할 수 있어요.</p><button class="fm-beta-button" type="button" data-action="discovery-withdraw">서버 통계 참여 해제</button>':''}</details><details class="fm-beta-data-details"><summary>개인정보 안내</summary><p>저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태. 결제 정보와 메시지 내용은 저장하지 않습니다.</p><a href="/beta-data-notice.html">자세히 보기</a></details>
+      </form><details class="fm-beta-data-details"><summary>추천 개선 통계 참여 · 선택</summary>${discoveryTransportStatus().withdrawalPending?'<p role="status">이 기기의 수집은 중지되어 있어요. 서버 기록 삭제는 아직 확인되지 않았어요. 해제를 재시도해주세요.</p>':''}<p>로그인 후 실제 경기의 추천·상세·참가 흐름을 서버에 기록해요. 이메일·조건 원문은 보내지 않아요. 데모는 제외하며 참여 해제 시 서버 탐색 기록을 삭제해요.</p><button class="fm-beta-button" type="button" data-action="discovery-consent" ${busy?'disabled':''}>${discoveryTransportStatus().withdrawalPending?'서버 통계 해제 재시도':discoveryTransportStatus().enabled?'통계 참여 해제':'통계 참여하기'}</button>${discoveryTransportStatus().serverEnabled&&!discoveryTransportStatus().enabled&&!discoveryTransportStatus().withdrawalPending?'<p>이 브라우저의 수집은 중지되어 있어요. 서버의 통계 참여는 켜져 있어요. 이 브라우저에서 참여하거나 서버 참여를 해제할 수 있어요.</p><button class="fm-beta-button" type="button" data-action="discovery-withdraw">서버 통계 참여 해제</button>':''}</details><details class="fm-beta-data-details"><summary>개인정보 안내</summary><p>저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태 · 로그인 중 선택한 추천 조건. 결제 정보와 메시지 내용은 저장하지 않습니다.</p><a href="/beta-data-notice.html">자세히 보기</a></details>
       
       <div class="fm-beta-actions" style="margin-top:12px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="delete-account" ${busy?'disabled':''}>계정·참가 데이터 삭제</button></div>
     </div>`;
@@ -167,14 +168,18 @@ if(root){
 
   function renderParticipation(){
     if(!session||!user)return '';
-    const confirmed=participations.filter(item=>item.status==='confirmed');
+    const confirmed=participations.filter(item=>{
+      if(item.status!=='confirmed')return false;
+      const match=matches.find(candidate=>candidate.id===item.match_id)||participationMatchHistory.find(candidate=>candidate.id===item.match_id);
+      return Boolean(match&&['open','full'].includes(match.status)&&new Date(match.startsAt).getTime()>Date.now());
+    });
     joinedPage=Math.min(joinedPage,Math.max(0,confirmed.length-1));
     return `<div class="fm-beta-panel">
       <div class="fm-beta-panel-head"><div><h3>내 경기</h3></div></div>
       ${confirmed.length?confirmed.slice(joinedPage,joinedPage+1).map(item=>{
-        const match=matches.find(candidate=>candidate.id===item.match_id);
+        const match=matches.find(candidate=>candidate.id===item.match_id)||participationMatchHistory.find(candidate=>candidate.id===item.match_id);
         return `<div class="fm-beta-participation">${item.is_demo?'<small class="fm-beta-demo-record">데모 경기</small>':''}<strong>${esc(match?.title||'참가 경기')} · ${esc(item.position||'')}</strong><p>${match?`${esc(formatStart(match.startsAt))} · ${esc(match.place)}`:'경기 정보를 불러오는 중입니다.'}</p>${match?attendanceLinks(match,true):''}<div class="fm-beta-actions" style="margin-top:10px"><button class="fm-beta-button fm-beta-button--danger" type="button" data-action="cancel" data-match-id="${esc(item.match_id)}" ${busy?'disabled':''}>참가 취소</button></div></div>`;
-      }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>경기를 고른 뒤 포지션 자리까지 확인하고 참가할 수 있어요.</div>`}
+      }).join(''):`<div class="fm-beta-empty"><strong>아직 참가한 경기가 없습니다.</strong>참석했던 경기는 내 경기의 참석 이력에서 확인할 수 있어요.</div>`}
       ${confirmed.length>1?`<nav class="fm-beta-demo-pager" aria-label="내 경기 페이지"><button class="fm-beta-button" type="button" data-action="joined-prev" ${joinedPage===0?'disabled':''}>이전</button><span>${joinedPage+1} / ${confirmed.length}</span><button class="fm-beta-button" type="button" data-action="joined-next" ${joinedPage===confirmed.length-1?'disabled':''}>다음</button></nav>`:''}
     </div>`;
   }
@@ -304,8 +309,8 @@ if(root){
     root.dataset.betaAuthOpen=String(authOpen);
     root.dataset.betaGuest=String(!session||!user);
     root.dataset.betaRecommendationsReady=String(recommendedIds!==null);
-    root.dataset.betaState=backendState==='error'?'error':backendState==='connected'?'ready':'booting';
-    const connected=backendState==='connected';
+    root.dataset.betaState=backendState==='error'?'error':['connected','preview'].includes(backendState)?'ready':'booting';
+    const connected=backendState==='connected'||backendState==='preview';
     root.dataset.betaOpening=String(openingOpen);
     root.dataset.betaDetail=String(Boolean(detailMatchId&&!authOpen&&view==='home'));
     if(openingOpen){root.innerHTML=renderOpening();return}
@@ -323,13 +328,15 @@ if(root){
   }
 
   async function loadMatches(){
-    if(!client)return;
+    if(!client&&!isDemoEntry)return;
     try{
       matchesError=null;
       const rows=isDemoEntry?demoCatalog(user?.id):await client.matches.list({limit:50});
       const futsal=(Array.isArray(rows)?rows:[]).filter(isFutsalMatch);
       const live=futsal.some(m=>['open','full'].includes(m.status)&&new Date(m.starts_at)>new Date());
-      matches=normalizeBetaMatches(!isDemoEntry&&session&&user&&!live?[...futsal,...demoCatalog(user.id)]:futsal);
+      const savedDemoIds=session&&user?new Set([pendingMatchId,...demoParticipations(user.id).filter(p=>p.status==='confirmed').map(p=>p.match_id)].filter(Boolean)):new Set();
+      const examples=!isDemoEntry&&session&&user?demoCatalog(user.id).filter(m=>!live||savedDemoIds.has(m.id)):[];
+      matches=normalizeBetaMatches([...futsal,...examples]);
     }catch(error){
       matches=[];
       matchesError=friendlyError(error);
@@ -345,8 +352,12 @@ if(root){
       isDemoEntry?Promise.resolve([]):client.participation.listMine({accessToken:session.accessToken})
     ]);
     profile=nextProfile;
+    const privateRows=Array.isArray(nextParticipations)?nextParticipations:[];
+    const missingIds=[...new Set(privateRows.filter(p=>p.status==='confirmed'||p.checked_in_at).map(p=>p.match_id).filter(id=>id&&!matches.some(m=>m.id===id)))];
+    const historyRows=!isDemoEntry&&missingIds.length?await client.matches.listByIds({matchIds:missingIds}).catch(()=>[]):[];
+    participationMatchHistory=normalizeBetaMatches(historyRows);
     await configureDiscoveryTransport(analyticsConfig,user.id,session.accessToken);
-    participations=[...(Array.isArray(nextParticipations)?nextParticipations:[]),...demoParticipations(user.id)];
+    participations=[...privateRows,...demoParticipations(user.id)];
   }
 
   async function restoreAuth(){
@@ -392,8 +403,17 @@ if(root){
       }
       setNotice(null);
     }catch(error){
-      backendState='error';
-      setNotice(friendlyError(error),'error');
+      if(isDemoEntry){
+        client=null;session=null;user=null;
+        matches=normalizeBetaMatches(demoCatalog());
+        matchesError=null;
+        lastSyncedAt=Date.now();
+        backendState='preview';
+        setNotice('예시 경기는 볼 수 있지만, 로그인과 참가에는 서버 연결이 필요해요.','info');
+      }else{
+        backendState='error';
+        setNotice(friendlyError(error),'error');
+      }
     }
     render();
     emitDiscoveryMeasurement('entry_viewed',{durationMs:Date.now()-entryStartedAt,isDemo:isDemoEntry||matches.some(m=>m.isDemo)});
@@ -407,6 +427,7 @@ if(root){
     if(form.dataset.form==='auth'){
       run(async()=>{
         setNotice(null);
+        if(!client)throw new Error('로그인 연결을 사용할 수 없어요. 서버 연결 후 다시 시도해주세요.');
         const email=String(data.get('email')||'').trim();
         const password=String(data.get('password')||'');
         if(authMode==='signin'){if(data.get('rememberEmail')==='on')localStorage.setItem('footmate:beta:remember-email:v1',email);else localStorage.removeItem('footmate:beta:remember-email:v1')}
@@ -514,9 +535,23 @@ if(root){
       const typed=window.prompt('마지막 확인: 삭제하려면 아래 칸에 정확히 “계정 삭제”를 입력하세요. 취소하면 아무 작업도 하지 않습니다.','');
       if(typed!=='계정 삭제'){setNotice('계정 삭제를 취소했습니다. 데이터는 변경되지 않았어요.');return;}
       run(async()=>{
+        const deletedUserId=user.id;
         await client.auth.deleteAccount({accessToken:session.accessToken});
+        let localCleanupFailed=false;
+        try{
+          clearDemoParticipations(deletedUserId);
+          localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':demo');
+          localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':live');
+          if(localStorage.getItem('footmate:beta:preferences-owner:v1')===deletedUserId){
+            localStorage.removeItem('footmate:beta:preferences-owner:v1');
+            localStorage.removeItem('footmate:beta:preferences:v1');
+            localStorage.removeItem('footmate:beta:ranking:v1');
+          }
+          sessionStorage.removeItem('footmate:beta:preferences-dirty:v1');
+          sessionStorage.removeItem('footmate:beta:discovery-events:v1');
+        }catch{localCleanupFailed=true}
         clearSession();
-        setNotice('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.','success');
+        setNotice(localCleanupFailed?'서버 계정은 삭제했지만 이 기기의 데모 기록은 일부 남아 있을 수 있습니다. 브라우저 저장 공간을 확인해주세요.':'계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.',localCleanupFailed?'error':'success');
       });return;
     }
     if(action==='join'){

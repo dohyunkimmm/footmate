@@ -26,7 +26,7 @@ function rows(){return [
 ]}
 
 async function mock(page){
- let queued=false,submitted=false;
+ let queued=false,submitted=false,lastWaitlistPosition='';
  await page.route('**/api/beta-config',r=>fulfill(r,{connected:true,url:origin,publishableKey:'public-key'}));
  await page.route('**/api/ai-match-assistant',r=>fulfill(r,{rankedMatchIds:[fullMatch],mode:'connected-ai',model:'test-model',result:{intent:'search',region:'수원 · 영통',position:'MF',level:'중급',maxPrice:null,maxDistanceMin:null,afterTime:'19:00',reply:'영통 MF 중급 저녁 조건으로 찾았어요.'}}));
  await page.route(`${origin}/**`,async route=>{
@@ -39,13 +39,13 @@ async function mock(page){
   if(url.pathname==='/rest/v1/beta_notifications')return fulfill(route,[]);
   if(url.pathname==='/rest/v1/beta_waitlist')return fulfill(route,queued?[{id:'w1',match_id:fullMatch,user_id:userId,position:'MF',status:'queued',created_at:'2099-01-01T00:00:00Z'}]:[]);
   if(url.pathname==='/rest/v1/beta_match_feedback')return fulfill(route,submitted?[{id:'f1',match_id:completedMatch,user_id:userId,difficulty:3,satisfaction:4,repeat_intent:true}]:[]);
-  if(url.pathname==='/rest/v1/rpc/join_beta_waitlist'){queued=true;return fulfill(route,[{waitlist_id:'w1',waitlist_status:'queued'}])}
+  if(url.pathname==='/rest/v1/rpc/join_beta_waitlist'){lastWaitlistPosition=req.postDataJSON()?.p_position;queued=true;return fulfill(route,[{waitlist_id:'w1',waitlist_status:'queued'}])}
   if(url.pathname==='/rest/v1/rpc/cancel_beta_waitlist'){queued=false;return fulfill(route,[{waitlist_id:'w1',waitlist_status:'canceled'}])}
   if(url.pathname==='/rest/v1/rpc/submit_beta_match_feedback'){submitted=true;return fulfill(route,{id:'f1',match_id:completedMatch,difficulty:3,satisfaction:4,repeat_intent:true})}
   if(url.pathname==='/rest/v1/rpc/check_in_participation')return fulfill(route,[]);
   return fulfill(route,[]);
  });
- return {queued:()=>queued,submitted:()=>submitted};
+ return {queued:()=>queued,submitted:()=>submitted,lastWaitlistPosition:()=>lastWaitlistPosition};
 }
 
 test('live beta growth surfaces rank real matches, waitlist and collect feedback',async({page})=>{
@@ -60,6 +60,8 @@ test('live beta growth surfaces rank real matches, waitlist and collect feedback
  await expect(page.locator('.fm-beta-match h3',{hasText:'영통 마감 경기'})).toHaveCount(0);
  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'내 경기',exact:true}).click();
+ await expect(page.getByText('아직 참가한 경기가 없습니다.')).toBeVisible();
+ await expect(page.getByRole('button',{name:'참가 취소'})).toHaveCount(0);
  await page.getByRole('button',{name:'대기',exact:true}).click();
  await page.getByRole('button',{name:'대기 신청'}).click();
  await expect.poll(()=>backend.queued()).toBe(true);
@@ -73,3 +75,81 @@ test('live beta growth surfaces rank real matches, waitlist and collect feedback
  expect(result.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([]);
 });
 
+
+test('beta empty waitlist and attended-history tabs show actionable feedback',async({page})=>{
+ await install(page);await mock(page);
+ await page.route('**/rest/v1/matches?**',route=>fulfill(route,[]));
+ await page.route('**/rest/v1/participations?**',route=>fulfill(route,[]));
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 경기',exact:true}).click();
+ await page.getByRole('button',{name:'대기',exact:true}).click();
+ await expect(page.getByText('현재 대기 대상 경기가 없습니다.',{exact:false})).toBeVisible();
+ await expect(page.getByText('아직 체크인 완료된 실제 경기 이력이 없습니다.',{exact:false})).toBeHidden();
+ await page.getByRole('button',{name:'참석 이력',exact:true}).click();
+ await expect(page.getByText('아직 체크인 완료된 실제 경기 이력이 없습니다.',{exact:false})).toBeVisible();
+ await expect(page.getByText('현재 대기 대상 경기가 없습니다.',{exact:false})).toBeHidden();
+ await page.getByRole('button',{name:'추천 경기 보기'}).click();
+ await expect(page.getByRole('button',{name:'추천',exact:true})).toHaveAttribute('aria-current','page');
+});
+
+test('waitlist uses the selected recommendation position instead of an older profile position',async({page})=>{
+ await install(page);const backend=await mock(page);
+ await page.addInitScript(()=>localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'',level:'',position:'GK',afterTime:'',beforeTime:'',dateWindow:''})));
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 경기',exact:true}).click();
+ await page.getByRole('button',{name:'대기',exact:true}).click();
+ await expect(page.locator('[data-beta-growth-panel="waitlist"] .fm-beta-growth-row')).toContainText('GK · 골키퍼');
+ await page.getByRole('button',{name:'대기 신청'}).click();
+ await expect.poll(()=>backend.lastWaitlistPosition()).toBe('GK');
+});
+
+test('authenticated recommendation conditions survive another browser-local reset',async({page})=>{
+ await install(page);await mock(page);
+ // The shared mock refreshes into a placeholder token; preference sync requires a
+ // real JWT-shaped access token with the signed-in subject claim.
+ const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
+ await page.route(origin+'/auth/v1/token?**',route=>fulfill(route,{
+  access_token:token,refresh_token:'refresh2',expires_in:3600,
+  user:{id:userId,email:'beta@example.com'}
+ }));
+ let saved=null;
+ await page.route(origin+'/rest/v1/beta_user_preferences**',route=>{
+  const request=route.request();
+  if(request.method()==='POST'){saved=request.postDataJSON();return fulfill(route,null,201)}
+  return fulfill(route,saved?[saved]:[]);
+ });
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
+ await page.getByRole('button',{name:'다음',exact:true}).click();
+ await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'GK · 골키퍼',exact:true}).check();
+ await page.getByRole('button',{name:'추천 경기 보기'}).click();
+ await expect.poll(()=>saved?.preferences?.position).toBe('GK');
+ await expect.poll(()=>page.evaluate(()=>sessionStorage.getItem('footmate:beta:preferences-dirty:v1'))).toBeNull();
+ await page.evaluate(()=>localStorage.removeItem('footmate:beta:preferences:v1'));
+ await page.reload();
+ await expect(page.locator('.fm-beta-preferences-summary')).toContainText('수원 · 영통');
+ await expect(page.locator('.fm-beta-preferences-summary')).toContainText('GK');
+});
+
+test('switching accounts never uploads another account\'s local recommendation filters',async({page})=>{
+ await install(page);await mock(page);
+ const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
+ await page.route(origin+'/auth/v1/token?**',route=>fulfill(route,{
+  access_token:token,refresh_token:'refresh2',expires_in:3600,user:{id:userId,email:'beta@example.com'}
+ }));
+ await page.addInitScript(()=>{
+  localStorage.setItem('footmate:beta:preferences-owner:v1','33333333-3333-4333-8333-333333333333');
+  localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'수원 · 영통',level:'',position:'GK',afterTime:'',beforeTime:'',dateWindow:''}));
+  sessionStorage.setItem('footmate:beta:preferences-dirty:v1','1');
+ });
+ let posted=0;
+ await page.route(origin+'/rest/v1/beta_user_preferences**',route=>{
+  if(route.request().method()==='POST'){posted++;return fulfill(route,null,201)}
+  return fulfill(route,[{preferences:{sport:'futsal',region:'수원 · 영통',level:'',position:'MF',afterTime:'',beforeTime:'',dateWindow:''}}]);
+ });
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await expect(page.locator('.fm-beta-preferences-summary')).toContainText('MF');
+ // Ownership is defined by the remote preference and absence of cross-account writes;
+ // a local pending flag may be recreated during bootstrapping.
+ expect(posted).toBe(0);
+});
