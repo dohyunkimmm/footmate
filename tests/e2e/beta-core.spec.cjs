@@ -956,3 +956,44 @@ test('discovery qa followup keeps reaction rows and reset controls stable',async
  await page.screenshot({path:testInfo.outputPath('reactions-cleared-430.png')});
  expect(await serious(page)).toEqual([]);
 });
+
+test('demo recommendation preview survives an unavailable backend config',async({page})=>{
+  await page.addInitScript(()=>sessionStorage.setItem('footmate:beta:entered:v1','1'));
+  await page.route('**/api/beta-config',route=>fulfill(route,{connected:false,code:'BETA_BACKEND_NOT_CONFIGURED'},503));
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  await expect(page.locator('.fm-beta-match-cover small')).toHaveText('데모 경기');
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await expect(page.getByText('로그인 연결을 사용할 수 없어요.',{exact:false})).toBeVisible();
+});
+
+test('selected demo match stays available after sign-in even when live matches exist',async({page})=>{
+  const backend=await mockBackend(page,{preferences:false});
+  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+  await page.route(origin+'/auth/v1/settings',route=>fulfill(route,{external:{google:true,kakao:true}}));
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
+  await page.getByRole('button',{name:'추천 경기 보기'}).click();
+  const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+  expect(selected).toMatch(/^demo-/);
+  await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await page.getByLabel('이메일').fill('beta@example.com');
+  await page.getByLabel('비밀번호').fill('safe-password');
+  await page.getByRole('button',{name:'로그인',exact:true}).click();
+  await page.waitForURL('**/beta');
+  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',selected);
+  expect(backend.isJoined()).toBe(false);
+  await page.getByRole('button',{name:'MF로 참가'}).click();
+  await expect(page.getByText('MF 데모 참가를 완료했어요.')).toBeVisible();
+  expect(backend.isJoined()).toBe(false);
+});
