@@ -28,7 +28,7 @@ assert.equal(new URL(calls[1].url).searchParams.get('on_conflict'),'user_id');
 await assert.rejects(()=>client.save({userId:uid,accessToken:'signed-in',preferences:{position:'invalid'}}),/Invalid/);
 await assert.rejects(()=>client.load({userId:'demo-1',accessToken:'signed-in'}),/Authenticated/);
 
-const migration=await readFile(new URL('../../supabase/migrations/20261030024000_beta_preferences_pilot_metrics.sql',import.meta.url),'utf8');
+const migration=await readFile(new URL('../../supabase/migrations/20261030032856_beta_preferences_pilot_metrics.sql',import.meta.url),'utf8');
 for(const part of [
  'references auth.users(id) on delete cascade',
  'alter table public.beta_user_preferences enable row level security',
