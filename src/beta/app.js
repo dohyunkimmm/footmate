@@ -2,7 +2,7 @@ import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {personalizeRecommendations,normalizeReactions,chooseOpeningVariant} from './domain/discovery-followup.js';
 import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus} from './discovery-transport.js';
 import {matchesRecommendationConditions,pickUnseenRecommendation} from './domain/recommendation-discovery.js';
-import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch} from './demo-catalog.js';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
@@ -535,7 +535,13 @@ if(root){
       const typed=window.prompt('마지막 확인: 삭제하려면 아래 칸에 정확히 “계정 삭제”를 입력하세요. 취소하면 아무 작업도 하지 않습니다.','');
       if(typed!=='계정 삭제'){setNotice('계정 삭제를 취소했습니다. 데이터는 변경되지 않았어요.');return;}
       run(async()=>{
+        const deletedUserId=user.id;
         await client.auth.deleteAccount({accessToken:session.accessToken});
+        try{
+          clearDemoParticipations(deletedUserId);
+          localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':demo');
+          localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':live');
+        }catch{setNotice('서버 계정은 삭제됐으나 이 기기의 데모 기록은 삭제하지 못했습니다. 브라우저 저장 공간을 확인해주세요.','error')}
         clearSession();
         setNotice('계정과 연결된 Beta 개인정보·참가 기록을 삭제했습니다.','success');
       });return;
