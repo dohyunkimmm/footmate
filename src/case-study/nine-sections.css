@@ -19,7 +19,7 @@ details{border-block:1px solid var(--line);margin:24px 0}summary{padding:16px 4p
 
 
 /* Typography QA: keep Korean words and amount/unit tokens intact where they fit. */
-.slide :is(p,li,th,td,caption,summary){word-break:keep-all;overflow-wrap:anywhere}
+.slide :is(p,li,th,td,caption,summary),.cs-button{word-break:keep-all;overflow-wrap:anywhere}
 @media(max-width:800px){
  .cs-button{font-size:14px}
  tbody td:before{font-size:13px}
