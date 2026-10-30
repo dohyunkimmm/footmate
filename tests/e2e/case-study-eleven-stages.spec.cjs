@@ -38,13 +38,24 @@ test('scroll position, deep links and browser history work without page switchin
  await page.locator('#section-08').evaluate(n=>n.scrollIntoView());await expect(page.locator('.toc-item').nth(7)).toHaveAttribute('aria-current','location');
  await expect(page.locator('.slide[hidden]')).toHaveCount(0);
 });
-test('case study has no project biography or demo implementation narrative',async({page})=>{
+test('case study distinguishes implementation evidence from proposed business results',async({page})=>{
  await page.goto('/');
- await expect(page.locator('body')).not.toContainText(/단독|2026\.06\.08|교육과정|직접 구축|개인 프로젝트|현재 제품/);
+ await expect(page.locator('body')).not.toContainText(/2026\.06\.08|교육과정/);
  await expect(page.locator('a[href="/demo"]')).toHaveCount(1);await expect(page.locator('a[href="/demo"]')).toHaveText('Demo ↗');
  await expect(page.locator('.track a[href="/demo"]')).toHaveCount(0);
- for(const text of ['1,169건','340원','1,765건','7,648건','−202,540원'])await expect(page.locator('.track')).toContainText(text);
+ for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
  await expect(page.locator('#section-08')).toContainText('계획이며 과거 수행 실적이 아니다');
+ await expect(page.locator('#section-01')).toContainText('담당 범위 · 김도현');
+ await expect(page.locator('#section-06')).toContainText('구현·기술 검증·사업 제안의 구분');
+ await expect(page.locator('#section-07 .transaction-flow')).toContainText('같은 트랜잭션');
+ await expect(page.locator('#section-08')).toContainText('늦게 유입된 집단은 30일을 채운 뒤');
+ await expect(page.locator('#section-09')).toContainText('−1,986,980원');
+ await expect(page.locator('#section-09')).not.toContainText('−202,540원');
+ for(const id of ['#section-01','#section-04','#section-05','#section-09']){
+  await expect(page.locator(id)).toContainText('626건');
+  await expect(page.locator(id)).toContainText('−387,160원');
+ }
+ await expect(page.locator('#section-04 details').first()).toContainText('단순 모델은 최종 투자 판단에 사용하지 않는다');
 });
 test('200 percent text retains the full report without horizontal page overflow',async({page})=>{
  await page.setViewportSize({width:1920,height:1080});await page.goto('/');
