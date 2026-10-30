@@ -39,7 +39,7 @@ for(const part of [
  'perform public.require_beta_operator_aal2();',
  "c.cohort='pilot'",
  'consent.enabled',
- 'v_users>=5 and totals.d>=5',
+ 'totals.u>=5 and totals.d>=5',
  'revoke all on function public.operator_discovery_kpi_baseline(timestamptz) from public,anon'
 ])assert.ok(migration.includes(part),'missing secure contract: '+part);
 assert.ok(!migration.includes('grant select on public.discovery_events to anon'));
