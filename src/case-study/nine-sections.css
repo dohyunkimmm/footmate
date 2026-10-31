@@ -94,3 +94,10 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  .toc-item{min-height:44px;padding-block:8px}
  .toc-t{word-break:keep-all}
 }
+
+/* Editorial summaries: clear reading order without competing callout panels. */
+.reader-summary{margin:0 0 36px;padding:0 0 20px;border-bottom:1px solid var(--line);max-width:960px}
+.reader-summary h3{font-size:22px;line-height:1.5;letter-spacing:-.35px;margin:0 0 12px;color:var(--green)}
+.reader-summary p{margin:0 0 12px;line-height:1.85}
+.reader-summary p:last-child{margin-bottom:0}
+@media(max-width:800px){.reader-summary{margin-bottom:28px;padding-bottom:18px}.reader-summary h3{font-size:20px}.reader-summary p{font-size:16px}}
