@@ -127,7 +127,7 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 
 /* 2차 QA: 모바일 첫 화면을 목차보다 핵심 판단 중심으로 구성 */
 @media(max-width:800px){
- .toc{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding:0 0 8px;scroll-snap-type:x proximity;overscroll-behavior-x:contain;scrollbar-width:thin}
+ .toc{display:flex;flex-direction:row;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding:0 0 8px;scroll-snap-type:x proximity;overscroll-behavior-x:contain;scrollbar-width:thin}
  .toc-item{flex:0 0 auto;align-items:center;white-space:nowrap;word-break:keep-all;padding:10px 12px;scroll-snap-align:start}
  .toc-t{white-space:nowrap;word-break:keep-all;overflow-wrap:normal}
 }
