@@ -353,7 +353,12 @@ test('MOSIGO-style document entry, in-page PPT preview and Excel access',async({
   await expect(documents.getByRole('link',{name:'발표자료 PPT 저장'})).toHaveAttribute('download','footmate_report.pptx');
   await expect(documents.getByRole('link',{name:'분석 모델 Excel 저장'})).toHaveAttribute('download','footmate_model.xlsx');
   await expect(documents.getByRole('link',{name:'손익 모형 화면에서 보기'})).toHaveAttribute('href','/src/case-study/materials.html');
+  const details=documents.locator('.case-doc-preview');
+  await expect(details).not.toHaveAttribute('open',/.+/);
   const frame=documents.locator('.case-ppt-frame');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1');
+  await details.locator('summary').click();
+  await expect(details).toHaveAttribute('open','');
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
