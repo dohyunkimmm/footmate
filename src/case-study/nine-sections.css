@@ -203,3 +203,18 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
   .case-decision-points dd{font-size:16px}
   .case-decision-next{font-size:15px}
 }
+
+/* Explicit non-destructive section navigation and PPT preview close. */
+.reader-back{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:100%;margin:0 0 14px;padding:8px 12px;border:1px solid #7d8e82;border-radius:7px;background:#fff;color:var(--green);font-size:14px;font-weight:700;cursor:pointer}
+.reader-back:hover:not(:disabled),.mobile-reader-back:hover:not(:disabled){background:#edf3ed}
+.reader-back:focus-visible,.mobile-reader-back:focus-visible,.case-preview-close:focus-visible{outline:3px solid #326c50;outline-offset:2px}
+.reader-back:disabled,.mobile-reader-back:disabled{opacity:.48;cursor:default}
+.case-preview-actions{display:flex;justify-content:flex-end;padding:12px 18px 16px;border-top:1px solid var(--line)}
+.case-preview-close{min-height:44px;padding:9px 18px;border:1px solid #7d8e82;border-radius:7px;background:#fff;color:var(--green);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.case-preview-close:hover{background:#edf3ed}
+.mobile-reader-back{display:none}
+@media(max-width:800px){
+ .reader-back{display:none}
+ .mobile-reader-back{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:44px;min-height:44px;padding:7px 9px;border:1px solid #7d8e82;border-radius:7px;background:#fff;color:var(--green);font-size:13px;font-weight:700;cursor:pointer}
+ .case-preview-actions{padding:10px 14px 14px}
+}

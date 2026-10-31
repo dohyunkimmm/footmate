@@ -8,7 +8,7 @@ const sections = [
     "name": "추진 배경·검토 결론",
     "title": "풋살 경기 연결 사업 검토",
     "lead": "FootMate · 사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례",
-    "body": "<div class=\"decision-grid\" aria-label=\"문제·수행 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">문제</p><h2>지역 공급과 참가 수요</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. 초기에는 경기 공급·참가 완료를 검증한다.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">수행 범위</p><h2>사업·IT 기획부터 구현까지</h2><p>사업 가설·대안 비교·손익 계산, IT 요구사항·운영 정책, 웹·API 구현·배포·검사</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h2>기존 운영자 제휴 우선</h2><p>제휴 조건·참가·재참가를 먼저 검증하고, 결제·정산은 후속 투자 단계로 분리한다.</p></article></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>월 현금 기준 손익</dt><dd>약 −38.7<small>만 원</small></dd></div></dl><p class=\"kpi-note\">기준 시나리오 · 월 추정치 · 산출 근거 05</p><p class=\"case-scenario-note\">01의 지표는 공급처 5곳·수수료율 10%·플랫폼 결제비 3%를 적용한 기준 가정입니다. 05의 공급 확대 손익 계산은 수수료율 12%·결제비 0%에 추가 관리비를 반영한 별도 협상 시나리오입니다.</p><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><h2 id=\"case-documents-heading\">자료</h2><p>PPT 9장 · Excel 손익 모델</p></div><div class=\"case-file-grid\"><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">PPT</span><div><h3>사업·IT 기획</h3><p>9장</p></div></div><a href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">PPT 다운로드 ↓</a></article><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">XLSX</span><div><h3>손익 분석 모델</h3><p>수치·계산식 포함</p></div></div><a href=\"/src/case-study/downloads/footmate_model.xlsx\" download=\"footmate_model.xlsx\">Excel 다운로드 ↓</a></article></div><p class=\"case-preview-context\">PPT 미리보기는 위 사업·IT 기획 내용을 발표용 9장으로 정리한 자료입니다. 본문 분석과 동일한 내용을 다른 형식으로 보여줍니다.</p><details class=\"case-doc-preview\"><summary><span>PPT 9장 보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"FootMate PPT 슬라이드\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1\" loading=\"lazy\"></iframe></div></details></section>"
+    "body": "<div class=\"decision-grid\" aria-label=\"문제·수행 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">문제</p><h2>지역 공급과 참가 수요</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. 초기에는 경기 공급·참가 완료를 검증한다.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">수행 범위</p><h2>사업·IT 기획부터 구현까지</h2><p>사업 가설·대안 비교·손익 계산, IT 요구사항·운영 정책, 웹·API 구현·배포·검사</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h2>기존 운영자 제휴 우선</h2><p>제휴 조건·참가·재참가를 먼저 검증하고, 결제·정산은 후속 투자 단계로 분리한다.</p></article></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>월 현금 기준 손익</dt><dd>약 −38.7<small>만 원</small></dd></div></dl><p class=\"kpi-note\">기준 시나리오 · 월 추정치 · 산출 근거 05</p><p class=\"case-scenario-note\">01의 지표는 공급처 5곳·수수료율 10%·플랫폼 결제비 3%를 적용한 기준 가정입니다. 05의 공급 확대 손익 계산은 수수료율 12%·결제비 0%에 추가 관리비를 반영한 별도 협상 시나리오입니다.</p><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><h2 id=\"case-documents-heading\">자료</h2><p>PPT 9장 · Excel 손익 모델</p></div><div class=\"case-file-grid\"><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">PPT</span><div><h3>사업·IT 기획</h3><p>9장</p></div></div><a href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">PPT 다운로드 ↓</a></article><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">XLSX</span><div><h3>손익 분석 모델</h3><p>수치·계산식 포함</p></div></div><a href=\"/src/case-study/downloads/footmate_model.xlsx\" download=\"footmate_model.xlsx\">Excel 다운로드 ↓</a></article></div><p class=\"case-preview-context\">PPT 미리보기는 위 사업·IT 기획 내용을 발표용 9장으로 정리한 자료입니다. 본문 분석과 동일한 내용을 다른 형식으로 보여줍니다.</p><details class=\"case-doc-preview\"><summary><span>PPT 9장 보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"FootMate PPT 슬라이드\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1\" loading=\"lazy\"></iframe><div class=\"case-preview-actions\"><button type=\"button\" class=\"case-preview-close\">미리보기 접기</button></div></div></details></section>"
   },
   {
     "name": "시장·경쟁 분석",
@@ -61,11 +61,18 @@ const sections = [
 ];
 
   const toc=document.querySelector('.toc'),track=document.querySelector('.track');
+  const readerBack=document.createElement('button');
+  readerBack.type='button';readerBack.className='reader-back';readerBack.textContent='이전 섹션';
+  toc.before(readerBack);
   toc.innerHTML=sections.map((s,i)=>`<a class="toc-item" href="#section-${String(i+1).padStart(2,'0')}" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></a>`).join('');
   track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-labelledby="heading-${i}"><header class="section-head"><span class="eyebrow">${String(i+1).padStart(2,'0')} / ${s.name}</span><${i===0?'h1':'h2'} class="section-title" id="heading-${i}" tabindex="-1">${s.title}</${i===0?'h1':'h2'}><p class="lead">${s.lead}</p></header>${s.body}</section>`).join('');
   const onDemandPreview=track.querySelector('.case-doc-preview');
   if(onDemandPreview){
     const frame=onDemandPreview.querySelector('.case-ppt-frame');
+    onDemandPreview.querySelector('.case-preview-close')?.addEventListener('click',()=>{
+      onDemandPreview.open=false;
+      onDemandPreview.querySelector('summary').focus();
+    });
     onDemandPreview.addEventListener('toggle',()=>{
       if(onDemandPreview.open && frame?.dataset.src){
         frame.src=frame.dataset.src;
@@ -135,9 +142,9 @@ const sections = [
   const mobileReaderNav=document.createElement('nav');
   mobileReaderNav.className='mobile-reader-nav';
   mobileReaderNav.setAttribute('aria-label','현재 섹션과 목차 이동');
-  mobileReaderNav.innerHTML='<span class="mobile-reader-count">01 / 09</span><span class="mobile-reader-name">추진 배경·검토 결론</span><button type="button" class="mobile-reader-toc">목차</button>';
+  mobileReaderNav.innerHTML='<span class="mobile-reader-count">01 / 09</span><span class="mobile-reader-name">추진 배경·검토 결론</span><button type="button" class="mobile-reader-back">이전</button><button type="button" class="mobile-reader-toc">목차</button>';
   track.before(mobileReaderNav);
-  mobileReaderNav.querySelector('button').addEventListener('click',()=>{
+  mobileReaderNav.querySelector('.mobile-reader-toc').addEventListener('click',()=>{
     document.querySelector('.sidebar').scrollIntoView({behavior:'instant',block:'start'});
     (toc.querySelector('.toc-item.on')||toc.querySelector('.toc-item')).focus({preventScroll:true});
   });
@@ -189,6 +196,13 @@ const sections = [
   });
   const slides=[...track.children],links=[...toc.children];
   let current=-1,scheduled=false;
+  const mobileBack=mobileReaderNav.querySelector('.mobile-reader-back');
+  function previousSection(){
+    if(current<=0)return;
+    links[current-1].click();
+  }
+  readerBack.addEventListener('click',previousSection);
+  mobileBack.addEventListener('click',previousSection);
   function updateCurrent(){
     scheduled=false;
     const offset=120;
@@ -197,6 +211,8 @@ const sections = [
     if(innerHeight+scrollY>=document.documentElement.scrollHeight-4)index=slides.length-1;
     mobileReaderNav.querySelector('.mobile-reader-count').textContent=String(index+1).padStart(2,'0')+' / 09';
     mobileReaderNav.querySelector('.mobile-reader-name').textContent=sections[index].name;
+    readerBack.disabled=index===0;
+    mobileBack.disabled=index===0;
     if(index===current)return;
     current=index;
     links.forEach((link,i)=>{link.classList.toggle('on',i===index);if(i===index)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});
