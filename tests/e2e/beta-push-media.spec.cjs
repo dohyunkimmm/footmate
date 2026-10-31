@@ -80,6 +80,8 @@ test('AAL2 operator can upload a public match image through the media boundary',
   await baseConfig(page);
   await page.addInitScript(({token})=>localStorage.setItem('footmate:beta:auth:v1',JSON.stringify({accessToken:token,refreshToken:'refresh',expiresAt:4102444800})),{token:jwt(operatorId,'aal2')});
   let matchUploaded=false,imagePath='';
+  let releaseImageRead;
+  const imageReadGate=new Promise(resolve=>{releaseImageRead=resolve});
   const match={id:matchId,title:'QA 경기',venue_name:'영통 풋살장',area_label:'영통',address:'수원시 영통구',region:'수원 · 영통',level:'중급',starts_at:'2099-10-01T20:00:00+09:00',capacity_total:8,joined_count:0,remaining_spots:8,format_label:'5 vs 5',surface:'인조잔디',duration_minutes:80,status:'open',created_at:'2099-01-01T00:00:00Z',updated_at:'2099-01-01T00:00:00Z',cancel_cutoff_at:'2099-10-01T18:00:00+09:00',check_in_opens_at:'2099-10-01T19:30:00+09:00',match_slots:[{position:'MF',capacity_total:8,joined_count:0,remaining_spots:8}],image_path:null};
   await page.route(`${origin}/**`,async route=>{
     const req=route.request(),url=new URL(req.url());
@@ -88,7 +90,7 @@ test('AAL2 operator can upload a public match image through the media boundary',
     if(url.pathname==='/rest/v1/operators')return fulfill(route,[{user_id:operatorId,created_at:'2099-01-01T00:00:00Z'}]);
     if(url.pathname==='/rest/v1/matches'){
       if(req.method()==='PATCH'){imagePath=String(req.postDataJSON?.()?.image_path||'');return fulfill(route,[])}
-      if(url.searchParams.get('select')==='image_path')return fulfill(route,[{image_path:imagePath||null}]);
+      if(url.searchParams.get('select')==='image_path'){await imageReadGate;return fulfill(route,[{image_path:imagePath||null}])}
       return fulfill(route,[{...match,image_path:imagePath||null}]);
     }
     if(url.pathname==='/rest/v1/participations')return fulfill(route,[]);
@@ -103,6 +105,9 @@ test('AAL2 operator can upload a public match image through the media boundary',
   await page.getByRole('button',{name:/QA 경기/}).click();
   await expect(page.getByText('경기장 이미지')).toBeVisible();
   await page.locator('[data-beta-match-file]').setInputFiles({name:'venue.webp',mimeType:'image/webp',buffer:Buffer.from([82,73,70,70,0,0,0,0,87,69,66,80])});
+  releaseImageRead();
+  await expect(page.locator('[data-beta-match-media-panel]')).toHaveAttribute('data-media-loaded','true');
+  await expect.poll(()=>page.locator('[data-beta-match-file]').evaluate(input=>input.files?.[0]?.name||'')).toBe('venue.webp');
   await page.locator('[data-action="upload-beta-match-image"]').click();
   await expect.poll(()=>matchUploaded).toBe(true);
   await expect.poll(()=>imagePath).toContain('/cover.webp');
