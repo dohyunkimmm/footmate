@@ -97,6 +97,27 @@ test('last section heading aligns near the top in desktop reading',async({page})
   await expect(page.locator('#section-09 .section-title')).toBeInViewport();
  }
 });
+
+test('05 and 08 keep one representative table visible and preserve expandable evidence',async({page})=>{
+ for(const width of [390,1440]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  for(const section of ['#section-05','#section-08']){
+   await expect(page.locator(section+' > .table-wrap')).toHaveCount(1);
+   expect(await page.locator(section+' > details').count()).toBeGreaterThanOrEqual(5);
+  }
+  const scenarios=page.locator('#section-05 > details').filter({has:page.getByText('월 사업 손익 민감도 · 보수·기준·확장 (가정)',{exact:true})});
+  await expect(scenarios.locator('table')).toBeHidden();
+  await scenarios.locator('summary').click();
+  await expect(scenarios.locator('table')).toBeVisible();
+  const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (합성 데이터)',{exact:true})});
+  await expect(report.locator('table')).toBeHidden();
+  await report.locator('summary').click();
+  await expect(report.locator('table')).toBeVisible();
+  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+});
+
 test('reader summary, detailed numbers and optional tables remain consistent',async({page})=>{
  await page.setViewportSize({width:390,height:844});await page.goto('/');
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');

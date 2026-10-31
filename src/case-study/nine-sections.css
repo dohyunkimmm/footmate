@@ -107,3 +107,10 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  #section-08 .table-wrap table{table-layout:auto}
  #section-08 .table-wrap th,#section-08 .table-wrap td{padding:10px 12px;line-height:1.6}
 }
+
+/* 05·08: 핵심 표 먼저, 상세 근거는 펼침 영역으로 제공 */
+#section-05 > details,#section-08 > details{margin:12px 0}
+#section-05 > details > summary,#section-08 > details > summary{padding:13px 4px;min-height:46px}
+#section-05 > details > .detail-body,#section-08 > details > .detail-body{padding-top:12px}
+#section-05 > details > .detail-body > .table-wrap:first-child,
+#section-08 > details > .detail-body > .table-wrap:first-child{margin-top:12px}
