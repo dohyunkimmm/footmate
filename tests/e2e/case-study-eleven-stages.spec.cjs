@@ -518,9 +518,9 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
 
 test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
  await page.goto('/');
- const texts=await page.locator('.slide p,.slide h2,.slide h3,.slide caption,.slide summary,.slide dt,.slide dd').evaluateAll(nodes=>nodes.map(node=>node.textContent.replace(/\\s+/g,' ').trim()));
+ const texts=await page.locator('.slide p,.slide h2,.slide h3,.slide caption,.slide summary,.slide dt,.slide dd').evaluateAll(nodes=>nodes.map(node=>node.textContent.replace(/\s+/g,' ').trim()));
  for(const value of texts){
-  expect(value).not.toMatch(/(?:^|\\s)([가-힣A-Za-z0-9]{2,})\\s+\\1(?=$|\\s|[.,!?])/u);
+  expect(value).not.toMatch(/(?:^|\s)([가-힣A-Za-z0-9]{2,})\s+\1(?=$|\s|[.,!?])/u);
  }
  await expect(page.locator('#section-08')).not.toContainText('30일 30일');
  await expect(page.locator('.track')).not.toContainText('시간 기회비용');
