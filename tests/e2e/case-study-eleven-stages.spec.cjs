@@ -219,7 +219,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
- await expect(page.locator('#section-06')).toContainText('실제 서버의 동시 요청 처리는 별도 검증');
+ await expect(page.locator('#section-06')).toContainText('동시 요청·현장 운영은 후속 검증한다.');
  await expect(page.locator('#section-07 .transaction-flow')).toContainText('정원 변경까지 한 번에 처리');
  await expect(page.locator('#section-08')).toContainText('관측 완료자만 분모 포함');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
