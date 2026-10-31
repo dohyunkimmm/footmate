@@ -99,7 +99,7 @@ test('CI keeps explicit required check names and Cloudflare deploy ordering', ()
   assert.match(workflow, /name: Production Smoke/);
   assert.match(workflow, /name: Case Study QA/);
   assert.match(workflow, /name: Case Study Production Smoke/);
-  assert.match(workflow, /needs\\.case_study_qa\\.result == 'success'/);
+  assert.match(workflow, /needs\.case_study_qa\.result == 'success'/);
   assert.match(workflow, /needs\.deploy_cloudflare\.result == 'success'/);
   assert.doesNotMatch(workflow, /FOOTMATE_VERCEL_CHANGED_FILES|vercel-preview-deployment|vercel-ignore-build/);
 });
