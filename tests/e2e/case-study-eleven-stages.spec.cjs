@@ -337,3 +337,40 @@ test('removed ledger ZIP stays unpublished while PPT and Excel remain available'
  expect(removed.headers()['content-type']||'').not.toMatch(/zip/i);
  expect((await removed.body()).subarray(0,4).toString('hex')).not.toBe('504b0304');
 });
+
+
+test('MOSIGO-style document entry, in-page PPT preview and Excel access',async({page,request})=>{
+ for(const width of [320,390,1440]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  await expect(page.getByRole('link',{name:'PPT·Excel 자료 보기 ↓'})).toBeVisible();
+  await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toContainText('PPT');
+  await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toContainText('Excel');
+  await page.getByRole('link',{name:'PPT·Excel 자료 보기 ↓'}).click();
+  await expect(page).toHaveURL(/#attachments$/);
+  const documents=page.locator('#attachments');
+  await expect(documents).toBeInViewport();
+  await expect(documents.getByRole('heading',{name:'자료 바로보기'})).toBeVisible();
+  await expect(documents.getByRole('link',{name:'발표자료 PPT 저장'})).toHaveAttribute('download','footmate_report.pptx');
+  await expect(documents.getByRole('link',{name:'분석 모델 Excel 저장'})).toHaveAttribute('download','footmate_model.xlsx');
+  await expect(documents.getByRole('link',{name:'손익 모형 화면에서 보기'})).toHaveAttribute('href','/src/case-study/materials.html');
+  const frame=documents.locator('.case-ppt-image');
+  await expect(frame).toHaveAttribute('src',/^data:image\\/png;base64,/,{timeout:15000});
+  await expect(documents.locator('.case-ppt-count')).toHaveText('1 / 9');
+  await expect(documents.locator('.case-ppt-prev')).toBeDisabled();
+  await documents.locator('.case-ppt-next').click();
+  await expect(documents.locator('.case-ppt-count')).toHaveText('2 / 9');
+  await expect(frame).toHaveAttribute('alt',/2장/);
+  await documents.locator('.case-ppt-prev').click();
+  await expect(documents.locator('.case-ppt-count')).toHaveText('1 / 9');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+ for(const [path,type] of [
+  ['/src/case-study/downloads/footmate_report.pptx','presentation'],
+  ['/src/case-study/downloads/footmate_model.xlsx','spreadsheet']
+ ]){
+  const response=await request.get(path);
+  expect(response.ok()).toBe(true);
+  expect(response.headers()['content-type']).toContain(type);
+  expect((await response.body()).subarray(0,2).toString()).toBe('PK');
+ }
+});
