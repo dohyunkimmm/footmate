@@ -488,7 +488,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   const borderContrast=await rate.evaluate(input=>{
    const channel=(v)=>{const n=v/255;return n<=0.04045?n/12.92:Math.pow((n+0.055)/1.055,2.4)};
    const lum=(color)=>{
-    const rgb=(color.match(/[\\d.]+/g)||[]).slice(0,3).map(Number);
+    const rgb=(color.match(/[0-9.]+/g)||[]).slice(0,3).map(Number);
     return .2126*channel(rgb[0])+.7152*channel(rgb[1])+.0722*channel(rgb[2]);
    };
    const a=lum(getComputedStyle(input).borderTopColor),b=lum(getComputedStyle(input).backgroundColor);
