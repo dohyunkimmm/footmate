@@ -140,7 +140,7 @@ test('investment evidence exposes budget scope and separates missing data from u
    await page.locator(id+' details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
    expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   }
-  for(const label of ['8주 자원 산정·승인 범위','목표 미달·자료 부족·중단 기준']){
+  for(const label of ['8주 자원 산정·승인 범위','실증 결과별 의사결정']){
    const detail=page.locator('#section-08 details').filter({has:page.getByText(label,{exact:true})});
    await testInfo.attach('investment-'+width+'-'+(label.startsWith('8주')?'budget':'decision'),{body:await detail.screenshot({animations:'disabled'}),contentType:'image/png'});
   }
