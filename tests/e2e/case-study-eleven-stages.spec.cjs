@@ -157,7 +157,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(techCards).toHaveCount(3);
   await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
   await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
-  await expect(techCards.nth(2)).toContainText('실제 결제·환불·운영자 정산은 아직 구축하지 않았다');
+  await expect(techCards.nth(2)).toContainText('실결제·환불·정산 미구현');
   await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 (미구현)');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
@@ -185,7 +185,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
   await expect(summary.locator('..')).toHaveAttribute('open','');
  }
  await expect(page.locator('#section-05')).toContainText('−387,160원');
- await expect(page.locator('#section-09')).toContainText('−1,986,980원');
+ await expect(page.locator('#section-09')).toContainText('제휴형 우선 검증, 공급·수익성 확인 후 확대.');
  await page.goto('/src/case-study/forecast.html');
  await expect(page.getByRole('heading',{name:'기준 손익 가정'})).toBeVisible();
  await expect(page.locator('#expansion')).toContainText('약 23곳');
@@ -217,7 +217,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
  await expect(page.locator('#section-01 .lead')).toContainText('사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례');
  await expect(page.locator('#section-06')).toContainText('접근 통제·복구·비용을 도입 판단 기준으로 검토한다.');
- await expect(page.locator('#section-09')).toContainText('시스템·데이터 관리 책임과 자체 구축·외부 서비스 활용 범위를 구분');
+ await expect(page.locator('#section-09')).toContainText('참가·정원 기능과 유료 전환 과제 정리');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
@@ -658,4 +658,13 @@ with ZipFile(xlsx) as x:
  expect(entries.load).toBeGreaterThanOrEqual(0);
  expect(entries.load).toBeLessThan(15000);
  console.log('Case Study local browser navigation (ms):',JSON.stringify(entries));
+});
+
+test('body card descriptions stay concise',async({page})=>{
+ await page.goto('/');
+ const descriptions=await page.locator('.story-card p,.decision-card>p:last-child').allTextContents();
+ expect(descriptions).toHaveLength(15);
+ for(const description of descriptions){
+  expect([...description.trim()].length,description).toBeLessThanOrEqual(30);
+ }
 });
