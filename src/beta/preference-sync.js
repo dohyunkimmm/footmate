@@ -8,6 +8,7 @@ const allowed={
  dateWindow:['','today','tomorrow','weekend']
 };
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const PREFERENCE_SYNC_TIMEOUT_MS=8000;
 export function cleanSyncPreferences(input){
  if(!input||typeof input!=='object'||Array.isArray(input))return null;
  const region=typeof input.region==='string'?input.region.trim():'';
@@ -17,20 +18,30 @@ export function cleanSyncPreferences(input){
  }
  return {...DEFAULT_SYNC_PREFERENCES,region,...Object.fromEntries(Object.keys(allowed).map(key=>[key,input[key]||'']))};
 }
-export function createPreferenceSyncClient({url,publishableKey,fetchImpl=globalThis.fetch}){
+export function createPreferenceSyncClient({url,publishableKey,fetchImpl=globalThis.fetch,requestTimeoutMs=PREFERENCE_SYNC_TIMEOUT_MS}){
+ if(typeof fetchImpl!=='function')throw new TypeError('fetch implementation is required');
+ const timeoutMs=Number.isFinite(Number(requestTimeoutMs))&&Number(requestTimeoutMs)>0?Math.max(50,Math.trunc(Number(requestTimeoutMs))):PREFERENCE_SYNC_TIMEOUT_MS;
  const base=new URL(url);
  if(base.protocol!=='https:')throw new Error('Secure backend URL required');
  const endpoint=base.toString().replace(/\/$/,'')+'/rest/v1/beta_user_preferences';
  async function send(userId,accessToken,options={}){
   if(!uuid.test(String(userId||''))||!String(accessToken||''))throw new Error('Authenticated user required');
-  const response=await fetchImpl(endpoint+(options.query||''),{
-   method:options.method||'GET',cache:'no-store',
-   headers:{apikey:publishableKey,authorization:'Bearer '+accessToken,...(options.body?{'content-type':'application/json',prefer:'resolution=merge-duplicates,return=minimal'}:{})},
-   ...(options.body?{body:JSON.stringify(options.body)}:{})
-  });
-  if(!response.ok)throw new Error('Preference sync unavailable');
-  if(options.body)return null;
-  return response.json();
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+   const response=await fetchImpl(endpoint+(options.query||''),{
+    method:options.method||'GET',cache:'no-store',signal:controller.signal,
+    headers:{apikey:publishableKey,authorization:'Bearer '+accessToken,...(options.body?{'content-type':'application/json',prefer:'resolution=merge-duplicates,return=minimal'}:{})},
+    ...(options.body?{body:JSON.stringify(options.body)}:{})
+   });
+   if(!response.ok)throw new Error('Preference sync unavailable');
+   const payload=options.body?null:await response.json();
+   if(controller.signal.aborted)throw new Error('Preference sync timed out');
+   return payload;
+  }catch(error){
+   if(controller.signal.aborted)throw new Error('Preference sync timed out');
+   throw error;
+  }finally{clearTimeout(timer)}
  }
  return {
   async load({userId,accessToken}){
