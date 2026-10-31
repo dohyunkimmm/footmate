@@ -56,7 +56,7 @@ const sections = [
     "name": "종합 판단·근거",
     "title": "검토 결론·후속 과제",
     "lead": "검토 결과와 다음 투자 조건.",
-    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>무료 참가·정원·취소 흐름을 구현하고, 결제·정산은 후속 투자 과제로 분리했다.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>제휴형을 초기안으로 선택했다. 현금 손익 −387,160원(기준 가정), 확장 시 노동비 포함 −1,986,980원(가정)이다. 공급 계약·수익성을 확인한 뒤 확대한다.</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급 계약·참가 완료·재참가·건당 수익·운영 품질을 확인하고, 결과에 따라 가격·제휴·지역 전략을 조정한다.</p></article></div><p class=\"decision\">후속 과제 · 수수료·결제비 협상, 공급처 수 재산정, 월별 손익 점검</p><div class=\"case-materials\" id=\"case-materials\"><h3>분석 자료</h3><p><a href=\"/src/case-study/materials.html\">발표자료·손익 모형 보기 ↗</a></p></div>"
+    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>무료 참가·정원·취소 흐름을 구현하고, 결제·정산은 후속 투자 과제로 분리했다.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>제휴형을 초기안으로 선택했다. 현금 손익 −387,160원(기준 가정), 확장 시 노동비 포함 −1,986,980원(가정)이다. 공급 계약·수익성을 확인한 뒤 확대한다.</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급 계약·참가 완료·재참가·건당 수익·운영 품질을 확인하고, 결과에 따라 가격·제휴·지역 전략을 조정한다.</p></article></div><p class=\"decision\">후속 과제 · 월 626건·건당 340원 기준 수수료·결제비 협상, 공급처 수 재산정</p><div class=\"case-materials\" id=\"case-materials\"><h3>분석 자료</h3><p><a href=\"/src/case-study/materials.html\">발표자료·손익 모형 보기 ↗</a></p></div>"
   }
 ];
 
