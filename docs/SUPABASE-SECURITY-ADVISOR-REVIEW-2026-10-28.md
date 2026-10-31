@@ -2,6 +2,14 @@
 
 > Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a change approval, or a claim that the Advisor warnings are resolved. Later Data API exposure tests are documented below.
 
+## 2026-10-30 후속 · 신규 KPI RPC 반영 (과거 10월 28일 감사는 아래에 보존)
+
+- [PR #727](https://github.com/dohyunkimmm/footmate/pull/727)으로 `public.beta_user_preferences`와 `public.operator_discovery_kpi_baseline(timestamptz)`이 추가됐고, Supabase 운영 migration `20261030032856_beta_preferences_pilot_metrics` 적용을 확인했습니다. 설정 변경이 아닌 후속 스키마/권한 확인 결과입니다.
+- 신규 preferences 테이블은 RLS 사용, 본인 `user_id = auth.uid()`에 대한 SELECT·INSERT·UPDATE 정책 3개 적용, `anon` SELECT/ authenticated DELETE 불허. 신규 KPI RPC는 `anon EXECUTE`를 허용하지 않으며, 공통 `require_beta_operator_aal2()`를 호출하는 SECURITY DEFINER 함수입니다. 모의 AAL1에서는 `MFA_REQUIRED`, 비인증에서는 `AUTH_REQUIRED` 차단 및 모의 AAL2 KPI 4행 정상 실행을 확인했지만 **실제 Auth 서명 JWT E2E가 아닙니다**.
+- **현재 Security Advisor:** `authenticated_security_definer_function_executable` **21 WARN**(기존 20 + 신규 파일럿 KPI RPC 1), `extension_in_public` **1 WARN**(`pg_net`), `auth_leaked_password_protection` **1 WARN**, `rls_enabled_no_policy` **2 INFO**. 기존 10월 28일 보고서의 20 WARN은 작성 당시 스냅샷으로 유지합니다. 새 WARN을 해결 처리하거나 `pg_net`·Cron 권한을 변경하지 않았습니다. 경고 확인: [Supabase 권한 린터](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
+- 실계정 운영자/비운영자 AAL1·AAL2, TOTP, refresh/logout/복구는 [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)에 **미완료**로 유지합니다. [PR #729](https://github.com/dohyunkimmm/footmate/pull/729)은 별도 승인된 테스트 계정을 위한 도구/모의 계약 QA이며, 도구가 있다는 이유로 실서명 JWT 검증을 완료 처리하지 않습니다.
+- 실제 파일럿 cohort 사용자 0명으로 신규 KPI 비율은 N/A입니다. 이 수치가 개인정보 억제/집계 함수 동작과 실사용 사업 성과를 동시에 검증하는 것은 아닙니다.
+
 ## Subsequent live API / Auth evidence (2026-10-28; supersedes initial "not verified" caveat)
 
 The sections below retain the **initial static review** as historical evidence; the following negative checks were later performed against the real Supabase Data API using its **public anon JWT**, without any service-role key or configuration change:

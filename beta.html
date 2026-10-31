@@ -30,10 +30,10 @@
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
   await import('/src/beta/readiness.js?v=1');
-  await import('/src/beta/growth.js?v=8');
+  await import('/src/beta/growth.js?v=9');
   await import('/src/beta/social-auth.js?v=1');
   await import('/src/beta/push.js?v=1');
-  await import('/src/beta/media.js?v=1');
+  await import('/src/beta/media.js?v=2');
 };
 if(root.dataset.betaState!=='booting')launch();
 else{

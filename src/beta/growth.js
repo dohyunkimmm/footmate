@@ -2,7 +2,7 @@ import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {emitDiscoveryMeasurement} from './measurement-events.js';
 import {matchesRecommendationConditions,recommendationFingerprint,validRecommendationCache,diverseRecommendationCandidates} from './domain/recommendation-discovery.js';
 import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations} from './demo-catalog.js';
-import {createPreferenceSyncClient,cleanSyncPreferences} from './preference-sync.js';
+import {createPreferenceSyncClient,cleanSyncPreferences} from './preference-sync.js?v=2';
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
 const TABLES=['matches','match_slots','participations','beta_notifications','beta_waitlist','beta_match_feedback'];
@@ -24,9 +24,32 @@ const accessToken=()=>String(session()?.accessToken||'');
 const jwtUserId=()=>{try{const part=accessToken().split('.')[1]||'';const padded=(part.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((part.length+3)%4));return JSON.parse(atob(padded))?.sub||''}catch{return''}};
 const startLabel=v=>new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'short',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v));
 const headers=(auth=true)=>({apikey:config?.publishableKey||'',...(auth&&accessToken()?{authorization:`Bearer ${accessToken()}`}:{})});
-async function request(path,{auth=true,...options}={}){const response=await fetch(`${config.url}${path}`,{...options,headers:{...headers(auth),...(options.headers||{})}});const data=await response.json().catch(()=>null);if(!response.ok)throw new Error(data?.message||data?.error_description||data?.error||`요청 실패 (${response.status})`);return data}
+const DATA_REQUEST_TIMEOUT_MS=8000;
+const CONFIG_REQUEST_TIMEOUT_MS=5000;
+async function boundedJson(url,options={},timeoutMs=DATA_REQUEST_TIMEOUT_MS){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
+ try{
+  const response=await fetch(url,{...options,signal:controller.signal});
+  const data=await response.json().catch(()=>null);
+  if(controller.signal.aborted)throw new Error('서버 응답 시간이 초과됐습니다.');
+  return {response,data};
+ }catch(error){
+  if(controller.signal.aborted)throw new Error('서버 응답 시간이 초과됐습니다.');
+  throw error;
+ }finally{clearTimeout(timer)}
+}
+async function request(path,{auth=true,...options}={}){
+ const {response,data}=await boundedJson(`${config.url}${path}`,{...options,headers:{...headers(auth),...(options.headers||{})}});
+ if(!response.ok)throw new Error(data?.message||data?.error_description||data?.error||`요청 실패 (${response.status})`);
+ return data;
+}
 const rpc=(name,params)=>request(`/rest/v1/rpc/${name}`,{method:'POST',headers:{'content-type':'application/json',prefer:'return=representation'},body:JSON.stringify(params||{})});
-async function loadConfig(){if(config)return;const res=await fetch('/api/beta-config',{cache:'no-store'});config=await res.json();if(!res.ok||!config?.connected)throw new Error('Beta backend config unavailable')}
+async function loadConfig(){
+ if(config)return;
+ const {response,data}=await boundedJson('/api/beta-config',{cache:'no-store'},CONFIG_REQUEST_TIMEOUT_MS);
+ if(!response.ok||!data?.connected)throw new Error('Beta backend config unavailable');
+ config=data;
+}
 function preferenceClient(){return createPreferenceSyncClient(config)}
 async function syncAccountPreferences(){
  if(isDemoEntry||!config||!accessToken())return;

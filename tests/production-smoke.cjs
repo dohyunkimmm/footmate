@@ -23,8 +23,9 @@ for(const route of ['/demo','/next'])a((await(await get(route)).text()).includes
   const caseScript=await(await get('/src/case-study/nine-sections.js')).text();
   a(!caseScript.includes('Live interaction'),'Case Study Live interaction removed');
   a(!caseScript.includes('/demo?embed=1'),'Case Study embedded app removed');
-  a(hasCaseStudyDemoCta(caseScript),'Case Study Product CTA route');
-  a(caseScript.includes('FootMate Demo 열기'),'Case Study Product CTA copy');
+  a(!hasCaseStudyDemoCta(cs),'Case Study sidebar has no duplicate Demo CTA');
+  a(hasCaseStudyDemoCta(caseScript),'Case Study implementation Demo CTA route');
+  a(caseScript.includes('서비스 Demo 보기 ↗'),'Case Study implementation Demo CTA copy');
   // Verify the changed Case Study assets themselves, not only the product release marker.
   for(const asset of ['index.html','src/case-study/nine-sections.js','src/case-study/nine-sections.css']){
     const actual=asset==='index.html'?cs:await(await get('/'+asset)).text();

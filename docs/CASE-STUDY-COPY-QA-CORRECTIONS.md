@@ -1,8 +1,8 @@
 # FootMate Case Study Copy QA Corrections
 
-> **과거 13단계 카피 수정 이력** · 아래 `현재 baseline` 표현은 각 항목이 작성된 2026-09-25 시점 기준입니다. 현재 공개 11개 섹션 Case Study는 [11개 섹션 구성](CASE-STUDY-ELEVEN-STAGES.md), [현행 화면 근거](CASE-STUDY-SCREEN-EVIDENCE.md), 현재 `main`의 전용 E2E를 우선합니다. [과거 9단계 문서](CASE-STUDY-NINE-STAGES.md)와 [당시 릴리스 이력](RELEASE-HISTORY.md)은 작성 시점의 기록입니다. 인용된 `archive/CASE-STUDY-COPY-QA.md`는 현재 작업 트리에 없으며 Git 과거 이력의 참조입니다.
+> **과거 13단계 카피 수정 이력** · 아래 `현재 baseline` 표현은 각 항목이 작성된 2026-09-25 시점 기준입니다. **현재 공개 Case Study는 9개 섹션**이며 [현행 기획 문서](IT-STRATEGY-CASE-STUDY.md), [9개 섹션 목차(호환 파일명)](CASE-STUDY-ELEVEN-STAGES.md), `src/case-study/nine-sections.js`와 현재 `main`의 전용 E2E를 우선합니다. [과거 서비스기획 화면 근거](CASE-STUDY-SCREEN-EVIDENCE.md), [과거 9단계 서비스기획 문서](CASE-STUDY-NINE-STAGES.md), [당시 릴리스 이력](RELEASE-HISTORY.md)은 작성 시점 기록입니다. 인용된 `archive/CASE-STUDY-COPY-QA.md`는 현재 작업 트리에 없으며 Git 과거 이력의 참조입니다.
 
-이 문서는 `archive/CASE-STUDY-COPY-QA.md`의 이후 Case Study 카피 변경을 기록한다. 기존 기록과 충돌하면 이 문서의 더 최신 항목을 현재 기준으로 사용한다.
+이 문서는 `archive/CASE-STUDY-COPY-QA.md` 이후 당시 Case Study 카피 변경을 기록한다. 항목 간 충돌은 작성 날짜와 PR 기준으로 해석하되, 현재 공개 구조·문구는 위의 9개 섹션 자료를 우선한다.
 
 ## 2026-09-25 · 02–13 repetition polish · final clarity closure
 
