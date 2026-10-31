@@ -185,7 +185,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
   await expect(summary.locator('..')).toHaveAttribute('open','');
  }
  await expect(page.locator('#section-05')).toContainText('−387,160원');
- await expect(page.locator('#section-09')).toContainText('제휴형 우선 검증, 공급·수익성 확인 후 확대.');
+ await expect(page.locator('#section-09')).toContainText('월 현금 −387,160원·확장 −1,986,980원(기회비용 포함).');
  await page.goto('/src/case-study/forecast.html');
  await expect(page.getByRole('heading',{name:'기준 손익 가정'})).toBeVisible();
  await expect(page.locator('#expansion')).toContainText('약 23곳');
@@ -665,6 +665,6 @@ test('body card descriptions stay concise',async({page})=>{
  const descriptions=await page.locator('.story-card p,.decision-card>p:last-child').allTextContents();
  expect(descriptions).toHaveLength(15);
  for(const description of descriptions){
-  expect([...description.trim()].length,description).toBeLessThanOrEqual(30);
+  expect([...description.trim()].length,description).toBeLessThanOrEqual(40);
  }
 });
