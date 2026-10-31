@@ -527,3 +527,133 @@ test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
  await expect(page.locator('.track')).not.toContainText('창업자 시간 기회비용');
  await expect(page.locator('#section-05 .case-profit-results')).toContainText('기회비용 포함');
 });
+
+test('PPT preview closes explicitly and previous-section navigation stays safe',async({page})=>{
+ await page.emulateMedia({reducedMotion:'reduce'});
+ for(const width of [320,390,800,1440]){
+  await page.setViewportSize({width,height:900});
+  await page.goto('/');
+  const previous=width<=800?page.locator('.mobile-reader-back'):page.locator('.reader-back');
+  await expect(previous).toBeVisible();
+  await expect(previous).toBeDisabled();
+  await page.locator('.toc-item').nth(3).click();
+  await expect(page).toHaveURL(/#section-04$/);
+  await expect(previous).toBeEnabled();
+  await previous.click();
+  await expect(page).toHaveURL(/#section-03$/);
+  await expect(page.locator('#section-03 .section-title')).toBeFocused();
+  await page.locator('.toc-item').first().click();
+  await expect(previous).toBeDisabled();
+  const preview=page.locator('.case-doc-preview');
+  await preview.locator('summary').click();
+  await expect(preview).toHaveAttribute('open','');
+  const close=preview.getByRole('button',{name:'미리보기 접기'});
+  await expect(close).toBeVisible();
+  await expect(close).toHaveJSProperty('disabled',false);
+  await close.click();
+  await expect(preview).not.toHaveAttribute('open','');
+  await expect(preview.locator('summary')).toBeFocused();
+  await preview.locator('summary').click();
+  await expect(preview).toHaveAttribute('open','');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+});
+
+test('cross-engine case study navigation and preview controls',async({page})=>{
+ test.setTimeout(120000);
+ const {firefox,webkit,devices}=require('@playwright/test');
+ await page.goto('/');
+ const site=new URL('/',page.url()).href;
+ for(const [name,engine] of [['firefox',firefox],['webkit',webkit]]){
+  const browser=await engine.launch();
+  try{
+   const context=await browser.newContext(name==='webkit'
+    ? {...devices['iPhone 13'],viewport:{width:390,height:844},reducedMotion:'reduce'}
+    : {viewport:{width:390,height:844},reducedMotion:'reduce'});
+   try{
+    const cross=await context.newPage();
+    for(const width of [320,390,800]){
+     await cross.setViewportSize({width,height:844});
+     const errors=[];cross.on('pageerror',error=>errors.push(error.message));
+     await cross.goto(site);
+     await expect(cross.locator('.slide')).toHaveCount(9);
+     await expect(cross.locator('.mobile-reader-back')).toBeVisible();
+     await expect(cross.locator('.mobile-reader-back')).toBeDisabled();
+     await cross.locator('.toc-item').nth(2).click();
+     await expect(cross).toHaveURL(/#section-03$/);
+     await cross.locator('.mobile-reader-back').click();
+     await expect(cross).toHaveURL(/#section-02$/);
+     const model=cross.locator('#case-profit-model');
+     await expect(model.locator('#case-profit-economic')).toHaveText('+5,640원');
+     await expect(model.locator('#case-profit-error')).toBeHidden();
+     expect(await cross.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),name+' at '+width+'px').toBe(true);
+     expect(errors,name+' script errors at '+width+'px').toEqual([]);
+    }
+    const preview=cross.locator('.case-doc-preview');
+    await preview.locator('summary').click();
+    await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
+    await preview.getByRole('button',{name:'미리보기 접기'}).click();
+    await expect(preview).not.toHaveAttribute('open','');
+   }finally{await context.close();}
+  }finally{await browser.close();}
+ }
+});
+
+test('case study download contents and static performance budgets',async({page})=>{
+ const fs=require('node:fs');
+ const {spawnSync}=require('node:child_process');
+ const sizes=[
+  ['src/case-study/downloads/footmate_report.pptx',2_000_000],
+  ['src/case-study/downloads/footmate_model.xlsx',1_000_000],
+  ['src/case-study/nine-sections.js',200_000],
+  ['src/case-study/nine-sections.css',100_000]
+ ];
+ for(const [file,budget] of sizes)expect(fs.statSync(file).size,file+' static byte budget').toBeLessThan(budget);
+ const audit=spawnSync('python3',['-c',String.raw`
+from pathlib import Path
+from zipfile import ZipFile
+import re,xml.etree.ElementTree as ET
+root=Path('src/case-study/downloads')
+pptx=root/'footmate_report.pptx'
+xlsx=root/'footmate_model.xlsx'
+with ZipFile(pptx) as p:
+    paths=set(p.namelist())
+    slides=sorted(x for x in paths if re.fullmatch(r'ppt/slides/slide[0-9]+\\.xml',x))
+    assert len(slides)==9, 'PPTX slide count: '+str(len(slides))
+    pres=ET.fromstring(p.read('ppt/presentation.xml'))
+    assert len(pres.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sldId'))==9
+    for name in slides:
+        node=ET.fromstring(p.read(name))
+        shapes=node.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sp')
+        images=node.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}pic')
+        assert shapes or images, 'empty PPT slide: '+name
+with ZipFile(xlsx) as x:
+    paths=set(x.namelist())
+    workbook=ET.fromstring(x.read('xl/workbook.xml'))
+    ns='{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
+    sheets=workbook.findall('.//'+ns+'sheet')
+    assert len(sheets)>=1, 'no Excel worksheets'
+    parts=[n for n in paths if re.fullmatch(r'xl/worksheets/sheet[0-9]+\\.xml',n)]
+    assert len(parts)>=len(sheets),'missing Excel sheet parts'
+    formulas=0
+    errors=[]
+    for n in parts:
+        node=ET.fromstring(x.read(n))
+        formulas+=len(node.findall('.//'+ns+'f'))
+        errors.extend(c.attrib.get('r') for c in node.findall('.//'+ns+'c') if c.attrib.get('t')=='e')
+    assert formulas>0, 'Excel file has no formulas'
+    assert not errors, 'Excel cached error values: '+str(errors[:10])
+    print('PASS: 9 PPT slides, '+str(len(sheets))+' Excel sheets, '+str(formulas)+' formulas, zero cached errors')
+`],{encoding:'utf8',timeout:25000});
+ expect(audit.status,audit.stderr+' '+audit.stdout).toBe(0);
+ await page.goto('/');
+ const entries=await page.evaluate(()=>{
+  const n=performance.getEntriesByType('navigation')[0];
+  return {dom:n?Math.round(n.domContentLoadedEventEnd-n.startTime):-1,load:n?Math.round(n.loadEventEnd-n.startTime):-1};
+ });
+ expect(entries.dom).toBeGreaterThanOrEqual(0);
+ expect(entries.load).toBeGreaterThanOrEqual(0);
+ expect(entries.load).toBeLessThan(15000);
+ console.log('Case Study local browser navigation (ms):',JSON.stringify(entries));
+});
