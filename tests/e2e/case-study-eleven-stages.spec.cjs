@@ -388,6 +388,18 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
+  // Fullscreen temporarily stretches the viewer; exit must restore its natural
+  // slide + toolbar height without leaving blank space inside the iframe.
+  const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
+  await enlarge.click();
+  await expect.poll(()=>slides.locator('html').evaluate(el=>Boolean(el.ownerDocument.fullscreenElement)),{timeout:10000}).toBe(true);
+  await slides.getByRole('button',{name:'슬라이드 원래 크기'}).click();
+  await expect.poll(()=>slides.locator('html').evaluate(el=>Boolean(el.ownerDocument.fullscreenElement)),{timeout:10000}).toBe(false);
+  await expect.poll(async()=>{
+    const outer=await frame.evaluate(el=>el.getBoundingClientRect().height);
+    const natural=await slides.locator('.viewer').evaluate(el=>el.getBoundingClientRect().height);
+    return Math.abs(outer-natural);
+  },{timeout:15000}).toBeLessThan(12);
   await expect.poll(async()=>{
     const outer=await frame.evaluate(el=>el.getBoundingClientRect().height);
     const inner=await slides.locator('html').evaluate(el=>el.scrollHeight);
