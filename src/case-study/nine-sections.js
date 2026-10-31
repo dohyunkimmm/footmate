@@ -8,7 +8,7 @@ const sections = [
     "name": "추진 배경·검토 결론",
     "title": "풋살 경기 연결 사업 검토",
     "lead": "FootMate · IT기획·전략기획 사례 분석",
-    "body": "<p class=\"source-note\">사업계획·손익·KPI 수치는 가정·합성 자료이며 실제 계약·매출 실적이 아닙니다. 구현·검증 결과는 06에서 구분합니다.</p><div class=\"decision-grid\" aria-label=\"문제·담당 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">문제</p><h2>지역 공급과 참가 수요</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. 초기에는 실제 경기 공급·참가 완료를 확인한다.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">담당 범위 · 김도현</p><h2>사업·IT 기획부터 구현까지</h2><p>사업 가설·대안 비교·손익 계산, IT 요구사항·운영 정책, 웹·API 구현·배포·검사</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h2>기존 운영자 제휴 우선</h2><p>제휴 조건·참가·재참가를 먼저 검증하고, 결제·정산은 후속 투자 단계로 분리한다.</p></article></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>월 현금 손익</dt><dd>약 −38.7<small>만 원</small></dd></div></dl><p class=\"kpi-note\">기준 시나리오 · 월 추정치(가정). 공헌이익·손익 계산은 05에 있습니다.</p><p class=\"source-note\">산출물 · 시장·경쟁 분석, 입력형 손익 모형, 참가·정원 관리 설계, 구현·검증 결과</p>"
+    "body": "<p class=\"source-note\">사업계획·손익·KPI 수치는 가정·합성 자료이며 실제 계약·매출 실적이 아닙니다. 구현·검증 결과는 06에서 구분합니다.</p><div class=\"decision-grid\" aria-label=\"문제·담당 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">문제</p><h2>지역 공급과 참가 수요</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. 초기에는 실제 경기 공급·참가 완료를 확인한다.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">담당 범위 · 김도현</p><h2>사업·IT 기획부터 구현까지</h2><p>사업 가설·대안 비교·손익 계산, IT 요구사항·운영 정책, 웹·API 구현·배포·검사</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h2>기존 운영자 제휴 우선</h2><p>제휴 조건·참가·재참가를 먼저 검증하고, 결제·정산은 후속 투자 단계로 분리한다.</p></article></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>월 현금 손익</dt><dd>약 −38.7<small>만 원</small></dd></div></dl><p class=\"kpi-note\">기준 시나리오 · 월 추정치(가정). 공헌이익·손익 계산은 05에 있습니다.</p><p class=\"source-note\">산출물 · 시장·경쟁 분석, 입력형 손익 모형, 참가·정원 관리 설계, 구현·검증 결과</p><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><p class=\"case-documents-label\">발표자료 · 분석 모델</p><h2 id=\"case-documents-heading\">자료 바로보기</h2><p>발표자료 9장을 이 페이지에서 넘겨 보고, 손익 모형은 별도로 확인할 수 있습니다.</p></div><div class=\"case-documents-actions\"><a class=\"case-document-action primary\" href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">발표자료 PPT 저장</a><a class=\"case-document-action\" href=\"/src/case-study/downloads/footmate_model.xlsx\" download=\"footmate_model.xlsx\">분석 모델 Excel 저장</a><a class=\"case-document-action\" href=\"/src/case-study/materials.html\">손익 모형 화면에서 보기 ↗</a></div><div class=\"case-ppt-viewer\" role=\"group\" aria-label=\"발표자료 9장 미리보기\"><div class=\"case-ppt-media\"><img class=\"case-ppt-image\" alt=\"FootMate 발표자료 1장 미리보기\" width=\"1280\" height=\"720\" decoding=\"async\" hidden><p class=\"case-ppt-status\" role=\"status\">발표자료 미리보기를 준비하고 있습니다.</p></div><div class=\"case-ppt-controls\"><button type=\"button\" class=\"case-ppt-prev\" disabled>이전</button><span class=\"case-ppt-count\" aria-live=\"polite\">1 / 9</span><button type=\"button\" class=\"case-ppt-next\" disabled>다음</button></div></div><p class=\"case-documents-note\">사업·손익 수치는 가정·합성 자료이며 실제 계약·매출 실적이 아닙니다.</p></section>"
   },
   {
     "name": "시장·경쟁 분석",
@@ -56,13 +56,62 @@ const sections = [
     "name": "종합 판단·근거",
     "title": "검토 결론·후속 과제",
     "lead": "검토 결과와 다음 투자 조건.",
-    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>무료 참가·정원·취소 흐름을 구현하고, 결제·정산은 후속 투자 과제로 분리했다.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>제휴형을 초기안으로 선택했다. 현금 손익 −387,160원(기준 가정), 확장 시 노동비 포함 −1,986,980원(가정)이다. 공급 계약·수익성을 확인한 뒤 확대한다.</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급 계약·참가 완료·재참가·건당 수익·운영 품질을 확인하고, 결과에 따라 가격·제휴·지역 전략을 조정한다.</p></article></div><p class=\"decision\">후속 과제 · 월 626건·건당 340원 기준 수수료·결제비 협상, 공급처 수 재산정</p><div class=\"case-materials\" id=\"case-materials\"><h3>분석 자료</h3><p><a href=\"/src/case-study/materials.html\">발표자료·손익 모형 보기 ↗</a></p></div>"
+    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>무료 참가·정원·취소 흐름을 구현하고, 결제·정산은 후속 투자 과제로 분리했다.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>제휴형을 초기안으로 선택했다. 현금 손익 −387,160원(기준 가정), 확장 시 노동비 포함 −1,986,980원(가정)이다. 공급 계약·수익성을 확인한 뒤 확대한다.</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급 계약·참가 완료·재참가·건당 수익·운영 품질을 확인하고, 결과에 따라 가격·제휴·지역 전략을 조정한다.</p></article></div><p class=\"decision\">후속 과제 · 월 626건·건당 340원 기준 수수료·결제비 협상, 공급처 수 재산정</p><div class=\"case-materials\" id=\"case-materials\"><h3>분석 자료</h3><p><a href=\"/src/case-study/materials.html\">발표자료(PPT)·분석 모델(Excel) 보기 ↗</a></p></div>"
   }
 ];
 
   const toc=document.querySelector('.toc'),track=document.querySelector('.track');
   toc.innerHTML=sections.map((s,i)=>`<a class="toc-item" href="#section-${String(i+1).padStart(2,'0')}" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></a>`).join('');
   track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-labelledby="heading-${i}"><header class="section-head"><span class="eyebrow">${String(i+1).padStart(2,'0')} / ${s.name}</span><${i===0?'h1':'h2'} class="section-title" id="heading-${i}" tabindex="-1">${s.title}</${i===0?'h1':'h2'}><p class="lead">${s.lead}</p></header>${s.body}</section>`).join('');
+  // MOSIGO-style in-page document preview: fetch the existing report assets only when visible.
+  const documentArea=track.querySelector('#attachments');
+  if(documentArea){
+    const viewer=documentArea.querySelector('.case-ppt-viewer');
+    const image=viewer.querySelector('.case-ppt-image');
+    const status=viewer.querySelector('.case-ppt-status');
+    const count=viewer.querySelector('.case-ppt-count');
+    const previous=viewer.querySelector('.case-ppt-prev');
+    const next=viewer.querySelector('.case-ppt-next');
+    let index=0,loaded=false,requested=false;
+    function showDocumentPage(){
+      const pages=window.REPORT_SLIDES;
+      if(!Array.isArray(pages)||!pages.length)return;
+      const page=pages[index];
+      image.src=page.src;
+      image.alt='FootMate 발표자료 '+(index+1)+'장 · '+page.title;
+      image.hidden=false;
+      status.hidden=true;
+      count.textContent=(index+1)+' / '+pages.length;
+      previous.disabled=index===0;
+      next.disabled=index===pages.length-1;
+    }
+    function loadDocumentPreview(){
+      if(requested||loaded)return;
+      requested=true;
+      const script=document.createElement('script');
+      script.src='/src/case-study/report-previews.js';
+      script.onload=()=>{
+        if(!Array.isArray(window.REPORT_SLIDES)||window.REPORT_SLIDES.length!==9){
+          status.textContent='미리보기를 불러오지 못했습니다. 발표자료 PPT 저장을 이용해 주세요.';
+          return;
+        }
+        loaded=true;
+        showDocumentPage();
+      };
+      script.onerror=()=>{status.textContent='미리보기를 불러오지 못했습니다. 발표자료 PPT 저장을 이용해 주세요.';};
+      document.head.append(script);
+    }
+    previous.addEventListener('click',()=>{if(loaded&&index>0){index--;showDocumentPage();}});
+    next.addEventListener('click',()=>{if(loaded&&index<window.REPORT_SLIDES.length-1){index++;showDocumentPage();}});
+    if('IntersectionObserver' in window){
+      const observer=new IntersectionObserver(entries=>{
+        if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadDocumentPreview();}
+      },{rootMargin:'220px 0px'});
+      observer.observe(viewer);
+    }else{
+      loadDocumentPreview();
+    }
+  }
   // Mobile reading aid: current section and a direct return to the contents.
   const mobileReaderNav=document.createElement('nav');
   mobileReaderNav.className='mobile-reader-nav';
