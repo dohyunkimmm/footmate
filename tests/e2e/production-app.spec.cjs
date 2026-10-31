@@ -40,7 +40,7 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   await expect(page.locator('.toc-item')).toHaveCount(9);
   await page.locator('.toc-item').nth(2).click();
   await page.locator('#section-03 > details summary').first().click();
-  await expect(page.locator('#section-03')).toContainText('이용자의 명시적 확인');
+  await expect(page.locator('#section-03')).toContainText('참가·결제는 이용자가 직접 확정하도록 설계한다.');
   await page.locator('.toc-item').nth(6).click();
   await expect(page.locator('#section-07')).toContainText('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서');
 });
