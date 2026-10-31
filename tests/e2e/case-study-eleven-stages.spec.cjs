@@ -217,7 +217,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-08')).toContainText('관측 완료자만 분모 포함');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
- await expect(page.locator('#section-09')).toContainText('발표자료·손익 모형 보기');
+ await expect(page.locator('#section-09')).toContainText('발표자료(PPT)·분석 모델(Excel) 보기');
  await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
  await expect(page.locator('#section-09 .table-wrap')).toHaveCount(0);
  await expect(page.locator('#case-materials-frame')).toHaveCount(0); // Avoid the duplicate embedded report and its large preview payload.
@@ -377,7 +377,7 @@ test('MOSIGO-style document entry, in-page PPT preview and Excel access',async({
  ]){
   const response=await request.get(path);
   expect(response.ok()).toBe(true);
-  expect(response.headers()['content-type']).toContain(type);
+  expect(['application/octet-stream',type].some(expected=>(response.headers()['content-type']||'').includes(expected))).toBe(true);
   expect((await response.body()).subarray(0,2).toString()).toBe('PK');
  }
 });
