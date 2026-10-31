@@ -38,8 +38,8 @@ test('KPI summary and mobile section navigation stay usable at 320 and 390px',as
   await page.goto('/');
   const kpis=page.locator('#section-01 .case-kpis');
   await expect(kpis).toBeVisible();
-  for(const text of ['626','340','−387,160'])await expect(kpis).toContainText(text);
-  await expect(page.locator('#section-01 .kpi-note')).toHaveText('기준 시나리오 · 월 추정치');
+  for(const text of ['626','340','−38.7'])await expect(kpis).toContainText(text);
+  await expect(page.locator('#section-01 .kpi-note')).toContainText('기준 시나리오 · 월 추정치');
   await expect(page.locator('.mobile-reader-nav')).toBeVisible();
   await expect(page.locator('.mobile-reader-count')).toHaveText('01 / 09');
   await testInfo.attach('manual-kpi-'+width,{body:await page.locator('#section-01').screenshot({animations:'disabled'}),contentType:'image/png'});
@@ -97,6 +97,31 @@ test('last section heading aligns near the top in desktop reading',async({page})
   await expect(page.locator('#section-09 .section-title')).toBeInViewport();
  }
 });
+test('reader summary, detailed numbers and optional tables remain consistent',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('약 23곳');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('약 28곳');
+ await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
+ await expect(page.locator('.track table')).toHaveCount(24);
+ await expect(page.locator('#section-04 .model-funnel')).toContainText('약 1,559석');
+ for(const [section,label] of [['#section-05','기준 거래 계산·수수료 협상 비교표 자세히 보기'],['#section-06','월 IT·운영 예산 세부 내역'],['#section-08','월간 지표 관리·정정 책임표']]){
+  const summary=page.locator(section+' details summary').filter({hasText:label});
+  await expect(summary).toBeVisible();
+  await summary.click();
+  await expect(summary.locator('..')).toHaveAttribute('open','');
+ }
+ await expect(page.locator('#section-05')).toContainText('−387,160원');
+ await expect(page.locator('#section-09')).toContainText('−1,986,980원');
+ await page.goto('/src/case-study/forecast.html');
+ await expect(page.getByRole('heading',{name:'기준 손익 가정'})).toBeVisible();
+ await expect(page.locator('#expansion')).toContainText('약 23곳');
+ await expect(page.locator('#expansion')).toContainText('약 28곳');
+ await page.goto('/src/case-study/materials.html');
+ await expect(page.locator('body')).toContainText('2027년');
+ await expect(page.locator('body')).toContainText('약 28곳');
+ await expect(page.locator('a[href$=".zip"]')).toHaveCount(0);
+});
 test('scroll position, deep links and browser history work without page switching',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:1920,height:1080});
  await page.goto('/#section-04');await expect(page.locator('.toc-item').nth(3)).toHaveAttribute('aria-current','location');
@@ -131,7 +156,8 @@ test('case study distinguishes implementation evidence from proposed business re
 
  for(const id of ['#section-01','#section-04','#section-05','#section-09']){
   await expect(page.locator(id)).toContainText('626건');
-  if(id!=='#section-04')await expect(page.locator(id)).toContainText('−387,160원');
+  if(id==='#section-01')await expect(page.locator(id)).toContainText('약 −38.7');
+  else if(id!=='#section-04')await expect(page.locator(id)).toContainText('−387,160원');
  }
  await expect(page.locator('#section-04')).not.toContainText(/이전 단순|기존 1,169건/);
 });
