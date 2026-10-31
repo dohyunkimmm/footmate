@@ -18,6 +18,7 @@ jobs:
       runtime: ${{ steps.impact.outputs.runtime }}
       production: ${{ steps.impact.outputs.production }}
       production_smoke: ${{ steps.impact.outputs.production_smoke }}
+      case_study_only: ${{ steps.impact.outputs.case_study_only }}
     steps:
       - uses: actions/checkout@v7
         with: {fetch-depth: 0}
@@ -77,7 +78,7 @@ jobs:
   regression:
     name: Regression 36
     needs: impact
-    if: needs.impact.outputs.runtime == 'true'
+    if: needs.impact.outputs.runtime == 'true' && needs.impact.outputs.case_study_only != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -146,12 +147,49 @@ jobs:
       - name: Run beta web push and media contracts
         run: node tests/contracts/beta-push-media.contract.mjs
 
+  case_study_qa:
+    name: Case Study QA
+    needs: impact
+    if: needs.impact.outputs.case_study_only == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Verify Case Study assets and safety boundaries
+        run: |
+          node scripts/sync-case-study-assets.cjs --check
+          node --check src/case-study/nine-sections.js
+          node scripts/check-app-boundary.cjs
+          node scripts/check-ai-boundary.cjs
+      - name: Install Case Study browser tools
+        run: |
+          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
+          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
+          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
+          node scripts/check-qa-toolchain.cjs
+      - name: Case Study sections, responsive, PPT, Excel and accessibility
+        run: npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
+      - name: Upload Case Study browser evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: case-study-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14
+
   browser_e2e:
     name: Browser E2E + axe
     env:
       QA_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     needs: impact
-    if: needs.impact.outputs.runtime == 'true'
+    if: needs.impact.outputs.runtime == 'true' && needs.impact.outputs.case_study_only != 'true'
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.55.1-noble
@@ -242,16 +280,22 @@ jobs:
 
   deploy_cloudflare:
     name: Deploy Cloudflare
-    needs: [impact, regression, browser_e2e, docs_only]
+    needs: [impact, regression, browser_e2e, docs_only, case_study_qa]
     if: >-
       always() &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       needs.impact.result == 'success' &&
       needs.impact.outputs.production == 'true' &&
-      needs.regression.result == 'success' &&
-      needs.browser_e2e.result == 'success' &&
-      needs.docs_only.result == 'skipped'
+      needs.docs_only.result == 'skipped' &&
+      ((needs.impact.outputs.case_study_only == 'true' &&
+        needs.case_study_qa.result == 'success' &&
+        needs.regression.result == 'skipped' &&
+        needs.browser_e2e.result == 'skipped') ||
+       (needs.impact.outputs.case_study_only != 'true' &&
+        needs.case_study_qa.result == 'skipped' &&
+        needs.regression.result == 'success' &&
+        needs.browser_e2e.result == 'success'))
     runs-on: ubuntu-latest
 
     steps:
@@ -276,7 +320,7 @@ jobs:
           command: deploy
   production_smoke:
     name: Production Smoke
-    needs: [impact, regression, browser_e2e, docs_only, deploy_cloudflare]
+    needs: [impact, regression, browser_e2e, docs_only, case_study_qa, deploy_cloudflare]
     if: >-
       always() &&
       (github.event_name == 'push' ||
@@ -284,6 +328,7 @@ jobs:
         github.event.pull_request.head.repo.full_name == github.repository &&
         needs.impact.outputs.production == 'false')) &&
       needs.impact.result == 'success' &&
+      needs.impact.outputs.case_study_only != 'true' &&
       needs.impact.outputs.production_smoke == 'true' &&
       (needs.regression.result == 'success' ||
        needs.regression.result == 'skipped') &&
@@ -355,3 +400,24 @@ jobs:
           path: test-results/
           if-no-files-found: warn
           retention-days: 14
+
+  case_study_smoke:
+    name: Case Study Production Smoke
+    needs: [impact, case_study_qa, deploy_cloudflare]
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.impact.result == 'success' &&
+      needs.impact.outputs.case_study_only == 'true' &&
+      needs.case_study_qa.result == 'success' &&
+      needs.deploy_cloudflare.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      FOOTMATE_PRODUCTION_URL: ${{ vars.FOOTMATE_CLOUDFLARE_URL }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: '24', package-manager-cache: false}
+      - name: Verify deployed Case Study files against merged SHA
+        run: node tests/case-study-production-smoke.cjs
