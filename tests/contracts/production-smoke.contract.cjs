@@ -5,13 +5,24 @@ const assert=require('node:assert/strict');
 const {readFileSync}=require('node:fs');
 const {resolve}=require('node:path');
 const {spawnSync}=require('node:child_process');
-const {extractBetaRuntime,hasCaseStudyDemoCta}=require('../production-smoke.cjs');
+const {extractBetaRuntime,extractBetaMediaRuntime,hasCaseStudyDemoCta}=require('../production-smoke.cjs');
 
 test('production smoke checks the actual Closed Beta application entry',()=>{
   const html=readFileSync(resolve(__dirname,'../../beta.html'),'utf8');
   const runtime=extractBetaRuntime(html);
   assert.match(runtime,/^\/src\/beta\/app\.js\?v=[\w.-]+$/);
   assert.ok(html.includes(`src="${runtime}"`));
+});
+
+test('production smoke reads the current media cache version from the Beta entry',()=>{
+  const root=resolve(__dirname,'../..');
+  const beta=readFileSync(resolve(root,'beta.html'),'utf8');
+  const operator=readFileSync(resolve(root,'beta-operator.html'),'utf8');
+  const media=extractBetaMediaRuntime(beta);
+  assert.match(media,/^\/src\/beta\/media\.js\?v=[\w.-]+$/);
+  assert.ok(operator.includes(media),'operator and Beta media runtime versions must match');
+  assert.equal(extractBetaMediaRuntime("await import('/src/beta/media.js?v=17');"),'/src/beta/media.js?v=17');
+  assert.throws(()=>extractBetaMediaRuntime("await import('/src/beta/media-legacy.js?v=1');"),/Beta media runtime/);
 });
 
 test('production smoke rejects a retired or missing beta entry with an actionable error',()=>{
