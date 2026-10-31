@@ -466,3 +466,52 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   expect((await response.body()).subarray(0,2).toString()).toBe('PK');
  }
 });
+
+test('scenario hierarchy, input guidance and responsive readability evidence',async({page},testInfo)=>{
+ test.setTimeout(90000);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const failures=[];page.on('pageerror',error=>failures.push(error.message));
+ for(const width of [320,390,800,1440,1920]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  await page.evaluate(()=>document.fonts.ready);
+  await expect(page.locator('#section-01 .case-scenario-note')).toContainText('별도 협상 시나리오');
+  await expect(page.locator('#section-05 .case-model-context')).toContainText('창업자 노동비 포함 월 손익');
+  await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
+  await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 461만원');
+  await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
+  await expect(page.locator('#attachments .case-preview-context')).toContainText('발표용 9장');
+  expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  const touchTargets=await page.locator('#section-05 > details > summary,#section-08 > details > summary').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().height));
+  expect(Math.min(...touchTargets)).toBeGreaterThanOrEqual(44);
+  const model=page.locator('#case-profit-model'),rate=model.locator('#case-profit-rate');
+  const borderContrast=await rate.evaluate(input=>{
+   const channel=(v)=>{const n=v/255;return n<=0.04045?n/12.92:Math.pow((n+0.055)/1.055,2.4)};
+   const lum=(color)=>{
+    const rgb=(color.match(/[\\d.]+/g)||[]).slice(0,3).map(Number);
+    return .2126*channel(rgb[0])+.7152*channel(rgb[1])+.0722*channel(rgb[2]);
+   };
+   const a=lum(getComputedStyle(input).borderTopColor),b=lum(getComputedStyle(input).backgroundColor);
+   return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+  });
+  expect(borderContrast).toBeGreaterThanOrEqual(3);
+  await expect(model.locator('#case-profit-economic')).toHaveText('+5,640원');
+  await expect(model.locator('#case-profit-error')).toBeHidden();
+  await testInfo.attach('ux-qa-'+width+'-01-context',{body:await page.locator('#section-01 .case-scenario-note').screenshot({animations:'disabled'}),contentType:'image/png'});
+  await testInfo.attach('ux-qa-'+width+'-08-decision',{body:await page.locator('#section-08 .reader-summary').screenshot({animations:'disabled'}),contentType:'image/png'});
+  await rate.fill('101');
+  await expect(rate).toHaveAttribute('aria-invalid','true');
+  await expect(rate).toHaveAttribute('aria-describedby','case-profit-error');
+  await expect(model.locator('#case-profit-error')).toContainText('수수료율은 0~100% 범위');
+  await expect(model.locator('#case-profit-orders')).toHaveText('—');
+  await testInfo.attach('ux-qa-'+width+'-05-validation',{body:await model.screenshot({animations:'disabled'}),contentType:'image/png'});
+  await model.locator('#case-profit-reset').click();
+  await expect(rate).toHaveValue('12');
+  await expect(rate).toHaveAttribute('aria-invalid','false');
+  await expect(rate).not.toHaveAttribute('aria-describedby',/case-profit-error/);
+  await expect(model.locator('#case-profit-error')).toBeHidden();
+  await expect(model.locator('#case-profit-economic')).toHaveText('+5,640원');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+ expect(failures).toEqual([]);
+});
