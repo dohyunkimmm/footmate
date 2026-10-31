@@ -10,13 +10,23 @@ export function auditConfig(env){
  if(env.FOOTMATE_QA_DEDICATED_ACCOUNT_ACK!==ACK)throw new Error('Dedicated-test-account authorization acknowledgement required');
  const missing=required.filter(key=>!String(env[key]||'').trim());
  if(missing.length)throw new Error('Missing QA environment variable names: '+missing.join(', '));
+ const key=String(env.FOOTMATE_QA_PUBLIC_KEY).trim();
+ // Reject service-role and secret keys even when they were accidentally supplied.
+ let publicKey=/^sb_publishable_[a-zA-Z0-9_-]{8,}$/.test(key);
+ if(!publicKey){
+  try{
+   const parts=key.split('.');
+   publicKey=parts.length===3&&JSON.parse(Buffer.from(parts[1],'base64url').toString('utf8')).role==='anon';
+  }catch{publicKey=false}
+ }
+ if(!publicKey)throw new Error('Only a Supabase publishable or legacy anon key is permitted');
  const url=new URL(String(env.FOOTMATE_QA_URL||''));
  if(url.protocol!=='https:'||url.hostname!==PROJECT_HOST||url.port||url.pathname!=='/'||url.search||url.hash)
   throw new Error('QA endpoint must be the expected FootMate Supabase HTTPS project');
  if(env.FOOTMATE_QA_USER_EMAIL.trim().toLowerCase()===env.FOOTMATE_QA_OPERATOR_EMAIL.trim().toLowerCase())
   throw new Error('QA user and QA operator must be different authorized test accounts');
  if(!/^\d{6}$/.test(env.FOOTMATE_QA_OPERATOR_TOTP))throw new Error('A current six-digit operator TOTP is required');
- return {base:url.origin,publicKey:env.FOOTMATE_QA_PUBLIC_KEY};
+ return {base:url.origin,publicKey:key};
 }
 
 export function jwtClaims(token){
