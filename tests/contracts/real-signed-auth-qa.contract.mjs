@@ -9,12 +9,18 @@ const userToken=fakeJwt(userId,'aal1'),opToken=fakeJwt(operatorId,'aal1'),aal2To
 const env={
  FOOTMATE_QA_DEDICATED_ACCOUNT_ACK:'I_HAVE_AUTHORIZED_BOTH_TEST_ACCOUNTS',
  FOOTMATE_QA_URL:'https://iihitfjphowjplxzfxtn.supabase.co',
- FOOTMATE_QA_PUBLIC_KEY:'fake-public-key',
+ FOOTMATE_QA_PUBLIC_KEY:'sb_publishable_local_test_key',
  FOOTMATE_QA_USER_EMAIL:'qa-user@example.test',FOOTMATE_QA_USER_PASSWORD:'QA-only-user-secret',
  FOOTMATE_QA_OPERATOR_EMAIL:'qa-operator@example.test',FOOTMATE_QA_OPERATOR_PASSWORD:'QA-only-operator-secret',
  FOOTMATE_QA_OPERATOR_TOTP:'123456'
 };
 assert.equal(auditConfig(env).base,env.FOOTMATE_QA_URL);
+const anonJwt='eyJhbGciOiJIUzI1NiJ9.'+Buffer.from(JSON.stringify({role:'anon'})).toString('base64url')+'.test-signature';
+const serviceJwt='eyJhbGciOiJIUzI1NiJ9.'+Buffer.from(JSON.stringify({role:'service_role'})).toString('base64url')+'.test-signature';
+assert.equal(auditConfig({...env,FOOTMATE_QA_PUBLIC_KEY:anonJwt}).publicKey,anonJwt);
+for(const forbiddenKey of ['sb_secret_unsafe_key',serviceJwt,'not-a-key']){
+ assert.throws(()=>auditConfig({...env,FOOTMATE_QA_PUBLIC_KEY:forbiddenKey}),/publishable or legacy anon key/);
+}
 assert.equal(jwtClaims(opToken).aal,'aal1');
 assert.throws(()=>jwtClaims('not-a-token'),/Invalid JWT/);
 assert.throws(()=>auditConfig({...env,FOOTMATE_QA_DEDICATED_ACCOUNT_ACK:''}),/authorization/);
