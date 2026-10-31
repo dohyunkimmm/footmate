@@ -354,7 +354,7 @@ test('MOSIGO-style document entry, in-page PPT preview and Excel access',async({
   await expect(documents.getByRole('link',{name:'분석 모델 Excel 저장'})).toHaveAttribute('download','footmate_model.xlsx');
   await expect(documents.getByRole('link',{name:'손익 모형 화면에서 보기'})).toHaveAttribute('href','/src/case-study/materials.html');
   const frame=documents.locator('.case-ppt-image');
-  await expect(frame).toHaveAttribute('src',/^data:image\\/png;base64,/,{timeout:15000});
+  await expect(frame).toHaveAttribute('src',/^data:image\/png;base64,/,{timeout:15000});
   await expect(documents.locator('.case-ppt-count')).toHaveText('1 / 9');
   await expect(documents.locator('.case-ppt-prev')).toBeDisabled();
   await documents.locator('.case-ppt-next').click();
