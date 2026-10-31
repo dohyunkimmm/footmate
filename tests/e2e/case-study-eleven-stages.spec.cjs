@@ -173,7 +173,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('약 23곳');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('약 28곳');
- await expect(page.locator('#section-05 .reader-summary')).toContainText('시간 기회비용 포함 월 손익분기는 관리비 추가 전 약 23곳');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('기회비용 포함 월 손익분기는 관리비 추가 전 약 23곳');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  await expect(page.locator('.track table')).toHaveCount(26);
@@ -475,7 +475,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
   await expect(page.locator('#section-01 .case-scenario-note')).toContainText('별도 협상 시나리오');
-  await expect(page.locator('#section-05 .case-model-context')).toContainText('창업자 시간 기회비용 포함 월 손익');
+  await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함 월 손익');
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
