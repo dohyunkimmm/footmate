@@ -142,7 +142,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   const roleCards=page.locator('#section-01 .decision-card');
   await expect(roleCards).toHaveCount(3);
   await expect(roleCards.nth(0)).toContainText('지역 공급과 참가 수요');
-  await expect(roleCards.nth(1)).toContainText('담당 범위 · 김도현');
+  await expect(roleCards.nth(1)).toContainText('수행 범위');
   await expect(roleCards.nth(2)).toContainText('기존 운영자 제휴 우선');
   await expect(page.locator('#section-01 .case-kpi')).toHaveCount(3);
   await expect(page.locator('#section-03 > .table-wrap')).toHaveCount(1);
