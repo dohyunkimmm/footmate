@@ -118,6 +118,40 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
  }
 });
 
+
+test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise and expandable',async({page})=>{
+ for(const width of [320,390,1440]){
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.setViewportSize({width,height:900});
+  await page.goto('/');
+  const roleCards=page.locator('#section-01 .decision-card');
+  await expect(roleCards).toHaveCount(3);
+  await expect(roleCards.nth(0)).toContainText('지역 공급과 참가 수요');
+  await expect(roleCards.nth(1)).toContainText('담당 범위 · 김도현');
+  await expect(roleCards.nth(2)).toContainText('기존 운영자 제휴 우선');
+  await expect(page.locator('#section-01 .case-kpi')).toHaveCount(3);
+  await expect(page.locator('#section-03 > .table-wrap')).toHaveCount(1);
+  await expect(page.locator('#section-03 table')).toHaveCount(4);
+  await expect(page.locator('#section-03 > details')).toHaveCount(2);
+  const optionDetails=page.locator('#section-03 > details').last();
+  await expect(optionDetails.locator('table')).toBeHidden();
+  await optionDetails.locator('summary').click();
+  await expect(optionDetails.locator('table')).toHaveCount(2);
+  await expect(optionDetails.locator('table').first()).toBeVisible();
+  const techCards=page.locator('#section-06 .decision-card');
+  await expect(techCards).toHaveCount(3);
+  await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
+  await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
+  await expect(techCards.nth(2)).toContainText('실제 결제·환불·운영자 정산은 미연동');
+  await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
+  await expect(page.locator('#section-06 table')).toHaveCount(4);
+  await expect(page.locator('.track table')).toHaveCount(26);
+  for(const id of ['#section-01','#section-03','#section-06'])
+   expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+});
+
 test('reader summary, detailed numbers and optional tables remain consistent',async({page})=>{
  await page.setViewportSize({width:390,height:844});await page.goto('/');
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
