@@ -173,6 +173,8 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('약 23곳');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('약 28곳');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('노동비 포함 월 손익분기는 관리비 추가 전 약 23곳');
+ await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  await expect(page.locator('.track table')).toHaveCount(26);
  await expect(page.locator('#section-04 .model-funnel')).toContainText('약 1,559석');
