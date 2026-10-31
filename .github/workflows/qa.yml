@@ -118,6 +118,8 @@ jobs:
         run: node tests/contracts/beta-backend.contract.mjs
       - name: Check preference sync and pilot-only KPI contract
         run: node tests/contracts/preference-sync-and-kpi.contract.mjs
+      - name: Check real signed Auth QA harness without credentials
+        run: node tests/contracts/real-signed-auth-qa.contract.mjs
       - name: Run beta Must recovery contracts
         run: node tests/contracts/beta-must-recovery.contract.mjs
       - name: Run beta operation audit contracts
