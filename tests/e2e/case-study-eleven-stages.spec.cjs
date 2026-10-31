@@ -380,10 +380,19 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
   await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1');
-  await preview.locator('summary').click();
+  const summary=preview.locator('summary');
+  await expect(summary).toContainText('PPT 9장 보기');
+  await expect(summary).toHaveCSS('background-color','rgb(11, 66, 49)');
+  await summary.click();
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
+  await expect.poll(async()=>{
+    const outer=await frame.evaluate(el=>el.getBoundingClientRect().height);
+    const inner=await slides.locator('html').evaluate(el=>el.scrollHeight);
+    return Math.abs(outer-inner);
+  },{timeout:15000}).toBeLessThan(12);
   await slides.getByRole('button',{name:'다음'}).click();
   await expect(slides.locator('#page')).toHaveText('2 / 9');
   await slides.getByRole('button',{name:'이전'}).click();

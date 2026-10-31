@@ -8,7 +8,7 @@ const sections = [
     "name": "추진 배경·검토 결론",
     "title": "풋살 경기 연결 사업 검토",
     "lead": "FootMate · 사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례",
-    "body": "<div class=\"decision-grid\" aria-label=\"문제·수행 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">문제</p><h2>지역 공급과 참가 수요</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. 초기에는 경기 공급·참가 완료를 검증한다.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">수행 범위</p><h2>사업·IT 기획부터 구현까지</h2><p>사업 가설·대안 비교·손익 계산, IT 요구사항·운영 정책, 웹·API 구현·배포·검사</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h2>기존 운영자 제휴 우선</h2><p>제휴 조건·참가·재참가를 먼저 검증하고, 결제·정산은 후속 투자 단계로 분리한다.</p></article></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>월 현금 손익</dt><dd>약 −38.7<small>만 원</small></dd></div></dl><p class=\"kpi-note\">기준 시나리오 · 월 추정치 · 산출 근거 05</p><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><h2 id=\"case-documents-heading\">자료</h2><p>PPT 9장 · Excel 손익 모델</p></div><div class=\"case-file-grid\"><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">PPT</span><div><h3>사업·IT 기획</h3><p>9장</p></div></div><a href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">PPT 다운로드 ↓</a></article><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">XLSX</span><div><h3>손익 분석 모델</h3><p>수치·계산식 포함</p></div></div><a href=\"/src/case-study/downloads/footmate_model.xlsx\" download=\"footmate_model.xlsx\">Excel 다운로드 ↓</a></article></div><details class=\"case-doc-preview\"><summary>PPT 9장 펼치기</summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"FootMate PPT 슬라이드\" data-src=\"/src/case-study/materials.html?preview=1\" loading=\"lazy\"></iframe></div></details></section>"
+    "body": "<div class=\"decision-grid\" aria-label=\"문제·수행 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">문제</p><h2>지역 공급과 참가 수요</h2><p>지역별 경기 공급과 참가 수요를 함께 확보해야 하는 양면 시장이다. 초기에는 경기 공급·참가 완료를 검증한다.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">수행 범위</p><h2>사업·IT 기획부터 구현까지</h2><p>사업 가설·대안 비교·손익 계산, IT 요구사항·운영 정책, 웹·API 구현·배포·검사</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h2>기존 운영자 제휴 우선</h2><p>제휴 조건·참가·재참가를 먼저 검증하고, 결제·정산은 후속 투자 단계로 분리한다.</p></article></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>월 현금 손익</dt><dd>약 −38.7<small>만 원</small></dd></div></dl><p class=\"kpi-note\">기준 시나리오 · 월 추정치 · 산출 근거 05</p><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><h2 id=\"case-documents-heading\">자료</h2><p>PPT 9장 · Excel 손익 모델</p></div><div class=\"case-file-grid\"><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">PPT</span><div><h3>사업·IT 기획</h3><p>9장</p></div></div><a href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">PPT 다운로드 ↓</a></article><article class=\"case-file\"><div class=\"case-file-info\"><span class=\"case-file-type\">XLSX</span><div><h3>손익 분석 모델</h3><p>수치·계산식 포함</p></div></div><a href=\"/src/case-study/downloads/footmate_model.xlsx\" download=\"footmate_model.xlsx\">Excel 다운로드 ↓</a></article></div><details class=\"case-doc-preview\"><summary><span>PPT 9장 보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"FootMate PPT 슬라이드\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1\" loading=\"lazy\"></iframe></div></details></section>"
   },
   {
     "name": "시장·경쟁 분석",
@@ -64,10 +64,25 @@ const sections = [
   toc.innerHTML=sections.map((s,i)=>`<a class="toc-item" href="#section-${String(i+1).padStart(2,'0')}" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></a>`).join('');
   track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-labelledby="heading-${i}"><header class="section-head"><span class="eyebrow">${String(i+1).padStart(2,'0')} / ${s.name}</span><${i===0?'h1':'h2'} class="section-title" id="heading-${i}" tabindex="-1">${s.title}</${i===0?'h1':'h2'}><p class="lead">${s.lead}</p></header>${s.body}</section>`).join('');
   const onDemandPreview=track.querySelector('.case-doc-preview');
-  if(onDemandPreview)onDemandPreview.addEventListener('toggle',()=>{
-    const frame=onDemandPreview.querySelector('iframe[data-src]');
-    if(onDemandPreview.open && frame){frame.src=frame.dataset.src;frame.removeAttribute('data-src');}
-  });
+  if(onDemandPreview){
+    const frame=onDemandPreview.querySelector('.case-ppt-frame');
+    onDemandPreview.addEventListener('toggle',()=>{
+      if(onDemandPreview.open && frame?.dataset.src){
+        frame.src=frame.dataset.src;
+        frame.removeAttribute('data-src');
+      }
+    });
+    // The embedded PPT reports its actual slide + toolbar height.
+    // Keep the frame flush with that height instead of leaving a tall white gap.
+    window.addEventListener('message',event=>{
+      if(event.origin!==location.origin || event.source!==frame?.contentWindow ||
+         event.data?.type!=='case-materials-height')return;
+      const height=Number(event.data.height);
+      if(Number.isFinite(height) && height>150 && height<2200){
+        frame.style.height=Math.ceil(height)+'px';
+      }
+    });
+  }
   // Compact in-page calculator, using the same assumptions as the forecast model.
   const profit=document.getElementById('case-profit-model');
   if(profit){

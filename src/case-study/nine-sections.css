@@ -147,10 +147,14 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 .case-file>a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:10px 12px;border:1px solid #b8ccc0;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;color:var(--green)}
 .case-file>a:hover{background:#f0f5f1;border-color:#387852}
 .case-doc-preview{margin:12px 0 0;border:1px solid var(--line);border-radius:9px;background:#fff;overflow:hidden}
-.case-doc-preview>summary{margin:0;padding:12px 17px;min-height:48px;font-size:14px;font-weight:700}
-.case-doc-preview[open]>summary{border-bottom:1px solid var(--line)}
-.case-doc-preview-body{padding:10px}
-.case-ppt-frame{display:block;width:100%;height:min(70vh,720px);min-height:390px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.case-doc-preview>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;padding:12px 18px;margin:0;background:var(--green);color:#fff;font-size:15px;font-weight:700;cursor:pointer;list-style:none;transition:background .15s ease}
+.case-doc-preview>summary::-webkit-details-marker{display:none}
+.case-doc-preview>summary:hover,.case-doc-preview>summary:focus-visible{background:#185e44}
+.case-preview-indicator::after{content:'⌄';font-size:23px;line-height:1}
+.case-doc-preview[open] .case-preview-indicator::after{content:'⌃'}
+.case-doc-preview[open]>summary{border-bottom:1px solid #1f624a}
+.case-doc-preview-body{padding:0}
+.case-ppt-frame{display:block;width:100%;aspect-ratio:16/10;height:auto;min-height:0;border:0;background:#fff}
 /* In-page financial scenario calculator */
 .case-profit-model{margin:28px 0 38px;border:1px solid var(--line);border-radius:12px;padding:22px;background:#f8faf7}
 .case-profit-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
@@ -167,5 +171,5 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 .case-profit-note{font-size:12px;line-height:1.65;color:var(--muted);margin:12px 0 0}
 .case-profit-error{font-size:14px;color:#994a40;margin:0}
 @media(max-width:1100px){.case-profit-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:800px){.case-file-grid{grid-template-columns:1fr}.case-documents-head{display:block}.case-documents-head h2{font-size:22px}.case-documents-head p{margin-top:3px}.case-file{padding:16px;gap:16px}.case-ppt-frame{height:420px;min-height:350px}.case-profit-model{padding:16px}.case-profit-results strong{font-size:19px}}
+@media(max-width:800px){.case-file-grid{grid-template-columns:1fr}.case-documents-head{display:block}.case-documents-head h2{font-size:22px}.case-documents-head p{margin-top:3px}.case-file{padding:16px;gap:16px}.case-profit-model{padding:16px}.case-profit-results strong{font-size:19px}}
 @media(max-width:360px){.case-profit-inputs{grid-template-columns:1fr}.case-profit-results{grid-template-columns:1fr}}
