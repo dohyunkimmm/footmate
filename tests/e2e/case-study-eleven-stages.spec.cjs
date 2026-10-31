@@ -353,15 +353,17 @@ test('MOSIGO-style document entry, in-page PPT preview and Excel access',async({
   await expect(documents.getByRole('link',{name:'발표자료 PPT 저장'})).toHaveAttribute('download','footmate_report.pptx');
   await expect(documents.getByRole('link',{name:'분석 모델 Excel 저장'})).toHaveAttribute('download','footmate_model.xlsx');
   await expect(documents.getByRole('link',{name:'손익 모형 화면에서 보기'})).toHaveAttribute('href','/src/case-study/materials.html');
-  const frame=documents.locator('.case-ppt-image');
-  await expect(frame).toHaveAttribute('src',/^data:image\/png;base64,/,{timeout:15000});
-  await expect(documents.locator('.case-ppt-count')).toHaveText('1 / 9');
-  await expect(documents.locator('.case-ppt-prev')).toBeDisabled();
-  await documents.locator('.case-ppt-next').click();
-  await expect(documents.locator('.case-ppt-count')).toHaveText('2 / 9');
-  await expect(frame).toHaveAttribute('alt',/2장/);
-  await documents.locator('.case-ppt-prev').click();
-  await expect(documents.locator('.case-ppt-count')).toHaveText('1 / 9');
+  const frame=documents.locator('.case-ppt-frame');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
+  const slides=frame.contentFrame();
+  await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await expect(slides.locator('#slide')).toHaveAttribute('src',/^data:image\/png;base64,/);
+  await expect(slides.getByRole('button',{name:'이전'})).toBeDisabled();
+  await slides.getByRole('button',{name:'다음'}).click();
+  await expect(slides.locator('#page')).toHaveText('2 / 9');
+  await slides.getByRole('button',{name:'이전'}).click();
+  await expect(slides.locator('#page')).toHaveText('1 / 9');
+  await expect(slides.getByRole('heading',{name:'FootMate 분석 자료'})).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  for(const [path,type] of [
