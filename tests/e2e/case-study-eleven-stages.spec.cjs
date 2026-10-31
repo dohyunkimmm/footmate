@@ -58,6 +58,11 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-09')).toContainText('발표자료·손익 모형 보기');
  await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
  await expect(page.locator('#section-09 .table-wrap')).toHaveCount(0);
+ await expect(page.locator('#case-materials-frame')).toHaveCount(0); // Avoid the duplicate embedded report and its large preview payload.
+ await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toHaveCount(1);
+ await expect(page.locator('link[href*="tossface.css"]')).toHaveCount(0);
+ await expect(page.locator('#section-08')).not.toContainText('포트폴리오용 합성 데이터·가정.');
+
  for(const id of ['#section-01','#section-04','#section-05','#section-09']){
   await expect(page.locator(id)).toContainText('626건');
   if(id!=='#section-04')await expect(page.locator(id)).toContainText('−387,160원');
