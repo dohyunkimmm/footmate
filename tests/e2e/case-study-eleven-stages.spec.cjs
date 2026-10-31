@@ -418,6 +418,18 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
   await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
+  // Mobile slide controls must be readable and finger-friendly.
+  const toolbar=slides.locator('.toolbar');
+  const controls=await toolbar.locator('button').evaluateAll(nodes=>nodes.map(node=>{
+    const rect=node.getBoundingClientRect();
+    return {name:node.textContent.trim(),width:rect.width,height:rect.height};
+  }));
+  for(const control of controls){
+    expect(control.width,control.name+' target width').toBeGreaterThanOrEqual(44);
+    expect(control.height,control.name+' target height').toBeGreaterThanOrEqual(44);
+  }
+  await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
+  expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
   const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
