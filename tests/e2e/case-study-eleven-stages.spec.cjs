@@ -567,7 +567,8 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
  const site=new URL('/',page.url()).href;
  for(const [name,engine] of [['firefox',firefox],['webkit',webkit]]){
   // The CI container launches as root; Firefox requires a root-owned HOME.
-  const browser=await engine.launch({env:{...process.env,HOME:'/root'}});
+  // Override Chromium-only launch flags inherited from the test project.
+  const browser=await engine.launch({env:{...process.env,HOME:'/root'},args:[]});
   try{
    const context=await browser.newContext(name==='webkit'
     ? {...devices['iPhone 13'],viewport:{width:390,height:844},reducedMotion:'reduce'}
