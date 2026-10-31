@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { classify, parseChangedFiles } = require('../../scripts/classify-cloudflare-impact.cjs');
+const { classify, caseStudyOnly, parseChangedFiles } = require('../../scripts/classify-cloudflare-impact.cjs');
 
 test('documentation-only updates use lightweight QA and no deployment', () => {
   assert.deepEqual(classify(['README.md', 'docs/README.md', '.github/pull_request_template.md']),
@@ -54,7 +54,23 @@ test('missing or malformed input fails open rather than skipping deploy checks',
     ['src/app/app.js', 'docs/README.md']);
 });
 
-test('workflow emits three strict boolean outputs to GitHub Actions', () => {
+test('Case Study-only paths use focused QA; mixed or uncertain changes always use full QA', () => {
+  for (const files of [
+    ['index.html'],['src/case-study/nine-sections.js'],
+    ['src/case-study/downloads/footmate_report.pptx','src/case-study/report-previews.js'],
+    ['index.html','src/case-study/nine-sections.css','tests/e2e/case-study-eleven-stages.spec.cjs'],
+    ['src/case-study/nine-sections.js','docs/CASE-STUDY.md']
+  ]) assert.equal(caseStudyOnly(files),true,String(files));
+  for (const files of [
+    [],null,undefined,[''],['README.md'],['tests/e2e/production-app.spec.cjs'],
+    ['index.html','worker/index.js'],['index.html','src/beta/app.js'],
+    ['index.html','.github/workflows/qa.yml'],
+    ['src/case-study/nine-sections.js','tests/e2e/production-app.spec.cjs'],
+    ['index.html','scripts/classify-cloudflare-impact.cjs']
+  ]) assert.equal(caseStudyOnly(files),false,String(files));
+});
+
+test('workflow emits four strict boolean outputs to GitHub Actions', () => {
   const runner = path.resolve(__dirname, '../../scripts/classify-cloudflare-impact.cjs');
   const run = files => spawnSync(process.execPath, [runner], {
     encoding: 'utf8',
@@ -66,6 +82,9 @@ test('workflow emits three strict boolean outputs to GitHub Actions', () => {
   const runtime = run('worker/index.js');
   assert.equal(runtime.status, 0, runtime.stderr);
   assert.equal(runtime.stdout, 'runtime=true\nproduction=true\nproduction_smoke=true\n');
+  const cs = run('index.html\\nsrc/case-study/nine-sections.js');
+  assert.equal(cs.status,0,cs.stderr);
+  assert.equal(cs.stdout,'runtime=true\\nproduction=true\\nproduction_smoke=true\\ncase_study_only=true\\n');
   const empty = run('');
   assert.equal(empty.status, 0, empty.stderr);
   assert.equal(empty.stdout, 'runtime=true\nproduction=true\nproduction_smoke=true\n');
@@ -78,6 +97,9 @@ test('CI keeps explicit required check names and Cloudflare deploy ordering', ()
   assert.match(workflow, /name: Browser E2E \+ axe/);
   assert.match(workflow, /name: Deploy Cloudflare/);
   assert.match(workflow, /name: Production Smoke/);
+  assert.match(workflow, /name: Case Study QA/);
+  assert.match(workflow, /name: Case Study Production Smoke/);
+  assert.match(workflow, /needs\\.case_study_qa\\.result == 'success'/);
   assert.match(workflow, /needs\.deploy_cloudflare\.result == 'success'/);
   assert.doesNotMatch(workflow, /FOOTMATE_VERCEL_CHANGED_FILES|vercel-preview-deployment|vercel-ignore-build/);
 });
