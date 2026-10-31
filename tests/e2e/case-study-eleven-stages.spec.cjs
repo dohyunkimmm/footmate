@@ -157,8 +157,8 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(techCards).toHaveCount(3);
   await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
   await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
-  await expect(techCards.nth(2)).toContainText('실제 결제·환불·운영자 정산은 미연동');
-  await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 (미연동)');
+  await expect(techCards.nth(2)).toContainText('실제 결제·환불·운영자 정산은 아직 구축하지 않았다');
+  await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 (미구현)');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
   await expect(page.locator('.track table')).toHaveCount(26);
@@ -223,7 +223,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
  await expect(page.locator('#section-06')).toContainText('동시 요청·현장 운영은 후속 검증한다.');
  await expect(page.locator('#section-07 .transaction-flow')).toContainText('정원 변경까지 한 번에 처리');
- await expect(page.locator('#section-08')).toContainText('관측 완료자만 분모 포함');
+ await expect(page.locator('#section-08')).toContainText('30일이 지난 이용자만 분모에 포함');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
  await expect(page.locator('#section-09')).not.toContainText('발표자료(PPT)·분석 모델(Excel) 보기');
@@ -319,7 +319,7 @@ test('investment evidence exposes budget scope and separates missing data from u
  }
  await expect(page.locator('#section-08')).toContainText('8,310,000원');
  await expect(page.locator('#section-08')).toContainText('취소 전·전체 모집 채널 합산');
- await expect(page.locator('#section-08')).toContainText('자료 부족');await expect(page.locator('#section-08')).toContainText('관측 미완료');
+ await expect(page.locator('#section-08')).toContainText('자료 부족');await expect(page.locator('#section-08')).toContainText('측정 기간 미완료');
  const scan=await new AxeBuilder({page}).include('#section-05').include('#section-06').include('#section-08').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
 });
 
