@@ -74,16 +74,31 @@ test('tables only enter Tab order when horizontally scrollable',async({page})=>{
   return (node.tabIndex===0)===scrollable;
  }))).toBe(true);
 });
-test('320px TOC keeps entire Korean labels readable without splitting words',async({page})=>{
- await page.setViewportSize({width:320,height:844});await page.goto('/');
- const labels=page.locator('.toc-item');
- await expect(labels).toHaveCount(9);
- const layout=await labels.evaluateAll(nodes=>nodes.map(n=>{
-   const a=n.getBoundingClientRect(), t=n.querySelector('.toc-t').getBoundingClientRect();
-   return {top:Math.round(a.top),height:a.height,labelWidth:t.width,labelOverflow:n.querySelector('.toc-t').scrollWidth-t.width};
- }));
- expect(new Set(layout.map(x=>x.top)).size).toBe(9);
- expect(layout.every(x=>x.height>=44&&x.labelOverflow<=1)).toBe(true);
+test('mobile TOC stays readable while the first decision enters the opening viewport',async({page})=>{
+ for(const [width,height] of [[320,740],[390,844],[800,900]]){
+  await page.setViewportSize({width,height});await page.goto('/');
+  const labels=page.locator('.toc-item');
+  await expect(labels).toHaveCount(9);
+  const layout=await page.evaluate(()=>{
+   const toc=document.querySelector('.toc');
+   const nodes=[...toc.querySelectorAll('.toc-item')];
+   return {
+    tocScrollWidth:toc.scrollWidth,tocClientWidth:toc.clientWidth,
+    labelLayouts:nodes.map(n=>({top:Math.round(n.getBoundingClientRect().top),height:n.getBoundingClientRect().height,
+     labelOverflow:n.querySelector('.toc-t').scrollWidth-n.querySelector('.toc-t').clientWidth})),
+    firstDecisionTop:document.querySelector('#section-01 .decision-card').getBoundingClientRect().top,
+    documentOverflow:document.documentElement.scrollWidth>innerWidth+1
+   };
+  });
+  expect(new Set(layout.labelLayouts.map(x=>x.top)).size).toBe(1);
+  expect(layout.tocScrollWidth).toBeGreaterThan(layout.tocClientWidth+1);
+  expect(layout.labelLayouts.every(x=>x.height>=44&&x.labelOverflow<=1)).toBe(true);
+  expect(layout.firstDecisionTop).toBeLessThan(height);
+  expect(layout.documentOverflow).toBe(false);
+  await labels.last().click();
+  await expect(labels.last()).toHaveAttribute('aria-current','location');
+  await expect(page.locator('#section-09 .section-title')).toBeInViewport();
+ }
 });
 test('last section heading aligns near the top in desktop reading',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});
@@ -143,6 +158,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
   await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
   await expect(techCards.nth(2)).toContainText('실제 결제·환불·운영자 정산은 미연동');
+  await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 (미연동)');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
   await expect(page.locator('.track table')).toHaveCount(26);
