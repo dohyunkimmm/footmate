@@ -101,3 +101,9 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 .reader-summary p{margin:0 0 12px;line-height:1.85}
 .reader-summary p:last-child{margin-bottom:0}
 @media(max-width:800px){.reader-summary{margin-bottom:28px;padding-bottom:18px}.reader-summary h3{font-size:20px}.reader-summary p{font-size:16px}}
+
+/* 08장 표의 불필요한 빈 공간 완화 */
+@media(min-width:801px){
+ #section-08 .table-wrap table{table-layout:auto}
+ #section-08 .table-wrap th,#section-08 .table-wrap td{padding:10px 12px;line-height:1.6}
+}
