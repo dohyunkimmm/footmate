@@ -53,3 +53,33 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  .scenario-table tr{border-inline-start:3px solid #84a68c}
  .baseline-cell{color:var(--green);font-weight:700}
 }
+
+/* Case Study: decision summary and compact mobile navigation. */
+.case-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0 0}
+.case-kpi{min-width:0;padding:20px;border:1px solid var(--line);border-radius:8px;background:#fafbf9}
+.case-kpi dt{font-size:14px;font-weight:600;line-height:1.5;color:var(--muted)}
+.case-kpi dd{font-size:30px;line-height:1.45;font-weight:800;letter-spacing:-.6px;color:var(--green);margin:10px 0 0;font-variant-numeric:tabular-nums}
+.case-kpi dd small{font-size:15px;letter-spacing:0;font-weight:600;margin-left:3px}
+.kpi-note{font-size:14px;color:var(--muted);margin:10px 0 24px}
+.mobile-reader-nav{display:none}
+@media(max-width:800px){
+ .mobile-reader-nav{display:flex;position:sticky;top:0;z-index:6;align-items:center;gap:10px;min-height:56px;padding:6px 24px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 3px 10px rgba(12,49,32,.045)}
+ .mobile-reader-count{flex:none;font-size:12px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+ .mobile-reader-name{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--muted);font-size:13px}
+ .mobile-reader-toc{flex:none;border:1px solid #b9cec0;border-radius:7px;background:white;color:var(--green);min-width:56px;min-height:44px;padding:6px 10px;font-size:13px;font-weight:700;cursor:pointer}
+ .mobile-reader-toc:focus-visible{outline:3px solid #326c50;outline-offset:2px}
+ .slide{scroll-margin-top:60px}
+ .case-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .case-kpi{padding:15px}
+ .case-kpi:last-child{grid-column:1/-1}
+ .case-kpi dd{font-size:25px}
+ #section-05 .table-wrap tbody tr,#section-06 .table-wrap tbody tr{padding:12px 14px;margin-top:10px}
+ #section-05 .table-wrap tbody td,#section-06 .table-wrap tbody td{padding:4px 0}
+ #section-05 .table-wrap tbody td:before,#section-06 .table-wrap tbody td:before{font-size:12px}
+}
+@media(max-width:360px){
+ .mobile-reader-nav{padding-inline:16px;gap:7px}
+ .mobile-reader-name{font-size:12px}
+ .case-kpis{grid-template-columns:1fr}
+ .case-kpi:last-child{grid-column:auto}
+}

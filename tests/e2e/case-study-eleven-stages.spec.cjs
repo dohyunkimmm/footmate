@@ -18,7 +18,7 @@ for(const width of [1920,1440,800,390,320]){
    await expect(link).toHaveAttribute('aria-current','location');
    expect(new URL(page.url()).hash).toBe('#section-'+String(i+1).padStart(2,'0'));
    const metrics=await section.evaluate(n=>({hidden:n.hidden,overflow:n.scrollWidth>n.clientWidth+1,top:n.getBoundingClientRect().top}));
-   expect(metrics.hidden).toBe(false);expect(metrics.overflow).toBe(false);if(i<8)expect(Math.abs(metrics.top)).toBeLessThan(40);else await expect(section.locator('.section-title')).toBeInViewport();
+   expect(metrics.hidden).toBe(false);expect(metrics.overflow).toBe(false);if(i<8)expect(Math.abs(metrics.top)).toBeLessThan(width<=800?80:40);else await expect(section.locator('.section-title')).toBeInViewport();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
    for(const table of await section.locator('.table-wrap').all())expect(await table.evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
    if(width===1920){
@@ -31,6 +31,38 @@ for(const width of [1920,1440,800,390,320]){
   const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);expect(errors).toEqual([]);
  });
 }
+test('KPI summary and mobile section navigation stay usable at 320 and 390px',async({page},testInfo)=>{
+ for(const width of [320,390]){
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.setViewportSize({width,height:844});
+  await page.goto('/');
+  const kpis=page.locator('#section-01 .case-kpis');
+  await expect(kpis).toBeVisible();
+  for(const text of ['626','340','−387,160'])await expect(kpis).toContainText(text);
+  await expect(page.locator('#section-01 .kpi-note')).toHaveText('기준 시나리오 · 월 추정치');
+  await expect(page.locator('.mobile-reader-nav')).toBeVisible();
+  await expect(page.locator('.mobile-reader-count')).toHaveText('01 / 09');
+  await testInfo.attach('manual-kpi-'+width,{body:await page.locator('#section-01').screenshot({animations:'disabled'}),contentType:'image/png'});
+  await page.locator('.toc-item').nth(5).click();
+  await expect(page.locator('.mobile-reader-count')).toHaveText('06 / 09');
+  await expect(page.locator('.mobile-reader-name')).toHaveText('IT 투자·시스템 구조');
+  await expect(page.locator('#section-06 td[data-label="구현 상태"]')).toHaveCount(5);
+  await expect(page.locator('#section-06 td[data-label="후속 조건"]')).toHaveCount(5);
+  await testInfo.attach('manual-section6-'+width,{body:await page.screenshot({animations:'disabled'}),contentType:'image/png'});
+  await page.getByRole('button',{name:'목차'}).click();
+  await expect(page.locator('.toc-item').nth(5)).toBeFocused();
+  await expect(page.locator('.toc-item').nth(5)).toBeInViewport();
+  await testInfo.attach('manual-return-to-toc-'+width,{body:await page.screenshot({animations:'disabled'}),contentType:'image/png'});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+});
+test('desktop KPI cards remain three columns without mobile navigation',async({page})=>{
+ await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await expect(page.locator('.mobile-reader-nav')).toBeHidden();
+ await expect(page.locator('.case-kpi')).toHaveCount(3);
+ const columns=await page.locator('.case-kpi').evaluateAll(nodes=>nodes.map(n=>Math.round(n.getBoundingClientRect().top)));
+ expect(new Set(columns).size).toBe(1);
+});
 test('scroll position, deep links and browser history work without page switching',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:1920,height:1080});
  await page.goto('/#section-04');await expect(page.locator('.toc-item').nth(3)).toHaveAttribute('aria-current','location');
