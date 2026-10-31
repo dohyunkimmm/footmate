@@ -41,6 +41,6 @@ assert(narrative.includes('선택 조건 검증 → 실제 경기 후보 → AI 
 assert(api.includes("body.task==='recommend'")&&api.includes('allowed.has(id)'),'Beta AI ranking must accept only supplied candidate IDs');
 const betaGrowth=read('src/beta/growth.js');
 assert(betaGrowth.includes('diverseRecommendationCandidates(rank(preferences))')&&betaGrowth.includes('AI must not add or relax conditions'),'Beta explicit conditions must bound AI candidates');
-assert(narrative.includes('사용자 직접 확정 · 자동 실행 제외'),'Case Study user confirmation boundary missing');
+assert(narrative.includes('참가·결제는 이용자가 직접 확정하도록 설계한다.'),'Case Study user confirmation boundary missing');
 console.log('PASS AI Match Assistant resilience boundary');
 
