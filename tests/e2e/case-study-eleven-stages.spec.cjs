@@ -213,6 +213,9 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
+ await expect(page.locator('#section-01 .section-lead')).toContainText('사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례');
+ await expect(page.locator('#section-06')).toContainText('접근 통제·복구·비용을 도입 판단 기준으로 검토한다.');
+ await expect(page.locator('#section-09')).toContainText('시스템·데이터 관리 책임과 자체 구축·외부 서비스 활용 범위를 구분');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
