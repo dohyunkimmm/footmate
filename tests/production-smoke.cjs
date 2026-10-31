@@ -8,15 +8,22 @@ function extractBetaRuntime(html){
   if(!match)throw new Error('Closed Beta runtime /src/beta/app.js?v=... not found in beta.html');
   return match[1];
 }
+function extractBetaMediaRuntime(html){
+  const match=html.match(/import\(['"](\/src\/beta\/media\.js\?v=[^'"]+)['"]\)/);
+  if(!match)throw new Error('Beta media runtime /src/beta/media.js?v=... not found in beta.html');
+  return match[1];
+}
 function a(condition,message){if(!condition)throw new Error(message)}
 // Case Study markup is embedded in a JavaScript string; its quotes may be escaped.
 function hasCaseStudyDemoCta(source){return /href=\\?["']\/demo\\?["']/.test(source)}
 async function get(path){const response=await fetch(base+path,{redirect:'follow',headers:{'user-agent':`FootMate-v${release}-QA`}});a(response.ok,`${path} ${response.status}`);return response}
 async function runProductionSmoke(){
   if(!strict){console.log(`SKIP v${release} exact Production HTTP smoke`);return}
-  const expectedBetaRuntime=extractBetaRuntime(readFileSync(resolve(__dirname,'../beta.html'),'utf8'));
+  const betaSource=readFileSync(resolve(__dirname,'../beta.html'),'utf8');
+  const expectedBetaRuntime=extractBetaRuntime(betaSource);
+  const expectedMediaRuntime=extractBetaMediaRuntime(betaSource);
   const publicApp=await(await get('/demo')).text(),app=await(await get('/prototype')).text(),cs=await(await get('/')).text(),beta=await(await get('/beta')).text(),operator=await(await get('/beta/operator')).text(),serviceWorker=await(await get('/beta-sw.js')).text(),journey=await(await get('/src/domain/journey.js')).text(),ai=await(await get('/src/app/ai-match-assistant.js')).text(),api=await(await get('/api/ai-match-assistant')).json(),betaConfig=await(await get('/api/beta-config')).json();
-  a(publicApp.includes('id="footmate-beta"'),'public entry uses released Beta');a(publicApp.includes(expectedBetaRuntime),'public entry uses connected runtime');a(app.includes(`footmate-release\" content=\"${release}\"`),'app release');a(app.includes('/src/app/ai-match-assistant.js?v=511'),'AI runtime');a(app.includes('/src/app/ai-match-assistant.css?v=511'),'AI styles');a(app.includes('theme-color\" content=\"#f7f8f7\"'),'white-first browser chrome');a(!app.includes('id=\"fm-real-app-white-tone\"'),'white-first CSS moved out of HTML');a(!app.includes('const redundant=new Set'),'Detail cleanup runtime patch removed');a(cs.includes('footmate-case-study-release\" content=\"5.5.0\"'),'case release');a(cs.includes('/src/case-study/nine-sections.js?v=550'),'case narrative');a(beta.includes('FootMate | Demo'),'Demo app route');a(beta.includes(expectedBetaRuntime),'beta runtime matches checked-out source');a(beta.includes('/src/beta/push.js?v=1'),'beta push runtime');a(beta.includes('/src/beta/media.js?v=1'),'beta media runtime');a(operator.includes('FootMate | Closed Beta Operator'),'operator route');a(operator.includes('/src/beta/operator-mfa.js?v=1'),'operator MFA gate');a(operator.includes('/src/beta/media.js?v=1'),'operator media runtime');a(serviceWorker.includes("addEventListener('push'"),'beta push service worker');a(betaConfig.connected===true,'beta backend connected');a(journey.includes("CONNECTED_PLATFORM_VERSION='5.1.1'"),'journey version');a(ai.includes("rankingOwner:'deterministic recommendation engine'"),'deterministic ranking ownership');a(api.version==='5.1.1','AI API version');a(api.provider==='vercel-ai-gateway','AI API provider');a(api.model==='openai/gpt-5.4-nano','AI primary model');a(api.fallbackModel==='openai/gpt-5.4-mini','AI fallback model');a(api.gatewayTimeoutMs===3000,'AI server timeout');a(typeof api.configured==='boolean','AI API configuration disclosure');
+  a(publicApp.includes('id="footmate-beta"'),'public entry uses released Beta');a(publicApp.includes(expectedBetaRuntime),'public entry uses connected runtime');a(app.includes(`footmate-release\" content=\"${release}\"`),'app release');a(app.includes('/src/app/ai-match-assistant.js?v=511'),'AI runtime');a(app.includes('/src/app/ai-match-assistant.css?v=511'),'AI styles');a(app.includes('theme-color\" content=\"#f7f8f7\"'),'white-first browser chrome');a(!app.includes('id=\"fm-real-app-white-tone\"'),'white-first CSS moved out of HTML');a(!app.includes('const redundant=new Set'),'Detail cleanup runtime patch removed');a(cs.includes('footmate-case-study-release\" content=\"5.5.0\"'),'case release');a(cs.includes('/src/case-study/nine-sections.js?v=550'),'case narrative');a(beta.includes('FootMate | Demo'),'Demo app route');a(beta.includes(expectedBetaRuntime),'beta runtime matches checked-out source');a(beta.includes('/src/beta/push.js?v=1'),'beta push runtime');a(beta.includes(expectedMediaRuntime),'beta media runtime');a(operator.includes('FootMate | Closed Beta Operator'),'operator route');a(operator.includes('/src/beta/operator-mfa.js?v=1'),'operator MFA gate');a(operator.includes(expectedMediaRuntime),'operator media runtime');a(serviceWorker.includes("addEventListener('push'"),'beta push service worker');a(betaConfig.connected===true,'beta backend connected');a(journey.includes("CONNECTED_PLATFORM_VERSION='5.1.1'"),'journey version');a(ai.includes("rankingOwner:'deterministic recommendation engine'"),'deterministic ranking ownership');a(api.version==='5.1.1','AI API version');a(api.provider==='vercel-ai-gateway','AI API provider');a(api.model==='openai/gpt-5.4-nano','AI primary model');a(api.fallbackModel==='openai/gpt-5.4-mini','AI fallback model');a(api.gatewayTimeoutMs===3000,'AI server timeout');a(typeof api.configured==='boolean','AI API configuration disclosure');
 for(const route of ['/demo','/next'])a((await(await get(route)).text()).includes('id="footmate-beta"'),`${route} opens Beta`);
 
   // Verify the static Case Study cover contract on the deployed source.
@@ -37,6 +44,6 @@ for(const route of ['/demo','/next'])a((await(await get(route)).text()).includes
 if(require.main===module){
   runProductionSmoke().catch(error=>{console.error(error);process.exitCode=1});
 }
-module.exports={extractBetaRuntime,hasCaseStudyDemoCta};
+module.exports={extractBetaRuntime,extractBetaMediaRuntime,hasCaseStudyDemoCta};
 
 
