@@ -209,8 +209,10 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveText('서비스 Demo 보기 ↗');
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveAttribute('target','_blank');
  for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
- await expect(page.locator('#section-08')).toContainText('계획이며 과거 수행 실적이 아니다');
- await expect(page.locator('#section-01')).toContainText('담당 범위 · 김도현');
+ await expect(page.locator('#section-08')).toContainText('8주 실증 일정·목표·투자 판단 기준.');
+ await expect(page.locator('#section-01')).toContainText('수행 범위');
+ await expect(page.locator('.track')).not.toContainText('김도현');
+ await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
