@@ -78,16 +78,16 @@ test('workflow emits four strict boolean outputs to GitHub Actions', () => {
   });
   const docs = run('docs/README.md');
   assert.equal(docs.status, 0, docs.stderr);
-  assert.equal(docs.stdout, 'runtime=false\nproduction=false\nproduction_smoke=false\n');
+  assert.equal(docs.stdout, 'runtime=false\nproduction=false\nproduction_smoke=false\ncase_study_only=false\n');
   const runtime = run('worker/index.js');
   assert.equal(runtime.status, 0, runtime.stderr);
-  assert.equal(runtime.stdout, 'runtime=true\nproduction=true\nproduction_smoke=true\n');
-  const cs = run('index.html\\nsrc/case-study/nine-sections.js');
+  assert.equal(runtime.stdout, 'runtime=true\nproduction=true\nproduction_smoke=true\ncase_study_only=false\n');
+  const cs = run('index.html\nsrc/case-study/nine-sections.js');
   assert.equal(cs.status,0,cs.stderr);
-  assert.equal(cs.stdout,'runtime=true\\nproduction=true\\nproduction_smoke=true\\ncase_study_only=true\\n');
+  assert.equal(cs.stdout,'runtime=true\nproduction=true\nproduction_smoke=true\ncase_study_only=true\n');
   const empty = run('');
   assert.equal(empty.status, 0, empty.stderr);
-  assert.equal(empty.stdout, 'runtime=true\nproduction=true\nproduction_smoke=true\n');
+  assert.equal(empty.stdout, 'runtime=true\nproduction=true\nproduction_smoke=true\ncase_study_only=false\n');
 });
 
 test('CI keeps explicit required check names and Cloudflare deploy ordering', () => {
