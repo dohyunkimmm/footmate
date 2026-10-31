@@ -346,7 +346,7 @@ test('removed ledger ZIP stays unpublished while PPT and Excel remain available'
 });
 
 
-test('single resource section, inline financial model and PPT viewer',async({page,request})=>{
+test('single resource section, inline financial model and PPT viewer',async({page,request},testInfo)=>{
  for(const width of [320,390,1440]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await expect(page.locator('.sidebar .docs-link')).toHaveCount(0);
@@ -367,6 +367,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(model.locator('#case-profit-orders')).toHaveText('3,506건');
   await expect(model.locator('#case-profit-economic')).toHaveText('+5,640원');
   await expect(model.locator('#case-profit-bep')).toHaveText('28곳');
+  await testInfo.attach('visual-'+width+'-financial-model',{body:await model.screenshot({animations:'disabled'}),contentType:'image/png'});
   await model.locator('#case-profit-partners').fill('23');
   await expect(model.locator('#case-profit-economic')).toHaveText('-432,800원');
   await model.getByRole('button',{name:'초기화'}).click();
@@ -383,11 +384,52 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 9장 보기');
   await expect(summary).toHaveCSS('background-color','rgb(11, 66, 49)');
+  // Verify rendered palette contrast, not just hard-coded expected colors.
+  const colorAudit=await documents.evaluate(root=>{
+    const selectors=[
+      ['PPT CTA','summary',null],
+      ['PPT file label','.case-file-type',null],
+      ['PPT download','.case-file>a','.case-file'],
+      ['Section heading','.case-documents-head h2','.case-documents'],
+      ['Section note','.case-documents-head p','.case-documents']
+    ];
+    const rgb=value=>(value.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
+    const luminance=value=>{
+      const linear=rgb(value).map(v=>{v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4)});
+      return .2126*linear[0]+.7152*linear[1]+.0722*linear[2];
+    };
+    return selectors.map(([label,selector,backgroundSelector])=>{
+      const node=root.querySelector(selector);
+      const foreground=getComputedStyle(node).color;
+      const background=getComputedStyle(backgroundSelector?node.closest(backgroundSelector):node).backgroundColor;
+      const bg=background==='rgba(0, 0, 0, 0)'?'rgb(255, 255, 255)':background;
+      const [a,b]=[luminance(foreground),luminance(bg)];
+      return {label,contrast:Number(((Math.max(a,b)+.05)/(Math.min(a,b)+.05)).toFixed(2))};
+    });
+  });
+  for(const item of colorAudit)expect(item.contrast,JSON.stringify(item)).toBeGreaterThanOrEqual(4.5);
+  await summary.focus();
+  await expect(summary).toBeFocused();
+  await expect(summary).toHaveCSS('outline-color','rgb(255, 255, 255)');
+  await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
+  // Mobile slide controls must be readable and finger-friendly.
+  const toolbar=slides.locator('.toolbar');
+  const controls=await toolbar.locator('button').evaluateAll(nodes=>nodes.map(node=>{
+    const rect=node.getBoundingClientRect();
+    return {name:node.textContent.trim(),width:rect.width,height:rect.height};
+  }));
+  for(const control of controls){
+    expect(control.width,control.name+' target width').toBeGreaterThanOrEqual(44);
+    expect(control.height,control.name+' target height').toBeGreaterThanOrEqual(44);
+  }
+  await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
+  expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
   const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
@@ -400,6 +442,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     const natural=await slides.locator('.viewer').evaluate(el=>el.getBoundingClientRect().height);
     return Math.abs(outer-natural);
   },{timeout:15000}).toBeLessThan(12);
+  await testInfo.attach('visual-'+width+'-PPT-after-fullscreen',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect.poll(async()=>{
     const outer=await frame.evaluate(el=>el.getBoundingClientRect().height);
     const inner=await slides.locator('html').evaluate(el=>el.scrollHeight);
