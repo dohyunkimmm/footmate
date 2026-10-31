@@ -112,8 +112,15 @@ if(operatorRoot){
     const form=operatorRoot.querySelector('form[data-form="match"]');if(!form){panel()?.remove();return}
     const matchId=selectedMatchId();const path=matchId?String(cache.get(matchId)||''):'';
     const preview=path?`<img class="fm-beta-media-preview" src="${esc(objectUrl(path))}" alt="현재 경기장 이미지">`:`<div class="fm-beta-media-placeholder">${matchId?'아직 등록된 이미지가 없습니다.':'경기를 먼저 저장하고 선택해주세요.'}</div>`;
-    const html=`<div class="fm-beta-enhancement fm-beta-media" data-beta-match-media-panel><div class="fm-beta-media-copy"><strong>경기장 이미지</strong><span>공개 경기 카드에 사용할 이미지 · JPG/PNG/WebP · 최대 5MB</span>${error?`<small data-tone="error">${esc(error)}</small>`:''}</div>${preview}<input class="fm-beta-media-input" type="file" aria-label="경기장 이미지 파일 선택" accept="image/jpeg,image/png,image/webp" data-beta-match-file ${!matchId?'disabled':''}><div class="fm-beta-actions"><button class="fm-beta-button" type="button" data-action="upload-beta-match-image" ${busy||!matchId?'disabled':''}>${busy?'저장 중':'이미지 저장'}</button>${path?`<button class="fm-beta-link" type="button" data-action="remove-beta-match-image" ${busy?'disabled':''}>이미지 제거</button>`:''}</div></div>`;
-    const existing=panel();if(existing){existing.outerHTML=html}else{
+    const html=`<div class="fm-beta-enhancement fm-beta-media" data-beta-match-media-panel data-media-match-id="${esc(matchId)}" data-media-loaded="${cache.has(matchId)}"><div class="fm-beta-media-copy"><strong>경기장 이미지</strong><span>공개 경기 카드에 사용할 이미지 · JPG/PNG/WebP · 최대 5MB</span>${error?`<small data-tone="error">${esc(error)}</small>`:''}</div>${preview}<input class="fm-beta-media-input" type="file" aria-label="경기장 이미지 파일 선택" accept="image/jpeg,image/png,image/webp" data-beta-match-file ${!matchId?'disabled':''}><div class="fm-beta-actions"><button class="fm-beta-button" type="button" data-action="upload-beta-match-image" ${busy||!matchId?'disabled':''}>${busy?'저장 중':'이미지 저장'}</button>${path?`<button class="fm-beta-link" type="button" data-action="remove-beta-match-image" ${busy?'disabled':''}>이미지 제거</button>`:''}</div></div>`;
+    const existing=panel();if(existing){
+      // Preserve a selected file when the same match's async image-path read finishes.
+      // Never carry it over when the operator switches matches.
+      const originalInput=existing.dataset.mediaMatchId===matchId?existing.querySelector('[data-beta-match-file]'):null;
+      existing.outerHTML=html;
+      const replacement=panel()?.querySelector('[data-beta-match-file]');
+      if(originalInput&&replacement){originalInput.disabled=!matchId;replacement.replaceWith(originalInput)}
+    }else{
       const note=form.querySelector('.fm-beta-note');if(note)note.insertAdjacentHTML('beforebegin',html);else form.insertAdjacentHTML('beforeend',html);
     }
     if(matchId&&!cache.has(matchId))void loadMatch(matchId);

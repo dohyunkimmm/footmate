@@ -45,8 +45,10 @@ assert.ok(sw.includes("self.addEventListener('push'"));
 assert.ok(sw.includes("self.addEventListener('notificationclick'"));
 assert.ok(sw.includes('showNotification'));
 assert.ok(beta.includes("import('/src/beta/push.js?v=1')"));
-assert.ok(beta.includes("import('/src/beta/media.js?v=1')"));
-assert.ok(operator.includes('/src/beta/media.js?v=1'));
+assert.ok(beta.includes("import('/src/beta/media.js?v=2')"));
+assert.ok(operator.includes('/src/beta/media.js?v=2'));
+assert.ok(media.includes('existing.dataset.mediaMatchId===matchId'),'preserve uploaded file only while the same match redraws');
+assert.ok(media.includes('replacement.replaceWith(originalInput)'),'keep chosen FileList through asynchronous image-path reads');
 assert.ok(beta.includes('/src/beta/enhancements.css?v=512'));
 assert.ok(operator.includes('/src/beta/enhancements.css?v=1'));
 
