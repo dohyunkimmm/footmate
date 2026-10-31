@@ -56,7 +56,7 @@ const sections = [
     "name": "종합 판단·근거",
     "title": "검토 결론·후속 과제",
     "lead": "확인한 근거와 추가로 검증할 사항.",
-    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>참가·정원 기능과 유료 전환 과제 정리.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>제휴형 우선 검증, 공급·수익성 확인 후 확대.</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급·참가·재참가·단위 수익 확인 후 투자·확장.</p></article></div><p class=\"decision\">후속 과제 · 월 626건·건당 340원 기준 수수료·결제비 협상, 공급처 수 재산정</p>"
+    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>참가·정원 기능과 유료 전환 과제 정리.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>월 현금 −387,160원·확장 −1,986,980원(기회비용 포함).</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급·참가·재참가·단위 수익 확인 후 투자·확장.</p></article></div><p class=\"decision\">후속 과제 · 월 626건·건당 340원 기준 수수료·결제비 협상, 공급처 수 재산정</p>"
   }
 ];
 
