@@ -58,6 +58,11 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-09')).toContainText('발표자료·손익 모형 보기');
  await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
  await expect(page.locator('#section-09 .table-wrap')).toHaveCount(0);
+ await expect(page.locator('#case-materials-frame')).toHaveCount(0); // Avoid the duplicate embedded report and its large preview payload.
+ await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toHaveCount(1);
+ await expect(page.locator('link[href*="tossface.css"]')).toHaveCount(0);
+ await expect(page.locator('#section-08')).not.toContainText('포트폴리오용 합성 데이터·가정.');
+
  for(const id of ['#section-01','#section-04','#section-05','#section-09']){
   await expect(page.locator(id)).toContainText('626건');
   if(id!=='#section-04')await expect(page.locator(id)).toContainText('−387,160원');
@@ -135,7 +140,7 @@ test('investment evidence exposes budget scope and separates missing data from u
    await page.locator(id+' details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
    expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   }
-  for(const label of ['8주 자원 산정·승인 범위','목표 미달·자료 부족·중단 기준']){
+  for(const label of ['8주 자원 산정·승인 범위','실증 결과별 의사결정']){
    const detail=page.locator('#section-08 details').filter({has:page.getByText(label,{exact:true})});
    await testInfo.attach('investment-'+width+'-'+(label.startsWith('8주')?'budget':'decision'),{body:await detail.screenshot({animations:'disabled'}),contentType:'image/png'});
   }
