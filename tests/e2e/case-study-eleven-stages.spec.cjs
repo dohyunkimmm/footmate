@@ -134,7 +134,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(page.locator('#section-03 table')).toHaveCount(4);
   await expect(page.locator('#section-03 > details')).toHaveCount(2);
   const optionDetails=page.locator('#section-03 > details').last();
-  await expect(optionDetails.locator('table')).toBeHidden();
+  await expect(optionDetails.locator('table').first()).toBeHidden();
   await optionDetails.locator('summary').click();
   await expect(optionDetails.locator('table')).toHaveCount(2);
   await expect(optionDetails.locator('table').first()).toBeVisible();
