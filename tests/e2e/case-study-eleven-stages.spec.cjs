@@ -63,6 +63,40 @@ test('desktop KPI cards remain three columns without mobile navigation',async({p
  const columns=await page.locator('.case-kpi').evaluateAll(nodes=>nodes.map(n=>Math.round(n.getBoundingClientRect().top)));
  expect(new Set(columns).size).toBe(1);
 });
+test('tables only enter Tab order when horizontally scrollable',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await expect(page.locator('.table-wrap[tabindex="0"]')).toHaveCount(0);
+ await page.locator('#section-08 details').evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
+ await expect(page.locator('.table-wrap[tabindex="0"]')).toHaveCount(0);
+ await page.setViewportSize({width:1440,height:900});
+ await expect.poll(()=>page.locator('.table-wrap').evaluateAll(nodes=>nodes.every(node=>{
+  const scrollable=getComputedStyle(node).overflowX!=='visible' && node.scrollWidth>node.clientWidth+1;
+  return (node.tabIndex===0)===scrollable;
+ }))).toBe(true);
+});
+test('320px TOC keeps entire Korean labels readable without splitting words',async({page})=>{
+ await page.setViewportSize({width:320,height:844});await page.goto('/');
+ const labels=page.locator('.toc-item');
+ await expect(labels).toHaveCount(9);
+ const layout=await labels.evaluateAll(nodes=>nodes.map(n=>{
+   const a=n.getBoundingClientRect(), t=n.querySelector('.toc-t').getBoundingClientRect();
+   return {top:Math.round(a.top),height:a.height,labelWidth:t.width,labelOverflow:n.querySelector('.toc-t').scrollWidth-t.width};
+ }));
+ expect(new Set(layout.map(x=>x.top)).size).toBe(9);
+ expect(layout.every(x=>x.height>=44&&x.labelOverflow<=1)).toBe(true);
+});
+test('last section heading aligns near the top in desktop reading',async({page})=>{
+ await page.emulateMedia({reducedMotion:'reduce'});
+ for(const [width,height] of [[1440,900],[1920,1080]]){
+  await page.setViewportSize({width,height});await page.goto('/');
+  await page.locator('.toc-item').nth(8).click();
+  await expect(page.locator('.toc-item').nth(8)).toHaveAttribute('aria-current','location');
+  const top=await page.locator('#section-09').evaluate(el=>el.getBoundingClientRect().top);
+  expect(top).toBeGreaterThanOrEqual(-1);
+  expect(top).toBeLessThanOrEqual(55);
+  await expect(page.locator('#section-09 .section-title')).toBeInViewport();
+ }
+});
 test('scroll position, deep links and browser history work without page switching',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:1920,height:1080});
  await page.goto('/#section-04');await expect(page.locator('.toc-item').nth(3)).toHaveAttribute('aria-current','location');

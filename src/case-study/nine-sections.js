@@ -96,6 +96,16 @@ const sections = [
       if(['월 완료 예약 · 최종 반올림','예약당 공헌이익','현금 기준 손익','창업자 노동비용 포함'].includes(row.firstElementChild?.textContent.trim())) row.classList.add('key-result');
     });
   });
+  // Only include a table region in the Tab order when it can scroll horizontally.
+  const tableRegions=[...track.querySelectorAll('.table-wrap[tabindex="0"]')];
+  function syncTableFocus(){
+    tableRegions.forEach(region=>{
+      const canScroll=getComputedStyle(region).overflowX!=='visible' && region.scrollWidth>region.clientWidth+1;
+      region.tabIndex=canScroll?0:-1;
+    });
+  }
+  syncTableFocus();
+  track.addEventListener('toggle',syncTableFocus,true);
   // Keep one document heading and a consistent section/subheading hierarchy.
   track.querySelectorAll('.slide:not(:first-child) .story-card h2,.slide:not(:first-child) .block-title').forEach(heading=>{
     const subheading=document.createElement('h3');subheading.className=heading.className;
@@ -123,6 +133,7 @@ const sections = [
   });
   window.addEventListener('scroll',schedule,{passive:true});
   window.addEventListener('resize',schedule);
+  window.addEventListener('resize',syncTableFocus);
   window.addEventListener('hashchange',schedule);
   // History traversal must restore the fragment and keyboard focus together.
   window.addEventListener('popstate',()=>{
@@ -136,7 +147,7 @@ const sections = [
     });
   });
   window.addEventListener('pageshow',schedule);
-  new ResizeObserver(schedule).observe(track);
+  new ResizeObserver(()=>{schedule();syncTableFocus();}).observe(track);
   updateCurrent();
 })();
 
