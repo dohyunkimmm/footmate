@@ -211,7 +211,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveText('서비스 Demo 보기 ↗');
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveAttribute('target','_blank');
  for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
- await expect(page.locator('#section-08')).toContainText('8주 현장 검증 일정·목표·투자 판단 기준.');
+ await expect(page.locator('#section-08')).toContainText('추진 일정과 목표, 예산 및 결정 기준.');
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
@@ -514,4 +514,16 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  expect(failures).toEqual([]);
+});
+
+test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
+ await page.goto('/');
+ const texts=await page.locator('.slide p,.slide h2,.slide h3,.slide caption,.slide summary,.slide dt,.slide dd').evaluateAll(nodes=>nodes.map(node=>node.textContent.replace(/\\s+/g,' ').trim()));
+ for(const value of texts){
+  expect(value).not.toMatch(/(?:^|\\s)([가-힣A-Za-z0-9]{2,})\\s+\\1(?=$|\\s|[.,!?])/u);
+ }
+ await expect(page.locator('#section-08')).not.toContainText('30일 30일');
+ await expect(page.locator('.track')).not.toContainText('시간 기회비용');
+ await expect(page.locator('.track')).not.toContainText('창업자 시간 기회비용');
+ await expect(page.locator('#section-05 .case-profit-results')).toContainText('기회비용 포함');
 });
