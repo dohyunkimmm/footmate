@@ -1,3 +1,4 @@
+/* Case Study visual styles are isolated from the Beta/service UI. */
 :root{--ink:#173329;--green:#0b4231;--muted:#53675d;--line:#dce5dd;--canvas:#f5f7f4;--soft:#edf3ed}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:32px}body{margin:0;background:var(--canvas);color:var(--ink);font:17px/1.85 Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;overflow-wrap:anywhere}button,a,input{font:inherit}a{color:#155a40;text-underline-offset:4px}a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #326c50;outline-offset:4px}.section-title:focus{outline:none}p{margin:0 0 20px}h1,h2,h3{word-break:keep-all;overflow-wrap:anywhere}strong{font-weight:700}.slide :is(p,li,th,td,caption,summary){word-break:keep-all;overflow-wrap:anywhere}
 .skip-link{position:fixed;top:-100px;left:16px;z-index:10;padding:10px 16px;background:white}.skip-link:focus{top:12px}
