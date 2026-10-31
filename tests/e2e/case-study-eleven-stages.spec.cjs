@@ -217,7 +217,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-08')).toContainText('관측 완료자만 분모 포함');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
- await expect(page.locator('#section-09')).toContainText('발표자료·손익 모형 보기');
+ await expect(page.locator('#section-09')).toContainText('발표자료(PPT)·분석 모델(Excel) 보기');
  await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
  await expect(page.locator('#section-09 .table-wrap')).toHaveCount(0);
  await expect(page.locator('#case-materials-frame')).toHaveCount(0); // Avoid the duplicate embedded report and its large preview payload.
@@ -336,4 +336,48 @@ test('removed ledger ZIP stays unpublished while PPT and Excel remain available'
  const removed=await request.get('/src/case-study/downloads/footmate_materials.zip');
  expect(removed.headers()['content-type']||'').not.toMatch(/zip/i);
  expect((await removed.body()).subarray(0,4).toString('hex')).not.toBe('504b0304');
+});
+
+
+test('MOSIGO-style document entry, in-page PPT preview and Excel access',async({page,request})=>{
+ for(const width of [320,390,1440]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  await expect(page.getByRole('link',{name:'PPT·Excel 자료 보기 ↓'})).toBeVisible();
+  await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toContainText('PPT');
+  await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toContainText('Excel');
+  await page.getByRole('link',{name:'PPT·Excel 자료 보기 ↓'}).click();
+  await expect(page).toHaveURL(/#attachments$/);
+  const documents=page.locator('#attachments');
+  await expect(documents).toBeInViewport();
+  await expect(documents.getByRole('heading',{name:'자료 바로보기'})).toBeVisible();
+  await expect(documents.getByRole('link',{name:'발표자료 PPT 저장'})).toHaveAttribute('download','footmate_report.pptx');
+  await expect(documents.getByRole('link',{name:'분석 모델 Excel 저장'})).toHaveAttribute('download','footmate_model.xlsx');
+  await expect(documents.getByRole('link',{name:'손익 모형 화면에서 보기'})).toHaveAttribute('href','/src/case-study/materials.html');
+  const details=documents.locator('.case-doc-preview');
+  await expect(details).not.toHaveAttribute('open',/.+/);
+  const frame=documents.locator('.case-ppt-frame');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1');
+  await details.locator('summary').click();
+  await expect(details).toHaveAttribute('open','');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
+  const slides=frame.contentFrame();
+  await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await expect(slides.locator('#slide')).toHaveAttribute('src',/^data:image\/png;base64,/);
+  await expect(slides.getByRole('button',{name:'이전'})).toBeDisabled();
+  await slides.getByRole('button',{name:'다음'}).click();
+  await expect(slides.locator('#page')).toHaveText('2 / 9');
+  await slides.getByRole('button',{name:'이전'}).click();
+  await expect(slides.locator('#page')).toHaveText('1 / 9');
+  await expect(slides.getByRole('heading',{name:'FootMate 분석 자료'})).toHaveCount(0);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ }
+ for(const [path,type] of [
+  ['/src/case-study/downloads/footmate_report.pptx','presentation'],
+  ['/src/case-study/downloads/footmate_model.xlsx','spreadsheet']
+ ]){
+  const response=await request.get(path);
+  expect(response.ok()).toBe(true);
+  expect(['application/octet-stream',type].some(expected=>(response.headers()['content-type']||'').includes(expected))).toBe(true);
+  expect((await response.body()).subarray(0,2).toString()).toBe('PK');
+ }
 });
