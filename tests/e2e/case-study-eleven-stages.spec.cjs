@@ -173,7 +173,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('약 23곳');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('약 28곳');
- await expect(page.locator('#section-05 .reader-summary')).toContainText('노동비 포함 월 손익분기는 관리비 추가 전 약 23곳');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('시간 기회비용 포함 월 손익분기는 관리비 추가 전 약 23곳');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  await expect(page.locator('.track table')).toHaveCount(26);
@@ -211,7 +211,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveText('서비스 Demo 보기 ↗');
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveAttribute('target','_blank');
  for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
- await expect(page.locator('#section-08')).toContainText('8주 실증 일정·목표·투자 판단 기준.');
+ await expect(page.locator('#section-08')).toContainText('8주 현장 검증 일정·목표·투자 판단 기준.');
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
@@ -305,14 +305,14 @@ test('expansion assumptions include added cost and supply loss without changing 
 
 test('investment evidence exposes budget scope and separates missing data from unmet targets',async({page},testInfo)=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#section-08');
- await expect(page.locator('#section-08')).toContainText('현금 461만원');
+ await expect(page.locator('#section-08')).toContainText('현금 지출 상한 461만 원');
  for(const width of [390,1440]){
   await page.setViewportSize({width,height:1080});
   for(const id of ['#section-05','#section-06','#section-08']){
    await page.locator(id+' details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
    expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   }
-  for(const label of ['8주 자원 산정·승인 범위','실증 결과별 의사결정']){
+  for(const label of ['8주 자원 산정·승인 범위','현장 검증 결과별 의사결정']){
    const detail=page.locator('#section-08 details').filter({has:page.getByText(label,{exact:true})});
    await testInfo.attach('investment-'+width+'-'+(label.startsWith('8주')?'budget':'decision'),{body:await detail.screenshot({animations:'disabled'}),contentType:'image/png'});
   }
@@ -475,9 +475,9 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
   await expect(page.locator('#section-01 .case-scenario-note')).toContainText('별도 협상 시나리오');
-  await expect(page.locator('#section-05 .case-model-context')).toContainText('창업자 노동비 포함 월 손익');
+  await expect(page.locator('#section-05 .case-model-context')).toContainText('창업자 시간 기회비용 포함 월 손익');
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
-  await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 461만원');
+  await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
   await expect(page.locator('#attachments .case-preview-context')).toContainText('발표용 9장');
   expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
