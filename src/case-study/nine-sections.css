@@ -114,3 +114,13 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 #section-05 > details > .detail-body,#section-08 > details > .detail-body{padding-top:12px}
 #section-05 > details > .detail-body > .table-wrap:first-child,
 #section-08 > details > .detail-body > .table-wrap:first-child{margin-top:12px}
+
+/* 01·06: recruiter's scan path — problem, ownership, decision and proof. */
+.decision-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}
+.decision-card{min-width:0;border:1px solid var(--line);border-top:3px solid #84a68c;border-radius:8px;background:#fafbf9;padding:20px}
+.decision-card-label{font-size:13px;font-weight:700;line-height:1.5;color:#38634e;margin:0 0 10px}
+.decision-card h2{font-size:20px;line-height:1.5;letter-spacing:-.35px;margin:0 0 10px}
+.decision-card>p:last-child{font-size:16px;line-height:1.75;margin:0}
+#section-03 > details{margin:14px 0}
+#section-03 > details > summary{padding-block:14px}
+@media(max-width:1100px){.decision-grid{grid-template-columns:1fr}.decision-card{padding:18px}}
