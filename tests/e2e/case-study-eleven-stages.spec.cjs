@@ -619,7 +619,7 @@ pptx=root/'footmate_report.pptx'
 xlsx=root/'footmate_model.xlsx'
 with ZipFile(pptx) as p:
     paths=set(p.namelist())
-    slides=sorted(x for x in paths if re.fullmatch(r'ppt/slides/slide[0-9]+\\.xml',x))
+    slides=sorted(x for x in paths if re.fullmatch(r'ppt/slides/slide[0-9]+\.xml',x))
     assert len(slides)==9, 'PPTX slide count: '+str(len(slides))
     pres=ET.fromstring(p.read('ppt/presentation.xml'))
     assert len(pres.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sldId'))==9
@@ -634,7 +634,7 @@ with ZipFile(xlsx) as x:
     ns='{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
     sheets=workbook.findall('.//'+ns+'sheet')
     assert len(sheets)>=1, 'no Excel worksheets'
-    parts=[n for n in paths if re.fullmatch(r'xl/worksheets/sheet[0-9]+\\.xml',n)]
+    parts=[n for n in paths if re.fullmatch(r'xl/worksheets/sheet[0-9]+\.xml',n)]
     assert len(parts)>=len(sheets),'missing Excel sheet parts'
     formulas=0
     errors=[]
