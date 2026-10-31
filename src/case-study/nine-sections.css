@@ -131,3 +131,25 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  .toc-item{flex:0 0 auto;align-items:center;white-space:nowrap;word-break:keep-all;padding:10px 12px;scroll-snap-align:start}
  .toc-t{white-space:nowrap;word-break:keep-all;overflow-wrap:normal}
 }
+
+/* Case Study document access, matching the MOSIGO report's discoverable preview/download pattern. */
+.docs-link{display:inline-block;color:var(--green);font-size:14px;font-weight:700;margin:20px 12px 0;text-decoration:underline;text-underline-offset:4px}
+.case-documents{max-width:960px;margin:38px 0 0;padding:24px;border:1px solid var(--line);border-radius:12px;background:#f8faf7;scroll-margin-top:22px}
+.case-documents-head h2{font-size:24px;line-height:1.4;margin:3px 0 10px}
+.case-documents-head p:not(.case-documents-label){font-size:16px;line-height:1.7;margin:0 0 16px}
+.case-documents-label{font-size:13px;font-weight:700;color:#38634e;margin:0}
+.case-documents-actions{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}
+.case-document-action{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;min-height:44px;border:1px solid #abc3ae;border-radius:8px;background:#fff;color:var(--green);font-size:14px;font-weight:700;line-height:1.5;text-decoration:none}
+.case-document-action.primary{background:var(--green);color:#fff}
+.case-document-action:hover{border-color:#387852;text-decoration:underline}
+.case-ppt-viewer{background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.case-ppt-media{display:grid;place-items:center;min-height:160px;background:#fff}
+.case-ppt-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
+.case-ppt-image[hidden],.case-ppt-status[hidden]{display:none}
+.case-ppt-status{font-size:14px;color:var(--muted);margin:28px 16px;text-align:center}
+.case-ppt-controls{display:flex;align-items:center;justify-content:center;gap:20px;padding:12px 16px;background:#f1f5f0;border-top:1px solid var(--line)}
+.case-ppt-controls button{min-height:44px;min-width:72px;padding:7px 14px;border:1px solid #b9cfc0;border-radius:7px;background:#fff;color:var(--green);cursor:pointer}
+.case-ppt-controls button:disabled{color:#7d8981;opacity:.6;cursor:default}
+.case-ppt-count{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.case-documents-note{color:var(--muted);font-size:13px;line-height:1.7;margin:14px 0 0}
+@media(max-width:800px){.docs-link{font-size:13px;margin:16px 6px 0}.case-documents{margin-top:28px;padding:16px}.case-documents-head h2{font-size:21px}.case-documents-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.case-document-action{min-width:0;font-size:13px;padding:10px 9px}.case-document-action:last-child{grid-column:1 / -1}.case-ppt-controls{gap:14px}}
