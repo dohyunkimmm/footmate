@@ -100,16 +100,16 @@ test('mobile TOC stays readable while the first decision enters the opening view
   await expect(page.locator('#section-09 .section-title')).toBeInViewport();
  }
 });
-test('last section heading aligns near the top in desktop reading',async({page})=>{
+test('last section stays readable without forced desktop height',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});
  for(const [width,height] of [[1440,900],[1920,1080]]){
   await page.setViewportSize({width,height});await page.goto('/');
   await page.locator('.toc-item').nth(8).click();
   await expect(page.locator('.toc-item').nth(8)).toHaveAttribute('aria-current','location');
-  const top=await page.locator('#section-09').evaluate(el=>el.getBoundingClientRect().top);
-  expect(top).toBeGreaterThanOrEqual(-1);
-  expect(top).toBeLessThanOrEqual(55);
-  await expect(page.locator('#section-09 .section-title')).toBeInViewport();
+  const section=page.locator('#section-09');
+  const sectionHeight=await section.evaluate(el=>el.getBoundingClientRect().height);
+  expect(sectionHeight).toBeLessThan(height);
+  await expect(section.locator('.section-title')).toBeInViewport();
  }
 });
 
