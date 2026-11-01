@@ -103,6 +103,8 @@ html.preview-only .slide-thumbnails{padding:12px}
 /* Visibly reveal off-screen thumbnails without replacing the native scrollbar. */
 .filmstrip{display:flex;align-items:center;gap:6px;min-width:0;padding:0 8px;background:#fbfcfb}
 .filmstrip .slide-thumbnails{flex:1 1 auto;min-width:0}
+.viewer:fullscreen .filmstrip{flex:none}
+.viewer:fullscreen .filmstrip .slide-thumbnails{flex:1 1 auto;min-width:0}
 .filmstrip-scroll{display:flex;flex:0 0 44px;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid #dce7df;border-radius:10px;background:#fff;color:#285943;cursor:pointer}
 .filmstrip-scroll:not(:disabled):hover{border-color:#8cae98;background:#eef5ef}
 .filmstrip-scroll:disabled{opacity:.32;cursor:default}
