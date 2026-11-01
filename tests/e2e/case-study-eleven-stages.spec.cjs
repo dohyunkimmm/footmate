@@ -124,7 +124,7 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
   await expect(scenarios.locator('table')).toBeHidden();
   await scenarios.locator('summary').click();
   await expect(scenarios.locator('table')).toBeVisible();
-  const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (합성 데이터)',{exact:true})});
+  const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (가상 데이터)',{exact:true})});
   await expect(report.locator('table')).toBeHidden();
   await report.locator('summary').click();
   await expect(report.locator('table')).toBeVisible();
@@ -675,7 +675,7 @@ test('all supporting prose stays concise outside page titles and descriptions',a
  for(const item of copy){
   expect([...item.text].length,item.tag+' '+item.className+': '+item.text).toBeLessThanOrEqual(50);
  }
- await expect(page.locator('#section-02')).toContainText('시장·경쟁: 공개 자료 확인. 유료 의향: 면담·가격 실험 검증.');
+ await expect(page.locator('#section-02')).toContainText('수요·경쟁은 공식 자료로 검토. 유료 의향은 면담·가격 실험·시범 운영으로 검증 예정.');
  await expect(page.locator('#section-03')).toContainText('초기 모델은 운영자 제휴형. 직접 운영·구독은 후속 대안.');
  await expect(page.locator('#section-05')).toContainText('손익분기 1,765건(현금)·7,648건(총비용)');
  await expect(page.locator('#section-08')).toContainText('2027 상반기 가상 데이터, 하반기 공급 전망.');
@@ -685,7 +685,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
  await page.goto('/');
  const bodyParagraphs=await page.locator('.track p:not(.lead)').evaluateAll(nodes=>nodes.map(n=>n.innerText.trim()).filter(Boolean));
  expect(bodyParagraphs.filter(t=>t.length>85)).toEqual([]);
- for(const phrase of ['참여 수요·경쟁 기능은 공식 자료로 검토. 유료 의향은 면담·가격 실험·시범 운영으로 검증할 계획.','월 손익에 취소·노쇼 비용을 반영합니다.','플랫폼 예약 비중 48%=기준 60% 대비 20% 감소.','예산 가정 · 구축 300만 원'])await expect(page.locator('.track')).toContainText(phrase);
+ for(const phrase of ['수요·경쟁은 공식 자료로 검토. 유료 의향은 면담·가격 실험·시범 운영으로 검증 예정.','월 손익에 취소·노쇼 비용을 반영합니다.','플랫폼 예약 비중 48%=기준 60% 대비 20% 감소.','예산 가정 · 구축 300만 원'])await expect(page.locator('.track')).toContainText(phrase);
  for(const url of ['/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
   await page.goto(url);
   const body=page.locator('body');
