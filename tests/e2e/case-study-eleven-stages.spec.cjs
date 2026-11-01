@@ -39,7 +39,7 @@ test('KPI summary and mobile section navigation stay usable at 320 and 390px',as
   const kpis=page.locator('#section-01 .case-kpis');
   await expect(kpis).toBeVisible();
   for(const text of ['626','340','−38.7'])await expect(kpis).toContainText(text);
-  await expect(page.locator('#section-01 .kpi-note')).toContainText('기준 시나리오 · 월 추정치');
+  await expect(page.locator('#section-01 .kpi-note')).toHaveCount(0);
   await expect(page.locator('.mobile-reader-nav')).toBeVisible();
   await expect(page.locator('.mobile-reader-count')).toHaveText('01 / 09');
   await testInfo.attach('manual-kpi-'+width,{body:await page.locator('#section-01').screenshot({animations:'disabled'}),contentType:'image/png'});
@@ -474,12 +474,13 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
  for(const width of [320,390,800,1440,1920]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
-  await expect(page.locator('#section-01 .case-scenario-note')).toContainText('별도 협상 시나리오');
+  await expect(page.locator('#section-01 .case-scenario-note')).toContainText('05 확대안');
+  expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(65);
   await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함 월 손익');
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
-  await expect(page.locator('#attachments .case-preview-context')).toContainText('발표용 9장');
+  await expect(page.locator('#attachments .case-preview-context')).toHaveCount(0);
   expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   const touchTargets=await page.locator('#section-05 > details > summary,#section-08 > details > summary').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().height));
