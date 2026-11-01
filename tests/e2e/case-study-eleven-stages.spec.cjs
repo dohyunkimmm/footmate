@@ -669,3 +669,14 @@ test('body card descriptions stay concise',async({page})=>{
   expect([...description.trim()].length,description).toBeLessThanOrEqual(40);
  }
 });
+test('all supporting prose stays concise outside page titles and descriptions',async({page})=>{
+ await page.goto('/');
+ const paragraphs=await page.locator('.slide p:not(.lead):not(.formula)').evaluateAll(nodes=>nodes.map(node=>({text:node.textContent.replace(/\s+/g,' ').trim(),className:node.className||''})).filter(x=>x.text));
+ for(const item of paragraphs){
+  expect([...item.text].length,item.className+': '+item.text).toBeLessThanOrEqual(50);
+ }
+ await expect(page.locator('#section-02')).toContainText('시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.');
+ await expect(page.locator('#section-03')).toContainText('초기 모델은 운영자 제휴형. 직접 운영·구독은 후속 대안.');
+ await expect(page.locator('#section-05')).toContainText('손익분기 1,765건(현금) / 7,648건(기회비용 포함).');
+ await expect(page.locator('#section-08')).toContainText('2027년 1~6월 합성 데이터, 7~12월 공급 기반 전망.');
+});
