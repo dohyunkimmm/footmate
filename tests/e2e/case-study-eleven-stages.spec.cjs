@@ -383,7 +383,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=visual-story-20261101');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=touch-targets-20261101');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
   await expect(summary).toHaveCSS('background-color','rgb(255, 255, 255)');
@@ -416,7 +416,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toHaveCSS('outline-color','rgb(11, 66, 49)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=visual-story-20261101');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=touch-targets-20261101');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
@@ -482,6 +482,14 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   for(const control of controls){
     expect(control.width,control.name+' target width').toBeGreaterThanOrEqual(44);
     expect(control.height,control.name+' target height').toBeGreaterThanOrEqual(44);
+  }
+  // Both dimensions must be finger-friendly, including the transparent native selector.
+  const targets=await slides.locator('#slideSelect,#thumbPrev,#thumbNext').evaluateAll(nodes=>nodes.map(node=>({
+   id:node.id,width:node.getBoundingClientRect().width,height:node.getBoundingClientRect().height
+  })));
+  for(const target of targets){
+   expect(target.width,target.id+' touch width').toBeGreaterThanOrEqual(44);
+   expect(target.height,target.id+' touch height').toBeGreaterThanOrEqual(44);
   }
   await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
   expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
@@ -650,7 +658,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=visual-story-20261101');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=touch-targets-20261101');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
