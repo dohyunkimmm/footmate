@@ -231,7 +231,8 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-09 .table-wrap')).toHaveCount(0);
  await expect(page.locator('#case-materials-frame')).toHaveCount(0); // Avoid the duplicate embedded report and its large preview payload.
  await expect(page.locator('#section-09 a[href="/src/case-study/materials.html"]')).toHaveCount(0);
- await expect(page.locator('link[href*="tossface.css"]')).toHaveCount(0);
+ await expect(page.locator('link[href*="tossface.css"]')).toHaveCount(1);
+ await expect(page.locator('link[href*="pretendardvariable-dynamic-subset.css"]')).toHaveCount(1);
  await expect(page.locator('#section-08')).not.toContainText('포트폴리오용 합성 데이터·가정.');
 
  for(const id of ['#section-01','#section-04','#section-05','#section-09']){
@@ -425,6 +426,16 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(thumbnails.nth(0)).toHaveAttribute('aria-current','true');
   await expect(thumbnails.nth(0).locator('.slide-thumb-title')).toContainText('플랫폼 운영과 수익성 개선');
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
+  await expect(slides.locator('link[href*="tossface.css"]')).toHaveCount(1);
+  await expect(slides.locator('link[href*="pretendardvariable-dynamic-subset.css"]')).toHaveCount(1);
+  const fonts=await slides.locator('body').evaluate(el=>({
+    text:getComputedStyle(el).fontFamily,
+    icon:getComputedStyle(el.ownerDocument.querySelector('#prev .fm-icon')).fontFamily,
+    select:getComputedStyle(el.ownerDocument.querySelector('#slideSelect')).appearance
+  }));
+  expect(fonts.text).toContain('Pretendard');
+  expect(fonts.icon).toContain('Tossface');
+  expect(fonts.select).toBe('none');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   await thumbnails.nth(3).click();
   await expect(slides.locator('#page')).toHaveText('04 / 09');
