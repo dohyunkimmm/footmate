@@ -212,3 +212,14 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  .mobile-reader-back{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:44px;min-height:44px;padding:7px 9px;border:1px solid #7d8e82;border-radius:7px;background:#fff;color:var(--green);font-size:13px;font-weight:700;cursor:pointer}
  .case-preview-actions{padding:10px 14px 14px}
 }
+
+
+/* PPT preview header keeps the collapse action visible before the slide canvas. */
+.case-preview-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;background:#f7faf7;border-top:0;border-bottom:1px solid var(--line)}
+.case-preview-context{display:flex;flex-direction:column;gap:2px;min-width:0}
+.case-preview-context strong{font-size:14px;line-height:1.45;color:var(--green)}
+.case-preview-context span{font-size:12px;line-height:1.5;color:var(--muted)}
+.case-preview-close{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;min-height:44px;padding:8px 14px;border:1px solid #7d8e82;border-radius:8px;background:#fff;color:var(--green);font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.case-preview-close span{font-size:18px;line-height:1}
+.case-preview-close:hover{background:#edf3ed}
+@media(max-width:800px){.case-preview-actions{align-items:flex-start;gap:10px;padding:11px 12px}.case-preview-context span{max-width:190px}.case-preview-close{padding-inline:11px}}
