@@ -448,6 +448,12 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   }
   await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
   expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
+  const [selectorBox,expandBox]=await Promise.all([
+    slides.locator('#slideSelect').boundingBox(),
+    toolbar.locator('#expand').boundingBox()
+  ]);
+  expect(selectorBox.x+selectorBox.width, 'slide selector must not overlap fullscreen control').toBeLessThanOrEqual(expandBox.x+1);
+  expect(selectorBox.y+selectorBox.height, 'slide selector must not overlap fullscreen control').toBeLessThanOrEqual(expandBox.y+1);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
   const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
