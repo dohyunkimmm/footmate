@@ -383,7 +383,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=polish-20261101');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=ppt-ux-20261101');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
   await expect(summary).toHaveCSS('background-color','rgb(255, 255, 255)');
@@ -416,7 +416,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toHaveCSS('outline-color','rgb(11, 66, 49)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=polish-20261101');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ppt-ux-20261101');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
@@ -426,6 +426,16 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
   await expect(thumbnails).toHaveCount(9);
   await expect(thumbnails.nth(0)).toHaveAttribute('aria-current','true');
+  const filmstrip=slides.locator('#thumbnails');
+  const scrollable=await filmstrip.evaluate(el=>el.scrollWidth>el.clientWidth+2);
+  await expect(slides.locator('#thumbPrev')).toBeDisabled();
+  if(scrollable){
+   await expect(slides.locator('#thumbNext')).toBeEnabled();
+   await slides.getByRole('button',{name:'다음 썸네일 보기'}).click();
+   await expect.poll(()=>filmstrip.evaluate(el=>el.scrollLeft)).toBeGreaterThan(10);
+   await expect(slides.locator('#thumbPrev')).toBeEnabled();
+   await filmstrip.evaluate(el=>el.scrollTo({left:0,behavior:'instant'}));
+  }else await expect(slides.locator('#thumbNext')).toBeDisabled();
   await expect(thumbnails.nth(0).locator('.slide-thumb-title')).toContainText('플랫폼 운영과 수익성 개선');
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
   await expect(slides.locator('link[href*="tossface.css"]')).toHaveCount(1);
@@ -438,14 +448,23 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   expect(fonts.text).toContain('Pretendard');
   expect(fonts.icon).toContain('Tossface');
   expect(fonts.select).toBe('none');
-  await expect(slides.locator('.slide-select-display')).toContainText('슬라이드 선택');
+  await expect(slides.locator('#slideSelectLabel')).toHaveText('01번 선택');
   await expect(slides.locator('#slideSelect')).toHaveCSS('opacity','0');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   await thumbnails.nth(3).click();
   await expect(slides.locator('#page')).toHaveText('04 / 09');
   await expect(slides.locator('#slideTitle')).toHaveText('수익성 개선안');
+  await expect(slides.locator('#slideSelectLabel')).toHaveText('04번 선택');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','4');
   await expect(thumbnails.nth(3)).toHaveAttribute('aria-current','true');
+  // Arrow keys work even when a viewer control button has focus.
+  const nextButton=slides.getByRole('button',{name:'다음 슬라이드'});
+  await nextButton.focus();
+  await nextButton.press('ArrowRight');
+  await expect(slides.locator('#page')).toHaveText('05 / 09');
+  await expect(slides.locator('#slideSelectLabel')).toHaveText('05번 선택');
+  await nextButton.press('ArrowLeft');
+  await expect(slides.locator('#page')).toHaveText('04 / 09');
   await thumbnails.nth(0).click();
   await expect(slides.locator('#page')).toHaveText('01 / 09');
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
@@ -522,7 +541,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
   await expect(page.locator('#attachments .case-preview-context')).toHaveCount(1);
-  await expect(page.locator('#attachments .case-preview-context')).toContainText('9장');
+  await expect(page.locator('#attachments .case-preview-context')).toContainText('썸네일에서 원하는 장을 선택하세요.');
   expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   const touchTargets=await page.locator('#section-05 > details > summary,#section-08 > details > summary').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().height));
@@ -599,7 +618,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=polish-20261101');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ppt-ux-20261101');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
