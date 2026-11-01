@@ -173,7 +173,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('23곳');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('28곳');
- await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0% · 기회비용 포함 손익분기 23곳 / 관리비 반영 28곳.');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0% · 손익분기 23곳 / 관리비 포함 28곳.');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  await expect(page.locator('.track table')).toHaveCount(26);
@@ -216,7 +216,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
  await expect(page.locator('#section-01 .lead')).toContainText('사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례');
- await expect(page.locator('#section-06')).toContainText('직접 구축·외부 활용·후속 투자로 구분. 접근 통제·복구·비용 기준 검토.');
+ await expect(page.locator('#section-06')).toContainText('직접 구축·외부 활용·후속 투자 구분. 권한·복구·비용 검토.');
  await expect(page.locator('#section-09')).toContainText('참가·정원 기능과 유료 전환 과제 정리');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
@@ -334,7 +334,7 @@ test('implementation decisions stay readable inside the case study',async({page}
   await testInfo.attach('inline-decision-'+width,{body:await detail.screenshot({animations:'disabled'}),contentType:'image/png'});
   expect(await page.locator('#section-06').evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
  }
- await expect(detail).toContainText('마지막 자리에 요청이 몰리거나');
+ await expect(detail).toContainText('동시 요청에도 서버가 정원을 확인해');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
 });
 
@@ -476,7 +476,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await page.evaluate(()=>document.fonts.ready);
   await expect(page.locator('#section-01 .case-scenario-note')).toContainText('05 확대');
   expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(65);
-  await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함 월 손익');
+  await expect(page.locator('#section-05 .case-model-context')).toContainText('월 손익');
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
@@ -675,8 +675,8 @@ test('all supporting prose stays concise outside page titles and descriptions',a
  for(const item of copy){
   expect([...item.text].length,item.tag+' '+item.className+': '+item.text).toBeLessThanOrEqual(50);
  }
- await expect(page.locator('#section-02')).toContainText('시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.');
+ await expect(page.locator('#section-02')).toContainText('시장·경쟁: 공개 자료 확인. 유료 의향: 면담·가격 실험 검증.');
  await expect(page.locator('#section-03')).toContainText('초기 모델은 운영자 제휴형. 직접 운영·구독은 후속 대안.');
- await expect(page.locator('#section-05')).toContainText('손익분기 1,765건(현금)·7,648건(기회비용 포함)');
- await expect(page.locator('#section-08')).toContainText('2027년 1~6월 합성 데이터, 7~12월 공급 기반 전망.');
+ await expect(page.locator('#section-05')).toContainText('손익분기 1,765건(현금)·7,648건(총비용)');
+ await expect(page.locator('#section-08')).toContainText('2027년 상반기 합성 데이터, 하반기 공급 전망.');
 });
