@@ -671,9 +671,9 @@ test('body card descriptions stay concise',async({page})=>{
 });
 test('all supporting prose stays concise outside page titles and descriptions',async({page})=>{
  await page.goto('/');
- const paragraphs=await page.locator('.slide p:not(.lead):not(.formula)').evaluateAll(nodes=>nodes.map(node=>({text:node.textContent.replace(/\s+/g,' ').trim(),className:node.className||''})).filter(x=>x.text));
- for(const item of paragraphs){
-  expect([...item.text].length,item.className+': '+item.text).toBeLessThanOrEqual(50);
+ const copy=await page.locator('.slide p:not(.lead):not(.formula),.slide h2,.slide h3,.slide summary,.slide caption,.slide th,.slide td,.slide dt,.slide dd,.slide li').evaluateAll(nodes=>nodes.map(node=>({text:node.textContent.replace(/\s+/g,' ').trim(),tag:node.tagName.toLowerCase(),className:node.className||''})).filter(x=>x.text));
+ for(const item of copy){
+  expect([...item.text].length,item.tag+' '+item.className+': '+item.text).toBeLessThanOrEqual(50);
  }
  await expect(page.locator('#section-02')).toContainText('시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.');
  await expect(page.locator('#section-03')).toContainText('초기 모델은 운영자 제휴형. 직접 운영·구독은 후속 대안.');
