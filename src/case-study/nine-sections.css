@@ -214,31 +214,44 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 }
 
 
-/* PPT preview panel: clear hierarchy, compact actions and a stable embedded canvas. */
-.case-doc-preview{margin:16px 0 0;border:1px solid #d9e3dc;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 8px 24px rgba(24,49,37,.06)}
-.case-doc-preview>summary{display:flex;align-items:center;justify-content:flex-start;gap:12px;min-height:60px;padding:14px 18px;margin:0;background:#0b4231;color:#fff;font-size:15px;font-weight:750;cursor:pointer;list-style:none}
+/* PPT preview: lightweight document card, aligned with Pretendard and Tossface. */
+.case-doc-preview{margin:18px 0 0;border:1px solid #dbe5de;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 4px 18px rgba(19,52,36,.045)}
+.case-doc-preview>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:80px;margin:0;padding:16px 18px;background:#fff;color:#163e2c;cursor:pointer;list-style:none;transition:background .15s ease}
 .case-doc-preview>summary::-webkit-details-marker{display:none}
-.case-doc-preview>summary:focus-visible{outline:3px solid #fff;outline-offset:-6px;box-shadow:inset 0 0 0 1px #0b4231}
-.case-doc-preview>summary:hover,.case-doc-preview>summary:focus-visible{background:#185e44}
-.case-preview-summary-meta{margin-left:auto;padding:4px 9px;border:1px solid rgba(255,255,255,.35);border-radius:999px;color:#fff;font-size:12px;font-weight:700}
-.case-preview-indicator{display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px}
-.case-preview-indicator::after{content:'⬇️';font-family:var(--fm-font-icon);font-size:16px;line-height:1}
+.case-doc-preview>summary:hover{background:#f6faf7}
+.case-doc-preview>summary:focus,.case-doc-preview>summary:focus-visible{outline:3px solid #0b4231;outline-offset:-4px;box-shadow:none}
+.case-doc-preview[open]>summary{border-bottom:1px solid #e6ece8;background:#fff}
+.case-preview-summary-main,.case-preview-summary-side{display:flex;align-items:center;gap:12px;min-width:0}
+.case-preview-summary-text{display:flex;flex-direction:column;gap:3px;min-width:0}
+.case-preview-summary-text strong{color:#173b2b;font-size:16px;line-height:1.4;font-weight:750;letter-spacing:-.025em}
+.case-preview-summary-text small{overflow:hidden;color:#597268;font-size:12px;font-weight:500;line-height:1.4;text-overflow:ellipsis;white-space:nowrap}
+.case-preview-symbol.fm-icon{display:inline-flex;flex:none;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #e3ece5;border-radius:13px;background:#edf5ef;color:#185b3c;font-size:23px}
+.case-preview-summary-side{flex:none;gap:10px}
+.case-preview-summary-meta{padding:6px 10px;border-radius:999px;background:#f1f6f1;color:#225438;font-size:12px;font-weight:750;white-space:nowrap}
+.case-preview-indicator{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;border:1px solid #e0e9e2;border-radius:50%;background:#fff}
+.case-preview-indicator::after{content:'⬇️';color:#185b3c;font-family:var(--fm-font-icon);font-size:15px;line-height:1}
 .case-doc-preview[open] .case-preview-indicator::after{content:'⬆️'}
-.case-doc-preview[open]>summary{border-bottom:1px solid #1f624a}
-.case-doc-preview-body{padding:0}
-.case-preview-actions{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 20px;background:#f7faf7;border-bottom:1px solid #e2e9e3}
-.case-preview-context{display:flex;flex-direction:column;gap:3px;min-width:0}
-.case-preview-kicker{color:#66806f;font-size:10px;font-weight:800;letter-spacing:.08em}
-.case-preview-context strong{color:#193b2d;font-size:16px;line-height:1.4}
-.case-preview-context>span:last-child{color:#6b7e71;font-size:12px;line-height:1.45}
-.case-preview-close{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;min-width:76px;min-height:44px;padding:8px 14px;border:1px solid #9aafa0;border-radius:8px;background:#fff;color:#174b35;font:inherit;font-size:13px;font-weight:750;cursor:pointer;white-space:nowrap}
-.case-preview-close:hover{background:#edf4ef;border-color:#6e927b}
-.case-preview-close span{font-size:18px;line-height:1}
+.case-doc-preview-body{padding:0;background:#fff}
+.case-preview-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 17px;background:#fafcfb;border-top:0;border-bottom:1px solid #e8eeea}
+.case-preview-context{display:flex;flex-direction:column;gap:2px;min-width:0}
+.case-preview-kicker{color:#2c5f41;font-size:12px;font-weight:700;line-height:1.5;letter-spacing:-.015em}
+.case-preview-context>span:last-child{color:#65796e;font-size:11px;font-weight:450;line-height:1.5}
+.case-preview-close{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;min-width:70px;min-height:44px;padding:8px 10px;border:0;border-radius:9px;background:transparent;color:#315747;font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.case-preview-close:hover{background:#edf4ef;color:#0b4231}
+.case-preview-close .fm-icon{width:1.1em;font-size:14px}
 .case-preview-close:focus-visible{outline:3px solid #326c50;outline-offset:2px}
-.case-ppt-frame{display:block;width:100%;height:620px;aspect-ratio:auto;border:0;background:#f2f5f2}
+.case-ppt-frame{display:block;width:100%;height:620px;aspect-ratio:auto;border:0;background:#f4f7f5}
 @media(max-width:800px){
- .case-preview-actions{align-items:center;gap:10px;padding:13px 12px}
- .case-preview-context strong{font-size:15px}
- .case-preview-context>span:last-child{max-width:230px;font-size:11px}
- .case-preview-close{min-width:64px;padding-inline:11px}
+ .case-doc-preview{border-radius:13px}
+ .case-doc-preview>summary{min-height:72px;padding:12px 13px;gap:8px}
+ .case-preview-summary-main{gap:10px}
+ .case-preview-symbol.fm-icon{width:39px;height:39px;font-size:21px;border-radius:11px}
+ .case-preview-summary-text strong{font-size:15px}
+ .case-preview-summary-text small{font-size:11px}
+ .case-preview-summary-side{gap:6px}
+ .case-preview-summary-meta{padding:5px 8px}
+ .case-preview-indicator{width:30px;height:30px}
+ .case-preview-actions{padding:8px 11px;gap:10px}
+ .case-preview-context>span:last-child{max-width:220px;font-size:10px}
+ .case-preview-close{padding:8px;min-width:54px}
 }
