@@ -20,7 +20,7 @@ begin
   from pg_proc p join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public' and p.prosecdef
     and has_function_privilege('authenticated',p.oid,'EXECUTE');
-  if total<>20 or exposed<>0 or bad_paths<>0 then
+  if total<>21 or exposed<>0 or bad_paths<>0 then
     raise exception 'QA_DEFINER_CATALOG_MISMATCH:total=%,anon=%,path=%',total,exposed,bad_paths;
   end if;
   select user_id::text into operator_uid from public.operators limit 1;
@@ -37,7 +37,7 @@ $qa$;
 
 set local role authenticated;
 
--- All ten operator_* RPCs must reject:
+-- All eleven operator_* RPCs must reject:
 -- 1. nonoperators, even when their JWT says AAL2;
 -- 2. operators with AAL1, without entering write or read-only branches.
 do $qa$
@@ -78,7 +78,7 @@ begin
         rejected:=rejected+1;
       end;
     end loop;
-    if rejected<>10 then raise exception 'QA_OPERATOR_COUNT:%:%',scenario.name,rejected;end if;
+    if rejected<>11 then raise exception 'QA_OPERATOR_COUNT:%:%',scenario.name,rejected;end if;
   end loop;
 end
 $qa$;
