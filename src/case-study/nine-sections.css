@@ -86,10 +86,6 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  .case-kpi:last-child{grid-column:auto}
 }
 
-/* Keep the concluding section aligned when it is shorter than the viewport. */
-@media(min-width:801px){
- #section-09{min-height:calc(100svh + 40px)}
-}
 /* Give narrow-screen contents labels their full words instead of splitting them. */
 @media(max-width:360px){
  .toc{grid-template-columns:minmax(0,1fr)}
