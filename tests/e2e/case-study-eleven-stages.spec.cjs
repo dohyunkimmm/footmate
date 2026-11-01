@@ -545,7 +545,7 @@ test('decision story, economic comparison and roadmap have consistent visual evi
   await expect(chart.locator('.case-economics-value')).toHaveText(['340원','580원','700원','940원']);
   const barWidths=await chart.locator('.case-economics-track>span').evaluateAll(nodes=>nodes.map(el=>el.style.width));
   expect(barWidths).toEqual(['36.2%','61.7%','74.5%','100%']);
-  await expect(chart).toContainText('확정 계약이나 실적이 아닙니다');
+  await expect(chart).toContainText('고정비 전·실적 아님');
   const roadmap=page.locator('#section-08 .case-roadmap');
   await expect(roadmap.getByRole('heading',{name:'8주 실행 로드맵'})).toBeVisible();
   await expect(roadmap.locator('li')).toHaveCount(4);
