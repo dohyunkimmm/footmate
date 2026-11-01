@@ -383,7 +383,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=touch-targets-20261101');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=ios-fullscreen-fallback-20261101');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
   await expect(summary).toHaveCSS('background-color','rgb(255, 255, 255)');
@@ -416,7 +416,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toHaveCSS('outline-color','rgb(11, 66, 49)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=touch-targets-20261101');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ios-fullscreen-fallback-20261101');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
@@ -630,6 +630,38 @@ test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
  await expect(page.locator('#section-05 .case-profit-results')).toContainText('기회비용 포함');
 });
 
+
+test('unsupported element fullscreen offers an accessible standalone slide viewer',async({page})=>{
+ await page.addInitScript(()=>{
+  // Simulate the API limitation of iPhone Safari without claiming real-device coverage.
+  Object.defineProperty(document,'fullscreenEnabled',{configurable:true,value:false});
+ });
+ for(const width of [320,390]){
+  await page.setViewportSize({width,height:844});
+  await page.goto('/');
+  const preview=page.locator('#section-01 .case-doc-preview');
+  await preview.locator('summary').click();
+  const slides=preview.locator('.case-ppt-frame').contentFrame();
+  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
+  await expect(slides.locator('#expand')).toBeHidden();
+  const fallback=slides.getByRole('link',{name:'새 탭에서 슬라이드 크게 보기'});
+  await expect(fallback).toBeVisible();
+  await expect(fallback).toHaveAttribute('target','_blank');
+  await expect(fallback).toHaveAttribute('rel',/noopener/);
+  const box=await fallback.boundingBox();
+  expect(box.width).toBeGreaterThanOrEqual(44);
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  const popupPromise=page.waitForEvent('popup');
+  await fallback.click();
+  const popup=await popupPromise;
+  await popup.waitForLoadState('domcontentloaded');
+  await expect(popup).toHaveURL(/materials\.html\?preview=1/);
+  await expect(popup.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
+  await popup.close();
+  await preview.locator('.case-preview-close').click();
+ }
+});
+
 test('PPT preview closes explicitly and previous-section navigation stays safe',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});
  for(const width of [320,390,800,1440]){
@@ -658,7 +690,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=touch-targets-20261101');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ios-fullscreen-fallback-20261101');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
