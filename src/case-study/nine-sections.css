@@ -263,7 +263,7 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  --cs-accent:#205a40;
  --cs-accent-soft:#eef5ef;
  --cs-line:#dce8de;
- --cs-caption:#65796b;
+ --cs-caption:#4d6253;
 }
 .case-quick-path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;align-items:stretch;margin:22px 0 10px;max-width:960px}
 .case-quick-path>strong{grid-column:1/-1;color:var(--cs-accent);font-size:13px;font-weight:750;letter-spacing:-.01em}
@@ -291,7 +291,7 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 .case-roadmap ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;gap:8px;margin:0;padding:0}
 .case-roadmap li{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;padding:17px 13px 14px;border:1px solid var(--cs-line);border-top:3px solid #8aaf95;border-radius:9px;background:#f8faf8}
 .case-roadmap li:last-child{border-top-color:#2b7550;background:#eef5ef}
-.case-roadmap-index{color:#639275;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
+.case-roadmap-index{color:#365b46;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
 .case-roadmap-period{color:#57715e;font-size:12px;font-weight:700;line-height:1.4}
 .case-roadmap li strong{color:#1a4830;font-size:16px;font-weight:800;line-height:1.4}
 .case-roadmap li small{color:var(--cs-caption);font-size:12px;line-height:1.5}
