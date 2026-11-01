@@ -382,9 +382,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
   const summary=preview.locator('summary');
-  await expect(summary).toContainText('PPT 9장 보기');
+  await expect(summary).toContainText('PPT 미리보기');
   await expect(summary).toHaveCSS('background-color','rgb(11, 66, 49)');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
@@ -415,19 +415,25 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toHaveCSS('outline-color','rgb(255, 255, 255)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
   const slides=frame.contentFrame();
-  await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
   await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
   const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
   await expect(thumbnails).toHaveCount(9);
   await expect(thumbnails.nth(0)).toHaveAttribute('aria-current','true');
+  await expect(thumbnails.nth(0).locator('.slide-thumb-title')).toContainText('플랫폼 운영과 수익성 개선');
+  await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
+  await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   await thumbnails.nth(3).click();
-  await expect(slides.locator('#page')).toHaveText('4 / 9');
+  await expect(slides.locator('#page')).toHaveText('04 / 09');
+  await expect(slides.locator('#slideTitle')).toHaveText('수익성 개선안');
+  await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','4');
   await expect(thumbnails.nth(3)).toHaveAttribute('aria-current','true');
   await thumbnails.nth(0).click();
-  await expect(slides.locator('#page')).toHaveText('1 / 9');
+  await expect(slides.locator('#page')).toHaveText('01 / 09');
+  await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
   await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
   // Mobile slide controls must be readable and finger-friendly.
@@ -442,6 +448,16 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   }
   await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
   expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
+  const [selectorBox,expandBox]=await Promise.all([
+    slides.locator('#slideSelect').boundingBox(),
+    toolbar.locator('#expand').boundingBox()
+  ]);
+  const controlsDoNotOverlap=
+    selectorBox.x+selectorBox.width<=expandBox.x+1 ||
+    expandBox.x+expandBox.width<=selectorBox.x+1 ||
+    selectorBox.y+selectorBox.height<=expandBox.y+1 ||
+    expandBox.y+expandBox.height<=selectorBox.y+1;
+  expect(controlsDoNotOverlap, 'slide selector must not overlap fullscreen control').toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
   const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
@@ -461,9 +477,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     return Math.abs(outer-inner);
   },{timeout:15000}).toBeLessThan(12);
   await slides.getByRole('button',{name:'다음 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('2 / 9');
+  await expect(slides.locator('#page')).toHaveText('02 / 09');
   await slides.getByRole('button',{name:'이전 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('1 / 9');
+  await expect(slides.locator('#page')).toHaveText('01 / 09');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  for(const [path,type] of [
@@ -491,7 +507,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
   await expect(page.locator('#attachments .case-preview-context')).toHaveCount(1);
-  await expect(page.locator('#attachments .case-preview-context')).toContainText('총 9장');
+  await expect(page.locator('#attachments .case-preview-context')).toContainText('9장');
   expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   const touchTargets=await page.locator('#section-05 > details > summary,#section-08 > details > summary').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().height));
@@ -568,7 +584,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
