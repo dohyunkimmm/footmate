@@ -678,5 +678,5 @@ test('all supporting prose stays concise outside page titles and descriptions',a
  await expect(page.locator('#section-02')).toContainText('시장·경쟁: 공개 자료 확인. 유료 의향: 면담·가격 실험 검증.');
  await expect(page.locator('#section-03')).toContainText('초기 모델은 운영자 제휴형. 직접 운영·구독은 후속 대안.');
  await expect(page.locator('#section-05')).toContainText('손익분기 1,765건(현금)·7,648건(총비용)');
- await expect(page.locator('#section-08')).toContainText('2027년 상반기 합성 데이터, 하반기 공급 전망.');
+ await expect(page.locator('#section-08')).toContainText('2027 상반기 합성 데이터, 하반기 공급 전망.');
 });
