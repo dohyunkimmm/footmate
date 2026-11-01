@@ -417,7 +417,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await summary.click();
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
   const slides=frame.contentFrame();
-  await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
   await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
   const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
@@ -469,7 +469,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await slides.getByRole('button',{name:'다음 슬라이드'}).click();
   await expect(slides.locator('#page')).toHaveText('02 / 09');
   await slides.getByRole('button',{name:'이전 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('1 / 9');
+  await expect(slides.locator('#page')).toHaveText('01 / 09');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  for(const [path,type] of [
