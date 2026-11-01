@@ -221,7 +221,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
- await expect(page.locator('#section-06')).toContainText('동시 요청·현장 검증은 후속.');
+ await expect(page.locator('#section-06')).toContainText('동시 요청·현장은 후속.');
  await expect(page.locator('#section-07 .transaction-flow')).toContainText('로그인·중복·잔여 정원 확인 후 반영');
  await expect(page.locator('#section-08')).toContainText('30일 경과자만 분모');
  await expect(page.locator('#section-09')).toContainText('−1,986,980원');
