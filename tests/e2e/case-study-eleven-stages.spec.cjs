@@ -383,10 +383,10 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=polish-20261101');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
-  await expect(summary).toHaveCSS('background-color','rgb(11, 66, 49)');
+  await expect(summary).toHaveCSS('background-color','rgb(255, 255, 255)');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
     const selectors=[
@@ -413,14 +413,16 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   for(const item of colorAudit)expect(item.contrast,JSON.stringify(item)).toBeGreaterThanOrEqual(4.5);
   await summary.focus();
   await expect(summary).toBeFocused();
-  await expect(summary).toHaveCSS('outline-color','rgb(255, 255, 255)');
+  await expect(summary).toHaveCSS('outline-color','rgb(11, 66, 49)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=polish-20261101');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
   await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
+  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획 슬라이드');
+  await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
   await expect(thumbnails).toHaveCount(9);
   await expect(thumbnails.nth(0)).toHaveAttribute('aria-current','true');
@@ -436,6 +438,8 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   expect(fonts.text).toContain('Pretendard');
   expect(fonts.icon).toContain('Tossface');
   expect(fonts.select).toBe('none');
+  await expect(slides.locator('.slide-select-display')).toContainText('슬라이드 선택');
+  await expect(slides.locator('#slideSelect')).toHaveCSS('opacity','0');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   await thumbnails.nth(3).click();
   await expect(slides.locator('#page')).toHaveText('04 / 09');
@@ -595,7 +599,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=filmstrip-20261102');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=polish-20261101');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
