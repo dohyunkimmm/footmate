@@ -255,3 +255,68 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
  .case-preview-context>span:last-child{max-width:220px;font-size:10px}
  .case-preview-close{padding:8px;min-width:54px}
 }
+
+
+/* Case Study visual hierarchy: a single accent palette across evidence paths,
+   unit-economics comparison and the proposed implementation roadmap. */
+#section-01,#section-05,#section-08{
+ --cs-accent:#205a40;
+ --cs-accent-soft:#eef5ef;
+ --cs-line:#dce8de;
+ --cs-caption:#65796b;
+}
+.case-quick-path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;align-items:stretch;margin:22px 0 10px;max-width:960px}
+.case-quick-path>strong{grid-column:1/-1;color:var(--cs-accent);font-size:13px;font-weight:750;letter-spacing:-.01em}
+.case-quick-path>a{display:flex;align-items:center;gap:8px;min-width:0;min-height:54px;padding:11px 12px;border:1px solid var(--cs-line);border-radius:10px;background:#fff;text-decoration:none;color:#23503a;font-size:14px;font-weight:700;line-height:1.45;transition:border-color .15s ease,background .15s ease}
+.case-quick-path>a>span:first-child{display:inline-flex;align-items:center;justify-content:center;flex:none;width:27px;height:27px;border-radius:7px;background:var(--cs-accent-soft);color:var(--cs-accent);font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
+.case-quick-path>a .fm-icon{flex:none;margin-left:auto;font-size:14px}
+.case-quick-path>a:hover,.case-quick-path>a:focus-visible{border-color:#70a081;background:#f7fbf7}
+.case-quick-path>a:focus-visible{outline:3px solid #326c50;outline-offset:2px}
+.case-economics-chart{max-width:960px;margin:26px 0 28px;padding:23px 26px 20px;border:1px solid var(--cs-line);border-radius:16px;background:linear-gradient(140deg,#fff 0%,#f7faf7 100%)}
+.case-economics-chart figcaption{display:flex;flex-direction:column;gap:3px;margin-bottom:24px}
+.case-visual-eyebrow{color:#456f56;font-size:12px;line-height:1.5;font-weight:750;letter-spacing:.025em}
+.case-economics-chart figcaption strong{color:#153d2b;font-size:22px;line-height:1.4;font-weight:800;letter-spacing:-.025em}
+.case-economics-chart figcaption>span:last-child{color:var(--cs-caption);font-size:13px}
+.case-economics-rows{display:grid;gap:15px}
+.case-economics-row{display:grid;grid-template-columns:minmax(165px,1fr) minmax(140px,1.35fr) 64px;align-items:center;gap:14px}
+.case-economics-name{color:#3f574a;font-size:13px;font-weight:650;line-height:1.5}
+.case-economics-track{height:13px;overflow:hidden;border-radius:99px;background:#e4ede6}
+.case-economics-track>span{display:block;height:100%;min-width:2px;border-radius:inherit;background:#99bea7}
+.case-economics-row.is-best .case-economics-track>span{background:#24744d}
+.case-economics-row.is-best .case-economics-name,.case-economics-row.is-best .case-economics-value{color:#145736;font-weight:800}
+.case-economics-value{color:#2a5340;text-align:right;font-size:15px;font-weight:750;font-variant-numeric:tabular-nums}
+.case-economics-chart>p{margin:22px 0 0;padding-top:14px;border-top:1px solid var(--cs-line);color:var(--cs-caption);font-size:12px;line-height:1.65}
+.case-roadmap{max-width:960px;margin:22px 0 30px;padding:23px 24px;border:1px solid var(--cs-line);border-radius:16px;background:#fff}
+.case-roadmap-heading h3{margin:4px 0 22px;color:#153d2b;font-size:22px;line-height:1.45;font-weight:800;letter-spacing:-.02em}
+.case-roadmap ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;gap:8px;margin:0;padding:0}
+.case-roadmap li{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;padding:17px 13px 14px;border:1px solid var(--cs-line);border-top:3px solid #8aaf95;border-radius:9px;background:#f8faf8}
+.case-roadmap li:last-child{border-top-color:#2b7550;background:#eef5ef}
+.case-roadmap-index{color:#639275;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
+.case-roadmap-period{color:#57715e;font-size:12px;font-weight:700;line-height:1.4}
+.case-roadmap li strong{color:#1a4830;font-size:16px;font-weight:800;line-height:1.4}
+.case-roadmap li small{color:var(--cs-caption);font-size:12px;line-height:1.5}
+@media(max-width:800px){
+ .case-quick-path{gap:7px}
+ .case-quick-path>a{min-height:52px;padding:9px 10px;font-size:12px;gap:6px}
+ .case-quick-path>a>span:first-child{width:25px;height:25px;font-size:10px}
+ .case-economics-chart{padding:19px 16px;margin:22px 0 26px}
+ .case-economics-chart figcaption strong{font-size:20px}
+ .case-economics-row{grid-template-columns:minmax(120px,1fr) minmax(80px,1fr) 53px;gap:8px}
+ .case-economics-name{font-size:12px}
+ .case-economics-value{font-size:13px}
+ .case-roadmap{padding:18px 15px}
+ .case-roadmap ol{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+ .case-quick-path{grid-template-columns:1fr}
+ .case-quick-path>strong{font-size:12px}
+ .case-quick-path>a{min-height:48px;font-size:13px}
+ .case-economics-row{grid-template-columns:minmax(0,1fr) auto;column-gap:8px;row-gap:5px}
+ .case-economics-name{grid-column:1;font-size:12px}
+ .case-economics-value{grid-column:2;grid-row:1}
+ .case-economics-track{grid-column:1/-1;grid-row:2;height:12px}
+ .case-roadmap li{padding:12px 10px}
+ .case-roadmap li strong{font-size:14px}
+}
+@media(max-width:340px){.case-roadmap ol{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.case-quick-path>a{transition:none}}
