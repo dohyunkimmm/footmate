@@ -383,7 +383,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=ppt-ux-20261101');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=visual-story-20261101');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
   await expect(summary).toHaveCSS('background-color','rgb(255, 255, 255)');
@@ -416,7 +416,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toHaveCSS('outline-color','rgb(11, 66, 49)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ppt-ux-20261101');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=visual-story-20261101');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
@@ -455,6 +455,8 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await thumbnails.nth(3).click();
   await expect(slides.locator('#page')).toHaveText('04 / 09');
   await expect(slides.locator('#slideTitle')).toHaveText('수익성 개선안');
+  await expect(slides.locator('#slideSummary')).toContainText('수수료·결제비');
+  await expect(slides.locator('#slide')).toHaveAttribute('aria-describedby','slideSummary');
   await expect(slides.locator('#slideSelectLabel')).toHaveText('04번 선택');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','4');
   await expect(thumbnails.nth(3)).toHaveAttribute('aria-current','true');
@@ -525,6 +527,35 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   expect(response.ok()).toBe(true);
   expect(['application/octet-stream',type].some(expected=>(response.headers()['content-type']||'').includes(expected))).toBe(true);
   expect((await response.body()).subarray(0,2).toString()).toBe('PK');
+ }
+});
+
+
+test('decision story, economic comparison and roadmap have consistent visual evidence',async({page},testInfo)=>{
+ test.setTimeout(90000);
+ for(const width of [320,390,1440]){
+  await page.setViewportSize({width,height:900});
+  await page.goto('/');
+  const path=page.locator('#section-01 .case-quick-path');
+  await expect(path.getByRole('link')).toHaveCount(3);
+  await expect(path.getByRole('link',{name:/손익·협상안/})).toHaveAttribute('href','#section-05');
+  const chart=page.locator('#section-05 .case-economics-chart');
+  await expect(chart).toBeVisible();
+  await expect(chart.locator('.case-economics-row')).toHaveCount(4);
+  await expect(chart.locator('.case-economics-value')).toHaveText(['340원','580원','700원','940원']);
+  const barWidths=await chart.locator('.case-economics-track>span').evaluateAll(nodes=>nodes.map(el=>el.style.width));
+  expect(barWidths).toEqual(['36.2%','61.7%','74.5%','100%']);
+  await expect(chart).toContainText('확정 계약이나 실적이 아닙니다');
+  const roadmap=page.locator('#section-08 .case-roadmap');
+  await expect(roadmap.getByRole('heading',{name:'8주 실행 로드맵'})).toBeVisible();
+  await expect(roadmap.locator('li')).toHaveCount(4);
+  await expect(roadmap).toContainText('8주 이후');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  for(const section of [path,chart,roadmap]){
+   expect(await section.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'responsive content overflow').toBe(true);
+  }
+  await testInfo.attach('visual-'+width+'-economics-chart',{body:await chart.screenshot({animations:'disabled'}),contentType:'image/png'});
+  await testInfo.attach('visual-'+width+'-roadmap',{body:await roadmap.screenshot({animations:'disabled'}),contentType:'image/png'});
  }
 });
 
@@ -619,7 +650,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ppt-ux-20261101');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=visual-story-20261101');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
