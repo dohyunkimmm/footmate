@@ -418,6 +418,16 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('1 / 9',{timeout:15000});
+  await expect(preview.locator('.case-preview-actions')).toBeVisible();
+  await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
+  const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
+  await expect(thumbnails).toHaveCount(9);
+  await expect(thumbnails.nth(0)).toHaveAttribute('aria-current','true');
+  await thumbnails.nth(3).click();
+  await expect(slides.locator('#page')).toHaveText('4 / 9');
+  await expect(thumbnails.nth(3)).toHaveAttribute('aria-current','true');
+  await thumbnails.nth(0).click();
+  await expect(slides.locator('#page')).toHaveText('1 / 9');
   await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
   // Mobile slide controls must be readable and finger-friendly.
@@ -450,9 +460,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     const inner=await slides.locator('html').evaluate(el=>el.scrollHeight);
     return Math.abs(outer-inner);
   },{timeout:15000}).toBeLessThan(12);
-  await slides.getByRole('button',{name:'다음'}).click();
+  await slides.getByRole('button',{name:'다음 슬라이드'}).click();
   await expect(slides.locator('#page')).toHaveText('2 / 9');
-  await slides.getByRole('button',{name:'이전'}).click();
+  await slides.getByRole('button',{name:'이전 슬라이드'}).click();
   await expect(slides.locator('#page')).toHaveText('1 / 9');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
@@ -548,6 +558,7 @@ test('PPT preview closes explicitly and previous-section navigation stays safe',
   const preview=page.locator('.case-doc-preview');
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
+  await expect(preview.locator('.case-preview-actions')).toBeVisible();
   const close=preview.getByRole('button',{name:'미리보기 접기'});
   await expect(close).toBeVisible();
   await expect(close).toHaveJSProperty('disabled',false);
