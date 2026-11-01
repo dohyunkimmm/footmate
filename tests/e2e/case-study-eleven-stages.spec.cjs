@@ -173,7 +173,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('23곳');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('28곳');
- await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0% · 기회비용 포함 23곳 / 관리비 반영 28곳.');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0% · 23곳 / 관리비 포함 28곳.');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  await expect(page.locator('.track table')).toHaveCount(26);
@@ -685,7 +685,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
  await page.goto('/');
  const bodyParagraphs=await page.locator('.track p:not(.lead)').evaluateAll(nodes=>nodes.map(n=>n.innerText.trim()).filter(Boolean));
  expect(bodyParagraphs.filter(t=>t.length>85)).toEqual([]);
- for(const phrase of ['시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.','수수료 매출 차이 − 취소·노쇼 비용 − 완료 건 비용 − 고정비 차이','유지율=실제 공급처 비중. 예약 비중 48%(기준 −20%).','예산 · 구축 300만 / 월 기회비용 200만 / 시범 50만 원.'])await expect(page.locator('.track')).toContainText(phrase);
+ for(const phrase of ['시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.','수수료 매출 차이 − 취소·노쇼 비용 − 완료 건 비용 − 고정비 차이','유지율=실제 공급처 비중. 플랫폼 예약 비중 48%(기준 −20%).','예산 · 구축 300만 / 월 기회비용 200만 / 시범 50만 원.'])await expect(page.locator('.track')).toContainText(phrase);
  for(const url of ['/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
   await page.goto(url);
   const body=page.locator('body');
