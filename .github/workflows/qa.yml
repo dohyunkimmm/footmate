@@ -90,6 +90,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Check global release identity
         run: node scripts/check-release-version.cjs
+      - name: Verify local documentation links
+        run: node scripts/check-local-doc-links.cjs
       - name: Check QA toolchain contract
         run: node scripts/check-qa-toolchain.cjs
       - name: Check Cloudflare deploy impact classification
