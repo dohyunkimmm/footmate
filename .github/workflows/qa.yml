@@ -70,6 +70,8 @@ jobs:
             head="$PUSH_HEAD_SHA"
           fi
           git diff --check "$base" "$head"
+      - name: Verify local links in README and documentation
+        run: node scripts/check-local-doc-links.cjs
       - name: Run documentation-facing connected platform contract
         run: node tests/contracts/connected-platform.contract.mjs
       - name: Run release app contract for documentation integrity
