@@ -490,7 +490,8 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
-  await expect(page.locator('#attachments .case-preview-context')).toHaveCount(0);
+  await expect(page.locator('#attachments .case-preview-context')).toHaveCount(1);
+  await expect(page.locator('#attachments .case-preview-context')).toContainText('총 9장');
   expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   const touchTargets=await page.locator('#section-05 > details > summary,#section-08 > details > summary').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().height));
