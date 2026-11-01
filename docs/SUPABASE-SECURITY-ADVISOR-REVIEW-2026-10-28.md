@@ -2,6 +2,20 @@
 
 > Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a change approval, or a claim that the Advisor warnings are resolved. Later Data API exposure tests are documented below.
 
+## 2026-11-01 운영 방침 — 무료 요금제 고정 / Advisor 예외 분리
+
+**운영 결정:** `footmate-beta`는 무료 요금제로 유지한다. 요금제 변경 및 무료 범위 밖의 기능은 **작업·인수 기준에서 제외**하며, 향후 반복적으로 비용 승인을 요구하지 않는다. 아래의 이전 날짜 기록은 감사 이력으로만 남기고, 현재 완료/미완료 판단은 이 방침을 우선한다.
+
+| Advisor 항목 | 무료 운영 기준 처리 |
+| --- | --- |
+| `auth_leaked_password_protection` 1 WARN | **요금제 제약으로 예외 수용**. 경고가 실제 남아 있음을 명시하고 보안상 무위험/해결 완료로 표기하지 않는다. 이 경고 자체는 무료 운영의 작업 차단 조건에서 제외한다. |
+| `authenticated_security_definer_function_executable` 21 WARN | **검증 대상 유지**. 익명 실행 0개, 운영자 `operator_*` 11개 가드 존재는 읽기 전용 확인 사항일 뿐, 실제 서명 JWT·AAL1/AAL2·세션 경계 E2E로 권한을 검증해야 한다. 일괄 REVOKE로 숫자만 줄이지 않는다. |
+| `extension_in_public` 1 WARN (`pg_net`) | **운영 의존성 예외/개별 검토**. 확장은 비이동형이며 Cron 3개가 동작한다. 이전 운영 REST 검사에서 `net` API 미노출을 확인했으나, 확장 설치 위치 경고 자체가 해결된 것은 아니다. |
+| `rls_enabled_no_policy` 2 INFO | **의도적 서버 전용 테이블**. RLS 활성/정책 0/익명 및 인증 사용자 SELECT 권한 없음 확인. 접근 허용 정책을 추가하지 않는다. |
+| `unused_index` 8 INFO | **보존·관찰**. 데이터 규모 및 대표 실행계획 근거로 임의 삭제하지 않는다. |
+
+**실제 남은 무료 범위 검증:** 허가된 테스트 계정에서 발급한 실제 서명 JWT로 비운영자 AAL1·운영자 AAL1/AAL2 허용/거부 및 갱신·로그아웃·복구를 확인하고, RPC별 인가·RLS·성능을 사례별로 검증한다. 이 작업이 끝나지 않았으므로 [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)은 OPEN 유지한다.
+
 ## 2026-10-30 후속 · 신규 KPI RPC 반영 (과거 10월 28일 감사는 아래에 보존)
 
 - [PR #727](https://github.com/dohyunkimmm/footmate/pull/727)으로 `public.beta_user_preferences`와 `public.operator_discovery_kpi_baseline(timestamptz)`이 추가됐고, Supabase 운영 migration `20261030032856_beta_preferences_pilot_metrics` 적용을 확인했습니다. 설정 변경이 아닌 후속 스키마/권한 확인 결과입니다.
@@ -25,7 +39,7 @@ This **closes the Data API `net` exposure verification task only**. It does **no
 
 Production Auth metadata without exposing identities: 4 user rows, 1 operator membership, 1 verified MFA factor, and an operator-associated AAL2 session record. Those preconditions are **not** real signed-token recovery/refresh or allow/deny E2E. `pg_stat_statements` also recorded normalized RPC statements; with `track_functions=none` those are not exact successful invocation counts.
 
-**Remaining owner-dependent gates:** (1) explicitly authorized real-account signed JWT tests, including AAL1 vs AAL2, nonoperator, recovery, refresh, and safe cross-user negative cases; (2) Pro billing authorization if leaked-password protection is required; (3) representative query/index workload evidence before any index drop. Do not modify production identities, credentials, API grants, or billing just to clear the Advisor.
+**Current Free-only gates:** (1) explicitly authorized real-account signed JWT tests, including AAL1 vs AAL2, nonoperator, recovery, refresh, and safe cross-user negative cases; (2) representative query/index workload evidence before any index drop. The plan-gated password protection WARN is documented as an accepted exception, not an outstanding billing request. Do not modify production identities, credentials, API grants, or billing just to clear the Advisor.
 
 See [GitHub Issue #611](https://github.com/dohyunkimmm/footmate/issues/611) for the audit log and acceptance status. The initial table and separate-decision section below document the earlier review; where they say API exposure was unverified, **this follow-up is newer**.
 
@@ -85,9 +99,9 @@ Before dropping any: collect representative non-sensitive SQL query patterns and
 
 1. **Real Auth MFA tests:** operator vs non-operator, AAL1 vs AAL2, expired/malformed token, account recovery, session refresh, and protected RPC authorization need **real Supabase Auth-signed JWTs** from authorized test accounts. Synthetic `request.jwt.claim` SQL cannot substitute. Do not create/delete production users without an approved test plan.
 2. **`pg_net` Data API exposure:** Extension `pg_net` is installed in `public` and is not relocatable. Schema `net` grants USAGE to anon/authenticated, with `net.http_get`, `http_post`, `http_delete` executable by both. A PostgreSQL connection has no `pgrst.db_schemas` setting; no matching `pg_db_role_setting` entry was found. **None of these facts proves whether the live PostgREST/Data API exposes the `net` schema.** Verify in [Supabase Data API Settings](https://supabase.com/dashboard/project/iihitfjphowjplxzfxtn/integrations/data_api/settings). Do not change extension/cron grants without dependency review.
-3. **Leaked-password protection:** The organization is on **Free**. Per [Supabase password-security documentation](https://supabase.com/docs/guides/auth/password-security), breached-password protection requires Pro or above. No billing change without an owner cost decision.
+3. **Leaked-password protection — Free-only accepted exception (2026-11-01):** This Advisor WARN remains visible because the feature is not included in the selected free operating scope. Document the limitation and residual risk; do not list billing changes as a remaining acceptance condition.
 4. **No-policy tables:** `beta_match_reminder_marks` and `beta_public_config` both have RLS on, zero policies, and no `anon`/`authenticated` SELECT/INSERT/UPDATE/DELETE grants. Treat as intentionally server-only; do not add permissive policies.
 
 ## Acceptance boundary
 
-This static, read-only **per-item assessment is complete**, but Issue #611 stays open. Required follow-up: authenticated session E2E, billing decision, and representative live caller/query-plan evidence. Data API `net` and `extensions` non-exposure was independently confirmed in the later section above. No schema, grants, data, secrets, account, or billing changes were performed.
+This static, read-only **per-item assessment is complete**, but Issue #611 stays open. Required Free-only follow-up: authenticated session E2E and representative live caller/query-plan evidence. The plan-limited password-protection warning is an accepted exception, not a requested change. Data API `net` and `extensions` non-exposure was independently confirmed in the later section above. No schema, grants, data, secrets, account, or billing changes were performed.
