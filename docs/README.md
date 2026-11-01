@@ -1,6 +1,6 @@
 ## 2026-11-01 · 무료 운영 기준 확정
 
-- **운영 범위:** Supabase 및 비공개 저장소는 무료 요금제로 유지한다. 유료 기능·요금제 전환은 이 저장소의 작업·검증 완료 조건에 포함하지 않는다.
+- **운영 범위:** Supabase `footmate-beta`는 무료 요금제로 유지한다. 무료 범위 밖의 기능·요금제 변경은 이 저장소의 작업·검증 완료 조건에 포함하지 않는다.
 - **Supabase Advisor 예외:** `auth_leaked_password_protection` 1 WARN은 무료 환경 기능 제약으로 **예외 수용**한다. 경고 자체는 계속 존재하며 해결 또는 안전 보증으로 표시하지 않는다. `SECURITY DEFINER` 21 WARN과 실제 계정·서명 JWT MFA E2E는 무료 범위의 검증 과제로 유지한다. 자세한 기준은 [보안 감사/예외 분류](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md)와 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에 기록한다.
 - **운영 변경 없음:** 요금·DB/RPC 권한·인증 계정·운영 Cron·데이터를 바꾸지 않고, 기존 보안 경고는 개별 증거에 따라 검토한다.
 
