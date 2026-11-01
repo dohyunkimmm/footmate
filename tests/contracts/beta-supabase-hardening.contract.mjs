@@ -90,7 +90,8 @@ for(const required of [
   "'QA_MISSING_UID_COUNT:%'",
   "'AUTH_REQUIRED'",
   "public.discovery_event_budget_available() is distinct from false",
-  "if rejected<>10",
+  "if total<>21 or exposed<>0 or bad_paths<>0",
+  "if rejected<>11",
   "if rejected<>8"
 ])assert.ok(rpcGuards.includes(required),'missing Definer RPC read-only assertion: '+required);
 assert.doesNotMatch(rpcGuards,/^\s*(?:insert|update|delete|alter|drop|create|truncate|grant|revoke)\b/im,
