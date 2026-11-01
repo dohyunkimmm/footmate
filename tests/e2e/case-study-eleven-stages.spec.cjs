@@ -452,8 +452,12 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     slides.locator('#slideSelect').boundingBox(),
     toolbar.locator('#expand').boundingBox()
   ]);
-  expect(selectorBox.x+selectorBox.width, 'slide selector must not overlap fullscreen control').toBeLessThanOrEqual(expandBox.x+1);
-  expect(selectorBox.y+selectorBox.height, 'slide selector must not overlap fullscreen control').toBeLessThanOrEqual(expandBox.y+1);
+  const controlsDoNotOverlap=
+    selectorBox.x+selectorBox.width<=expandBox.x+1 ||
+    expandBox.x+expandBox.width<=selectorBox.x+1 ||
+    selectorBox.y+selectorBox.height<=expandBox.y+1 ||
+    expandBox.y+expandBox.height<=selectorBox.y+1;
+  expect(controlsDoNotOverlap, 'slide selector must not overlap fullscreen control').toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
   const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
