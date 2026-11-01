@@ -1,3 +1,9 @@
+## 2026-11-01 · 무료 운영 기준 확정
+
+- **운영 범위:** Supabase 및 비공개 저장소는 무료 요금제로 유지한다. 유료 기능·요금제 전환은 이 저장소의 작업·검증 완료 조건에 포함하지 않는다.
+- **Supabase Advisor 예외:** `auth_leaked_password_protection` 1 WARN은 무료 환경 기능 제약으로 **예외 수용**한다. 경고 자체는 계속 존재하며 해결 또는 안전 보증으로 표시하지 않는다. `SECURITY DEFINER` 21 WARN과 실제 계정·서명 JWT MFA E2E는 무료 범위의 검증 과제로 유지한다. 자세한 기준은 [보안 감사/예외 분류](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md)와 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에 기록한다.
+- **운영 변경 없음:** 요금·DB/RPC 권한·인증 계정·운영 Cron·데이터를 바꾸지 않고, 기존 보안 경고는 개별 증거에 따라 검토한다.
+
 ## 2026-10-30 · 현행 문서 동기화 기준
 
 - **현재 공개 Case Study:** [PR #728](https://github.com/dohyunkimmm/footmate/pull/728)에서 IT기획·전략기획 **9개 섹션**으로 재구성됐습니다. 런타임 `index.html`의 `data-case-study-stages="9"` 및 `scripts/sync-case-study-assets.cjs` 검사도 9개를 요구합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 링크 호환을 위해 유지된 **파일명**으로, 본문은 현행 9개를 설명합니다. 현재 내용은 [전략 Case Study 근거](IT-STRATEGY-CASE-STUDY.md)를 우선합니다.
@@ -13,7 +19,7 @@
 
 - 최신 `main` [`5f015f7`](https://github.com/dohyunkimmm/footmate/commit/5f015f7d3260c8165ffb22122ca5973d46f5e227)의 [FootMate QA #40616598843](https://github.com/dohyunkimmm/footmate/actions/runs/40616598843)은 **Change Impact, Regression 36, Browser E2E + axe SUCCESS**입니다. Docs-only QA, Deploy Cloudflare, Production Smoke는 **SKIPPED**였으며, 새 운영 배포나 Production Smoke 성공을 뜻하지 않습니다.
 - 2026-10-28 감사 직전 검증된 `main` `435585341a9aa748ccb96883b39589862cba0ea3`의 [FootMate QA #40610280350](https://github.com/dohyunkimmm/footmate/actions/runs/40610280350)은 **Regression 36, Browser E2E + axe SUCCESS**. 이번 워크플로 전용 변경은 런타임 무영향이므로 Deploy Cloudflare / Production Smoke가 skipped. 이전 프로덕션 스모크 성공 기록을 이 실행의 성과로 오인하지 않습니다.
-- [Supabase 20 SECURITY DEFINER / 8 미사용 인덱스 개별 검토와 실제 API 응답](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md): `net`·`extensions` 스키마 REST 비노출(406/PGRST106), 읽기 전용 운영자 RPC 익명 요청 거부(401/42501). 이것은 확장 이동·RPC WARN 해결이나 실계정 JWT MFA/복구 E2E 완료를 뜻하지 않습니다. 실제 서명 JWT 실계정 QA 및 Pro 비용 결정을 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에 미완료로 유지합니다.
+- [Supabase 20 SECURITY DEFINER / 8 미사용 인덱스 개별 검토와 실제 API 응답](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md): `net`·`extensions` 스키마 REST 비노출(406/PGRST106), 읽기 전용 운영자 RPC 익명 요청 거부(401/42501). 이것은 확장 이동·RPC WARN 해결이나 실계정 JWT MFA/복구 E2E 완료를 뜻하지 않습니다. 실제 서명 JWT 실계정 QA는 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에 미완료로 유지하고, 무료 환경 기능 제약은 별도 예외로 분류합니다.
 - [Git 120개 브랜치 패치 감사 / 전체 참조 검증 백업 / 복원 및 삭제 효과 분석](BRANCH-PATCH-AUDIT-2026-10-28.md): [Actions #40610280210](https://github.com/dohyunkimmm/footmate/actions/runs/40610280210)의 ZIP 보관 만료는 **2026-11-04 UTC**. 별도 ChatGPT 파일 라이브러리 복사와 독립 복원·8개 tip SHA 검사를 완료했으나, **소유자 관리 영구 오프-GitHub 보관·외부 참조 검토·삭제 승인은 미완료**. 6개 병합 과거 후보를 가상 제거해도 대형 blob은 0개 해제되므로 크기 절감 명목의 브랜치 삭제는 권장하지 않습니다. [#525](https://github.com/dohyunkimmm/footmate/issues/525) 참고.
 - 1회성 대형 백업에 사용한 `[one-time-bundle]` push 마커 자동 실행은 CI 설정에서 제거했으며, 이후에는 명시적 수동 `workflow_dispatch` 요청만 7일 임시 bundle을 만듭니다. 실운영 데이터/권한/인증/요금제/원격 Git ref 및 `main` 이력을 변경하지 않습니다.
 
