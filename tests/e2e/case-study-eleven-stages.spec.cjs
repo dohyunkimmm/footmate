@@ -685,7 +685,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
  await page.goto('/');
  const bodyParagraphs=await page.locator('.track p:not(.lead)').evaluateAll(nodes=>nodes.map(n=>n.innerText.trim()).filter(Boolean));
  expect(bodyParagraphs.filter(t=>t.length>85)).toEqual([]);
- for(const phrase of ['월간 손익 모델에 취소·노쇼 비용을 반영한다.','플랫폼 예약 비중 48%=기준 60% 대비 20% 감소.','예산 가정 · 구축 300만 원'])await expect(page.locator('.track')).toContainText(phrase);
+ for(const phrase of ['월 손익에 취소·노쇼 비용을 반영합니다.','플랫폼 예약 비중 48%=기준 60% 대비 20% 감소.','예산 가정 · 구축 300만 원'])await expect(page.locator('.track')).toContainText(phrase);
  for(const url of ['/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
   await page.goto(url);
   const body=page.locator('body');
