@@ -112,8 +112,10 @@ html.preview-only .slide-thumbnails{padding:12px}
 .filmstrip-scroll .fm-icon{font-size:16px}
 @media(max-width:540px){
  .filmstrip{gap:4px;padding:0 6px}
- .filmstrip-scroll{flex-basis:40px;width:40px;height:44px}
+ .filmstrip-scroll{flex-basis:44px;width:44px;height:44px}
 }
+/* Make the overlaid native select's usable box at least 44px high. */
+.slide-select-wrap{min-height:46px}
 html.preview-only .viewer-stage{padding:10px}
 .slide-current-info #slideSummary{display:block;overflow:hidden;max-width:100%;color:#63796c;font-size:11px;font-weight:450;line-height:1.5;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:1000px){
