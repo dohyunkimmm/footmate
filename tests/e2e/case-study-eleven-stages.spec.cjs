@@ -680,3 +680,24 @@ test('all supporting prose stays concise outside page titles and descriptions',a
  await expect(page.locator('#section-05')).toContainText('손익분기 1,765건(현금)·7,648건(총비용)');
  await expect(page.locator('#section-08')).toContainText('2027 상반기 합성 데이터, 하반기 공급 전망.');
 });
+
+test('case-study body copy stays concise and terminology stays consistent',async({page})=>{
+ await page.goto('/');
+ const bodyParagraphs=await page.locator('.track p:not(.lead)').evaluateAll(nodes=>nodes.map(n=>n.innerText.trim()).filter(Boolean));
+ expect(bodyParagraphs.filter(t=>t.length>85)).toEqual([]);
+ for(const phrase of ['월간 손익 모델에 취소·노쇼 비용을 반영한다.','플랫폼 예약 비중 48%=기준 60% 대비 20% 감소.','예산 가정 · 구축 300만 원'])await expect(page.locator('.track')).toContainText(phrase);
+ for(const url of ['/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
+  await page.goto(url);
+  const body=page.locator('body');
+  await expect(body).not.toContainText('무단 불참');
+  await expect(body).not.toContainText('획득비');
+  const longParagraphs=await page.locator('main p').evaluateAll(nodes=>nodes.map(n=>n.innerText.trim()).filter(t=>t.length>165));
+  expect(longParagraphs,url).toEqual([]);
+ }
+ await page.goto('/src/case-study/materials.html');
+ for(const phrase of ['가정을 바꿔 손익 변화를 확인하세요.','2027년 합성 예약 데이터입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
+ await page.goto('/src/case-study/forecast.html');
+ for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처는 1~500곳 계산 중','수요·계약은 미검증.'])await expect(page.locator('body')).toContainText(phrase);
+ await page.goto('/src/case-study/decision-memos.html');
+ for(const phrase of ['초기 운영은 운영자 제휴형으로 추진합니다.','월 손익 −2,387,160원','실제 계약 효과는 미검증입니다.'])await expect(page.locator('body')).toContainText(phrase);
+});
