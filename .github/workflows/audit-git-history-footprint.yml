@@ -122,21 +122,7 @@ jobs:
           git bundle create "$d/footmate-all-refs.bundle" --all
           git bundle verify "$d/footmate-all-refs.bundle" > "$d/bundle-verification.txt" 2>&1
           git bundle list-heads "$d/footmate-all-refs.bundle" > "$d/bundle-heads.txt"
-          while IFS=
-          echo 'Temporary bundle verified. Download and retain it outside GitHub before considering any ref deletion.' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload temporary bundle (not an off-repository backup)
-        if: github.event_name == 'workflow_dispatch' && inputs.make_temporary_bundle == true
-        uses: actions/upload-artifact@v6
-        with:
-          name: git-history-bundle-download-off-github
-          path: |
-            verification/git-history-footprint/footmate-all-refs.bundle
-            verification/git-history-footprint/bundle-verification.txt
-            verification/git-history-footprint/bundle-heads.txt
-          if-no-files-found: error
-          retention-days: 7
-\t' read -r branch expected actual unchanged; do
+          while IFS=$'\t' read -r branch expected actual unchanged; do
             if ! awk -v sha="$expected" -v ref="refs/remotes/origin/$branch" \
               '$1 == sha && $2 == ref { found=1; exit } END { exit !found }' "$d/bundle-heads.txt"; then
               echo "::error::Missing remote branch tip from bundle: $branch ($expected)"; exit 1
