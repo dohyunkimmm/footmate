@@ -63,5 +63,7 @@ jobs:
           git add src/case-study/downloads/footmate_report.pptx src/case-study/report-previews.js
           if ! git diff --cached --quiet; then
             git commit -m "Synchronize concluding PPT slide with Case Study final decision"
+            git fetch origin fix/conclusion-slide-body-sync-20261102
+            git rebase origin/fix/conclusion-slide-body-sync-20261102
             git push origin HEAD:fix/conclusion-slide-body-sync-20261102
           fi
