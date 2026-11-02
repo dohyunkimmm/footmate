@@ -5,6 +5,23 @@
   "main": "./worker/index.js",
   "compatibility_date": "2026-10-25",
   "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1,
+    "redact_query_string": true,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "head_sampling_rate": 0.1
+    },
+    "traces": {
+      "enabled": false
+    },
+    "issues": {
+      "enabled": true
+    }
+  },
 
 "ratelimits": [
   {
