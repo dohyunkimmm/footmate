@@ -81,7 +81,7 @@ for(const required of [
   '동시 요청',
   '기회비용',
   '데이터 정정',
-  'PPT 9장'
+  'PPT 10장'
 ])assert.ok(caseStudy.includes(required),`missing current strategy Case Study boundary copy: ${required}`);
 
 console.log('PASS connected platform contracts');
