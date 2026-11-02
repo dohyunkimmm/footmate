@@ -48,6 +48,34 @@ jobs:
               print('FONTS',i+1,fonts.most_common(10))
               print('COLORS',i+1,colors.most_common(10))
           PY
+      - name: Inspect original table themes
+        run: |
+          python - <<'PY'
+          from pptx import Presentation
+          p=Presentation('src/case-study/downloads/footmate_report.pptx')
+          for si in (3,4,7):
+            s=p.slides[si]
+            for sh in s.shapes:
+              if not sh.has_table: continue
+              t=sh.table
+              print('TABLE',si+1,'rows',len(t.rows),'cols',len(t.columns))
+              for ri,row in enumerate(t.rows):
+                vals=[]
+                for ci,c in enumerate(row.cells):
+                  rr=c.text_frame.paragraphs[0].runs
+                  fmt=[]
+                  for run in rr[:1]:
+                    ft=run.font
+                    co=''
+                    try: co=str(ft.color.rgb) if ft.color.type else ''
+                    except: pass
+                    fmt.append((ft.name,ft.size.pt if ft.size else None,co,ft.bold))
+                  color=''
+                  try: color=str(c.fill.fore_color.rgb) if c.fill.type else ''
+                  except: pass
+                  vals.append({'text':c.text[:56],'style':fmt,'fill':color})
+                print('ROW',si+1,ri,vals)
+          PY
       - name: Regenerate ROI slide styled from originals
         if: hashFiles('scripts/style-roi-slide.py') != ''
         run: python scripts/style-roi-slide.py
