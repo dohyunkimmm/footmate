@@ -30,17 +30,26 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Fetch all existing remote branches without modifying refs
+      - name: Fetch and verify the current remote branch inventory
         shell: bash
         run: |
           set -euo pipefail
-          git fetch --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          d=verification/git-history-footprint
+          mkdir -p "$d"
+          git fetch --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*'
           git rev-parse --verify refs/remotes/origin/main
-          n="$(git for-each-ref --format='%(refname)' refs/remotes/origin | wc -l)"
-          if [ "$n" -lt 100 ]; then
-            echo "::error::Incomplete remote branch inventory ($n refs)"
+          git ls-remote --heads origin |
+            awk '{sub(/^refs\/heads\//,"",$2); print $1 "\t" $2}' |
+            LC_ALL=C sort > "$d/remote-heads.tsv"
+          git for-each-ref --format='%(objectname)%09%(refname:lstrip=3)' refs/remotes/origin |
+            awk -F '\t' '$2 != "HEAD"' |
+            LC_ALL=C sort > "$d/fetched-heads.tsv"
+          test -s "$d/remote-heads.tsv"
+          if ! diff -u "$d/remote-heads.tsv" "$d/fetched-heads.tsv"; then
+            echo "::error::Fetched branch refs differ from remote. Retry the read-only audit."
             exit 1
           fi
+          echo "Verified $(wc -l < "$d/remote-heads.tsv") current remote refs."
 
       - name: Profile reachable history without garbage collection
         shell: bash
@@ -73,30 +82,23 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           echo 'Pack sizes and historical blob sizes are not an estimate of GitHub storage that deletion would reclaim. No refs, Git objects or main history were modified.' >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Validate eight historical candidate tip SHAs
+      - name: Snapshot and verify current remote branch tip SHAs
         shell: bash
         run: |
           set -euo pipefail
-          f=verification/git-history-footprint/candidate-refs.tsv
+          d=verification/git-history-footprint
+          f="$d/branch-refs.tsv"
           printf 'branch\texpected_sha\tactual_sha\tunchanged\n' > "$f"
-          while read -r branch expected; do
+          while IFS=$'\t' read -r expected branch; do
             actual="$(git rev-parse --verify "refs/remotes/origin/$branch^{commit}")"
             status=false
             if [ "$actual" = "$expected" ]; then status=true; fi
             printf '%s\t%s\t%s\t%s\n' "$branch" "$expected" "$actual" "$status" >> "$f"
             if [ "$status" != true ]; then
-              echo "::error::Candidate ref changed: $branch"; exit 1
+              echo "::error::Remote branch changed during audit: $branch"; exit 1
             fi
-          done <<'REFS'
-          chore/retry-cardcopy-production 11e3299e0c2e73714b053586cde7bc85c879fa3b
-          chore/retry-vercel-deploy 75c390b648542780ca0515e7637a0fbb0d28c99c
-          docs/add-evidence-index 2b3ff9efece25c66c8b5bb0959a24091a1739bd8
-          docs/add-verification-matrix afd0e049a010f4128ba05f2ef6cbe4cae1615f60
-          docs/footmate-closeout febb351d477950971365a708caa6b3aeca073bcf
-          docs/sync-final-qa e051486c6c2fc5b2826bdd1eee3e08331a443e29
-          docs/sync-qa-record 56c716e36fcc30d6cab9fbe2a7cc157bc08d3e1e
-          qa/webkit-my-selector-20260928 8223f9c295a39c2d88d951ab6f9f44fee2851777
-          REFS
+          done < "$d/remote-heads.tsv"
+          echo "Recorded $(($(wc -l < "$f")-1)) remote tips for reproducible review."
 
       - name: Upload reproducible read-only audit
         uses: actions/upload-artifact@v6
@@ -106,7 +108,9 @@ jobs:
             verification/git-history-footprint/count-objects.txt
             verification/git-history-footprint/reachability-counts.txt
             verification/git-history-footprint/top-100-historical-blobs.tsv
-            verification/git-history-footprint/candidate-refs.tsv
+            verification/git-history-footprint/branch-refs.tsv
+            verification/git-history-footprint/remote-heads.tsv
+            verification/git-history-footprint/fetched-heads.tsv
           retention-days: 30
 
       - name: Create self-contained temporary Git bundle when explicitly requested
@@ -118,11 +122,12 @@ jobs:
           git bundle create "$d/footmate-all-refs.bundle" --all
           git bundle verify "$d/footmate-all-refs.bundle" > "$d/bundle-verification.txt" 2>&1
           git bundle list-heads "$d/footmate-all-refs.bundle" > "$d/bundle-heads.txt"
-          while read -r branch expected; do
-            if ! grep -Fq "$expected" "$d/bundle-heads.txt"; then
-              echo "::error::Missing candidate object from bundle: $branch"; exit 1
+          while IFS=$'\t' read -r branch expected actual unchanged; do
+            if ! awk -v sha="$expected" -v ref="refs/remotes/origin/$branch" \
+              '$1 == sha && $2 == ref { found=1; exit } END { exit !found }' "$d/bundle-heads.txt"; then
+              echo "::error::Missing remote branch tip from bundle: $branch ($expected)"; exit 1
             fi
-          done < <(tail -n +2 "$d/candidate-refs.tsv" | awk -F '\t' '{print $1, $2}')
+          done < <(tail -n +2 "$d/branch-refs.tsv")
           echo 'Temporary bundle verified. Download and retain it outside GitHub before considering any ref deletion.' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload temporary bundle (not an off-repository backup)
