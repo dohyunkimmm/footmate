@@ -19,6 +19,6 @@
     "axeCorePlaywright": "4.10.2"
   },
   "devDependencies": {
-    "wrangler": "^4.152.0"
+    "wrangler": "^4.156.0"
   }
 }
