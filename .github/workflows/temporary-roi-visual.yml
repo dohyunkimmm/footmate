@@ -1,0 +1,71 @@
+name: FootMate ROI slide visual update
+on:
+  push:
+    branches: [feat/footmate-roi-visual-qa-20261102]
+    paths: [scripts/upgrade-roi-slide.py]
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install slide editing and PDF preview tools
+        run: |
+          python -m pip install --quiet python-pptx pymupdf pillow
+          if ! command -v libreoffice >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq libreoffice-impress >/dev/null
+          fi
+      - name: Install Pretendard locally for accurate slide rendering
+        run: |
+          mkdir -p "$HOME/.local/share/fonts"
+          for weight in Regular Medium SemiBold Bold; do
+            curl -fsSL --retry 3 "https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-$weight.otf" -o "$HOME/.local/share/fonts/Pretendard-$weight.otf"
+          done
+          fc-cache -f "$HOME/.local/share/fonts"
+          fc-match Pretendard
+      - name: Update ROI slide 9 and its actual visual preview
+        run: python scripts/upgrade-roi-slide.py
+      - name: Check original slide count, consistent font and web preview metadata
+        run: |
+          python - <<'PY'
+          from pptx import Presentation
+          from pathlib import Path
+          import json
+          prs=Presentation('src/case-study/downloads/footmate_report.pptx')
+          assert len(prs.slides)==10
+          def t(i):return ' '.join(x.text for x in prs.slides[i].shapes if x.has_text_frame)
+          assert '12개월 예상 ROI' in t(8)
+          assert '의사결정 메모' in t(9)
+          assert '음수' not in t(8)
+          assert '-47.5' not in t(8)  # Only the typographically consistent minus sign should appear.
+          assert '−47.5%' in t(8)
+          fonts=set()
+          for slide in prs.slides:
+            for shape in slide.shapes:
+              frames=[shape.text_frame] if shape.has_text_frame else []
+              if shape.has_table: frames += [c.text_frame for row in shape.table.rows for c in row.cells]
+              for frame in frames:
+                for paragraph in frame.paragraphs:
+                  for run in paragraph.runs:
+                    if run.text:fonts.add(run.font.name)
+          assert fonts=={'Pretendard'}, fonts
+          raw=Path('src/case-study/report-previews.js').read_text()
+          data=json.loads(raw.removeprefix('window.REPORT_SLIDES=').rstrip().rstrip(';'))
+          assert len(data)==10
+          assert '예상 ROI' in data[8]['title']
+          assert data[8]['src'].startswith('data:image/png;base64,')
+          print('PASS: 10 slides, matched Pretendard, ROI on page 9, synchronized preview')
+          PY
+      - name: Commit updated PPT and slide 9 preview
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/case-study/downloads/footmate_report.pptx src/case-study/report-previews.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Refine ROI slide 9 comparison within existing presentation design"
+            git push origin HEAD:feat/footmate-roi-visual-qa-20261102
+          fi
