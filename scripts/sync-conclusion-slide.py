@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synchronize only slide 10 with the final Case Study investment conclusion.
+"""Synchronize only slide 10 with the final Case Study staged-investment conclusion.
 
 Use existing PPT shape locations, sizes, Pretendard font attributes and colors;
 render the updated PPTX and replace only image #10 in the website preview.
