@@ -418,7 +418,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await summary.click();
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ios-fullscreen-fallback-20261101');
   const slides=frame.contentFrame();
-  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
+  await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
   await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
   await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획 슬라이드');
@@ -453,7 +453,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('#slideSelect')).toHaveCSS('opacity','0');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   await thumbnails.nth(3).click();
-  await expect(slides.locator('#page')).toHaveText('04 / 09');
+  await expect(slides.locator('#page')).toHaveText('04 / 10');
   await expect(slides.locator('#slideTitle')).toHaveText('수익성 개선안');
   await expect(slides.locator('#slideSummary')).toContainText('수수료·결제비');
   await expect(slides.locator('#slide')).toHaveAttribute('aria-describedby','slideSummary');
@@ -464,12 +464,12 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const nextButton=slides.getByRole('button',{name:'다음 슬라이드'});
   await nextButton.focus();
   await nextButton.press('ArrowRight');
-  await expect(slides.locator('#page')).toHaveText('05 / 09');
+  await expect(slides.locator('#page')).toHaveText('05 / 10');
   await expect(slides.locator('#slideSelectLabel')).toHaveText('05번 선택');
   await nextButton.press('ArrowLeft');
-  await expect(slides.locator('#page')).toHaveText('04 / 09');
+  await expect(slides.locator('#page')).toHaveText('04 / 10');
   await thumbnails.nth(0).click();
-  await expect(slides.locator('#page')).toHaveText('01 / 09');
+  await expect(slides.locator('#page')).toHaveText('01 / 10');
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
   await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
@@ -524,7 +524,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await slides.getByRole('button',{name:'다음 슬라이드'}).click();
   await expect(slides.locator('#page')).toHaveText('02 / 09');
   await slides.getByRole('button',{name:'이전 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('01 / 09');
+  await expect(slides.locator('#page')).toHaveText('01 / 10');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  for(const [path,type] of [
@@ -642,7 +642,7 @@ test('unsupported element fullscreen offers an accessible standalone slide viewe
   const preview=page.locator('#section-01 .case-doc-preview');
   await preview.locator('summary').click();
   const slides=preview.locator('.case-ppt-frame').contentFrame();
-  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
+  await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect(slides.locator('#expand')).toBeHidden();
   const fallback=slides.getByRole('link',{name:'새 탭에서 슬라이드 크게 보기'});
   await expect(fallback).toBeVisible();
