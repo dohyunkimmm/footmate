@@ -73,8 +73,18 @@ def make_tossface_icon():
     ttf.save(out)
 
     emoji = "📊"
-    font = ImageFont.truetype(str(out), size=160)
-    canvas = Image.new("RGBA", (230, 230), (0, 0, 0, 0))
+    strike_sizes = sorted(ttf["sbix"].strikes) if "sbix" in ttf else []
+    candidate_sizes = strike_sizes + [128, 96, 72, 64, 48, 40, 32, 24]
+    font = None
+    for candidate in candidate_sizes:
+        try:
+            font = ImageFont.truetype(str(out), size=candidate)
+            break
+        except OSError:
+            continue
+    if font is None:
+        raise RuntimeError(f"Official Tossface font has no renderable strike: {strike_sizes}")
+    canvas = Image.new("RGBA", (max(230, candidate * 2), max(230, candidate * 2)), (0, 0, 0, 0))
     draw = ImageDraw.Draw(canvas)
     draw.text((24, 10), emoji, font=font, embedded_color=True)
     bounds = canvas.getbbox()
