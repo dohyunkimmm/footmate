@@ -62,7 +62,7 @@ for(const [path,repositoryName] of [
 // The live Case Study is now a nine-section strategy report, not the retired
 // 13-slide connected-platform presentation. Verify real production copy.
 const caseStudy=await readFile(new URL('../../src/case-study/nine-sections.js',import.meta.url),'utf8');
-const caseSections=[...caseStudy.matchAll(/^\\s+"name": "([^"]+)"/gm)].map(match=>match[1]);
+const caseSections=[...caseStudy.matchAll(/^\s+"name": "([^"]+)"/gm)].map(match=>match[1]);
 assert.deepEqual(caseSections,[
   '추진 배경·검토 결론',
   '시장·경쟁 분석',
