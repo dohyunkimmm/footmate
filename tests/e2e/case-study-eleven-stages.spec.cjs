@@ -846,7 +846,7 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await jump.click();
   await expect(page).toHaveURL(/#roi-analysis$/);
   await expect(roi.locator('.roi-section-label')).toHaveText('본문 05 · 손익 검토');
-  await expect(roi.locator('h2')).toHaveText('12개월 예상 ROI');
+  await expect(roi.locator('#roi-projection-heading')).toHaveText('12개월 예상 ROI');
   await expect(roi.locator('.roi-highlights dd')).toHaveText(['12개월','−47.5%','−11.4%']);
   await expect(roi.locator('.roi-coverage-row')).toHaveCount(4);
   await expect(roi.locator('.roi-coverage-value')).toHaveText(['10.3%','52.5%','88.6%','85.4%']);
