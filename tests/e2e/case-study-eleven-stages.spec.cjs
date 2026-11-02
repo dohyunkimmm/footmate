@@ -848,8 +848,10 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await expect(roi.locator('.roi-coverage-row')).toHaveCount(4);
   await expect(roi.locator('.roi-coverage-value')).toHaveText(['10.3%','52.5%','88.6%','85.4%']);
   await expect(roi).not.toContainText('ROI 음수');
-  await expect(roi).toContainText('실적과 구분한 사업계획');
-  await expect(roi).toContainText('100%가 총현금비용 회수 기준');
+  await expect(roi).toContainText('12개월 운영 가정에 따른 수익성 분석');
+  await expect(roi).not.toContainText('실제 실적 아님');
+  await expect(roi).not.toContainText('첫해 비용 회수에는 조건 개선이 필요합니다.');
+  await expect(roi).toContainText('100% = 총현금비용 충당 기준');
   const details=roi.locator('.roi-financial-details');
   await expect(details).not.toHaveAttribute('open','');
   await details.locator('summary').click();
