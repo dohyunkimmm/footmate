@@ -20,10 +20,10 @@
 
 **포트폴리오 검토 포인트**
 
-- **케이스 스터디:** 시장·경쟁, 사업모델·손익, IT 투자·시스템 구조와 단계별 투자 판단을 9개 섹션으로 정리했습니다. 신규 사업 가정과 기존 구축·배포 근거를 구분합니다.
+- **케이스 스터디:** 시장·경쟁, 사업모델·손익, IT 투자·운영 통제와 단계별 투자 판단을 **9개 섹션**으로 정리했습니다. **05번에 12개월 예상 ROI**(보수·기준·확장·관리비 반영), **09번에 최종 판단**을 배치했습니다. 신규 사업 가정과 구축·배포 근거를 구분합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
-**주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
+**주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 10장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
 ## 주요 경험
 
@@ -66,7 +66,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 ## 자세한 문서
 
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
-- [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md) · [IT기획·전략기획 현행 9개 섹션](docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md)
+- [Case Study 현행 문서 · 05번 ROI·09번 최종 판단](docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md) · [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
 - [릴리스·QA 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
 - [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
 - [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
