@@ -322,9 +322,6 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 @media(prefers-reduced-motion:reduce){.case-quick-path>a{transition:none}}
 
 /* Section 05: assumption-based ROI, reusing the Case Study palette and type scale. */
-.roi-jump{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;padding:8px 14px;border:1px solid #b8cbbf;border-radius:8px;color:var(--green);background:#f7faf7;font-weight:700;text-decoration:none;text-underline-offset:3px}
-.roi-jump:hover{text-decoration:underline;background:#eef5ef}
-.roi-jump:focus-visible{outline:3px solid #326c50;outline-offset:3px}
 #roi-analysis{max-width:960px;scroll-margin-top:76px;margin-top:52px;border-top:1px solid var(--line);padding-top:34px}
 .roi-heading .roi-title{margin:8px 0 4px;padding:0;border:0;font-size:26px}
 .roi-section-label{color:#38634e;font-size:13px;line-height:1.5;letter-spacing:.02em;font-weight:750}
