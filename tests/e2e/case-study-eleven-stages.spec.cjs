@@ -835,3 +835,48 @@ test('case-study body copy stays concise and terminology stays consistent',async
  await page.goto('/src/case-study/decision-memos.html');
  for(const phrase of ['초기 운영은 운영자 제휴형으로 추진합니다.','월 손익 −2,387,160원','실제 계약 효과는 미검증입니다.'])await expect(page.locator('body')).toContainText(phrase);
 });
+
+
+test('ROI analysis in section 05 stays clear, accessible and numerically consistent',async({page},testInfo)=>{
+  await page.goto('/');
+  const roi=page.locator('#roi-analysis');
+  const jump=page.locator('#section-05 .roi-jump');
+  await expect(jump).toHaveAttribute('href','#roi-analysis');
+  await expect(jump).toContainText('05 · 예상 ROI');
+  await jump.click();
+  await expect(page).toHaveURL(/#roi-analysis$/);
+  await expect(roi.locator('.roi-section-label')).toHaveText('본문 05 · 손익 검토');
+  await expect(roi.locator('#roi-projection-heading')).toHaveText('12개월 예상 ROI');
+  await expect(roi.locator('.roi-highlights dd')).toHaveText(['12개월','−47.5%','−11.4%']);
+  await expect(roi.locator('.roi-coverage-row')).toHaveCount(4);
+  await expect(roi.locator('.roi-coverage-value')).toHaveText(['10.3%','52.5%','88.6%','85.4%']);
+  await expect(roi).not.toContainText('ROI 음수');
+  await expect(roi).toContainText('실적과 구분한 사업계획');
+  await expect(roi).toContainText('100%가 총현금비용 회수 기준');
+  const details=roi.locator('.roi-financial-details');
+  await expect(details).not.toHaveAttribute('open','');
+  await details.locator('summary').click();
+  await expect(roi.locator('table tbody tr')).toHaveCount(4);
+  await expect(roi.locator('table tbody tr').nth(1)).toContainText('−8,145,920원');
+  await expect(roi.locator('table tbody tr').nth(1)).toContainText('−47.5%');
+  const widths=await roi.locator('.roi-coverage-track>span').evaluateAll(nodes=>nodes.map(x=>parseFloat(x.style.width)));
+  expect(widths).toEqual([10.3,52.5,88.6,85.4]);
+  for(const width of [320,390,800,1440]){
+    await page.setViewportSize({width,height:900});
+    await page.goto('/#roi-analysis');
+    await expect(page.locator('#roi-analysis')).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),String(width)).toBe(true);
+    const box=await roi.evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
+    expect(box.scroll,String(width)).toBeLessThanOrEqual(box.client+1);
+    if(width===390||width===1440)await testInfo.attach('roi-review-'+width,{body:await roi.screenshot({animations:'disabled'}),contentType:'image/png'});
+  }
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/');
+  const scan=await new AxeBuilder({page}).include('#roi-analysis').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
+  expect(scan.violations).toEqual([]);
+  await page.goto('/src/case-study/materials.html?preview=1');
+  await page.locator('.slide-thumbnails .slide-thumb').nth(8).click();
+  await expect(page.locator('#page')).toHaveText('09 / 10');
+  await expect(page.locator('#slideTitle')).toHaveText('12개월 예상 ROI');
+  await expect(page.locator('#slideSummary')).toContainText('비용 회수율 비교');
+});
