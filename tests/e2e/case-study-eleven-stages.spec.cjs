@@ -757,9 +757,9 @@ xlsx=root/'footmate_model.xlsx'
 with ZipFile(pptx) as p:
     paths=set(p.namelist())
     slides=sorted(x for x in paths if re.fullmatch(r'ppt/slides/slide[0-9]+\.xml',x))
-    assert len(slides)==9, 'PPTX slide count: '+str(len(slides))
+    assert len(slides)==10, 'PPTX slide count: '+str(len(slides))
     pres=ET.fromstring(p.read('ppt/presentation.xml'))
-    assert len(pres.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sldId'))==9
+    assert len(pres.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sldId'))==10
     for name in slides:
         node=ET.fromstring(p.read(name))
         shapes=node.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sp')
@@ -781,7 +781,7 @@ with ZipFile(xlsx) as x:
         errors.extend(c.attrib.get('r') for c in node.findall('.//'+ns+'c') if c.attrib.get('t')=='e')
     assert formulas>0, 'Excel file has no formulas'
     assert not errors, 'Excel cached error values: '+str(errors[:10])
-    print('PASS: 9 PPT slides, '+str(len(sheets))+' Excel sheets, '+str(formulas)+' formulas, zero cached errors')
+    print('PASS: 10 PPT slides, '+str(len(sheets))+' Excel sheets, '+str(formulas)+' formulas, zero cached errors')
 `],{encoding:'utf8',timeout:25000});
  expect(audit.status,audit.stderr+' '+audit.stdout).toBe(0);
  await page.goto('/');
