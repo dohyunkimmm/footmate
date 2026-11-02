@@ -349,7 +349,7 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
 .roi-financial-details summary,.roi-method summary{padding:14px 2px}
 .roi-financial-details .detail-body,.roi-method .detail-body{padding-top:4px}
 .roi-financial-details .table-wrap{margin:12px 0 16px}
-.roi-financial-details table{font-size:14px;line-height:1.55}
+.roi-financial-details table{font-size:16px;line-height:1.55}
 .roi-financial-details th,.roi-financial-details td{padding:12px 10px;overflow-wrap:break-word}
 .roi-financial-details table caption{font-size:15px}
 .roi-financial-details .formula{font-size:14px;padding:14px 17px;margin:16px 0}
