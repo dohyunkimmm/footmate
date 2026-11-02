@@ -14,78 +14,56 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - run: pip install python-pptx pillow
-      - name: Inspect existing presentation style
+      - name: Install slide renderer and image dependencies
         run: |
-          python - <<'PY'
-          from pptx import Presentation
-          from collections import Counter
-          p=Presentation('src/case-study/downloads/footmate_report.pptx')
-          print('SLIDE_SIZE',p.slide_width/914400,p.slide_height/914400,'layouts',len(p.slide_layouts))
-          for i,s in enumerate(p.slides):
-              print('SLIDE',i+1,'SHAPES',len(s.shapes))
-              fonts=Counter(); colors=Counter()
-              for j,sh in enumerate(s.shapes):
-                  txt=sh.text.replace('\n',' ')[:96] if sh.has_text_frame else ''
-                  if sh.has_text_frame:
-                    for par in sh.text_frame.paragraphs:
-                      for run in par.runs:
-                        if run.text:
-                          font=run.font
-                          fname=font.name or 'theme'
-                          size=round(font.size.pt,1) if font.size else None
-                          fonts[(fname,size)]+=1
-                          try:
-                            if font.color.type is not None and font.color.rgb: colors[str(font.color.rgb)]+=1
-                          except: pass
-                  if i in (3,7,8,9):
-                    fill=''
-                    try:
-                      if sh.fill.type is not None and sh.fill.fore_color.type is not None:
-                        fill=str(sh.fill.fore_color.rgb)
-                    except: fill='theme'
-                    print('SH',i+1,j,sh.shape_type,round(sh.left/914400,2),round(sh.top/914400,2),round(sh.width/914400,2),round(sh.height/914400,2),'fill',fill,'text',repr(txt))
-              print('FONTS',i+1,fonts.most_common(10))
-              print('COLORS',i+1,colors.most_common(10))
-          PY
-      - name: Inspect original table themes
+          python -m pip install --quiet python-pptx pillow fonttools brotli pymupdf
+          if ! command -v libreoffice >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq libreoffice-impress > /dev/null
+          fi
+      - name: Prepare official Pretendard and Tossface fonts locally
         run: |
-          python - <<'PY'
-          from pptx import Presentation
-          p=Presentation('src/case-study/downloads/footmate_report.pptx')
-          for si in (3,4,7):
-            s=p.slides[si]
-            for sh in s.shapes:
-              if not sh.has_table: continue
-              t=sh.table
-              print('TABLE',si+1,'rows',len(t.rows),'cols',len(t.columns))
-              for ri,row in enumerate(t.rows):
-                vals=[]
-                for ci,c in enumerate(row.cells):
-                  rr=c.text_frame.paragraphs[0].runs
-                  fmt=[]
-                  for run in rr[:1]:
-                    ft=run.font
-                    co=''
-                    try: co=str(ft.color.rgb) if ft.color.type else ''
-                    except: pass
-                    fmt.append((ft.name,ft.size.pt if ft.size else None,co,ft.bold))
-                  color=''
-                  try: color=str(c.fill.fore_color.rgb) if c.fill.type else ''
-                  except: pass
-                  vals.append({'text':c.text[:56],'style':fmt,'fill':color})
-                print('ROW',si+1,ri,vals)
-          PY
-      - name: Regenerate ROI slide styled from originals
-        if: hashFiles('scripts/style-roi-slide.py') != ''
+          mkdir -p "$HOME/.local/share/fonts"
+          for weight in Regular Medium SemiBold Bold; do
+            curl -fsSL --retry 3 "https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-$weight.otf" -o "$HOME/.local/share/fonts/Pretendard-$weight.otf"
+          done
+          curl -fsSL --retry 3 'https://raw.githubusercontent.com/toss/tossface/main/dist/TossFaceFontMac-09.woff2' -o /tmp/TossFaceFontMac-09.woff2
+          fc-cache -f "$HOME/.local/share/fonts"
+          fc-match Pretendard
+      - name: Match slide 10 layout and all fonts
         run: python scripts/style-roi-slide.py
-      - name: Commit visual outputs
-        if: hashFiles('scripts/style-roi-slide.py') != ''
+      - name: Validate all slides and preview images
+        run: |
+          python - <<'PY'
+          from pptx import Presentation
+          import json
+          from pathlib import Path
+          prs=Presentation('src/case-study/downloads/footmate_report.pptx')
+          assert len(prs.slides)==10
+          bad=[]
+          for i,sl in enumerate(prs.slides,1):
+            for sh in sl.shapes:
+              frames=[]
+              if sh.has_text_frame: frames.append(sh.text_frame)
+              if sh.has_table: frames.extend(c.text_frame for row in sh.table.rows for c in row.cells)
+              for frame in frames:
+                for paragraph in frame.paragraphs:
+                  for run in paragraph.runs:
+                    if run.text and run.font.name!='Pretendard':
+                      bad.append((i,run.text,run.font.name))
+          assert not bad, f'Font mismatches: {bad[:20]}'
+          assert '예상 ROI' in prs.slides[-1].shapes[0].text
+          path=Path('src/case-study/report-previews.js')
+          content=path.read_text()
+          assert len(json.loads(content.split('=',1)[1].rstrip().rstrip(';')))==10
+          print('PASS all text Pretendard and Tossface icon embedded, 10 PNG slides')
+          PY
+      - name: Commit matched PPTX and previews
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/case-study/downloads/footmate_report.pptx src/case-study/report-previews.js
           if ! git diff --cached --quiet; then
-            git commit -m "Match ROI slide to original deck typography and graphics"
+            git commit -m "Use Pretendard across slides and Tossface emoji on ROI slide"
             git push origin HEAD:fix/roi-slide-design-match-20261102
           fi
