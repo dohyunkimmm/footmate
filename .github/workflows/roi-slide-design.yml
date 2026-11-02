@@ -1,0 +1,63 @@
+name: ROI slide design match
+on:
+  push:
+    branches: [fix/roi-slide-design-match-20261102]
+    paths:
+      - .github/workflows/roi-slide-design.yml
+      - scripts/style-roi-slide.py
+permissions:
+  contents: write
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: pip install python-pptx pillow
+      - name: Inspect existing presentation style
+        run: |
+          python - <<'PY'
+          from pptx import Presentation
+          from collections import Counter
+          p=Presentation('src/case-study/downloads/footmate_report.pptx')
+          print('SLIDE_SIZE',p.slide_width/914400,p.slide_height/914400,'layouts',len(p.slide_layouts))
+          for i,s in enumerate(p.slides):
+              print('SLIDE',i+1,'SHAPES',len(s.shapes))
+              fonts=Counter(); colors=Counter()
+              for j,sh in enumerate(s.shapes):
+                  txt=sh.text.replace('\n',' ')[:96] if sh.has_text_frame else ''
+                  if sh.has_text_frame:
+                    for par in sh.text_frame.paragraphs:
+                      for run in par.runs:
+                        if run.text:
+                          font=run.font
+                          fname=font.name or 'theme'
+                          size=round(font.size.pt,1) if font.size else None
+                          fonts[(fname,size)]+=1
+                          try:
+                            if font.color.type is not None and font.color.rgb: colors[str(font.color.rgb)]+=1
+                          except: pass
+                  if i in (3,7,8,9):
+                    fill=''
+                    try:
+                      if sh.fill.type is not None and sh.fill.fore_color.type is not None:
+                        fill=str(sh.fill.fore_color.rgb)
+                    except: fill='theme'
+                    print('SH',i+1,j,sh.shape_type,round(sh.left/914400,2),round(sh.top/914400,2),round(sh.width/914400,2),round(sh.height/914400,2),'fill',fill,'text',repr(txt))
+              print('FONTS',i+1,fonts.most_common(10))
+              print('COLORS',i+1,colors.most_common(10))
+          PY
+      - name: Regenerate ROI slide styled from originals
+        if: hashFiles('scripts/style-roi-slide.py') != ''
+        run: python scripts/style-roi-slide.py
+      - name: Commit visual outputs
+        if: hashFiles('scripts/style-roi-slide.py') != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/case-study/downloads/footmate_report.pptx src/case-study/report-previews.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Match ROI slide to original deck typography and graphics"
+            git push origin HEAD:fix/roi-slide-design-match-20261102
+          fi
