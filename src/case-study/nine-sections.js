@@ -56,7 +56,7 @@ const sections = [
     "name": "종합 판단·근거",
     "title": "검토 결론·후속 과제",
     "lead": "확인한 근거와 추가로 검증할 사항.",
-    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>구현·설계</h2><p>참가·정원 기능과 유료 전환 과제 정리.</p></article><article class=\"story-card\"><h2>제휴형 우선 검토</h2><p>월 현금 −387,160원·확장 −1,986,980원(기회비용 포함).</p></article><article class=\"story-card\"><h2>추가 투자 조건</h2><p>공급·참가·재참가·단위 수익 확인 후 투자·확장.</p></article></div><p class=\"decision\">후속 과제 · 626건 기준 수수료·결제비·공급처 재산정.</p>"
+    "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>사업모델 방향</h2><p>운영자 제휴형 우선 · 수수료·결제비 복합 협상.</p></article><article class=\"story-card\"><h2>핵심 확인 지표</h2><p>건당 공헌이익·플랫폼 예약 비중·재참가 확인.</p></article><article class=\"story-card\"><h2>단계적 투자 기준</h2><p>취소·고객지원비 반영 손익·예상 ROI 재산정.</p></article></div><p class=\"decision\">공급 계약·수익성 기준 충족 후 단계적 투자 확대.</p>"
   }
 ];
 
