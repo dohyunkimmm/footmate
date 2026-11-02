@@ -424,7 +424,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획 슬라이드');
   await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
-  await expect(thumbnails).toHaveCount(9);
+  await expect(thumbnails).toHaveCount(10);
   await expect(thumbnails.nth(0)).toHaveAttribute('aria-current','true');
   const filmstrip=slides.locator('#thumbnails');
   const scrollable=await filmstrip.evaluate(el=>el.scrollWidth>el.clientWidth+2);
@@ -522,7 +522,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     return Math.abs(outer-inner);
   },{timeout:15000}).toBeLessThan(12);
   await slides.getByRole('button',{name:'다음 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('02 / 09');
+  await expect(slides.locator('#page')).toHaveText('02 / 10');
   await slides.getByRole('button',{name:'이전 슬라이드'}).click();
   await expect(slides.locator('#page')).toHaveText('01 / 10');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
