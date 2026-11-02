@@ -1,5 +1,14 @@
 # FootMate Release History
 
+## 2026-11-02 — Case Study 12개월 ROI·최종 판단 동기화
+
+- **본문:** 9개 섹션 구조 유지. **05번 「수익성·손익분기점」** 아래 12개월 예상 ROI와 시나리오별 현금비용 대비 수수료 매출 비중을 추가하고, **09번 「종합 판단·근거」**는 운영자 제휴형·핵심 확인 지표·단계적 투자 기준으로 정리.
+- **발표자료:** 10장 구조. **9장 「12개월 예상 ROI」 → 10장 「최종 판단 · 단계적 투자」** 순서이며 PPT 원본과 웹 미리보기 일치. 전 슬라이드 Pretendard, ROI 시각화에 Tossface 삽입 이미지. 계산 결과는 보수 **−89.7%**, 기준 **−47.5%**, 확장 **−11.4%**, 관리비 반영 확장 **−14.6%**(12개월 현금비용 기준).
+- **문구·범위:** 별도 ROI 바로가기 삭제, 예상 ROI 설명·비용 가정 토글의 중복/설명체 문장 간결화. 매출·비용·ROI 수치와 계산식 보존. 월 운영손익과 초기 구축비용을 포함하는 12개월 ROI는 계산 범위가 다르다. 현재 사업성과가 아니라 운영 가정에 따른 산출이다.
+- **변경 이력:** [#803](https://github.com/dohyunkimmm/footmate/pull/803) ROI 추가 → [#804](https://github.com/dohyunkimmm/footmate/pull/804) PPT 서체/디자인 → [#805](https://github.com/dohyunkimmm/footmate/pull/805) 슬라이드 순서 → [#806](https://github.com/dohyunkimmm/footmate/pull/806) ROI 시각화·QA → [#807](https://github.com/dohyunkimmm/footmate/pull/807) 중복 바로가기 제거 → [#808](https://github.com/dohyunkimmm/footmate/pull/808) 문구 정리 → [#809](https://github.com/dohyunkimmm/footmate/pull/809) 마지막 슬라이드/본문 결론 동기화.
+- **최종 배포 근거:** #809 병합 `5d5f62d4e70077ca4c37873481377cd97ddd9ed9`, [FootMate QA #41414549101](https://github.com/dohyunkimmm/footmate/actions/runs/41414549101) Case Study QA·Cloudflare Deploy·Case Study Production Smoke **SUCCESS**. 실측 성과나 실제 투자 집행이 확인됐다는 의미는 아니다.
+- **원본/문서:** [현재 기획·ROI 근거](IT-STRATEGY-CASE-STUDY.md) · [발표자료 보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1)
+
 ## 2026-10-30 — P2·P3 운영 반영 및 IT기획·전략기획 Case Study 9개 섹션
 
 - [PR #727](https://github.com/dohyunkimmm/footmate/pull/727) squash 병합 `89dc54114cf047962c29a39af06dd1032e35896f`: 지역 선택 개선, 탈퇴/데모 참가 기록 격리, **실제 로그인 계정의 추천 조건 Supabase 동기화**(로컬 대체; 데모·게스트 제외), 운영자 파일럿 KPI 4종과 RLS·동의·표본 보호. Supabase 운영 migration `20261030032856_beta_preferences_pilot_metrics` 적용 및 신규 `beta_user_preferences` 테이블 정책 3개·RPC 접근권한 검증. 임의 사용자 데이터 삭제나 자동 파일럿 지정은 하지 않음.
