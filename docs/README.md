@@ -1,3 +1,11 @@
+## 2026-11-02 · Case Study ROI·최종 결론 문서 동기화
+
+- **현재 공개 구조:** Case Study 본문은 **9개 섹션**으로, **05번 「수익성·손익분기점」 안에 12개월 예상 ROI**, **09번 「종합 판단·근거」에 단계적 투자 결론**을 배치한다. 발표자료는 **10장**이며 **9장 ROI → 10장 「최종 판단 · 단계적 투자」** 순서다.
+- **ROI 가정:** 12개월 현금비용 기준 보수 **−89.7%**, 기준 **−47.5%**, 확장 **−11.4%**, 확장·관리비 반영 **−14.6%**. 신규 사업계획 수치로서 월 운영손익과 계산 기간 및 초기비용 포함 범위를 구분한다. 비용·매출 산출표와 가정은 [현행 기획 문서](IT-STRATEGY-CASE-STUDY.md)의 05번 참조.
+- **의사결정:** 운영자 제휴형 우선 및 수수료·결제비 복합 협상 → 건당 공헌이익·플랫폼 예약 비중·재참가 확인 → 취소·고객지원비 반영 손익·예상 ROI 재산정 → 공급 계약·수익성 기준 충족 시 단계적 투자 확대.
+- **운영 반영 근거:** [PR #803–#809](https://github.com/dohyunkimmm/footmate/pull/809)에 걸친 ROI·발표자료·본문 문구 개선의 마지막 본문/PPT 동기화는 [PR #809](https://github.com/dohyunkimmm/footmate/pull/809) 병합 SHA `5d5f62d4e70077ca4c37873481377cd97ddd9ed9`. 최종 [FootMate QA #41414549101](https://github.com/dohyunkimmm/footmate/actions/runs/41414549101)의 Case Study QA·Cloudflare Deploy·Case Study Production Smoke **SUCCESS**.
+- **현재 문서 위치:** [전체 기획 근거](IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차](CASE-STUDY-ELEVEN-STAGES.md) · [공개 본문](https://footmate.fmate.workers.dev/) · [발표자료 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1). 10월에 작성된 QA·구성 문서는 당시 기록으로 보존.
+
 ## 2026-11-01 · 무료 운영 기준 확정
 
 - **운영 범위:** Supabase `footmate-beta`는 무료 요금제로 유지한다. 무료 범위 밖의 기능·요금제 변경은 이 저장소의 작업·검증 완료 조건에 포함하지 않는다.
