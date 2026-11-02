@@ -42,7 +42,7 @@ jobs:
           assert '의사결정 메모' in t(9)
           assert '음수' not in t(8)
           assert '-47.5' not in t(8)  # Only the typographically consistent minus sign should appear.
-          assert '−47.5%' in t(8)
+          assert '−47.5%' in ' '.join(c.text for sh in prs.slides[8].shapes if sh.has_table for row in sh.table.rows for c in row.cells)
           fonts=set()
           for slide in prs.slides:
             for shape in slide.shapes:
