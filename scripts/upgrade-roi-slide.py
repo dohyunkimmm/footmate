@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Improve ONLY ROI slide 9 and its matching image preview.
+"""Improve ONLY ROI slide 9 and its matching image preview (validated table values).
 
 The comparison uses sales-to-total-cash-cost coverage, so the widths are
 100% * annual sales / annual total cash costs. The existing ROI values remain
