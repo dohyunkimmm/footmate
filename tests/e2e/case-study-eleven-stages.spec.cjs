@@ -161,7 +161,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 미구현');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
-  await expect(page.locator('.track table')).toHaveCount(26);
+  await expect(page.locator('.track table')).toHaveCount(27);
   for(const id of ['#section-01','#section-03','#section-06'])
    expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
@@ -176,7 +176,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0% · 23곳 / 관리비 포함 28곳.');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
- await expect(page.locator('.track table')).toHaveCount(26);
+ await expect(page.locator('.track table')).toHaveCount(27);
  await expect(page.locator('#section-04 .model-funnel')).toContainText('약 1,559석');
  for(const [section,label] of [['#section-05','기준 거래 계산·수수료 협상 비교표 자세히 보기'],['#section-06','월 IT·운영 예산 세부 내역'],['#section-08','월간 지표 관리·정정 책임표']]){
   const summary=page.locator(section+' details summary').filter({hasText:label});
