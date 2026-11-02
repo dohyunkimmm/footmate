@@ -54,7 +54,7 @@ if len(prs.slides) not in (9,10):
     raise SystemExit(f"Expected 9 or 10 slides, got {len(prs.slides)}")
 already = any(TITLE in sh.text for slide in prs.slides for sh in slide.shapes if sh.has_text_frame)
 if not already:
-    slide=prs.slides.add_slide(prs.slide_layouts[6])
+    slide=prs.slides.add_slide(prs.slide_layouts[len(prs.slide_layouts)-1])
     W,H=prs.slide_width,prs.slide_height
     # Use relative coordinates to preserve the source presentation size.
     X=lambda v: int(W*v/13.333)
