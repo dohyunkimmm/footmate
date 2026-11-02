@@ -59,37 +59,30 @@ for(const [path,repositoryName] of [
   assert.equal(source.includes('footmate:v4:'),false,`${path} must not own legacy storage keys`);
 }
 
-const caseStudy=await readFile(new URL('../../src/case-study/connected.js',import.meta.url),'utf8');
+// The live Case Study is now a nine-section strategy report, not the retired
+// 13-slide connected-platform presentation. Verify real production copy.
+const caseStudy=await readFile(new URL('../../src/case-study/nine-sections.js',import.meta.url),'utf8');
+const caseSections=[...caseStudy.matchAll(/^\s+"name": "([^"]+)"/gm)].map(match=>match[1]);
+assert.deepEqual(caseSections,[
+  '추진 배경·검토 결론',
+  '시장·경쟁 분석',
+  '사업모델·역할',
+  '수요·공급 시나리오',
+  '수익성·손익분기점',
+  'IT 투자·시스템 구조',
+  '운영 안정성·통제',
+  '실행계획·성과관리',
+  '종합 판단·근거'
+]);
 for(const required of [
-  "['Overview','Role & Scope']",
-  "['Scope & Priority','Value Before Scale']",
-  "['Sign in · Join','Context & Confirmation']",
-  "['Domain & AI','Contracts & Guardrails']",
-  "['Release & Learnings','Limits & Next Steps']",
-  'if(slides.length!==13||!note)return false;',
-  'UX 시뮬레이션 인증 · 무료 참가 확인',
-  'Supabase 인증·참가 경로 실연동',
-  '결정론적 추천 엔진',
-  'Google/Kakao OAuth',
-  'Resend',
-  'Web Push',
-  'Storage',
-  '실제 PG · 외부 분석 도구',
-  '사람 검수 (Human QA)',
-  'AI 보조 검수 (AI-assisted QA)'
-])assert.ok(caseStudy.includes(required),`missing current product boundary copy: ${required}`);
-
-for(const stale of [
-  "['개요','AI Match Assistant']",
-  "['도메인 구조','recommendation · participation · matchday · return']",
-  "['외부 연동 · AI 경계','실연동 · 시뮬레이션 · HITL 경계']",
-  "['Production 범위','실제 연결·검증된 기능만 표기']",
-  '외부 AI 모델, 회원 DB, 실시간 정원, 실제 결제, 알림 backend는 연결하지 않았습니다.',
-  'OAuth · 회원 DB · PG · 실시간 정원 · 알림 backend',
-  'sample records',
-  'connected data path',
-  'external analytics는 미연동입니다.'
-])assert.equal(caseStudy.includes(stale),false,`stale Case Study boundary copy must be removed: ${stale}`);
+  '초기 모델은 운영자 제휴형',
+  '결제·정산은 후속',
+  '실제 결제·환불·운영자 정산',
+  '동시 요청',
+  '기회비용',
+  '데이터 정정',
+  'PPT 9장'
+])assert.ok(caseStudy.includes(required),`missing current strategy Case Study boundary copy: ${required}`);
 
 console.log('PASS connected platform contracts');
 
