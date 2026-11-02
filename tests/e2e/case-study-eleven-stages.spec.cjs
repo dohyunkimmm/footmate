@@ -185,7 +185,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
   await expect(summary.locator('..')).toHaveAttribute('open','');
  }
  await expect(page.locator('#section-05')).toContainText('−387,160원');
- await expect(page.locator('#section-09')).toContainText('월 현금 −387,160원·확장 −1,986,980원(기회비용 포함).');
+ await expect(page.locator('#section-09')).toContainText('운영자 제휴형 우선 · 수수료·결제비 복합 협상.');
  await page.goto('/src/case-study/forecast.html');
  await expect(page.getByRole('heading',{name:'기준 손익 가정'})).toBeVisible();
  await expect(page.locator('#expansion')).toContainText('약 23곳');
@@ -217,14 +217,14 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
  await expect(page.locator('#section-01 .lead')).toContainText('사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례');
  await expect(page.locator('#section-06')).toContainText('직접 구축·외부 활용·후속 투자 구분. 접근·복구·비용 검토.');
- await expect(page.locator('#section-09')).toContainText('참가·정원 기능과 유료 전환 과제 정리');
+ await expect(page.locator('#section-09')).toContainText('건당 공헌이익·플랫폼 예약 비중·재참가 확인.');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
  await expect(page.locator('#section-06')).toContainText('가상 데이터');
  await expect(page.locator('#section-06')).toContainText('실제 서버의 동시 요청 처리는 별도 검증');
  await expect(page.locator('#section-07 .transaction-flow')).toContainText('로그인·중복·잔여 정원 확인 후 반영');
  await expect(page.locator('#section-08')).toContainText('30일 경과 이용자');
- await expect(page.locator('#section-09')).toContainText('−1,986,980원');
+ await expect(page.locator('#section-09')).toContainText('취소·고객지원비 반영 손익·예상 ROI 재산정.');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
  await expect(page.locator('#section-09')).not.toContainText('발표자료(PPT)·분석 모델(Excel) 보기');
  await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
@@ -235,7 +235,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('link[href*="pretendardvariable-dynamic-subset.css"]')).toHaveCount(1);
  await expect(page.locator('#section-08')).not.toContainText('포트폴리오용 합성 데이터·가정.');
 
- for(const id of ['#section-01','#section-04','#section-05','#section-09']){
+ for(const id of ['#section-01','#section-04','#section-05']){
   await expect(page.locator(id)).toContainText('626건');
   if(id==='#section-01')await expect(page.locator(id)).toContainText('약 −38.7');
   else if(id!=='#section-04')await expect(page.locator(id)).toContainText('−387,160원');
@@ -878,4 +878,23 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await expect(page.locator('#page')).toHaveText('09 / 10');
   await expect(page.locator('#slideTitle')).toHaveText('12개월 예상 ROI');
   await expect(page.locator('#slideSummary')).toContainText('비용 회수율 비교');
+});
+
+
+test('final Case Study decision and presentation conclusion stay aligned',async({page})=>{
+  await page.goto('/');
+  const final=page.locator('#section-09');
+  for(const phrase of [
+    '운영자 제휴형 우선 · 수수료·결제비 복합 협상.',
+    '건당 공헌이익·플랫폼 예약 비중·재참가 확인.',
+    '취소·고객지원비 반영 손익·예상 ROI 재산정.',
+    '공급 계약·수익성 기준 충족 후 단계적 투자 확대.'
+  ])await expect(final).toContainText(phrase);
+  await expect(final.locator('.story-card')).toHaveCount(3);
+  await page.goto('/src/case-study/materials.html?preview=1');
+  await expect(page.locator('.slide-thumbnails .slide-thumb')).toHaveCount(10);
+  await page.locator('.slide-thumbnails .slide-thumb').nth(9).click();
+  await expect(page.locator('#page')).toHaveText('10 / 10');
+  await expect(page.locator('#slideTitle')).toHaveText('최종 판단 · 단계적 투자');
+  await expect(page.locator('#slideSummary')).toContainText('핵심 지표·단계적 투자 기준');
 });
