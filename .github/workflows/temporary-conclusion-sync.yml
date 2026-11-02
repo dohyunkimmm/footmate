@@ -1,0 +1,67 @@
+name: Sync FootMate conclusion slide and preview
+on:
+  push:
+    branches: [fix/conclusion-slide-body-sync-20261102]
+    paths: [scripts/sync-conclusion-slide.py]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install slide and preview rendering dependencies
+        run: |
+          python -m pip install --quiet python-pptx pillow pymupdf
+          if ! command -v libreoffice >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq libreoffice-impress >/dev/null
+          fi
+      - name: Install local Pretendard only for accurate preview
+        run: |
+          mkdir -p "$HOME/.local/share/fonts"
+          for weight in Regular Medium SemiBold Bold; do
+            curl -fsSL --retry 3 "https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-$weight.otf" -o "$HOME/.local/share/fonts/Pretendard-$weight.otf"
+          done
+          fc-cache -f "$HOME/.local/share/fonts"
+      - name: Replace slide 10 content, render same slide for web preview
+        run: python scripts/sync-conclusion-slide.py
+      - name: Verify slide order, fonts and decision phrases
+        run: |
+          python - <<'PY'
+          from pptx import Presentation
+          from pathlib import Path
+          import json
+          p=Presentation('src/case-study/downloads/footmate_report.pptx')
+          assert len(p.slides)==10
+          def txt(i):
+            return '\n'.join(x.text for x in p.slides[i].shapes if x.has_text_frame)
+          assert '12개월 예상 ROI' in txt(8)
+          last=txt(9)
+          for phrase in ['최종 판단 · 단계적 투자','운영자 제휴형 우선','건당 공헌이익','플랫폼 예약 비중','예상 ROI 재산정','단계적 투자 확대']:
+            assert phrase in last, phrase
+          assert '합니다.' not in last
+          fonts=set()
+          for shape in p.slides[9].shapes:
+            if shape.has_text_frame:
+              for para in shape.text_frame.paragraphs:
+                for run in para.runs:
+                  if run.text: fonts.add(run.font.name)
+          assert fonts=={'Pretendard'}, fonts
+          src=Path('src/case-study/report-previews.js').read_text()
+          data=json.loads(src.removeprefix('window.REPORT_SLIDES=').rstrip().rstrip(';'))
+          assert len(data)==10 and data[9]['title']=='최종 판단 · 단계적 투자'
+          assert data[8]['title']=='12개월 예상 ROI'
+          print('PASS: presentation last conclusion, fonts, slide order and web preview')
+          PY
+      - name: Commit PowerPoint and refreshed slide preview
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/case-study/downloads/footmate_report.pptx src/case-study/report-previews.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Synchronize concluding PPT slide with Case Study final decision"
+            git push origin HEAD:fix/conclusion-slide-body-sync-20261102
+          fi
