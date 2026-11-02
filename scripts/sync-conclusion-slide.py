@@ -21,7 +21,7 @@ PREVIEW=ROOT/'src/case-study/report-previews.js'
 p=Presentation(str(PPTX))
 assert len(p.slides)==10
 slide=p.slides[9]
-before9=[x.slide_id for x in p.slides[:9]]
+before9=[x.slide_id for x in [p.slides[i] for i in range(9)]]
 new_title='최종 판단 · 단계적 투자'
 new_headline='운영자 제휴형 우선 · 수수료·결제비 복합 협상'
 new_lines=[
@@ -78,7 +78,7 @@ if (title_count,head_count,body_count)!=(1,1,3):
 p.save(str(PPTX))
 verify=Presentation(str(PPTX))
 assert len(verify.slides)==10
-assert [x.slide_id for x in verify.slides[:9]]==before9
+assert [x.slide_id for x in [verify.slides[i] for i in range(9)]]==before9
 s10='\n'.join(s.text for s in verify.slides[9].shapes if s.has_text_frame)
 for expected in [new_title,new_headline,*new_lines]:
     assert expected in s10,expected
