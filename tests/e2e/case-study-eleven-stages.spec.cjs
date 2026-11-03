@@ -588,7 +588,8 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
  for(const width of [320,390,800,1440,1920]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
-  await expect(page.locator('#section-01 .case-scenario-note')).toContainText('05 확대');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('기준 · 공급처 5곳 · 수수료 10% · 결제비 3%');
+  await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0%');
   expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(65);
   await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함');
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
