@@ -6,6 +6,12 @@ on:
       - 'src/case-study/downloads/footmate_report.pptx'
       - 'qa/improve-case-study-chart.py'
       - '.github/workflows/case-study-ppt-previews.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/case-study/downloads/footmate_report.pptx'
+      - 'qa/improve-case-study-chart.py'
+      - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
 permissions:
@@ -103,6 +109,7 @@ jobs:
           print('Preview updated:',target.stat().st_size,'bytes; slides:',len(slides))
           PY
       - name: Stage previews on a dedicated review branch
+        if: github.event_name != 'pull_request'
         id: preview_branch
         env:
           GH_TOKEN: ${{ github.token }}
