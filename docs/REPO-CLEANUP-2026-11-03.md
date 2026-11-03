@@ -38,6 +38,7 @@ GitHub `main` 재귀 트리에서 **309개 파일·40개 디렉터리**를 확�
 ## 검증 및 이번 작업 범위
 
 - 기준 `main`의 [FootMate QA #41564352694](https://github.com/dohyunkimmm/footmate/actions/runs/41564352694) 전체 워크플로 결과는 **success**였습니다. 개별 배포·운영 실계정 시나리오까지 통과했다고 해석하지 않습니다.
-- `README.md`와 `docs/README.md`에 현행 파일·폴더 안내/이 점검 기록으로 이동하는 링크만 정리합니다.
+- `README.md`와 `docs/README.md`에 현행 파일·폴더 안내/이 점검 기록으로 이동하는 링크를 정리합니다.
+- **기존 문서 QA 오류 수정:** `tests/contracts/connected-platform.contract.mjs`는 과거의 단일 문구 `PPT 10장`을 요구했지만 현행 화면은 `PPT` 유형과 `10장` 수량을 서로 다른 요소에 표시합니다. 실제 문서 카드의 `PPT 다운로드 ↓` 및 `10장</p>`를 확인하도록 계약만 맞췄습니다(화면/자료 내용 변경 없음).
 - 런타임 HTML·JS·CSS, PPTX·XLSX, Worker, Supabase DB/함수, 의존성 버전, 브랜치 참조·태그·배포 설정은 변경하지 않습니다.
 - 이 문서의 브랜치 수와 PR/QA 상태는 **점검 시점의 스냅샷**이며, 별도 PR 병합 및 작업 브랜치 생성 후 바뀔 수 있습니다.
