@@ -157,7 +157,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(techCards).toHaveCount(3);
   await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
   await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
-  await expect(techCards.nth(2)).toContainText('실결제·환불·정산 미구현');
+  await expect(techCards.nth(2)).toContainText('실결제·환불·정산 후속 구축 대상');
   await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 미구현');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
@@ -360,7 +360,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(documents.getByRole('heading',{name:'자료',exact:true})).toBeVisible();
   await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
-  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 기준 · 공급처 5곳 · 수수료 10% · 결제비 3% · 현장 실측 후 갱신');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 · 5곳 · 수수료 10% · 결제비 3%');
   await expect(documents.locator('.case-file')).toHaveCount(2);
   await expect(page.getByRole('link',{name:'PPT 다운로드 ↓'})).toHaveCount(1);
   await expect(page.getByRole('link',{name:'Excel 다운로드 ↓'})).toHaveCount(1);
@@ -588,7 +588,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
  for(const width of [320,390,800,1440,1920]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
-  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 기준 · 공급처 5곳 · 수수료 10% · 결제비 3% · 현장 실측 후 갱신');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 · 5곳 · 수수료 10% · 결제비 3%');
   await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0%');
   expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(100);
   await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함');
@@ -863,7 +863,7 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await expect(roi.locator('.roi-coverage-row')).toHaveCount(4);
   await expect(roi.locator('.roi-coverage-value')).toHaveText(['10.3%','52.5%','88.6%','85.4%']);
   await expect(roi).not.toContainText('ROI 음수');
-  await expect(roi).toContainText('12개월 운영 산정 기준에 따른 수익성 분석');
+  await expect(roi).toContainText('12개월 운영 예상 조건에 따른 수익성 분석');
   await expect(roi).not.toContainText('실제 실적 아님');
   await expect(roi).not.toContainText('첫해 비용 회수에는 조건 개선이 필요합니다.');
   await expect(roi).toContainText('100% = 총현금비용 충당 기준');
