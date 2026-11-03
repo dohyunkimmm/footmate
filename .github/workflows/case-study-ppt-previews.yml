@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: footmate-case-study-preview
@@ -70,7 +71,10 @@ jobs:
           assert len(slides)==10
           print('Preview updated:',target.stat().st_size,'bytes; slides:',len(slides))
           PY
-      - name: Publish source-aligned previews
+      - name: Stage previews on a dedicated review branch
+        id: preview_branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
@@ -78,27 +82,21 @@ jobs:
           git add src/case-study/report-previews.js
           if git diff --cached --quiet; then
             echo 'No preview changes'
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m 'docs: align FootMate inline slide previews with editable presentation'
-            git pull --rebase origin main
-            git push origin HEAD:main
+            SOURCE_SHA="$(git rev-parse HEAD~1)"
+            PREVIEW_BRANCH="automation/footmate-case-preview-${SOURCE_SHA:0:12}"
+            git push origin "HEAD:refs/heads/$PREVIEW_BRANCH"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "branch=$PREVIEW_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "Created review branch $PREVIEW_BRANCH (main remains protected)"
+            if gh pr create --head "$PREVIEW_BRANCH" --base main --title "docs: FootMate PPT 원본과 슬라이드 미리보기 동기화" --body "PPTX 10장을 기준으로 생성한 PNG 미리보기를 동기화합니다. 본문 수치와 PPTX 원본은 변경하지 않습니다. 자동 QA 통과 후 병합합니다."; then
+              echo "Created preview pull request"
+            else
+              echo "::warning::Preview branch created. Create a pull request through the connected GitHub account; main is protected."
+            fi
           fi
-      # GITHUB_TOKEN preview commits do not start another push workflow.
-      # Deploy the freshly rendered thumbnails here so the website and PPTX never diverge.
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          package-manager-cache: false
-      - name: Install application dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Build Cloudflare assets with refreshed slides
-        run: npm run build:cloudflare
-      - name: Deploy refreshed Case Study previews to Cloudflare
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
       - name: Upload presentation rendering for QA
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
