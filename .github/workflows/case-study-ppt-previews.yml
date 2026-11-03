@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: footmate-case-study-preview
@@ -31,6 +32,34 @@ jobs:
           curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Regular.otf -o ~/.local/share/fonts/footmate/Pretendard-Regular.otf
           curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Bold.otf -o ~/.local/share/fonts/footmate/Pretendard-Bold.otf
           fc-cache -f
+      - name: Ensure final decision banner stays visible in PPTX
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/footmate-slide-edit
+          /tmp/footmate-slide-edit/bin/pip install --quiet python-pptx==1.0.2
+          /tmp/footmate-slide-edit/bin/python - <<'PY'
+          from pathlib import Path
+          from pptx import Presentation
+          ppt=Path('src/case-study/downloads/footmate_report.pptx')
+          prs=Presentation(ppt)
+          assert len(prs.slides)==10
+          slide=prs.slides[9]
+          banners=[sh for sh in slide.shapes if sh.has_text_frame and '운영자 제휴형 우선' in sh.text]
+          assert len(banners)==1, 'Final decision banner not found exactly once'
+          banner=banners[0]
+          tree=slide.shapes._spTree
+          # Adjust once only. Avoid rewriting an unchanged PPTX on later runs.
+          if slide.shapes[-1]._element is not banner._element:
+              tree.remove(banner._element)
+              tree.append(banner._element)
+              prs.save(ppt)
+              print('Corrected final decision foreground order')
+          else:
+              print('Decision title already in foreground')
+          check=Presentation(ppt).slides[9]
+          assert check.shapes[-1].has_text_frame and '운영자 제휴형 우선' in check.shapes[-1].text
+          print('PASS PPTX page 10: visible decision heading, source data retained')
+          PY
       - name: Render editable 10-slide presentation
         run: |
           set -euo pipefail
@@ -70,35 +99,32 @@ jobs:
           assert len(slides)==10
           print('Preview updated:',target.stat().st_size,'bytes; slides:',len(slides))
           PY
-      - name: Publish source-aligned previews
+      - name: Stage previews on a dedicated review branch
+        id: preview_branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/case-study/report-previews.js
+          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx
           if git diff --cached --quiet; then
             echo 'No preview changes'
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m 'docs: align FootMate inline slide previews with editable presentation'
-            git pull --rebase origin main
-            git push origin HEAD:main
+            SOURCE_SHA="$(git rev-parse HEAD~1)"
+            PREVIEW_BRANCH="automation/footmate-case-preview-${SOURCE_SHA:0:12}"
+            git push origin "HEAD:refs/heads/$PREVIEW_BRANCH"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "branch=$PREVIEW_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "Created review branch $PREVIEW_BRANCH (main remains protected)"
+            if gh pr create --head "$PREVIEW_BRANCH" --base main --title "docs: FootMate PPT 원본과 슬라이드 미리보기 동기화" --body "최종 장의 가려진 결론 문구를 표시 순서로 바로잡고, 편집 가능한 PPTX와 PNG 미리보기 10장을 함께 동기화합니다. 사업성 수치는 유지합니다. 자동 QA 통과 후 병합합니다."; then
+              echo "Created preview pull request"
+            else
+              echo "::warning::Preview branch created. Create a pull request through the connected GitHub account; main is protected."
+            fi
           fi
-      # GITHUB_TOKEN preview commits do not start another push workflow.
-      # Deploy the freshly rendered thumbnails here so the website and PPTX never diverge.
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          package-manager-cache: false
-      - name: Install application dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Build Cloudflare assets with refreshed slides
-        run: npm run build:cloudflare
-      - name: Deploy refreshed Case Study previews to Cloudflare
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
       - name: Upload presentation rendering for QA
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
