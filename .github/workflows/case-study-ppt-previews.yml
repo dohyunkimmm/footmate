@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'src/case-study/downloads/footmate_report.pptx'
+      - 'qa/improve-case-study-chart.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
@@ -60,6 +61,8 @@ jobs:
           assert check.shapes[-1].has_text_frame and '운영자 제휴형 우선' in check.shapes[-1].text
           print('PASS PPTX page 10: visible decision heading, source data retained')
           PY
+      - name: Refine monthly revenue chart from original numbers
+        run: /tmp/footmate-slide-edit/bin/python qa/improve-case-study-chart.py
       - name: Render editable 10-slide presentation
         run: |
           set -euo pipefail
