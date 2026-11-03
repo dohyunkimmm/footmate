@@ -32,6 +32,30 @@ jobs:
           curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Regular.otf -o ~/.local/share/fonts/footmate/Pretendard-Regular.otf
           curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Bold.otf -o ~/.local/share/fonts/footmate/Pretendard-Bold.otf
           fc-cache -f
+      - name: Ensure final decision banner stays visible in PPTX
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/footmate-slide-edit
+          /tmp/footmate-slide-edit/bin/pip install --quiet python-pptx==1.0.2
+          /tmp/footmate-slide-edit/bin/python - <<'PY'
+          from pathlib import Path
+          from pptx import Presentation
+          ppt=Path('src/case-study/downloads/footmate_report.pptx')
+          prs=Presentation(ppt)
+          assert len(prs.slides)==10
+          slide=prs.slides[9]
+          banners=[sh for sh in slide.shapes if sh.has_text_frame and '운영자 제휴형 우선' in sh.text]
+          assert len(banners)==1, 'Final decision banner not found exactly once'
+          banner=banners[0]
+          tree=slide.shapes._spTree
+          # Existing white text is behind the green band; bring it to foreground.
+          tree.remove(banner._element)
+          tree.append(banner._element)
+          prs.save(ppt)
+          check=Presentation(ppt).slides[9]
+          assert check.shapes[-1].has_text_frame and '운영자 제휴형 우선' in check.shapes[-1].text
+          print('PASS PPTX page 10: visible decision heading, source data retained')
+          PY
       - name: Render editable 10-slide presentation
         run: |
           set -euo pipefail
@@ -79,7 +103,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/case-study/report-previews.js
+          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx
           if git diff --cached --quiet; then
             echo 'No preview changes'
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -91,7 +115,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "branch=$PREVIEW_BRANCH" >> "$GITHUB_OUTPUT"
             echo "Created review branch $PREVIEW_BRANCH (main remains protected)"
-            if gh pr create --head "$PREVIEW_BRANCH" --base main --title "docs: FootMate PPT 원본과 슬라이드 미리보기 동기화" --body "PPTX 10장을 기준으로 생성한 PNG 미리보기를 동기화합니다. 본문 수치와 PPTX 원본은 변경하지 않습니다. 자동 QA 통과 후 병합합니다."; then
+            if gh pr create --head "$PREVIEW_BRANCH" --base main --title "docs: FootMate PPT 원본과 슬라이드 미리보기 동기화" --body "최종 장의 가려진 결론 문구를 표시 순서로 바로잡고, 편집 가능한 PPTX와 PNG 미리보기 10장을 함께 동기화합니다. 사업성 수치는 유지합니다. 자동 QA 통과 후 병합합니다."; then
               echo "Created preview pull request"
             else
               echo "::warning::Preview branch created. Create a pull request through the connected GitHub account; main is protected."
