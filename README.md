@@ -63,6 +63,13 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 - **검증:** 회귀 테스트, Playwright 브라우저 E2E·시각 회귀, axe 접근성, 모바일 WebKit
 - **릴리스:** 제품 식별자 `v6.0.0`. 코드 변경은 영향에 맞는 QA와 배포 검증을 거치며, 문서만 변경할 때는 경량 QA를 적용합니다.
 
+## 저장소 파일·폴더 안내
+
+- **화면·서비스:** [메인 Case Study](index.html) · [Demo](app.html) · [Beta](beta.html) · [운영자](beta-operator.html) · [앱 코드](src/app/) · [Beta 코드](src/beta/)
+- **기획자료:** [Case Study 원본·다운로드·증빙](src/case-study/) · [전략/운영 문서](docs/)
+- **운영·검증:** [AI 연동](api/) · [Cloudflare Worker](worker/) · [Supabase 함수/마이그레이션](supabase/) · [검증 코드](tests/) · [자동화](.github/workflows/)
+- **정합성 점검:** [2026-11-03 파일·폴더 및 미반영 항목 확인](docs/REPO-CLEANUP-2026-11-03.md). SQL 마이그레이션, 과거 증빙 및 미검증 고유 커밋 브랜치는 중복처럼 보인다는 이유만으로 삭제하지 않습니다.
+
 ## 자세한 문서
 
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
