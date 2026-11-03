@@ -48,10 +48,14 @@ jobs:
           assert len(banners)==1, 'Final decision banner not found exactly once'
           banner=banners[0]
           tree=slide.shapes._spTree
-          # Existing white text is behind the green band; bring it to foreground.
-          tree.remove(banner._element)
-          tree.append(banner._element)
-          prs.save(ppt)
+          # Adjust once only. Avoid rewriting an unchanged PPTX on later runs.
+          if slide.shapes[-1]._element is not banner._element:
+              tree.remove(banner._element)
+              tree.append(banner._element)
+              prs.save(ppt)
+              print('Corrected final decision foreground order')
+          else:
+              print('Decision title already in foreground')
           check=Presentation(ppt).slides[9]
           assert check.shapes[-1].has_text_frame and '운영자 제휴형 우선' in check.shapes[-1].text
           print('PASS PPTX page 10: visible decision heading, source data retained')
