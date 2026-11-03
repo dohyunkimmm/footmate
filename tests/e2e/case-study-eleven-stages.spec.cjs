@@ -419,6 +419,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=ios-fullscreen-fallback-20261101');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
+  await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
   await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
   await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획 슬라이드');
@@ -454,6 +455,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   await thumbnails.nth(3).click();
   await expect(slides.locator('#page')).toHaveText('04 / 10');
+  await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
   await expect(slides.locator('#slideTitle')).toHaveText('수익성 개선안');
   await expect(slides.locator('#slideSummary')).toContainText('수수료·결제비');
   await expect(slides.locator('#slide')).toHaveAttribute('aria-describedby','slideSummary');
@@ -544,22 +546,22 @@ test('decision story, economic comparison and roadmap have consistent visual evi
  for(const width of [320,390,1440]){
   await page.setViewportSize({width,height:900});
   await page.goto('/');
-  const path=page.locator('#section-01 .case-quick-path');
-  await expect(path.getByRole('link')).toHaveCount(3);
-  await expect(path.getByRole('link',{name:/손익·협상안/})).toHaveAttribute('href','#section-05');
+  await expect(page.locator('#section-01 .case-quick-path')).toHaveCount(0);
+  await expect(page.locator('.toc-item')).toHaveCount(9);
   const chart=page.locator('#section-05 .case-economics-chart');
   await expect(chart).toBeVisible();
   await expect(chart.locator('.case-economics-row')).toHaveCount(4);
   await expect(chart.locator('.case-economics-value')).toHaveText(['340원','580원','700원','940원']);
   const barWidths=await chart.locator('.case-economics-track>span').evaluateAll(nodes=>nodes.map(el=>el.style.width));
   expect(barWidths).toEqual(['36.2%','61.7%','74.5%','100%']);
-  await expect(chart).toContainText('고정비 전·실적 아님');
+  await expect(chart).toContainText('고정비 차감 전');
+  await expect(chart).not.toContainText('실적 아님');
   const roadmap=page.locator('#section-08 .case-roadmap');
   await expect(roadmap.getByRole('heading',{name:'8주 실행 로드맵'})).toBeVisible();
   await expect(roadmap.locator('li')).toHaveCount(4);
   await expect(roadmap).toContainText('8주 이후');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-  for(const section of [path,chart,roadmap]){
+  for(const section of [page.locator('#section-01 .decision-grid'),chart,roadmap]){
    expect(await section.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'responsive content overflow').toBe(true);
   }
   await testInfo.attach('visual-'+width+'-economics-chart',{body:await chart.screenshot({animations:'disabled'}),contentType:'image/png'});
