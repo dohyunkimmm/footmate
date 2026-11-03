@@ -358,6 +358,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const documents=page.locator('#attachments');
   await documents.scrollIntoViewIfNeeded();
   await expect(documents.getByRole('heading',{name:'자료',exact:true})).toBeVisible();
+  await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
+  await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('기준 · 공급처 5곳 · 수수료 10% · 결제비 3%');
   await expect(documents.locator('.case-file')).toHaveCount(2);
   await expect(page.getByRole('link',{name:'PPT 다운로드 ↓'})).toHaveCount(1);
   await expect(page.getByRole('link',{name:'Excel 다운로드 ↓'})).toHaveCount(1);
@@ -422,7 +425,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
   await expect(preview.locator('.case-preview-actions')).toBeVisible();
   await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
-  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획 슬라이드');
+  await expect(preview.locator('.case-preview-summary-text')).toHaveText('PPT 미리보기');
   await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   const thumbnails=slides.locator('.slide-thumbnails .slide-thumb');
   await expect(thumbnails).toHaveCount(10);
@@ -473,6 +476,15 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await thumbnails.nth(0).click();
   await expect(slides.locator('#page')).toHaveText('01 / 10');
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
+  const firstSlideSrc=await slides.locator('#slide').getAttribute('src');
+  await thumbnails.nth(9).click();
+  await expect(slides.locator('#page')).toHaveText('10 / 10');
+  await expect(thumbnails.nth(9)).toHaveAttribute('aria-current','true');
+  await expect.poll(()=>slides.locator('#slide').evaluate(img=>img.complete&&img.naturalWidth>200&&img.naturalHeight>100),{timeout:15000}).toBe(true);
+  expect(await slides.locator('#slide').getAttribute('src')).not.toBe(firstSlideSrc);
+  await testInfo.attach('visual-'+width+'-PPT-last-image',{body:await slides.locator('.viewer-stage').screenshot({animations:'disabled'}),contentType:'image/png'});
+  await thumbnails.nth(0).click();
+  await expect(slides.locator('#page')).toHaveText('01 / 10');
   await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
   // Mobile slide controls must be readable and finger-friendly.
@@ -582,8 +594,8 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
   await expect(page.locator('#section-08 .reader-summary')).toContainText('30일 재참가율 30%');
-  await expect(page.locator('#attachments .case-preview-context')).toHaveCount(1);
-  await expect(page.locator('#attachments .case-preview-context')).toContainText('썸네일에서 원하는 장을 선택하세요.');
+  await expect(page.locator('#attachments .case-preview-context')).toHaveCount(0);
+  await expect(page.locator('#attachments')).not.toContainText('썸네일에서 원하는 장을 선택하세요.');
   expect(await page.locator('#section-05 .numeric-value').count()).toBeGreaterThan(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   const touchTargets=await page.locator('#section-05 > details > summary,#section-08 > details > summary').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().height));
