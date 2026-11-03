@@ -83,6 +83,22 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+      # GITHUB_TOKEN preview commits do not start another push workflow.
+      # Deploy the freshly rendered thumbnails here so the website and PPTX never diverge.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install application dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build Cloudflare assets with refreshed slides
+        run: npm run build:cloudflare
+      - name: Deploy refreshed Case Study previews to Cloudflare
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
       - name: Upload presentation rendering for QA
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
