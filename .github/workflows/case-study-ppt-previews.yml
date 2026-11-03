@@ -1,0 +1,111 @@
+name: FootMate Case Study PPT preview
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/case-study/downloads/footmate_report.pptx'
+      - '.github/workflows/case-study-ppt-previews.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: footmate-case-study-preview
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: true
+      - name: Install slide rendering tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-impress poppler-utils fonts-noto-cjk
+          mkdir -p ~/.local/share/fonts/footmate
+          curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Regular.otf -o ~/.local/share/fonts/footmate/Pretendard-Regular.otf
+          curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Bold.otf -o ~/.local/share/fonts/footmate/Pretendard-Bold.otf
+          fc-cache -f
+      - name: Render editable 10-slide presentation
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/footmate-ppt
+          libreoffice -env:UserInstallation=file:///tmp/lo-footmate-ppt --headless --convert-to pdf --outdir /tmp/footmate-ppt src/case-study/downloads/footmate_report.pptx
+          test -s /tmp/footmate-ppt/footmate_report.pdf
+          test "$(pdfinfo /tmp/footmate-ppt/footmate_report.pdf | awk '/^Pages:/ {print $2}')" = "10"
+          for page in $(seq 1 10); do
+            number="$(printf '%02d' "$page")"
+            pdftoppm -f "$page" -l "$page" -scale-to-x 1280 -scale-to-y -1 -png -singlefile /tmp/footmate-ppt/footmate_report.pdf "/tmp/footmate-ppt/page-$number"
+          done
+      - name: Refresh inline images and verify slide count
+        run: |
+          python3 - <<'PY'
+          import base64, json, pathlib
+          root=pathlib.Path('/tmp/footmate-ppt')
+          titles=[
+              '플랫폼 운영과 수익성 개선',
+              '운영 모델과 책임',
+              '공급과 플랫폼 경유 예약',
+              '수익성 개선안',
+              '월간 성과관리',
+              '손익 차이와 운영 조치',
+              '운영 데이터와 통제',
+              'IT 투자 범위와 비용',
+              '12개월 예상 ROI',
+              '최종 판단 · 단계적 투자',
+          ]
+          slides=[]
+          for i,title in enumerate(titles,1):
+              data=(root/f'page-{i:02d}.png').read_bytes()
+              assert data[:8]==bytes.fromhex('89504e470d0a1a0a'), f'Page {i} is not PNG'
+              assert len(data)>5000
+              slides.append(dict(title=title,src='data:image/png;base64,'+base64.b64encode(data).decode('ascii')))
+          target=pathlib.Path('src/case-study/report-previews.js')
+          target.write_text('window.REPORT_SLIDES='+json.dumps(slides,ensure_ascii=False,separators=(',',':'))+';\n',encoding='utf-8')
+          assert len(slides)==10
+          print('Preview updated:',target.stat().st_size,'bytes; slides:',len(slides))
+          PY
+      - name: Publish source-aligned previews
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/case-study/report-previews.js
+          if git diff --cached --quiet; then
+            echo 'No preview changes'
+          else
+            git commit -m 'docs: align FootMate inline slide previews with editable presentation'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      # GITHUB_TOKEN preview commits do not start another push workflow.
+      # Deploy the freshly rendered thumbnails here so the website and PPTX never diverge.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install application dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build Cloudflare assets with refreshed slides
+        run: npm run build:cloudflare
+      - name: Deploy refreshed Case Study previews to Cloudflare
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+      - name: Upload presentation rendering for QA
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: footmate-case-study-slides
+          path: |
+            /tmp/footmate-ppt/footmate_report.pdf
+            /tmp/footmate-ppt/page-*.png
+          if-no-files-found: warn
+          retention-days: 14

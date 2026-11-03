@@ -363,3 +363,57 @@ details{border-block:1px solid var(--line);margin:32px 0}summary{padding:18px 4p
   .roi-highlights dd{font-size:25px}
   .roi-coverage-row{grid-template-columns:94px minmax(60px,1fr) 55px;gap:7px}
 }
+
+
+/* Visual QA 2026-11-03: stronger decision hierarchy and readable financial context. */
+:root{--cs-a11y-green:#0b4231;--cs-deep-ink:#173329;--cs-warm-panel:#f7faf6}
+.section-head{max-width:960px}
+.section-title{font-weight:820;letter-spacing:-.045em}
+.lead{color:#3c5749}
+.decision-card{background:var(--cs-warm-panel);border:1px solid #d6e3d9;border-top:3px solid #82a98b;border-radius:11px;padding:20px 21px}
+.decision-card-label{font-size:14px;color:#335d44}
+.decision-card h2{color:var(--cs-deep-ink)}
+.case-kpi{border-top:3px solid #83a889;background:#fbfdfb;border-radius:11px}
+.case-kpi:last-child{border-top-color:#347e57}
+.case-kpi dt,.case-file p,.case-scenario-note{font-size:14px;line-height:1.7}
+.case-kpi dd{font-size:clamp(29px,3vw,35px)}
+.case-scenario-note{color:#405e4d;max-width:900px}
+.case-file{transition:border-color .16s,box-shadow .16s}
+.case-file:hover{border-color:#8cad96;box-shadow:0 5px 18px #0d3c2910}
+.case-file>a{font-size:15px;font-weight:780;min-height:48px}
+.case-preview-summary-text strong{font-size:17px}
+.case-preview-indicator{width:36px;height:36px}
+.source-note,.roi-heading .source-note{font-size:15px;line-height:1.8;color:#4b6656}
+.eyebrow,.roi-section-label,.case-visual-eyebrow{font-size:14px;color:#346a4c}
+.table-wrap{border-color:#d5e3d7;box-shadow:0 1px 0 #f0f5f0}
+thead th{color:#153d2b;font-weight:750}
+tbody tr:nth-child(even){background:#f7faf7}
+.key-result{background:#e9f3ec}
+.case-economics-name,.case-economics-chart figcaption>span:last-child{font-size:14px}
+.roi-highlights dt{font-size:14px}
+.roi-highlights dd{font-size:clamp(27px,2.6vw,33px)}
+details>summary{color:#145337;font-size:16px;line-height:1.6}
+.case-doc-preview[open]{border-color:#b8d0bd}
+:where(.case-file>a,.case-doc-preview summary,.toc-item,.mobile-reader-toc):focus-visible{outline:3px solid #266a4a;outline-offset:3px}
+@media(max-width:800px){
+ .slide{padding-block:34px 48px}
+ .section-title{font-size:28px;line-height:1.4}
+ .case-kpi{padding:17px 15px}
+ .case-kpi dd{font-size:clamp(25px,6.4vw,30px)}
+ .decision-card{padding:17px}
+ .source-note,.roi-heading .source-note{font-size:14px}
+ .case-documents-head p,.case-file p{font-size:14px}
+ .case-file>a{font-size:15px}
+ .mobile-reader-count{font-size:13px}
+ .mobile-reader-name,.mobile-reader-toc{font-size:14px}
+ .case-visual-eyebrow,.case-economics-name{font-size:14px}
+ .roi-coverage-row{font-size:14px}
+ .roi-financial-details tbody td:before{font-size:13px}
+}
+@media(max-width:360px){
+ .mobile-reader-nav{gap:6px}
+ .mobile-reader-name{font-size:13px}
+ .case-kpis{grid-template-columns:1fr}
+ .case-kpi:last-child{grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce){.case-file{transition:none}}

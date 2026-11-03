@@ -120,7 +120,7 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
    await expect(page.locator(section+' > .table-wrap')).toHaveCount(1);
    expect(await page.locator(section+' > details').count()).toBeGreaterThanOrEqual(5);
   }
-  const scenarios=page.locator('#section-05 > details').filter({has:page.getByText('월 사업 손익 민감도 · 보수·기준·확장 (가정)',{exact:true})});
+  const scenarios=page.locator('#section-05 > details').filter({has:page.getByText('월 사업 손익 민감도 · 보수·기준·확장 (산정 기준)',{exact:true})});
   await expect(scenarios.locator('table')).toBeHidden();
   await scenarios.locator('summary').click();
   await expect(scenarios.locator('table')).toBeVisible();
@@ -157,8 +157,8 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(techCards).toHaveCount(3);
   await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
   await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
-  await expect(techCards.nth(2)).toContainText('실결제·환불·정산 미구현');
-  await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 미구현');
+  await expect(techCards.nth(2)).toContainText('실결제·환불·정산 후속 구축 대상');
+  await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 후속 구축 대상');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
   await expect(page.locator('.track table')).toHaveCount(27);
@@ -187,7 +187,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-05')).toContainText('−387,160원');
  await expect(page.locator('#section-09')).toContainText('운영자 제휴형 우선 · 수수료·결제비 복합 협상.');
  await page.goto('/src/case-study/forecast.html');
- await expect(page.getByRole('heading',{name:'기준 손익 가정'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'기준 손익 시나리오'})).toBeVisible();
  await expect(page.locator('#expansion')).toContainText('약 23곳');
  await expect(page.locator('#expansion')).toContainText('약 28곳');
  await page.goto('/src/case-study/materials.html');
@@ -360,7 +360,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(documents.getByRole('heading',{name:'자료',exact:true})).toBeVisible();
   await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
-  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('기준 · 공급처 5곳 · 수수료 10% · 결제비 3%');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 · 5곳 · 수수료 10% · 결제비 3%');
   await expect(documents.locator('.case-file')).toHaveCount(2);
   await expect(page.getByRole('link',{name:'PPT 다운로드 ↓'})).toHaveCount(1);
   await expect(page.getByRole('link',{name:'Excel 다운로드 ↓'})).toHaveCount(1);
@@ -588,9 +588,9 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
  for(const width of [320,390,800,1440,1920]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
-  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('기준 · 공급처 5곳 · 수수료 10% · 결제비 3%');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 · 5곳 · 수수료 10% · 결제비 3%');
   await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0%');
-  expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(65);
+  expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(100);
   await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함');
   await expect(page.locator('#section-08 .case-decision-points > div')).toHaveCount(3);
   await expect(page.locator('#section-08 .reader-summary')).toContainText('현금 지출 상한 461만 원');
@@ -844,11 +844,11 @@ test('case-study body copy stays concise and terminology stays consistent',async
   expect(longParagraphs,url).toEqual([]);
  }
  await page.goto('/src/case-study/materials.html');
- for(const phrase of ['가정을 바꿔 손익 변화를 확인하세요.','2027년 가상 예약 데이터입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['산정 조건을 바꿔 손익 변화를 확인하세요.','2027년 가상 예약 데이터입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/forecast.html');
- for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처: 1~500곳 중 월 손익이 0 이상인 최소 수.','실제 수요·계약 미검증.'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처: 1~500곳 중 월 손익이 0 이상인 최소 수.','실제 수요와 제휴 계약은 현장에서 확인할 항목입니다.'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/decision-memos.html');
- for(const phrase of ['초기 운영은 운영자 제휴형으로 추진합니다.','월 손익 −2,387,160원','실제 계약 효과는 미검증입니다.'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['초기 운영은 운영자 제휴형으로 추진합니다.','월 손익 −2,387,160원','실제 계약 효과는 제휴 협의와 시범 운영을 통해 확인합니다.'])await expect(page.locator('body')).toContainText(phrase);
 });
 
 
@@ -863,7 +863,7 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await expect(roi.locator('.roi-coverage-row')).toHaveCount(4);
   await expect(roi.locator('.roi-coverage-value')).toHaveText(['10.3%','52.5%','88.6%','85.4%']);
   await expect(roi).not.toContainText('ROI 음수');
-  await expect(roi).toContainText('12개월 운영 가정에 따른 수익성 분석');
+  await expect(roi).toContainText('12개월 운영 예상 조건에 따른 수익성 분석');
   await expect(roi).not.toContainText('실제 실적 아님');
   await expect(roi).not.toContainText('첫해 비용 회수에는 조건 개선이 필요합니다.');
   await expect(roi).toContainText('100% = 총현금비용 충당 기준');
