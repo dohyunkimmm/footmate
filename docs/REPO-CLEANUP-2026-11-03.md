@@ -42,3 +42,17 @@ GitHub `main` 재귀 트리에서 **309개 파일·40개 디렉터리**를 확�
 - **기존 문서 QA 오류 수정:** `tests/contracts/connected-platform.contract.mjs`는 과거의 단일 문구 `PPT 10장`을 요구했지만 현행 화면은 `PPT` 유형과 `10장` 수량을 서로 다른 요소에 표시합니다. 실제 문서 카드의 `PPT 다운로드 ↓` 및 `10장</p>`를 확인하도록 계약만 맞췄습니다(화면/자료 내용 변경 없음).
 - 런타임 HTML·JS·CSS, PPTX·XLSX, Worker, Supabase DB/함수, 의존성 버전, 브랜치 참조·태그·배포 설정은 변경하지 않습니다.
 - 이 문서의 브랜치 수와 PR/QA 상태는 **점검 시점의 스냅샷**이며, 별도 PR 병합 및 작업 브랜치 생성 후 바뀔 수 있습니다.
+
+---
+
+## 2026-11-04 재점검 · 최신 GitHub 상태
+
+> 이 절은 2026-11-03 스냅샷을 수정하지 않고 **후속 조회 결과**만 기록합니다. 기준 `main`은 `0cbe87d46d8d2c1777cf0eda339d309ad74147b8`이며, 이번 문서 PR 및 이후 변경은 이 수치에 포함되지 않습니다.
+
+- 재귀 트리: **312개 파일·41개 디렉터리**(이 문서의 11월 3일 스냅샷: 309개·40개). 자료 및 생성 미리보기 등 이후 변경이 반영된 것으로, 증가한 파일을 불필요한 중복으로 판단하지 않습니다.
+- 같은 blob을 공유하는 파일은 기존 **Supabase 마이그레이션 두 쌍**입니다. DB 적용 이력을 알 수 없는 상태에서 삭제·이름 변경·재적용하지 않습니다.
+- 최신 기준 `main`의 [FootMate QA #41740436399](https://github.com/dohyunkimmm/footmate/actions/runs/41740436399)와 [Case Study PPT preview #41740436427](https://github.com/dohyunkimmm/footmate/actions/runs/41740436427)는 모두 `success`입니다. 실제 사용자 기기 시험이나 향후 모든 배포 상태를 대신하지 않습니다.
+- 원격 브랜치 **124개**(`main` 포함), 열린 PR [#799](https://github.com/dohyunkimmm/footmate/pull/799)·[#800](https://github.com/dohyunkimmm/footmate/pull/800), 열린 보존 이슈 [#525](https://github.com/dohyunkimmm/footmate/issues/525)와 보안 후속 [#611](https://github.com/dohyunkimmm/footmate/issues/611)을 확인했습니다.
+- #525의 **소유자 지정 오프-GitHub 영구 백업, 독립 외부 참조 최종 점검**은 완료로 확인되지 않았습니다. 기존 Git bundle의 테스트·일시적 사본 검증만으로 영구 보관 승인을 대신하지 않습니다. 이번 정리에서도 과거 원격 브랜치·태그·Git 이력을 삭제하거나 다시 쓰지 않습니다.
+- 공개 Case Study는 9개 섹션과 10장 PPT를 유지합니다. 첫 섹션의 주요 KPI 아래에 이미 `예상 시나리오`와 비용·수수료 가정이 표시되어 있어 같은 문구를 반복 추가하지 않습니다.
+- 이번 후속 작업은 정리·QA **기록만** 보완합니다. 서비스 코드, DB, 이미지·PPTX·XLSX와 배포 설정은 수정하지 않습니다.
