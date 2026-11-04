@@ -30,7 +30,7 @@ def update_workbook():
     with ZipFile(XLSX, "r") as original:
         infos = original.infolist()
         parts = {item.filename: original.read(item.filename) for item in infos}
-    if b'name="원장입력"' in parts['xl/workbook.xml']:
+    if 'name="원장입력"'.encode('utf-8') in parts['xl/workbook.xml']:
         print('PASS workbook: ledger template and independent checks already installed')
         return
 
