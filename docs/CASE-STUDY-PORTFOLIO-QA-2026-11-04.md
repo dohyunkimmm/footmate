@@ -42,3 +42,10 @@
 - **웹 동작:** 기본 스크립트 문법·자산 버전 검증 후 기존 PR 모바일/접근성/브라우저 QA 수행.
 
 이 문서는 수정의 근거와 재현 기준을 기록합니다. 브라우저 QA 및 배포 상태는 각 GitHub Actions 실행 결과와 배포 이후 확인으로 최종 판단합니다.
+
+## 실행 결과 기록
+
+- 원본 파일 편집·검증: [FootMate Original Files QA #41839311541](https://github.com/dohyunkimmm/footmate/actions/runs/41839311541) 성공.
+- 발표자료 10장 PDF·PNG 재생성 및 원본 연동: [FootMate Case Study PPT preview #41840837495](https://github.com/dohyunkimmm/footmate/actions/runs/41840837495) 성공.
+- 기본 애플리케이션 회귀 검사 36단계: [FootMate QA #41840175909](https://github.com/dohyunkimmm/footmate/actions/runs/41840175909)에서 Regression 36 성공; 이후 최신 커밋의 전체 브라우저 QA는 PR 검사 결과로 확인.
+- 추가로 합성 월별 집계와 예약별 원장 자료를 분리해 두었으며, 원장 미입력 시 검증 완료로 표시하지 않습니다.
