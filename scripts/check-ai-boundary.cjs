@@ -36,7 +36,7 @@ assert(api.includes('allowedByRateLimit(req)'),'rate-limit guardrail missing');
 assert(worker.includes('env.AI_RATE_LIMITER.limit')&&worker.includes('429')&&worker.includes('retry-after'),'Cloudflare Worker AI rate-limit boundary missing');
 assert(/"name"\s*:\s*"AI_RATE_LIMITER"/.test(wrangler)&&/"limit"\s*:\s*10/.test(wrangler)&&/"period"\s*:\s*60/.test(wrangler),'Cloudflare AI rate limit configuration missing');
 assert(!data.includes('최근 경기 ELO 범위'),'current deterministic recommendation must not claim ELO ownership');
-assert(cs.includes('footmate-case-study-release\" content=\"5.5.0\"'),'Case Study must preserve its independent v5.5.0 release');
+assert(cs.includes('footmate-case-study-release\" content=\"5.6.0\"'),'Case Study must preserve its independent v5.6.0 release');
 assert(narrative.includes('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서'),'Case Study choice-first recommendation responsibility missing');
 assert(api.includes("body.task==='recommend'")&&api.includes('allowed.has(id)'),'Beta AI ranking must accept only supplied candidate IDs');
 const betaGrowth=read('src/beta/growth.js');
