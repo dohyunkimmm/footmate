@@ -417,3 +417,11 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
  .case-kpi:last-child{grid-column:auto}
 }
 @media(prefers-reduced-motion:reduce){.case-file{transition:none}}
+
+/* Read-first portfolio summary: subtle information hierarchy and mobile-friendly links. */
+.case-evidence-note{margin:12px 0 18px;border-left:3px solid #92b7a0;background:#f6faf7;padding:12px 16px;color:#2c5140;font-size:14px;line-height:1.75}
+.case-evidence-note strong{color:#164735}
+.case-jump{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 22px}
+.case-jump a{display:inline-flex;align-items:center;min-height:42px;border:1px solid #b7ccbd;border-radius:8px;padding:9px 14px;color:#164735;background:#fff;text-decoration:none;font-weight:650;font-size:14px}
+.case-jump a:hover,.case-jump a:focus-visible{background:#edf5ef}
+@media(max-width:540px){.case-jump a{flex:1 1 135px;justify-content:center}.case-evidence-note{padding:12px 14px}}
