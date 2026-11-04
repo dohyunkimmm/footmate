@@ -224,7 +224,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-06')).toContainText('실제 서버의 동시 요청 처리는 별도 검증');
  await expect(page.locator('#section-07 .transaction-flow')).toContainText('로그인·중복·잔여 정원 확인 후 반영');
  await expect(page.locator('#section-08')).toContainText('30일 경과 이용자');
- await expect(page.locator('#section-09')).toContainText('취소·고객지원비 반영 손익·예상 ROI 재산정.');
+ await expect(page.locator('#section-09')).toContainText('취소·고객지원비 반영 손익·비용 대비 예상 손익률 재산정.');
  await expect(page.locator('#section-09')).not.toContainText('−202,540원');
  await expect(page.locator('#section-09')).not.toContainText('발표자료(PPT)·분석 모델(Excel) 보기');
  await expect(page.locator('#section-09')).not.toContainText(/첨부 자료 대조|대조 기준|자동 재검사|B8·B9|model\.json/);
@@ -858,7 +858,7 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await expect(page.locator('#section-05 .roi-jump')).toHaveCount(0);
   await expect(roi).toBeVisible();
   await expect(roi.locator('.roi-section-label')).toHaveText('본문 05 · 손익 검토');
-  await expect(roi.locator('#roi-projection-heading')).toHaveText('12개월 예상 ROI');
+  await expect(roi.locator('#roi-projection-heading')).toHaveText('12개월 비용 대비 예상 손익률');
   await expect(roi.locator('.roi-highlights dd')).toHaveText(['12개월','−47.5%','−11.4%']);
   await expect(roi.locator('.roi-coverage-row')).toHaveCount(4);
   await expect(roi.locator('.roi-coverage-value')).toHaveText(['10.3%','52.5%','88.6%','85.4%']);
@@ -891,7 +891,7 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await page.goto('/src/case-study/materials.html?preview=1');
   await page.locator('.slide-thumbnails .slide-thumb').nth(8).click();
   await expect(page.locator('#page')).toHaveText('09 / 10');
-  await expect(page.locator('#slideTitle')).toHaveText('12개월 예상 ROI');
+  await expect(page.locator('#slideTitle')).toHaveText('12개월 비용 대비 예상 손익률');
   await expect(page.locator('#slideSummary')).toContainText('비용 회수율 비교');
 });
 
@@ -902,7 +902,7 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
   for(const phrase of [
     '운영자 제휴형 우선 · 수수료·결제비 복합 협상.',
     '건당 공헌이익·플랫폼 예약 비중·재참가 확인.',
-    '취소·고객지원비 반영 손익·예상 ROI 재산정.',
+    '취소·고객지원비 반영 손익·비용 대비 예상 손익률 재산정.',
     '공급 계약·수익성 기준 충족 후 단계적 투자 확대.'
   ])await expect(final).toContainText(phrase);
   await expect(final.locator('.story-card')).toHaveCount(3);
