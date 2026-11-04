@@ -215,7 +215,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
- await expect(page.locator('#section-01 .lead')).toContainText('사업 요구사항을 IT 구축·투자·운영 기준으로 구체화한 기획 사례');
+ await expect(page.locator('#section-01 .lead')).toContainText('공급·참가·수익성 분석을 IT 구현과 투자 기준으로 연결한 기획 사례');
  await expect(page.locator('#section-06')).toContainText('직접 구축·외부 활용·후속 투자 구분. 접근·복구·비용 검토.');
  await expect(page.locator('#section-09')).toContainText('건당 공헌이익·플랫폼 예약 비중·재참가 확인.');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
@@ -360,7 +360,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(documents.getByRole('heading',{name:'자료',exact:true})).toBeVisible();
   await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
-  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 · 5곳 · 수수료 10% · 결제비 3%');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
   await expect(documents.locator('.case-file')).toHaveCount(2);
   await expect(page.getByRole('link',{name:'PPT 다운로드 ↓'})).toHaveCount(1);
   await expect(page.getByRole('link',{name:'Excel 다운로드 ↓'})).toHaveCount(1);
@@ -588,7 +588,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
  for(const width of [320,390,800,1440,1920]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await page.evaluate(()=>document.fonts.ready);
-  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('예상 시나리오 · 5곳 · 수수료 10% · 결제비 3%');
+  await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
   await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0%');
   expect((await page.locator('#section-01 .case-scenario-note').textContent()).trim().length).toBeLessThanOrEqual(100);
   await expect(page.locator('#section-05 .case-model-context')).toContainText('기회비용 포함');
@@ -844,7 +844,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
   expect(longParagraphs,url).toEqual([]);
  }
  await page.goto('/src/case-study/materials.html');
- for(const phrase of ['산정 조건을 바꿔 손익 변화를 확인하세요.','2027년 가상 예약 데이터입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['산정 조건을 바꿔 손익 변화를 확인하세요.','2027년 합성 예약 데이터와 월별 집계 예시입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/forecast.html');
  for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처: 1~500곳 중 월 손익이 0 이상인 최소 수.','실제 수요와 제휴 계약은 현장에서 확인할 항목입니다.'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/decision-memos.html');
