@@ -30,6 +30,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: true
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Install slide rendering tools
         run: |
           set -euo pipefail
@@ -134,6 +135,21 @@ jobs:
             else
               echo "::warning::Preview branch created. Create a pull request through the connected GitHub account; main is protected."
             fi
+          fi
+      - name: Keep previews aligned with the PPTX on same-repository review branches
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          REVIEW_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx
+          if git diff --cached --quiet; then
+            echo 'PASS: review branch previews already synchronized'
+          else
+            git commit -m 'docs: align FootMate presentation and slide preview images'
+            git push origin "HEAD:refs/heads/$REVIEW_BRANCH"
           fi
       - name: Upload presentation rendering for QA
         if: always()
