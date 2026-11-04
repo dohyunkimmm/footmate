@@ -30,6 +30,9 @@ def update_workbook():
     with ZipFile(XLSX, "r") as original:
         infos = original.infolist()
         parts = {item.filename: original.read(item.filename) for item in infos}
+    if b'name="원장입력"' in parts['xl/workbook.xml']:
+        print('PASS workbook: ledger template and independent checks already installed')
+        return
 
     sheets = {i: ET.fromstring(parts[f"xl/worksheets/sheet{i}.xml"]) for i in range(1, 6)}
 
