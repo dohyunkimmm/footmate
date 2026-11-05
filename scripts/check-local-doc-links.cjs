@@ -1,7 +1,7 @@
 'use strict';
 
-// Check repository-relative links in current and retained Markdown documentation.
-// Remote URLs and fragment-only links are intentionally out of scope.
+// Check repository-local links in Markdown and static HTML entry points.
+// Remote URLs, fragment-only links, and runtime-generated URLs are out of scope.
 const fs = require('node:fs');
 const path = require('node:path');
 
