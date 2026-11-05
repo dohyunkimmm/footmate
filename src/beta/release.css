@@ -468,6 +468,11 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-catalog .fm-beta-price{margin-right:auto;font-size:14px}
 .fm-beta-sample-label{display:inline-block;margin-top:10px;padding:3px 7px;border-radius:6px;background:#f0f3f1;color:var(--fm-muted);font-size:12px}
 .fm-beta-compare-toggle{min-height:44px;font-size:13px;font-weight:650}
+.fm-beta-recommendation-body>.fm-beta-demo-slots{display:inline-block;vertical-align:middle;width:60%;margin:0}
+.fm-beta-recommendation-body>.fm-beta-demo-slots>summary{min-height:44px;padding:12px 0}
+.fm-beta-recommendation-body>.fm-beta-demo-slots[open]{display:block;width:100%}
+.fm-beta-recommendation-body>.fm-beta-compare-toggle{display:inline-flex;vertical-align:middle;justify-content:flex-end;width:38%;padding-inline:0}
+.fm-beta-recommendation-body>.fm-beta-demo-slots[open]+.fm-beta-compare-toggle{width:auto;justify-content:flex-start}
 .fm-beta-compare-toggle[aria-pressed="true"]{color:#193e20;background:var(--fm-accent);padding:8px 12px;border-radius:10px}
 .fm-beta-compare-tray{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px;border:1px solid var(--fm-line);border-radius:14px;background:#fff;font-size:13px}
 .fm-beta-compare-tray .fm-beta-button{margin-left:auto;font-size:13px}

@@ -62,7 +62,9 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
   await expect(page.getByText('영통 금요일 저녁 경기')).toBeVisible();
   await expect(page.getByRole('button',{name:'참가하기'})).toBeVisible();
-  await expect(page.locator('.fm-beta-match a[href^="https://www.google.com/maps/search/"]')).toBeVisible();
+  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail a[href^="https://www.google.com/maps/search/"]')).toBeVisible();
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
   await expect(page.locator('.fm-beta-match a[href^="https://calendar.google.com/"]')).toHaveCount(0);
   await page.evaluate(()=>{window.__betaQaEvents=[];window.addEventListener('footmate:beta:measurement',e=>window.__betaQaEvents.push(e.detail));});
   expect(await serious(page)).toEqual([]);

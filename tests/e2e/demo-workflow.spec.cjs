@@ -28,8 +28,8 @@ for(const size of [{width:320,height:568},{width:390,height:844},{width:1280,hei
  test(`demo workflow facts remain readable at ${size.width}x${size.height}`,async({page})=>{
   await page.setViewportSize(size);await setup(page);await page.goto('/beta');
   const card=page.locator('.fm-beta-catalog .fm-beta-match');await expect(card).toBeVisible();
-  const geometry=await card.locator('.fm-beta-recommendation-body').evaluate(el=>({content:el.scrollHeight,height:el.clientHeight,overflow:getComputedStyle(el).overflowY}));
-  expect(geometry.overflow).toBe('visible');expect(geometry.content).toBeLessThanOrEqual(geometry.height+2);
+  await expect.poll(()=>card.locator('.fm-beta-recommendation-body').evaluate(el=>({connected:el.isConnected,readable:el.clientHeight>0&&el.scrollHeight<=el.clientHeight+2,overflow:getComputedStyle(el).overflowY}))).toEqual({connected:true,readable:true,overflow:'visible'});
+  await page.screenshot({path:test.info().outputPath(`initial-${size.width}x${size.height}.png`),fullPage:true});
   await card.locator('.fm-beta-meta>span').first().scrollIntoViewIfNeeded();
   await expect(card.locator('.fm-beta-meta>span').first()).toBeInViewport();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -74,16 +74,16 @@ test('demo workflow shows candidates while AI ranks and validates time bounds',a
  await expect(page.locator('.fm-beta-ranking-status')).toBeVisible();
  await expect(page.locator('.fm-beta-match h3')).toBeVisible();
  await page.locator('#quick-filter-afterTime').click();
- await page.getByRole('radio',{name:'저녁 8시 이후',exact:true}).check();
+ await page.getByRole('radio',{name:'저녁 8시 이후',exact:true}).click();
  await page.locator('#quick-filter-afterTime').click();
- await page.getByRole('radio',{name:'저녁 6시 전 시작',exact:true}).check();
+ await page.getByRole('radio',{name:'저녁 6시 전 시작',exact:true}).click();
  await expect(page.getByText('시작 시간 상한은 선호 시간보다 늦게 골라주세요.')).toBeVisible();
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).beforeTime)).toBe('');
 });
 
 test('demo workflow empty recovery changes only the requested condition',async({page})=>{
  await setup(page);await page.goto('/beta');await expect(page.locator('.fm-beta-match')).toBeVisible();
- await page.locator('#quick-filter-region').click();await page.getByRole('radio',{name:'서울 · 강남',exact:true}).check();
+ await page.locator('#quick-filter-region').click();await page.getByRole('radio',{name:'서울 · 강남',exact:true}).click();
  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'지역 조건 해제 · 4개'}).click();
  await expect(page.locator('.fm-beta-match')).toBeVisible();
