@@ -265,6 +265,10 @@ jobs:
         run: node scripts/typography-qa-report.cjs
       - name: Run Release App Mobile Safari/WebKit gate without clearing Chromium evidence
         run: npx playwright test --project=webkit-mobile --output=test-results/playwright-webkit tests/e2e/release-app.spec.cjs --grep "Release App mobile Detail, free Join and MY stay overflow-safe and accessible|Release App keeps Matchday operations inside MY|legacy Schedule state migrates into canonical MY ownership"
+      - name: Verify 200 percent desktop reflow and guide actions
+        run: npx playwright test --project=chromium --output=test-results/playwright-zoom-200 tests/e2e/reviewer-zoom-p1.spec.cjs --grep "200%-effective"
+      - name: Verify P1 guide on emulated iPhone WebKit and Android Chromium
+        run: npx playwright test --project=iphone-reviewer-p1 --project=android-reviewer-p1 --output=test-results/playwright-mobile-reviewer tests/e2e/reviewer-zoom-p1.spec.cjs --grep "mobile-device emulation"
       - name: Recheck saved typography PNG integrity before artifact upload
         if: always()
         run: node scripts/typography-qa-report.cjs
