@@ -42,9 +42,50 @@ for (const source of markdown) {
     }
   }
 }
+// Main entry points and retained Case Study pages also expose static assets.
+// The Worker serves the route aliases below; they are not filesystem paths.
+const htmlEntries = [
+  'index.html',
+  'app.html',
+  'beta.html',
+  'beta-operator.html',
+  'beta-data-notice.html',
+  'src/case-study/materials.html',
+  'src/case-study/forecast.html',
+  'src/case-study/decision-memos.html'
+];
+const routedPages = new Set([
+  '/demo', '/beta', '/beta/operator', '/prototype',
+  '/app', '/demo.html', '/next', '/next.html'
+]);
+let checkedHtmlLinks = 0;
+
+for (const source of htmlEntries) {
+  const html = fs.readFileSync(path.join(root, source), 'utf8');
+  // Check only concrete local href/src/poster attributes, not dynamic JS URLs.
+  const tags = /<(?:a|link|script|img|source)\b[^>]*?\b(?:href|src|poster)\s*=\s*(["'])([^"']*)\1/gi;
+  for (const match of html.matchAll(tags)) {
+    const raw = match[2].trim();
+    if (!raw || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(raw)) continue;
+    const href = raw.replace(/&amp;/gi, '&').split(/[?#]/)[0];
+    if (!href || routedPages.has(href)) continue;
+    let decoded;
+    try { decoded = decodeURIComponent(href); }
+    catch { failures.push(source + ': invalid URI ' + href); continue; }
+
+    const absolute = decoded.startsWith('/')
+      ? path.resolve(root, '.' + decoded)
+      : path.resolve(root, path.dirname(source), decoded);
+    checkedHtmlLinks++;
+    if ((absolute !== root && !absolute.startsWith(root + path.sep)) || !fs.existsSync(absolute)) {
+      failures.push(source + ': ' + href);
+    }
+  }
+}
+
 if (failures.length) {
-  console.error('Broken local Markdown links:\n' + failures.join('\n'));
+  console.error('Broken local documentation/HTML links:\n' + failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log('PASS ' + markdown.length + ' Markdown files, ' + checkedLinks + ' local links');
+  console.log('PASS ' + markdown.length + ' Markdown files, ' + checkedLinks + ' local links; ' + htmlEntries.length + ' HTML entry points, ' + checkedHtmlLinks + ' local links');
 }
