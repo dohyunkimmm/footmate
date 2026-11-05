@@ -474,3 +474,5 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
  .case-kpi dd{font-size:26px;margin:0;white-space:nowrap}
  .case-screen-evidence{grid-template-columns:1fr}
 }
+/* Balance narrow explanatory lines so short trailing words stay with context. */
+@media(max-width:540px){.case-verdict p,.case-scenario-note{text-wrap:balance}}
