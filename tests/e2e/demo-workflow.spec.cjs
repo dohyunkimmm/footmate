@@ -106,3 +106,19 @@ test('demo workflow returns to the selected match after setting a missing positi
  await expect(page.getByRole('button',{name:'DF로 참가',exact:true})).toBeVisible();
  expect(backend.attempts()).toBe(0);
 });
+
+test('demo workflow keeps comparison focus when a pending AI response arrives',async({page})=>{
+ await setup(page);let release;
+ await page.addInitScript(()=>{window.__workflowRankingDone=false;window.addEventListener('footmate:beta:recommendations',event=>{if(!event.detail.busy)window.__workflowRankingDone=true})});
+ await page.route('**/api/ai-match-assistant',async route=>{await new Promise(resolve=>release=resolve);await route.fulfill({json:{rankedMatchIds:[first]}})});
+ await page.goto('/beta',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'비교에 담기'}).click();
+ await page.getByRole('button',{name:'다음',exact:true}).click();
+ await page.getByRole('button',{name:'비교에 담기'}).click();
+ await page.getByRole('button',{name:'두 경기 비교'}).click();
+ await expect(page.getByRole('heading',{name:'경기 비교'})).toBeFocused();
+ const response=page.waitForResponse('**/api/ai-match-assistant');release();await response;
+ await expect.poll(()=>page.evaluate(()=>window.__workflowRankingDone)).toBe(true);
+ await expect(page.getByRole('heading',{name:'경기 비교'})).toBeFocused();
+ await expect(page.getByRole('table')).toContainText('워크플로 경기 2');
+});

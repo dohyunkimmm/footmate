@@ -652,8 +652,8 @@ if(root){
       if(anchor&&recommendedIds?.includes(anchor)){demoPage=recommendedIds.indexOf(anchor);if(demoPage>=3)previewExpanded=true;}
     }
     if(!recommendationBusy)recommendationAnchorId='';
-    // Ranking updates must not replace an active detail, login or account view.
-    if(detailMatchId||authOpen||openingOpen||view!=='home')return;
+    // Ranking updates must not replace an active comparison, detail, login or account view.
+    if(comparisonOpen||detailMatchId||authOpen||openingOpen||view!=='home')return;
     render();
     // Growth restores its controls after the base view is rendered.
     if(!changed)requestAnimationFrame(()=>{const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=scrollTop});
