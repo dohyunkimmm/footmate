@@ -86,7 +86,7 @@ function guide(){
       <button data-action="scenario-matchday">경기 당일</button>
       <button data-action="scenario-postgame">경기 후</button>
     </div>`:'';
-  return `<aside class="fm-next-guide" aria-label="FootMate 시연 안내">
+  return `<aside class="fm-next-guide" aria-label="Case Study Guide">
     <div class="fm-next-guide-brand"><span class="fm-next-brand-mark">${icon('logo')}</span>FootMate</div>
     <div class="fm-next-guide-kicker">${mode==='evidence'?'Reviewer Evidence':'Guided Case Study'}</div>
     <h1>실제 사용자 흐름을 먼저 보여줍니다.</h1>
