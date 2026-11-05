@@ -3,9 +3,11 @@ const AxeBuilder=require('@axe-core/playwright').default;
 const uid='22222222-2222-4222-8222-222222222222';
 const origin='https://workflow.example.supabase.co';
 const first='11111111-1111-4111-8111-111111111111';
-async function setup(page,{slowAI=false}={}){
+async function setup(page,{slowAI=false,needsPosition=false}={}){
  let joined=false,attempts=0;
  await page.addInitScript(()=>{sessionStorage.setItem('footmate:beta:entered:v1','1');localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'',level:'',position:'MF',afterTime:''}))});
+ if(needsPosition)await page.addInitScript(()=>{const p=JSON.parse(localStorage.getItem('footmate:beta:preferences:v1'));p.position='';localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify(p))});
+ let profile={id:uid,display_name:'테스터',position:needsPosition?null:'MF',region:'수원 · 영통',level:'중급'};
  const rows=[0,1,2,3].map((n)=>({id:n===0?first:`11111111-1111-4111-8111-${String(n+1).padStart(12,'0')}`,title:`워크플로 경기 ${n+1}`,venue_name:`풋살장 ${n+1}`,area_label:'영통',region:'수원 · 영통',level:n%2?'입문':'중급',positions:['MF','DF'],starts_at:`2099-09-${25+n}T20:00:00+09:00`,price_krw:0,capacity_total:12,joined_count:8,remaining_spots:4,format_label:'6 vs 6',surface:'인조잔디',duration_minutes:80,status:'open',match_slots:[{position:'MF',remaining_spots:2},{position:'DF',remaining_spots:2}]}));
  await page.route('**/api/beta-config',r=>r.fulfill({json:{connected:true,url:origin,publishableKey:'public-key'}}));
  await page.route('**/api/ai-match-assistant',async r=>{if(slowAI)await new Promise(resolve=>setTimeout(resolve,1500));return r.fulfill({json:{rankedMatchIds:rows.map(m=>m.id)}})});
@@ -14,7 +16,7 @@ async function setup(page,{slowAI=false}={}){
   let payload=[];
   if(path==='/auth/v1/token')payload={access_token:'access-token',refresh_token:'refresh-token',expires_in:3600,user:{id:uid,email:'qa@example.com'}};
   if(path==='/auth/v1/user')payload={user:{id:uid,email:'qa@example.com'}};
-  if(path==='/rest/v1/profiles')payload=[{id:uid,display_name:'테스터',position:'MF',region:'수원 · 영통',level:'중급'}];
+  if(path==='/rest/v1/profiles'){if(r.request().method()==='PATCH')profile={...profile,...r.request().postDataJSON()};payload=[profile]}
   if(path==='/rest/v1/matches')payload=rows;
   if(path==='/rest/v1/participations')payload=joined?[{id:'p1',match_id:first,position:'MF',status:'confirmed',joined_at:'2099-01-01T00:00:00Z'}]:[];
   if(path==='/rest/v1/rpc/join_match_position'){attempts++;joined=true;payload=[{participation_id:'p1',joined_match_id:first,joined_position:'MF',participation_status:'confirmed'}]}
@@ -47,7 +49,7 @@ test('demo workflow compares two matches and preserves detail and login return',
  await expect(page.getByRole('table')).toContainText('워크플로 경기 2');
  const accessibility=await new AxeBuilder({page}).include('.fm-beta').withTags(['wcag2a','wcag2aa']).analyze();
  expect(accessibility.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([]);
- await page.screenshot({path:test.info().outputPath('comparison.png'),fullPage:true});
+ for(const width of [320,390,1280]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:test.info().outputPath(`comparison-${width}.png`),fullPage:true})}
  await page.getByRole('button',{name:'워크플로 경기 1 상세 보기'}).click();
  await expect(page.getByRole('heading',{name:'경기 상세'})).toBeFocused();
  await page.getByRole('button',{name:'비교로 돌아가기',exact:true}).click();
@@ -88,4 +90,19 @@ test('demo workflow empty recovery changes only the requested condition',async({
  await page.getByRole('button',{name:'지역 조건 해제 · 4개'}).click();
  await expect(page.locator('.fm-beta-match')).toBeVisible();
  const p=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')));expect(p.region).toBe('');expect(p.position).toBe('MF');
+});
+
+test('demo workflow returns to the selected match after setting a missing position',async({page})=>{
+ const backend=await setup(page,{needsPosition:true});await page.goto('/beta');
+ await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await page.getByRole('button',{name:'참가하기',exact:true}).click();
+ await page.getByLabel('이메일').fill('qa@example.com');await page.getByLabel('비밀번호',{exact:true}).fill('qa-password');
+ await page.getByRole('button',{name:'로그인',exact:true}).click();
+ await page.getByRole('button',{name:'포지션 설정 필요',exact:true}).click();
+ await page.locator('[data-form="profile"] [name="position"]').selectOption('DF');
+ await page.getByRole('button',{name:'프로필 저장',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'경기 상세'})).toBeVisible();
+ await expect(page.locator('.fm-beta-detail h3')).toHaveText('워크플로 경기 1');
+ await expect(page.getByRole('button',{name:'DF로 참가',exact:true})).toBeVisible();
+ expect(backend.attempts()).toBe(0);
 });
