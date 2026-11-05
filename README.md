@@ -67,10 +67,13 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-- **화면·서비스:** [메인 Case Study](index.html) · [Demo](app.html) · [Beta](beta.html) · [운영자](beta-operator.html) · [앱 코드](src/app/) · [Beta 코드](src/beta/)
-- **기획자료:** [Case Study 원본·다운로드·증빙](src/case-study/) · [전략/운영 문서](docs/)
-- **운영·검증:** [AI 연동](api/) · [Cloudflare Worker](worker/) · [Supabase 함수/마이그레이션](supabase/) · [검증 코드](tests/) · [자동화](.github/workflows/)
-- **정합성 점검:** [2026-11-03 파일·폴더 및 미반영 항목 확인](docs/REPO-CLEANUP-2026-11-03.md). SQL 마이그레이션, 과거 증빙 및 미검증 고유 커밋 브랜치는 중복처럼 보인다는 이유만으로 삭제하지 않습니다.
+**`main` 구조 점검(2026-11-05):** 최상위 폴더 9개와 루트 파일 14개. 실제 파일 역할과 보존 사유는 [최신 저장소 점검](docs/REPO-CLEANUP-2026-11-05.md)에 정리했습니다.
+
+- **공개 진입 파일:** [Case Study](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.
+- **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [Case Study 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
+- **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
+- **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
+- **문서:** [기획·운영·QA 목록](docs/README.md) · [2026-11-05 클렌징 확인](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 점검 기록](docs/REPO-CLEANUP-2026-11-03.md). 과거 기록의 파일 수치는 작성 당시 기준입니다.
 
 ## 자세한 문서
 
