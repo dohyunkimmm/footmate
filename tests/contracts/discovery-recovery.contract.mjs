@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {discoveryRecoveryOptions,hasInvalidTimeRange} from '../../src/beta/domain/discovery-recovery.js';
+import {personalizeRecommendations,normalizeReactions} from '../../src/beta/domain/discovery-followup.js';
+const now=Date.parse('2026-11-05T12:00:00+09:00');
+const row={id:'a',region:'수원',level:'입문',status:'open',starts_at:'2026-11-06T20:00:00+09:00',remaining_spots:2,positions:['MF'],match_slots:[{position:'MF',remaining_spots:2}]};
+const prefs={region:'수원',level:'입문',position:'MF',dateWindow:'today',afterTime:'18:00',beforeTime:'22:00'};
+const snapshot=JSON.stringify(prefs);
+assert.deepEqual(discoveryRecoveryOptions([row],prefs,now).map(x=>[x.key,x.count]),[['date',1]]);
+assert.equal(JSON.stringify(prefs),snapshot,'suggestions never mutate selected conditions');
+assert.deepEqual(discoveryRecoveryOptions([{...row,status:'full'}],prefs,now),[]);
+assert.deepEqual(discoveryRecoveryOptions([{...row,match_slots:[{position:'MF',remaining_spots:0}]}],prefs,now),[]);
+assert.equal(hasInvalidTimeRange({afterTime:'20:00',beforeTime:'18:00'}),true);
+assert.equal(hasInvalidTimeRange({afterTime:'18:00',beforeTime:'18:00'}),true);
+assert.equal(hasInvalidTimeRange({afterTime:'18:00',beforeTime:'22:00'}),false);
+const candidates=[{id:'a',level:'중급',startsAt:row.starts_at,isDemo:true},{id:'b',level:'입문',startsAt:row.starts_at,isDemo:true}];
+const signal={matchId:'a',kind:'different_level',level:'중급',scope:'demo',at:now};
+assert.equal(normalizeReactions([signal],now).length,1);
+// Use a fresh signal because personalization deliberately rejects reactions older than 30 days.
+const reaction={...signal,at:Date.now()};
+assert.deepEqual(personalizeRecommendations(candidates,[reaction]).map(m=>m.id),['b','a']);
+assert.deepEqual(personalizeRecommendations(candidates,[{...reaction,scope:'live'}]),candidates);
+console.log('PASS explicit single-condition recovery, availability, immutable preferences, time range validation and scoped level feedback');

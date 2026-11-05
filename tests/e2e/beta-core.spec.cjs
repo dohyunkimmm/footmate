@@ -304,7 +304,7 @@ test('choice-first recommendations keep demo home populated and participation is
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await expect(page.getByRole('heading',{name:'어디서 뛸까요?'})).toHaveCount(0);
   await expect(page.getByLabel('이메일')).toBeHidden();
-  await expect(page.locator('.fm-beta-match-cover small')).toHaveText('데모 경기');
+  await expect(page.locator('.fm-beta-sample-label')).toHaveText('데모 경기');
   const pager=page.getByRole('navigation',{name:'추천 경기 페이지'});
   await expect(pager).toBeVisible();
   await expect(pager.getByRole('button',{name:'이전',exact:true})).toBeDisabled();
@@ -315,7 +315,9 @@ test('choice-first recommendations keep demo home populated and participation is
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',firstMatch);
   expect(await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
   await page.getByText('모집 포지션',{exact:true}).click();
+  await page.locator('.fm-beta-match').getByRole('button',{name:'참가하기',exact:true}).scrollIntoViewIfNeeded();
   await expect(page.locator('.fm-beta-match').getByRole('button',{name:'참가하기',exact:true})).toBeInViewport();
+  await pager.getByRole('button',{name:'다음',exact:true}).scrollIntoViewIfNeeded();
   await expect(pager.getByRole('button',{name:'다음',exact:true})).toBeInViewport();
   await page.screenshot({path:testInfo.outputPath('recommendation-home-390.png'),fullPage:true});
   await expect(page.getByRole('button',{name:'축구',exact:true})).toHaveCount(0);
@@ -482,7 +484,8 @@ for(const [width,height] of [[320,568],[390,844]]){
   await expect.poll(async()=>{
     const card=await page.locator('.fm-beta-match').boundingBox();
     const pager=await page.getByRole('navigation',{name:'추천 경기 페이지',exact:true}).boundingBox();
-    return !!card&&!!pager&&card.y+card.height<=pager.y+1&&card.height<height*.75;
+    const facts=await page.locator('.fm-beta-recommendation-body').evaluate(el=>({height:el.clientHeight,content:el.scrollHeight}));
+    return !!card&&!!pager&&card.y+card.height<=pager.y+1&&facts.content<=facts.height+2;
   }).toBe(true);
   await page.getByRole('button',{name:'상세 보기',exact:true}).click();
   const info=await page.locator('.fm-beta-detail-body').boundingBox();
@@ -502,6 +505,7 @@ for(const [width,height] of [[320,568],[390,844]]){
   await page.getByRole('button',{name:'로그인',exact:true}).click();
   await expect(page.getByRole('button',{name:'MF로 참가',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
+  await page.getByRole('button',{name:'MF로 참가',exact:true}).scrollIntoViewIfNeeded();
   const signedInAction=await page.getByRole('button',{name:'MF로 참가',exact:true}).boundingBox();
   const appNav=await page.getByRole('navigation',{name:'Beta 메뉴',exact:true}).boundingBox();
   expect(signedInAction.y+signedInAction.height).toBeLessThanOrEqual(appNav.y);
@@ -626,7 +630,7 @@ test('quick filters update results in place and zero results offer explicit reco
   expect(await serious(page)).toEqual([]);
 });
 
-test('AI loading hides provisional cards and late responses cannot overwrite a newer filter',async({page})=>{
+test('AI loading keeps eligible cards usable and late responses cannot overwrite a newer filter',async({page})=>{
   await mockBackend(page,{preferences:false});
   const second={...baseMatch,id:'second-region',region:'서울 · 강남',title:'강남 경기'};
   await page.route(origin+'/rest/v1/matches?**',route=>fulfill(route,[baseMatch,second]));
@@ -636,8 +640,8 @@ test('AI loading hides provisional cards and late responses cannot overwrite a n
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
   await expect.poll(()=>pending.length).toBe(1);
-  await expect(page.getByText('선택한 조건으로 추천을 준비하고 있어요.',{exact:true})).toBeVisible();
-  await expect(page.locator('.fm-beta-match')).toHaveCount(0);
+  await expect(page.locator('.fm-beta-ranking-status')).toContainText('선택한 조건으로 추천을 준비하고 있어요.');
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await page.locator('#quick-filter-region').click();
   await page.getByRole('group',{name:'빠른 활동 지역',exact:true}).getByRole('radio',{name:'서울 · 강남',exact:true}).click();
   await expect.poll(()=>pending.length).toBe(2);
@@ -1021,3 +1025,4 @@ test('new live venue region appears in the first-step location choices',async({p
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
 });
+
