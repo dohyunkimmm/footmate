@@ -86,7 +86,7 @@ function guide(){
       <button data-action="scenario-matchday">경기 당일</button>
       <button data-action="scenario-postgame">경기 후</button>
     </div>`:'';
-  return `<aside class="fm-next-guide" aria-label="Case Study Guide">
+  return `<aside class="fm-next-guide" aria-label="FootMate 시연 안내">
     <div class="fm-next-guide-brand"><span class="fm-next-brand-mark">${icon('logo')}</span>FootMate</div>
     <div class="fm-next-guide-kicker">${mode==='evidence'?'Reviewer Evidence':'Guided Case Study'}</div>
     <h1>실제 사용자 흐름을 먼저 보여줍니다.</h1>
@@ -384,6 +384,11 @@ function toast(message){
   toastTimer=setTimeout(()=>el.classList.remove('is-visible'),2300);
 }
 
+function scrollGuidedReviewIntoView(){
+  if(mode!=='guided'||!window.matchMedia('(max-width: 920px)').matches)return;
+  requestAnimationFrame(()=>root.querySelector('.fm-next-stage')?.scrollIntoView({block:'start',behavior:'instant'}));
+}
+
 function resetFlow(){
   state=createState();
   if(mode==='evidence')state=createState({setupComplete:true,route:'home',signedIn:true});
@@ -476,19 +481,19 @@ root.addEventListener('click',event=>{
   if(action==='show-route'){toast('길찾기 연결은 실제 서비스 연동 단계에서 제공됩니다.');return;}
   if(action==='team-chat'){toast('팀 메시지 화면은 다음 상세 설계 범위에서 연결됩니다.');return;}
   if(action==='rate-match'){toast('경기 평가 플로우를 준비 중입니다.');return;}
-  if(action==='show-policy'){toast(mode==='real'?'무료 참가 체험입니다. 실제 결제·환불이나 참가 취소 처리는 발생하지 않습니다.':'경기 24시간 전까지 전액 환불됩니다.');return;}
+  if(action==='show-policy'){toast(mode==='real'?'무료 참가 체험입니다. 실제 결제·환불이나 참가 취소 처리는 발생하지 않습니다.':'시연용 정책 예시: 경기 24시간 전까지 전액 환불 기준입니다. 실제 결제·환불은 없습니다.');return;}
   if(action==='reset-flow'){resetFlow();return;}
   if(action==='open-real'){location.href='/demo';return;}
-  if(mode==='guided'&&action==='review-home'){state=createState({setupComplete:true,route:'home'});render();return;}
+  if(mode==='guided'&&action==='review-home'){state=createState({setupComplete:true,route:'home'});render();scrollGuidedReviewIntoView();return;}
   if(mode==='guided'&&action==='review-compare'){
     state=createState({setupComplete:true,route:'detail',selectedMatchId:MATCHES[0].id});render();
-    window.__FOOTMATE_DECISION__?.showReviewerCompare?.();return;
+    window.__FOOTMATE_DECISION__?.showReviewerCompare?.();scrollGuidedReviewIntoView();return;
   }
   if(mode==='guided'&&action==='review-position'){
-    state=createState({setupComplete:true,route:'detail',region:'수원 · 영통',position:'MF',selectedMatchId:'yeongtong-1900'});render();return;
+    state=createState({setupComplete:true,route:'detail',region:'수원 · 영통',position:'MF',selectedMatchId:'yeongtong-1900'});render();scrollGuidedReviewIntoView();return;
   }
   if(mode==='guided'&&action==='review-my'){
-    state=createState({setupComplete:true,route:'profile',signedIn:true,authExperience:'simulated',joinedMatchId:MATCHES[0].id,selectedMatchId:MATCHES[0].id,joinedJoinPosition:'MF',matchStage:'upcoming'});render();return;
+    state=createState({setupComplete:true,route:'profile',signedIn:true,authExperience:'simulated',joinedMatchId:MATCHES[0].id,selectedMatchId:MATCHES[0].id,joinedJoinPosition:'MF',matchStage:'upcoming'});render();scrollGuidedReviewIntoView();return;
   }
   if(action==='scenario-discover'){
     state=createState({setupComplete:true,route:'home',signedIn:true});render();return;
