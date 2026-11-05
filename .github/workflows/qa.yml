@@ -112,6 +112,8 @@ jobs:
         run: node tests/contracts/recommendation-discovery.contract.mjs
       - name: Check discovery personalization and consent isolation
         run: node tests/contracts/discovery-followup.contract.mjs
+      - name: Check explicit empty-result recovery and time bounds
+        run: node tests/contracts/discovery-recovery.contract.mjs
       - name: Check player-to-match suitability facts
         run: node tests/contracts/matching.contract.mjs
       - name: Run release candidate contracts
@@ -240,6 +242,8 @@ jobs:
           node --test tests/contracts/footmate-product-ux.contract.cjs
       - name: Verify changed choice-to-login journey before full screen QA
         run: npx playwright test --project=chromium tests/e2e/beta-core.spec.cjs --grep "choice-first recommendations keep|random discovery|quick filters|AI loading|refreshing recommendations|a refreshed full position|mobile match detail keeps selection|enhanced discovery|discovery followup|discovery hotfix|discovery qa"
+      - name: Verify Demo workflow, comparison and readable match facts
+        run: npx playwright test --project=chromium tests/e2e/demo-workflow.spec.cjs
       - name: Upload changed journey screen evidence
         if: always()
         uses: actions/upload-artifact@v6
