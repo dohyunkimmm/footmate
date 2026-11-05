@@ -1,4 +1,11 @@
-## 2026-11-03 · 저장소 구성과 클렌징 점검
+## 2026-11-05 · `main` 목록·정적 링크·안전 클렌징 점검
+
+- [최신 `main` 폴더와 보존 기준](REPO-CLEANUP-2026-11-05.md): HEAD `577dcef` 기준 322개 파일·41개 디렉터리(루트 14개 파일·9개 폴더). `qa/`·`scripts/`·`worker/` 등 최상위 목록과 진입 URL의 실제 파일 연결을 확인했습니다.
+- **검증 보강:** 기존 Markdown 링크 검사에 메인/이전 Case Study HTML 8개 정적 참조 검사를 추가했습니다. 파일이 없는 로컬 링크를 Docs-only QA와 회귀 검사에서 감지합니다. 운영 중 동적/외부 URL이나 실기기 상태를 검증하는 검사는 아닙니다.
+- **미완료 유지:** [#829](https://github.com/dohyunkimmm/footmate/issues/829) 실기기 QA, [#611](https://github.com/dohyunkimmm/footmate/issues/611) 실계정 보안, [#525](https://github.com/dohyunkimmm/footmate/issues/525) 백업·브랜치 삭제 승인. [#799](https://github.com/dohyunkimmm/footmate/pull/799)·[#800](https://github.com/dohyunkimmm/footmate/pull/800) 의존성 PR은 별도 검토합니다.
+- 이전 11월 3일·4일의 파일 수와 QA 결과는 **당시 스냅샷**으로 보존하며, 현행 수치가 아닙니다.
+
+## 2026-11-03 · 저장소 구성과 클렌징 점검 (당시 기록)
 
 - [현행 파일·폴더·PR·브랜치 정합성 점검](REPO-CLEANUP-2026-11-03.md): `main` 309개 파일·40개 폴더, 정적 경로 존재 여부, 적용 이력 보존 대상인 SQL 마이그레이션, 원격 브랜치 123개의 독립 패치·보존 조건과 의존성 PR 2건의 미반영 상태를 구분합니다. **제품·DB·배포 설정이나 미검증 브랜치를 삭제하지 않았습니다.**
 - 이전 [Git branch 감사](BRANCH-PATCH-AUDIT-2026-10-28.md)와 [Issue #525](https://github.com/dohyunkimmm/footmate/issues/525)의 영구 백업·삭제 승인 조건은 계속 유효합니다.
