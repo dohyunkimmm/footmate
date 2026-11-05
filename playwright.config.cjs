@@ -48,6 +48,16 @@ module.exports = defineConfig({
       grep: /discovery followup sends real events|discovery hotfix preserves failed withdrawal|discovery qa/,
       use: { ...devices['iPhone 13'] }
     }
+    ,{
+      name: 'android-reviewer-p1',
+      testMatch: /reviewer-zoom-p1\.spec\.cjs/,
+      use: { ...devices['Pixel 5'], browserName: 'chromium' }
+    },
+    {
+      name: 'iphone-reviewer-p1',
+      testMatch: /reviewer-zoom-p1\.spec\.cjs/,
+      use: { ...devices['iPhone 13'], browserName: 'webkit' }
+    }
   ]
 });
 
