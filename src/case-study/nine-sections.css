@@ -427,3 +427,50 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 .case-jump a{display:inline-flex;align-items:center;min-height:42px;border:1px solid #b7ccbd;border-radius:8px;padding:9px 14px;color:#164735;background:#fff;text-decoration:none;font-weight:650;font-size:14px}
 .case-jump a:hover,.case-jump a:focus-visible{background:#edf5ef}
 @media(max-width:540px){.case-jump a{flex:1 1 135px;justify-content:center}.case-evidence-note{padding:12px 14px}}
+
+/* 5.7: decision-led reading, neutral prose and explicit financial status. */
+:root{--ink:#25332e;--muted:#58665f;--canvas:#f5f6f4;--soft:#eff5f1}
+.slide{color:var(--ink)}
+.slide p,.slide td{color:#35453d}
+.section-title{color:#123f30;letter-spacing:-.035em;overflow-wrap:normal}
+.case-verdict{padding:26px 28px;background:#123f30;border-radius:12px;margin:0 0 22px;color:#fff}
+.case-status{display:inline-block;font-size:13px;font-weight:650;color:#c9e4d3;letter-spacing:.04em}
+.case-verdict h2{font-size:30px;line-height:1.45;margin:8px 0 12px;letter-spacing:-.03em;color:#fff}
+.slide .case-verdict p{font-size:16px;color:#e2ede6;margin:0;line-height:1.7}
+.case-kpi dd.is-negative{color:#9b4038}
+#section-01 .decision-grid{margin-top:24px}
+#section-01 .decision-card{border:0;border-left:2px solid #c7d7cc;border-radius:0;background:transparent;padding:4px 18px}
+.decision-card h3{font-size:20px;line-height:1.5;letter-spacing:-.35px;margin:0 0 10px;color:#173329}
+.case-profit-summary{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:24px 0 32px}
+.case-profit-summary>div{padding:22px;border:1px solid #dce5dd;border-radius:10px}
+.case-profit-summary>div:last-child{background:#f0f6f2;border-color:#9cb7a5}
+.case-profit-summary span{font-size:14px;color:#53675d;display:block}
+.case-profit-summary strong{font-size:24px;line-height:1.5;display:block;margin:8px 0 12px;color:#123f30}
+.case-profit-summary>div:first-child strong{color:#9b4038}
+.case-profit-summary p{font-size:15px;margin:3px 0;line-height:1.65}
+.case-screen-evidence{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:32px 0}
+.case-screen-evidence figure{margin:0;padding:20px;background:#f6f8f6;border:1px solid #dce5dd;border-radius:12px;min-width:0}
+.case-screen-evidence img{display:block;width:100%;height:auto;max-height:380px;object-fit:contain;object-position:top;background:#fff}
+.case-screen-evidence figcaption{display:grid;gap:5px;margin-top:16px;font-size:15px;line-height:1.7}
+.case-screen-evidence figcaption strong{color:#123f30}
+.case-preview-actions{justify-content:space-between;gap:12px;flex-wrap:wrap}
+.case-open-slides{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:650}
+.case-documents{scroll-margin-top:32px}
+@media(max-width:800px){
+ html{scroll-padding-top:80px}
+ .case-documents{scroll-margin-top:12px}
+ .case-verdict{padding:20px}
+ .case-verdict h2{font-size:25px}
+ .case-profit-summary{grid-template-columns:1fr;gap:12px}
+ .case-screen-evidence{gap:14px}
+ .case-screen-evidence figure{padding:12px}
+}
+@media(max-width:540px){
+ .section-title{font-size:27px;line-height:1.45;text-wrap:pretty}
+ .case-kpis{grid-template-columns:1fr;gap:10px}
+ .case-kpi{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+ .case-kpi:last-child{grid-column:auto}
+ .case-kpi dt{font-size:13px;margin:0;max-width:47%}
+ .case-kpi dd{font-size:26px;margin:0;white-space:nowrap}
+ .case-screen-evidence{grid-template-columns:1fr}
+}

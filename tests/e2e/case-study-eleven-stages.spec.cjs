@@ -86,7 +86,7 @@ test('mobile TOC stays readable while the first decision enters the opening view
     tocScrollWidth:toc.scrollWidth,tocClientWidth:toc.clientWidth,
     labelLayouts:nodes.map(n=>({top:Math.round(n.getBoundingClientRect().top),height:n.getBoundingClientRect().height,
      labelOverflow:n.querySelector('.toc-t').scrollWidth-n.querySelector('.toc-t').clientWidth})),
-    firstDecisionTop:document.querySelector('#section-01 .decision-card').getBoundingClientRect().top,
+    firstDecisionTop:document.querySelector('#section-01 .case-verdict').getBoundingClientRect().top,
     documentOverflow:document.documentElement.scrollWidth>innerWidth+1
    };
   });
@@ -173,7 +173,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-01 .case-kpi').nth(2)).toContainText('약 −38.7만 원');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('23곳');
  await expect(page.locator('#section-05 .reader-summary')).toContainText('28곳');
- await expect(page.locator('#section-05 .reader-summary')).toContainText('12%·결제비 0% · 23곳 / 관리비 포함 28곳.');
+ await expect(page.locator('#section-05 .reader-summary')).toContainText('수수료 12%, 결제비 0%');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  await expect(page.locator('.track table')).toHaveCount(27);
@@ -912,4 +912,26 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
   await expect(page.locator('#page')).toHaveText('10 / 10');
   await expect(page.locator('#slideTitle')).toHaveText('최종 판단 · 단계적 투자');
   await expect(page.locator('#slideSummary')).toContainText('핵심 지표·단계적 투자 기준');
+});
+
+
+
+test('decision-led portfolio keeps assumptions, mobile anchors and slide text usable',async({page})=>{
+ for(const width of [320,390,800,1440]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  await expect(page.locator('.case-verdict')).toContainText('수익성 확인 후 투자한다.');
+  await expect(page.locator('.case-kpi .is-negative')).toContainText('−38.7');
+  await expect(page.locator('.case-profit-summary')).toContainText('추가 관리비 포함');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await page.getByRole('link',{name:'발표·엑셀 자료',exact:true}).click();
+  const top=await page.locator('#case-documents-heading').evaluate(n=>n.getBoundingClientRect().top);
+  expect(top).toBeGreaterThanOrEqual(width<=800?65:0);
+ }
+ await page.goto('/src/case-study/materials.html?preview=1&slide=3');
+ await expect(page.locator('#page')).toHaveText('04 / 10');
+ await page.locator('.slide-transcript summary').click();
+ await expect(page.locator('#slideTranscript')).toContainText('940원');
+ await expect(page.locator('#slideTranscript')).toContainText('7,648건/월');
+ await page.getByRole('button',{name:'다음 슬라이드',exact:true}).click();
+ await expect(page.locator('#slideTranscript')).toContainText('가상 데이터');
 });
