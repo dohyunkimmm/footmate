@@ -457,8 +457,8 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 .case-open-slides{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:650}
 .case-documents{scroll-margin-top:32px}
 @media(max-width:800px){
- html{scroll-padding-top:80px}
- .case-documents{scroll-margin-top:12px}
+ html{scroll-padding-top:16px}
+ .case-documents{scroll-margin-top:64px}
  .case-verdict{padding:20px}
  .case-verdict h2{font-size:25px}
  .case-profit-summary{grid-template-columns:1fr;gap:12px}
