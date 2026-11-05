@@ -199,7 +199,7 @@ function wizardPanel(){
 function moveWizard(form,step){draft={...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(new FormData(form))};wizardStep=step;render()}
 function recoveryPanel(p){
  const alternatives=discoveryRecoveryOptions(matches,p);
- return `<section class="fm-beta-filter-recovery" aria-label="추천 조건 조정"><p>선택한 조건은 그대로예요. 바꿀 조건을 직접 골라주세요.</p>${alternatives.map(item=>`<button class="fm-beta-button" type="button" data-growth-action="recover-condition" data-recovery-key="${item.key}">${esc(item.label)} · ${item.count}개</button>`).join('')}${!alternatives.length?'<p>조건 하나만 바꿔서는 결과가 없어요. 조건을 다시 선택하거나 전체 조건을 해제해보세요.</p>':''}<button class="fm-beta-link" type="button" data-growth-action="clear-filters">전체 조건 해제</button></section>`;
+ return `<section class="fm-beta-filter-recovery" aria-label="추천 조건 조정"><p>선택한 조건은 그대로예요. 바꿀 조건을 직접 골라주세요.</p>${alternatives.map(item=>`<button class="fm-beta-button" type="button" data-growth-action="recover-condition" data-recovery-key="${item.key}">${esc(item.label)} · ${item.count}개</button>`).join('')}${!alternatives.length?'<p>조건 하나만 바꿔서는 결과가 없어요. 조건을 다시 선택하거나 전체 조건을 해제해보세요.</p>':''}</section>`;
 }
 function recommendPanel(){
  if(!preferences)return wizardPanel();

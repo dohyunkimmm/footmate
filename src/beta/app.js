@@ -52,17 +52,19 @@ if(root){
   let detailMatchId=sessionStorage.getItem('footmate:beta:detail-match:v1')||'';
   let detailTab='info';
   let comparisonIds=[],comparisonOpen=false;
+  let detailOrigin='results';
   let resultsScrollTop=0;
   function focusScreen(selector){requestAnimationFrame(()=>{const node=root.querySelector(selector);if(node){if(!node.hasAttribute('tabindex'))node.tabIndex=-1;node.focus({preventScroll:true})}})}
   function restoreResults(){render();requestAnimationFrame(()=>{const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=resultsScrollTop;root.querySelector('[data-action="match-detail"]')?.focus({preventScroll:true})})}
   function rememberResults(){resultsScrollTop=root.querySelector('[data-beta-main]')?.scrollTop||0}
-  function closeDetail(){detailMatchId='';detailTab='info';sessionStorage.removeItem('footmate:beta:detail-match:v1')}
+  function closeDetail(){detailMatchId='';detailTab='info';detailOrigin='results';sessionStorage.removeItem('footmate:beta:detail-match:v1')}
   function setView(next){closeDetail();view=next;matchesTab='joined';sessionStorage.setItem('footmate:beta:view:v1',next);authOpen=false;render();window.scrollTo({top:0,behavior:'smooth'})}
   function exampleMatch(id){return matches.some(m=>m.id===id&&m.isDemo)||participations.some(p=>p.match_id===id&&p.is_demo)}
   let authOpen=Boolean(location.hash.includes('error')||sessionStorage.getItem('footmate:beta:social-auth-error:v1'));
   let recommendedIds=null,recommendationReasons={};
   let recommendationBusy=false,recommendationConditions='',recommendationAnchorId='';
   let seenRecommendations=new Set();
+  let recommendationInteracted=false;
   let lastMeasuredRecommendation='';
   let pendingMatchId=sessionStorage.getItem('footmate:beta:pending-match:v1')||'';
   function selectedPreferences(){try{return JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null')||{}}catch{return{}}}
@@ -274,7 +276,7 @@ if(root){
     const preview=guest&&!previewExpanded?visible.slice(0,3):visible;
     demoPage=Math.min(demoPage,preview.length-1);
     const current=preview[demoPage];
-    seenRecommendations.add(current.id);
+    if(!recommendationBusy||recommendationInteracted)seenRecommendations.add(current.id);
     if(recommendedIds!==null&&!recommendationBusy&&!openingOpen&&!authOpen&&view==='home'&&!detailMatchId){const key=recommendationConditions+'|'+current.id;if(key!==lastMeasuredRecommendation){lastMeasuredRecommendation=key;emitDiscoveryMeasurement('recommendation_viewed',{resultCount:visible.length,isDemo:current.isDemo,matchId:current.id,durationMs:Date.now()-entryStartedAt});}}
     const exhausted=visible.every(match=>seenRecommendations.has(match.id));
     const discovery=visible.length>1?`<div class="fm-beta-discovery"><p role="status">${exhausted?'조건에 맞는 경기를 모두 봤어요.':'조건은 유지하고, 아직 보지 않은 경기를 추천해요.'}</p><button class="fm-beta-button" type="button" data-action="${exhausted?'restart-discovery':'random-recommendation'}">${exhausted?'다시 둘러보기':'다른 경기 추천'}</button></div>`:'<p class="fm-beta-discovery-note">조건에 맞는 경기는 1개예요. 필터를 바꾸면 다른 경기를 찾을 수 있어요.</p>';
@@ -293,7 +295,7 @@ if(root){
   function renderDetail(match){
     const card=renderMatch(match,{detail:true}).replace('<details class="fm-beta-demo-slots">','<details class="fm-beta-demo-slots" open>');
     return `<div class="fm-beta-shell fm-beta-detail" data-detail-tab="${detailTab}">
-      <header class="fm-beta-detail-header"><button class="fm-beta-link" type="button" data-action="detail-back" aria-label="추천으로 돌아가기"><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5-7 7 7 7M5 12h14"/></svg></button><h1>경기 상세</h1><span aria-hidden="true"></span></header>
+      <header class="fm-beta-detail-header"><button class="fm-beta-link" type="button" data-action="detail-back" aria-label="${detailOrigin==='comparison'?'비교로 돌아가기':'추천으로 돌아가기'}"><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5-7 7 7 7M5 12h14"/></svg></button><h1>경기 상세</h1><span aria-hidden="true"></span></header>
       <nav class="fm-beta-account-tabs" aria-label="경기 상세 메뉴">${[['info','경기 정보'],['slots','모집 포지션']].map(([id,label])=>`<button class="fm-beta-button" type="button" data-action="detail-tab" data-tab="${id}" ${detailTab===id?'aria-current="page"':''}>${label}</button>`).join('')}</nav>
       ${detailTab==='slots'?'<p class="fm-beta-detail-hint">포지션별 남은 자리를 확인하세요.</p>':''}
       ${card}
@@ -325,6 +327,8 @@ if(root){
     const connected=backendState==='connected'||backendState==='preview';
     root.dataset.betaOpening=String(openingOpen);
     root.dataset.betaDetail=String(Boolean(detailMatchId&&!authOpen&&view==='home'));
+    comparisonIds=comparisonIds.filter(id=>matches.some(match=>match.id===id));
+    if(comparisonIds.length<2)comparisonOpen=false;
     if(openingOpen){root.innerHTML=renderOpening();return}
     if(comparisonOpen&&!authOpen&&view==='home'){root.innerHTML=renderComparison();return}
     const detailMatch=matches.find(m=>m.id===detailMatchId);
@@ -474,6 +478,7 @@ if(root){
     const target=event.target.closest('[data-action]');
     if(!target)return;
     const action=target.dataset.action;
+    if(['match-detail','compare-toggle','demo-prev','demo-next','random-recommendation','restart-discovery','expand-preview','focus-auth'].includes(action))recommendationInteracted=true;
     if(action==='discovery-consent'||action==='discovery-withdraw'){
       run(async()=>{await setDiscoveryConsent(action==='discovery-withdraw'||discoveryTransportStatus().withdrawalPending?false:!discoveryTransportStatus().enabled);setNotice(discoveryTransportStatus().enabled?'통계 참여를 시작했어요.':'통계 참여를 해제했어요.','success')});return;
     }
@@ -505,9 +510,9 @@ if(root){
     if(action==='compare-clear'){comparisonIds=[];render();focusScreen('[data-action="compare-toggle"]');return}
     if(action==='compare-open'){if(comparisonIds.length!==2)return;rememberResults();comparisonOpen=true;render();focusScreen('h1');return}
     if(action==='compare-back'){comparisonOpen=false;closeDetail();restoreResults();return}
-    if(action==='compare-detail'){comparisonOpen=false;detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
+    if(action==='compare-detail'){comparisonOpen=false;detailOrigin='comparison';detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
     if(action==='match-detail'){rememberResults();emitDiscoveryMeasurement('match_detail_opened',{isDemo:matches.find(m=>m.id===target.dataset.matchId)?.isDemo,matchId:target.dataset.matchId});detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
-    if(action==='detail-back'){closeDetail();restoreResults();return}
+    if(action==='detail-back'){const origin=detailOrigin;closeDetail();if(origin==='comparison'&&comparisonIds.length===2){comparisonOpen=true;render();focusScreen('h1')}else restoreResults();return}
     if(action==='detail-tab'){detailTab=target.dataset.tab;render();return}
     if(action==='setup-position'){pendingMatchId=target.dataset.matchId||detailMatchId;sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId);setView('my');accountTab='profile';render();focusScreen('[name="position"]');return}
     if(action==='opening'){closeDetail();openingOpen=true;authOpen=false;render();return}
@@ -626,6 +631,7 @@ if(root){
   window.addEventListener('footmate:beta:recommendations',event=>{
     const openFilters=openQuickFilterIds(root);
     const focusedFilter=document.activeElement?.id;
+    const scrollTop=root.querySelector('[data-beta-main]')?.scrollTop||0;
     const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
     const conditions=event.detail?.conditions||'';
     serverReactions=normalizeReactions(event.detail?.reactions||[]);
@@ -635,13 +641,14 @@ if(root){
     recommendationBusy=Boolean(event.detail?.busy);
     recommendedIds=event.detail?.ids??null;recommendationReasons=event.detail?.reasons||{};
     if(changed){
+      recommendationInteracted=false;
       demoPage=0;previewExpanded=false;seenRecommendations.clear();
       recommendationAnchorId=firstRecommendation&&recommendedIds?.includes(pendingMatchId)?pendingMatchId:'';
       if(recommendationAnchorId){demoPage=recommendedIds.indexOf(recommendationAnchorId);if(demoPage>=3)previewExpanded=true;}
     }
     else{
-      if(recommendationBusy&&current)recommendationAnchorId=current;
-      const anchor=recommendationAnchorId||current;
+      if(recommendationBusy&&current&&lastMeasuredRecommendation)recommendationAnchorId=current;
+      const anchor=recommendationAnchorId||(recommendationInteracted?current:'');
       if(anchor&&recommendedIds?.includes(anchor)){demoPage=recommendedIds.indexOf(anchor);if(demoPage>=3)previewExpanded=true;}
     }
     if(!recommendationBusy)recommendationAnchorId='';
@@ -649,6 +656,7 @@ if(root){
     if(detailMatchId||authOpen||openingOpen||view!=='home')return;
     render();
     // Growth restores its controls after the base view is rendered.
+    if(!changed)requestAnimationFrame(()=>{const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=scrollTop});
     if(!changed&&openFilters.length)queueMicrotask(()=>restoreQuickFilters(root,openFilters));
     if(focusedFilter?.startsWith('quick-filter-'))queueMicrotask(()=>document.getElementById(focusedFilter)?.focus());
   });

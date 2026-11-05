@@ -615,16 +615,17 @@ test('quick filters update results in place and zero results offer explicit reco
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await page.locator('#quick-filter-region').click();
   await page.getByRole('group',{name:'빠른 활동 지역',exact:true}).getByRole('radio',{name:'서울 · 강남',exact:true}).click();
-  await expect(page.getByRole('button',{name:'시간 조건 해제',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'시간 조건 해제',exact:true}).click();
+  await expect(page.getByRole('button',{name:'지역 조건 해제 · 1개',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'지역 조건 해제 · 1개',exact:true}).click();
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')));
-  expect(saved.region).toBe('서울 · 강남');expect(saved.afterTime).toBe('');
-  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
+  expect(saved.region).toBe('');expect(saved.afterTime).toBe('20:00');
+  await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await page.getByRole('button',{name:'전체 조건 해제',exact:true}).click();
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   for(const width of [320,375,390,430,1440]){
     await page.setViewportSize({width,height:844});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+    await page.getByRole('button',{name:'상세 보기',exact:true}).scrollIntoViewIfNeeded();
     await expect(page.getByRole('button',{name:'상세 보기',exact:true})).toBeInViewport();
   }
   expect(await serious(page)).toEqual([]);
@@ -716,7 +717,7 @@ test('enhanced discovery applies Seoul dates and exclusive start-time bounds',as
  await page.locator('#quick-filter-afterTime').click();
  await page.getByRole('group',{name:'빠른 시작 시간 상한',exact:true}).getByRole('radio',{name:'저녁 6시 전 시작',exact:true}).click();
  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'시간 조건 해제',exact:true}).click();
+ await page.getByRole('button',{name:'시간 조건 해제 · 1개',exact:true}).click();
  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id','tomorrow-match');
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).dateWindow)).toBe('tomorrow');
 });
@@ -983,7 +984,7 @@ test('demo recommendation preview survives an unavailable backend config',async(
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
-  await expect(page.locator('.fm-beta-match-cover small')).toHaveText('데모 경기');
+  await expect(page.locator('.fm-beta-sample-label')).toHaveText('데모 경기');
   await page.getByRole('button',{name:'참가하기',exact:true}).click();
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByLabel('비밀번호').fill('safe-password');

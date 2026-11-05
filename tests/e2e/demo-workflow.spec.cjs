@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+const AxeBuilder=require('@axe-core/playwright').default;
 const uid='22222222-2222-4222-8222-222222222222';
 const origin='https://workflow.example.supabase.co';
 const first='11111111-1111-4111-8111-111111111111';
@@ -44,8 +45,14 @@ test('demo workflow compares two matches and preserves detail and login return',
  await page.getByRole('button',{name:'두 경기 비교'}).click();
  await expect(page.getByRole('table')).toContainText('워크플로 경기 1');
  await expect(page.getByRole('table')).toContainText('워크플로 경기 2');
+ const accessibility=await new AxeBuilder({page}).include('.fm-beta').withTags(['wcag2a','wcag2aa']).analyze();
+ expect(accessibility.violations.filter(v=>['serious','critical'].includes(v.impact))).toEqual([]);
+ await page.screenshot({path:test.info().outputPath('comparison.png'),fullPage:true});
  await page.getByRole('button',{name:'워크플로 경기 1 상세 보기'}).click();
  await expect(page.getByRole('heading',{name:'경기 상세'})).toBeFocused();
+ await page.getByRole('button',{name:'비교로 돌아가기',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'경기 비교'})).toBeFocused();
+ await page.getByRole('button',{name:'워크플로 경기 1 상세 보기'}).click();
  await page.getByRole('button',{name:'참가하기',exact:true}).click();
  await expect(page.getByRole('region',{name:'참가할 경기'})).toContainText('워크플로 경기 1');
  await expect(page.getByLabel('이메일')).toBeVisible();
@@ -63,7 +70,7 @@ test('demo workflow compares two matches and preserves detail and login return',
 });
 
 test('demo workflow shows candidates while AI ranks and validates time bounds',async({page})=>{
- await setup(page,{slowAI:true});await page.goto('/beta');
+ await setup(page,{slowAI:true});await page.goto('/beta',{waitUntil:'domcontentloaded'});
  await expect(page.locator('.fm-beta-ranking-status')).toBeVisible();
  await expect(page.locator('.fm-beta-match h3')).toBeVisible();
  await page.locator('#quick-filter-afterTime').click();
