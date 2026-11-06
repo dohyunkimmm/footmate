@@ -495,3 +495,5 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 .case-compare dl>div{padding:10px 12px;background:#edf3ed;border-radius:8px}
 .case-compare dt{font-size:.9rem}
 .case-compare dd{margin:3px 0 0;font-weight:700;font-variant-numeric:tabular-nums}
+
+@media(max-width:480px){.case-cash-chart{padding-inline:8px}.case-cash-chart svg text{font-size:22px}}
