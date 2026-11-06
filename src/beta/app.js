@@ -60,7 +60,7 @@ if(root){
   let venueOriginId='';
   let freshMatches=null;
   let presetsOpen=false;
-  function focusScreen(selector){requestAnimationFrame(()=>{const node=root.querySelector(selector);if(node){if(!node.hasAttribute('tabindex'))node.tabIndex=-1;node.focus({preventScroll:true})}})}
+  function focusScreen(selector,{scroll=false}={}){requestAnimationFrame(()=>{const node=root.querySelector(selector);if(node){if(!node.hasAttribute('tabindex'))node.tabIndex=-1;node.focus({preventScroll:!scroll})}})}
   function restoreResults(){
     const savedId=savedDetailOrigin;
     savedDetailOrigin='';
@@ -298,7 +298,7 @@ if(root){
     presetsOpen=false;
     demoPage=0;previewExpanded=false;recommendationAnchorId='';recommendationInteracted=false;seenRecommendations.clear();
     window.dispatchEvent(new CustomEvent('footmate:beta:apply-preset',{detail:row.conditions}));
-    focusScreen('#recommendation-title');
+    focusScreen('#recommendation-title',{scroll:true});
   }
   function renderMatch(match,{detail=false}={}){
     const p=profile||{};
@@ -354,6 +354,10 @@ if(root){
     const conditions=selectedPreferences();
     const available=matches.filter(match=>isFutsalMatch(match)&&(!freshMatches||freshMatches.ids.has(match.id))&&eligibleMatch(match,conditions));
     const ordered=recommendedIds===null?available:recommendedIds.map(id=>available.find(match=>match.id===id)).filter(Boolean);
+    if(freshMatches&&recommendedIds!==null){
+      const ranked=new Set(ordered.map(match=>match.id));
+      ordered.push(...available.filter(match=>!ranked.has(match.id)));
+    }
     return personalizeRecommendations(ordered,[...reactions(false),...reactions(true),...serverReactions.filter(r=>user&&r.userId===user.id)]);
   }
 
@@ -598,7 +602,7 @@ if(root){
       handlePresetAction(action,target);return;
     }
     if(action==='clear-new-matches'){
-      freshMatches=null;demoPage=0;previewExpanded=false;recommendationInteracted=false;recommendationAnchorId='';seenRecommendations.clear();render();focusScreen('#recommendation-title');return;
+      freshMatches=null;demoPage=0;previewExpanded=false;recommendationInteracted=false;recommendationAnchorId='';seenRecommendations.clear();render();focusScreen('#recommendation-title',{scroll:true});return;
     }
     if(action==='save-demo-match'&&isDemoEntry){
       const id=target.dataset.matchId;

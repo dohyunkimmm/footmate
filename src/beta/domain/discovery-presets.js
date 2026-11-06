@@ -1,5 +1,6 @@
 import {cleanSyncPreferences} from '../preference-sync.js?v=2';
 import {matchesRecommendationConditions} from './recommendation-discovery.js';
+import {hasInvalidTimeRange} from './discovery-recovery.js';
 
 export const MAX_PRESETS=3;
 export const MAX_KNOWN_MATCHES=200;
@@ -15,7 +16,7 @@ export function readDiscoveryPresets(storage,key){
     if(!Array.isArray(rows))return [];
     return rows.flatMap(row=>{
       const conditions=cleanSyncPreferences(row?.conditions);
-      if(!conditions||!Array.isArray(row.knownIds))return [];
+      if(!conditions||hasInvalidTimeRange(conditions)||!Array.isArray(row.knownIds))return [];
       return [{conditions,knownIds:row.knownIds.filter(id=>typeof id==='string').slice(0,MAX_KNOWN_MATCHES)}];
     }).slice(0,MAX_PRESETS);
   }catch{return []}
