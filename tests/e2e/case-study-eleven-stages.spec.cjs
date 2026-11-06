@@ -118,9 +118,9 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
   await page.setViewportSize({width,height:900});await page.goto('/');
   for(const section of ['#section-05','#section-08']){
    await expect(page.locator(section+' > .table-wrap')).toHaveCount(1);
-   expect(await page.locator(section+' > details').count()).toBeGreaterThanOrEqual(5);
+   await expect(page.locator(section+' > details')).toHaveCount(section==='#section-05'?2:5);
   }
-  const scenarios=page.locator('#section-05 > details').filter({has:page.getByText('월 사업 손익 민감도 · 보수·기준·확장 (산정 기준)',{exact:true})});
+  const scenarios=page.locator('#section-05 > details').filter({has:page.getByText('월 손익 민감도·직접 운영 기준',{exact:true})});
   await expect(scenarios.locator('table')).toBeHidden();
   await scenarios.locator('summary').click();
   await expect(scenarios.locator('table')).toBeVisible();
