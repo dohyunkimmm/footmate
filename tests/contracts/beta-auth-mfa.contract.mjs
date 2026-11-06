@@ -39,7 +39,7 @@ assert.ok(migration.includes("position('require_beta_operator_aal2' in pg_get_fu
 assert.ok(!migration.includes("E'\\\\nbegin"),'MFA patch must not double-escape newline sequences');
 
 assert.ok(beta.includes('/src/beta/social-auth-bootstrap.js?v=1'));
-assert.ok(beta.includes("import('/src/beta/social-auth.js?v=1')"));
+assert.ok(beta.includes("import('/src/beta/social-auth.js?v=2')"));
 assert.ok(social.includes('/auth/v1/settings'),'social buttons must reflect actually enabled providers');
 assert.ok(social.includes('/auth/v1/authorize'),'social auth must use Supabase OAuth authorize flow');
 assert.ok(social.includes('payload?.external?.google'));
