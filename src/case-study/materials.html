@@ -178,18 +178,17 @@ html.preview-only .viewer-stage{padding:10px}
 @media(max-width:370px){.viewer-mobile-hint{flex-direction:column;align-items:stretch}.viewer-mobile-hint button{width:100%}}
 
 html.embedded-preview,html.embedded-preview body{overflow:hidden}
-.viewer .toolbar{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"meta nav tools";gap:8px;padding:8px 12px;border-top:0;border-bottom:1px solid #e3ebe5}
-.viewer .toolbar .slide-nav-controls{width:auto;justify-self:end}
+.viewer .toolbar{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nav tools";gap:8px;padding:8px 12px;border-top:0;border-bottom:1px solid #e3ebe5}
+.viewer .toolbar .slide-nav-controls{width:auto;justify-self:start;background:transparent;border-color:transparent}
 .viewer .toolbar .slide-tools{display:flex;width:auto}
 .viewer .toolbar #expand,.viewer .toolbar #openSlideTab{grid-column:auto}
-.viewer .toolbar .slide-current-info span,.slide-progress{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.viewer .toolbar .slide-current-info,.slide-progress{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 html.preview-only .viewer-stage{padding:0;background:#fff}
 html.preview-only .viewer:not(:fullscreen) .viewer-stage img{border:0;border-radius:0;box-shadow:none}
 html.preview-only .viewer:fullscreen .viewer-stage{padding:12px;background:#17251e}
 .viewer:fullscreen .slide-transcript[open]{max-height:30dvh;overflow:auto}
 @media(max-width:680px){
  .viewer .toolbar{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nav tools";padding:6px 8px}
- .viewer .toolbar .slide-current-info{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
  .viewer .toolbar .slide-nav-controls{justify-self:start}
  .viewer .toolbar .slide-nav-controls button{min-width:44px;padding-inline:6px}
  .viewer .toolbar .slide-nav-controls #page{min-width:53px;padding-inline:5px}

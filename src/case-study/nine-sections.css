@@ -479,12 +479,12 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 
 .case-documents .case-documents-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-bottom:12px}
 .case-downloads{display:flex;flex-wrap:wrap;gap:6px 8px}
-.case-downloads a{display:inline-flex;align-items:center;min-height:44px;padding:6px 12px;border:1px solid #c3d4c8;border-radius:7px;color:var(--green);font-size:13px;font-weight:700;text-decoration:none}
-.case-downloads a:hover{background:#edf4ef}
+.case-downloads a{display:inline-flex;align-items:center;min-height:44px;padding:6px 8px;color:var(--green);font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.case-downloads a:hover{color:#0b4231}
 .case-downloads a:focus-visible{outline:3px solid #266a4a;outline-offset:2px}
 .case-doc-preview{margin-top:0;box-shadow:none}
 .case-doc-preview>summary{min-height:56px;padding:8px 12px}
 .case-doc-preview>summary:focus:not(:focus-visible){outline:none}
-.case-preview-symbol.fm-icon{width:32px;height:32px;font-size:18px;border-radius:7px}
-.case-preview-indicator{width:28px;height:28px}
+.case-preview-symbol.fm-icon{width:24px;height:24px;font-size:18px;border:0;background:transparent}
+.case-preview-indicator{width:24px;height:24px;border:0;background:transparent}
 .case-ppt-frame{height:clamp(230px,64vw,650px)}
