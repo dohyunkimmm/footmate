@@ -483,6 +483,10 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-recommendation-body>.fm-beta-demo-slots[open]{display:block;width:100%}
 .fm-beta-recommendation-body>.fm-beta-compare-toggle{display:inline-flex;vertical-align:middle;justify-content:flex-end;width:38%;padding-inline:0}
 .fm-beta-recommendation-body>.fm-beta-demo-slots[open]+.fm-beta-compare-toggle{width:auto;justify-content:flex-start}
+[data-beta-demo="true"] .fm-beta-recommendation-body>.fm-beta-demo-slots:not([open]){width:37%}
+[data-beta-demo="true"] .fm-beta-recommendation-body>.fm-beta-compare-toggle{width:29%;justify-content:center}
+[data-beta-demo="true"] .fm-beta-recommendation-body>.fm-beta-save-toggle{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:29%;margin:0;padding:0 4px}
+[data-beta-demo="true"] .fm-beta-recommendation-body>.fm-beta-demo-slots[open]~button{width:auto;margin-right:8px}
 .fm-beta-compare-toggle[aria-pressed="true"]{color:#193e20;background:var(--fm-accent);padding:8px 12px;border-radius:10px}
 .fm-beta-compare-tray{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px;border:1px solid var(--fm-line);border-radius:14px;background:#fff;font-size:13px}
 .fm-beta-compare-tray .fm-beta-button{margin-left:auto;font-size:13px}
