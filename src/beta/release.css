@@ -197,7 +197,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-auth-card[data-auth-mode="signin"] .fm-beta-field>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .fm-beta-auth-card form.fm-beta-stack{gap:10px}
 .fm-beta-auth-card .fm-beta-field input{height:50px;border:1px solid #cbd3cf;border-radius:8px;padding:0 12px;font-size:14px}
-.fm-beta-auth-card .fm-beta-field input::placeholder{color:#8d9b93}
+.fm-beta-auth-card .fm-beta-field input::placeholder{color:#52645a;opacity:1}
 .fm-beta-auth-card form>.fm-beta-button--primary{width:100%;min-height:52px;border-radius:10px;margin-top:8px}
 .fm-beta-remember-email{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0;font-size:13px;color:#68796f;cursor:pointer;min-height:28px}
 .fm-beta-remember-email input{width:16px;height:16px;margin:0;accent-color:#173c2c}
@@ -549,3 +549,12 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-saved li{border-top:1px solid var(--fm-line);padding-inline:4px}
 .fm-beta-connection{display:flex;align-items:center;justify-content:space-between;gap:0 8px;flex-wrap:wrap;margin:0 0 8px;padding:0 10px;border-radius:12px;background:#fff1ee;color:#7b352a;font-size:13px}
 .fm-beta-connection .fm-beta-link{min-height:44px;color:inherit}
+
+.fm-beta-auth-card .fm-beta-login-brand{margin:8px 0 12px}
+.fm-beta-auth-card .fm-beta-login-brand img{width:64px;height:64px}
+.fm-beta-auth-card .fm-beta-login-brand strong{font-size:24px}
+.fm-beta-auth-card [data-beta-social-auth]{margin:8px 0 12px;gap:8px}
+.fm-beta-auth-card .fm-beta-social-divider{margin:0}
+.fm-beta-browse-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--fm-line)}
+.fm-beta-catalog .fm-beta-browse-controls .fm-beta-demo-pager,.fm-beta-browse-controls .fm-beta-discovery{margin:0;padding:0;border:0}
+.fm-beta-browse-controls .fm-beta-demo-pager{flex:1;flex-wrap:wrap}

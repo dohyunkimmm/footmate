@@ -306,3 +306,42 @@ test('compact visual keeps one connection message and readable cards with 200 pe
  await page.getByRole('button',{name:'모집 포지션',exact:true}).click();
  await expect(page.locator('.fm-beta-detail .fm-beta-slots')).toBeVisible();
 });
+
+for(const path of ['/demo','/beta']){
+ test('current typography loads and falls back on '+path,async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await setup(page);
+  await page.goto(path);
+  const card=page.locator('.fm-beta-catalog .fm-beta-match');
+  await expect(card).toBeVisible();
+  await expect(card.locator('h3')).toHaveCSS('font-family',/Pretendard Variable/);
+  if(path==='/demo'){
+   await card.getByRole('button',{name:'경기 저장',exact:true}).click();
+   await expect(page.getByRole('region',{name:'저장한 경기'}).locator('summary')).toHaveCSS('font-family',/Pretendard Variable/);
+  }
+  await card.locator('h3').evaluate(node=>{node.textContent='수원 영통 풋살 전용구장 초보자 환영 친선 경기 FootMate Weekend';});
+  expect(await card.locator('h3').evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
+  await card.getByRole('button',{name:'상세 보기',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail-facts')).toHaveCSS('font-family',/Pretendard Variable/);
+  await page.locator('.fm-beta-detail').getByRole('button',{name:'참가하기',exact:true}).click();
+  const icon=page.locator('.fm-beta-back .fm-icon');
+  await expect(icon).toHaveCSS('font-family',/Tossface/);
+  await expect(page.getByLabel('이메일')).toHaveCSS('font-family',/Pretendard Variable/);
+  const fonts=()=>page.evaluate(async()=>{
+   await document.fonts.ready;
+   return Promise.all([['Pretendard Variable','경기 참가'],['Tossface','⬅️']].map(async ([family,sample])=>{
+    try{return (await document.fonts.load('400 16px "'+family+'"',sample)).some(face=>face.status==='loaded')}
+    catch{return false}
+   }));
+  });
+  expect(await fonts()).toEqual([true,true]);
+  await page.route(/^https:\/\/cdn\.jsdelivr\.net\/gh\/(orioncactus\/pretendard|toss\/tossface)@/,route=>route.abort());
+  await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
+  await page.reload();
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  expect(await fonts()).toEqual([false,false]);
+  await expect(card).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ });
+}
