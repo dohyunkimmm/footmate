@@ -1,3 +1,10 @@
+## 2026-11-06 · 브랜치 보존 결정과 실제 Supabase 읽기 전용 감사
+
+- [이슈 #525](https://github.com/dohyunkimmm/footmate/issues/525)는 **삭제하지 않고 보존**하는 기술적 결론으로 `closed/not_planned` 종결했습니다. 원격 패치 동등 후보 8/8 tip SHA 불변, 6개 병합 후보 가상 삭제 시 고유 대형 blob 0개(압축 commit 엔트리 합계 435바이트), 미병합 종료 PR의 고유 이력 보존 필요를 근거로 합니다. **Git ref 삭제·강제 이력 변경·실제 용량 회수는 0건**입니다. 향후 삭제를 새로 추진하면 오프-GitHub 영구 백업·외부 참조 확인·소유자 승인을 다시 충족해야 합니다.
+- `footmate-beta` 운영 Supabase Advisor 및 PostgreSQL 카탈로그를 **읽기 전용 재조회**했습니다. `public` 테이블 16개 모두 RLS 활성, SECURITY DEFINER 함수의 익명 실행 허용 0개, authenticated 실행 허용 21개는 전부 명시적 search_path 설정, 운영자 전용 RPC 10개는 AAL2 가드 호출을 정적으로 확인했습니다. Security Advisor WARN: 인증 사용자 SECURITY DEFINER 21건, `pg_net` in public 1건, 유출 비밀번호 보호 1건(무료 요금제 예외); INFO: RLS 정책 없음 2건. Performance INFO: 미사용 인덱스 8건. 이는 **취약점 없음/보안 해결을 보증하지 않습니다.**
+- 실제 서명된 JWT·TOTP/실계정 검증은 [#611](https://github.com/dohyunkimmm/footmate/issues/611)과 [수동 QA 가이드](REAL-SIGNED-MFA-QA.md)의 승인된 일반 사용자·운영자 테스트 계정 및 인증 앱 코드가 없어 완료로 선언하지 않습니다. 물리 iPhone/Android 및 네이티브 200% QA도 [#829](https://github.com/dohyunkimmm/footmate/issues/829)에 검증 증거가 없습니다. DB 권한·Cron·인덱스·요금제·운영 데이터를 변경하지 않았습니다.
+- 수정 전 `main` [`134fabf`](https://github.com/dohyunkimmm/footmate/commit/134fabf566c8e2a827330af9f828b8dbd5514711)은 파일 323개·디렉터리 41개. 이 문서의 이전 2026-10~11월 스냅샷은 해당 시점 관측으로 보존합니다.
+
 ## 2026-11-06 · 최신 `main` 목록과 보존 범위
 
 - GitHub `main` [`070dabe`](https://github.com/dohyunkimmm/footmate/commit/070dabe8a5a48ee7c5f3a23d9ca546056c22ff4e) 재귀 트리 기준 **323개 파일·41개 디렉터리**(루트 14개 파일·9개 폴더). [11월 5일 파일 점검](REPO-CLEANUP-2026-11-05.md)의 **322개**는 이전 기준 SHA의 역사적 수치입니다.
