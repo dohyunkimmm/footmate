@@ -488,3 +488,12 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 .case-preview-symbol.fm-icon{width:24px;height:24px;font-size:18px;border:0;background:transparent}
 .case-preview-indicator{width:24px;height:24px;border:0;background:transparent}
 .case-ppt-frame{height:clamp(230px,64vw,650px)}
+
+.case-evidence-part + .case-evidence-part{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.case-evidence-part h4{margin:0 0 10px;color:var(--green);font-size:1rem}
+.case-compare dl{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.case-compare dl>div{display:grid;grid-template-rows:1fr auto;padding:10px 8px;background:#fff;border:1px solid var(--line)}
+.case-compare dl>div:has([data-compare="preferred"]){background:#e9f4eb;border-color:#a6c7ad}
+.case-compare dt,.case-compare dd{overflow-wrap:anywhere}
+.case-compare dd{text-align:right}
+@media(max-width:480px){.case-compare dl>div{padding:8px 5px}.case-compare dt,.case-compare dd{font-size:12px}}
