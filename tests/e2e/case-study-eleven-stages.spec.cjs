@@ -125,9 +125,11 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
   await scenarios.locator('summary').click();
   await expect(scenarios.locator('table')).toBeVisible();
   const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (가상 데이터)',{exact:true})});
-  await expect(report.locator('table')).toBeHidden();
+  const reportTables = report.locator('table');
+  await expect(reportTables).toHaveCount(2);
+  for (const table of await reportTables.all()) await expect(table).toBeHidden();
   await report.locator('summary').click();
-  await expect(report.locator('table')).toBeVisible();
+  for (const table of await reportTables.all()) await expect(table).toBeVisible();
   await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
  const plan=page.locator('#section-08 details').filter({has:page.getByText('중장기 사업계획 · 예산과 확대 기준',{exact:true})});
  await plan.locator('summary').click();
