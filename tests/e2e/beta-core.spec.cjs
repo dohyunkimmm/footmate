@@ -709,6 +709,27 @@ test('random discovery keeps the drawn demo match through participation login',a
   expect(backend.isJoined()).toBe(false);
 });
 
+test('condition editor explains conflicting times and accepts the corrected range',async({page})=>{
+ await mockBackend(page);
+ await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+ await page.goto('/demo');
+ await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+ const afterTime=page.getByRole('combobox',{name:'선호 시간',exact:true});
+ const submit=page.getByRole('button',{name:'추천 경기 보기',exact:true});
+ await afterTime.selectOption('20:00');
+ await page.getByRole('radio',{name:'낮 12시 전 시작',exact:true}).check();
+ await submit.click();
+ const error=page.getByRole('alert').filter({hasText:'시작 시간 상한은 선호 시간보다 늦게 골라주세요.'});
+ await expect(error).toBeVisible();
+ await expect(afterTime).toBeFocused();
+ await expect(afterTime).toHaveValue('20:00');
+ await page.getByRole('radio',{name:'밤 10시 전 시작',exact:true}).check();
+ await expect(error).toHaveCount(0);
+ await submit.click();
+ await expect(page.getByRole('region',{name:'추천 조건',exact:true})).toBeVisible();
+ await expect(page.locator('#quick-filter-afterTime')).toHaveText('20:00 이후 · 22:00 전');
+});
+
 test('enhanced discovery applies Seoul dates and exclusive start-time bounds',async({page})=>{
  await mockBackend(page);
  await page.clock.setFixedTime(new Date('2026-10-26T15:00:00Z'));
