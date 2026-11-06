@@ -406,7 +406,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261106-clean');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261106-zoom');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
   // Verify rendered palette contrast, not just hard-coded expected colors.
@@ -436,7 +436,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toBeFocused();
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-clean');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-zoom');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
@@ -495,7 +495,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
-  const enlarge=slides.getByRole('button',{name:'슬라이드 크게 보기'});
+  const enlarge=slides.getByRole('button',{name:'슬라이드 이미지 확대'});
   await enlarge.click();
   await expect.poll(()=>slides.locator('html').evaluate(el=>Boolean(el.ownerDocument.fullscreenElement)),{timeout:10000}).toBe(true);
   await slides.getByRole('button',{name:'슬라이드 원래 크기'}).click();
@@ -672,7 +672,7 @@ test('PPT preview closes explicitly and the contents control section navigation'
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-clean');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-zoom');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
