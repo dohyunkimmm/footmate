@@ -122,3 +122,48 @@ test('demo workflow keeps comparison focus when a pending AI response arrives',a
  await expect(page.getByRole('heading',{name:'경기 비교'})).toBeFocused();
  await expect(page.getByRole('table')).toContainText('워크플로 경기 2');
 });
+
+
+test('compact demo opens, saves an occurrence, and restores it the next day',async({page})=>{
+ await page.setViewportSize({width:320,height:568});
+ await page.clock.setFixedTime(new Date('2026-11-06T03:00:00Z'));
+ await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
+ await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
+ await page.goto('/demo');
+ const start=page.getByRole('button',{name:'내 조건으로 추천받기'});
+ await expect(start).toBeInViewport();
+ expect(await start.evaluate(el=>el.getBoundingClientRect().bottom<=document.querySelector('.fm-beta-opening-preview').getBoundingClientRect().top)).toBe(true);
+ await start.click();
+ await expect(page.getByRole('heading',{name:'어디서 뛸까요?'})).toBeFocused();
+ await page.getByRole('radio',{name:'수원 · 영통',exact:true}).click();
+ await page.getByRole('button',{name:'다음',exact:true}).click();
+ await page.locator('[data-growth-form="recommend"] input[name="position"][value="MF"]').check();
+ await page.getByRole('button',{name:'추천 경기 보기'}).click();
+ const card=page.locator('.fm-beta-catalog .fm-beta-match');
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('내 포지션 · MF');
+ const title=await card.locator('h3').innerText();
+ const save=card.getByRole('button',{name:'경기 저장'});
+ await save.click();
+ await expect(save).toHaveAttribute('aria-pressed','true');
+ await expect(save).toBeFocused();
+ const saved=page.getByRole('region',{name:'저장한 경기'});
+ const resume=saved.getByRole('button',{name:title+' 이어보기'});
+ await expect(resume).toBeVisible();
+ const originalDate=await saved.locator('small').innerText();
+ await page.clock.setFixedTime(new Date('2026-11-07T03:00:00Z'));
+ await page.reload();
+ await expect(resume).toBeVisible();
+ await expect(saved.locator('small')).toHaveText(originalDate);
+ await resume.click();
+ await expect(page.getByRole('heading',{name:'경기 상세'})).toBeFocused();
+ await expect(page.locator('.fm-beta-detail h3')).toHaveText(title);
+ await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
+ await expect(resume).toBeFocused();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.clock.setFixedTime(new Date('2026-11-12T03:00:00Z'));
+ await page.reload();
+ await expect(saved.locator('small')).toContainText('종료');
+ await expect(resume).toHaveCount(0);
+ await saved.getByRole('button',{name:title+' 저장 해제'}).click();
+ await expect(saved).toHaveCount(0);
+});

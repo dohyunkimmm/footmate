@@ -22,23 +22,40 @@ export function isFutsalMatch(match){
 }
 function read(){try{const rows=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(rows)?rows.filter(p=>p&&typeof p.user_id==='string'&&String(p.match_id).startsWith('demo-')):[]}catch{return[]}}
 export function demoParticipations(userId){return userId?read().filter(p=>p.user_id===userId):[]}
-export function demoCatalog(userId='',now=Date.now()){
- const seoul=new Date(now+9*3600000),mine=demoParticipations(userId);
- const rows=templates.map(([title,region,venue_name,level,format_label,hour],i)=>{
-  const starts=new Date(Date.UTC(seoul.getUTCFullYear(),seoul.getUTCMonth(),seoul.getUTCDate()+1+i%4,hour-9));
-  const five=format_label==='5 vs 5',id=`demo-${i+1}-${starts.toISOString().slice(0,10)}`;
+function demoMatch(template,index,starts,mine){
+  const [title,region,venue_name,level,format_label]=template;
+  const five=format_label==='5 vs 5',id=`demo-${index+1}-${starts.toISOString().slice(0,10)}`;
   const capacities=five?[3,3,3,1]:[4,3,4,1],left=five?[1,1,2,1]:[2,1,2,1];
   const own=mine.find(p=>p.match_id===id&&p.status==='confirmed');
   const match_slots=['MF','FW','DF','GK'].map((position,j)=>({position,capacity_total:capacities[j],joined_count:capacities[j]-left[j]+(own?.position===position?1:0),remaining_spots:left[j]-(own?.position===position?1:0)}));
   const capacity_total=capacities.reduce((a,b)=>a+b,0),joined_count=match_slots.reduce((a,s)=>a+s.joined_count,0);
   return{id,title,region,area_label:region.split(' · ')[1],venue_name,address:'',level,format_label,starts_at:starts.toISOString(),price_krw:0,capacity_total,joined_count,remaining_spots:capacity_total-joined_count,positions:['MF','FW','DF','GK'],match_slots,surface:'인조잔디',duration_minutes:80,status:'open',is_demo:true};
+}
+
+export function demoCatalog(userId='',now=Date.now(),retainedIds=[]){
+ const seoul=new Date(now+9*3600000),mine=demoParticipations(userId);
+ const rows=templates.map((template,index)=>{
+  const starts=new Date(Date.UTC(seoul.getUTCFullYear(),seoul.getUTCMonth(),seoul.getUTCDate()+1+index%4,template[5]-9));
+  return demoMatch(template,index,starts,mine);
  });
+ for(const id of retainedIds){
+  if(rows.some(row=>row.id===id))continue;
+  const parts=/^demo-(\d+)-(\d{4}-\d{2}-\d{2})$/.exec(id);
+  if(!parts)continue;
+  const index=Number(parts[1])-1,template=templates[index];
+  if(!template)continue;
+  const starts=new Date(parts[2]+'T00:00:00Z');
+  starts.setUTCHours(template[5]-9);
+  if(!(starts>now&&starts<Date.parse(rows[index].starts_at)))continue;
+  const match=demoMatch(template,index,starts,mine);
+  if(match.id===id)rows.push(match);
+ }
  for(const p of mine)if(p.match_snapshot&&isFutsalMatch(p.match_snapshot)&&!rows.some(m=>m.id===p.match_id))rows.push(p.match_snapshot);
  return rows;
 }
 export function joinDemoMatch(userId,matchId,position){
  if(!userId)throw new Error('로그인 후 참가해주세요.');
- const match=demoCatalog(userId).find(m=>m.id===matchId),slot=match?.match_slots.find(s=>s.position===position);
+ const match=demoCatalog(userId,Date.now(),[matchId]).find(m=>m.id===matchId),slot=match?.match_slots.find(s=>s.position===position);
  if(!match||new Date(match.starts_at)<=new Date()||!slot||slot.remaining_spots<=0)throw new Error('참가할 수 있는 자리가 없어요.');
  const rows=read(),existing=rows.find(p=>p.user_id===userId&&p.match_id===matchId);
  if(existing?.status==='confirmed')return;
