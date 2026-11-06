@@ -1,3 +1,10 @@
+## 2026-11-06 · 최신 `main` 목록과 보존 범위
+
+- GitHub `main` [`070dabe`](https://github.com/dohyunkimmm/footmate/commit/070dabe8a5a48ee7c5f3a23d9ca546056c22ff4e) 재귀 트리 기준 **323개 파일·41개 디렉터리**(루트 14개 파일·9개 폴더). [11월 5일 파일 점검](REPO-CLEANUP-2026-11-05.md)의 **322개**는 이전 기준 SHA의 역사적 수치입니다.
+- 최신 [FootMate QA #42216666549](https://github.com/dohyunkimmm/footmate/actions/runs/42216666549) 및 [PPT preview #42216666308](https://github.com/dohyunkimmm/footmate/actions/runs/42216666308)은 해당 `main` SHA에서 성공. 이후 문서 PR의 CI/배포는 별도 확인해야 합니다.
+- 열린 작업은 [#829 실기기 수동 QA](https://github.com/dohyunkimmm/footmate/issues/829), [#611 무료 환경 보안 실계정 검증](https://github.com/dohyunkimmm/footmate/issues/611), [#525 백업·브랜치 정리 승인](https://github.com/dohyunkimmm/footmate/issues/525) **3건**. 의존성 PR [#799](https://github.com/dohyunkimmm/footmate/pull/799)·[#800](https://github.com/dohyunkimmm/footmate/pull/800)은 **미병합 종료**로 정정합니다. 기존 `package.json`의 버전 값은 별도로 확인합니다.
+- 현재 Markdown 상대 경로 점검에서 누락은 발견되지 않았습니다. `scripts/check-local-doc-links.cjs`의 기존 Markdown·HTML 진입점 자동 검사를 유지하고, 링크 경로 검증을 실기기·배포 검증이나 삭제 근거로 혼동하지 않습니다.
+
 ## 2026-10-28 · 전수 Git 브랜치 패치 분석 완료
 
 - [PR #720](https://github.com/dohyunkimmm/footmate/pull/720)으로 [전수 Git 패치 감사](https://github.com/dohyunkimmm/footmate/actions/runs/40604043505) 실제 실행 SUCCESS. `origin/main`을 제외한 원격 브랜치 **120개**에서 `ahead=0` 0개, patch-equivalent review 8개(과거 병합 PR 6, 미병합 종료 PR 2), unique-patch branch 112개, 현재 main 동일 트리 0개를 확인. [개별 SHA·PR·판단 기록](BRANCH-PATCH-AUDIT-2026-10-28.md) 참조. 8개 모두 별도 원본 SHA/백업·외부 참조 보존 필요, **자동 삭제 없음**. GitHub 클론 pack size 약 139864 KiB는 회수 가능한 저장 공간을 의미하지 않습니다.
