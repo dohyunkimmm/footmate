@@ -187,7 +187,7 @@ test('released demo opens the connected Beta with useful actions only',async({pa
     await expect(page.locator('#footmate-next')).toHaveCount(0);
     await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
     await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeHidden();
-    await expect(page.getByText('전체 경기 둘러보기',{exact:true})).toBeVisible();
+    await expect(page.locator('.fm-beta-filter-count')).toHaveText('추천 필터');
     await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
     const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
     expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
@@ -218,7 +218,7 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await expect.poll(()=>requests.length).toBe(1);
   expect(requests[0].task).toBe('recommend');expect(requests[0].candidates[0].id).toBe(matchId);
-  await expect(page.locator('.fm-beta-own-slot')).toHaveText('내 포지션 · FW 1자리');
+  await expect(page.locator('.fm-beta-own-slot')).toHaveText('FW 1자리');
   await expect(page.getByLabel('이메일')).toBeHidden();
   expect(await serious(page)).toEqual([]);
   await page.screenshot({path:testInfo.outputPath('recommendations-390.png'),fullPage:true});
@@ -256,7 +256,7 @@ test('futsal conditions stay explicit and AI failure keeps real matches usable',
   await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await page.getByRole('combobox',{name:'활동 지역',exact:true}).selectOption({label:'지역 전체'});
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
-  await expect(page.getByText('AI 연결이 지연되어 선택한 조건으로 찾았어요.')).toBeVisible();
+  await expect(page.getByText('기본 추천',{exact:true})).toBeVisible();
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   for(const width of [320,375,430,1920]){
     await page.setViewportSize({width,height:900});
@@ -316,7 +316,10 @@ test('choice-first recommendations keep demo home populated and participation is
   await pager.getByRole('button',{name:'이전',exact:true}).click();
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',firstMatch);
   expect(await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(1);
-  await page.getByText('모집 포지션',{exact:true}).click();
+  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+  await page.getByRole('button',{name:'모집 포지션',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail .fm-beta-slots')).toBeVisible();
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
   await page.locator('.fm-beta-match').getByRole('button',{name:'참가하기',exact:true}).scrollIntoViewIfNeeded();
   await expect(page.locator('.fm-beta-match').getByRole('button',{name:'참가하기',exact:true})).toBeInViewport();
   await pager.getByRole('button',{name:'다음',exact:true}).scrollIntoViewIfNeeded();
@@ -524,12 +527,13 @@ test('recommendation labels distinguish unrestricted browse and selected conditi
  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:[matchId]}));
  await page.goto('/beta',{waitUntil:'domcontentloaded'});
  const summary=page.getByRole('region',{name:'추천 조건',exact:true});
- await expect(summary).toContainText('전체 경기 둘러보기');
+ await expect(summary.locator('.fm-beta-filter-count')).toHaveText('추천 필터');
  await expect(summary.locator('.fm-beta-ai-label')).toHaveCount(0);
  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
  await page.getByRole('combobox',{name:'실력',exact:true}).selectOption('초중급');
  await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
- await expect(summary).toContainText('나에게 맞는 경기');
+ await expect(summary.locator('.fm-beta-filter-count')).toHaveText('조건 1개 선택됨');
+ await expect(summary.locator('#quick-filter-level')).toHaveText('초중급');
  await expect(summary.locator('.fm-beta-ai-label')).toHaveText('AI 추천');
 });
 
@@ -919,8 +923,8 @@ test('discovery qa visual design keeps preview, filters and selected reactions c
  await expect(page.locator('details[data-filter-active="true"]')).toHaveCount(1);
  await expect(page.locator('#quick-filter-level')).toHaveCSS('background-color','rgb(232, 243, 223)');
  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-tone',/morning|day|evening/);
- await expect(page.locator('.fm-beta-match-reason')).not.toBeEmpty();
  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await expect(page.locator('.fm-beta-match-reason')).not.toBeEmpty();
  await page.locator('.fm-beta-reaction-panel summary').click();
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','true');
@@ -991,7 +995,9 @@ test('demo recommendation preview survives an unavailable backend config',async(
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
-  await expect(page.getByText('로그인 연결을 사용할 수 없어요.',{exact:false})).toBeVisible();
+  await expect(page.getByText('연결 실패',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'연결 다시 시도'})).toBeFocused();
+  await expect(page.locator('[data-readiness-notice]')).toHaveCount(0);
 });
 
 test('selected demo match stays available after sign-in even when live matches exist',async({page})=>{

@@ -144,7 +144,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
  const card=page.locator('.fm-beta-catalog .fm-beta-match');
- await expect(card.locator('.fm-beta-own-slot')).toContainText('내 포지션 · MF');
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('MF');
  const title=await card.locator('h3').innerText();
  const save=card.getByRole('button',{name:'경기 저장'});
  await save.click();
@@ -162,10 +162,17 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  const saved=page.getByRole('region',{name:'저장한 경기'});
  const resume=saved.getByRole('button',{name:title+' 이어보기'});
  await expect(resume).toBeVisible();
+ const savedMenu=saved.locator('#saved-match-menu');
+ await expect(savedMenu).toHaveText('저장 경기 1');
+ await resume.click();
+ await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
+ await expect(resume).toBeFocused();
+ await savedMenu.click();
  const originalDate=await saved.locator('small').innerText();
  await page.clock.setFixedTime(new Date('2026-11-07T03:00:00Z'));
  await page.reload();
  await expect(resume).toBeVisible();
+ await savedMenu.click();
  await expect(saved.locator('small')).toHaveText(originalDate);
  await resume.click();
  await expect(page.getByRole('heading',{name:'경기 상세'})).toBeFocused();
@@ -175,6 +182,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.clock.setFixedTime(new Date('2026-11-12T03:00:00Z'));
  await page.reload();
+ await savedMenu.click();
  await expect(saved.locator('small')).toContainText('종료');
  await expect(resume).toHaveCount(0);
  await saved.getByRole('button',{name:title+' 저장 해제'}).click();
@@ -257,4 +265,44 @@ test('checked-in history opens the earliest eligible match at the same venue',as
  await page.getByRole('button',{name:'참석 이력으로 돌아가기'}).click();
  await expect(same).toBeFocused();
  await expect(page.getByRole('button',{name:'참석 이력',exact:true})).toHaveAttribute('aria-current','page');
+});
+
+test('compact visual keeps one connection message and readable cards with 200 percent text',async({page})=>{
+ await page.setViewportSize({width:320,height:568});
+ await page.addInitScript(()=>{
+  sessionStorage.setItem('footmate:beta:entered:v1','1');
+  localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'수원 · 영통',level:'중급',position:'MF',afterTime:''}));
+ });
+ await page.route('**/api/beta-config',route=>route.fulfill({status:503,json:{connected:false}}));
+ await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
+ await page.goto('/demo');
+ await expect(page.locator('.fm-beta-connection')).toHaveCount(1);
+ await expect(page.getByText('연결 실패',{exact:true})).toBeVisible();
+ await expect(page.locator('[data-readiness-notice]')).toHaveCount(0);
+ const card=page.locator('.fm-beta-catalog .fm-beta-match');
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('MF');
+ await expect(card.locator('.fm-beta-demo-slots')).toHaveCount(0);
+ await expect(card).not.toContainText('인조잔디');
+ await page.locator('.fm-beta-catalog :is(button,h3,span,summary,.fm-beta-match-place)').evaluateAll(nodes=>{
+  const sizes=nodes.filter(node=>node.getClientRects().length).map(node=>[node,parseFloat(getComputedStyle(node).fontSize)]);
+  for(const [node,size] of sizes)node.style.fontSize=size*2+'px';
+ });
+ const join=card.getByRole('button',{name:'참가하기',exact:true});
+ await join.scrollIntoViewIfNeeded();
+ await expect(join).toBeInViewport();
+ expect(await card.locator('.fm-beta-match-actions button').evaluateAll(buttons=>buttons.every(button=>{
+  const range=document.createRange();
+  range.selectNodeContents(button);
+  return range.getClientRects().length===1;
+ }))).toBe(true);
+ expect(await page.evaluate(()=>{
+  const main=document.querySelector('[data-beta-main]');
+  return document.documentElement.scrollWidth<=innerWidth&&main.scrollWidth<=main.clientWidth+1;
+ })).toBe(true);
+ await page.screenshot({path:test.info().outputPath('court-card-text-200-320.png')});
+ await card.getByRole('button',{name:'상세 보기',exact:true}).click();
+ await expect(page.locator('.fm-beta-match-cover')).toBeVisible();
+ await expect(page.locator('.fm-beta-detail-facts')).toContainText('인조잔디');
+ await page.getByRole('button',{name:'모집 포지션',exact:true}).click();
+ await expect(page.locator('.fm-beta-detail .fm-beta-slots')).toBeVisible();
 });
