@@ -882,6 +882,9 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
   await expect(page.locator('#page')).toHaveText('10 / 10');
   await expect(page.locator('#slideTitle')).toHaveText('최종 판단 · 단계적 투자');
   await expect(page.locator('#slideSummary')).toContainText('핵심 지표·단계적 투자 기준');
+  await page.locator('.slide-transcript summary').click();
+  await expect(page.locator('#slideTranscript')).toContainText('5개년 경영계획');
+  await expect(page.locator('#slideTranscript')).toContainText('2,998');
 });
 
 
