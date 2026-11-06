@@ -1,3 +1,11 @@
+## 2026-11-06 · `main` 파일 목록·이슈·의존성 상태 재동기화
+
+- **재확인 기준:** `main` HEAD [`070dabe`](https://github.com/dohyunkimmm/footmate/commit/070dabe8a5a48ee7c5f3a23d9ca546056c22ff4e)에서 **파일 323개·디렉터리 41개**, 루트 파일 14개·최상위 폴더 9개. 11월 5일 문서의 322개는 당시 스냅샷입니다.
+- **링크·보존:** README·문서 및 PR 템플릿 등 Markdown **33개**의 상대 링크 **181개**를 현재 GitHub 트리와 대조해 누락 경로 **0개**를 확인했습니다. 이는 정적 Markdown 경로 검증이며 동적 URL·실서비스·파일 내부 기능의 정상 동작을 보장하지 않습니다. 동일 blob의 SQL 마이그레이션 2쌍은 적용 이력 보존을 위해 유지합니다.
+- **의존성 상태 정정:** [#799 Wrangler](https://github.com/dohyunkimmm/footmate/pull/799)와 [#800 OIDC](https://github.com/dohyunkimmm/footmate/pull/800)는 **2026-11-05 미병합 종료**되어 더 이상 열린 PR이 아닙니다. 현재 `package.json`은 `wrangler ^4.156.0`, `@vercel/oidc 4.0.5`를 명시하지만, 두 PR이 병합된 것으로 해석하지 않습니다.
+- **미완료 유지:** [#829 실기기 접근성](https://github.com/dohyunkimmm/footmate/issues/829), [#611 실계정 보안 검증](https://github.com/dohyunkimmm/footmate/issues/611), [#525 외부 백업·브랜치 정리 승인](https://github.com/dohyunkimmm/footmate/issues/525)은 모두 열려 있습니다. 브랜치/이력 재작성, 운영 DB·권한 변경, 증빙 자산·SQL 삭제는 하지 않습니다.
+- **기존 기준선 QA:** [FootMate QA #42216666549](https://github.com/dohyunkimmm/footmate/actions/runs/42216666549) 및 [PPT 미리보기 #42216666308](https://github.com/dohyunkimmm/footmate/actions/runs/42216666308)은 위 HEAD 기준 성공. 이 문서 변경분의 새 CI와 실제 단말 검증은 별도로 판단합니다.
+
 ## 2026-11-05 · `main` 목록·정적 링크·안전 클렌징 점검
 
 - [최신 `main` 폴더와 보존 기준](REPO-CLEANUP-2026-11-05.md): HEAD `577dcef` 기준 322개 파일·41개 디렉터리(루트 14개 파일·9개 폴더). `qa/`·`scripts/`·`worker/` 등 최상위 목록과 진입 URL의 실제 파일 연결을 확인했습니다.
@@ -57,6 +65,7 @@
 | `api/`, `worker/` | AI/API 구현과 Cloudflare Workers 진입점 |
 | `supabase/` | Edge Function·적용 이력이 있는 SQL 마이그레이션 (임의 삭제·이름 변경 금지) |
 | `tests/`, `scripts/`, `.github/` | 계약·브라우저 QA, 빌드/검증 스크립트, CI 워크플로 |
+| `qa/` | 발표자료·차트·시각 자산 보정 스크립트 (원본 보존) |
 | `docs/` | 현행 안내·운영 기록·과거 검증 근거 (아래 목록으로 상태 구분) |
 
 실행 코드와 기존 링크·스냅샷·SQL 이력을 유지하기 위해 이번 정리는 폴더 이동이 아니라 문서 색인과 참조 정합성을 기준으로 합니다. 공개 Case Study에서 참조하는 원본 `docs/` 문서는 Cloudflare 정적 빌드에 포함되지 않으므로 GitHub의 `main/docs/` 원본 링크로 연결합니다.
