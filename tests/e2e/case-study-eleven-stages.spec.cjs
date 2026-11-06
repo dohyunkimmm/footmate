@@ -125,10 +125,21 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
   await scenarios.locator('summary').click();
   await expect(scenarios.locator('table')).toBeVisible();
   const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (가상 데이터)',{exact:true})});
-  await expect(report.locator('table')).toBeHidden();
+  const reportTables = report.locator('table');
+  await expect(reportTables).toHaveCount(2);
+  for (const table of await reportTables.all()) await expect(table).toBeHidden();
   await report.locator('summary').click();
-  await expect(report.locator('table')).toBeVisible();
+  for (const table of await reportTables.all()) await expect(table).toBeVisible();
   await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
+ const plan=page.locator('#section-08 details').filter({has:page.getByText('중장기 사업계획 · 예산과 확대 기준',{exact:true})});
+ await plan.locator('summary').click();
+ await expect(plan.getByRole('table')).toHaveCount(2);
+ await expect(plan).toContainText('기본 현금 예산 1,070만 원');
+ await expect(plan).toContainText('3년차 · 제휴 운영 확대');
+ const monthly=page.locator('#section-08 details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (가상 데이터)',{exact:true})});
+ await monthly.locator('summary').click();
+ await expect(monthly).toContainText('가상 실적 1,019건');
+ await expect(monthly).toContainText('−217,040원');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
@@ -161,7 +172,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 후속 구축 대상');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
-  await expect(page.locator('.track table')).toHaveCount(27);
+  await expect(page.locator('.track table')).toHaveCount(30);
   for(const id of ['#section-01','#section-03','#section-06'])
    expect(await page.locator(id).evaluate(n=>n.scrollWidth<=n.clientWidth+1)).toBe(true);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
@@ -176,7 +187,7 @@ test('reader summary, detailed numbers and optional tables remain consistent',as
  await expect(page.locator('#section-05 .reader-summary')).toContainText('수수료 12%, 결제비 0%');
  await expect(page.locator('#section-05 .reader-summary')).not.toContainText('현금 손익분기');
  await expect(page.locator('#section-08 .reader-summary')).toContainText('831만 원');
- await expect(page.locator('.track table')).toHaveCount(27);
+ await expect(page.locator('.track table')).toHaveCount(30);
  await expect(page.locator('#section-04 .model-funnel')).toContainText('약 1,559석');
  for(const [section,label] of [['#section-05','기준 거래 계산·수수료 협상 비교표 자세히 보기'],['#section-06','월 IT·운영 예산 세부 내역'],['#section-08','월간 지표 관리·정정 책임표']]){
   const summary=page.locator(section+' details summary').filter({hasText:label});
