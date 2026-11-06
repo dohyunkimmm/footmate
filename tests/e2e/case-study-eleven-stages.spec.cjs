@@ -890,6 +890,8 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
   await page.locator('.slide-transcript summary').click();
   await expect(page.locator('#slideTranscript')).toContainText('5개년 경영계획');
   await expect(page.locator('#slideTranscript')).toContainText('2,998');
+  await expect(page.locator('#slideTranscript')).toContainText('협상안 적용 · −815 / 622 / 1,415 / 2,207 / 2,998');
+  await expect(page.locator('#slideTranscript')).toContainText('기존 조건 유지 · −815 / −459 / −388 / −318 / −247');
 });
 
 
