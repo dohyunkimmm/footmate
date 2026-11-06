@@ -655,7 +655,7 @@ test('unsupported element fullscreen offers an accessible standalone slide viewe
  }
 });
 
-test('PPT preview closes explicitly and previous-section navigation stays safe',async({page})=>{
+test('PPT preview closes explicitly and the contents control section navigation',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});
  for(const width of [320,390,800,1440]){
   await page.setViewportSize({width,height:900});
@@ -708,11 +708,10 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
      const errors=[];cross.on('pageerror',error=>errors.push(error.message));
      await cross.goto(site);
      await expect(cross.locator('.slide')).toHaveCount(9);
-     await expect(cross.locator('.mobile-reader-back')).toBeVisible();
-     await expect(cross.locator('.mobile-reader-back')).toBeDisabled();
+     await expect(cross.locator('.mobile-reader-back')).toHaveCount(0);
      await cross.locator('.toc-item').nth(2).click();
      await expect(cross).toHaveURL(/#section-03$/);
-     await cross.locator('.mobile-reader-back').click();
+     await cross.locator('.toc-item').nth(1).click();
      await expect(cross).toHaveURL(/#section-02$/);
      const model=cross.locator('#case-profit-model');
      await expect(model.locator('#case-profit-economic')).toHaveText('+5,640원');
