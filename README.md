@@ -67,13 +67,13 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-**`main` 구조 점검(2026-11-05):** 최상위 폴더 9개와 루트 파일 14개. 실제 파일 역할과 보존 사유는 [최신 저장소 점검](docs/REPO-CLEANUP-2026-11-05.md)에 정리했습니다.
+**`main` 구조 재점검(2026-11-06):** 기준 HEAD `070dabe`에서 파일 323개·디렉터리 41개(루트 파일 14개·최상위 폴더 9개)를 확인했습니다. [현행 문서 목록](docs/README.md)과 [2026-11-05 점검 당시 기록](docs/REPO-CLEANUP-2026-11-05.md)을 구분해 참조합니다.
 
 - **공개 진입 파일:** [Case Study](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.
 - **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [Case Study 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
 - **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
 - **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
-- **문서:** [기획·운영·QA 목록](docs/README.md) · [2026-11-05 클렌징 확인](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 점검 기록](docs/REPO-CLEANUP-2026-11-03.md). 과거 기록의 파일 수치는 작성 당시 기준입니다.
+- **문서:** [기획·운영·QA 현행 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
 
 ## 자세한 문서
 

@@ -81,9 +81,11 @@ for(const required of [
   '동시 요청',
   '기회비용',
   '데이터 정정',
-  // The PPT file type and its 10-slide count are separate elements in the current card.
-  'PPT 다운로드 ↓',
-  '10장</p>'
+  // The current card exposes separate download and on-demand preview controls.
+  // The slide count is validated by Case Study QA, not a retired card label.
+  'PPT 다운로드',
+  'PPT 미리보기',
+  'footmate_report.pptx'
 ])assert.ok(caseStudy.includes(required),`missing current strategy Case Study boundary copy: ${required}`);
 
 console.log('PASS connected platform contracts');
