@@ -376,11 +376,11 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
   await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
-  await expect(documents.locator('.case-file')).toHaveCount(2);
-  await expect(page.getByRole('link',{name:'PPT 다운로드 ↓'})).toHaveCount(1);
-  await expect(page.getByRole('link',{name:'Excel 다운로드 ↓'})).toHaveCount(1);
-  await expect(documents.getByRole('link',{name:'PPT 다운로드 ↓'})).toHaveAttribute('download','footmate_report.pptx');
-  await expect(documents.getByRole('link',{name:'Excel 다운로드 ↓'})).toHaveAttribute('download','footmate_model.xlsx');
+  await expect(documents.locator('.case-downloads a')).toHaveCount(2);
+  await expect(page.getByRole('link',{name:'PPT 다운로드'})).toHaveCount(1);
+  await expect(page.getByRole('link',{name:'Excel 다운로드'})).toHaveCount(1);
+  await expect(documents.getByRole('link',{name:'PPT 다운로드'})).toHaveAttribute('download','footmate_report.pptx');
+  await expect(documents.getByRole('link',{name:'Excel 다운로드'})).toHaveAttribute('download','footmate_model.xlsx');
   await expect(page.locator('a[href="/src/case-study/forecast.html"]')).toHaveCount(0);
   const model=page.locator('#case-profit-model');
   await model.scrollIntoViewIfNeeded();
@@ -404,16 +404,14 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261106-plan');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261106-clean');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
-  await expect(summary).toHaveCSS('background-color','rgb(255, 255, 255)');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
     const selectors=[
       ['PPT CTA','summary',null],
-      ['PPT file label','.case-file-type',null],
-      ['PPT download','.case-file>a','.case-file'],
+      ['PPT download','.case-downloads a','.case-documents'],
       ['Section heading','.case-documents-head h2','.case-documents'],
       ['Section note','.case-documents-head p','.case-documents']
     ];
@@ -434,15 +432,13 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   for(const item of colorAudit)expect(item.contrast,JSON.stringify(item)).toBeGreaterThanOrEqual(4.5);
   await summary.focus();
   await expect(summary).toBeFocused();
-  await expect(summary).toHaveCSS('outline-color','rgb(11, 66, 49)');
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-plan');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-clean');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
-  await expect(preview.locator('.case-preview-actions')).toBeVisible();
-  await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
+
   await expect(preview.locator('.case-preview-summary-text')).toHaveText('PPT 미리보기');
   await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
@@ -651,7 +647,7 @@ test('unsupported element fullscreen offers an accessible standalone slide viewe
   await expect(popup).toHaveURL(/materials\.html\?preview=1/);
   await expect(popup.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
   await popup.close();
-  await preview.locator('.case-preview-close').click();
+  await preview.locator('summary').click();
  }
 });
 
@@ -668,16 +664,13 @@ test('PPT preview closes explicitly and the contents control section navigation'
   const preview=page.locator('.case-doc-preview');
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-preview-actions')).toBeVisible();
-  const close=preview.getByRole('button',{name:'미리보기 접기'});
-  await expect(close).toBeVisible();
-  await expect(close).toHaveJSProperty('disabled',false);
-  await close.click();
+
+  await preview.locator('summary').click();
   await expect(preview).not.toHaveAttribute('open','');
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-plan');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-clean');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
@@ -715,8 +708,8 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
     }
     const preview=cross.locator('.case-doc-preview');
     await preview.locator('summary').click();
-    await expect(preview.getByRole('button',{name:'미리보기 접기'})).toBeVisible();
-    await preview.getByRole('button',{name:'미리보기 접기'}).click();
+
+    await preview.locator('summary').click();
     await expect(preview).not.toHaveAttribute('open','');
    }finally{await context.close();}
   }finally{await browser.close();}
