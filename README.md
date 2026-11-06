@@ -23,8 +23,6 @@
 - **케이스 스터디:** 시장·경쟁, 사업모델·손익, IT 투자·운영 통제와 단계별 투자 판단을 **9개 섹션**으로 정리했습니다. **05번에 12개월 예상 ROI**(보수·기준·확장·관리비 반영), **09번에 최종 판단**을 배치했습니다. 신규 사업 가정과 구축·배포 근거를 구분합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
-**채용 검토용 빠른 시연:** [90초 핵심 화면](https://footmate.fmate.workers.dev/demo?mode=guided)에서 추천·경기 비교·마감 포지션·MY 예시를 바로 확인할 수 있습니다. 이 경로는 예시 데이터만 사용하는 빠른 검토 모드입니다. 전체 체험은 [FootMate Demo](https://footmate.fmate.workers.dev/demo)에서, 실제 계정·경기 연동 범위는 README의 Closed Beta 설명에서 확인할 수 있습니다.
-
 **주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 10장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
 ## 주요 경험
