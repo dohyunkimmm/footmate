@@ -406,7 +406,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-doc-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261106-zoom');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('PPT 미리보기');
   // Verify rendered palette contrast, not just hard-coded expected colors.
@@ -436,7 +436,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toBeFocused();
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-zoom');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
   const slides=frame.contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
@@ -622,34 +622,22 @@ test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
 });
 
 
-test('unsupported element fullscreen offers an accessible standalone slide viewer',async({page})=>{
+test('restricted fullscreen enlarges the current slide inline on first click',async({page})=>{
  await page.addInitScript(()=>{
-  // Simulate the API limitation of iPhone Safari without claiming real-device coverage.
-  Object.defineProperty(document,'fullscreenEnabled',{configurable:true,value:false});
+  if(window.top.innerWidth===320)Object.defineProperty(document,'fullscreenEnabled',{configurable:true,value:false});
+  else Element.prototype.requestFullscreen=()=>Promise.reject(new Error('Denied'));
  });
  for(const width of [320,390]){
   await page.setViewportSize({width,height:844});
   await page.goto('/');
-  const preview=page.locator('#section-01 .case-doc-preview');
-  await preview.locator('summary').click();
-  const slides=preview.locator('.case-ppt-frame').contentFrame();
+  await page.locator('.case-doc-preview summary').click();
+  const slides=page.locator('.case-ppt-frame').contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
-  await expect(slides.locator('#expand')).toBeHidden();
-  const fallback=slides.getByRole('link',{name:'새 탭에서 슬라이드 크게 보기'});
-  await expect(fallback).toBeVisible();
-  await expect(fallback).toHaveAttribute('target','_blank');
-  await expect(fallback).toHaveAttribute('rel',/noopener/);
-  const box=await fallback.boundingBox();
-  expect(box.width).toBeGreaterThanOrEqual(44);
-  expect(box.height).toBeGreaterThanOrEqual(44);
-  const popupPromise=page.waitForEvent('popup');
-  await fallback.click();
-  const popup=await popupPromise;
-  await popup.waitForLoadState('domcontentloaded');
-  await expect(popup).toHaveURL(/materials\.html\?preview=1/);
-  await expect(popup.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
-  await popup.close();
-  await preview.locator('summary').click();
+  await slides.getByRole('button',{name:'슬라이드 이미지 확대'}).click();
+  await expect(slides.locator('.viewer')).toHaveClass(/inline-zoom/);
+  expect(await slides.locator('.viewer-stage').evaluate(e=>e.scrollWidth>e.clientWidth)).toBe(true);
+  await slides.getByRole('button',{name:'슬라이드 원래 크기'}).press('Escape');
+  await expect(slides.locator('.viewer')).not.toHaveClass(/inline-zoom/);
  }
 });
 
@@ -672,7 +660,7 @@ test('PPT preview closes explicitly and the contents control section navigation'
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261106-zoom');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });
