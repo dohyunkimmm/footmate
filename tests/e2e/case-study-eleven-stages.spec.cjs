@@ -134,6 +134,8 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
  const plan=page.locator('#section-08 details').filter({has:page.getByText('중장기 사업계획 · 예산과 확대 기준',{exact:true})});
  await plan.locator('summary').click();
  await expect(plan.getByRole('table')).toHaveCount(3);
+ await expect(page.locator('#section-05 details')).toHaveCount(3);
+ await expect(page.locator('#section-08 details')).toHaveCount(5);
  await expect(page.locator('.case-cash-chart .cash-line')).toHaveCount(2);
  await expect(page.locator('.case-cash-chart rect')).toHaveCount(10);
  await expect(plan).toContainText('기본 현금 예산 1,070만 원');
