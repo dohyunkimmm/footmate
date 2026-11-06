@@ -884,16 +884,16 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
 
 
 
-test('decision-led portfolio keeps assumptions, mobile anchors and slide text usable',async({page})=>{
+test('decision-led portfolio keeps assumptions, mobile layout and slide text usable',async({page})=>{
  for(const width of [320,390,800,1440]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await expect(page.locator('.case-verdict')).toContainText('수익성 확인 후 투자한다.');
   await expect(page.locator('.case-kpi .is-negative')).toContainText('−38.7');
   await expect(page.locator('.case-profit-summary')).toContainText('추가 관리비 포함');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-  await page.getByRole('link',{name:'발표·엑셀 자료',exact:true}).click();
+  await expect(page.locator('.case-jump,.case-open-slides')).toHaveCount(0);
+  await page.locator('#case-documents-heading').scrollIntoViewIfNeeded();
   await expect(page.locator('#case-documents-heading')).toBeInViewport();
-  await expect.poll(async()=>{const top=await page.locator('#case-documents-heading').evaluate(n=>n.getBoundingClientRect().top);return top>=(width<=800?65:0)&&top<160;}).toBe(true);
  }
  await page.goto('/src/case-study/materials.html?preview=1&slide=3');
  await expect(page.locator('#page')).toHaveText('04 / 10');
