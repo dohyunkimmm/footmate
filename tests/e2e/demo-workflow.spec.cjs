@@ -131,6 +131,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
  await page.goto('/demo');
  const start=page.getByRole('button',{name:'내 조건으로 추천받기'});
+ await expect(page.getByRole('region',{name:'추천 예시'})).toBeVisible();
  await expect(start).toBeInViewport();
  await expect(start).toHaveCSS('background-color','rgb(9, 46, 33)');
  await expect(start).toHaveCSS('color','rgb(255, 255, 255)');

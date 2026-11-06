@@ -268,7 +268,7 @@ if(root){
       </details>${detail?attendanceLinks(match,Boolean(joined)):''}
       ${detail?`<dl class="fm-beta-detail-facts"><div><dt>경기 일시</dt><dd>${esc(formatStart(match.startsAt))}</dd></div><div><dt>경기 방식</dt><dd>${esc(match.format||'경기')} · ${match.durationMin}분 · ${esc(match.surface||'구장')}</dd></div><div><dt>권장 실력</dt><dd>${esc(match.level)}</dd></div></dl>${reactionPanel(match)}`:''}
       ${!detail?`<button type="button" class="fm-beta-link fm-beta-compare-toggle" data-action="compare-toggle" data-match-id="${esc(match.id)}" aria-pressed="${comparisonIds.includes(match.id)}">${comparisonIds.includes(match.id)?'비교 선택됨':'비교에 담기'}</button>`:''}
-      ${isDemoEntry&&match.isDemo?`<button class="fm-beta-button fm-beta-save-toggle" type="button" data-action="save-demo-match" data-match-id="${esc(match.id)}" aria-pressed="${saved}">경기 저장</button>`:''}
+      ${isDemoEntry&&match.isDemo?`<button class="fm-beta-button fm-beta-save-toggle" type="button" data-action="save-demo-match" data-match-id="${esc(match.id)}" aria-label="경기 저장" aria-pressed="${saved}">${saved?'저장됨':'경기 저장'}</button>`:''}
       </div><div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span>${!detail?`<button class="fm-beta-button" type="button" data-action="match-detail" data-match-id="${esc(match.id)}">상세 보기</button>`:''}<button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
     </article>`;
   }
@@ -519,12 +519,14 @@ if(root){
       const next=alreadySaved?rows.filter(row=>row.id!==id):[{id,title:match.title,startsAt:match.startsAt},...rows].slice(0,12);
       const scroll=root.querySelector('.fm-beta-detail-body')||root.querySelector('[data-beta-main]');
       const top=scroll?.scrollTop||0;
+      const anchor=target.classList.contains('fm-beta-save-toggle')?target.getBoundingClientRect().top:null;
       try{localStorage.setItem(savedDemoKey,JSON.stringify(next))}catch{setNotice('경기를 저장하지 못했어요.','error')}
       render();
       requestAnimationFrame(()=>{
         const container=root.querySelector('.fm-beta-detail-body')||root.querySelector('[data-beta-main]');
         if(container)container.scrollTop=top;
         const button=[...root.querySelectorAll('.fm-beta-save-toggle')].find(item=>item.dataset.matchId===id);
+        if(container&&button&&anchor!==null)container.scrollTop+=button.getBoundingClientRect().top-anchor;
         (button||root.querySelector('[data-saved-remove], .fm-beta-match [data-action="match-detail"]'))?.focus({preventScroll:true});
       });
       return;

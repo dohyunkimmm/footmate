@@ -589,7 +589,7 @@ test('random discovery keeps filters, avoids repeats and never calls AI for anot
     const id=await page.locator('.fm-beta-match').getAttribute('data-match-id');
     expect(seen.has(id)).toBe(false);expect(eligible.map(m=>m.id)).toContain(id);seen.add(id);
   }
-  await expect(page.getByText('조건에 맞는 경기를 모두 봤어요.',{exact:true})).toBeVisible();
+  await expect(page.getByText('모든 추천을 봤어요.',{exact:true})).toBeVisible();
   const last=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.getByRole('button',{name:'다시 둘러보기',exact:true}).click();
   await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',last);
@@ -643,7 +643,7 @@ test('AI loading keeps eligible cards usable and late responses cannot overwrite
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
   await expect.poll(()=>pending.length).toBe(1);
-  await expect(page.locator('.fm-beta-ranking-status')).toContainText('선택한 조건으로 추천을 준비하고 있어요.');
+  await expect(page.locator('.fm-beta-ranking-status')).toContainText('추천 순서 조정 중');
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await page.locator('#quick-filter-region').click();
   await page.getByRole('group',{name:'빠른 활동 지역',exact:true}).getByRole('radio',{name:'서울 · 강남',exact:true}).click();
@@ -671,7 +671,7 @@ test('refreshing recommendations preserves the viewed match and discovery histor
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',id);
   await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
   await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',id);
-  await expect(page.getByText('조건에 맞는 경기를 모두 봤어요.',{exact:true})).toBeVisible();
+  await expect(page.getByText('모든 추천을 봤어요.',{exact:true})).toBeVisible();
 });
 
 test('a refreshed full position cannot be drawn from stale recommendation IDs',async({page})=>{
