@@ -187,7 +187,7 @@ test('released demo opens the connected Beta with useful actions only',async({pa
     await expect(page.locator('#footmate-next')).toHaveCount(0);
     await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
     await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeHidden();
-    await expect(page.getByText('전체 경기 둘러보기',{exact:true})).toBeVisible();
+    await expect(page.locator('.fm-beta-filter-count')).toHaveText('추천 필터');
     await expect(page.getByRole('button',{name:/내 경기 이어보기|내 경기 찾아보기|로그인 화면 보기|경기 먼저 둘러보기/})).toHaveCount(0);
     const layout=await page.locator('.fm-beta-shell').evaluate(el=>({width:el.getBoundingClientRect().width,overflow:document.documentElement.scrollWidth-innerWidth}));
     expect(layout.width).toBeLessThanOrEqual(560);expect(layout.overflow).toBeLessThanOrEqual(1);
@@ -527,12 +527,13 @@ test('recommendation labels distinguish unrestricted browse and selected conditi
  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:[matchId]}));
  await page.goto('/beta',{waitUntil:'domcontentloaded'});
  const summary=page.getByRole('region',{name:'추천 조건',exact:true});
- await expect(summary).toContainText('전체 경기 둘러보기');
+ await expect(summary.locator('.fm-beta-filter-count')).toHaveText('추천 필터');
  await expect(summary.locator('.fm-beta-ai-label')).toHaveCount(0);
  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
  await page.getByRole('combobox',{name:'실력',exact:true}).selectOption('초중급');
  await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
- await expect(summary).toContainText('나에게 맞는 경기');
+ await expect(summary.locator('.fm-beta-filter-count')).toHaveText('조건 1개 선택됨');
+ await expect(summary.locator('#quick-filter-level')).toHaveText('초중급');
  await expect(summary.locator('.fm-beta-ai-label')).toHaveText('AI 추천');
 });
 
