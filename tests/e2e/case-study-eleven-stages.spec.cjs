@@ -134,6 +134,8 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
  const plan=page.locator('#section-08 details').filter({has:page.getByText('중장기 사업계획 · 예산과 확대 기준',{exact:true})});
  await plan.locator('summary').click();
  await expect(plan.getByRole('table')).toHaveCount(3);
+ await expect(page.locator('.case-cash-chart .cash-line')).toHaveCount(2);
+ await expect(page.locator('.case-cash-chart rect')).toHaveCount(10);
  await expect(plan).toContainText('기본 현금 예산 1,070만 원');
  await expect(plan.getByRole('table',{name:'5개년 경영계획 · 금액 단위 만 원'})).toContainText('2,998');
  await expect(plan).toContainText('기존 수수료·결제 조건 유지 시 현금수지');
@@ -384,6 +386,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await model.scrollIntoViewIfNeeded();
   await expect(model.getByRole('heading',{name:'공급 확대 손익 계산'})).toBeVisible();
   await expect(model.locator('#case-profit-orders')).toHaveText('3,506건');
+  await expect(model.locator('[data-compare="base"]')).toHaveText('-2,097,960원');
+  await expect(model.locator('[data-compare="fallback"]')).toHaveText('-835,800원');
+  await expect(model.locator('[data-compare="preferred"]')).toHaveText('+5,640원');
   await expect(model.locator('#case-profit-economic')).toHaveText('+5,640원');
   await expect(model.locator('#case-profit-bep')).toHaveText('28곳');
   await testInfo.attach('visual-'+width+'-financial-model',{body:await model.screenshot({animations:'disabled'}),contentType:'image/png'});

@@ -476,3 +476,22 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 }
 /* Balance narrow explanatory lines so short trailing words stay with context. */
 @media(max-width:540px){.case-verdict p,.case-scenario-note{text-wrap:balance}}
+
+.case-cash-chart{margin:24px 0;padding:18px clamp(12px,3vw,24px);border:1px solid #dce5dd;border-radius:14px;background:#f8faf8}
+.case-cash-chart figcaption{display:grid;gap:4px;color:var(--ink)}
+.case-cash-chart figcaption strong{font-size:1.22rem}
+.case-cash-chart figcaption span,.case-cash-chart p,.case-compare p{color:var(--muted)}
+.case-cash-chart svg{display:block;width:100%;max-width:720px;height:auto;margin:8px auto;overflow:visible}
+.case-cash-chart svg text{fill:#41574c;font-size:15px}
+.cash-grid{stroke:#dce5dd;stroke-width:1}.cash-zero{stroke:#688477;stroke-width:1.3}
+.case-cash-legend{display:flex;flex-wrap:wrap;gap:8px 18px;list-style:none;margin:12px 0 0;padding:0}
+.case-cash-legend li{display:flex;align-items:center;gap:6px}
+.case-cash-legend li::before{content:"";width:20px;border-top:3px solid #147451}
+.case-cash-legend li+li::before{border-top:3px solid #546577}
+.cash-line rect{fill:#147451}.cash-line-1 rect{fill:#546577}
+.case-compare{margin-top:16px;border-top:1px solid #dce5dd;padding-top:14px}
+.case-compare h4,.case-compare p{margin:0 0 5px}
+.case-compare dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(145px,100%),1fr));gap:8px;margin:10px 0 0}
+.case-compare dl>div{padding:10px 12px;background:#edf3ed;border-radius:8px}
+.case-compare dt{font-size:.9rem}
+.case-compare dd{margin:3px 0 0;font-weight:700;font-variant-numeric:tabular-nums}
