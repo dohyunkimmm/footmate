@@ -1,7 +1,9 @@
 import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {personalizeRecommendations,normalizeReactions,chooseOpeningVariant} from './domain/discovery-followup.js';
 import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus} from './discovery-transport.js';
-import {matchesRecommendationConditions,pickUnseenRecommendation} from './domain/recommendation-discovery.js';
+import {pickUnseenRecommendation} from './domain/recommendation-discovery.js';
+import {discoveryPresetKey,readDiscoveryPresets,eligibleMatch,unseenPresetMatches,nextAtVenue,MAX_PRESETS,MAX_KNOWN_MATCHES} from './domain/discovery-presets.js';
+import {cleanSyncPreferences} from './preference-sync.js?v=2';
 import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
@@ -55,6 +57,9 @@ if(root){
   let detailOrigin='results';
   let resultsScrollTop=0;
   let savedDetailOrigin='';
+  let venueOriginId='';
+  let freshMatches=null;
+  let presetsOpen=false;
   function focusScreen(selector){requestAnimationFrame(()=>{const node=root.querySelector(selector);if(node){if(!node.hasAttribute('tabindex'))node.tabIndex=-1;node.focus({preventScroll:true})}})}
   function restoreResults(){
     const savedId=savedDetailOrigin;
@@ -107,7 +112,7 @@ if(root){
     localStorage.removeItem(SESSION_KEY);
     session=null;
     user=null;
-    profile=null;serverReactions=[];comparisonIds=[];comparisonOpen=false;closeDetail();
+    profile=null;serverReactions=[];comparisonIds=[];comparisonOpen=false;freshMatches=null;presetsOpen=false;closeDetail();
     void configureDiscoveryTransport(null,'','');
     participations=[];participationMatchHistory=[];view='home';sessionStorage.removeItem('footmate:beta:view:v1');
   }
@@ -236,6 +241,65 @@ if(root){
     }).join('')}</ul></section>`;
   }
 
+  function presetKey(){return discoveryPresetKey(isDemoEntry,session&&user?.id)}
+  function presets(){try{return readDiscoveryPresets(localStorage,presetKey())}catch{return []}}
+  function presetCatalog(){return matches.filter(match=>match.isDemo===isDemoEntry)}
+  function presetLabel(conditions){
+    const date={today:'오늘',tomorrow:'내일',weekend:'주말'}[conditions.dateWindow];
+    return [conditions.region,conditions.level,conditions.position,date,conditions.afterTime&&`${conditions.afterTime} 이후`,conditions.beforeTime&&`${conditions.beforeTime} 전`].filter(Boolean).join(' · ')||'전체 경기';
+  }
+  function presetSignature(conditions){return JSON.stringify(cleanSyncPreferences(conditions))}
+  function writePresets(rows){
+    const key=presetKey();
+    if(!key)return false;
+    try{localStorage.setItem(key,JSON.stringify(rows));return true}
+    catch{setNotice('조건을 저장하지 못했어요.','error');return false}
+  }
+  function knownPresetIds(catalog,previous=[]){
+    return [...new Set([...catalog.map(match=>match.id),...previous])].slice(0,MAX_KNOWN_MATCHES);
+  }
+  function renderPresets(){
+    if(!presetKey()||root.dataset.betaOnboarding==='true')return '';
+    const rows=presets(),catalog=presetCatalog();
+    const signature=presetSignature(selectedPreferences());
+    const selected=rows.some(row=>presetSignature(row.conditions)===signature);
+    const counts=rows.map(row=>unseenPresetMatches(catalog,row));
+    const freshCount=new Set(counts.flat().map(match=>match.id)).size;
+    return `<details class="fm-beta-presets" ${presetsOpen?'open':''}><summary id="preset-menu">저장한 조건${freshCount?`<span>새 경기 ${freshCount}개</span>`:''}</summary>
+      <ul>${rows.map((row,index)=>{
+        const label=esc(presetLabel(row.conditions)),count=counts[index].length;
+        return `<li><button id="preset-apply-${index}" class="fm-beta-link" type="button" data-action="apply-preset" data-preset="${index}">${label}</button>
+          ${count?`<button class="fm-beta-button" type="button" data-action="new-preset-matches" data-preset="${index}" aria-label="${label} 새 경기 ${count}개">새 경기 ${count}개</button>`:''}
+          <button class="fm-beta-link" type="button" data-action="remove-preset" data-preset="${index}" aria-label="${label} 조건 해제">해제</button></li>`;
+      }).join('')}</ul><button id="preset-save" class="fm-beta-button" type="button" data-action="save-preset" ${selected||rows.length>=MAX_PRESETS||matchesError||!lastSyncedAt?'disabled':''}>${selected?'저장됨':rows.length>=MAX_PRESETS?'최대 3개':'현재 조건 저장'}</button>
+    </details>`;
+  }
+  function handlePresetAction(action,target){
+    const rows=presets(),index=Number(target.dataset.preset),row=rows[index];
+    const catalog=presetCatalog();
+    presetsOpen=true;
+    if(action==='save-preset'){
+      const conditions=cleanSyncPreferences(selectedPreferences());
+      if(!conditions||matchesError||!lastSyncedAt||rows.length>=MAX_PRESETS||rows.some(item=>presetSignature(item.conditions)===presetSignature(conditions)))return;
+      if(writePresets([{conditions,knownIds:knownPresetIds(catalog)},...rows])){render();focusScreen('#preset-apply-0')}
+      else{render();focusScreen('#preset-menu')}
+      return;
+    }
+    if(!row)return;
+    if(action==='remove-preset'){
+      writePresets(rows.filter((_,i)=>i!==index));
+      render();focusScreen('#preset-menu');return;
+    }
+    const isNew=action==='new-preset-matches';
+    const unseen=isNew?unseenPresetMatches(catalog,row):[];
+    if(isNew&&!unseen.length){render();focusScreen('#preset-menu');return}
+    if(isNew)writePresets(rows.map((item,i)=>i===index?{...item,knownIds:knownPresetIds(catalog,item.knownIds)}:item));
+    freshMatches=isNew?{signature:presetSignature(row.conditions),ids:new Set(unseen.map(match=>match.id))}:null;
+    presetsOpen=false;
+    demoPage=0;previewExpanded=false;recommendationAnchorId='';recommendationInteracted=false;seenRecommendations.clear();
+    window.dispatchEvent(new CustomEvent('footmate:beta:apply-preset',{detail:row.conditions}));
+    focusScreen('#recommendation-title');
+  }
   function renderMatch(match,{detail=false}={}){
     const p=profile||{};
     const preferredPosition=selectedPreferences().position||p.position;
@@ -288,10 +352,7 @@ if(root){
 
   function recommendationMatches(){
     const conditions=selectedPreferences();
-    const available=matches.filter(match=>isFutsalMatch(match)&&matchesRecommendationConditions({
-      ...match,remaining_spots:match.remaining,starts_at:match.startsAt,price_krw:match.price,
-      positions:Object.keys(match.positionSlots),match_slots:Object.entries(match.positionSlots).map(([position,remaining_spots])=>({position,remaining_spots}))
-    },conditions));
+    const available=matches.filter(match=>isFutsalMatch(match)&&(!freshMatches||freshMatches.ids.has(match.id))&&eligibleMatch(match,conditions));
     const ordered=recommendedIds===null?available:recommendedIds.map(id=>available.find(match=>match.id===id)).filter(Boolean);
     return personalizeRecommendations(ordered,[...reactions(false),...reactions(true),...serverReactions.filter(r=>user&&r.userId===user.id)]);
   }
@@ -302,6 +363,7 @@ if(root){
     if(matchesError)return `<div class="fm-beta-empty"><strong>경기 데이터를 불러오지 못했습니다.</strong>${esc(matchesError)}<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" data-action="refresh" type="button">다시 시도</button></div></div>`;
     if(!matches.length)return `<div class="fm-beta-empty"><strong>지금 참가할 수 있는 경기가 없어요.</strong><button class="fm-beta-button" type="button" data-action="refresh" ${busy?'disabled':''}>다시 확인</button></div>`;
     const visible=recommendationMatches();
+    if(!visible.length&&freshMatches)return '<div class="fm-beta-empty" role="status">새 경기 없음</div>';
     if(!visible.length)return `<div class="fm-beta-empty" role="status"><strong>조건에 맞는 경기가 없어요.</strong><p>다른 조건으로 찾아보세요.</p><button type="button" class="fm-beta-button" data-growth-action="edit-preferences">조건 다시 선택</button></div>`;
 
     const guest=!session||!user;
@@ -327,7 +389,7 @@ if(root){
   function renderDetail(match){
     const card=renderMatch(match,{detail:true}).replace('<details class="fm-beta-demo-slots">','<details class="fm-beta-demo-slots" open>');
     return `<div class="fm-beta-shell fm-beta-detail" data-detail-tab="${detailTab}">
-      <header class="fm-beta-detail-header"><button class="fm-beta-link" type="button" data-action="detail-back" aria-label="${detailOrigin==='comparison'?'비교로 돌아가기':'추천으로 돌아가기'}"><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5-7 7 7 7M5 12h14"/></svg></button><h1>경기 상세</h1><span aria-hidden="true"></span></header>
+      <header class="fm-beta-detail-header"><button class="fm-beta-link" type="button" data-action="detail-back" aria-label="${detailOrigin==='comparison'?'비교로 돌아가기':detailOrigin==='history'?'참석 이력으로 돌아가기':'추천으로 돌아가기'}"><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5-7 7 7 7M5 12h14"/></svg></button><h1>경기 상세</h1><span aria-hidden="true"></span></header>
       <nav class="fm-beta-account-tabs" aria-label="경기 상세 메뉴">${[['info','경기 정보'],['slots','모집 포지션']].map(([id,label])=>`<button class="fm-beta-button" type="button" data-action="detail-tab" data-tab="${id}" ${detailTab===id?'aria-current="page"':''}>${label}</button>`).join('')}</nav>
       ${card}
       ${notice?`<div role="status" class="fm-beta-note" data-tone="${esc(notice.tone)}">${esc(notice.message)}</div>`:''}
@@ -357,19 +419,20 @@ if(root){
     root.dataset.betaState=backendState==='error'?'error':['connected','preview'].includes(backendState)?'ready':'booting';
     const connected=backendState==='connected'||backendState==='preview';
     root.dataset.betaOpening=String(openingOpen);
-    root.dataset.betaDetail=String(Boolean(detailMatchId&&!authOpen&&view==='home'));
+    const detailMatch=matches.find(m=>m.id===detailMatchId);
+    const detailVisible=Boolean(detailMatch&&!authOpen&&(view==='home'||detailOrigin==='history'&&view==='matches'));
+    root.dataset.betaDetail=String(detailVisible);
     comparisonIds=comparisonIds.filter(id=>matches.some(match=>match.id===id));
     if(comparisonIds.length<2)comparisonOpen=false;
     if(openingOpen){root.innerHTML=renderOpening();return}
     if(comparisonOpen&&!authOpen&&view==='home'){root.innerHTML=renderComparison();return}
-    const detailMatch=matches.find(m=>m.id===detailMatchId);
-    if(detailMatch&&!authOpen&&view==='home'){root.innerHTML=renderDetail(detailMatch);return}
+    if(detailVisible){root.innerHTML=renderDetail(detailMatch);return}
     root.innerHTML=`<div class="fm-beta-shell">
       <header class="fm-beta-topbar"><div class="fm-beta-brand"><button class="fm-beta-brand-home" type="button" data-action="opening" aria-label="앱 시작 화면"><img src="/src/app/assets/footmate-original.png" width="36" height="36" alt=""></button><h1>FootMate</h1><span class="fm-beta-live" data-beta-backend="${connected?'connected':backendState==='error'?'error':'connecting'}">${backendState==='error'?'연결 오류':'Demo'}</span></div><button class="fm-beta-link" type="button" data-action="open-account" ${authOpen?'hidden':''}>${session&&user?esc(profile?.display_name||'내 정보'):'로그인'}</button></header>
       
       ${session&&user&&view==='matches'?`<nav class="fm-beta-account-tabs" aria-label="내 경기 메뉴">${[['joined','참가 경기'],['waitlist','대기'],['history','참석 이력']].map(([tab,label])=>`<button class="fm-beta-button" type="button" data-action="matches-tab" data-tab="${tab}" ${matchesTab===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`:''}
       ${notice?`<div class="fm-beta-note" data-tone="${esc(notice.tone)}" style="margin-bottom:18px">${esc(notice.message)}</div>`:''}
-      ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>서버에 연결할 수 없어요.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside><div class="fm-beta-account-view" ${!(authOpen||(session&&user&&view==='my'))?'hidden':''}>${authOpen?'<button class="fm-beta-link fm-beta-back" type="button" data-action="close-account" aria-label="← 뒤로"><span class="fm-icon" aria-hidden="true">⬅️</span> 뒤로</button>':''}${session&&user?`<nav class="fm-beta-account-tabs" aria-label="내 정보 메뉴">${[['profile','프로필'],['notifications','알림'],['settings','설정']].map(([tab,label])=>`<button class="fm-beta-button" type="button" data-action="account-tab" data-tab="${tab}" ${accountTab===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`:''}${renderAuth()}</div><div class="fm-beta-joined-view">${renderParticipation()}</div></aside><section data-beta-main><div class="fm-beta-panel fm-beta-catalog"><div class="fm-beta-panel-head"><div><h2>추천 경기</h2>${isDemoEntry?'':`<p>${esc(formatSync(lastSyncedAt))}</p>`}</div><button class="fm-beta-button fm-beta-refresh" type="button" data-action="refresh" aria-label="새로고침" title="새로고침" ${busy?'disabled':''}><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 7a7 7 0 0 1 11.5-1L20 9M4 15l2.4 3A7 7 0 0 0 18 17"/></svg></button></div>${renderSavedDemoMatches()}${renderMatches()}</div></section></div>`}
+      ${backendState==='error'?`<div class="fm-beta-panel"><div class="fm-beta-empty"><strong>서버에 연결할 수 없어요.</strong>잠시 후 다시 시도해주세요.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button class="fm-beta-button" type="button" data-action="retry-backend">연결 다시 시도</button></div></div></div>`:`<div class="fm-beta-grid"><aside><div class="fm-beta-account-view" ${!(authOpen||(session&&user&&view==='my'))?'hidden':''}>${authOpen?'<button class="fm-beta-link fm-beta-back" type="button" data-action="close-account" aria-label="← 뒤로"><span class="fm-icon" aria-hidden="true">⬅️</span> 뒤로</button>':''}${session&&user?`<nav class="fm-beta-account-tabs" aria-label="내 정보 메뉴">${[['profile','프로필'],['notifications','알림'],['settings','설정']].map(([tab,label])=>`<button class="fm-beta-button" type="button" data-action="account-tab" data-tab="${tab}" ${accountTab===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`:''}${renderAuth()}</div><div class="fm-beta-joined-view">${renderParticipation()}</div></aside><section data-beta-main><div class="fm-beta-panel fm-beta-catalog"><div class="fm-beta-panel-head"><div><h2 id="recommendation-title">${freshMatches?'새 경기':'추천 경기'}</h2>${isDemoEntry?'':`<p>${esc(formatSync(lastSyncedAt))}</p>`}</div><button class="fm-beta-button fm-beta-refresh" type="button" data-action="refresh" aria-label="새로고침" title="새로고침" ${busy?'disabled':''}><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 7a7 7 0 0 1 11.5-1L20 9M4 15l2.4 3A7 7 0 0 0 18 17"/></svg></button></div>${freshMatches?'<button class="fm-beta-link" type="button" data-action="clear-new-matches">전체 보기</button>':`${renderPresets()}${renderSavedDemoMatches()}`}${renderMatches()}</div></section></div>`}
       ${session&&user?`<nav class="fm-beta-app-nav" aria-label="Beta 메뉴">${[['home','추천','✨'],['matches','내 경기','🗓️'],['my','MY','👤']].map(([tab,label,icon])=>`<button type="button" data-action="navigate" data-view="${tab}" ${view===tab?'aria-current="page"':''}><i class="fm-icon" aria-hidden="true">${icon}</i><span>${label}</span></button>`).join('')}</nav>`:''}
       <footer class="fm-beta-footer">${isDemoEntry?'FootMate Demo · 데모 경기':'FootMate Demo · 무료 참가'}</footer>
     </div>`;
@@ -502,6 +565,28 @@ if(root){
     }
   });
 
+  root.addEventListener('toggle',event=>{
+    if(event.target.matches('.fm-beta-presets')&&root.contains(event.target))presetsOpen=event.target.open;
+  },true);
+
+  window.addEventListener('footmate:beta:same-venue',event=>{
+    if(!session||!user||view!=='matches'||matchesTab!=='history')return;
+    const id=event.detail?.matchId;
+    const attended=participations.some(row=>row.match_id===id&&row.checked_in_at&&!row.is_demo);
+    const previous=[...matches,...participationMatchHistory].find(match=>match.id===id);
+    if(!attended||!previous)return;
+    const conditions=selectedPreferences();
+    const excluded=new Set(participations.filter(row=>row.status==='confirmed').map(row=>row.match_id));
+    const next=nextAtVenue(matches,previous,{...conditions,position:conditions.position||profile?.position},excluded);
+    if(!next){
+      const status=[...root.querySelectorAll('[data-venue-status]')].find(node=>node.dataset.venueStatus===id);
+      if(status)status.textContent='조건에 맞는 경기 없음';
+      return;
+    }
+    venueOriginId=id;detailOrigin='history';detailMatchId=next.id;detailTab='info';
+    render();focusScreen('h1');
+  });
+
   root.addEventListener('click',event=>{
     const utility=event.target.closest('[data-beta-measure]');
     if(utility){emitBetaMeasurement(utility.dataset.betaMeasure,{matchId:utility.dataset.matchId});return;}
@@ -509,6 +594,12 @@ if(root){
     if(!target)return;
     const action=target.dataset.action;
     if(['match-detail','save-demo-match','compare-toggle','demo-prev','demo-next','random-recommendation','restart-discovery','expand-preview','focus-auth'].includes(action))recommendationInteracted=true;
+    if(['save-preset','apply-preset','remove-preset','new-preset-matches'].includes(action)){
+      handlePresetAction(action,target);return;
+    }
+    if(action==='clear-new-matches'){
+      freshMatches=null;demoPage=0;previewExpanded=false;recommendationInteracted=false;recommendationAnchorId='';seenRecommendations.clear();render();focusScreen('#recommendation-title');return;
+    }
     if(action==='save-demo-match'&&isDemoEntry){
       const id=target.dataset.matchId;
       const rows=savedDemoMatches();
@@ -563,7 +654,15 @@ if(root){
     if(action==='compare-back'){comparisonOpen=false;closeDetail();restoreResults();return}
     if(action==='compare-detail'){comparisonOpen=false;detailOrigin='comparison';detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
     if(action==='match-detail'){savedDetailOrigin=target.hasAttribute('data-saved-entry')?target.dataset.matchId:'';rememberResults();emitDiscoveryMeasurement('match_detail_opened',{isDemo:matches.find(m=>m.id===target.dataset.matchId)?.isDemo,matchId:target.dataset.matchId});detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
-    if(action==='detail-back'){const origin=detailOrigin;closeDetail();if(origin==='comparison'&&comparisonIds.length===2){comparisonOpen=true;render();focusScreen('h1')}else restoreResults();return}
+    if(action==='detail-back'){
+      const origin=detailOrigin;closeDetail();
+      if(origin==='comparison'&&comparisonIds.length===2){comparisonOpen=true;render();focusScreen('h1')}
+      else if(origin==='history'){
+        const id=venueOriginId;venueOriginId='';render();
+        requestAnimationFrame(()=>[...root.querySelectorAll('[data-growth-action="same-venue"]')].find(button=>button.dataset.matchId===id)?.focus());
+      }else restoreResults();
+      return;
+    }
     if(action==='detail-tab'){detailTab=target.dataset.tab;render();return}
     if(action==='setup-position'){pendingMatchId=target.dataset.matchId||detailMatchId;sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId);setView('my');accountTab='profile';render();focusScreen('[name="position"]');return}
     if(action==='opening'){closeDetail();openingOpen=true;authOpen=false;render();return}
@@ -621,6 +720,7 @@ if(root){
         let localCleanupFailed=false;
         try{
           clearDemoParticipations(deletedUserId);
+          localStorage.removeItem(discoveryPresetKey(false,deletedUserId));
           localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':demo');
           localStorage.removeItem('footmate:beta:reactions:v1:'+deletedUserId+':live');
           if(localStorage.getItem('footmate:beta:preferences-owner:v1')===deletedUserId){
@@ -682,6 +782,7 @@ if(root){
   window.addEventListener('footmate:beta:recommendations',event=>{
     const openFilters=openQuickFilterIds(root);
     const focusedFilter=document.activeElement?.id;
+    if(freshMatches&&presetSignature(selectedPreferences())!==freshMatches.signature)freshMatches=null;
     const scrollTop=root.querySelector('[data-beta-main]')?.scrollTop||0;
     const current=root.querySelector('.fm-beta-match')?.dataset.matchId;
     const conditions=event.detail?.conditions||'';
@@ -700,7 +801,8 @@ if(root){
     else{
       if(recommendationBusy&&current&&lastMeasuredRecommendation)recommendationAnchorId=current;
       const anchor=recommendationAnchorId||(recommendationInteracted?current:'');
-      if(anchor&&recommendedIds?.includes(anchor)){demoPage=recommendedIds.indexOf(anchor);if(demoPage>=3)previewExpanded=true;}
+      const anchorIndex=freshMatches?recommendationMatches().findIndex(match=>match.id===anchor):recommendedIds?.indexOf(anchor);
+      if(anchor&&anchorIndex>=0){demoPage=anchorIndex;if(demoPage>=3)previewExpanded=true;}
     }
     if(!recommendationBusy)recommendationAnchorId='';
     // Ranking updates must not replace an active comparison, detail, login or account view.
@@ -709,7 +811,7 @@ if(root){
     // Growth restores its controls after the base view is rendered.
     if(!changed)requestAnimationFrame(()=>{const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=scrollTop});
     if(!changed&&openFilters.length)queueMicrotask(()=>restoreQuickFilters(root,openFilters));
-    if(focusedFilter?.startsWith('quick-filter-'))queueMicrotask(()=>document.getElementById(focusedFilter)?.focus());
+    if(focusedFilter?.startsWith('quick-filter-')||focusedFilter==='recommendation-title'||focusedFilter?.startsWith('preset-'))queueMicrotask(()=>{const node=document.getElementById(focusedFilter);if(node){if(focusedFilter==='recommendation-title')node.tabIndex=-1;node.focus({preventScroll:true})}});
   });
   boot();
 }

@@ -180,3 +180,81 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await saved.getByRole('button',{name:title+' 저장 해제'}).click();
  await expect(saved).toHaveCount(0);
 });
+
+
+test('saved demo conditions show and open only new eligible matches',async({page})=>{
+ await page.setViewportSize({width:320,height:568});
+ await page.clock.setFixedTime(new Date('2026-11-06T03:00:00Z'));
+ await page.addInitScript(()=>{
+  sessionStorage.setItem('footmate:beta:entered:v1','1');
+  if(!localStorage.getItem('footmate:beta:preferences:v1')){
+   localStorage.setItem('footmate:beta:preferences:v1',JSON.stringify({sport:'futsal',region:'수원 · 영통',level:'중급',position:'MF',afterTime:''}));
+  }
+ });
+ await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
+ await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
+ await page.goto('/demo');
+ const menu=page.locator('#preset-menu');
+ await menu.click();
+ await page.getByRole('button',{name:'현재 조건 저장'}).click();
+ const preset=page.getByRole('button',{name:'수원 · 영통 · 중급 · MF',exact:true});
+ await expect(preset).toBeFocused();
+ await expect(menu).not.toContainText('새 경기');
+ const original=await page.locator('.fm-beta-catalog .fm-beta-match').getAttribute('data-match-id');
+ await page.locator('#quick-filter-position').click();
+ await page.getByRole('group',{name:'빠른 포지션'}).getByRole('radio',{name:'DF · 수비수'}).click();
+ await expect(page.locator('#quick-filter-position')).toContainText('DF');
+ await preset.click();
+ await expect(page.locator('#quick-filter-position')).toContainText('MF');
+ await expect(page.locator('#recommendation-title')).toBeFocused();
+
+ await page.clock.setFixedTime(new Date('2026-11-07T03:00:00Z'));
+ await page.reload();
+ await expect(menu).toContainText(/새 경기 \d+개/);
+ await menu.click();
+ await page.getByRole('button',{name:/수원 · 영통 · 중급 · MF 새 경기/}).click();
+ await expect(page.locator('#recommendation-title')).toHaveText('새 경기');
+ const card=page.locator('.fm-beta-catalog .fm-beta-match');
+ await expect(card).not.toHaveAttribute('data-match-id',original);
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('MF');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.getByRole('button',{name:'전체 보기',exact:true}).click();
+ await expect(menu).not.toContainText('새 경기');
+ await menu.click();
+ await page.getByRole('button',{name:'수원 · 영통 · 중급 · MF 조건 해제'}).click();
+ await expect(preset).toHaveCount(0);
+});
+
+test('checked-in history opens the earliest eligible match at the same venue',async({page})=>{
+ await setup(page);
+ const past='11111111-1111-4111-8111-111111111110';
+ const exact='11111111-1111-4111-8111-111111111117';
+ const base={venue_name:'영통 풋살장',address:'영통로 100',area_label:'영통',region:'수원 · 영통',level:'중급',positions:['MF'],price_krw:0,capacity_total:12,joined_count:8,remaining_spots:4,format_label:'6 vs 6',duration_minutes:80,status:'open',match_slots:[{position:'MF',remaining_spots:2}]};
+ const rows=[
+  {...base,id:past,title:'참석한 경기',starts_at:'2025-09-25T20:00:00+09:00',status:'completed'},
+  {...base,id:'11111111-1111-4111-8111-111111111115',title:'포지션 마감',starts_at:'2099-09-25T20:00:00+09:00',match_slots:[{position:'MF',remaining_spots:0}]},
+  {...base,id:'11111111-1111-4111-8111-111111111116',title:'다른 주소의 경기',address:'영통로 200',starts_at:'2099-09-26T20:00:00+09:00'},
+  {...base,id:exact,title:'같은 구장 다음 경기',starts_at:'2099-09-27T20:00:00+09:00'},
+  {...base,id:'11111111-1111-4111-8111-111111111118',title:'같은 구장 나중 경기',starts_at:'2099-09-28T20:00:00+09:00'},
+ ];
+ await page.route(origin+'/**',async route=>{
+  const url=new URL(route.request().url());
+  if(url.pathname==='/rest/v1/matches')return route.fulfill({json:url.searchParams.has('id')?rows.filter(m=>m.id===past):url.searchParams.get('status')?.includes('completed')?rows:rows.filter(m=>m.id!==past)});
+  if(url.pathname==='/rest/v1/participations')return route.fulfill({json:[{id:'history-entry',match_id:past,position:'MF',status:'confirmed',checked_in_at:'2025-09-25T11:00:00Z'}]});
+  return route.fallback();
+ });
+ await page.goto('/beta');
+ await page.locator('[data-action="open-account"]').click();
+ await page.getByLabel('이메일').fill('qa@example.com');
+ await page.getByLabel('비밀번호',{exact:true}).fill('qa-password');
+ await page.getByRole('button',{name:'로그인',exact:true}).click();
+ await page.getByRole('button',{name:'내 경기',exact:true}).click();
+ await page.getByRole('button',{name:'참석 이력',exact:true}).click();
+ const same=page.getByRole('button',{name:'같은 구장',exact:true});
+ await same.click();
+ await expect(page.locator('.fm-beta-detail .fm-beta-match')).toHaveAttribute('data-match-id',exact);
+ await expect(page.getByRole('heading',{name:'경기 상세'})).toBeFocused();
+ await page.getByRole('button',{name:'참석 이력으로 돌아가기'}).click();
+ await expect(same).toBeFocused();
+ await expect(page.getByRole('button',{name:'참석 이력',exact:true})).toHaveAttribute('aria-current','page');
+});
