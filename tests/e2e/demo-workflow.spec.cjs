@@ -164,6 +164,9 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await expect(resume).toBeVisible();
  const savedMenu=saved.locator('#saved-match-menu');
  await expect(savedMenu).toHaveText('저장 경기 1');
+ await resume.click();
+ await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
+ await expect(resume).toBeFocused();
  await savedMenu.click();
  const originalDate=await saved.locator('small').innerText();
  await page.clock.setFixedTime(new Date('2026-11-07T03:00:00Z'));
@@ -287,6 +290,11 @@ test('compact visual keeps one connection message and readable cards with 200 pe
  const join=card.getByRole('button',{name:'참가하기',exact:true});
  await join.scrollIntoViewIfNeeded();
  await expect(join).toBeInViewport();
+ expect(await card.locator('.fm-beta-match-actions button').evaluateAll(buttons=>buttons.every(button=>{
+  const range=document.createRange();
+  range.selectNodeContents(button);
+  return range.getClientRects().length===1;
+ }))).toBe(true);
  expect(await page.evaluate(()=>{
   const main=document.querySelector('[data-beta-main]');
   return document.documentElement.scrollWidth<=innerWidth&&main.scrollWidth<=main.clientWidth+1;

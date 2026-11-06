@@ -166,7 +166,7 @@ async function rankWithAI(){
   const allowed=new Set(candidates.map(({m})=>m.id));
   aiOrder=[...new Set(body.rankedMatchIds.filter(id=>allowed.has(id)))];if(!aiOrder.length)throw new Error('invalid-ranking');
   try{localStorage.setItem('footmate:beta:ranking:v1',JSON.stringify({conditions:JSON.stringify(preferences),ids:aiOrder,fingerprint,createdAt:Date.now()}))}catch{}publishRecommendations();
- }catch{if(requestId===recommendationRequestId)message='AI 연결이 지연되어 선택한 조건으로 찾았어요.'}
+ }catch{if(requestId===recommendationRequestId)message='기본 추천'}
  finally{clearTimeout(timeout);if(requestId===recommendationRequestId){busy=false;publishRecommendations();render();emitDiscoveryMeasurement('recommendation_completed',{resultCount:recommendation?.ranked.length||0,durationMs:Date.now()-started,isDemo:recommendation?.ranked.length>0&&recommendation.ranked.every(row=>row.m.is_demo),mode:aiOrder.length?'ai':'rules'});}}
 }
 async function waitlistAction(id,cancel){busy=true;render();try{if(cancel)await rpc('cancel_beta_waitlist',{p_match_id:id});else{const position=preferences?.position||profile?.position;if(!position)throw new Error('선호 포지션을 먼저 설정해주세요.');await rpc('join_beta_waitlist',{p_match_id:id,p_position:position})}message=cancel?'대기 신청을 취소했습니다.':'대기 신청했습니다. 빈 자리가 생기면 자동 참가 전환됩니다.';await loadState()}catch(e){message=String(e?.message||e)}finally{busy=false;render()}}
@@ -214,7 +214,7 @@ function recommendPanel(){
  const p=draft||preferences||{};
  const options=(values,value,empty)=>`<option value="">${empty}</option>${values.map(([v,label])=>`<option value="${esc(v)}" ${value===v?'selected':''}>${esc(label)}</option>`).join('')}`;
  const regions=[...new Set([p.region,'수원 · 영통','수원 · 인계','용인 · 기흥','서울 · 강남',...matches.map(m=>m.region)].filter(Boolean))].sort();
- if(!editing&&preferences)return `<section class="fm-beta-preferences-summary" aria-label="추천 조건">${quickFilters(p)}${!busy&&recommendation?.ranked.length===0?recoveryPanel(p):''}${message?`<p class="fm-beta-search-status" role="status">${esc(message)}${message.startsWith('AI 연결')?'<button type="button" class="fm-beta-link" data-growth-action="retry-ranking">AI 추천 다시 시도</button>':''}</p>`:''}</section>`;
+ if(!editing&&preferences)return `<section class="fm-beta-preferences-summary" aria-label="추천 조건">${quickFilters(p)}${!busy&&recommendation?.ranked.length===0?recoveryPanel(p):''}${message?`<div class="fm-beta-search-status"><span role="status">${esc(message)}</span>${message==='기본 추천'?'<button type="button" class="fm-beta-link" data-growth-action="retry-ranking">AI 다시 시도</button>':''}</div>`:''}</section>`;
  return `<section class="fm-beta-panel fm-beta-preferences"><h2>어떤 경기를 즐기세요?</h2><form data-growth-form="recommend" class="fm-beta-preference-form">
  <label class="fm-beta-field"><span>활동 지역</span><select name="region" aria-label="활동 지역">${options(regions.map(v=>[v,v]),p.region,'지역 전체')}</select></label>
  <div class="fm-beta-preference-row"><label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(['입문','초중급','중급','중급+'].map(v=>[v,v]),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label></div>

@@ -256,7 +256,7 @@ test('futsal conditions stay explicit and AI failure keeps real matches usable',
   await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await page.getByRole('combobox',{name:'활동 지역',exact:true}).selectOption({label:'지역 전체'});
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
-  await expect(page.getByText('AI 연결이 지연되어 선택한 조건으로 찾았어요.')).toBeVisible();
+  await expect(page.getByText('기본 추천',{exact:true})).toBeVisible();
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   for(const width of [320,375,430,1920]){
     await page.setViewportSize({width,height:900});

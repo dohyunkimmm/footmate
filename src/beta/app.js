@@ -68,7 +68,7 @@ if(root){
     render();
     requestAnimationFrame(()=>{
       const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=resultsScrollTop;
-      const savedButton=[...root.querySelectorAll('[data-saved-entry]')].find(button=>button.dataset.matchId===savedId&&button.getClientRects().length);
+      const savedButton=[...root.querySelectorAll('[data-saved-entry]')].find(button=>button.dataset.matchId===savedId&&!button.closest('details:not([open])')&&button.getClientRects().length);
       (savedButton||root.querySelector('.fm-beta-match [data-action="match-detail"]'))?.focus({preventScroll:true});
     });
   }
@@ -342,7 +342,7 @@ if(root){
       ${detail?`<div class="fm-beta-match-cover"><span>${esc(match.format)} · ${visual.label}</span>${match.isDemo?'<small>데모 경기</small>':''}<i aria-hidden="true"></i></div>`:''}
       <div class="fm-beta-match-top"><h3>${esc(match.title)}</h3>${detail?`<span class="fm-beta-badge">${esc(availability)}</span>`:match.isDemo?'<span class="fm-beta-sample-label">데모 경기</span>':''}</div>
       ${detail?`${place}<p class="fm-beta-match-reason">${esc(discoveryContext)}</p>`:
-      `<div class="fm-beta-meta"><span><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(formatStart(match.startsAt))}</span>${positionAvailability?`<span class="fm-beta-own-slot" aria-label="내 포지션 · ${esc(positionAvailability)}">${esc(positionAvailability)}</span>`:`<span class="fm-beta-badge">${esc(availability)}</span>`}</div>
+      `<div class="fm-beta-meta"><span><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(formatStart(match.startsAt))}</span>${positionAvailability?`<span class="fm-beta-own-slot" role="group" aria-label="내 포지션">${esc(positionAvailability)}</span>`:`<span class="fm-beta-badge">${esc(availability)}</span>`}</div>
       <div class="fm-beta-card-venue">${place}<span>${esc(match.level)}</span></div>`}
       ${detail?`<details class="fm-beta-demo-slots" open><summary>모집 포지션</summary><div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${({MF:"미드필더",FW:"공격수",DF:"수비수",GK:"골키퍼"})[item]} <small>${item}</small></b><span><strong>${Number(match.positionSlots[item]||0)}</strong>자리</span></div>`).join('')}</div>
       </details>${attendanceLinks(match,Boolean(joined))}`:''}

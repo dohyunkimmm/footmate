@@ -57,7 +57,7 @@ assert.match(operator,/stopImmediatePropagation/);
 
 assert.match(betaHtml,/recovery-bootstrap\.js/);
 assert.ok(betaHtml.indexOf('recovery-bootstrap.js')<betaHtml.indexOf('app.js'));
-assert.match(betaHtml,/import\('\/src\/beta\/readiness\.js\?v=1'\)/);
+assert.match(betaHtml,/import\('\/src\/beta\/readiness\.js\?v=2'\)/);
 assert.match(betaHtml,/data-beta-state/);
 assert.match(operatorHtml,/data-operator-state/);
 if(operatorMfa){
