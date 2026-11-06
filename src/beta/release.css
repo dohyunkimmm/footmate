@@ -429,9 +429,6 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-quick-filters details[data-filter-active="true"]>summary{background:#e8f3df;border-color:#7ca66a;color:#123c28;font-weight:700}
 .fm-beta-quick-filters details[open]>summary{outline:2px solid #346b33;outline-offset:-2px}
 .fm-beta-opening .fm-beta-opening-preview{padding:12px;box-shadow:0 8px 24px #203d2d0a}
-.fm-beta-preview-steps{display:flex;justify-content:space-between;gap:8px;list-style:none;padding:0;margin:0 0 10px;color:#52645a;font-size:11px;line-height:1.5;counter-reset:step}
-.fm-beta-preview-steps li{counter-increment:step}
-.fm-beta-preview-steps li:before{content:counter(step);display:inline-grid;place-items:center;width:17px;height:17px;margin-right:4px;border-radius:50%;background:#e0edda;color:#234f2d;font-weight:700}
 .fm-beta-preview-card{padding:12px 14px;border-left:4px solid #346b33;border-radius:10px;background:#edf4e8;animation:fm-beta-preview-enter .22s ease-out}
 .fm-beta-preview-card[data-match-tone="evening"]{background:#e7efeb;border-color:#2c5148}
 .fm-beta-preview-card[data-match-tone="day"]{background:#e6f3ed;border-color:#28715c}
@@ -439,7 +436,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-preview-controls .fm-beta-link{min-height:36px;font-size:12px;font-weight:700}
 @keyframes fm-beta-preview-enter{from{opacity:.5;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.fm-beta-preview-card{animation:none}}
-@media(max-height:740px){.fm-beta-opening .fm-beta-opening-preview{padding:8px 10px}.fm-beta-preview-card{padding:8px 10px}.fm-beta-preview-steps{margin-bottom:6px}}
+@media(max-height:740px){.fm-beta-opening .fm-beta-opening-preview{padding:8px 10px}.fm-beta-preview-card{padding:8px 10px}}
 
 .fm-beta-preferences-summary .fm-beta-quick-filters>.fm-beta-filter-count{display:block;font-size:12px;margin:0 0 2px}
 @media(max-height:760px){[data-beta-app="true"] .fm-beta-catalog .fm-beta-match-cover{display:none}}
@@ -476,6 +473,8 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-saved small{display:block;color:var(--fm-muted);font-size:12px}
 .fm-beta-saved .fm-beta-link{flex-shrink:0;padding:0 4px;font-size:12px}
 .fm-beta-catalog .fm-beta-match-actions .fm-beta-button--primary{min-width:96px}
+@media(max-width:430px){[data-beta-app="true"] .fm-beta-catalog .fm-beta-match{padding:16px}}
+@media(max-width:360px){[data-beta-app="true"] .fm-beta-catalog .fm-beta-match{padding:14px}}
 .fm-beta-catalog .fm-beta-price{margin-right:auto;font-size:14px}
 .fm-beta-sample-label{display:inline-block;margin-top:10px;padding:3px 7px;border-radius:6px;background:#f0f3f1;color:var(--fm-muted);font-size:12px}
 .fm-beta-compare-toggle{min-height:44px;font-size:13px;font-weight:650}

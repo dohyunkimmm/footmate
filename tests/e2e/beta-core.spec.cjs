@@ -912,7 +912,7 @@ test('discovery qa visual design keeps preview, filters and selected reactions c
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
  await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
- await expect(page.locator('.fm-beta-filter-count')).toHaveText('원하는 조건을 골라보세요');
+ await expect(page.locator('.fm-beta-filter-count')).toHaveText('추천 필터');
  await page.locator('#quick-filter-level').click();
  await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'중급',exact:true}).click();
  await expect(page.locator('.fm-beta-filter-count')).toHaveText('조건 1개 선택됨');
@@ -946,7 +946,7 @@ test('discovery qa followup keeps reaction rows and reset controls stable',async
  const reset=page.getByRole('button',{name:'전체 조건 해제',exact:true});
  await expect(reset).toHaveCount(1);await expect(reset).toBeVisible();
  await reset.click();
- await expect(page.locator('.fm-beta-filter-count')).toHaveText('원하는 조건을 골라보세요');
+ await expect(page.locator('.fm-beta-filter-count')).toHaveText('추천 필터');
  await expect(page.locator('#quick-filter-region')).toBeFocused();
  await expect(page.locator('details[data-filter-active="true"]')).toHaveCount(0);
  await page.screenshot({path:testInfo.outputPath('filters-reset-320.png')});
@@ -957,7 +957,7 @@ test('discovery qa followup keeps reaction rows and reset controls stable',async
  await expect(interested).toHaveAttribute('aria-pressed','false');
  await expect(interested).toBeFocused();await expect(interested).toBeInViewport();
  await expect(page.locator('.fm-beta-reaction-panel')).toHaveAttribute('open','');
- await expect(page.getByText('선택한 반응이 없어요.',{exact:true})).toBeVisible();
+ await expect(page.locator('[data-action="recommendation-reaction"][aria-pressed="true"]')).toHaveCount(0);
  for(const width of [320,390,430]){
   await page.setViewportSize({width,height:740});
   const boxes=await page.locator('[data-action="recommendation-reaction"]').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect();return {width:r.width,height:r.height,x:r.x}}));

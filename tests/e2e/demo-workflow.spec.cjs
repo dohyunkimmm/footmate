@@ -132,12 +132,15 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await page.goto('/demo');
  const start=page.getByRole('button',{name:'내 조건으로 추천받기'});
  await expect(start).toBeInViewport();
+ await expect(start).toHaveCSS('background-color','rgb(9, 46, 33)');
+ await expect(start).toHaveCSS('color','rgb(255, 255, 255)');
+ await page.screenshot({path:test.info().outputPath('compact-opening-320.png')});
  expect(await start.evaluate(el=>el.getBoundingClientRect().bottom<=document.querySelector('.fm-beta-opening-preview').getBoundingClientRect().top)).toBe(true);
  await start.click();
  await expect(page.getByRole('heading',{name:'어디서 뛸까요?'})).toBeFocused();
  await page.getByRole('radio',{name:'수원 · 영통',exact:true}).click();
  await page.getByRole('button',{name:'다음',exact:true}).click();
- await page.locator('[data-growth-form="recommend"] input[name="position"][value="MF"]').check();
+ await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
  const card=page.locator('.fm-beta-catalog .fm-beta-match');
  await expect(card.locator('.fm-beta-own-slot')).toContainText('내 포지션 · MF');
@@ -146,6 +149,15 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await save.click();
  await expect(save).toHaveAttribute('aria-pressed','true');
  await expect(save).toBeFocused();
+ await expect(save).toHaveCSS('background-color','rgb(216, 255, 115)');
+ await expect(save).toHaveCSS('color','rgb(9, 46, 33)');
+ for(const width of [320,390,430]){
+  await page.setViewportSize({width,height:width===320?568:844});
+  await expect(card).toHaveCSS('padding-left',width===320?'14px':'16px');
+  expect(await save.evaluate(el=>el.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:test.info().outputPath(`compact-recommendation-${width}.png`)});
+ }
  const saved=page.getByRole('region',{name:'저장한 경기'});
  const resume=saved.getByRole('button',{name:title+' 이어보기'});
  await expect(resume).toBeVisible();
