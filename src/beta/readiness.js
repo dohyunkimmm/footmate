@@ -202,8 +202,14 @@ if(root){
   observer.observe(root,{childList:true,subtree:true});
 
   consumeRecoveryHash();
-  void (async()=>{
+  let connecting=false;
+  async function connect(){
+    if(client||connecting||(root.dataset.betaConnection&&root.dataset.betaConnection!=='connected'))return;
+    connecting=true;
     try{const config=await loadBetaBackendConfig();client=createBetaReadinessClient(config);enhance();await refreshState({force:true})}
-    catch(error){notice(String(error?.message||'Beta readiness 연결을 확인하지 못했습니다.'),'error')}
-  })();
+    catch{notice('운영 정보 연결 실패','error')}
+    finally{connecting=false}
+  }
+  window.addEventListener('footmate:beta:connection-ready',()=>void connect());
+  void connect();
 }
