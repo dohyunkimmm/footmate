@@ -419,9 +419,9 @@ test('FootMate results expand without signup and participation retains preferenc
   const geometry=await page.evaluate(()=>{
     const form=document.querySelector('[data-form="auth"]').getBoundingClientRect();
     const social=document.querySelector('[data-beta-social-auth]').getBoundingClientRect();
-    return {formBottom:form.bottom,socialTop:social.top,document:document.documentElement.scrollHeight,viewport:innerHeight};
+    return {formTop:form.top,socialBottom:social.bottom,document:document.documentElement.scrollHeight,viewport:innerHeight};
   });
-  expect(geometry.socialTop).toBeGreaterThanOrEqual(geometry.formBottom);
+  expect(geometry.socialBottom).toBeLessThanOrEqual(geometry.formTop);
   expect(geometry.document-geometry.viewport).toBeLessThanOrEqual(1);
   await page.screenshot({path:testInfo.outputPath('reference-login-390.png'),fullPage:true});
   await page.getByRole('button',{name:'← 뒤로',exact:true}).click();
@@ -544,7 +544,7 @@ test('participation login explains selected match and stays scrollable on a shor
  await page.getByRole('button',{name:'참가하기',exact:true}).click();
  const context=page.getByRole('region',{name:'참가할 경기',exact:true});
  await expect(context).toContainText(baseMatch.title);
- await expect(context).toContainText('로그인만으로 참가가 확정되지는 않아요.');
+ await expect(context).toContainText('로그인 후 참가 버튼을 눌러주세요.');
  await expect(context).toContainText('9월');
  await page.getByRole('button',{name:'로그인',exact:true}).scrollIntoViewIfNeeded();
  await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeInViewport();
@@ -924,7 +924,7 @@ test('discovery qa visual design keeps preview, filters and selected reactions c
  await expect(page.locator('#quick-filter-level')).toHaveCSS('background-color','rgb(232, 243, 223)');
  await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-tone',/morning|day|evening/);
  await page.getByRole('button',{name:'상세 보기',exact:true}).click();
- await expect(page.locator('.fm-beta-match-reason')).not.toBeEmpty();
+ await expect(page.locator('.fm-beta-detail-facts')).toBeVisible();
  await page.locator('.fm-beta-reaction-panel summary').click();
  await page.getByRole('button',{name:'다른 시간 원해요',exact:true}).click();
  await expect(page.getByRole('button',{name:'다른 시간 원해요',exact:true})).toHaveAttribute('aria-pressed','true');
