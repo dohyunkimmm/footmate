@@ -453,8 +453,7 @@ if(root){
     }catch(error){
       if(isDemoEntry){
         client=null;session=null;user=null;
-        matches=normalizeBetaMatches(demoCatalog());
-        matchesError=null;
+        await loadMatches();
         lastSyncedAt=Date.now();
         backendState='preview';
         setNotice('예시 경기는 볼 수 있지만, 로그인과 참가에는 서버 연결이 필요해요.','info');
