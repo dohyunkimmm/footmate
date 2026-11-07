@@ -1,3 +1,12 @@
+## 2026-11-07 · 저장소 클렌징 최신 확인
+
+- **기준:** GitHub `main` [`bbe60e5`](https://github.com/dohyunkimmm/footmate/commit/bbe60e54322e03d772354f523f5d2af0518b233d)의 잘리지 않은 재귀 트리에서 **파일 325개·디렉터리 41개**를 확인했습니다. 이 수치는 이번 문서 PR 병합 전 스냅샷입니다.
+- **병합·검사:** 열린 PR **0건**, 최신 `main`의 [FootMate QA #42361412100](https://github.com/dohyunkimmm/footmate/actions/runs/42361412100) 전체 성공. [#860](https://github.com/dohyunkimmm/footmate/pull/860)의 데모 선택값 점검과 [#861](https://github.com/dohyunkimmm/footmate/pull/861)의 4개 지역 × 4개 실력 **16조합·새로고침 운영 테스트**는 모두 병합됐습니다. 두 변경은 테스트 코드만 수정했으므로 Cloudflare 재배포는 생략됐고 운영 환경 Smoke는 성공했습니다.
+- **미완료:** 열린 이슈는 [#611](https://github.com/dohyunkimmm/footmate/issues/611) 실서명 JWT·MFA 등 허가된 실계정 보안 검증 **1건**입니다. 실제 테스트 계정·세션 증빙 전 해결 처리하지 않습니다. 홈 개편 [#858](https://github.com/dohyunkimmm/footmate/pull/858)은 [#859](https://github.com/dohyunkimmm/footmate/pull/859)에서 의도적으로 되돌린 상태이므로 새 홈/저장 탭을 반영된 기능으로 적지 않습니다.
+- **중복·보존:** 재귀 트리상 동일 blob SHA 파일은 **Supabase SQL 마이그레이션 2쌍**뿐이며, 적용 이력 보존을 위해 삭제·합치지 않습니다. E2E 스냅샷·Case Study 증빙·PPTX/XLSX도 현행 검증 자산으로 유지합니다.
+- **브랜치·이력:** 원격 브랜치 **123개(보호된 `main` 포함)**, 열린 PR 0건을 확인했습니다. [#525](https://github.com/dohyunkimmm/footmate/issues/525)는 2026-11-06에 고유 이력 보존·삭제 실익 부족으로 `closed/not_planned` 처리됐습니다. 오프-GitHub 영구 백업·외부 참조·소유자 승인 없는 일괄 ref 삭제, force push, Git 이력 재작성은 하지 않습니다. 브랜치 존재만으로 미병합 기능이나 정리 대상이라고 단정하지 않습니다.
+- **이번 변경 범위:** 문서의 현재 상태 색인만 업데이트합니다. 앱·Worker·DB·권한·데이터·배포 구성·원격 refs를 변경하지 않으며, 기존 날짜별 기록은 당시 스냅샷으로 보존합니다.
+
 ## 2026-11-06 · `main` 파일 목록·이슈·의존성 상태 재동기화
 
 - **재확인 기준:** `main` HEAD [`070dabe`](https://github.com/dohyunkimmm/footmate/commit/070dabe8a5a48ee7c5f3a23d9ca546056c22ff4e)에서 **파일 323개·디렉터리 41개**, 루트 파일 14개·최상위 폴더 9개. 11월 5일 문서의 322개는 당시 스냅샷입니다.
