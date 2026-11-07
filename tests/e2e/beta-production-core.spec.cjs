@@ -84,3 +84,50 @@ test('production demo keeps exact level and region from onboarding through quick
   await expect.poll(async()=> (await stored())?.level).toBe('중급+');
   expect((await stored()).region).toBe('서울 · 강남');
 });
+
+ 
+// Exhaust every public demo region and level, not just the happy-path pair.
+// Separate browser pages prevent preferences from one choice masking another.
+const demoRegionMatrix=[
+  ['수원 · 영통','영통'],
+  ['수원 · 인계','인계'],
+  ['용인 · 기흥','기흥'],
+  ['서울 · 강남','강남']
+];
+const demoLevelMatrix=[
+  ['입문','입문'],
+  ['초중급','초중급'],
+  ['중급','중급'],
+  ['중급+','고급']
+];
+for(const [region,area] of demoRegionMatrix){
+ for(const [level,label] of demoLevelMatrix){
+  test(`production demo preserves ${region} / ${label} through reload`,async({page})=>{
+   await page.setViewportSize({width:390,height:844});
+   await page.goto('/demo',{waitUntil:'domcontentloaded'});
+   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+   await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+   await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:region,exact:true}).check();
+   await page.getByRole('button',{name:'다음',exact:true}).click();
+   const selected=page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:label,exact:true});
+   await selected.check();
+   await expect(selected).toBeChecked();
+   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
+   const verify=async()=>{
+    await expect(page.locator('#quick-filter-region')).toHaveAttribute('title',region);
+    await expect(page.locator('#quick-filter-level')).toHaveAttribute('title',label);
+    await expect(page.locator('.fm-beta-match h3')).toBeVisible();
+    await expect(page.locator('.fm-beta-card-venue .fm-beta-match-place')).toContainText(area+' 데모 풋살장');
+    await expect(page.locator('.fm-beta-card-venue > span')).toHaveText(label);
+    await expect.poll(()=>page.evaluate(()=>{
+     const p=JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null');
+     return p&&{region:p.region,level:p.level};
+    })).toEqual({region,level});
+   };
+   await verify();
+   await page.reload({waitUntil:'domcontentloaded'});
+   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+   await verify();
+  });
+ }
+}
