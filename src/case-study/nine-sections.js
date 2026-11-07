@@ -59,25 +59,24 @@ const sections = [
     "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>사업모델 방향</h2><p>운영자 제휴형 우선 · 수수료·결제비 복합 협상.</p></article><article class=\"story-card\"><h2>핵심 확인 지표</h2><p>건당 공헌이익·플랫폼 예약 비중·재참가 확인.</p></article><article class=\"story-card\"><h2>단계적 투자 기준</h2><p>취소·고객지원비 반영 손익·비용 대비 예상 손익률 재산정.</p></article></div><p class=\"decision\">공급 계약·수익성 기준 충족 후 단계적 투자 확대.</p>"
   }
 ];
-  // 5개년 경영전략: 기존 공급·손익 시나리오와 실행·성과관리 체계 연결.
-  sections[0].title = "중장기 경영계획과 사업·IT 투자전략";
-  sections[0].lead = "FootMate · 공급 확대, 수익성 개선, 경영성과 관리를 연결한 5개년 전략기획 사례";
+  // 기존 9개 장·31개 표를 유지하면서 장기 전략을 선택형 상세 보기로 제공.
   sections[8].title = "5개년 경영전략·투자 판단";
-  sections[8].lead = "성장 목표와 수익성, 투자 우선순위, 월간 경영성과 관리의 연결";
   sections[8].body += `
-    <h3 class="block-title">5개년 경영전략·자원 배분</h3>
-    <div class="table-wrap" tabindex="0" aria-label="5개년 사업·경영계획 전략과제">
-      <table><thead><tr><th scope="col">계획 연차</th><th scope="col">공급처 시나리오</th><th scope="col">핵심 전략과제</th><th scope="col">관리 지표·투자 판단</th></tr></thead><tbody>
-        <tr><th scope="row">1년 차</th><td>5곳</td><td>핵심 생활권 제휴·공급 정확도 확보</td><td>완료 예약·충원율·취소율 / 제휴 조건 확인</td></tr>
-        <tr><th scope="row">2년 차</th><td>12곳</td><td>수수료·결제비 협상과 인접 생활권 확대</td><td>건당 공헌이익·공급 유지율 / 투자 효율 평가</td></tr>
-        <tr><th scope="row">3년 차</th><td>20곳</td><td>운영 표준화·고객 재참가 관리</td><td>30일 재참가·고객지원비 / 효율 중심 투자</td></tr>
-        <tr><th scope="row">4년 차</th><td>28곳</td><td>지역별 공급·운영비 최적화</td><td>관리비 반영 경제적 손익 / 권역별 자원 배분</td></tr>
-        <tr><th scope="row">5년 차</th><td>36곳</td><td>권역별 확장과 운영 시스템 고도화</td><td>현금수지·유지율·IT 투자 효과 / 성장 심의</td></tr>
-      </tbody></table>
-    </div>
-    <h3 class="block-title">경영계획 → 성과관리 → 투자 조정</h3>
-    <p>연간 경영계획을 월별 공급·예약·수익·비용 계획으로 연결하고, 계획 대비 차이 분석과 분기별 수정 전망으로 전략과제·예산을 조정합니다. IT 투자는 운영 지표와 비용 개선 효과에 따라 우선순위를 결정합니다.</p>
-    <p class="case-scenario-note">공급처 수와 손익은 중장기 경영계획 시나리오입니다. 제휴·수수료·결제비·운영비 조건에 따라 수치를 갱신하고, 합성 집계는 실제 영업 성과와 구분합니다.</p>
+    <details class="strategy-more">
+      <summary>5개년 성장전략·투자계획 펼치기</summary>
+      <div class="card-grid">
+        <article class="story-card"><h3>1년 차 · 공급처 5곳</h3><p>핵심 생활권 제휴·완료 예약 관리</p></article>
+        <article class="story-card"><h3>2년 차 · 공급처 12곳</h3><p>수수료·결제비 협상과 생활권 확대</p></article>
+        <article class="story-card"><h3>3년 차 · 공급처 20곳</h3><p>재참가·공급 안정성과 운영 표준화</p></article>
+        <article class="story-card"><h3>4년 차 · 공급처 28곳</h3><p>관리비 반영 손익과 권역별 자원 배분</p></article>
+        <article class="story-card"><h3>5년 차 · 공급처 36곳</h3><p>권역 확대·IT 투자 효율·현금수지 관리</p></article>
+      </div>
+      <h3>경영계획과 투자 조정</h3>
+      <p>연간 목표를 월별 공급·수익·비용으로 연결.</p>
+      <p>계획 대비 차이와 분기별 전망을 관리.</p>
+      <p>성과와 현금 소요에 따라 투자 우선순위 조정.</p>
+      <p class="case-scenario-note">공급처 수는 경영계획 시나리오.</p>
+    </details>
   `;
 
   const toc=document.querySelector('.toc'),track=document.querySelector('.track');
