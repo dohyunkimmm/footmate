@@ -57,3 +57,30 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
   await expect(page.getByRole('button',{name:'Kakao로 계속하기'})).toBeVisible();
   await page.screenshot({path:'test-results/production-design/production-design-login-390.png',fullPage:true});
 });
+
+
+test('production demo keeps exact level and region from onboarding through quick filters',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  const response=await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  expect(response?.status()).toBe(200);
+  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
+  await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+  await page.getByRole('radio',{name:'서울 · 강남',exact:true}).check();
+  await page.getByRole('button',{name:'다음',exact:true}).click();
+  const level=page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:'중급',exact:true});
+  await level.check();
+  await expect(level).toBeChecked();
+  await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
+  await expect(page.locator('#quick-filter-level')).toContainText('중급');
+  await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 중급 저녁 풋살');
+  const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')));
+  await expect.poll(async()=> (await stored())?.level).toBe('중급');
+  expect((await stored()).region).toBe('서울 · 강남');
+
+  await page.locator('#quick-filter-level').click();
+  await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'고급',exact:true}).click();
+  await expect(page.locator('#quick-filter-level')).toContainText('고급');
+  await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 고급 저녁 풋살');
+  await expect.poll(async()=> (await stored())?.level).toBe('중급+');
+  expect((await stored()).region).toBe('서울 · 강남');
+});
