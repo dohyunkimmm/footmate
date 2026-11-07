@@ -171,15 +171,15 @@ def mkstyles(styles):
         name=font.find(q("name"))
         if name is None: ET.SubElement(font,q("name"),{"val":"Pretendard"})
         else: name.set("val","Pretendard")
-    colors={"title":"FF143F31","header":"FFFFFFFF","text":"FF263C33","note":"FF5A7163",
+    colors={"title":"FF143F31","head":"FFFFFFFF","text":"FF263C33","note":"FF5A7163",
             "input":"FF0000FF","formula":"FF0A722C","percent":"FF0000FF"}
     additions=[]
-    for k in ["title","header","text","note","input","formula","percent"]:
+    for k in ["title","head","text","note","input","formula","percent"]:
         font=ET.Element(q("font"))
         ET.SubElement(font,q("sz"),{"val":"17" if k=="title" else "11"})
         ET.SubElement(font,q("name"),{"val":"Pretendard"})
         ET.SubElement(font,q("color"),{"rgb":colors[k]})
-        if k in ("title","header"):ET.SubElement(font,q("b"))
+        if k in ("title","head"):ET.SubElement(font,q("b"))
         fonts.append(font); additions.append((k,len(fonts)-1))
     fonts.set("count",str(len(fonts)))
     fills=styles.find(q("fills"))
@@ -203,7 +203,7 @@ def mkstyles(styles):
     sids={}
     for k,fid in additions:
         attr={"numFmtId":str(base+1 if k=="percent" else (base if k in ("input","formula") else 0)),
-              "fontId":str(fid),"fillId":str(headfill if k=="header" else 0),"borderId":"0",
+              "fontId":str(fid),"fillId":str(headfill if k=="head" else 0),"borderId":"0",
               "xfId":"0","applyFont":"1","applyFill":"1","applyNumberFormat":"1","applyAlignment":"1"}
         xf=ET.SubElement(xfs,q("xf"),attr)
         ET.SubElement(xf,q("alignment"),{"vertical":"center","wrapText":"1"})
