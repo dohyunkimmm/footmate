@@ -55,8 +55,8 @@ for slide in prs.slides:
         if shape.has_chart:
             c=shape.chart
             if c.has_legend:c.legend.font.name="Pretendard"
-            if c.has_category_axis:c.category_axis.tick_labels.font.name="Pretendard"
-            if c.has_value_axis:c.value_axis.tick_labels.font.name="Pretendard"
+            c.category_axis.tick_labels.font.name="Pretendard"
+            c.value_axis.tick_labels.font.name="Pretendard"
 prs.core_properties.keywords=((prs.core_properties.keywords or "")+" strategy-20261107").strip()
 prs.save(src)
 check=Presentation(src)
