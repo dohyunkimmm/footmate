@@ -5,12 +5,16 @@ on:
     paths:
       - 'src/case-study/downloads/footmate_report.pptx'
       - 'qa/improve-case-study-chart.py'
+      - 'qa/align-footmate-strategy-20261107.py'
+      - 'qa/build-footmate-strategy-appendix-20261107.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   pull_request:
     branches: [main]
     paths:
       - 'src/case-study/downloads/footmate_report.pptx'
       - 'qa/improve-case-study-chart.py'
+      - 'qa/align-footmate-strategy-20261107.py'
+      - 'qa/build-footmate-strategy-appendix-20261107.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
@@ -70,12 +74,22 @@ jobs:
           PY
       - name: Refine monthly revenue chart from original numbers
         run: /tmp/footmate-slide-edit/bin/python qa/improve-case-study-chart.py
+      - name: Align 5-year strategy, preserve source chart and enforce Pretendard
+        run: /tmp/footmate-slide-edit/bin/python qa/align-footmate-strategy-20261107.py
+      - name: Generate separate six-slide Pretendard strategic appendix
+        run: |
+          /tmp/footmate-slide-edit/bin/python qa/build-footmate-strategy-appendix-20261107.py
+          mkdir -p /tmp/footmate-appendix
+          libreoffice -env:UserInstallation=file:///tmp/lo-footmate-appendix --headless --convert-to pdf --outdir /tmp/footmate-appendix src/case-study/downloads/footmate_5year_strategy.pptx
+          test "$(pdfinfo /tmp/footmate-appendix/footmate_5year_strategy.pdf | awk '/^Pages:/ {print $2}')" = "6"
+          pdffonts /tmp/footmate-appendix/footmate_5year_strategy.pdf | grep -qi Pretendard
       - name: Render editable 10-slide presentation
         run: |
           set -euo pipefail
           mkdir -p /tmp/footmate-ppt
           libreoffice -env:UserInstallation=file:///tmp/lo-footmate-ppt --headless --convert-to pdf --outdir /tmp/footmate-ppt src/case-study/downloads/footmate_report.pptx
           test -s /tmp/footmate-ppt/footmate_report.pdf
+          pdffonts /tmp/footmate-ppt/footmate_report.pdf | grep -qi Pretendard
           test "$(pdfinfo /tmp/footmate-ppt/footmate_report.pdf | awk '/^Pages:/ {print $2}')" = "10"
           for page in $(seq 1 10); do
             number="$(printf '%02d' "$page")"
@@ -118,7 +132,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx
+          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx src/case-study/downloads/footmate_5year_strategy.pptx
           if git diff --cached --quiet; then
             echo 'No preview changes'
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -144,7 +158,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx
+          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx src/case-study/downloads/footmate_5year_strategy.pptx
           if git diff --cached --quiet; then
             echo 'PASS: review branch previews already synchronized'
           else

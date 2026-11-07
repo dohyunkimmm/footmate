@@ -378,11 +378,12 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
   await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
-  await expect(documents.locator('.case-downloads a')).toHaveCount(2);
+  await expect(documents.locator('.case-downloads a')).toHaveCount(3);
   await expect(page.getByRole('link',{name:'PPT 다운로드'})).toHaveCount(1);
   await expect(page.getByRole('link',{name:'Excel 다운로드'})).toHaveCount(1);
   await expect(documents.getByRole('link',{name:'PPT 다운로드'})).toHaveAttribute('download','footmate_report.pptx');
   await expect(documents.getByRole('link',{name:'Excel 다운로드'})).toHaveAttribute('download','footmate_model.xlsx');
+   await expect(documents.getByRole('link',{name:'5개년 전략 PPT (6장)'})).toHaveAttribute('download','footmate_5year_strategy.pptx');
   await expect(page.locator('a[href="/src/case-study/forecast.html"]')).toHaveCount(0);
   const model=page.locator('#case-profit-model');
   await model.scrollIntoViewIfNeeded();
