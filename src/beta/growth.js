@@ -2,7 +2,7 @@ import {discoveryRecoveryOptions,hasInvalidTimeRange} from './domain/discovery-r
 import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {emitDiscoveryMeasurement} from './measurement-events.js';
 import {matchesRecommendationConditions,recommendationFingerprint,validRecommendationCache,diverseRecommendationCandidates} from './domain/recommendation-discovery.js';
-import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations} from './demo-catalog.js';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations} from './demo-catalog.js?v=2';
 import {createPreferenceSyncClient,cleanSyncPreferences} from './preference-sync.js?v=2';
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -15,6 +15,7 @@ const PREFERENCES_KEY='footmate:beta:preferences:v1';
 const PREF_OWNER_KEY='footmate:beta:preferences-owner:v1';
 const PREF_DIRTY_KEY='footmate:beta:preferences-dirty:v1';
 let syncedUser='',preferenceRevision=0;
+const TIME_RANGE_ERROR='시작 시간 상한은 선호 시간보다 늦게 골라주세요.';
 const DEFAULT_PREFERENCES={sport:'futsal',region:'',level:'',position:'',afterTime:'',beforeTime:'',dateWindow:''};
 let preferences=null,draft=null,editing=true,wizardStep=1,aiOrder=[],initialRecommendationRequested=false,activeRecommendationController=null,recommendationRequestId=0;
 try{const saved=JSON.parse(localStorage.getItem(PREFERENCES_KEY)||'null');if(saved&&['football','futsal',''].includes(saved.sport)&&['','입문','초중급','중급','중급+'].includes(saved.level)&&['','MF','FW','DF','GK'].includes(saved.position)&&['','09:00','14:00','18:00','20:00'].includes(saved.afterTime)&&typeof saved.region==='string'){preferences={...DEFAULT_PREFERENCES,...saved,sport:'futsal',dateWindow:['','today','tomorrow','weekend'].includes(saved.dateWindow)?saved.dateWindow:'',beforeTime:['','12:00','18:00','22:00'].includes(saved.beforeTime)?saved.beforeTime:''};editing=false}}catch{}
@@ -139,10 +140,17 @@ function publishRecommendations(){
 }
 async function recommend(form){
  const data=new FormData(form);
- return applyPreferences({...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(data)});
+ const next={...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(data)};
+ if(hasInvalidTimeRange(next)){
+  draft=next;
+  form.querySelector('[data-time-range-error]').textContent=TIME_RANGE_ERROR;
+  form.elements.afterTime.focus();
+  return;
+ }
+ return applyPreferences(next);
 }
 async function applyPreferences(next){
- if(hasInvalidTimeRange(next)){message='시작 시간 상한은 선호 시간보다 늦게 골라주세요.';render();const summary=document.getElementById('quick-filter-afterTime');if(summary){summary.parentElement.open=true;summary.focus()}return}
+ if(hasInvalidTimeRange(next)){message=TIME_RANGE_ERROR;render();const summary=document.getElementById('quick-filter-afterTime');if(summary){summary.parentElement.open=true;summary.focus()}return}
  draft=null;initialRecommendationRequested=true;preferences=cleanSyncPreferences({...next,sport:'futsal'})||{...DEFAULT_PREFERENCES};
  preferenceRevision++;sessionStorage.setItem(PREF_DIRTY_KEY,'1');
  try{localStorage.setItem(PREFERENCES_KEY,JSON.stringify(preferences))}catch{}
@@ -220,6 +228,7 @@ function recommendPanel(){
  <div class="fm-beta-preference-row"><label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(['입문','초중급','중급','중급+'].map(v=>[v,v]),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label></div>
  <label class="fm-beta-field"><span>선호 시간</span><select name="afterTime" aria-label="선호 시간">${options([['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']],p.afterTime,'시간 전체')}</select></label>
  ${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}${choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p)}
+ <div role="alert" data-time-range-error>${hasInvalidTimeRange(p)?TIME_RANGE_ERROR:''}</div>
  <button class="fm-beta-button fm-beta-button--primary" ${busy?'disabled':''}>추천 경기 보기</button><button class="fm-beta-link" type="button" data-growth-action="close-preferences">닫기</button></form></section>`;
 }
 function waitlistPanel(){if(isDemoEntry||!accessToken())return'';const p=preferences?.position||profile?.position||'';const list=matches.filter(m=>!m.is_demo&&p&&['open','full'].includes(m.status)&&new Date(m.starts_at)>new Date()&&(m.status==='full'||Number(m.remaining_spots)<=0||slotLeft(m,p)<=0));return `<section class="fm-beta-panel fm-beta-growth-panel" data-beta-growth-panel="waitlist"><div class="fm-beta-panel-head"><div><h3>대기 신청</h3><p>취소로 ${esc(p||'선호 포지션')} 자리가 나면 신청 순서대로 자동 참가 전환됩니다.</p></div></div>${!p?'<div class="fm-beta-empty">프로필에서 선호 포지션을 설정해주세요.</div>':list.length?list.map(m=>{const q=queued(m.id);return `<div class="fm-beta-growth-row"><div><b>${esc(m.title)}</b><span>${esc(startLabel(m.starts_at))} · ${esc(POSITIONS[p]||p)}</span></div><button class="fm-beta-button ${q?'fm-beta-button--danger':''}" data-growth-action="${q?'cancel-waitlist':'join-waitlist'}" data-match-id="${esc(m.id)}" ${busy?'disabled':''}>${q?'대기 취소':'대기 신청'}</button></div>`}).join(''):'<div class="fm-beta-empty">현재 대기 대상 경기가 없습니다.<div class="fm-beta-actions" style="justify-content:center;margin-top:12px"><button type="button" class="fm-beta-button" data-action="navigate" data-view="home">추천 경기 보기</button></div></div>'}</section>`}
@@ -227,7 +236,11 @@ function historyPanel(){if(isDemoEntry||!accessToken())return'';const attended=p
 function render(){const focusedId=document.activeElement?.id;root.dataset.betaOnboarding=String(!preferences);const shell=root.querySelector('.fm-beta-shell');if(!shell)return;let host=shell.querySelector('[data-beta-growth-host]');if(!host){host=document.createElement('div');host.dataset.betaGrowthHost='true';shell.querySelector('.fm-beta-footer')?.before(host)}host.dataset.realtimeState=realtimeState;host.innerHTML=`<div class="fm-beta-growth-grid">${waitlistPanel()}${historyPanel()}</div>`;host.dataset.realtimeState=realtimeState;const main=shell.querySelector('[data-beta-main]');if(main){let search=main.querySelector('[data-beta-ai-entry]');if(!search){search=document.createElement('div');search.dataset.betaAiEntry='true';main.prepend(search)}const signature=JSON.stringify(preferences);const openFilters=search.dataset.conditions===signature?openQuickFilterIds(search):[];search.innerHTML=recommendPanel();search.dataset.conditions=signature;restoreQuickFilters(search,openFilters);if(focusedId?.startsWith('quick-filter-'))document.getElementById(focusedId)?.focus()}}
 function baseRefresh(){clearTimeout(refreshTimer);refreshTimer=setTimeout(()=>{root.querySelector('[data-action="refresh"]')?.click();loadState().catch(()=>{})},300)}
 function connectRealtime(){if(isDemoEntry)return;if(!config||socket||document.visibilityState==='hidden')return;const url=config.url.replace(/^http/,'ws')+`/realtime/v1/websocket?apikey=${encodeURIComponent(config.publishableKey)}&vsn=1.0.0`;let ref=1;realtimeState='connecting';render();socket=new WebSocket(url);socket.onopen=()=>{socket.send(JSON.stringify({topic:'realtime:footmate-beta-growth',event:'phx_join',payload:{config:{broadcast:{self:false},presence:{key:''},postgres_changes:TABLES.map((table,i)=>({event:'*',schema:'public',table,id:i+1}))},access_token:accessToken()||config.publishableKey},ref:String(ref++)}));heartbeat=setInterval(()=>socket?.readyState===1&&socket.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:String(ref++)})),25000)};socket.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event==='phx_reply'&&d.payload?.status==='ok'){realtimeState='connected';render()}if(d.event==='postgres_changes')baseRefresh()}catch{}};socket.onclose=()=>{clearInterval(heartbeat);heartbeat=null;socket=null;realtimeState='error';render();clearTimeout(reconnectTimer);reconnectTimer=setTimeout(connectRealtime,2500)};socket.onerror=()=>{realtimeState='error';render()}}
-root.addEventListener('change',e=>{if(e.target.closest('[data-growth-form="quick-filter"]')){const input=e.target;document.getElementById('quick-filter-'+(['dateWindow','beforeTime'].includes(input.name)?'afterTime':input.name))?.focus();void applyPreferences({...preferences,[input.name]:input.value});return;}const form=e.target.closest('[data-growth-form="recommend"]');if(form)draft={...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(new FormData(form))}});
+root.addEventListener('change',e=>{if(e.target.closest('[data-growth-form="quick-filter"]')){const input=e.target;document.getElementById('quick-filter-'+(['dateWindow','beforeTime'].includes(input.name)?'afterTime':input.name))?.focus();void applyPreferences({...preferences,[input.name]:input.value});return;}const form=e.target.closest('[data-growth-form="recommend"]');if(form){
+ draft={...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(new FormData(form))};
+ const error=form.querySelector('[data-time-range-error]');
+ if(error)error.textContent=hasInvalidTimeRange(draft)?TIME_RANGE_ERROR:'';
+}});
 root.addEventListener('submit',e=>{const f=e.target.closest('[data-growth-form]');if(!f)return;e.preventDefault();if(f.dataset.growthForm==='quick-filter')return;if(f.dataset.growthForm==='recommend'){if(!preferences&&wizardStep===1)moveWizard(f,2);else recommend(f)}else submitFeedback(f)});
 root.addEventListener('click',e=>{const t=e.target.closest('[data-growth-action]');if(!t)return;if(t.dataset.growthAction==='same-venue'){window.dispatchEvent(new CustomEvent('footmate:beta:same-venue',{detail:{matchId:t.dataset.matchId}}));return}if(t.dataset.growthAction==='recover-condition'){const option=discoveryRecoveryOptions(matches,preferences).find(item=>item.key===t.dataset.recoveryKey);if(option)void applyPreferences({...preferences,...option.changes});return}if(t.dataset.growthAction==='retry-ranking'){void rankWithAI();return}if(t.dataset.growthAction==='relax-time'){void applyPreferences({...preferences,afterTime:'',beforeTime:''});return}if(t.dataset.growthAction==='clear-filters'){void applyPreferences({...DEFAULT_PREFERENCES});root.querySelector('#quick-filter-region')?.focus();return}if(t.dataset.growthAction==='next-setup'){moveWizard(t.closest('form'),2);return}if(t.dataset.growthAction==='previous-setup'){moveWizard(t.closest('form'),1);return}if(t.dataset.growthAction==='set-sport'){void applyPreferences({...preferences,sport:t.dataset.sport||''});return}if(t.dataset.growthAction==='close-preferences'){editing=false;draft=null;render();return}if(t.dataset.growthAction==='edit-preferences'){editing=true;draft=null;root.dataset.betaRecommendationsReady='false';render();root.querySelector('[data-beta-ai-entry] h2')?.scrollIntoView({block:'start',behavior:'smooth'});return}waitlistAction(t.dataset.matchId,t.dataset.growthAction==='cancel-waitlist')});
 const observer=new MutationObserver(()=>{if(root.querySelector('.fm-beta-shell')&&!root.querySelector('[data-beta-growth-host]'))render()});observer.observe(root,{childList:true,subtree:true});

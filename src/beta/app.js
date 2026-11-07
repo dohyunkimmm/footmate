@@ -4,7 +4,7 @@ import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus
 import {pickUnseenRecommendation} from './domain/recommendation-discovery.js';
 import {discoveryPresetKey,readDiscoveryPresets,eligibleMatch,unseenPresetMatches,nextAtVenue,MAX_PRESETS,MAX_KNOWN_MATCHES} from './domain/discovery-presets.js';
 import {cleanSyncPreferences} from './preference-sync.js?v=2';
-import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js?v=2';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
