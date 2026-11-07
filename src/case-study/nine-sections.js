@@ -59,6 +59,25 @@ const sections = [
     "body": "<div class=\"card-grid\"><article class=\"story-card\"><h2>사업모델 방향</h2><p>운영자 제휴형 우선 · 수수료·결제비 복합 협상.</p></article><article class=\"story-card\"><h2>핵심 확인 지표</h2><p>건당 공헌이익·플랫폼 예약 비중·재참가 확인.</p></article><article class=\"story-card\"><h2>단계적 투자 기준</h2><p>취소·고객지원비 반영 손익·비용 대비 예상 손익률 재산정.</p></article></div><p class=\"decision\">공급 계약·수익성 기준 충족 후 단계적 투자 확대.</p>"
   }
 ];
+  // 기존 9개 장·31개 표를 유지하면서 장기 전략을 선택형 상세 보기로 제공.
+  sections[8].title = "5개년 경영전략·투자 판단";
+  sections[8].body += `
+    <details class="strategy-more">
+      <summary>5개년 성장전략·투자계획 펼치기</summary>
+      <ul class="strategy-year-list">
+        <li>1년 차·5곳: 생활권 제휴·완료 예약 관리</li>
+        <li>2년 차·12곳: 수수료 협상·지역 확대</li>
+        <li>3년 차·20곳: 재참가·운영 표준화</li>
+        <li>4년 차·28곳: 관리비 반영·자원 배분</li>
+        <li>5년 차·36곳: 권역 확대·현금수지 관리</li>
+      </ul>
+      <h3>경영계획과 투자 조정</h3>
+      <p>연간 목표를 월별 공급·수익·비용으로 연결.</p>
+      <p>계획 대비 차이와 분기별 전망을 관리.</p>
+      <p>성과와 현금 소요에 따라 투자 우선순위 조정.</p>
+      <p class="case-scenario-note">공급처 수는 경영계획 시나리오.</p>
+    </details>
+  `;
 
   const toc=document.querySelector('.toc'),track=document.querySelector('.track');
   toc.innerHTML=sections.map((s,i)=>`<a class="toc-item" href="#section-${String(i+1).padStart(2,'0')}" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></a>`).join('');
