@@ -11,6 +11,7 @@ const files=[
  ['src/case-study/materials.html','/src/case-study/materials.html'],
  ['src/case-study/report-previews.js','/src/case-study/report-previews.js'],
  ['src/case-study/downloads/footmate_report.pptx','/src/case-study/downloads/footmate_report.pptx'],
+ ['src/case-study/downloads/footmate_5year_strategy.pptx','/src/case-study/downloads/footmate_5year_strategy.pptx'],
  ['src/case-study/downloads/footmate_model.xlsx','/src/case-study/downloads/footmate_model.xlsx']
 ];
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -21,4 +22,4 @@ async function check([local,url]){
  if(sha(actual)!==sha(expected))throw Error(url+' differs from deployed merge commit');
  console.log('PASS '+url+' '+actual.length+' bytes');
 }
-Promise.all(files.map(check)).then(()=>console.log('PASS Case Study Production Smoke · 7 assets')).catch(e=>{console.error(e);process.exitCode=1});
+Promise.all(files.map(check)).then(()=>console.log('PASS Case Study Production Smoke · 8 assets')).catch(e=>{console.error(e);process.exitCode=1});
