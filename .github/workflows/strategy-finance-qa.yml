@@ -1,0 +1,23 @@
+name: FootMate strategy Excel cross-check
+on:
+  push:
+    branches:
+      - strategy/financial-workbook-20261108
+    paths:
+      - 'qa/strategy_excel_sync.py'
+      - '.github/workflows/strategy-finance-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inspect original five-sheet model and formulas
+        run: python qa/strategy_excel_sync.py
