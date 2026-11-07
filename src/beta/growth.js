@@ -227,7 +227,7 @@ function recoveryPanel(p){
 }
 function recommendPanel(){
  if(!preferences)return wizardPanel();
- return `<section class="fm-beta-preferences-summary" aria-label="추천 조건">${quickFilters(preferences)}${!busy&&recommendation?.ranked.length===0?recoveryPanel(preferences):''}${message? `<div class="fm-beta-search-status"><span role="status">${esc(message)}</span>${message==='기본 추천'?'<button type="button" class="fm-beta-link" data-growth-action="retry-ranking">AI 다시 시도</button>':''}</div>`:''}</section>`;
+ return `<section class="fm-beta-preferences-summary" aria-label="추천 조건">${quickFilters(preferences)}${!busy&&recommendation?.ranked.length===0?recoveryPanel(preferences):''}${message&&message!==TIME_RANGE_ERROR?`<div class="fm-beta-search-status"><span role="status">${esc(message)}</span>${message==='기본 추천'?'<button type="button" class="fm-beta-link" data-growth-action="retry-ranking">AI 다시 시도</button>':''}</div>`:''}</section>`;
 }
 function preferenceSheet(){
  const p=draft||preferences;
