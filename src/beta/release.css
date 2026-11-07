@@ -639,7 +639,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
  display:grid;place-items:center;width:44px;min-width:44px;min-height:44px;padding:0;border:1px solid #acc9b66e;border-radius:14px;
  color:#f7fff8;background:#ffffff12;
 }
-.fm-beta-app-card-kicker .fm-beta-card-tools button[aria-pressed="true"]{color:#173e2b;background:#e2f3d8;border-color:#e2f3d8}
+.fm-beta-app-card-kicker .fm-beta-card-tools button[aria-pressed="true"]{color:#092e21;background:#d8ff73;border-color:#d8ff73}
 .fm-beta-app-card-kicker .fm-beta-card-tools button:focus-visible{outline:2px solid #d0edc4;outline-offset:2px}
 .fm-beta-app-card-kicker .fm-beta-ui-icon{width:19px;height:19px}
 .fm-beta-catalog .fm-beta-app-match .fm-beta-match-top{align-items:center;gap:6px}
