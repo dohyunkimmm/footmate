@@ -19,5 +19,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Inspect original five-sheet model and formulas
-        run: python qa/strategy_excel_sync.py
+      - name: Append 5-year strategy and financial cross-checks without changing original sheets
+        run: |
+          python qa/strategy_excel_sync.py footmate
+          python qa/strategy_excel_sync.py footmate
+      - name: Commit reviewed integrated XLSX to the strategy branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/case-study/downloads/footmate_model.xlsx
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(finance): replace FootMate Excel with six original and four strategy sheets'
+            git push origin HEAD:strategy/financial-workbook-20261108
+          fi
