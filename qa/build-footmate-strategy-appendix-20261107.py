@@ -1,6 +1,7 @@
 """Build the separate six-slide FootMate 5-year strategy appendix.
 All labels are plan/scenario data, not realized transaction results.
 Editable shapes, 16:9 ratio, Pretendard typography, no emoji glyphs.
+Re-running the generator preserves published bytes for identical reviewed decks.
 """
 from pathlib import Path
 from pptx import Presentation
