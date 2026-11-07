@@ -259,6 +259,14 @@ def xml_sheet(spec,styleids):
                     ET.SubElement(c,q("v")).text=str(data_val)
                 elif data_val is None:pass
                 else:raise TypeError((address,data_val))
+    # Long notes, document header and overview span the whole sheet rather than clipping in column A.
+    final_col=chr(64+len(spec["widths"]))
+    merge_rows=sorted(r for r,entry in rows.items() if r in (1,2) or
+                      (len(entry)==1 and entry[0][0].startswith("A") and r>=10))
+    if merge_rows:
+        merges=ET.SubElement(root,q("mergeCells"),{"count":str(len(merge_rows))})
+        for rr in merge_rows:
+            ET.SubElement(merges,q("mergeCell"),{"ref":f"A{rr}:{final_col}{rr}"})
     ET.SubElement(root,q("pageMargins"),{"left":"0.4","right":"0.4","top":"0.5","bottom":"0.5","header":"0.2","footer":"0.2"})
     return ET.tostring(root,encoding="utf-8",xml_declaration=True)
 
