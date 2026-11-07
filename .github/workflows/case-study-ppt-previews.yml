@@ -89,6 +89,7 @@ jobs:
           mkdir -p /tmp/footmate-ppt
           libreoffice -env:UserInstallation=file:///tmp/lo-footmate-ppt --headless --convert-to pdf --outdir /tmp/footmate-ppt src/case-study/downloads/footmate_report.pptx
           test -s /tmp/footmate-ppt/footmate_report.pdf
+          pdffonts /tmp/footmate-ppt/footmate_report.pdf | grep -qi Pretendard
           test "$(pdfinfo /tmp/footmate-ppt/footmate_report.pdf | awk '/^Pages:/ {print $2}')" = "10"
           for page in $(seq 1 10); do
             number="$(printf '%02d' "$page")"
