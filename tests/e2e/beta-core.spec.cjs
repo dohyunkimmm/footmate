@@ -709,6 +709,32 @@ test('random discovery keeps the drawn demo match through participation login',a
   expect(backend.isJoined()).toBe(false);
 });
 
+test('filter overlays leave the mobile recommendation layout in place',async({page})=>{
+ await mockBackend(page);
+ await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+ await page.setViewportSize({width:320,height:560});
+ await page.goto('/demo');
+ const main=page.locator('[data-beta-main]');
+ const layout=()=>main.evaluate(el=>({height:el.scrollHeight,catalogTop:el.querySelector('.fm-beta-catalog').getBoundingClientRect().top}));
+ const timeChip=page.locator('#quick-filter-afterTime');
+ await expect(timeChip).toBeVisible();
+ await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-recommendations-ready','true');
+ const initial=await layout();
+ await timeChip.click();
+ await expect(page.getByRole('group',{name:'빠른 경기 날짜',exact:true})).toBeVisible();
+ expect(await layout()).toEqual(initial);
+ await page.getByRole('button',{name:'빠른 필터 닫기'}).click();
+ await expect(timeChip).toBeFocused();
+ const edit=page.getByRole('button',{name:'조건 변경',exact:true});
+ await edit.click();
+ const sheet=page.getByRole('dialog',{name:'추천 조건',exact:true});
+ await expect(sheet.getByRole('button',{name:'추천 경기 보기',exact:true})).toBeInViewport();
+ expect(await layout()).toEqual(initial);
+ await page.keyboard.press('Escape');
+ await expect(sheet).toHaveCount(0);
+ await expect(edit).toBeFocused();
+});
+
 test('condition editor explains conflicting times and accepts the corrected range',async({page})=>{
  await mockBackend(page);
  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
@@ -1055,4 +1081,3 @@ test('new live venue region appears in the first-step location choices',async({p
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
 });
-
