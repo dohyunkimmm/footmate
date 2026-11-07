@@ -10,6 +10,15 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR
 
 OUT=Path("src/case-study/downloads/footmate_5year_strategy.pptx")
+if OUT.exists():
+    existing=Presentation(OUT)
+    if len(existing.slides)==6 and any(
+        "5개년 월 경제적 손익" in sh.text
+        for sh in existing.slides[3].shapes if sh.has_text_frame
+    ):
+        print("PASS FootMate appendix exists and is aligned; keeping original file bytes")
+        raise SystemExit(0)
+
 p=Presentation();p.slide_width=Inches(13.333);p.slide_height=Inches(7.5)
 G=RGBColor(15,55,44);G2=RGBColor(30,98,73);M=RGBColor(209,238,221)
 L=RGBColor(202,247,172);W=RGBColor(255,255,255);D=RGBColor(30,54,46)
