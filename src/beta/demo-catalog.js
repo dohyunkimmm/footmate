@@ -1,3 +1,5 @@
+import {betaLevelLabel} from './level-label.js';
+
 // Isolated preview data. Never inserted into the live match/participation tables.
 export const isDemoEntry=location.pathname.replace(/\/$/,'')==='/demo';
 const KEY='footmate:beta:demo-participations:v1';
@@ -13,7 +15,7 @@ const templates=[
 ];
 for(const [region,venue] of [['수원 · 영통','영통'],['수원 · 인계','인계'],['용인 · 기흥','기흥'],['서울 · 강남','강남']]){
  for(const [i,level] of ['입문','초중급','중급','중급+'].entries()){
-  templates.push([`${venue} ${level} 저녁 풋살`,region,`${venue} 데모 풋살장`,level,i%2?'5 vs 5':'6 vs 6',20+i%2]);
+  templates.push([`${venue} ${betaLevelLabel(level)} 저녁 풋살`,region,`${venue} 데모 풋살장`,level,i%2?'5 vs 5':'6 vs 6',20+i%2]);
  }
 }
 export function isFutsalMatch(match){
@@ -50,7 +52,7 @@ export function demoCatalog(userId='',now=Date.now(),retainedIds=[]){
   const match=demoMatch(template,index,starts,mine);
   if(match.id===id)rows.push(match);
  }
- for(const p of mine)if(p.match_snapshot&&isFutsalMatch(p.match_snapshot)&&!rows.some(m=>m.id===p.match_id))rows.push(p.match_snapshot);
+ for(const p of mine)if(p.match_snapshot&&isFutsalMatch(p.match_snapshot)&&!rows.some(m=>m.id===p.match_id))rows.push({...p.match_snapshot,title:p.match_snapshot.title?.replace('중급+','고급')});
  return rows;
 }
 export function joinDemoMatch(userId,matchId,position){

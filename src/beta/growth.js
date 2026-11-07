@@ -1,8 +1,9 @@
+import {betaLevelLabel} from './level-label.js';
 import {discoveryRecoveryOptions,hasInvalidTimeRange} from './domain/discovery-recovery.js';
 import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {emitDiscoveryMeasurement} from './measurement-events.js';
 import {matchesRecommendationConditions,recommendationFingerprint,validRecommendationCache,diverseRecommendationCandidates} from './domain/recommendation-discovery.js';
-import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations} from './demo-catalog.js?v=2';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations} from './demo-catalog.js?v=3';
 import {createPreferenceSyncClient,cleanSyncPreferences} from './preference-sync.js?v=2';
 const root=document.getElementById('footmate-beta');
 const SESSION_KEY='footmate:beta:auth:v1';
@@ -184,7 +185,7 @@ const FILTERS={
  dateWindow:{label:'경기 날짜',short:'날짜',values:[['','날짜 전체'],['today','오늘'],['tomorrow','내일'],['weekend','다가오는 주말']]},
  beforeTime:{label:'시작 시간 상한',short:'시작 상한',values:[['','상한 없음'],['12:00','낮 12시 전 시작'],['18:00','저녁 6시 전 시작'],['22:00','밤 10시 전 시작']]},
  region:{label:'활동 지역',short:'지역',values:[['','지역 전체'],['수원 · 영통','수원 · 영통'],['수원 · 인계','수원 · 인계'],['용인 · 기흥','용인 · 기흥'],['서울 · 강남','서울 · 강남']]},
- level:{label:'실력',short:'실력',values:[['','상관없음'],...['입문','초중급','중급','중급+'].map(v=>[v,v])]},
+ level:{label:'실력',short:'실력',values:[['','상관없음'],...['입문','초중급','중급','중급+'].map(v=>[v,betaLevelLabel(v)])]},
  position:{label:'포지션',short:'포지션',values:[['','상관없음'],...Object.entries(POSITIONS)]},
  afterTime:{label:'선호 시간',short:'시간',values:[['','시간 전체'],['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']]}
 };
@@ -206,8 +207,19 @@ function quickFilters(p){
   const selected=values.find(([value])=>value===p[name])?.[1];
   const labels=[p[name]&&(name==='position'?p[name]:dates?p[name]+' 이후':selected),dates&&p.dateWindow&&FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1],dates&&p.beforeTime&&p.beforeTime+' 전'].filter(Boolean);
   const label=labels.join(' · ')||filter.short;
+  let compactLabel=label;
+  if(dates){
+   const date=p.dateWindow==='weekend'?'주말':FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1];
+   const after=p.afterTime&&Number(p.afterTime.slice(0,2));
+   const before=p.beforeTime&&Number(p.beforeTime.slice(0,2));
+   const time=after&&before?`${after}–${before}시`:after?`${after}시~`:before?`~${before}시`:'';
+   compactLabel=date?(time?`${date} +1`:date):time||filter.short;
+  }else if(name==='region'&&p.region){
+   compactLabel=p.region.split(' · ').at(-1);
+  }
+  const accessibleLabel=labels.length?`${filter.short} · ${compactLabel}${compactLabel!==label?` · ${label}`:''}`:label;
   return `<details name="beta-quick-filter" data-filter-active="${Boolean(labels.length)}">
-   <summary id="quick-filter-${name}" title="${esc(label)}"><span>${esc(label)}</span></summary>
+   <summary id="quick-filter-${name}" title="${esc(label)}" aria-label="${esc(accessibleLabel)}"><span>${esc(compactLabel)}</span></summary>
    <div class="fm-beta-filter-scrim" data-growth-action="close-quick-filter" aria-hidden="true"></div>
    <form class="fm-beta-quick-panel" data-growth-form="quick-filter">
     <div class="fm-beta-filter-panel-head"><strong>${esc(dates?'날짜와 시간':filter.label)}</strong><button type="button" class="fm-beta-filter-close" data-growth-action="close-quick-filter" aria-label="빠른 필터 닫기">×</button></div>${choices(name,filter.label,values,p,'빠른 ')}${dates?choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p,'빠른 ')+choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p,'빠른 '):''}
@@ -237,7 +249,7 @@ function preferenceSheet(){
  <div class="fm-beta-filter-panel-head"><h2 id="beta-conditions-title">추천 조건</h2><button class="fm-beta-filter-close" type="button" data-growth-action="close-preferences" aria-label="닫기">×</button></div>
  <form data-growth-form="recommend" class="fm-beta-preference-form"><div class="fm-beta-condition-fields"><div class="fm-beta-condition-selects">
  <label class="fm-beta-field"><span>활동 지역</span><select name="region" aria-label="활동 지역">${options(regions.map(v=>[v,v]),p.region,'지역 전체')}</select></label>
- <label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(['입문','초중급','중급','중급+'].map(v=>[v,v]),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label>
+ <label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(FILTERS.level.values.slice(1),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label>
  <label class="fm-beta-field"><span>선호 시간</span><select name="afterTime" aria-label="선호 시간">${options([['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']],p.afterTime,'시간 전체')}</select></label></div>
  ${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}${choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p)}
  <div role="alert" data-time-range-error>${hasInvalidTimeRange(p)?TIME_RANGE_ERROR:''}</div>
