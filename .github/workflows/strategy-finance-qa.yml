@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Start from unchanged six-sheet workbook on main
+        run: git show origin/main:src/case-study/downloads/footmate_model.xlsx > src/case-study/downloads/footmate_model.xlsx
       - name: Append 5-year strategy and financial cross-checks without changing original sheets
         run: |
           python qa/strategy_excel_sync.py footmate
