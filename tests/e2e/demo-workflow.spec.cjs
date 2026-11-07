@@ -206,7 +206,7 @@ test('demo level selection keeps recommendations and stored filters consistent',
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).level)).toBe('중급');
 
  await page.locator('#quick-filter-level').click();
- await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'고급',exact:true}).check();
+ await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'고급',exact:true}).click();
  await expect(page.locator('#quick-filter-level')).toContainText('고급');
  await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 고급 저녁 풋살');
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).level)).toBe('중급+');
