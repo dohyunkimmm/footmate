@@ -13,9 +13,9 @@ from pptx.enum.text import MSO_ANCHOR
 OUT=Path("src/case-study/downloads/footmate_5year_strategy.pptx")
 if OUT.exists():
     existing=Presentation(OUT)
-    if len(existing.slides)==6 and any(
-        "공급처 28곳 기준 약 +0.6만 원" in sh.text
-        for sh in existing.slides[3].shapes if sh.has_text_frame
+    if len(existing.slides)==6 and all(
+        any(label in sh.text for sh in existing.slides[3].shapes if sh.has_text_frame)
+        for label in ("공급처 28곳 기준 약 +0.6만 원", "−238.7만 원", "+0.6만 원")
     ):
         print("PASS FootMate appendix exists and is aligned; keeping original file bytes")
         raise SystemExit(0)
