@@ -64,13 +64,13 @@ const sections = [
   sections[8].body += `
     <details class="strategy-more">
       <summary>5개년 성장전략·투자계획 펼치기</summary>
-      <div class="card-grid">
-        <article class="story-card"><h3>1년 차 · 공급처 5곳</h3><p>핵심 생활권 제휴·완료 예약 관리</p></article>
-        <article class="story-card"><h3>2년 차 · 공급처 12곳</h3><p>수수료·결제비 협상과 생활권 확대</p></article>
-        <article class="story-card"><h3>3년 차 · 공급처 20곳</h3><p>재참가·공급 안정성과 운영 표준화</p></article>
-        <article class="story-card"><h3>4년 차 · 공급처 28곳</h3><p>관리비 반영 손익과 권역별 자원 배분</p></article>
-        <article class="story-card"><h3>5년 차 · 공급처 36곳</h3><p>권역 확대·IT 투자 효율·현금수지 관리</p></article>
-      </div>
+      <ul class="strategy-year-list">
+        <li>1년 차·5곳: 생활권 제휴·완료 예약 관리</li>
+        <li>2년 차·12곳: 수수료 협상·지역 확대</li>
+        <li>3년 차·20곳: 재참가·운영 표준화</li>
+        <li>4년 차·28곳: 관리비 반영·자원 배분</li>
+        <li>5년 차·36곳: 권역 확대·현금수지 관리</li>
+      </ul>
       <h3>경영계획과 투자 조정</h3>
       <p>연간 목표를 월별 공급·수익·비용으로 연결.</p>
       <p>계획 대비 차이와 분기별 전망을 관리.</p>
