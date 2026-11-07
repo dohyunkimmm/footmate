@@ -209,7 +209,7 @@ function quickFilters(p){
   const label=labels.join(' · ')||filter.short;
   let compactLabel=label;
   if(dates){
-   const date=p.dateWindow==='weekend'?'주말':FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1];
+   const date=p.dateWindow&&(p.dateWindow==='weekend'?'주말':FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1]);
    const after=p.afterTime&&Number(p.afterTime.slice(0,2));
    const before=p.beforeTime&&Number(p.beforeTime.slice(0,2));
    const time=after&&before?`${after}–${before}시`:after?`${after}시~`:before?`~${before}시`:'';
