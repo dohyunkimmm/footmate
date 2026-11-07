@@ -129,7 +129,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await page.clock.setFixedTime(new Date('2026-11-06T03:00:00Z'));
  await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo');
+ await page.goto('/demo?opening=control');
  const start=page.getByRole('button',{name:'내 조건으로 추천받기'});
  await expect(page.getByRole('region',{name:'추천 예시'})).toBeVisible();
  await expect(start).toBeInViewport();

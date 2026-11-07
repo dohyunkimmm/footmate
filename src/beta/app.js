@@ -61,7 +61,8 @@ if(root){
   sessionStorage.setItem('footmate:beta:opening-variant:v1',activeOpeningVariant);
   const entryStartedAt=Date.now();
   let serverReactions=[];
-  let openingOpen=openingVariant!=='quick'&&(isDemoEntry||openingExperiment)&&(comparisonEntry||sessionStorage.getItem('footmate:beta:entered:v1')!=='1');
+  const directAppHome=isDemoEntry&&!requestedOpening;
+  let openingOpen=openingVariant!=='quick'&&openingExperiment&&(comparisonEntry||sessionStorage.getItem('footmate:beta:entered:v1')!=='1');
   let joinedPage=0;
   let matchesTab='joined';
   let authEntry='results';
@@ -466,7 +467,7 @@ if(root){
   }
 
   function render(){
-    try{root.dataset.betaOnboarding=String(!JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null'))}catch{root.dataset.betaOnboarding='true'}
+    try{root.dataset.betaOnboarding=String(!directAppHome&&!JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null'))}catch{root.dataset.betaOnboarding=String(!directAppHome)}
     root.dataset.betaConnection=backendState;
     root.dataset.betaCatalogSource=matches.some(m=>m.isDemo)?'demo':'server';
     root.dataset.betaView=view;

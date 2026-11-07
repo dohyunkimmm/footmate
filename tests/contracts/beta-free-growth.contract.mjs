@@ -39,7 +39,7 @@ for(const token of ['realtime/v1/websocket','postgres_changes','matchesConstrain
   assert.ok(growth.includes(token),`missing browser growth contract: ${token}`);
 assert.ok(!growth.includes('Math.random'),'live recommendation must remain deterministic');
 assert.ok(html.includes('/src/beta/growth.css?v=1'));
-assert.ok(html.includes("import('/src/beta/growth.js?v=16')"));
+assert.ok(html.includes("import('/src/beta/growth.js?v=17')"));
 assert.ok(growth.includes("from './preference-sync.js?v=2'"));
 assert.ok(growth.includes('const DATA_REQUEST_TIMEOUT_MS=8000;'));
 assert.ok(growth.includes('const CONFIG_REQUEST_TIMEOUT_MS=5000;'));

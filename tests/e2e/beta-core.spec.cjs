@@ -293,7 +293,7 @@ test('choice-first recommendations keep demo home populated and participation is
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
   await page.route('**/api/ai-match-assistant',route=>{const body=route.request().postDataJSON();return fulfill(route,{mode:'connected-ai',rankedMatchIds:body.candidates.map(m=>m.id).reverse()})});
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo');
+  await page.goto('/demo?opening=quick');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
   await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
@@ -389,7 +389,7 @@ test('FootMate results expand without signup and participation retains preferenc
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo');
+  await page.goto('/demo?opening=control');
   const opening=page.locator('[data-screen="welcome"]');
   await expect(opening.locator('.fm-app-entry-name')).toHaveText('FootMate');
   await expect(opening.locator('.fm-app-entry-name')).toHaveCSS('font-size','32px');
@@ -710,7 +710,8 @@ test('random discovery keeps the drawn demo match through participation login',a
 });
 
 test('public app tabs keep saved matches one tap away on mobile',async({page})=>{
- await mockBackend(page);
+ await mockBackend(page,{preferences:false});
+ await page.addInitScript(()=>sessionStorage.removeItem('footmate:beta:entered:v1'));
  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
  await page.setViewportSize({width:390,height:740});
  await page.goto('/demo');
