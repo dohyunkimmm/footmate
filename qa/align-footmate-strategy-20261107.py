@@ -8,6 +8,12 @@ src=Path("src/case-study/downloads/footmate_report.pptx")
 prs=Presentation(src)
 assert len(prs.slides)==10
 
+if "strategy-20261107" in (prs.core_properties.keywords or ""):
+    assert any("5개년 경영계획 · 투자·성과관리 시나리오" in sh.text
+               for sh in prs.slides[9].shapes if sh.has_text_frame)
+    print("PASS FootMate: reviewed strategy file already aligned; no resave")
+    raise SystemExit(0)
+
 replacements={
   1:[("공급·참가·거래 데이터를 IT 투자와 운영 판단에 연결",
       "공급 확대·수익성·IT 투자를 경영성과 관리에 연결")],
