@@ -154,7 +154,8 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await expect(save).toHaveCSS('color','rgb(9, 46, 33)');
  for(const width of [320,390,430]){
   await page.setViewportSize({width,height:width===320?568:844});
-  await expect(card).toHaveCSS('padding-left',width===320?'14px':'16px');
+  await expect(card).toHaveCSS('padding-left','0px');
+  await expect(card.locator('.fm-beta-recommendation-body')).toHaveCSS('padding-left',width===320?'12px':'15px');
   expect(await save.evaluate(el=>el.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:test.info().outputPath(`compact-recommendation-${width}.png`)});
