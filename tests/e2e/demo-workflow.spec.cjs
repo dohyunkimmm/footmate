@@ -190,6 +190,28 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
 });
 
 
+test('demo level selection keeps recommendations and stored filters consistent',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-11-07T03:00:00Z'));
+ await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
+ await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
+ await page.goto('/demo');
+ await page.getByRole('button',{name:'내 조건으로 추천받기'}).click();
+ await page.getByRole('radio',{name:'서울 · 강남',exact:true}).click();
+ await page.getByRole('button',{name:'다음',exact:true}).click();
+ await page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:'중급',exact:true}).check();
+ await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
+
+ await expect(page.locator('#quick-filter-level')).toContainText('중급');
+ await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 중급 저녁 풋살');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).level)).toBe('중급');
+
+ await page.locator('#quick-filter-level').click();
+ await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'고급',exact:true}).check();
+ await expect(page.locator('#quick-filter-level')).toContainText('고급');
+ await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 고급 저녁 풋살');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).level)).toBe('중급+');
+});
+
 test('saved demo conditions show and open only new eligible matches',async({page})=>{
  await page.setViewportSize({width:320,height:568});
  await page.clock.setFixedTime(new Date('2026-11-06T03:00:00Z'));
