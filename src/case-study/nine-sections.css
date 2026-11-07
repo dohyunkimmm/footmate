@@ -497,3 +497,46 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 .case-compare dt,.case-compare dd{overflow-wrap:anywhere}
 .case-compare dd{text-align:right}
 @media(max-width:480px){.case-compare dl>div{padding:8px 5px}.case-compare dt,.case-compare dd{font-size:12px}}
+
+/* 2026-11 five-year economics visual polish: no extra shortcut buttons or navigation layers. */
+#section-09 .strategy-more{margin:28px 0;padding:0 22px 17px;border:1px solid #d5e3d9;border-radius:15px;background:#f8fbf8;overflow:hidden}
+#section-09 .strategy-more>summary{padding:18px 3px;min-height:56px;font-size:17px;font-weight:750;letter-spacing:-.02em}
+#section-09 .strategy-more[open]>summary{border-bottom:1px solid #d8e7dd;margin-bottom:18px}
+#section-09 .strategy-year-list{counter-reset:strategy;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;padding:0;margin:0 0 26px;list-style:none}
+#section-09 .strategy-year-list li{min-width:0;margin:0;padding:15px 12px 16px;border:1px solid #dce7dd;border-top:3px solid #96baa0;border-radius:11px;background:white;line-height:1.55;font-size:13px;font-weight:650;overflow-wrap:anywhere}
+#section-09 .strategy-year-list li:nth-child(4){border-top-color:#176544;background:#edf6ef;color:#164b32}
+#section-09 .strategy-year-economics{margin:18px 0 25px;padding:21px 22px 16px;border:1px solid #d6e5d9;border-radius:14px;background:white}
+#section-09 .strategy-year-economics figcaption{display:flex;flex-direction:column;gap:4px;margin-bottom:17px}
+#section-09 .strategy-year-economics figcaption span{font-size:11px;font-weight:800;letter-spacing:.11em;color:#3c7351}
+#section-09 .strategy-year-economics figcaption strong{font-size:22px;line-height:1.4;color:#143c2d;letter-spacing:-.025em}
+#section-09 .strategy-year-economics figcaption p{font-size:13px;line-height:1.6;color:#5a7363;margin:0}
+#section-09 .strategy-year-economics svg{display:block;width:100%;height:auto;overflow:visible;font-family:var(--fm-font-text)}
+#section-09 .strategy-year-economics svg text{font-family:var(--fm-font-text);font-size:15px;fill:#526d5b;font-weight:650}
+#section-09 .strategy-year-economics svg text.economics-zero{font-size:12px;fill:#6c8070}
+#section-09 .strategy-year-economics svg text.economics-axis{font-size:14px;fill:#516a5a}
+#section-09 .strategy-year-economics svg text.economics-bep-label{fill:#12603f;font-weight:850}
+#section-09 .economics-grid{stroke:#a6c9b0;stroke-width:2;stroke-dasharray:5 5}
+#section-09 .economics-area{fill:#dcece0;opacity:.65}
+#section-09 .economics-line{fill:none;stroke:#227750;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+#section-09 .economics-point{fill:white;stroke:#227750;stroke-width:3}
+#section-09 .economics-point.is-bep{fill:#227750;stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 0.25rem rgba(36,118,77,.4))}
+#section-09 .strategy-chart-note{margin:17px 0 0;padding-top:13px;border-top:1px solid #e3ebe4;font-size:12px;line-height:1.65;color:#5c7465}
+#section-09 .story-card{border-top-color:#8faf98}
+#section-09 .decision{border-left:4px solid #24734e}
+@media(max-width:800px){
+ #section-09 .strategy-more{padding:0 14px 14px}
+ #section-09 .strategy-year-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #section-09 .strategy-year-list li{padding:12px 10px;font-size:12px}
+ #section-09 .strategy-year-economics{padding:16px 10px 12px}
+ #section-09 .strategy-year-economics figcaption strong{font-size:20px}
+ #section-09 .strategy-year-economics svg text{font-size:13px}
+ #section-09 .strategy-year-economics svg text.economics-axis{font-size:12px}
+ #section-09 .strategy-chart-note{font-size:12px}
+}
+@media(max-width:360px){
+ #section-09 .strategy-year-list{grid-template-columns:1fr 1fr}
+ #section-09 .strategy-year-economics svg text.economics-axis{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ #section-09 .strategy-year-economics *{animation:none!important;transition:none!important}
+}
