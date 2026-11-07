@@ -1,10 +1,11 @@
+import {betaLevelLabel} from './level-label.js';
 import {openQuickFilterIds,restoreQuickFilters} from './filter-interaction.js';
 import {personalizeRecommendations,normalizeReactions,chooseOpeningVariant} from './domain/discovery-followup.js';
 import {configureDiscoveryTransport,setDiscoveryConsent,discoveryTransportStatus} from './discovery-transport.js';
 import {pickUnseenRecommendation} from './domain/recommendation-discovery.js';
 import {discoveryPresetKey,readDiscoveryPresets,eligibleMatch,unseenPresetMatches,nextAtVenue,MAX_PRESETS,MAX_KNOWN_MATCHES} from './domain/discovery-presets.js';
 import {cleanSyncPreferences} from './preference-sync.js?v=2';
-import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js?v=2';
+import {isDemoEntry,isFutsalMatch,demoCatalog,demoParticipations,joinDemoMatch,cancelDemoMatch,clearDemoParticipations} from './demo-catalog.js?v=3';
 import {createSupabaseBetaClient,loadBetaBackendConfig,SupabaseBetaError,BETA_SIGNUP_PASSWORD_MIN_LENGTH} from './infrastructure/supabase.js';
 import {normalizeBetaMatches,BETA_MATCH_POSITIONS} from './domain/match-contract.js';
 import {betaDirectionsUrl,betaCalendarUrl} from './attendance-links.js';
@@ -181,7 +182,7 @@ if(root){
         <label class="fm-beta-field"><span>이름</span><input name="displayName" maxlength="40" value="${esc(p.display_name||'')}" placeholder="풋살러 이름"></label>
         <label class="fm-beta-field"><span>생활권</span><input name="region" maxlength="80" value="${esc(p.region||'')}" placeholder="예: 수원 · 영통"></label>
         <label class="fm-beta-field"><span>선호 포지션</span><select name="position"><option value="">선택해주세요</option>${BETA_MATCH_POSITIONS.map(position=>`<option value="${position}" ${p.position===position?'selected':''}>${POSITION_LABELS[position]}</option>`).join('')}</select></label>
-        <label class="fm-beta-field"><span>체감 레벨</span><select name="level"><option value="">선택해주세요</option>${LEVELS.map(level=>`<option value="${level}" ${p.level===level?'selected':''}>${level}</option>`).join('')}</select></label>
+        <label class="fm-beta-field"><span>체감 레벨</span><select name="level"><option value="">선택해주세요</option>${LEVELS.map(level=>`<option value="${level}" ${p.level===level?'selected':''}>${betaLevelLabel(level)}</option>`).join('')}</select></label>
         <button class="fm-beta-button" type="submit" ${busy?'disabled':''}>프로필 저장</button>
       </form><details class="fm-beta-data-details"><summary>추천 개선 통계 참여 · 선택</summary>${discoveryTransportStatus().withdrawalPending?'<p role="status">이 기기의 수집은 중지되어 있어요. 서버 기록 삭제는 아직 확인되지 않았어요. 해제를 재시도해주세요.</p>':''}<p>로그인 후 실제 경기의 추천·상세·참가 흐름을 서버에 기록해요. 이메일·조건 원문은 보내지 않아요. 데모는 제외하며 참여 해제 시 서버 탐색 기록을 삭제해요.</p><button class="fm-beta-button" type="button" data-action="discovery-consent" ${busy?'disabled':''}>${discoveryTransportStatus().withdrawalPending?'서버 통계 해제 재시도':discoveryTransportStatus().enabled?'통계 참여 해제':'통계 참여하기'}</button>${discoveryTransportStatus().serverEnabled&&!discoveryTransportStatus().enabled&&!discoveryTransportStatus().withdrawalPending?'<p>이 브라우저의 수집은 중지되어 있어요. 서버의 통계 참여는 켜져 있어요. 이 브라우저에서 참여하거나 서버 참여를 해제할 수 있어요.</p><button class="fm-beta-button" type="button" data-action="discovery-withdraw">서버 통계 참여 해제</button>':''}</details><details class="fm-beta-data-details"><summary>개인정보 안내</summary><p>저장 데이터: 이메일 · 이름 · 생활권 · 포지션 · 레벨 · 참가 상태 · 로그인 중 선택한 추천 조건. 결제 정보와 메시지 내용은 저장하지 않습니다.</p><a href="/beta-data-notice.html">자세히 보기</a></details>
       
@@ -234,8 +235,9 @@ if(root){
   function renderSavedDemoMatches(){
     const rows=savedDemoMatches();
     if(!rows.length)return '';
-    const items=rows.map(row=>{
-      const match=matches.find(item=>item.id===row.id&&item.isDemo);
+    const items=rows.map(saved=>{
+      const match=matches.find(item=>item.id===saved.id&&item.isDemo);
+      const row={...saved,title:match?.title||saved.title.replace('중급+','고급')};
       const ended=Date.parse(row.startsAt)<=Date.now();
       const status=ended?'종료':!match?'확인 불가':match.status!=='open'||!match.remaining?'마감':`${match.remaining}자리`;
       const resume=match&&!ended?`<button type="button" class="fm-beta-link" data-action="match-detail" data-saved-entry data-match-id="${esc(row.id)}" aria-label="${esc(row.title)} 이어보기">이어보기</button>`:'';
@@ -258,7 +260,7 @@ if(root){
   function presetCatalog(){return matches.filter(match=>match.isDemo===isDemoEntry)}
   function presetLabel(conditions){
     const date={today:'오늘',tomorrow:'내일',weekend:'주말'}[conditions.dateWindow];
-    return [conditions.region,conditions.level,conditions.position,date,conditions.afterTime&&`${conditions.afterTime} 이후`,conditions.beforeTime&&`${conditions.beforeTime} 전`].filter(Boolean).join(' · ')||'전체 경기';
+    return [conditions.region,betaLevelLabel(conditions.level),conditions.position,date,conditions.afterTime&&`${conditions.afterTime} 이후`,conditions.beforeTime&&`${conditions.beforeTime} 전`].filter(Boolean).join(' · ')||'전체 경기';
   }
   function presetSignature(conditions){return JSON.stringify(cleanSyncPreferences(conditions))}
   function writePresets(rows){
@@ -343,10 +345,10 @@ if(root){
       <div class="fm-beta-match-top"><h3>${esc(match.title)}</h3>${detail?`<span class="fm-beta-badge">${esc(availability)}</span>`:match.isDemo?'<span class="fm-beta-sample-label">데모 경기</span>':''}</div>
       ${detail?`${place}${discoveryContext?`<p class="fm-beta-match-reason">${esc(discoveryContext)}</p>`:''}`:
       `<div class="fm-beta-meta"><span><svg class="fm-beta-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(formatStart(match.startsAt))}</span>${positionAvailability?`<span class="fm-beta-own-slot" role="group" aria-label="내 포지션">${esc(positionAvailability)}</span>`:`<span class="fm-beta-badge">${esc(availability)}</span>`}</div>
-      <div class="fm-beta-card-venue">${place}<span>${esc(match.level)}</span></div>`}
+      <div class="fm-beta-card-venue">${place}<span>${esc(betaLevelLabel(match.level))}</span></div>`}
       ${detail?`<details class="fm-beta-demo-slots" open><summary>모집 포지션</summary><div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot"><b>${({MF:"미드필더",FW:"공격수",DF:"수비수",GK:"골키퍼"})[item]} <small>${item}</small></b><span><strong>${Number(match.positionSlots[item]||0)}</strong>자리</span></div>`).join('')}</div>
       </details>${attendanceLinks(match,Boolean(joined))}`:''}
-      ${detail?`<dl class="fm-beta-detail-facts"><div><dt>경기 일시</dt><dd>${esc(formatStart(match.startsAt))}</dd></div><div><dt>경기 방식</dt><dd>${esc(match.format||'경기')} · ${match.durationMin}분 · ${esc(match.surface||'구장')}</dd></div><div><dt>권장 실력</dt><dd>${esc(match.level)}</dd></div></dl>${reactionPanel(match)}`:''}
+      ${detail?`<dl class="fm-beta-detail-facts"><div><dt>경기 일시</dt><dd>${esc(formatStart(match.startsAt))}</dd></div><div><dt>경기 방식</dt><dd>${esc(match.format||'경기')} · ${match.durationMin}분 · ${esc(match.surface||'구장')}</dd></div><div><dt>권장 실력</dt><dd>${esc(betaLevelLabel(match.level))}</dd></div></dl>${reactionPanel(match)}`:''}
       ${detail?saveButton:`<div class="fm-beta-card-tools"><button type="button" class="fm-beta-link fm-beta-compare-toggle" data-action="compare-toggle" data-match-id="${esc(match.id)}" aria-pressed="${comparisonIds.includes(match.id)}">${comparisonIds.includes(match.id)?'비교 선택됨':'비교에 담기'}</button>${saveButton}</div>`}
       </div><div class="fm-beta-match-actions"><span class="fm-beta-price">${match.price===0?'무료 참가':`${new Intl.NumberFormat('ko-KR').format(match.price)}원`}</span>${!detail?`<button class="fm-beta-button" type="button" data-action="match-detail" data-match-id="${esc(match.id)}">상세 보기</button>`:''}<button class="fm-beta-button fm-beta-button--primary" type="button" data-action="${action}" data-match-id="${esc(match.id)}" ${disabled||busy?'disabled':''}>${esc(label)}</button></div>
     </article>`;
@@ -405,7 +407,7 @@ if(root){
 
   function renderComparison(){
     const selected=comparisonIds.map(id=>matches.find(m=>m.id===id)).filter(Boolean);
-    const fields=[['일시',m=>formatStart(m.startsAt)],['장소',m=>m.place],['실력',m=>m.level],['경기 방식',m=>m.format+' · '+m.durationMin+'분'],['잔여 자리',m=>m.remaining+'자리'],['선택 포지션',m=>selectedPreferences().position?selectedPreferences().position+' '+Number(m.positionSlots[selectedPreferences().position]||0)+'자리':'포지션 제한 없음'],['참가비',m=>m.price===0?'무료 참가':new Intl.NumberFormat('ko-KR').format(m.price)+'원']];
+    const fields=[['일시',m=>formatStart(m.startsAt)],['장소',m=>m.place],['실력',m=>betaLevelLabel(m.level)],['경기 방식',m=>m.format+' · '+m.durationMin+'분'],['잔여 자리',m=>m.remaining+'자리'],['선택 포지션',m=>selectedPreferences().position?selectedPreferences().position+' '+Number(m.positionSlots[selectedPreferences().position]||0)+'자리':'포지션 제한 없음'],['참가비',m=>m.price===0?'무료 참가':new Intl.NumberFormat('ko-KR').format(m.price)+'원']];
     return `<div class="fm-beta-shell fm-beta-comparison"><header class="fm-beta-detail-header"><button type="button" class="fm-beta-link" data-action="compare-back" aria-label="추천으로 돌아가기">←</button><h1 tabindex="-1">경기 비교</h1><span></span></header><div class="fm-beta-compare-content"><table><caption>선택한 두 경기 비교</caption><thead><tr><th scope="col">기준</th>${selected.map(m=>`<th scope="col">${esc(m.title)}${m.isDemo?'<small>데모 경기</small>':''}</th>`).join('')}</tr></thead><tbody>${fields.map(([label,value])=>`<tr><th scope="row">${label}</th>${selected.map(m=>`<td>${esc(value(m))}</td>`).join('')}</tr>`).join('')}<tr><th scope="row">자세히</th>${selected.map(m=>`<td><button class="fm-beta-button" type="button" data-action="compare-detail" data-match-id="${esc(m.id)}" aria-label="${esc(m.title)} 상세 보기">상세 보기</button></td>`).join('')}</tr></tbody></table></div></div>`;
   }
 
@@ -426,7 +428,7 @@ if(root){
       <div class="fm-app-entry-brand"><img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate 축구공 로고"><strong class="fm-app-entry-name">FootMate</strong></div>
       <div class="fm-next-intro-copy"><h1>내 조건에 맞는 풋살</h1></div>
       <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'계속하기':'내 조건으로 추천받기'}</button></div>
-      ${example?`<section class="fm-beta-opening-preview" aria-label="추천 예시"><div class="fm-beta-preview-card" data-match-tone="${matchVisual(example).tone}" role="status" aria-live="polite"><small>추천 예시 · 데모 경기</small><h2>${esc(example.title)}</h2><p>${esc(example.place)} · ${esc(example.level)}</p><p>${esc(formatStart(example.startsAt))}</p></div>${examples.length>1?`<div class="fm-beta-preview-controls"><span>${openingPreviewPage%examples.length+1} / ${examples.length}</span><button type="button" class="fm-beta-link" data-action="opening-preview-next" aria-label="다른 추천 예시 보기">다른 예시 <span aria-hidden="true">→</span></button></div>`:''}</section>`:''}
+      ${example?`<section class="fm-beta-opening-preview" aria-label="추천 예시"><div class="fm-beta-preview-card" data-match-tone="${matchVisual(example).tone}" role="status" aria-live="polite"><small>추천 예시 · 데모 경기</small><h2>${esc(example.title)}</h2><p>${esc(example.place)} · ${esc(betaLevelLabel(example.level))}</p><p>${esc(formatStart(example.startsAt))}</p></div>${examples.length>1?`<div class="fm-beta-preview-controls"><span>${openingPreviewPage%examples.length+1} / ${examples.length}</span><button type="button" class="fm-beta-link" data-action="opening-preview-next" aria-label="다른 추천 예시 보기">다른 예시 <span aria-hidden="true">→</span></button></div>`:''}</section>`:''}
     </div></div>`;
   }
 
@@ -843,4 +845,3 @@ if(root){
   });
   boot();
 }
-

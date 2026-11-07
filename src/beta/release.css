@@ -554,9 +554,16 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-browse-controls .fm-beta-demo-pager{flex:1;flex-wrap:wrap}
 
 /* Filters sit above the recommendations so opening them cannot move the results. */
-.fm-beta-quick-filters summary{gap:3px;justify-content:center;padding-inline:7px}
-.fm-beta-quick-filters summary span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fm-beta-quick-filters summary:after{font-size:13px}
+.fm-beta-quick-filters summary{gap:4px;justify-content:center;padding-inline:5px;white-space:nowrap}
+.fm-beta-quick-filters summary span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.fm-beta-quick-filters summary:after{content:"";width:5px;height:5px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:translateY(-1px) rotate(45deg)}
+.fm-beta-quick-filters details[open]>summary:after{content:"";transform:translateY(1px) rotate(225deg)}
+.fm-beta-quick-panel .fm-beta-choice-group>div{gap:6px}
+.fm-beta-quick-panel .fm-beta-choice-group span{padding-inline:8px;font-size:13px}
+@media(max-width:360px){
+ .fm-beta-quick-filters{gap:4px}
+ .fm-beta-quick-filters summary{font-size:12px}
+}
 .fm-beta-filter-toolbar [data-growth-action="edit-preferences"]{padding:6px 12px;border-radius:999px;background:#e8f3df;color:#173b20}
 .fm-beta-filter-scrim{position:fixed;inset:0;z-index:100;background:#0d251d55}
 .fm-beta-quick-filters .fm-beta-quick-panel,

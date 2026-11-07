@@ -720,6 +720,9 @@ test('filter overlays leave the mobile recommendation layout in place',async({pa
  await expect(timeChip).toBeVisible();
  await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-recommendations-ready','true');
  const initial=await layout();
+ const chipRows=await page.locator('.fm-beta-quick-filters summary').evaluateAll(chips=>chips.map(chip=>Math.round(chip.getBoundingClientRect().top)));
+ expect(chipRows).toHaveLength(4);
+ expect(new Set(chipRows).size).toBe(1);
  await timeChip.click();
  await expect(page.getByRole('group',{name:'빠른 경기 날짜',exact:true})).toBeVisible();
  expect(await layout()).toEqual(initial);
@@ -733,6 +736,11 @@ test('filter overlays leave the mobile recommendation layout in place',async({pa
  await page.keyboard.press('Escape');
  await expect(sheet).toHaveCount(0);
  await expect(edit).toBeFocused();
+ await page.locator('#quick-filter-level').click();
+ await page.getByRole('radio',{name:'고급',exact:true}).click();
+ await expect(page.locator('#quick-filter-level')).toHaveText('고급');
+ await expect(page.locator('.fm-beta-match')).toContainText('고급');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')).level)).toBe('중급+');
 });
 
 test('condition editor explains conflicting times and accepts the corrected range',async({page})=>{
@@ -753,7 +761,8 @@ test('condition editor explains conflicting times and accepts the corrected rang
  await expect(error).toHaveCount(0);
  await submit.click();
  await expect(page.getByRole('region',{name:'추천 조건',exact:true})).toBeVisible();
- await expect(page.locator('#quick-filter-afterTime')).toHaveText('20:00 이후 · 22:00 전');
+ await expect(page.locator('#quick-filter-afterTime')).toHaveText('20–22시');
+ await expect(page.locator('#quick-filter-afterTime')).toHaveAttribute('title','20:00 이후 · 22:00 전');
 });
 
 test('enhanced discovery applies Seoul dates and exclusive start-time bounds',async({page})=>{
