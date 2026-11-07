@@ -709,6 +709,27 @@ test('random discovery keeps the drawn demo match through participation login',a
   expect(backend.isJoined()).toBe(false);
 });
 
+test('public app tabs keep saved matches one tap away on mobile',async({page})=>{
+ await mockBackend(page);
+ await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
+ await page.setViewportSize({width:390,height:740});
+ await page.goto('/demo');
+ const nav=page.getByRole('navigation',{name:'FootMate 메뉴'});
+ await expect(nav.getByRole('button',{name:'추천',exact:true})).toHaveAttribute('aria-current','page');
+ await expect(page.locator('.fm-beta-app-match')).toBeVisible();
+ await page.getByRole('button',{name:'경기 저장',exact:true}).click();
+ await nav.getByRole('button',{name:'저장',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'저장한 경기',exact:true})).toBeVisible();
+ await expect(nav.getByRole('button',{name:'저장',exact:true})).toHaveAttribute('aria-current','page');
+ await page.getByRole('button',{name:/이어보기$/}).click();
+ await expect(page.getByRole('heading',{name:'경기 상세',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'저장한 경기로 돌아가기',exact:true}).click();
+ await page.getByRole('button',{name:/저장 해제$/}).click();
+ await expect(page.getByText('저장한 경기가 없어요', {exact:true})).toBeVisible();
+ await nav.getByRole('button',{name:'추천',exact:true}).click();
+ await expect(page.locator('.fm-beta-app-match')).toBeVisible();
+});
+
 test('filter overlays leave the mobile recommendation layout in place',async({page})=>{
  await mockBackend(page);
  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
