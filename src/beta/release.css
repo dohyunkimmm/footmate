@@ -588,7 +588,7 @@ html:has([data-beta-app="true"]),body:has([data-beta-app="true"]){height:100%;ov
 .fm-beta-condition-actions .fm-beta-button{width:100%;min-height:48px}
 .fm-beta-condition-sheet .fm-beta-choice-group legend,.fm-beta-quick-panel .fm-beta-choice-group legend{margin-bottom:6px;color:#314c3c}
 .fm-beta-condition-sheet .fm-beta-choice-group span,.fm-beta-quick-panel .fm-beta-choice-group span{border-radius:999px}
-.fm-beta-condition-sheet [data-time-range-error]:empty{position:absolute}
+.fm-beta-condition-sheet [data-time-range-error]:empty{position:absolute;padding:0}
 .fm-beta-condition-sheet [data-time-range-error],.fm-beta-quick-panel [role="alert"]{
  margin:0;padding:10px 12px;border-radius:10px;background:#fff2e8;color:#783719;font-size:13px;
 }
