@@ -384,6 +384,9 @@ jobs:
       - name: Run Production HTTP smoke
         run: node tests/production-smoke.cjs
 
+      - name: Verify public case-study Excel and presentation hashes
+        run: node tests/case-study-production-smoke.cjs
+
       - name: Run Production AI inference
         run: node tests/production-ai.cjs
 
