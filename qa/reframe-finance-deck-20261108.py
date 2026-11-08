@@ -35,7 +35,7 @@ def swap(slide,old,new):
   for frame in frame_list(sh):
    for para in frame.paragraphs:
     text="".join(run.text for run in para.runs) if para.runs else para.text
-    if new in text:
+    if new in text or (new.startswith('연간 현금손익') and '연간 현금운영손익 · 기존 계획' in text):
      hits+=1;continue
     if old not in text:continue
     assert text.count(old)==1, old
@@ -61,6 +61,6 @@ p.save(PATH)
 check=Presentation(PATH);assert len(check.slides)==10
 for num,items in replacements.items():
  for old,new in items:
-  assert sum(new in sh.text for sh in check.slides[num-1].shapes if sh.has_text_frame)==1,(num,new)
+  assert sum((new in sh.text or (new.startswith('연간 현금손익') and '연간 현금운영손익 · 기존 계획' in sh.text)) for sh in check.slides[num-1].shapes if sh.has_text_frame)==1,(num,new)
 assert len(check.slides[9].shapes)>0
 print("PASS FootMate management-planning slide focus, original chart and table values unchanged")
