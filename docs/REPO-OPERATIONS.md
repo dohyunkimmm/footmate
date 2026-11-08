@@ -1,3 +1,8 @@
+## 2026-11-08 후속 · 패치 동등성 감사와 운영 보안 확인
+
+- 기존 브랜치 124개 `main` 비교 및 [읽기 전용 전체 감사 #42485591883](https://github.com/dohyunkimmm/footmate/actions/runs/42485591883) 성공. 감사 시점 비기본 125개(감사용 새 브랜치 포함) 중 8개 동등 패치 후보·117개 고유 패치·0개 완전 동일 트리. 임의 병합·브랜치/태그 삭제·강제 이력 변경하지 않았습니다. [세부 기록](REMAINING-AUDIT-2026-11-08.md)과 [#525 보존 결정](https://github.com/dohyunkimmm/footmate/issues/525)을 유지합니다.
+- `footmate-beta` RLS 16/16, SECURITY DEFINER 38개/명시적 search_path 38개/익명 EXECUTE 0개/인증 EXECUTE 21개, Cron 활성 3개를 읽기 전용 확인했습니다. Adviser 보안 WARN 23건과 운영 제약 예외 1건을 해결로 표시하지 않습니다. 실제 실서명 JWT·TOTP E2E 및 성능·인가 개별 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 **미완료**입니다. 권한·DDL·인덱스·데이터 변경 없음.
+
 ## 2026-11-08 · 최신 `main` 점검 및 문서 클렌징
 
 - 점검용 브랜치 생성 전 [`main` `dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)의 재귀 트리는 파일 **339개·폴더 43개**(루트 14개 파일·9개 폴더)입니다. 원격 브랜치 **125개**(main 포함), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**을 확인했습니다. 이 수치는 문서 PR 생성 전 스냅샷으로, 후속 변경은 별도 확인해야 합니다. [상세 점검](REPO-CLEANUP-2026-11-08.md).
