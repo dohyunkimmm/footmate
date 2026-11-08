@@ -65,11 +65,11 @@ const sections = [
     <details class="strategy-more">
       <summary>5개년 성장전략·투자계획 펼치기</summary>
       <ul class="strategy-year-list">
-        <li>1년 차·5곳: 생활권 제휴·완료 예약 관리</li>
-        <li>2년 차·12곳: 수수료 협상·지역 확대</li>
-        <li>3년 차·20곳: 재참가·운영 표준화</li>
-        <li>4년 차·28곳: 관리비 반영·자원 배분</li>
-        <li>5년 차·36곳: 권역 확대·현금수지 관리</li>
+        <li>1년 차·5곳: 생활권 제휴·완료 예약 관리<span class="strategy-year-amount">−238.7만 원/월</span></li>
+        <li>2년 차·12곳: 수수료 협상·지역 확대<span class="strategy-year-amount">−139.8만 원/월</span></li>
+        <li>3년 차·20곳: 재참가·운영 표준화<span class="strategy-year-amount">−69.6만 원/월</span></li>
+        <li>4년 차·28곳: 관리비 반영·자원 배분<span class="strategy-year-amount">+0.6만 원/월</span></li>
+        <li>5년 차·36곳: 권역 확대·현금수지 관리<span class="strategy-year-amount">+70.7만 원/월</span></li>
       </ul>
       <figure class="strategy-year-economics" aria-labelledby="strategy-year-economics-title">
         <figcaption><span>5-YEAR UNIT ECONOMICS · 월간 정상상태 시나리오</span><strong id="strategy-year-economics-title">손익분기점 전환 경로</strong><p>공급처 확대와 수수료·결제비 조건 개선에 따른 월 경제적 손익(만원)입니다.</p></figcaption>
