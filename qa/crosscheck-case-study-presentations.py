@@ -76,7 +76,7 @@ for filename,count in (("footmate_report.pptx",9),("footmate_5year_strategy.pptx
         for number in range(1,count+1):
             part=f"ppt/slides/slide{number}.xml"
             slide_xml=font_deck.read(part)
-            families=set(re.findall(rb'<a:(?:latin|ea|cs)\\b[^>]*\\btypeface="([^"]+)"',slide_xml))
+            families=set(re.findall(rb'<a:(?:latin|ea|cs)\b[^>]*\btypeface="([^"]+)"',slide_xml))
             assert families and families <= {b"Pretendard"}, (filename,number,families)
 print("DECKS", len(main), len(strategy), "font: Pretendard")
 assert "수익성" in main[0] and "운영자 제휴" in main[0]
