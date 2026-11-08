@@ -7,6 +7,10 @@ for(const width of [1920,1440,800,390,320]){
   await page.setViewportSize({width,height:1080});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');await page.evaluate(()=>document.fonts.ready);
+  await expect(page.locator('.sidebar .sb-logo')).toHaveText('FootMate');
+  await expect(page.locator('.sidebar .sb-sub')).toHaveCount(0);
+  await expect(page.locator('.sidebar')).not.toContainText('Case Study');
+  await expect(page.locator('.sidebar')).toHaveAttribute('aria-label','본문 목차');
   await expect(page.locator('.toc-item')).toHaveCount(9);
   await expect(page.locator('.slide')).toHaveCount(9);
   await expect(page.locator('h1')).toHaveCount(1);
