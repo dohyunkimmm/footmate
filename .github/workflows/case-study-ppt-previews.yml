@@ -9,6 +9,7 @@ on:
       - 'qa/build-footmate-strategy-appendix-20261107.py'
       - 'qa/visual-polish-main-deck-20261108.py'
       - 'qa/final-slide-readability-20261108.py'
+      - 'qa/reframe-finance-deck-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   pull_request:
     branches: [main]
@@ -19,6 +20,7 @@ on:
       - 'qa/build-footmate-strategy-appendix-20261107.py'
       - 'qa/visual-polish-main-deck-20261108.py'
       - 'qa/final-slide-readability-20261108.py'
+      - 'qa/reframe-finance-deck-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
@@ -84,6 +86,8 @@ jobs:
         run: /tmp/footmate-slide-edit/bin/python qa/visual-polish-main-deck-20261108.py
       - name: Improve final-slide financial table and disclosure readability
         run: /tmp/footmate-slide-edit/bin/python qa/final-slide-readability-20261108.py
+      - name: Reframe editable original slides for management and rolling forecast
+        run: /tmp/footmate-slide-edit/bin/python qa/reframe-finance-deck-20261108.py
       - name: Generate separate six-slide Pretendard strategic appendix
         run: |
           /tmp/footmate-slide-edit/bin/python qa/build-footmate-strategy-appendix-20261107.py

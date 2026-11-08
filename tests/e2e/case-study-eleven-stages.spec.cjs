@@ -232,7 +232,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
- await expect(page.locator('#section-01 .lead')).toContainText('공급·참가·수익성 분석을 IT 구현과 투자 기준으로 연결한 기획 사례');
+ await expect(page.locator('#section-01 .lead')).toContainText('공급 계획, 손익·예산, 수정 전망을 투자 판단으로 연결한 경영기획 사례');
  await expect(page.locator('#section-06')).toContainText('직접 구축·외부 활용·후속 투자 구분. 접근·복구·비용 검토.');
  await expect(page.locator('#section-09')).toContainText('건당 공헌이익·플랫폼 예약 비중·재참가 확인.');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
