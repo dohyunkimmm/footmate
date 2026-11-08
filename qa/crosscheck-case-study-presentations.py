@@ -89,8 +89,10 @@ assert all(term in no_spaces(strategy[1]) for term in ("5곳", "12곳", "20곳",
 assert all(term in no_spaces(strategy[2]) for term in ("340원", "700원", "940원", "28곳"))
 expected_economics = ["−238.7만원", "−139.8만원", "−69.6만원", "+0.6만원", "+70.7만원"]
 assert all(term in no_spaces(strategy[3]) for term in expected_economics), strategy[3]
-assert all("기존9장발표자료보완" in no_spaces(s) for s in strategy[1:5]), \
-    "5-year PPT footer still has a stale main-deck slide count"
+assert all("경영계획시나리오" in no_spaces(s) for s in strategy[1:5]), \
+    "5-year strategy slide scenario identifier was removed"
+assert all("기존9장발표자료보완" not in no_spaces(s) for s in strategy[1:5]), \
+    "Removed cross-deck filler appeared again"
 
 for name, content in [
     ("body", body), ("README", (ROOT / "README.md").read_text(encoding="utf-8")),
