@@ -46,7 +46,7 @@ def base(i,title,lead):
     text(sl,title,.73,.82,11.9,.6,28,True,G)
     text(sl,lead,.75,1.47,11.8,.42,13,False,S)
     rect(sl,.75,6.97,11.8,.018,M)
-    text(sl,'FootMate · 경영계획 시나리오 / 기존 10장 발표자료 보완',.77,7.06,11.3,.24,10,False,S)
+    text(sl,'FootMate · 경영계획 시나리오 / 기존 9장 발표자료 보완',.77,7.06,11.3,.24,10,False,S)
     text(sl,f'{i:02d} / 06',11.78,7.06,.75,.25,10,True,G2)
     return sl
 def panel(sl,x,y,w,h,label,value,desc):
