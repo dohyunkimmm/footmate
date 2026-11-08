@@ -243,7 +243,7 @@ function reset(){let c=DATA.configs[$('project').value];for(let id of ['rate','s
  copy.append(heading,hint);
  const reader=document.createElement('a');reader.className='slide-gallery-reader';
  reader.href='/src/case-study/materials.html?preview=1&mode=slides'+(strategyDeck?'&deck=strategy':'');
- reader.target='_blank';reader.rel='noopener noreferrer';reader.textContent='한 장씩 읽기 ↗';
+ reader.target='_blank';reader.rel='noopener noreferrer';reader.textContent='한 장씩 읽기';const readerIcon=document.createElement('span');readerIcon.className='fm-icon';readerIcon.setAttribute('aria-hidden','true');readerIcon.textContent='↗️';reader.appendChild(readerIcon);
  intro.append(copy,reader);gallery.appendChild(intro);
  const cards=[];
  slides.forEach((item,i)=>{
