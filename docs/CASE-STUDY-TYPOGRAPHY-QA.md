@@ -1,6 +1,6 @@
 # Nine-stage typography QA
 
-> **과거 9단계 QA 기록** · 현재 11개 섹션의 검증 기준은 [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md)와 현행 전용 E2E입니다. 아래 판정은 작성 당시 상태를 설명합니다.
+> **과거 타이포그래피 QA 기록** · 현재 공개 Case Study는 **9개 섹션**입니다. 현행 본문은 [IT-STRATEGY-CASE-STUDY.md](IT-STRATEGY-CASE-STUDY.md)를, 자동 검사 범위는 현재 E2E를 기준으로 확인합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 파일명 호환용이며 아래 수치는 작성 당시 상태입니다.
 
 ## Text roles
 The root case study keeps its 34px desktop title and 13px narrative body. Desktop journey-map and table content use a 13px minimum, journey labels 11px, and flow descriptions/figure captions 12px. These are project readability decisions, not WCAG minimum font-size claims. The document continues to scroll normally, with its scrollbar hidden.
