@@ -555,3 +555,21 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 
 /* Six-slide strategy presentation uses the existing preview card and a responsive viewer. */
 .case-strategy-preview .case-ppt-frame{height:clamp(300px,68vw,670px)}
+
+/* Table QA 2026-11-08: remove stretched white cells and mobile row gaps. */
+@media(min-width:801px){
+ .slide .table-wrap table{table-layout:auto}
+ .slide .table-wrap th,.slide .table-wrap td{padding:10px 12px;line-height:1.55;vertical-align:middle}
+ .slide .table-wrap caption{padding:10px 14px}
+}
+@media(max-width:800px){
+ .slide .table-wrap{margin:18px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+ .slide .table-wrap table{table-layout:auto}
+ .slide .table-wrap caption{padding:11px 13px;line-height:1.45;border-radius:0}
+ .slide .table-wrap tbody tr,
+ #section-05 .table-wrap tbody tr,
+ #section-06 .table-wrap tbody tr{margin-top:0;border:0;border-top:1px solid var(--line);border-radius:0;padding:12px 14px}
+ .slide .table-wrap tbody tr:nth-child(even){background:#f5f8f5}
+ .slide .table-wrap tbody th{padding:0 0 4px;margin-bottom:2px;line-height:1.5}
+ .slide .table-wrap tbody td{padding:3px 0;line-height:1.5}
+}

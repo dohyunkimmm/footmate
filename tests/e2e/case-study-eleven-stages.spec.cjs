@@ -734,6 +734,44 @@ test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
  await expect(page.locator('.case-report-preview iframe')).toHaveAttribute('data-src',/\/src\/case-study\/materials\.html/);
 });
 
+test('tables retain continuous rows, compact cells and readable layouts across viewports',async({page},testInfo)=>{
+ await page.emulateMedia({reducedMotion:'reduce'});
+ for(const width of [320,390,768,1024,1440]){
+  await page.setViewportSize({width,height:900});
+  await page.goto('/');
+  await page.locator('details:not(.case-doc-preview)').evaluateAll(nodes=>nodes.forEach(el=>{el.open=true;}));
+  const audit=await page.locator('.slide .table-wrap').evaluateAll(wraps=>wraps.map((wrap,index)=>{
+   const table=wrap.querySelector('table');
+   if(!table)return null;
+   const box=wrap.getBoundingClientRect();
+   if(box.width===0||box.height===0)return null;
+   const rows=[...table.querySelectorAll('tbody tr')];
+   const gaps=rows.slice(1).map((row,i)=>row.getBoundingClientRect().top-rows[i].getBoundingClientRect().bottom);
+   const cells=[...table.querySelectorAll('tbody th,tbody td')];
+   return {
+    index,caption:table.querySelector('caption')?.textContent?.trim()||'',
+    layout:getComputedStyle(table).tableLayout,
+    horizontalOverflow:Math.max(0,wrap.scrollWidth-wrap.clientWidth),
+    maxRowGap:gaps.length?Math.max(...gaps):0,
+    emptyCells:cells.filter(el=>!el.textContent?.trim()).length,
+    clippedCells:cells.filter(el=>el.scrollHeight>el.clientHeight+2&&getComputedStyle(el).overflowY!=='visible').length
+   };
+  }).filter(Boolean));
+  expect(audit.length,'tables at '+width+'px').toBeGreaterThanOrEqual(20);
+  for(const entry of audit){
+   expect(entry.layout,'automatic table columns: '+entry.caption+' @'+width).toBe('auto');
+   expect(entry.emptyCells,'empty cell: '+entry.caption+' @'+width).toBe(0);
+   expect(entry.clippedCells,'clipped text: '+entry.caption+' @'+width).toBe(0);
+   if(width<=800)expect(entry.maxRowGap,'white row gaps: '+entry.caption+' @'+width).toBeLessThanOrEqual(1);
+  }
+  const rootOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+  expect(rootOverflow,'horizontal page overflow @'+width).toBeLessThanOrEqual(1);
+  const report=page.locator('#section-07 .table-wrap').first();
+  await report.scrollIntoViewIfNeeded();
+  if(width===390||width===1440)await testInfo.attach('table-qa-'+width,{body:await report.screenshot({animations:'disabled'}),contentType:'image/png'});
+ }
+});
+
 test('case study download contents and static performance budgets',async({page})=>{
  const fs=require('node:fs');
  const {spawnSync}=require('node:child_process');
