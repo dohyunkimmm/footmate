@@ -7,6 +7,7 @@ on:
       - 'qa/improve-case-study-chart.py'
       - 'qa/align-footmate-strategy-20261107.py'
       - 'qa/build-footmate-strategy-appendix-20261107.py'
+      - 'qa/visual-polish-main-deck-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   pull_request:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - 'qa/improve-case-study-chart.py'
       - 'qa/align-footmate-strategy-20261107.py'
       - 'qa/build-footmate-strategy-appendix-20261107.py'
+      - 'qa/visual-polish-main-deck-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
@@ -76,6 +78,8 @@ jobs:
         run: /tmp/footmate-slide-edit/bin/python qa/improve-case-study-chart.py
       - name: Align 5-year strategy, preserve source chart and enforce Pretendard
         run: /tmp/footmate-slide-edit/bin/python qa/align-footmate-strategy-20261107.py
+      - name: Emphasize fourth-year economic transition in original 10-slide deck
+        run: /tmp/footmate-slide-edit/bin/python qa/visual-polish-main-deck-20261108.py
       - name: Generate separate six-slide Pretendard strategic appendix
         run: |
           /tmp/footmate-slide-edit/bin/python qa/build-footmate-strategy-appendix-20261107.py
