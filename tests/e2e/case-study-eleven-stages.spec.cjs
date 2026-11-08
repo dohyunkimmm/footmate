@@ -985,3 +985,13 @@ test('decision-led portfolio keeps assumptions, mobile layout and slide navigati
  await expect(page.locator('#page')).toHaveText('05 / 09');
  await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
 });
+
+test('body and presentations retain consistent figures and necessary disclosures',async()=>{
+ const {spawnSync}=require('node:child_process');
+ const result=spawnSync('python3',['qa/crosscheck-case-study-presentations.py'],{
+  cwd:process.cwd(),encoding:'utf8',timeout:30000
+ });
+ expect(result.error, String(result.error||'')).toBeUndefined();
+ expect(result.status, (result.stdout||'')+'\n'+(result.stderr||'')).toBe(0);
+ expect(result.stdout).toContain('PASS: body vs 9-slide report vs 6-slide strategy figures, copy, and decisions match');
+});
