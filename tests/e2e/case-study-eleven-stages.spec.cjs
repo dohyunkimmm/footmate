@@ -374,16 +374,16 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(page.locator('a[href="/src/case-study/materials.html"]')).toHaveCount(0);
   const documents=page.locator('#attachments');
   await documents.scrollIntoViewIfNeeded();
-  await expect(documents.getByRole('heading',{name:'자료',exact:true})).toBeVisible();
-  await expect(documents.locator('.case-documents-head p')).toHaveText('발표자료 · 손익 모델');
+  await expect(documents.getByRole('heading',{name:'발표자료',exact:true})).toBeVisible();
+  await expect(documents.locator('.case-documents-lead')).toHaveText('기획 판단과 실행 근거를 두 가지 흐름으로 정리했습니다.');
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
   await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
-  await expect(documents.locator('.case-downloads a')).toHaveCount(3);
-  await expect(page.getByRole('link',{name:'PPT 다운로드'})).toHaveCount(1);
-  await expect(page.getByRole('link',{name:'Excel 다운로드'})).toHaveCount(1);
-  await expect(documents.getByRole('link',{name:'PPT 다운로드'})).toHaveAttribute('download','footmate_report.pptx');
-  await expect(documents.getByRole('link',{name:'Excel 다운로드'})).toHaveAttribute('download','footmate_model.xlsx');
-   await expect(documents.getByRole('link',{name:'5개년 전략 PPT (6장)'})).toHaveAttribute('download','footmate_5year_strategy.pptx');
+  await expect(documents.locator('.case-downloads a')).toHaveCount(2);
+  await expect(page.getByRole('link',{name:'기획안 내려받기'})).toHaveCount(1);
+  await expect(page.getByRole('link',{name:'Excel 다운로드'})).toHaveCount(0);
+  await expect(documents.getByRole('link',{name:'기획안 내려받기'})).toHaveAttribute('download','footmate_report.pptx');
+  await expect(documents.locator('.case-downloads a[href*=".xlsx"]')).toHaveCount(0);
+   await expect(documents.getByRole('link',{name:'전략안 내려받기'})).toHaveAttribute('download','footmate_5year_strategy.pptx');
   await expect(page.locator('a[href="/src/case-study/forecast.html"]')).toHaveCount(0);
   const model=page.locator('#case-profit-model');
   await model.scrollIntoViewIfNeeded();
@@ -407,9 +407,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-report-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
   const summary=preview.locator('summary');
-  await expect(summary).toContainText('PPT 미리보기');
+  await expect(summary).toContainText('사업·IT 기획안');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
     const selectors=[
@@ -437,7 +437,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toBeFocused();
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
   const slides=frame.contentFrame();
   // A preview shows the full thumbnail contact sheet, not the presentation controls.
   await expect(slides.locator('.slide-gallery-card')).toHaveCount(9,{timeout:15000});
@@ -454,8 +454,8 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('.slide-gallery')).toBeHidden();
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
-  await expect(preview.locator('.case-preview-summary-text')).toHaveText('본편 PPT 미리보기 (9장)');
-  await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
+  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획안');
+  await expect(preview.locator('.case-preview-symbol')).toHaveText('01');
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
   await expect(slides.locator('link[href*="tossface.css"]')).toHaveCount(1);
@@ -769,7 +769,7 @@ test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
  await page.goto('/');
  const preview=page.locator('.case-strategy-preview');
  await expect(preview).toHaveCount(1);
- await expect(preview.locator('summary')).toContainText('5개년 전략 PPT 미리보기 (6장)');
+ await expect(preview.locator('summary')).toContainText('중장기 성장 전략');
  const frame=preview.locator('iframe.case-ppt-frame');
  await expect(frame).toHaveAttribute('data-src',/materials\.html\?preview=1&deck=strategy/);
  await expect(frame).not.toHaveAttribute('src',/.+/);
