@@ -653,7 +653,11 @@ test('restricted fullscreen enlarges the current slide inline on first click',as
   await page.setViewportSize({width,height:844});
   await page.goto('/');
   await page.locator('.case-report-preview summary').click();
-  const slides=page.locator('.case-report-preview .case-ppt-frame').contentFrame();
+  const frame=page.locator('.case-report-preview .case-ppt-frame');
+  const slides=frame.contentFrame();
+  await expect(slides.locator('.slide-gallery-card')).toHaveCount(9,{timeout:15000});
+  await frame.evaluate(element=>{element.src='/src/case-study/materials.html?preview=1&mode=slides'});
+  await expect(slides.locator('.viewer-stage')).toBeVisible();
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await slides.getByRole('button',{name:'슬라이드 이미지 확대'}).click();
   await expect(slides.locator('.viewer')).toHaveClass(/inline-zoom/);
@@ -774,6 +778,10 @@ test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
  await expect(frame).toHaveAttribute('src',/materials\.html\?preview=1&deck=strategy/);
  await expect(frame).not.toHaveAttribute('data-src',/.+/);
  const slides=frame.contentFrame();
+ await expect(slides.locator('.slide-gallery-card')).toHaveCount(6,{timeout:15000});
+ await expect(slides.locator('.toolbar')).toBeHidden();
+ await frame.evaluate(element=>{element.src='/src/case-study/materials.html?preview=1&mode=slides&deck=strategy'});
+ await expect(slides.locator('.viewer-stage')).toBeVisible();
  await expect(slides.locator('#page')).toHaveText('01 / 06');
  await expect(slides.locator('#slideProgressTrack,#slideProgress')).toHaveCount(2);
  await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuemax','6');
@@ -979,7 +987,7 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
     '공급 계약·수익성 기준 충족 후 단계적 투자 확대.'
   ])await expect(final).toContainText(phrase);
   await expect(final.locator('.story-card')).toHaveCount(3);
-  await page.goto('/src/case-study/materials.html?preview=1&slide=8');
+  await page.goto('/src/case-study/materials.html?preview=1&mode=slides&slide=8');
   await expect(page.locator('#page')).toHaveText('09 / 09');
   await expect(page.locator('#slideTitle')).toHaveText('최종 판단 · 단계적 투자');
   await expect(page.locator('#slideSummary')).toContainText('핵심 지표·단계적 투자 기준');
@@ -999,7 +1007,7 @@ test('decision-led portfolio keeps assumptions, mobile layout and slide navigati
   await page.locator('#case-documents-heading').scrollIntoViewIfNeeded();
   await expect(page.locator('#case-documents-heading')).toBeInViewport();
  }
- await page.goto('/src/case-study/materials.html?preview=1&slide=3');
+ await page.goto('/src/case-study/materials.html?preview=1&mode=slides&slide=3');
  await expect(page.locator('#page')).toHaveText('04 / 09');
  await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
  await page.getByRole('button',{name:'다음 슬라이드',exact:true}).click();
