@@ -108,7 +108,7 @@ jobs:
             exit 1
           fi
           echo '### Current-main path-overlap triage (manual review only)' >> "$GITHUB_STEP_SUMMARY"
-          awk -F '\t' 'NR>1 {groups[$11]++; total++} END {for (g in groups) printf "%s: %d\\n",g,groups[g]; printf "Reviewed refs: %d\\n",total}' "$d/applicability.tsv" | tee -a "$GITHUB_STEP_SUMMARY"
+          awk -F '\t' 'NR>1 {groups[$11]++; total++} END {for (g in groups) print g ": " groups[g]; print "Reviewed refs: " total}' "$d/applicability.tsv" | tee -a "$GITHUB_STEP_SUMMARY"
           echo 'A file still existing on main does not prove that its historical patch is missing. Do not auto-merge or delete branches.' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload audit reports
