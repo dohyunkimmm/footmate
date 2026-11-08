@@ -540,3 +540,12 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 @media(prefers-reduced-motion:reduce){
  #section-09 .strategy-year-economics *{animation:none!important;transition:none!important}
 }
+
+/* Five-year figures stay legible on narrow screens; reuse the existing strategy items. */
+#section-09 .strategy-year-amount{display:block;margin-top:10px;padding-top:9px;border-top:1px solid #e3ece4;font-size:16px;font-weight:800;line-height:1.4;color:#285d42;font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+#section-09 .strategy-year-list li:nth-child(4) .strategy-year-amount{color:#0e633a}
+@media(max-width:600px){
+ #section-09 .strategy-year-economics{display:none}
+ #section-09 .strategy-year-list li{padding:14px 12px;font-size:13px}
+ #section-09 .strategy-year-amount{font-size:16px}
+}
