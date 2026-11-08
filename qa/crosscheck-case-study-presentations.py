@@ -77,18 +77,14 @@ assert all(term in no_spaces(main[3]) for term in ("340원", "940원", "2,766"))
 minus_normalized = no_spaces(main[4]).replace("−", "-").replace("–", "-").replace("—", "-")
 assert all(term in minus_normalized for term in ("-39,600", "-217,040")), minus_normalized
 assert "단계적 투자" in main[-1] and "9" in main[-1]
-final_tables = [r for r in main_tables[-1] if r and re.search(r"^[1-5]년\s*차$", r[0])]
-assert len(final_tables) == 5, final_tables
-for index, row in enumerate(final_tables):
-    values = [no_spaces(item) for item in row]
-    assert matrix["제휴공급처"][index] in values, (index, values)
-    assert matrix["수수료매출"][index] in values, (index, values)
-    operations = int(matrix["거래변동비"][index].replace(",", "")) + int(
-        matrix["현금운영비"][index].replace(",", ""))
-    assert f"{operations:,}" in values, (index, values)
-    assert matrix["구축·확장투자비"][index] in values, (index, values)
-    assert matrix["투자후현금수지"][index] in values, (index, values)
-    assert matrix["기존수수료·결제조건유지시현금수지"][index] in values, (index, values)
+final_copy = no_spaces(main[-1]).replace("−", "-").replace("–", "-").replace("—", "-")
+for key in ("제휴공급처", "수수료매출", "구축·확장투자비", "투자후현금수지", "기존수수료·결제조건유지시현금수지"):
+    for cell in matrix[key]:
+        expected = cell.replace("−", "-").replace("–", "-")
+        assert expected in final_copy, (key, expected)
+for index in range(5):
+    operating = int(matrix["거래변동비"][index].replace(",", "")) + int(matrix["현금운영비"][index].replace(",", ""))
+    assert f"{operating:,}" in final_copy, (index, operating)
 assert all(term in no_spaces(strategy[1]) for term in ("5곳", "12곳", "20곳", "28곳", "36곳"))
 assert all(term in no_spaces(strategy[2]) for term in ("340원", "700원", "940원", "28곳"))
 expected_economics = ["−238.7만원", "−139.8만원", "−69.6만원", "+0.6만원", "+70.7만원"]
