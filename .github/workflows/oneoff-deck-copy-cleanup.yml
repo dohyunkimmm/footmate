@@ -1,0 +1,78 @@
+name: One-time FootMate deck copy cleanup
+on:
+  push:
+    branches:
+      - copy/remove-empty-resource-lead-20261108
+    paths:
+      - .github/workflows/oneoff-deck-copy-cleanup.yml
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    if: github.repository == 'dohyunkimmm/footmate'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Remove repeated non-substantive slide labels
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import io
+          deck=Path('src/case-study/downloads/footmate_5year_strategy.pptx')
+          replacements={
+            1:[('전략기획 포트폴리오',''),('공개 모델의 기본 산식과 구분','')],
+            2:[(' / 기존 9장 발표자료 보완','')],
+            3:[(' / 기존 9장 발표자료 보완','')],
+            4:[(' / 기존 9장 발표자료 보완','')],
+            5:[(' / 기존 9장 발표자료 보완','')],
+            6:[('별도 전략 보완 슬라이드 6장 · ','')]
+          }
+          buf=io.BytesIO()
+          with ZipFile(deck,'r') as origin, ZipFile(buf,'w') as dest:
+            for info in origin.infolist():
+              data=origin.read(info.filename)
+              for n,patches in replacements.items():
+                if info.filename==f'ppt/slides/slide{n}.xml':
+                  xml=data.decode('utf-8')
+                  for old,new in patches:
+                    count=xml.count(old)
+                    assert count==1,(info.filename,old,count)
+                    xml=xml.replace(old,new,1)
+                  data=xml.encode('utf-8')
+              dest.writestr(info,data)
+          deck.write_bytes(buf.getvalue())
+          with ZipFile(deck) as check:
+            assert check.testzip() is None
+            assert all(b'\xec\xa0\x84\xeb\x9e\xb5\xea\xb8\xb0\xed\x9a\x8d \xed\x8f\xac\xed\x8a\xb8\xed\x8f\xb4\xeb\xa6\xac\xec\x98\xa4' not in check.read(f'ppt/slides/slide{i}.xml') for i in (1,))
+          print('Slide copy simplified without altering figures or relationships.')
+          PY
+      - name: Install slide rendering support
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-impress poppler-utils fonts-noto-cjk fonts-nanum
+      - name: Regenerate six published slide previews from edited PPTX
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/footmate-copy-clean
+          libreoffice -env:UserInstallation=file:///tmp/footmate-copy-clean-office --headless --convert-to pdf --outdir /tmp/footmate-copy-clean src/case-study/downloads/footmate_5year_strategy.pptx
+          pdfinfo /tmp/footmate-copy-clean/footmate_5year_strategy.pdf | grep -q '^Pages: *6'
+          pdftoppm -jpeg -scale-to-x 1400 -scale-to-y 788 -jpegopt quality=92 /tmp/footmate-copy-clean/footmate_5year_strategy.pdf /tmp/footmate-copy-clean/slide
+          for n in 1 2 3 4 5 6; do
+            test -s "/tmp/footmate-copy-clean/slide-${n}.jpg"
+            cp "/tmp/footmate-copy-clean/slide-${n}.jpg" "src/case-study/previews/strategy/slide-${n}.jpg"
+          done
+      - name: Commit synchronized PPTX and preview images to the PR branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/case-study/downloads/footmate_5year_strategy.pptx src/case-study/previews/strategy/slide-*.jpg
+          git diff --cached --quiet && { echo 'No slide changes'; exit 1; }
+          git commit -m "docs: remove redundant strategy slide labels and sync previews"
+          git push origin HEAD:refs/heads/copy/remove-empty-resource-lead-20261108
