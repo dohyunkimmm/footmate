@@ -74,7 +74,8 @@ print("DECKS", len(main), len(strategy))
 assert "수익성" in main[0] and "운영자 제휴" in main[0]
 assert all(str(i) in no_spaces(main[2]) for i in ("626", "751,200"))
 assert all(term in no_spaces(main[3]) for term in ("340원", "940원", "2,766"))
-assert all(term in no_spaces(main[4]) for term in ("−39,600", "−217,040"))
+minus_normalized = no_spaces(main[4]).replace("−", "-").replace("–", "-").replace("—", "-")
+assert all(term in minus_normalized for term in ("-39,600", "-217,040")), minus_normalized
 assert "단계적 투자" in main[-1] and "9" in main[-1]
 final_tables = [r for r in main_tables[-1] if r and re.search(r"^[1-5]년\s*차$", r[0])]
 assert len(final_tables) == 5, final_tables
