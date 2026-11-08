@@ -29,32 +29,34 @@ def snapshot(p):
 
 before = snapshot(prs)
 last = prs.slides[9]
-tables = [shape.table for shape in last.shapes if shape.has_table]
-if len(tables) != 1:
-    print("DIAG: page 10 table count", len(tables))
-    for i, sh in enumerate(last.shapes):
-        val = sh.text.replace("\\n", " | ")[:100] if sh.has_text_frame else ""
-        print("DIAG", i, "x", round(sh.left/prs.slide_width, 3), "y", round(sh.top/prs.slide_height, 3), "w", round(sh.width/prs.slide_width, 3), "table", sh.has_table, "text", repr(val))
-    raise AssertionError("Last slide uses alternate editable shape structure; inspect diagnostic before styling")
-table = tables[0]
-assert len(table.rows) == 6, "Expected header and five annual rows"
-assert any("4년 차" in cell.text for cell in table.rows[4].cells)
+# The source deck draws the financial table with editable text boxes, not a PPT table shape.
+# Scope the change to its 7 columns × 6 rows, excluding the chart, title and decision banner.
+cells = []
+for shape in last.shapes:
+    if not shape.has_text_frame or not shape.text.strip():
+        continue
+    x = shape.left / prs.slide_width
+    y = shape.top / prs.slide_height
+    if 0.57 <= x < 0.95 and 0.36 <= y < 0.72:
+        cells.append(shape)
+assert len(cells) == 42, f"Expected 42 editable text cells (7 columns × 6 rows), got {len(cells)}"
+assert any(cell.text.strip() == "4년 차" for cell in cells)
 
-for row_number, row in enumerate(table.rows):
-    for cell in row.cells:
-        frame = cell.text_frame
-        frame.word_wrap = True
-        frame.margin_left = Inches(0.045)
-        frame.margin_right = Inches(0.045)
-        frame.margin_top = Inches(0.035)
-        frame.margin_bottom = Inches(0.035)
-        for paragraph in frame.paragraphs:
-            for run in paragraph.runs:
-                current = run.font.size
-                floor = Pt(10.5 if row_number == 0 else 10.4)
-                if current is None or current < floor:
-                    run.font.size = floor
-                run.font.name = "Pretendard"
+styled_runs = 0
+for shape in cells:
+    frame = shape.text_frame
+    frame.word_wrap = True
+    frame.margin_left = min(frame.margin_left, Inches(0.03))
+    frame.margin_right = min(frame.margin_right, Inches(0.03))
+    frame.margin_top = min(frame.margin_top, Inches(0.03))
+    frame.margin_bottom = min(frame.margin_bottom, Inches(0.03))
+    for paragraph in frame.paragraphs:
+        for run in paragraph.runs:
+            if run.font.size is None or run.font.size < Pt(10.5):
+                run.font.size = Pt(10.5)
+            run.font.name = "Pretendard"
+            styled_runs += 1
+assert styled_runs >= 42, "Editable table text runs not located"
 
 # Retain the scope/assumption disclosure at the bottom, but avoid tiny footnote text.
 notes = 0
