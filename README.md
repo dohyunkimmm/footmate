@@ -1,18 +1,18 @@
 # FootMate
 
-**처음 조건을 선택하고 AI 추천 경기를 확인한 뒤, 참가할 때 로그인하는 풋살 앱입니다.**
+**풋살 매칭 플랫폼의 사업성 검토, 수익성 개선안 및 중장기 경영계획을 정리한 신사업 기획 프로젝트입니다.**
 
-활동 지역·실력·포지션·시간으로 실제 후보를 정한 뒤 AI가 후보 안에서 추천 순서를 정합니다. 추천 이유와 잔여 자리는 실제 경기 정보로 표시하며, 참가·취소·체크인·피드백은 기존 서버와 연결합니다.
+보조 구현 자료에서는 활동 지역·실력·포지션·시간으로 실제 후보를 정한 뒤 AI가 후보 안에서 추천 순서를 정합니다. 추천 이유와 잔여 자리는 실제 경기 정보로 표시하며, 참가·취소·체크인·피드백은 기존 서버와 연결합니다.
 
 **사용자 여정:** `Find → Decide → Join → Play → Return`
 
-공개 화면 이름은 **FootMate Demo**입니다. 로그인 후에도 Demo 표기를 유지하며, `/beta`는 기존 인증·연동 기능의 경로 이름으로 구분합니다.
+보조 구현 화면의 이름은 **FootMate Demo**입니다. 로그인 후에도 Demo 표기를 유지하며, `/beta`는 기존 인증·연동 기능의 경로 이름으로 구분합니다.
 
 ## 화면 구성
 
 | 경로 | 설명 |
 | --- | --- |
-| `/` | 시장·사업성·IT 투자·운영 통제·성과관리를 검토하는 IT기획·전략기획 Case Study |
+| `/` | 시장·사업성·수익구조·5개년 경영계획 및 투자 판단을 검토하는 신사업 기획 자료 |
 | `/demo` | 로그인 전 조건 선택·풋살 추천 미리보기. 인증 후 /beta 홈으로 이동 |
 | `/beta` | 인증 후 추천·내 경기·MY. 실제 경기 우선, 없을 때 구분된 풋살 예시 경기 |
 | `/prototype` | 보관된 로컬 프로토타입(참고용) |
@@ -20,10 +20,10 @@
 
 **포트폴리오 검토 포인트**
 
-- **케이스 스터디:** 시장·경쟁, 사업모델·손익, IT 투자·운영 통제와 단계별 투자 판단을 **9개 섹션**으로 정리했습니다. **05번에 12개월 예상 ROI**(보수·기준·확장·관리비 반영), **09번에 최종 판단**을 배치했습니다. 신규 사업 가정과 구축·배포 근거를 구분합니다.
+- **사업성 분석·경영계획:** 시장·경쟁, 사업모델·손익, IT 투자·운영 통제와 단계별 투자 판단을 **9개 섹션**으로 정리했습니다. **05번에 12개월 예상 ROI**(보수·기준·확장·관리비 반영), **09번에 최종 판단**을 배치했습니다. 신규 사업 가정과 구축·배포 근거를 구분합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
-**주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [5개년 전략 6장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1&deck=strategy) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
+**주요 링크:** [사업성 분석·경영계획](https://footmate.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [5개년 전략 6장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1&deck=strategy) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
 **경영기획 중심 산출물:** 월별 예산·가상 실적·CAPEX/OPEX·인력 비용·투자 판단을 검토합니다. 기존 AI 구현은 사업계획의 실행 가능성 근거로 구분해 제시합니다.
 
@@ -68,8 +68,8 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 **`main` 구조 재점검(2026-11-08):** 점검 전 기준 HEAD [`dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)에서 **파일 339개·디렉터리 43개**(루트 파일 14개·최상위 폴더 9개)를 확인했습니다. [2026-11-08 점검·보존 결정](docs/REPO-CLEANUP-2026-11-08.md)과 [현행 문서 목록](docs/README.md)을 참조합니다. 이전 날짜별 파일 수는 당시 스냅샷입니다.
 
-- **공개 진입 파일:** [Case Study](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.
-- **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [Case Study 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
+- **공개 진입 파일:** [사업성 분석·경영계획](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.
+- **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [사업·재무 분석 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
 - **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
 - **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
 - **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-08 최신 점검](docs/REPO-CLEANUP-2026-11-08.md) · [미반영 패치·보안 후속 점검](docs/REMAINING-AUDIT-2026-11-08.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
@@ -77,7 +77,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 ## 자세한 문서
 
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
-- [Case Study 현행 문서 · 05번 ROI·09번 최종 판단](docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md) · [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
+- [사업성·경영계획 현행 문서 · 05번 ROI·09번 최종 판단](docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md) · [기획 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
 - [릴리스 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
 - [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
 - [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
