@@ -65,12 +65,27 @@ const sections = [
     <details class="strategy-more">
       <summary>5개년 성장전략·투자계획 펼치기</summary>
       <ul class="strategy-year-list">
-        <li>1년 차·5곳: 생활권 제휴·완료 예약 관리</li>
-        <li>2년 차·12곳: 수수료 협상·지역 확대</li>
-        <li>3년 차·20곳: 재참가·운영 표준화</li>
-        <li>4년 차·28곳: 관리비 반영·자원 배분</li>
-        <li>5년 차·36곳: 권역 확대·현금수지 관리</li>
+        <li>1년 차·5곳: 생활권 제휴·완료 예약 관리<span class="strategy-year-amount">−238.7만 원/월</span></li>
+        <li>2년 차·12곳: 수수료 협상·지역 확대<span class="strategy-year-amount">−139.8만 원/월</span></li>
+        <li>3년 차·20곳: 재참가·운영 표준화<span class="strategy-year-amount">−69.6만 원/월</span></li>
+        <li>4년 차·28곳: 관리비 반영·자원 배분<span class="strategy-year-amount">+0.6만 원/월</span></li>
+        <li>5년 차·36곳: 권역 확대·현금수지 관리<span class="strategy-year-amount">+70.7만 원/월</span></li>
       </ul>
+      <figure class="strategy-year-economics" aria-labelledby="strategy-year-economics-title">
+        <figcaption><span>5-YEAR UNIT ECONOMICS · 월간 정상상태 시나리오</span><strong id="strategy-year-economics-title">손익분기점 전환 경로</strong><p>공급처 확대와 수수료·결제비 조건 개선에 따른 월 경제적 손익(만원)입니다.</p></figcaption>
+        <svg viewBox="0 0 780 229" role="img" aria-labelledby="strategy-year-economics-title strategy-year-economics-desc" preserveAspectRatio="xMidYMid meet">
+          <desc id="strategy-year-economics-desc">1년 차 공급처 5곳, 월 −238.7만 원. 2년 차 12곳 −139.8만 원. 3년 차 20곳 −69.6만 원. 4년 차 28곳 +0.6만 원. 5년 차 36곳 +70.7만 원. 4년 차에 월 경제적 손익분기점에 근접합니다.</desc>
+          <line class="economics-grid" x1="46" x2="760" y1="68" y2="68"></line>
+          <text class="economics-zero" x="47" y="58">0원 · 손익분기선</text>
+          <path class="economics-area" d="M90 198 L240 145 L390 108 L540 68 L690 29 L690 68 L540 68 L390 68 L240 68 L90 68 Z"></path>
+          <polyline class="economics-line" points="90,198 240,145 390,108 540,68 690,29"></polyline>
+          <circle class="economics-point" cx="90" cy="198" r="6"></circle><circle class="economics-point" cx="240" cy="145" r="6"></circle><circle class="economics-point" cx="390" cy="108" r="6"></circle><circle class="economics-point is-bep" cx="540" cy="68" r="8"></circle><circle class="economics-point" cx="690" cy="29" r="6"></circle>
+          <text x="90" y="181" text-anchor="middle">−238.7만</text><text x="240" y="128" text-anchor="middle">−139.8만</text><text x="390" y="92" text-anchor="middle">−69.6만</text><text class="economics-bep-label" x="540" y="48" text-anchor="middle">+0.6만</text><text x="690" y="17" text-anchor="middle">+70.7만</text>
+          <text class="economics-axis" x="90" y="225" text-anchor="middle">1년 · 5곳</text><text class="economics-axis" x="240" y="225" text-anchor="middle">2년 · 12곳</text><text class="economics-axis" x="390" y="225" text-anchor="middle">3년 · 20곳</text><text class="economics-axis economics-bep-label" x="540" y="225" text-anchor="middle">4년 · 28곳</text><text class="economics-axis" x="690" y="225" text-anchor="middle">5년 · 36곳</text>
+        </svg>
+        <p class="strategy-chart-note">월 정상상태 경제손익 · 연간 투자 후 현금수지와 별도.</p>
+        <p class="strategy-chart-note">1년 차 건당 340원, 2~5년 차 940원 적용.</p>
+      </figure>
       <h3>경영계획과 투자 조정</h3>
       <p>연간 목표를 월별 공급·수익·비용으로 연결.</p>
       <p>계획 대비 차이와 분기별 전망을 관리.</p>
