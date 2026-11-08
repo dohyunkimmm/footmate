@@ -379,11 +379,11 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
   await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
   await expect(documents.locator('.case-downloads a')).toHaveCount(2);
-  await expect(page.getByRole('link',{name:'기획안 내려받기'})).toHaveCount(1);
+  await expect(page.getByRole('link',{name:'기획 자료 받기'})).toHaveCount(1);
   await expect(page.getByRole('link',{name:'Excel 다운로드'})).toHaveCount(0);
-  await expect(documents.getByRole('link',{name:'기획안 내려받기'})).toHaveAttribute('download','footmate_report.pptx');
+  await expect(documents.getByRole('link',{name:'기획 자료 받기'})).toHaveAttribute('download','footmate_report.pptx');
   await expect(documents.locator('.case-downloads a[href*=".xlsx"]')).toHaveCount(0);
-   await expect(documents.getByRole('link',{name:'전략안 내려받기'})).toHaveAttribute('download','footmate_5year_strategy.pptx');
+   await expect(documents.getByRole('link',{name:'전략 자료 받기'})).toHaveAttribute('download','footmate_5year_strategy.pptx');
   await expect(page.locator('a[href="/src/case-study/forecast.html"]')).toHaveCount(0);
   const model=page.locator('#case-profit-model');
   await model.scrollIntoViewIfNeeded();
@@ -409,7 +409,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(preview).not.toHaveAttribute('open',/.+/);
   await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
   const summary=preview.locator('summary');
-  await expect(summary).toContainText('사업·IT 기획안');
+  await expect(summary).toContainText('사업·IT 기획');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
     const selectors=[
@@ -465,7 +465,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('.slide-gallery')).toBeHidden();
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
-  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획안');
+  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획');
   await expect(preview.locator('.case-preview-symbol')).toHaveText('01');
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
