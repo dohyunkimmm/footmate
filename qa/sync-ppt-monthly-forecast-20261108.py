@@ -84,8 +84,8 @@ update_text("계획 대비 수정 전망 차이",
     "계획 대비 차이  |  "+" · ".join(f"{m}월 {delta(revision[m-1]-plan[m-1])}" for m in (1,6,12)))
 update_text("가상 데이터 · 계획과 수정 전망 비교",
     "가상 데이터 · 1~6월 합성 실적 / 7~12월 재예측")
-update_text("연간 현금손익",
-    f"연간 현금운영손익 · 기존 계획 {planned_profit/10000:,.1f}만 원 / 재예측 {revised_profit/10000:,.1f}만 원 (합성)")
+update_text("연간 현금",
+    f"연간 현금운영손익 · 기존 계획 −{abs(planned_profit)/10000:,.1f}만 원 / 재예측 −{abs(revised_profit)/10000:,.1f}만 원 (합성)")
 prs.save(PPT)
 check=Presentation(PPT)
 values=tuple(tuple(round(v) for v in s.values) for s in
