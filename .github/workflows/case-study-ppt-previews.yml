@@ -10,6 +10,7 @@ on:
       - 'qa/visual-polish-main-deck-20261108.py'
       - 'qa/final-slide-readability-20261108.py'
       - 'qa/reframe-finance-deck-20261108.py'
+      - 'qa/sync-ppt-monthly-forecast-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   pull_request:
     branches: [main]
@@ -21,6 +22,7 @@ on:
       - 'qa/visual-polish-main-deck-20261108.py'
       - 'qa/final-slide-readability-20261108.py'
       - 'qa/reframe-finance-deck-20261108.py'
+      - 'qa/sync-ppt-monthly-forecast-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
@@ -88,6 +90,8 @@ jobs:
         run: /tmp/footmate-slide-edit/bin/python qa/final-slide-readability-20261108.py
       - name: Reframe editable original slides for management and rolling forecast
         run: /tmp/footmate-slide-edit/bin/python qa/reframe-finance-deck-20261108.py
+      - name: Align slide 5 monthly chart and notes with canonical Rolling Forecast
+        run: /tmp/footmate-slide-edit/bin/python qa/sync-ppt-monthly-forecast-20261108.py
       - name: Generate separate six-slide Pretendard strategic appendix
         run: |
           /tmp/footmate-slide-edit/bin/python qa/build-footmate-strategy-appendix-20261107.py
@@ -118,7 +122,7 @@ jobs:
               '운영 모델과 책임',
               '공급과 플랫폼 경유 예약',
               '수익성 개선안',
-              '월간 성과관리',
+              '월간 경영관리와 Rolling Forecast',
               '손익 차이와 운영 조치',
               '운영 데이터와 통제',
               'IT 투자 범위와 비용',
@@ -187,6 +191,7 @@ jobs:
           name: footmate-case-study-slides
           path: |
             /tmp/footmate-ppt/footmate_report.pdf
+            src/case-study/downloads/footmate_report.pptx
             /tmp/footmate-ppt/page-*.png
             /tmp/footmate-appendix/footmate_5year_strategy.pdf
             /tmp/footmate-appendix/five-year-economics.png
