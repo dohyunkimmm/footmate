@@ -1,5 +1,30 @@
 # FootMate 미반영 패치·무료 운영 보안 잔여 검증 — 2026-11-08
 
+## 2026-11-08 최신 완료 확인 — `main` 현재 경로 적합성 전수 감사
+
+> **최신 기준:** [`main` `6d7d720`](https://github.com/dohyunkimmm/footmate/commit/6d7d7204d5fda200942c4a9de34ff1c1ad5332be) · [병합된 PR #891](https://github.com/dohyunkimmm/footmate/pull/891) · [`main` 감사 #42493941874](https://github.com/dohyunkimmm/footmate/actions/runs/42493941874) **SUCCESS**. 아래의 초기 125개 숫자는 PR용 작업 브랜치가 포함된 **과거 PR 검사 스냅샷**이며, 이 항목의 124개가 병합 후 최종 검사 결과입니다.
+
+| 병합 후 비기본 브랜치 분류 | 개수 | 의미 |
+| --- | ---: | --- |
+| 현행 런타임 경로와 접점 | **43** | 소스 파일명·경로가 겹침. 기능 미반영 확정 아님 |
+| 현행 QA·워크플로 경로와 접점 | **18** | 현재 테스트/워크플로와 겹침. 별도 테스트 의도 검토 필요 |
+| 현행 문서·원본·생성물 경로와 접점 | **15** | 자료 보존/재생성 기준 검토 |
+| 현행 `main`에 없는 경로만 변경 | **40** | 구버전 파일 변경. 이식의 명시적 근거 필요 |
+| 패치 동등성 후보 | **8** | `git cherry` 결과상 동등. Git SHA 참조/장기 보존 검토 별도 |
+| **합계** | **124** | 원격 `main` 제외, 브랜치 삭제·병합 0건 |
+
+`git cherry` 기준 **고유 패치 보유 브랜치 116개**, 조상으로 완전히 포함된 브랜치 0개, **현재 `main`과 완전 동일 트리 0개**를 확인했습니다. [최종 TSV 아티팩트](https://github.com/dohyunkimmm/footmate/actions/runs/42493941874/artifacts/13623100406)는 `patches.tsv`, `applicability.tsv`, `tree-equality.tsv` 등을 포함하며 **2026-12-08 UTC** 만료 예정입니다.
+
+### 개별 검토에서 즉시 병합하지 않은 사례
+
+- `chore/update-footmate-cloudflare-links`: 2026-10-25 패치가 과거 Vercel canonical/OG URL을 `https://footmate.fmate.workers.dev/`로 바꾼 내용입니다. 현행 `index.html`은 이미 동일 Cloudflare 주소를 사용하므로 과거 전체 HTML 재도입 불필요.
+- `fix/demo-viewport-no-page-scroll`: 이전 브랜치의 좁은 폭 `.fm-beta-meta>span` 12px/1.5 스타일은 현재 `src/beta/release.css`에 이미 존재합니다. 브랜치 전체 역방향 병합 불필요.
+- `fix/sidebar-menu-spacing`, `fix/sidebar-single-line`, `fix/ui-screen-specification-title`: 원본은 11개 섹션 목차/문구를 대상으로 했고 현행 공개 화면은 **9개 섹션**입니다. 새 구조에 재현되는 문제 없이 원래 CSS·HTML/JS를 덮어쓰지 않습니다.
+- `chore/retry-cardcopy-production-v3`: 과거 **13개 섹션**의 재배포용 `index.html` 변경으로, 현행 9개 섹션의 문서/DOM 구조와 호환되지 않습니다.
+- `automation/footmate-case-preview-*`: 이전 시점의 PPT 및 미리보기 자동 생성 결과입니다. 본편 9장/전략 6장인 현행 자산과 일치한다는 빌드·슬라이드 교차검증 근거 없이 교체하지 않습니다.
+
+**조치 상태:** `tests/tools/branch-applicability.cjs`, 단위 테스트, 기존 [읽기 전용 전체 감사 워크플로](../.github/workflows/audit-branch-patches.yml) 및 문서를 PR #891로 병합했습니다. PR 헤드 [FootMate QA #42492887579](https://github.com/dohyunkimmm/footmate/actions/runs/42492887579)에서 Change Impact·Regression 36·Browser E2E + axe **SUCCESS**, 브랜치 전수 패치 감사도 **SUCCESS**. 병합 후 `main` 브랜치 감사도 **SUCCESS**입니다. 데이터/SQL/앱 런타임/Worker/기존 브랜치/이력에는 손대지 않았습니다. **실제 적용할 기능 미반영 여부는 43개 런타임 접점 각각의 최신 동작 재현/요구 비교 후 확정**합니다.
+
 > **읽기 전용 점검.** 별도 브랜치의 커밋이 `main`에 없는 것과 필요한 제품 기능이 누락된 것은 다릅니다. 이 문서는 코드/DB/인증정보 변경 또는 브랜치 삭제 승인이 아닙니다. 기준 `main`: [`850db56`](https://github.com/dohyunkimmm/footmate/commit/850db56c865966e8a0dcb742e14b084694e04272)(PR #887 병합 후).
 
 ## 2026-11-08 후속 — 고유 패치의 현행 파일 영향 범위 추적
