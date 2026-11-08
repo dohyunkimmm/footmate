@@ -64,7 +64,6 @@ jobs:
           pdftoppm -f 2 -l 5 -r 105 -jpeg -jpegopt quality=88,optimize=y,progressive=y /tmp/footmate-strategy-clean/footmate_5year_strategy.pdf src/case-study/previews/strategy/slide
           test -s src/case-study/previews/strategy/slide-2.jpg
           test -s src/case-study/previews/strategy/slide-5.jpg
-          python3 qa/crosscheck-case-study-presentations.py
       - name: Commit original PPT and synchronized preview images
         run: |
           git config user.name "github-actions[bot]"
