@@ -707,10 +707,10 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
  }
 });
 
-test('Rolling Forecast copy, panel, and dedicated slide are absent across the site and PPT sources',async({page})=>{
- const forbidden=/Rolling\\s*Forecast|수정\\s?전망|재예측|분기\\s?전망/i;
- for(const url of ['/','/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
-  await page.goto(url);
+test('Rolling Forecast copy, sections and dedicated slide are absent in all materials',async({page})=>{
+ const forbidden=/Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망/i;
+ for(const path of ['/','/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
+  await page.goto(path);
   await expect(page.locator('body')).not.toContainText(forbidden);
  }
  await page.goto('/src/case-study/materials.html?preview=1');
@@ -719,21 +719,23 @@ test('Rolling Forecast copy, panel, and dedicated slide are absent across the si
  await expect(page.locator('#slideProgressTrack')).toHaveAttribute('aria-valuemax','9');
  const fs=require('node:fs');
  for(const path of ['src/case-study/nine-sections.js','src/case-study/materials.html','src/case-study/forecast.html','README.md']){
-  expect(fs.readFileSync(path,'utf8'),path+' has no Rolling Forecast copy').not.toMatch(forbidden);
+  expect(fs.readFileSync(path,'utf8'),path).not.toMatch(forbidden);
  }
  const previews=fs.readFileSync('src/case-study/report-previews.js','utf8');
- const slides=JSON.parse(previews.replace(/^window\\.REPORT_SLIDES=/,'').trim().replace(/;$/,''));
+ const slides=JSON.parse(previews.replace(/^window\.REPORT_SLIDES=/,'').trim().replace(/;$/,''));
  expect(slides).toHaveLength(9);
  for(const slide of slides)expect(slide.title).not.toMatch(forbidden);
  const {spawnSync}=require('node:child_process');
  const audit=spawnSync('python3',['-c',String.raw`
-from pptx import Presentation
+from zipfile import ZipFile
+from xml.etree import ElementTree as ET
 import re
 for file,count in [('src/case-study/downloads/footmate_report.pptx',9),('src/case-study/downloads/footmate_5year_strategy.pptx',6)]:
-    deck=Presentation(file)
-    assert len(deck.slides)==count
-    t='\\n'.join(sh.text for slide in deck.slides for sh in slide.shapes if sh.has_text_frame)
-    assert not re.search(r'Rolling\\s*Forecast|수정\\s?전망|재예측|분기\\s?전망',t,re.I),file
+    with ZipFile(file) as z:
+        slides=[x for x in z.namelist() if re.fullmatch(r'ppt/slides/slide[0-9]+\.xml',x)]
+        assert len(slides)==count,(file,len(slides))
+        text=' '.join(node.text or '' for name in slides for node in ET.fromstring(z.read(name)).iter('{http://schemas.openxmlformats.org/drawingml/2006/main}t'))
+        assert not re.search(r'Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망',text,re.I),(file,text)
 `],{encoding:'utf8',timeout:10000});
  expect(audit.status,audit.stderr).toBe(0);
 });
