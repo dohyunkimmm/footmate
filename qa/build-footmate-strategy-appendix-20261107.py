@@ -15,7 +15,7 @@ if OUT.exists():
     existing=Presentation(OUT)
     if len(existing.slides)==6 and all(
         any(label in sh.text for sh in existing.slides[3].shapes if sh.has_text_frame)
-        for label in ("월 경제적 손익 · 연차별 개선 경로", "−238.7만", "+0.6만")
+        for label in ("월 경제적 손익 · 연차별 개선 경로", "−238.7만 원", "+0.6만 원")
     ):
         print("PASS FootMate appendix exists and is aligned; keeping original file bytes")
         raise SystemExit(0)
@@ -99,12 +99,12 @@ zero_y=3.10
 segment(sl,1.08,zero_y,12.10,zero_y,M,1.5)
 text(sl,'손익분기선',1.11,zero_y-.28,1.25,.24,10,False,S)
 series=[(1,5,-238.7),(2,12,-139.8),(3,20,-69.6),(4,28,.6),(5,36,70.7)]
-xs=[1.60,4.05,6.50,8.95,11.40]
+xs=[1.90,4.15,6.40,8.65,10.90]
 ys=[2.55+(70.7-value)/309.4*2.55 for _,_,value in series]
 for k in range(4):segment(sl,xs[k],ys[k],xs[k+1],ys[k+1],G2,3)
 for (year,partners,value),x,y in zip(series,xs,ys):
     milestone(sl,x,y,year==4)
-    value_text=('+' if value>0 else '−')+f'{abs(value):.1f}만'
+    value_text=('+' if value>0 else '−')+f'{abs(value):.1f}만 원'
     text(sl,value_text,x-.83,y-.47,1.66,.34,16,True,G if value>=0 else D)
     text(sl,f'{year}년 차 · {partners}곳',x-1.07,5.43,2.14,.35,13,True,G)
 rect(sl,.77,5.96,11.75,.60,M)
