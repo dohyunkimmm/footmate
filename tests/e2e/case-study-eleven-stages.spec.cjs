@@ -864,16 +864,12 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
   await expect(page.locator('#page')).toHaveText('10 / 10');
   await expect(page.locator('#slideTitle')).toHaveText('최종 판단 · 단계적 투자');
   await expect(page.locator('#slideSummary')).toContainText('핵심 지표·단계적 투자 기준');
-  await page.locator('.slide-transcript summary').click();
-  await expect(page.locator('#slideTranscript')).toContainText('5개년 경영계획');
-  await expect(page.locator('#slideTranscript')).toContainText('2,998');
-  await expect(page.locator('#slideTranscript')).toContainText('협상안 적용 · −815 / 622 / 1,415 / 2,207 / 2,998');
-  await expect(page.locator('#slideTranscript')).toContainText('기존 조건 유지 · −815 / −459 / −388 / −318 / −247');
+  await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
 });
 
 
 
-test('decision-led portfolio keeps assumptions, mobile layout and slide text usable',async({page})=>{
+test('decision-led portfolio keeps assumptions, mobile layout and slide navigation usable',async({page})=>{
  for(const width of [320,390,800,1440]){
   await page.setViewportSize({width,height:900});await page.goto('/');
   await expect(page.locator('.case-verdict')).toContainText('수익성 확인 후 투자한다.');
@@ -886,9 +882,8 @@ test('decision-led portfolio keeps assumptions, mobile layout and slide text usa
  }
  await page.goto('/src/case-study/materials.html?preview=1&slide=3');
  await expect(page.locator('#page')).toHaveText('04 / 10');
- await page.locator('.slide-transcript summary').click();
- await expect(page.locator('#slideTranscript')).toContainText('940원');
- await expect(page.locator('#slideTranscript')).toContainText('7,648건/월');
+ await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
  await page.getByRole('button',{name:'다음 슬라이드',exact:true}).click();
- await expect(page.locator('#slideTranscript')).toContainText('가상 데이터');
+ await expect(page.locator('#page')).toHaveText('05 / 10');
+ await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
 });
