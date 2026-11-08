@@ -87,6 +87,7 @@ jobs:
           libreoffice -env:UserInstallation=file:///tmp/lo-footmate-appendix --headless --convert-to pdf --outdir /tmp/footmate-appendix src/case-study/downloads/footmate_5year_strategy.pptx
           test "$(pdfinfo /tmp/footmate-appendix/footmate_5year_strategy.pdf | awk '/^Pages:/ {print $2}')" = "6"
           pdffonts /tmp/footmate-appendix/footmate_5year_strategy.pdf | grep -qi Pretendard
+          pdftoppm -f 4 -l 4 -scale-to 1280 -singlefile -png /tmp/footmate-appendix/footmate_5year_strategy.pdf /tmp/footmate-appendix/five-year-economics
       - name: Render editable 10-slide presentation
         run: |
           set -euo pipefail
@@ -177,5 +178,7 @@ jobs:
           path: |
             /tmp/footmate-ppt/footmate_report.pdf
             /tmp/footmate-ppt/page-*.png
+            /tmp/footmate-appendix/footmate_5year_strategy.pdf
+            /tmp/footmate-appendix/five-year-economics.png
           if-no-files-found: warn
           retention-days: 14
