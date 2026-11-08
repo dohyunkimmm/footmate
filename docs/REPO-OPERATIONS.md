@@ -1,6 +1,7 @@
 ## 2026-11-08 후속 · 패치 동등성 감사와 운영 보안 확인
 
 - 기존 브랜치 124개 `main` 비교 및 [읽기 전용 전체 감사 #42485591883](https://github.com/dohyunkimmm/footmate/actions/runs/42485591883) 성공. 감사 시점 비기본 125개(감사용 새 브랜치 포함) 중 8개 동등 패치 후보·117개 고유 패치·0개 완전 동일 트리. 임의 병합·브랜치/태그 삭제·강제 이력 변경하지 않았습니다. [세부 기록](REMAINING-AUDIT-2026-11-08.md)과 [#525 보존 결정](https://github.com/dohyunkimmm/footmate/issues/525)을 유지합니다.
+- [PR #888](https://github.com/dohyunkimmm/footmate/pull/888)의 감사 보강을 `main`에 병합했고, 새 [`main` 감사 #42486341433](https://github.com/dohyunkimmm/footmate/actions/runs/42486341433)은 **SUCCESS**(비기본 125개·동등 패치 8개·고유 패치 117개·동일 트리 0개). 비기본 개수에는 당시 작성 중인 문서 브랜치가 포함되며, 해당 수치는 시점 스냅샷입니다.
 - `footmate-beta` RLS 16/16, SECURITY DEFINER 38개/명시적 search_path 38개/익명 EXECUTE 0개/인증 EXECUTE 21개, Cron 활성 3개를 읽기 전용 확인했습니다. Adviser 보안 WARN 23건과 운영 제약 예외 1건을 해결로 표시하지 않습니다. 실제 실서명 JWT·TOTP E2E 및 성능·인가 개별 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 **미완료**입니다. 권한·DDL·인덱스·데이터 변경 없음.
 
 ## 2026-11-08 · 최신 `main` 점검 및 문서 클렌징
