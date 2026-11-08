@@ -2,6 +2,17 @@
 
 > Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a change approval, or a claim that the Advisor warnings are resolved. Later Data API exposure tests are documented below.
 
+## 2026-11-08 추가 확인 — RPC 21개·인덱스 실행계획·Cron
+
+**범위:** 운영 `footmate-beta`에 PostgreSQL 카탈로그 `SELECT`, `EXPLAIN (FORMAT JSON)` (**ANALYZE 없이 실행계획만 생성**) 및 Supabase Advisor 재조회. 테스트 계정 로그인, 실제 JWT 발급, 쓰기 RPC 호출은 하지 않았습니다.
+
+- `public`의 인증 사용자 실행 가능 `SECURITY DEFINER` 21개 **전체 함수명·인수·권한·가드 참조**를 확인했습니다. 그중 운영자 `operator_*` **11개 전부** 본문 `BEGIN` 다음 첫 실행문이 `perform public.require_beta_operator_aal2();`였습니다(11/11). `require_beta_operator_aal2()` 정의는 `auth.uid()` 존재, `public.operators` 멤버십, 서명된 요청에 전달되는 JWT `aal='aal2'`를 확인하도록 작성되어 있습니다. 이는 **정적 코드 순서 검사**이며 실제 AAL1/AAL2 성공·거절 증빙은 아닙니다.
+- `anon` / `authenticated` / `service_role`의 `public` 스키마 `CREATE` 권한은 **없고**, `USAGE`만 확인했습니다. 따라서 공개 클라이언트 역할이 `public`에 임의 SQL 객체를 생성할 수 있는 상태로 관측되지는 않았습니다. 함수의 모든 실행 경로 안전성을 보증하는 검사는 아닙니다.
+- Advisor `unused_index` 8개 전부 `idx_scan=0`였지만, 표준 SELECT 조건을 가정한 읽기 전용 `EXPLAIN`에서 **6개 인덱스 선택 계획**이 확인됐습니다: `matches_created_by_idx`, `beta_operation_events_actor_idx`, `beta_operation_events_subject_user_idx`, `beta_notifications_match_idx`, `discovery_events_match_idx`, `beta_match_feedback_match_idx`. 이는 **계획된 사용 가능성**이지 실제 서비스 쿼리 실행·효과 검증은 아닙니다.
+- `beta_notifications_email_due_idx`, `beta_notifications_push_due_idx`는 현재 작은 테이블에서 대표 due-query 실행계획상 **순차 스캔**이 선택됐습니다. 테이블 크기·실제 입력 분포에 따라 달라지는 판단이므로 두 인덱스도 삭제하지 않습니다. **8개 전부 보존**, DDL/인덱스 조작 0건.
+- Cron 최근 **24시간** 기록: `footmate-beta-email-outbox` **1,440/1,440**, `footmate-beta-push-outbox` **1,440/1,440**, `footmate-beta-match-reminders` **288/288** 성공, **실패 0건**. 이는 DB 스케줄러 실행 성공이며 외부 알림의 최종 도착·사용자 이용 성과를 뜻하지 않습니다.
+- **남은 작업:** [#611](https://github.com/dohyunkimmm/footmate/issues/611)의 승인된 전용 테스트 계정·현행 TOTP로 **실제 서명 JWT** 로그인, 비운영자/운영자 AAL1·AAL2 허용/거절, 새로고침·로컬 로그아웃·계정 복구 E2E. 실제 호출 부하와 인덱스 사용 추이도 별도 측정해야 합니다. 현재 연결 기능은 인증된 테스트 전용 사용자 세션/TOTP를 제공하지 않으므로 이를 임의로 우회하거나 기존 계정을 사용하지 않았습니다. 개인 정보·토큰·운영 데이터·권한·요금제 변경은 없습니다.
+
 ## 2026-11-08 운영 재확인 — 읽기 전용
 
 - `footmate-beta` 연결 상태 `ACTIVE_HEALTHY`. 운영 카탈로그 `SELECT` 및 Security/Performance/Health Advisor를 재조회했습니다. 아래 결과는 **시점 한정 정적 권한·운영 통계**이며 실제 JWT 권한 E2E와 구분합니다.
