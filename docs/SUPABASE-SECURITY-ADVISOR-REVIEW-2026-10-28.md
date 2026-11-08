@@ -2,6 +2,15 @@
 
 > Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a change approval, or a claim that the Advisor warnings are resolved. Later Data API exposure tests are documented below.
 
+## 2026-11-08 운영 재확인 — 읽기 전용
+
+- `footmate-beta` 연결 상태 `ACTIVE_HEALTHY`. 운영 카탈로그 `SELECT` 및 Security/Performance/Health Advisor를 재조회했습니다. 아래 결과는 **시점 한정 정적 권한·운영 통계**이며 실제 JWT 권한 E2E와 구분합니다.
+- `public` 테이블 **16/16 RLS 활성**, 정책 없는 **2개** `beta_match_reminder_marks`, `beta_public_config`는 `anon`/`authenticated` SELECT·INSERT 권한이 없습니다. `public` RLS 정책 30개에서 `raw_user_meta_data` 참조 0건.
+- `public` SECURITY DEFINER 함수 **38개**, 전부 `search_path` 지정, 익명 `EXECUTE` 가능 **0**, 인증 사용자 `EXECUTE` 가능 **21**. 이 결과만으로 개별 함수의 AAL2·소유권 검증이나 보안 경고 해소를 선언하지 않습니다.
+- Security Advisor: `authenticated_security_definer_function_executable` **21 WARN**, `extension_in_public` **1 WARN**, `auth_leaked_password_protection` **1 WARN**, `rls_enabled_no_policy` **2 INFO**. Performance Advisor: `unused_index` **8 INFO**. Health Advisor 0건. 경고 개수는 전과 동일하며 제거되지 않았습니다.
+- `pg_net`은 `public`에 존재하며 Cron 3/3 활성. 미사용 인덱스 Advisor 대상 8개 `idx_scan=0`으로 관측되지만, 각 크기 8~16KiB이고 해당 테이블 표본이 작아 미사용 확정·삭제 근거가 아닙니다. **REVOKE/이전/인덱스 삭제/DDL/계정 조작 없이 보존**했습니다.
+- **미완료:** 승인된 테스트 전용 일반 사용자·운영자, 실서명 JWT, 운영자 TOTP를 이용한 AAL1/AAL2 허용·차단/refresh/local logout·복구 테스트 및 개별 RPC·쿼리 실행계획 검증은 [#611](https://github.com/dohyunkimmm/footmate/issues/611)에서 유지합니다. [실행 가이드](REAL-SIGNED-MFA-QA.md)의 개인정보·비밀정보 비노출 원칙을 따릅니다. 무료 요금제와 유출 비밀번호 보호 **미해결·수용 예외**도 기존 결정을 유지합니다.
+
 ## 2026-11-01 운영 방침 — 무료 요금제 고정 / Advisor 예외 분리
 
 **운영 결정:** `footmate-beta`는 무료 요금제로 유지한다. 요금제 변경 및 무료 범위 밖의 기능은 **작업·인수 기준에서 제외**하며, 향후 반복적으로 비용 승인을 요구하지 않는다. 아래의 이전 날짜 기록은 감사 이력으로만 남기고, 현재 완료/미완료 판단은 이 방침을 우선한다.
