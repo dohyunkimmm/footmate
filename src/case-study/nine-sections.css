@@ -552,3 +552,6 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
 
 /* Read compact economic scenario footnotes as one paragraph without losing source distinctions. */
 #section-09 .strategy-chart-note+.strategy-chart-note{margin-top:3px;padding-top:0;border-top:0}
+
+/* Six-slide strategy presentation uses the existing preview card and a responsive viewer. */
+.case-strategy-preview .case-ppt-frame{height:clamp(300px,68vw,670px)}

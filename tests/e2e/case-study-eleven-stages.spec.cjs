@@ -404,7 +404,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await model.getByRole('button',{name:'초기화'}).click();
   await expect(model.locator('#case-profit-error')).toBeHidden();
   await documents.scrollIntoViewIfNeeded();
-  const preview=documents.locator('.case-doc-preview');
+  const preview=documents.locator('.case-report-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
   await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
@@ -442,7 +442,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
-  await expect(preview.locator('.case-preview-summary-text')).toHaveText('PPT 미리보기');
+  await expect(preview.locator('.case-preview-summary-text')).toHaveText('본편 PPT 미리보기 (10장)');
   await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
@@ -631,8 +631,8 @@ test('restricted fullscreen enlarges the current slide inline on first click',as
  for(const width of [320,390]){
   await page.setViewportSize({width,height:844});
   await page.goto('/');
-  await page.locator('.case-doc-preview summary').click();
-  const slides=page.locator('.case-ppt-frame').contentFrame();
+  await page.locator('.case-report-preview summary').click();
+  const slides=page.locator('.case-report-preview .case-ppt-frame').contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await slides.getByRole('button',{name:'슬라이드 이미지 확대'}).click();
   await expect(slides.locator('.viewer')).toHaveClass(/inline-zoom/);
@@ -652,7 +652,7 @@ test('PPT preview closes explicitly and the contents control section navigation'
   await expect(page).toHaveURL(/#section-04$/);
   await expect(page.locator('#section-04 .section-title')).toBeFocused();
   await page.locator('.toc-item').first().click();
-  const preview=page.locator('.case-doc-preview');
+  const preview=page.locator('.case-report-preview');
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
 
@@ -697,7 +697,7 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
      expect(await cross.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),name+' at '+width+'px').toBe(true);
      expect(errors,name+' script errors at '+width+'px').toEqual([]);
     }
-    const preview=cross.locator('.case-doc-preview');
+    const preview=cross.locator('.case-report-preview');
     await preview.locator('summary').click();
 
     await preview.locator('summary').click();
@@ -705,6 +705,33 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
    }finally{await context.close();}
   }finally{await browser.close();}
  }
+});
+
+test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
+ await page.goto('/');
+ const preview=page.locator('.case-strategy-preview');
+ await expect(preview).toHaveCount(1);
+ await expect(preview.locator('summary')).toContainText('5개년 전략 PPT 미리보기 (6장)');
+ const frame=preview.locator('iframe.case-ppt-frame');
+ await expect(frame).toHaveAttribute('data-src',/materials\.html\?preview=1&deck=strategy/);
+ await expect(frame).not.toHaveAttribute('src',/.+/);
+ await preview.locator('summary').click();
+ await expect(preview).toHaveAttribute('open','');
+ await expect(frame).toHaveAttribute('src',/materials\.html\?preview=1&deck=strategy/);
+ await expect(frame).not.toHaveAttribute('data-src',/.+/);
+ const slides=frame.contentFrame();
+ await expect(slides.locator('#page')).toHaveText('01 / 06');
+ await expect(slides.locator('#slideProgressTrack,#slideProgress')).toHaveCount(2);
+ await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuemax','6');
+ await expect.poll(()=>slides.locator('#slide').evaluate(img=>img.naturalWidth)).toBeGreaterThan(1000);
+ await slides.getByRole('button',{name:'다음 슬라이드',exact:true}).click();
+ await expect(slides.locator('#page')).toHaveText('02 / 06');
+ await expect(slides.locator('#slideTitle')).toContainText('5개년 성장 전략');
+ await expect(slides.locator('#slide')).toHaveAttribute('src',/slide-2\.jpg/);
+ await preview.locator('summary').click();
+ await expect(preview).not.toHaveAttribute('open','');
+ await expect(page.locator('.case-report-preview')).toHaveCount(1);
+ await expect(page.locator('.case-report-preview iframe')).toHaveAttribute('data-src',/\/src\/case-study\/materials\.html/);
 });
 
 test('case study download contents and static performance budgets',async({page})=>{
