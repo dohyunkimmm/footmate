@@ -232,7 +232,7 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
- await expect(page.locator('#section-01 .lead')).toContainText('공급 계획, 손익·예산, 수정 전망을 투자 판단으로 연결한 경영기획 사례');
+ await expect(page.locator('#section-01 .lead')).toContainText('공급 계획과 손익·예산을 투자 판단으로 연결한 경영기획 사례');
  await expect(page.locator('#section-06')).toContainText('직접 구축·외부 활용·후속 투자 구분. 접근·복구·비용 검토.');
  await expect(page.locator('#section-09')).toContainText('건당 공헌이익·플랫폼 예약 비중·재참가 확인.');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
@@ -337,7 +337,7 @@ test('investment evidence exposes budget scope and separates missing data from u
  }
  await expect(page.locator('#section-08')).toContainText('8,310,000원');
  await expect(page.locator('#section-08')).toContainText('취소 전·전체 채널');
- await expect(page.locator('#section-08')).toContainText('자료 부족');await expect(page.locator('#section-08')).toContainText('측정 기간 미완료');
+ await expect(page.locator('#section-08')).toContainText('자료 보완');await expect(page.locator('#section-08')).toContainText('측정 진행');
  const scan=await new AxeBuilder({page}).include('#section-05').include('#section-06').include('#section-08').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
 });
 
@@ -439,10 +439,10 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await summary.click();
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
   const slides=frame.contentFrame();
-  await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
+  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
-  await expect(preview.locator('.case-preview-summary-text')).toHaveText('본편 PPT 미리보기 (10장)');
+  await expect(preview.locator('.case-preview-summary-text')).toHaveText('본편 PPT 미리보기 (9장)');
   await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
@@ -456,7 +456,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   expect(fonts.icon).toContain('Tossface');
   await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuenow','1');
   for(let i=0;i<3;i++)await slides.locator('#next').click();
-  await expect(slides.locator('#page')).toHaveText('04 / 10');
+  await expect(slides.locator('#page')).toHaveText('04 / 09');
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
   await expect(slides.locator('#slideTitle')).toHaveText('수익성 개선안');
   await expect(slides.locator('#slideSummary')).toContainText('수수료·결제비');
@@ -466,20 +466,20 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const nextButton=slides.getByRole('button',{name:'다음 슬라이드'});
   await nextButton.focus();
   await nextButton.press('ArrowRight');
-  await expect(slides.locator('#page')).toHaveText('05 / 10');
+  await expect(slides.locator('#page')).toHaveText('05 / 09');
   await nextButton.press('ArrowLeft');
-  await expect(slides.locator('#page')).toHaveText('04 / 10');
+  await expect(slides.locator('#page')).toHaveText('04 / 09');
   for(let i=0;i<3;i++)await slides.locator('#prev').click();
-  await expect(slides.locator('#page')).toHaveText('01 / 10');
+  await expect(slides.locator('#page')).toHaveText('01 / 09');
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
   const firstSlideSrc=await slides.locator('#slide').getAttribute('src');
-  for(let i=0;i<9;i++)await slides.locator('#next').click();
-  await expect(slides.locator('#page')).toHaveText('10 / 10');
+  for(let i=0;i<8;i++)await slides.locator('#next').click();
+  await expect(slides.locator('#page')).toHaveText('09 / 09');
   await expect.poll(()=>slides.locator('#slide').evaluate(img=>img.complete&&img.naturalWidth>200&&img.naturalHeight>100),{timeout:15000}).toBe(true);
   expect(await slides.locator('#slide').getAttribute('src')).not.toBe(firstSlideSrc);
   await testInfo.attach('visual-'+width+'-PPT-last-image',{body:await slides.locator('.viewer-stage').screenshot({animations:'disabled'}),contentType:'image/png'});
-  for(let i=0;i<9;i++)await slides.locator('#prev').click();
-  await expect(slides.locator('#page')).toHaveText('01 / 10');
+  for(let i=0;i<8;i++)await slides.locator('#prev').click();
+  await expect(slides.locator('#page')).toHaveText('01 / 09');
   await testInfo.attach('visual-'+width+'-PPT-expanded',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await expect(slides.getByRole('button',{name:'슬라이드 크게 보기'})).toBeVisible();
   // Mobile slide controls must be readable and finger-friendly.
@@ -513,9 +513,9 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     return Math.abs(outer-inner);
   },{timeout:15000}).toBeLessThan(12);
   await slides.getByRole('button',{name:'다음 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('02 / 10');
+  await expect(slides.locator('#page')).toHaveText('02 / 09');
   await slides.getByRole('button',{name:'이전 슬라이드'}).click();
-  await expect(slides.locator('#page')).toHaveText('01 / 10');
+  await expect(slides.locator('#page')).toHaveText('01 / 09');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  for(const [path,type] of [
@@ -633,7 +633,7 @@ test('restricted fullscreen enlarges the current slide inline on first click',as
   await page.goto('/');
   await page.locator('.case-report-preview summary').click();
   const slides=page.locator('.case-report-preview .case-ppt-frame').contentFrame();
-  await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
+  await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
   await slides.getByRole('button',{name:'슬라이드 이미지 확대'}).click();
   await expect(slides.locator('.viewer')).toHaveClass(/inline-zoom/);
   expect(await slides.locator('.viewer-stage').evaluate(e=>e.scrollWidth>e.clientWidth)).toBe(true);
@@ -705,6 +705,39 @@ test('cross-engine case study navigation and preview controls',async({page})=>{
    }finally{await context.close();}
   }finally{await browser.close();}
  }
+});
+
+test('Rolling Forecast copy, sections and dedicated slide are absent in all materials',async({page})=>{
+ const forbidden=/Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망/i;
+ for(const path of ['/','/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
+  await page.goto(path);
+  await expect(page.locator('body')).not.toContainText(forbidden);
+ }
+ await page.goto('/src/case-study/materials.html?preview=1');
+ await expect(page.locator('#page')).toHaveText('01 / 09');
+ await expect(page.locator('#rolling-management,#rolling-kpis,#annual')).toHaveCount(0);
+ await expect(page.locator('#slideProgressTrack')).toHaveAttribute('aria-valuemax','9');
+ const fs=require('node:fs');
+ for(const path of ['src/case-study/nine-sections.js','src/case-study/materials.html','src/case-study/forecast.html','README.md']){
+  expect(fs.readFileSync(path,'utf8'),path).not.toMatch(forbidden);
+ }
+ const previews=fs.readFileSync('src/case-study/report-previews.js','utf8');
+ const slides=JSON.parse(previews.replace(/^window\.REPORT_SLIDES=/,'').trim().replace(/;$/,''));
+ expect(slides).toHaveLength(9);
+ for(const slide of slides)expect(slide.title).not.toMatch(forbidden);
+ const {spawnSync}=require('node:child_process');
+ const audit=spawnSync('python3',['-c',String.raw`
+from zipfile import ZipFile
+from xml.etree import ElementTree as ET
+import re
+for file,count in [('src/case-study/downloads/footmate_report.pptx',9),('src/case-study/downloads/footmate_5year_strategy.pptx',6)]:
+    with ZipFile(file) as z:
+        slides=[x for x in z.namelist() if re.fullmatch(r'ppt/slides/slide[0-9]+\.xml',x)]
+        assert len(slides)==count,(file,len(slides))
+        text=' '.join(node.text or '' for name in slides for node in ET.fromstring(z.read(name)).iter('{http://schemas.openxmlformats.org/drawingml/2006/main}t'))
+        assert not re.search(r'Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망',text,re.I),(file,text)
+`],{encoding:'utf8',timeout:10000});
+ expect(audit.status,audit.stderr).toBe(0);
 });
 
 test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
@@ -792,9 +825,9 @@ xlsx=root/'footmate_model.xlsx'
 with ZipFile(pptx) as p:
     paths=set(p.namelist())
     slides=sorted(x for x in paths if re.fullmatch(r'ppt/slides/slide[0-9]+\.xml',x))
-    assert len(slides)==10, 'PPTX slide count: '+str(len(slides))
+    assert len(slides)==9, 'PPTX slide count: '+str(len(slides))
     pres=ET.fromstring(p.read('ppt/presentation.xml'))
-    assert len(pres.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sldId'))==10
+    assert len(pres.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sldId'))==9
     for name in slides:
         node=ET.fromstring(p.read(name))
         shapes=node.findall('.//{http://schemas.openxmlformats.org/presentationml/2006/main}sp')
@@ -816,7 +849,7 @@ with ZipFile(xlsx) as x:
         errors.extend(c.attrib.get('r') for c in node.findall('.//'+ns+'c') if c.attrib.get('t')=='e')
     assert formulas>0, 'Excel file has no formulas'
     assert not errors, 'Excel cached error values: '+str(errors[:10])
-    print('PASS: 10 PPT slides, '+str(len(sheets))+' Excel sheets, '+str(formulas)+' formulas, zero cached errors')
+    print('PASS: 9 PPT slides, '+str(len(sheets))+' Excel sheets, '+str(formulas)+' formulas, zero cached errors')
 `],{encoding:'utf8',timeout:25000});
  expect(audit.status,audit.stderr+' '+audit.stdout).toBe(0);
  await page.goto('/');
@@ -908,8 +941,8 @@ test('ROI analysis in section 05 stays clear, accessible and numerically consist
   await page.goto('/');
   const scan=await new AxeBuilder({page}).include('#roi-analysis').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
   expect(scan.violations).toEqual([]);
-  await page.goto('/src/case-study/materials.html?preview=1&slide=8');
-  await expect(page.locator('#page')).toHaveText('09 / 10');
+  await page.goto('/src/case-study/materials.html?preview=1&slide=7');
+  await expect(page.locator('#page')).toHaveText('08 / 09');
   await expect(page.locator('#slideTitle')).toHaveText('12개월 비용 대비 예상 손익률');
   await expect(page.locator('#slideSummary')).toContainText('비용 회수율 비교');
 });
@@ -925,8 +958,8 @@ test('final Case Study decision and presentation conclusion stay aligned',async(
     '공급 계약·수익성 기준 충족 후 단계적 투자 확대.'
   ])await expect(final).toContainText(phrase);
   await expect(final.locator('.story-card')).toHaveCount(3);
-  await page.goto('/src/case-study/materials.html?preview=1&slide=9');
-  await expect(page.locator('#page')).toHaveText('10 / 10');
+  await page.goto('/src/case-study/materials.html?preview=1&slide=8');
+  await expect(page.locator('#page')).toHaveText('09 / 09');
   await expect(page.locator('#slideTitle')).toHaveText('최종 판단 · 단계적 투자');
   await expect(page.locator('#slideSummary')).toContainText('핵심 지표·단계적 투자 기준');
   await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
@@ -946,9 +979,9 @@ test('decision-led portfolio keeps assumptions, mobile layout and slide navigati
   await expect(page.locator('#case-documents-heading')).toBeInViewport();
  }
  await page.goto('/src/case-study/materials.html?preview=1&slide=3');
- await expect(page.locator('#page')).toHaveText('04 / 10');
+ await expect(page.locator('#page')).toHaveText('04 / 09');
  await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
  await page.getByRole('button',{name:'다음 슬라이드',exact:true}).click();
- await expect(page.locator('#page')).toHaveText('05 / 10');
+ await expect(page.locator('#page')).toHaveText('05 / 09');
  await expect(page.locator('.slide-transcript,#slideTranscript')).toHaveCount(0);
 });

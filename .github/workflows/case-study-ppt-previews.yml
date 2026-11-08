@@ -4,196 +4,77 @@ on:
     branches: [main]
     paths:
       - 'src/case-study/downloads/footmate_report.pptx'
-      - 'qa/improve-case-study-chart.py'
-      - 'qa/align-footmate-strategy-20261107.py'
-      - 'qa/build-footmate-strategy-appendix-20261107.py'
-      - 'qa/visual-polish-main-deck-20261108.py'
-      - 'qa/final-slide-readability-20261108.py'
-      - 'qa/reframe-finance-deck-20261108.py'
-      - 'qa/sync-ppt-monthly-forecast-20261108.py'
+      - 'src/case-study/downloads/footmate_5year_strategy.pptx'
+      - 'src/case-study/report-previews.js'
+      - 'src/case-study/nine-sections.js'
+      - 'qa/crosscheck-case-study-presentations.py'
+      - 'src/case-study/previews/strategy/**'
       - '.github/workflows/case-study-ppt-previews.yml'
   pull_request:
     branches: [main]
     paths:
       - 'src/case-study/downloads/footmate_report.pptx'
-      - 'qa/improve-case-study-chart.py'
-      - 'qa/align-footmate-strategy-20261107.py'
-      - 'qa/build-footmate-strategy-appendix-20261107.py'
-      - 'qa/visual-polish-main-deck-20261108.py'
-      - 'qa/final-slide-readability-20261108.py'
-      - 'qa/reframe-finance-deck-20261108.py'
-      - 'qa/sync-ppt-monthly-forecast-20261108.py'
+      - 'src/case-study/downloads/footmate_5year_strategy.pptx'
+      - 'src/case-study/report-previews.js'
+      - 'src/case-study/nine-sections.js'
+      - 'qa/crosscheck-case-study-presentations.py'
+      - 'src/case-study/previews/strategy/**'
       - '.github/workflows/case-study-ppt-previews.yml'
-  workflow_dispatch:
-
 permissions:
-  contents: write
-  pull-requests: write
-
-concurrency:
-  group: footmate-case-study-preview
-  cancel-in-progress: false
-
+  contents: read
 jobs:
-  render:
+  verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 12
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: true
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - name: Install slide rendering tools
+      - uses: actions/checkout@v4
+      - name: Install presentation rendering support
         run: |
-          set -euo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libreoffice-impress poppler-utils fonts-noto-cjk
-          mkdir -p ~/.local/share/fonts/footmate
-          curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Regular.otf -o ~/.local/share/fonts/footmate/Pretendard-Regular.otf
-          curl -fSL --retry 3 https://raw.githubusercontent.com/orioncactus/pretendard/main/packages/pretendard/dist/public/static/Pretendard-Bold.otf -o ~/.local/share/fonts/footmate/Pretendard-Bold.otf
-          fc-cache -f
-      - name: Ensure final decision banner stays visible in PPTX
+          sudo apt-get install -y -qq libreoffice-impress poppler-utils fonts-noto-cjk fonts-nanum
+      - name: Confirm original presentation and published preview parity
         run: |
           set -euo pipefail
-          python3 -m venv /tmp/footmate-slide-edit
-          /tmp/footmate-slide-edit/bin/pip install --quiet python-pptx==1.0.2
-          /tmp/footmate-slide-edit/bin/python - <<'PY'
-          from pathlib import Path
-          from pptx import Presentation
-          ppt=Path('src/case-study/downloads/footmate_report.pptx')
-          prs=Presentation(ppt)
-          assert len(prs.slides)==10
-          slide=prs.slides[9]
-          banners=[sh for sh in slide.shapes if sh.has_text_frame and '운영자 제휴형 우선' in sh.text]
-          assert len(banners)==1, 'Final decision banner not found exactly once'
-          banner=banners[0]
-          tree=slide.shapes._spTree
-          # Adjust once only. Avoid rewriting an unchanged PPTX on later runs.
-          if slide.shapes[-1]._element is not banner._element:
-              tree.remove(banner._element)
-              tree.append(banner._element)
-              prs.save(ppt)
-              print('Corrected final decision foreground order')
-          else:
-              print('Decision title already in foreground')
-          check=Presentation(ppt).slides[9]
-          assert check.shapes[-1].has_text_frame and '운영자 제휴형 우선' in check.shapes[-1].text
-          print('PASS PPTX page 10: visible decision heading, source data retained')
-          PY
-      - name: Refine monthly revenue chart from original numbers
-        run: /tmp/footmate-slide-edit/bin/python qa/improve-case-study-chart.py
-      - name: Align 5-year strategy, preserve source chart and enforce Pretendard
-        run: /tmp/footmate-slide-edit/bin/python qa/align-footmate-strategy-20261107.py
-      - name: Emphasize fourth-year economic transition in original 10-slide deck
-        run: /tmp/footmate-slide-edit/bin/python qa/visual-polish-main-deck-20261108.py
-      - name: Improve final-slide financial table and disclosure readability
-        run: /tmp/footmate-slide-edit/bin/python qa/final-slide-readability-20261108.py
-      - name: Reframe editable original slides for management and rolling forecast
-        run: /tmp/footmate-slide-edit/bin/python qa/reframe-finance-deck-20261108.py
-      - name: Align slide 5 monthly chart and notes with canonical Rolling Forecast
-        run: /tmp/footmate-slide-edit/bin/python qa/sync-ppt-monthly-forecast-20261108.py
-      - name: Generate separate six-slide Pretendard strategic appendix
-        run: |
-          /tmp/footmate-slide-edit/bin/python qa/build-footmate-strategy-appendix-20261107.py
-          mkdir -p /tmp/footmate-appendix
-          libreoffice -env:UserInstallation=file:///tmp/lo-footmate-appendix --headless --convert-to pdf --outdir /tmp/footmate-appendix src/case-study/downloads/footmate_5year_strategy.pptx
-          test "$(pdfinfo /tmp/footmate-appendix/footmate_5year_strategy.pdf | awk '/^Pages:/ {print $2}')" = "6"
-          pdffonts /tmp/footmate-appendix/footmate_5year_strategy.pdf | grep -qi Pretendard
-          pdftoppm -f 4 -l 4 -scale-to 1280 -singlefile -png /tmp/footmate-appendix/footmate_5year_strategy.pdf /tmp/footmate-appendix/five-year-economics
-      - name: Render editable 10-slide presentation
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/footmate-ppt
-          libreoffice -env:UserInstallation=file:///tmp/lo-footmate-ppt --headless --convert-to pdf --outdir /tmp/footmate-ppt src/case-study/downloads/footmate_report.pptx
-          test -s /tmp/footmate-ppt/footmate_report.pdf
-          pdffonts /tmp/footmate-ppt/footmate_report.pdf | grep -qi Pretendard
-          test "$(pdfinfo /tmp/footmate-ppt/footmate_report.pdf | awk '/^Pages:/ {print $2}')" = "10"
-          for page in $(seq 1 10); do
-            number="$(printf '%02d' "$page")"
-            pdftoppm -f "$page" -l "$page" -scale-to-x 1280 -scale-to-y -1 -png -singlefile /tmp/footmate-ppt/footmate_report.pdf "/tmp/footmate-ppt/page-$number"
-          done
-      - name: Refresh inline images and verify slide count
-        run: |
+          mkdir -p /tmp/footmate-deck-qa
+          libreoffice -env:UserInstallation=file:///tmp/footmate-deck-check1 --headless --convert-to pdf --outdir /tmp/footmate-deck-qa src/case-study/downloads/footmate_report.pptx
+          libreoffice -env:UserInstallation=file:///tmp/footmate-deck-check2 --headless --convert-to pdf --outdir /tmp/footmate-deck-qa src/case-study/downloads/footmate_5year_strategy.pptx
+          test "$(pdfinfo /tmp/footmate-deck-qa/footmate_report.pdf | awk '/^Pages:/ {print $2}')" = "9"
+          test "$(pdfinfo /tmp/footmate-deck-qa/footmate_5year_strategy.pdf | awk '/^Pages:/ {print $2}')" = "6"
           python3 - <<'PY'
-          import base64, json, pathlib
-          root=pathlib.Path('/tmp/footmate-ppt')
-          titles=[
-              '플랫폼 운영과 수익성 개선',
-              '운영 모델과 책임',
-              '공급과 플랫폼 경유 예약',
-              '수익성 개선안',
-              '월간 경영관리와 Rolling Forecast',
-              '손익 차이와 운영 조치',
-              '운영 데이터와 통제',
-              'IT 투자 범위와 비용',
-              '12개월 비용 대비 예상 손익률',
-              '최종 판단 · 단계적 투자',
-          ]
-          slides=[]
-          for i,title in enumerate(titles,1):
-              data=(root/f'page-{i:02d}.png').read_bytes()
-              assert data[:8]==bytes.fromhex('89504e470d0a1a0a'), f'Page {i} is not PNG'
-              assert len(data)>5000
-              slides.append(dict(title=title,src='data:image/png;base64,'+base64.b64encode(data).decode('ascii')))
-          target=pathlib.Path('src/case-study/report-previews.js')
-          target.write_text('window.REPORT_SLIDES='+json.dumps(slides,ensure_ascii=False,separators=(',',':'))+';\n',encoding='utf-8')
-          assert len(slides)==10
-          print('Preview updated:',target.stat().st_size,'bytes; slides:',len(slides))
-          PY
-      - name: Stage previews on a dedicated review branch
-        if: github.event_name != 'pull_request'
-        id: preview_branch
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx src/case-study/downloads/footmate_5year_strategy.pptx
-          if git diff --cached --quiet; then
-            echo 'No preview changes'
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            git commit -m 'docs: align FootMate inline slide previews with editable presentation'
-            SOURCE_SHA="$(git rev-parse HEAD~1)"
-            PREVIEW_BRANCH="automation/footmate-case-preview-${SOURCE_SHA:0:12}"
-            git push origin "HEAD:refs/heads/$PREVIEW_BRANCH"
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "branch=$PREVIEW_BRANCH" >> "$GITHUB_OUTPUT"
-            echo "Created review branch $PREVIEW_BRANCH (main remains protected)"
-            if gh pr create --head "$PREVIEW_BRANCH" --base main --title "docs: FootMate PPT 원본과 슬라이드 미리보기 동기화" --body "최종 장의 가려진 결론 문구를 표시 순서로 바로잡고, 편집 가능한 PPTX와 PNG 미리보기 10장을 함께 동기화합니다. 사업성 수치는 유지합니다. 자동 QA 통과 후 병합합니다."; then
-              echo "Created preview pull request"
-            else
-              echo "::warning::Preview branch created. Create a pull request through the connected GitHub account; main is protected."
-            fi
-          fi
-      - name: Verify review assets without bot commits that invalidate checks
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          set -euo pipefail
-          /tmp/footmate-slide-edit/bin/python - <<'PY'
+          import base64,json,re,zipfile
           from pathlib import Path
-          from pptx import Presentation
-          p=Path("src/case-study/downloads/footmate_report.pptx")
-          a=Path("src/case-study/downloads/footmate_5year_strategy.pptx")
-          assert len(Presentation(p).slides)==10, "Ten-slide original changed"
-          assert len(Presentation(a).slides)==6, "Six-slide strategy appendix changed"
-          preview=Path("src/case-study/report-previews.js")
-          text=preview.read_text(encoding="utf-8")
-          assert text.startswith("window.REPORT_SLIDES=") and "data:image/png;base64," in text
-          print("PASS generated presentation, strategy appendix, and inline preview integrity")
+          root=Path('src/case-study')
+          prefix='window.REPORT_SLIDES='
+          script=(root/'report-previews.js').read_text(encoding='utf-8').strip()
+          assert script.startswith(prefix) and script.endswith(';')
+          slides=json.loads(script[len(prefix):-1])
+          assert len(slides)==9,len(slides)
+          for i,slide in enumerate(slides,1):
+              src=slide['src']
+              assert src.startswith('data:image/png;base64,')
+              raw=base64.b64decode(src.split(',',1)[1],validate=True)
+              assert raw.startswith(bytes.fromhex('89504e470d0a1a0a')) and len(raw)>5000,i
+          for i in range(1,7):
+              jpg=root/f'previews/strategy/slide-{i}.jpg'
+              content=jpg.read_bytes()
+              assert content[:3]==bytes.fromhex('ffd8ff') and len(content)>5000,str(jpg)
+          forbidden=re.compile(r'Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망',re.I)
+          assert not any(forbidden.search(slide['title']) for slide in slides)
+          for name,count in [('footmate_report.pptx',9),('footmate_5year_strategy.pptx',6)]:
+              with zipfile.ZipFile(root/'downloads'/name) as z:
+                  parts=[p for p in z.namelist() if re.fullmatch(r'ppt/slides/slide[0-9]+\.xml',p)]
+                  assert len(parts)==count,(name,len(parts))
+                  for part in parts:
+                      assert not forbidden.search(z.read(part).decode('utf-8','replace')),(name,part)
+          print('PASS: 9 editable main slides, 6 editable strategy slides and all published previews')
           PY
-          echo 'No automatic PR branch push: review commit and QA results remain stable'
-      - name: Upload presentation rendering for QA
+      - name: Cross-check body against both slide decks
+        run: python3 qa/crosscheck-case-study-presentations.py
+      - name: Upload render evidence for quality review
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         with:
-          name: footmate-case-study-slides
-          path: |
-            /tmp/footmate-ppt/footmate_report.pdf
-            src/case-study/downloads/footmate_report.pptx
-            /tmp/footmate-ppt/page-*.png
-            /tmp/footmate-appendix/footmate_5year_strategy.pdf
-            /tmp/footmate-appendix/five-year-economics.png
+          name: footmate-case-study-ppt-render
+          path: /tmp/footmate-deck-qa/*.pdf
           if-no-files-found: warn
           retention-days: 14

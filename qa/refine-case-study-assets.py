@@ -236,7 +236,7 @@ def update_presentation():
 
     # Concise additional notes preserve original composition and source chart.
     additions = [
-        (5, "연간 현금 손익 · 수정 전망 −303.3만 원 / 연중 가상 비용 추세 반영 −484.1만 원", 6.67),
+        (5, "6월 손익 차이 · 물량·단가·비용 영향 분석", 6.67),
         (8, "※ 거래 변동비·추가 투자·세금 등은 별도 산정합니다.", 6.70),
         (9, "산식: (연 수수료 매출 − 총현금비용) ÷ 총현금비용 · 가정 기반", 6.88),
     ]

@@ -47,7 +47,7 @@ chart.value_axis.major_gridlines.format.line.width=Pt(.5)
 def signed_money(v):
     return ("+" if v>0 else "−" if v<0 else "±")+f"{abs(v):,.0f}원"
 diffs=[before[1][i]-before[0][i] for i in (0,5,11)]
-note="계획 대비 수정 전망 차이  |  "+ " · ".join(f"{n}월 {signed_money(d)}" for n,d in zip((1,6,12),diffs))
+note="계획 대비 손익 차이  |  "+ " · ".join(f"{n}월 {signed_money(d)}" for n,d in zip((1,6,12),diffs))
 notes=[sh for sh in slide.shapes if sh.has_text_frame and ("상반기 모형 거래" in sh.text or "하반기 전망 비교" in sh.text)]
 assert len(notes)==1, f"Expected original month-by-month commentary, found {len(notes)}"
 sh=notes[0]
