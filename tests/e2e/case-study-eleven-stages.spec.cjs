@@ -337,7 +337,7 @@ test('investment evidence exposes budget scope and separates missing data from u
  }
  await expect(page.locator('#section-08')).toContainText('8,310,000원');
  await expect(page.locator('#section-08')).toContainText('취소 전·전체 채널');
- await expect(page.locator('#section-08')).toContainText('자료 부족');await expect(page.locator('#section-08')).toContainText('측정 기간 미완료');
+ await expect(page.locator('#section-08')).toContainText('자료 보완');await expect(page.locator('#section-08')).toContainText('측정 진행');
  const scan=await new AxeBuilder({page}).include('#section-05').include('#section-06').include('#section-08').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(scan.violations).toEqual([]);
 });
 
