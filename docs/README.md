@@ -1,3 +1,8 @@
+## 2026-11-08 추가 · #611 운영 권한·성능 점검
+
+- [실운영 보안 후속 증빙](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md): 인증 사용자 실행 가능 SECURITY DEFINER **21개**의 권한·가드 참조를 확인하고, `operator_*` **11/11개** 함수의 AAL2 가드가 실행 본문 첫 문장임을 검증했습니다. `anon`·`authenticated`의 `public` 스키마 CREATE 권한도 없습니다. **실서명 JWT E2E 통과와는 별개**입니다.
+- 미사용 경고 인덱스 8개에 대한 비실행 `EXPLAIN`에서 **6개 사용 계획**, 이메일/푸시 due 인덱스 2개는 작은 테이블에서 순차 스캔 계획이었습니다. 인덱스 삭제는 하지 않았습니다. Cron 3종은 직전 24시간 총 **3,168회 성공, 실패 0**(DB 스케줄 실행 기준). 실제 Auth 세션·TOTP를 통한 [#611](https://github.com/dohyunkimmm/footmate/issues/611) 테스트는 계속 미완료로 유지합니다.
+
 ## 2026-11-08 후속 · 미반영 패치·보안 실운영 점검
 
 - [미반영 패치·잔여 보안 실점검](REMAINING-AUDIT-2026-11-08.md): GitHub Compare에서 기존 비기본 브랜치 124개의 분기 상태를 확인했고, [읽기 전용 전체 `git cherry` 감사 #42485591883](https://github.com/dohyunkimmm/footmate/actions/runs/42485591883)는 신규 감사용 브랜치 포함 125개를 검사해 동등 패치 후보 8개·고유 패치 보유 117개·동일 트리 0개를 확인했습니다. 이 결과는 **자동 병합·삭제 허가가 아닙니다.**
