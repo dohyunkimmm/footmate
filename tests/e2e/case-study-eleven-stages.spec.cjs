@@ -442,7 +442,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
-  await expect(preview.locator('.case-preview-summary-text')).toHaveText('PPT 미리보기');
+  await expect(preview.locator('.case-preview-summary-text')).toHaveText('본편 PPT 미리보기 (10장)');
   await expect(preview.locator('.case-preview-symbol')).toHaveCSS('font-family',/Tossface/);
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
@@ -632,7 +632,7 @@ test('restricted fullscreen enlarges the current slide inline on first click',as
   await page.setViewportSize({width,height:844});
   await page.goto('/');
   await page.locator('.case-report-preview summary').click();
-  const slides=page.locator('.case-ppt-frame').contentFrame();
+  const slides=page.locator('.case-report-preview .case-ppt-frame').contentFrame();
   await expect(slides.locator('#page')).toHaveText('01 / 10',{timeout:15000});
   await slides.getByRole('button',{name:'슬라이드 이미지 확대'}).click();
   await expect(slides.locator('.viewer')).toHaveClass(/inline-zoom/);
