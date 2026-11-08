@@ -1,5 +1,12 @@
 # FootMate Release History
 
+## 2026-11-08 — 본편 9장·전략 6장 및 Case Study 문구·미리보기 정리
+
+- **현재 공개 구성:** Case Study 본문 **9개 섹션**, 사업·IT 기획 본편 PPT **9장**, 5개년 성장 전략 PPT **6장**. [#876](https://github.com/dohyunkimmm/footmate/pull/876)에서 Rolling Forecast 관련 본문·계산·발표자료를 제거하고 본편을 10장에서 9장으로 변경. 이전 11월 2일 '10장' 기록은 그 날짜의 이력으로 보존합니다.
+- **발표자료·검증:** [#874](https://github.com/dohyunkimmm/footmate/pull/874)에서 전략 6장 미리보기 추가, [#878](https://github.com/dohyunkimmm/footmate/pull/878)에서 본문·두 PPT 교차검증을 정기 QA에 연결, [#880](https://github.com/dohyunkimmm/footmate/pull/880)에서 미리보기를 슬라이드 썸네일 목록으로 정리. [#881](https://github.com/dohyunkimmm/footmate/pull/881)에서 공개 Excel 다운로드 버튼만 제거하고 원본 XLSX와 내부 검사를 보존.
+- **글꼴·문구:** [#884](https://github.com/dohyunkimmm/footmate/pull/884)의 Pretendard/Tossface 확인 및 원본 정리, [#885](https://github.com/dohyunkimmm/footmate/pull/885)의 불필요한 상단 문구 제거, [#886](https://github.com/dohyunkimmm/footmate/pull/886)의 반복 문구 정리가 `main`에 병합. 제품 기능·손익 가정의 외부 실측 완료를 의미하지 않습니다.
+- **기준 검증:** [`main` `dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)에서 [FootMate QA #42482120022](https://github.com/dohyunkimmm/footmate/actions/runs/42482120022)의 Case Study QA·Cloudflare 배포·Case Study Production Smoke와 [PPT preview #42482119997](https://github.com/dohyunkimmm/footmate/actions/runs/42482119997)이 성공. Regression 36·Browser E2E·Docs-only는 이 실행에서 생략. [저장소·문서 점검](REPO-CLEANUP-2026-11-08.md)은 별도 기록입니다.
+
 ## 2026-11-02 — Case Study 12개월 ROI·최종 판단 동기화
 
 - **본문:** 9개 섹션 구조 유지. **05번 「수익성·손익분기점」** 아래 12개월 예상 ROI와 시나리오별 현금비용 대비 수수료 매출 비중을 추가하고, **09번 「종합 판단·근거」**는 운영자 제휴형·핵심 확인 지표·단계적 투자 기준으로 정리.
