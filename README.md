@@ -25,7 +25,7 @@
 
 **주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
-**경영기획 중심 산출물:** 월별 예산·가상 실적·CAPEX/OPEX·인력 비용·투자 판단을 검토합니다. 기존 AI 구현·QA는 사업계획의 실행 가능성 근거로 유지합니다.
+**경영기획 중심 산출물:** 월별 예산·가상 실적·CAPEX/OPEX·인력 비용·투자 판단을 검토합니다. 기존 AI 구현은 사업계획의 실행 가능성 근거로 구분해 제시합니다.
 
 ## 주요 경험
 
@@ -59,11 +59,10 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 **실제 결제(PG)와 외부 분석 도구는 연결되지 않았습니다.** 내부 탐색 통계는 별개로, 로그인한 사용자가 MY/설정에서 명시적으로 동의한 이후의 실제 경기 탐색 이벤트만 서버에 전송합니다. 데모·게스트·미동의 기록은 전송하지 않으며, 동의 해제와 삭제 확인 절차·측정 한계는 [Beta 측정 준비 기준](docs/BETA-MEASUREMENT-READINESS.md)을 따릅니다.
 
-## 기술과 검증
+## 기술 구성
 
 - **기술:** JavaScript, Cloudflare Workers(배포·API), Vercel AI Gateway(AI 추론), Supabase(Auth·Postgres·Realtime·Storage), Resend, Web Push
-- **검증:** 회귀 테스트, Playwright 브라우저 E2E·시각 회귀, axe 접근성, 모바일 WebKit
-- **릴리스:** 제품 식별자 `v6.0.0`. 코드 변경은 영향에 맞는 QA와 배포 검증을 거치며, 문서만 변경할 때는 경량 QA를 적용합니다.
+- **릴리스:** 제품 식별자 `v6.0.0`. 상세 변경·검증 이력은 릴리스 문서에서 관리합니다.
 
 ## 저장소 파일·폴더 안내
 
@@ -73,13 +72,13 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 - **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [Case Study 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
 - **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
 - **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
-- **문서:** [기획·운영·QA 현행 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
+- **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
 
 ## 자세한 문서
 
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
 - [Case Study 현행 문서 · 05번 ROI·09번 최종 판단](docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md) · [Case Study 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
-- [릴리스·QA 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
+- [릴리스 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
 - [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
 - [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
 
