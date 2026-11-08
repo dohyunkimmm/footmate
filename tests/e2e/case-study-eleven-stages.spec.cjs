@@ -439,7 +439,19 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await summary.click();
   await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261107-inlinezoom');
   const slides=frame.contentFrame();
+  // A preview shows the full thumbnail contact sheet, not the presentation controls.
+  await expect(slides.locator('.slide-gallery-card')).toHaveCount(9,{timeout:15000});
+  await expect(slides.locator('.slide-gallery')).toBeVisible();
+  await expect(slides.locator('.toolbar')).toBeHidden();
+  await expect(slides.locator('.viewer-stage')).toBeHidden();
+  await expect(slides.locator('.slide-gallery-card').first()).toHaveAttribute('href','/src/case-study/materials.html?preview=1&mode=slides&slide=0');
+  await expect.poll(()=>slides.locator('.slide-gallery-card img').first().evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
+  await testInfo.attach('visual-'+width+'-PPT-thumbnail-preview',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
+  // Exercise the dedicated large-slide reader without replacing the case study page.
+  await frame.evaluate(element=>{element.src='/src/case-study/materials.html?preview=1&mode=slides'});
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
+  await expect(slides.locator('.viewer-stage')).toBeVisible();
+  await expect(slides.locator('.slide-gallery')).toBeHidden();
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
   await expect(preview.locator('.case-preview-summary-text')).toHaveText('본편 PPT 미리보기 (9장)');
@@ -517,6 +529,15 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await slides.getByRole('button',{name:'이전 슬라이드'}).click();
   await expect(slides.locator('#page')).toHaveText('01 / 09');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  if(width===1440){
+   const strategy=documents.locator('.case-strategy-preview');
+   await strategy.locator('summary').click();
+   const strategySlides=strategy.locator('.case-ppt-frame').contentFrame();
+   await expect(strategySlides.locator('.slide-gallery-card')).toHaveCount(6,{timeout:15000});
+   await expect(strategySlides.locator('.slide-gallery-card').last()).toHaveAttribute('href','/src/case-study/materials.html?preview=1&mode=slides&deck=strategy&slide=5');
+   await expect(strategySlides.locator('.viewer-stage')).toBeHidden();
+   await testInfo.attach('visual-strategy-PPT-thumbnail-preview',{body:await strategy.screenshot({animations:'disabled'}),contentType:'image/png'});
+  }
  }
  for(const [path,type] of [
   ['/src/case-study/downloads/footmate_report.pptx','presentation'],
