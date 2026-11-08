@@ -624,4 +624,6 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
  .case-deck-stack .case-preview-indicator{width:27px;height:27px}
 }
 @media(prefers-reduced-motion:reduce){.case-deck-stack .case-doc-preview,.case-deck-stack .case-preview-indicator::after{transition:none}}
-
+/* The expandable resource control uses the same Tossface icon font as the viewer. */
+.case-deck-stack .case-preview-indicator::after{content:'⬇️';display:inline-block;width:auto;height:auto;margin:0;border:0;transform:none;transition:none;font-family:var(--fm-font-icon);font-size:15px;font-weight:400;line-height:1}
+.case-deck-stack .case-doc-preview[open] .case-preview-indicator::after{content:'⬆️';margin:0;transform:none}

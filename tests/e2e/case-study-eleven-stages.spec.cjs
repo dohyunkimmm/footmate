@@ -407,9 +407,15 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const preview=documents.locator('.case-report-preview');
   const frame=preview.locator('.case-ppt-frame');
   await expect(preview).not.toHaveAttribute('open',/.+/);
-  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
+  await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261108-pretendard');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('사업·IT 기획');
+  const resourceFonts=await summary.evaluate(el=>({
+    text:getComputedStyle(el).fontFamily,
+    icon:getComputedStyle(el.querySelector('.case-preview-indicator'),'::after').fontFamily
+  }));
+  expect(resourceFonts.text).toContain('Pretendard');
+  expect(resourceFonts.icon).toContain('Tossface');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
     const selectors=[
@@ -437,11 +443,12 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(summary).toBeFocused();
   await testInfo.attach('visual-'+width+'-PPT-closed-focus',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
   await summary.click();
-  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
+  await expect(frame).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261108-pretendard');
   const slides=frame.contentFrame();
   // A preview shows the full thumbnail contact sheet, not the presentation controls.
   await expect(slides.locator('.slide-gallery-card')).toHaveCount(9,{timeout:15000});
   await expect(slides.locator('.slide-gallery')).toBeVisible();
+  await expect(slides.locator('.slide-gallery-reader .fm-icon')).toHaveCount(1);
   await expect(slides.locator('.slide-gallery-card').first()).toBeVisible();
   await expect(slides.locator('.slide-gallery-card').nth(1)).toBeVisible();
   await expect(slides.locator('.slide-gallery-card').nth(2)).toBeHidden();
@@ -702,7 +709,7 @@ test('PPT preview closes explicitly and the contents control section navigation'
   await expect(preview.locator('summary')).toBeFocused();
   await preview.locator('summary').click();
   await expect(preview).toHaveAttribute('open','');
-  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
+  await expect(preview.locator('.case-ppt-frame')).toHaveAttribute('src','/src/case-study/materials.html?preview=1&viewer=20261108-pretendard');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
 });

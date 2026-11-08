@@ -70,7 +70,15 @@ def deck(path: Path) -> tuple[list[str],list[list[list[str]]]]:
 main, main_tables = deck(CASE / "downloads" / "footmate_report.pptx")
 strategy, strategy_tables = deck(CASE / "downloads" / "footmate_5year_strategy.pptx")
 assert len(main) == 9 and len(strategy) == 6, (len(main), len(strategy))
-print("DECKS", len(main), len(strategy))
+# Keep visible slide text in Pretendard; decorative icons on the web use Tossface.
+for filename,count in (("footmate_report.pptx",9),("footmate_5year_strategy.pptx",6)):
+    with ZipFile(CASE / "downloads" / filename) as font_deck:
+        for number in range(1,count+1):
+            part=f"ppt/slides/slide{number}.xml"
+            slide_xml=font_deck.read(part)
+            families=set(re.findall(rb'<a:(?:latin|ea|cs)\b[^>]*\btypeface="([^"]+)"',slide_xml))
+            assert families and families <= {b"Pretendard"}, (filename,number,families)
+print("DECKS", len(main), len(strategy), "font: Pretendard")
 assert "수익성" in main[0] and "운영자 제휴" in main[0]
 assert all(str(i) in no_spaces(main[2]) for i in ("626", "751,200"))
 assert all(term in no_spaces(main[3]) for term in ("340원", "940원", "2,766"))
