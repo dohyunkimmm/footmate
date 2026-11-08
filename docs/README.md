@@ -174,4 +174,3 @@ Case Study는 Product package release와 version-coupling하지 않는다. FootM
 
 제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.
 
-- [FootMate Rolling Forecast·CAPEX/OPEX·Headcount 검토](MANAGEMENT-CONTROL-ROLLING-FORECAST.md) — 기존 계획과 합성 거래를 구분한 경영관리 보완 산출물
