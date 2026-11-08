@@ -442,11 +442,22 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   // A preview shows the full thumbnail contact sheet, not the presentation controls.
   await expect(slides.locator('.slide-gallery-card')).toHaveCount(9,{timeout:15000});
   await expect(slides.locator('.slide-gallery')).toBeVisible();
+  await expect(slides.locator('.slide-gallery-card').first()).toBeVisible();
+  await expect(slides.locator('.slide-gallery-card').nth(1)).toBeVisible();
+  await expect(slides.locator('.slide-gallery-card').nth(2)).toBeHidden();
+  await expect(slides.locator('.slide-gallery-more')).toHaveText('전체 9장 펼치기');
   await expect(slides.locator('.toolbar')).toBeHidden();
   await expect(slides.locator('.viewer-stage')).toBeHidden();
   await expect(slides.locator('.slide-gallery-card').first()).toHaveAttribute('href','/src/case-study/materials.html?preview=1&mode=slides&slide=0');
   await expect.poll(()=>slides.locator('.slide-gallery-card img').first().evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
   await testInfo.attach('visual-'+width+'-PPT-thumbnail-preview',{body:await documents.screenshot({animations:'disabled'}),contentType:'image/png'});
+  if(width===1440){
+   await slides.locator('.slide-gallery-more').click();
+   await expect(slides.locator('.slide-gallery-card').last()).toBeVisible();
+   await expect(slides.locator('.slide-gallery-more')).toHaveAttribute('aria-expanded','true');
+   await slides.locator('.slide-gallery-more').click();
+   await expect(slides.locator('.slide-gallery-card').last()).toBeHidden();
+  }
   // Exercise the dedicated large-slide reader without replacing the case study page.
   await frame.evaluate(element=>{element.src='/src/case-study/materials.html?preview=1&mode=slides'});
   await expect(slides.locator('#page')).toHaveText('01 / 09',{timeout:15000});
@@ -534,6 +545,11 @@ test('single resource section, inline financial model and PPT viewer',async({pag
    await strategy.locator('summary').click();
    const strategySlides=strategy.locator('.case-ppt-frame').contentFrame();
    await expect(strategySlides.locator('.slide-gallery-card')).toHaveCount(6,{timeout:15000});
+   await expect(strategySlides.locator('.slide-gallery-card').first()).toBeVisible();
+   await expect(strategySlides.locator('.slide-gallery-card').last()).toBeHidden();
+   await expect(strategySlides.locator('.slide-gallery-more')).toHaveText('전체 6장 펼치기');
+   await strategySlides.locator('.slide-gallery-more').click();
+   await expect(strategySlides.locator('.slide-gallery-card').last()).toBeVisible();
    await expect(strategySlides.locator('.slide-gallery-card').last()).toHaveAttribute('href','/src/case-study/materials.html?preview=1&mode=slides&deck=strategy&slide=5');
    await expect(strategySlides.locator('.viewer-stage')).toBeHidden();
    await testInfo.attach('visual-strategy-PPT-thumbnail-preview',{body:await strategy.screenshot({animations:'disabled'}),contentType:'image/png'});
@@ -779,6 +795,8 @@ test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
  await expect(frame).not.toHaveAttribute('data-src',/.+/);
  const slides=frame.contentFrame();
  await expect(slides.locator('.slide-gallery-card')).toHaveCount(6,{timeout:15000});
+ await expect(slides.locator('.slide-gallery-card').nth(2)).toBeHidden();
+ await expect(slides.locator('.slide-gallery-reader')).toHaveAttribute('href','/src/case-study/materials.html?preview=1&mode=slides&deck=strategy');
  await expect(slides.locator('.toolbar')).toBeHidden();
  await frame.evaluate(element=>{element.src='/src/case-study/materials.html?preview=1&mode=slides&deck=strategy'});
  await expect(slides.locator('.viewer-stage')).toBeVisible();
