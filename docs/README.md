@@ -1,3 +1,8 @@
+## 2026-11-08 후속 · 미반영 패치·보안 실운영 점검
+
+- [미반영 패치·잔여 보안 실점검](REMAINING-AUDIT-2026-11-08.md): GitHub Compare에서 기존 비기본 브랜치 124개의 분기 상태를 확인했고, [읽기 전용 전체 `git cherry` 감사 #42485591883](https://github.com/dohyunkimmm/footmate/actions/runs/42485591883)는 신규 감사용 브랜치 포함 125개를 검사해 동등 패치 후보 8개·고유 패치 보유 117개·동일 트리 0개를 확인했습니다. 이 결과는 **자동 병합·삭제 허가가 아닙니다.**
+- 연결된 `footmate-beta`의 운영 카탈로그와 Advisor를 재조회했습니다. `public` 16개 테이블 RLS 활성, 익명 실행 가능 SECURITY DEFINER 0, 인증 사용자 실행 가능 21, Cron 3개 활성, Advisor WARN/INFO는 미해결로 구분했습니다. [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 실제 JWT·MFA E2E 전까지 열린 상태입니다. 인증정보·권한·SQL·실데이터는 변경하지 않았습니다.
+
 ## 2026-11-08 · 현재 `main` 목록 및 발표자료 동기화
 
 - **점검 기준:** [`dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e) 재귀 트리(`truncated=false`)에서 **파일 339개·디렉터리 43개**(루트 14개 파일·9개 폴더), 원격 브랜치 **125개**를 확인했습니다. 모두 이번 점검용 브랜치·PR 생성 **전**의 숫자입니다. 세부 분류 및 보존 기준은 [11월 8일 파일·폴더 점검](REPO-CLEANUP-2026-11-08.md)을 참조합니다.
