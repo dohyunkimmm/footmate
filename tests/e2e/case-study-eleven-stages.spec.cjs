@@ -721,7 +721,7 @@ test('six-slide strategy PPT has its own lazy-loaded preview',async({page})=>{
  await expect(frame).not.toHaveAttribute('data-src',/.+/);
  const slides=frame.contentFrame();
  await expect(slides.locator('#page')).toHaveText('01 / 06');
- await expect(slides.locator('#slideProgressTrack,#slideProgress')).toHaveCount(1);
+ await expect(slides.locator('#slideProgressTrack,#slideProgress')).toHaveCount(2);
  await expect(slides.locator('#slideProgressTrack')).toHaveAttribute('aria-valuemax','6');
  await expect.poll(()=>slides.locator('#slide').evaluate(img=>img.naturalWidth)).toBeGreaterThan(1000);
  await slides.getByRole('button',{name:'다음 슬라이드',exact:true}).click();
