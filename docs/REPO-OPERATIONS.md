@@ -1,3 +1,10 @@
+## 2026-11-08 · 최신 `main` 점검 및 문서 클렌징
+
+- 점검용 브랜치 생성 전 [`main` `dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)의 재귀 트리는 파일 **339개·폴더 43개**(루트 14개 파일·9개 폴더)입니다. 원격 브랜치 **125개**(main 포함), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**을 확인했습니다. 이 수치는 문서 PR 생성 전 스냅샷으로, 후속 변경은 별도 확인해야 합니다. [상세 점검](REPO-CLEANUP-2026-11-08.md).
+- 동일 blob SHA의 SQL 마이그레이션 **2쌍**, 회귀 스냅샷·증빙 이미지·원본 PPTX/XLSX·호환 파일명을 **보존**합니다. 삭제 확정 대상은 없으며 브랜치/태그 삭제, force push, Git 이력 재작성도 하지 않습니다. [#525](https://github.com/dohyunkimmm/footmate/issues/525)는 `closed/not_planned`으로 유지됩니다. 분기별 패치 전수 비교 없이 브랜치 존재를 코드 미반영 증거로 해석하지 않습니다.
+- 공개 Case Study는 **9개 섹션**, 본편 PPT **9장**, 5개년 전략 **6장**입니다. Rolling Forecast는 [#876](https://github.com/dohyunkimmm/footmate/pull/876)에서 제거했고, 발표자료 교차검증 및 미리보기·문구 정리는 [#878](https://github.com/dohyunkimmm/footmate/pull/878)·[#880](https://github.com/dohyunkimmm/footmate/pull/880)·[#884](https://github.com/dohyunkimmm/footmate/pull/884)·[#886](https://github.com/dohyunkimmm/footmate/pull/886)에 반영됐습니다. 공개 Excel 버튼은 제거됐지만 내부 계산용 XLSX는 보존합니다.
+- 기준 SHA의 [FootMate QA #42482120022](https://github.com/dohyunkimmm/footmate/actions/runs/42482120022)는 Case Study QA·Cloudflare 배포·Case Study Production Smoke 성공, Docs-only·Regression·Browser E2E 생략. [PPT preview #42482119997](https://github.com/dohyunkimmm/footmate/actions/runs/42482119997) 성공. 신규 문서 PR의 성공은 이 기준선 결과로 대신하지 않습니다. 실서명 JWT/MFA 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료이며 무료 운영 결정·기존 보안 예외를 유지합니다.
+
 ## 2026-11-06 · 브랜치 보존 결정과 실제 Supabase 읽기 전용 감사
 
 - [이슈 #525](https://github.com/dohyunkimmm/footmate/issues/525)는 **삭제하지 않고 보존**하는 기술적 결론으로 `closed/not_planned` 종결했습니다. 원격 패치 동등 후보 8/8 tip SHA 불변, 6개 병합 후보 가상 삭제 시 고유 대형 blob 0개(압축 commit 엔트리 합계 435바이트), 미병합 종료 PR의 고유 이력 보존 필요를 근거로 합니다. **Git ref 삭제·강제 이력 변경·실제 용량 회수는 0건**입니다. 향후 삭제를 새로 추진하면 오프-GitHub 영구 백업·외부 참조 확인·소유자 승인을 다시 충족해야 합니다.

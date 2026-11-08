@@ -23,7 +23,7 @@
 - **케이스 스터디:** 시장·경쟁, 사업모델·손익, IT 투자·운영 통제와 단계별 투자 판단을 **9개 섹션**으로 정리했습니다. **05번에 12개월 예상 ROI**(보수·기준·확장·관리비 반영), **09번에 최종 판단**을 배치했습니다. 신규 사업 가정과 구축·배포 근거를 구분합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
-**주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
+**주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [5개년 전략 6장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1&deck=strategy) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
 **경영기획 중심 산출물:** 월별 예산·가상 실적·CAPEX/OPEX·인력 비용·투자 판단을 검토합니다. 기존 AI 구현은 사업계획의 실행 가능성 근거로 구분해 제시합니다.
 
@@ -66,13 +66,13 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-**`main` 구조 재점검(2026-11-06):** 기준 HEAD `070dabe`에서 파일 323개·디렉터리 41개(루트 파일 14개·최상위 폴더 9개)를 확인했습니다. [현행 문서 목록](docs/README.md)과 [2026-11-05 점검 당시 기록](docs/REPO-CLEANUP-2026-11-05.md)을 구분해 참조합니다.
+**`main` 구조 재점검(2026-11-08):** 점검 전 기준 HEAD [`dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)에서 **파일 339개·디렉터리 43개**(루트 파일 14개·최상위 폴더 9개)를 확인했습니다. [2026-11-08 점검·보존 결정](docs/REPO-CLEANUP-2026-11-08.md)과 [현행 문서 목록](docs/README.md)을 참조합니다. 이전 날짜별 파일 수는 당시 스냅샷입니다.
 
 - **공개 진입 파일:** [Case Study](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.
 - **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [Case Study 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
 - **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
 - **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
-- **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
+- **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-08 최신 점검](docs/REPO-CLEANUP-2026-11-08.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
 
 ## 자세한 문서
 
