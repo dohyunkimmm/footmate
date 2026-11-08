@@ -1,3 +1,11 @@
+## 2026-11-08 · 현재 `main` 목록 및 발표자료 동기화
+
+- **점검 기준:** [`dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e) 재귀 트리(`truncated=false`)에서 **파일 339개·디렉터리 43개**(루트 14개 파일·9개 폴더), 원격 브랜치 **125개**를 확인했습니다. 모두 이번 점검용 브랜치·PR 생성 **전**의 숫자입니다. 세부 분류 및 보존 기준은 [11월 8일 파일·폴더 점검](REPO-CLEANUP-2026-11-08.md)을 참조합니다.
+- **미반영 확인:** 점검 시 열린 PR **0건**, 열린 이슈는 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. [#886](https://github.com/dohyunkimmm/footmate/pull/886)은 최신 `main`에 병합됐습니다. 기존 브랜치의 고유 패치 전체가 반영됐다고 판단하지 않으며 [#525](https://github.com/dohyunkimmm/footmate/issues/525)의 `closed/not_planned` 보존 결정을 유지합니다.
+- **발표자료 현행 구성:** Case Study 본문 **9개 섹션**, 본편 PPT **9장**, 5개년 전략 PPT **6장**. [#876](https://github.com/dohyunkimmm/footmate/pull/876)에서 Rolling Forecast 및 본편 1장을 제거했고, [#878](https://github.com/dohyunkimmm/footmate/pull/878)의 교차검증, [#880](https://github.com/dohyunkimmm/footmate/pull/880)의 썸네일 미리보기, [#881](https://github.com/dohyunkimmm/footmate/pull/881)의 공개 Excel 버튼 제거(원본 XLSX 보존), [#884](https://github.com/dohyunkimmm/footmate/pull/884)의 글꼴 정리, [#886](https://github.com/dohyunkimmm/footmate/pull/886)의 중복 문구 정리가 반영돼 있습니다.
+- **검증:** 같은 SHA의 [Case Study QA·Cloudflare 배포·스모크 #42482120022](https://github.com/dohyunkimmm/footmate/actions/runs/42482120022)와 [PPT 미리보기 #42482119997](https://github.com/dohyunkimmm/footmate/actions/runs/42482119997)는 성공. 이 QA 실행에서 Docs-only·Regression 36·Browser E2E는 생략됐으며, 이번 문서 변경의 새 CI 결과는 별개입니다.
+- **중복·보존:** 동일 SHA SQL 마이그레이션 **2쌍**은 적용 이력으로 보존. 증빙 이미지·시각 회귀 스냅샷·원본 PPTX/XLSX·기존 브랜치 삭제나 DB 변경은 하지 않습니다. 아래 과거 날짜 섹션의 '현재 10장' 등은 **그 날짜 당시 기록**이며 현행 발표자료 수는 이 항목이 우선합니다.
+
 ## 2026-11-07 · 저장소 클렌징 최신 확인
 
 - **기준:** GitHub `main` [`bbe60e5`](https://github.com/dohyunkimmm/footmate/commit/bbe60e54322e03d772354f523f5d2af0518b233d)의 잘리지 않은 재귀 트리에서 **파일 325개·디렉터리 41개**를 확인했습니다. 이 수치는 이번 문서 PR 병합 전 스냅샷입니다.
