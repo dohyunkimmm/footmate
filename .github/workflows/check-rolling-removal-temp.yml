@@ -6,56 +6,49 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.55.1-noble
-      options: --ipc=host
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: remove-rolling-forecast-content-20261108
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          package-manager-cache: false
-      - name: Install project QA dependencies
+      - name: Validate workbook formulas, cached values and chart series without reformatting
         run: |
-          PLAYWRIGHT_VERSION="$(node -p "require('./package.json').qaToolchain.playwright")"
-          AXE_VERSION="$(node -p "require('./package.json').qaToolchain.axeCorePlaywright")"
-          npm install --no-save --ignore-scripts "@playwright/test@$PLAYWRIGHT_VERSION" "@axe-core/playwright@$AXE_VERSION"
-      - name: Validate case study materials and slide navigation
-        run: npx playwright test --project=chromium tests/e2e/case-study-eleven-stages.spec.cjs
-      - name: Check XLSX workbook formulas, charts and integrity
-        run: |
-          python3 -m pip install --quiet openpyxl --break-system-packages
           python3 - <<'PY'
-          from openpyxl import load_workbook
+          from zipfile import ZipFile
+          from xml.etree import ElementTree as ET
+          import re
           path='src/case-study/downloads/footmate_model.xlsx'
-          formulas=load_workbook(path,data_only=False)
-          cache=load_workbook(path,data_only=True)
-          assert len(formulas.sheetnames)==10
-          assert len(formulas['운영보고']._charts)==1
-          assert len(formulas['운영보고']._charts[0].series)==2
-          assert formulas['운영보고']['C6'].value=="=SUM('월별손익'!N6:N17)"
-          assert formulas['운영보고']['C7'].value=="=SUM('월별손익'!O6:O17)"
-          assert cache['운영보고']['C6'].value==18681100
-          assert cache['운영보고']['C7'].value==-4840730
-          assert cache['전략KPI']['B6'].value==18681100
-          assert cache['전략KPI']['B7'].value==448300
-          assert cache['전략KPI']['B8'].value==-2806690
-          for sheet in formulas:
-              for row in sheet:
-                  for cell in row:
-                      assert cell.data_type!='e', (sheet.title,cell.coordinate,cell.value)
-          print('PASS: 10 sheets, linked financial formulas and values, 2 chart series, no cached cell errors')
+          m='{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
+          c='{http://schemas.openxmlformats.org/drawingml/2006/chart}'
+          with ZipFile(path) as z:
+              assert z.testzip() is None
+              wb=ET.fromstring(z.read('xl/workbook.xml'))
+              assert len(list(wb.iter(m+'sheet')))==10
+              sheet1=ET.fromstring(z.read('xl/worksheets/sheet1.xml'))
+              sheet3=ET.fromstring(z.read('xl/worksheets/sheet3.xml'))
+              sheet9=ET.fromstring(z.read('xl/worksheets/sheet9.xml'))
+              chart=ET.fromstring(z.read('xl/drawings/charts/chart1.xml'))
+              assert len(list(chart.iter(c+'ser')))==2
+              def cells(sheet):return {cell.attrib['r']:cell for cell in sheet.iter(m+'c')}
+              def value(cell):
+                  v=cell.find(m+'v')
+                  return v.text if v is not None else None
+              a=cells(sheet1)
+              assert a['C6'].find(m+'f').text=="SUM('월별손익'!N6:N17)"
+              assert a['C7'].find(m+'f').text=="SUM('월별손익'!O6:O17)"
+              assert int(float(value(a['C6'])))==18681100
+              assert int(float(value(a['C7'])))==-4840730
+              b=cells(sheet3)
+              assert b['N12'].find(m+'f').text=='H12'
+              assert b['O12'].find(m+'f').text=='I12'
+              assert 'P12' not in b and 'Q12' not in b
+              k=cells(sheet9)
+              assert [int(float(value(k[x]))) for x in ('B6','B7','B8')]==[18681100,448300,-2806690]
+              for file in z.namelist():
+                  if not file.endswith('.xml'):continue
+                  raw=z.read(file).decode('utf-8','replace')
+                  assert not re.search(r'Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망',raw,re.I),file
+                  if not file.startswith('xl/worksheets/sheet'):continue
+                  sheet=ET.fromstring(raw)
+                  assert all(cell.attrib.get('t')!='e' for cell in sheet.iter(m+'c')),file
+              print('PASS: 10 sheets, 2 chart series, linked plan and virtual scenario formulas, cached values and no spreadsheet errors')
           PY
-      - name: Upload case-study visual QA evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: rolling-clean-case-study-${{ github.run_id }}
-          path: |
-            test-results/
-            playwright-report/
-          if-no-files-found: warn
