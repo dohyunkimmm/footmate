@@ -1,0 +1,24 @@
+name: Inspect Rolling Forecast source slides
+on:
+  push:
+    branches: [remove-rolling-forecast-content-20261108]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract presentation text
+        run: |
+          python -m pip install --quiet python-pptx
+          python - <<'PY'
+          from pptx import Presentation
+          for path in ('src/case-study/downloads/footmate_report.pptx','src/case-study/downloads/footmate_5year_strategy.pptx'):
+              p=Presentation(path)
+              print('PRESENTATION',path,len(p.slides))
+              for n,sl in enumerate(p.slides,1):
+                  lines=[shape.text.replace('\\n',' / ') for shape in sl.shapes if shape.has_text_frame and shape.text.strip()]
+                  print('SLIDE',n, '\n'+' | '.join(lines)[:3500])
+          PY
