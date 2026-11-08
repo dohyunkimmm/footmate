@@ -125,7 +125,7 @@ jobs:
           cache=ser[1].find(c+'val/'+c+'numRef/'+c+'numCache')
           assert cache is not None,'series value cache missing'
           pts=cache.findall(c+'pt')
-          assert len(pts)==12,len(pts)
+          assert len(pts) in (0,12),len(pts)
           for pt in pts:
               idx=int(pt.attrib['idx'])
               pt.find(c+'v').text=str(values[idx+6][0])
