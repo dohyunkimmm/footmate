@@ -248,7 +248,7 @@ function reset(){let c=DATA.configs[$('project').value];for(let id of ['rate','s
  const cards=[];
  slides.forEach((item,i)=>{
   const link=document.createElement('a');link.className='slide-gallery-card';
-  link.href=reader.href+'&slide='+i;link.target='_blank';link.rel='noopener noreferrer';
+  link.href=reader.getAttribute('href')+'&slide='+i;link.target='_blank';link.rel='noopener noreferrer';
   link.setAttribute('aria-label',String(i+1)+'번 슬라이드 '+item.title+' 새 탭에서 크게 보기');
   const imageWrap=document.createElement('span');imageWrap.className='slide-gallery-image';
   const image=document.createElement('img');image.src=item.src;image.alt='';image.loading='lazy';
