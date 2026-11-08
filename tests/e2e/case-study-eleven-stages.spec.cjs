@@ -975,7 +975,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
   expect(longParagraphs,url).toEqual([]);
  }
  await page.goto('/src/case-study/materials.html');
- for(const phrase of ['산정 조건을 바꿔 손익 변화를 확인하세요.','2027년 합성 예약 데이터와 월별 집계 예시입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['2027년 손익 시나리오(산정 기준)','2027년 합성 예약 데이터와 월별 집계 예시입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/forecast.html');
  for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처: 1~500곳 중 월 손익이 0 이상인 최소 수.','실제 수요와 제휴 계약은 현장에서 확인할 항목입니다.'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/decision-memos.html');
