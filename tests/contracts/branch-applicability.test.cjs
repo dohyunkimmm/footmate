@@ -20,7 +20,7 @@ test('classifies current active runtime, QA and historical paths conservatively'
   assert.equal(classify({...example, patchUnique: 0}),
     'patch-equivalent-review');
   assert.equal(classify({...example, changedPaths: 0}),
-    'active-runtime-manual-review');
+    'no-delta-review');
   assert.equal(classify({...example, changedPaths: 0, activeRuntime: 0,
     activeQa: 0, activeDocs: 0}), 'no-delta-review');
 });
