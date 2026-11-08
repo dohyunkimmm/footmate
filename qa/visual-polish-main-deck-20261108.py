@@ -9,6 +9,11 @@ from pptx.util import Pt
 path=Path("src/case-study/downloads/footmate_report.pptx")
 prs=Presentation(path)
 assert len(prs.slides)==10
+# The asset renderer may run again on a PR; do not rewrite an already polished PPTX.
+VISUAL_MARKER="footmate-main-visual-20261108"
+if VISUAL_MARKER in (prs.core_properties.keywords or ""):
+    print("PASS FootMate final-slide hierarchy already applied; original published bytes unchanged")
+    raise SystemExit(0)
 page=prs.slides[9]
 P=RGBColor(230,244,232)
 F=RGBColor(21,81,52)
@@ -53,6 +58,7 @@ for sh in page.shapes:
 
 assert alltext()==before, "original ten-slide text/numbers must be identical"
 if changed:
+    prs.core_properties.keywords=((prs.core_properties.keywords or "")+" "+VISUAL_MARKER).strip()
     prs.save(path)
     assert alltext()==before, "text mutated"
     print("PASS FootMate final-slide hierarchy (modified editable elements):",changed)
