@@ -2,6 +2,15 @@
 
 > **읽기 전용 점검.** 별도 브랜치의 커밋이 `main`에 없는 것과 필요한 제품 기능이 누락된 것은 다릅니다. 이 문서는 코드/DB/인증정보 변경 또는 브랜치 삭제 승인이 아닙니다. 기준 `main`: [`850db56`](https://github.com/dohyunkimmm/footmate/commit/850db56c865966e8a0dcb742e14b084694e04272)(PR #887 병합 후).
 
+## 2026-11-08 후속 — 고유 패치의 현행 파일 영향 범위 추적
+
+기존 `git cherry` 감사의 **고유 패치 보유 브랜치**는 곧바로 병합할 변경 목록이 아닙니다. 예전 구현이 이미 다른 방식으로 반영됐거나 파일 자체가 사라졌을 수 있습니다. 그래서 [읽기 전용 브랜치 감사 워크플로](../.github/workflows/audit-branch-patches.yml)에 `tests/tools/branch-applicability.cjs`를 추가해 **`merge-base(main, branch)` 이후의 파일 변경 목록**과 최신 `main` 파일 목록을 대조하는 `applicability.tsv`를 생성하도록 했습니다.
+
+- 분류는 `active-runtime-manual-review`(현행 런타임 파일과 접점), `active-qa-manual-review`(현행 테스트/워크플로와 접점), `active-docs-assets-manual-review`(현행 문서·증빙·빌드 산출물과 접점), `retired-paths-manual-review`(현재 `main`에 없는 경로만), `patch-equivalent-review`(`git cherry`에서 동등), `no-delta-review`(파일 차이 없음)입니다.
+- **접점은 제품 기능 미반영의 증거가 아닙니다.** 옛 브랜치가 변경한 파일이 지금도 있다는 사실만 보여줍니다. 코드 선택, 요구·UX 변경 여부, 실제 테스트 재현을 거쳐야 병합할 수 있습니다. 상충되는 과거 UI나 배포 산출물을 자동으로 복원하지 않습니다.
+- 특히 `automation/footmate-case-preview-3efe9642af73`와 `...-05684ce54f3a`의 자동 PPT 커밋은 **2026-11-08 03:43 / 02:37 UTC**로, 현재 `main`이 관리하는 별도 blob의 예전 스냅샷입니다. 파일명이 같아도 현행 **본편 9장** 자산보다 최신이라는 증거가 없어 **무조건 교체하지 않습니다**. 기존 테스트 브랜치 `tests/e2e/v5.2-webkit-mobile.spec.cjs` 등은 현재 `main`에 해당 경로 자체가 없으며, 현재 테스트 구조로의 별도 이식 평가가 필요합니다.
+- 보고서는 `patches.tsv`와 **같은 전체 원격 ref 목록**을 대상으로 만들고 행 수가 다르면 CI에서 실패합니다. 아티팩트는 별도 보관 수단이 아니며, 보고서 결과를 이유로 원격 ref를 삭제하거나 이력을 변경하지 않습니다.
+
 ## 1. 미반영 브랜치 판정
 
 - GitHub Compare API로 **비기본 브랜치 124개** 전부의 `main...branch` 커밋 차이와 변경 파일 목록을 검사했습니다(이번 추가 감사/문서 브랜치 생성 전). 124개 모두 `ahead>0`이며 이전 `main` 변경을 다수 포함하지 않는 **분기된 역사적 브랜치**입니다. 이것만으로 실제 기능 미반영이라고 확정하지 않습니다.
