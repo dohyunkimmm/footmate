@@ -25,6 +25,8 @@
 
 **주요 링크:** [Case Study](https://footmate.fmate.workers.dev/) · [발표자료 10장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
+**경영기획 중심 산출물:** 월별 예산·가상 실적·Rolling Forecast·CAPEX/OPEX·인력 환산·투자 판단을 한 흐름으로 확인합니다. 기존 AI 구현·QA는 사업계획의 실행 가능성 근거로 유지합니다. [경영관리 재예측 화면](https://footmate.fmate.workers.dev/src/case-study/forecast.html#rolling-management) · [관리회계·예산 통제 근거](docs/MANAGEMENT-CONTROL-ROLLING-FORECAST.md).
+
 ## 주요 경험
 
 - **조건 선택·추천:** 첫 방문에는 ① 활동 지역 ② 실력·포지션·시간을 짧게 선택합니다. 데모에는 예시 경기가 준비되어 있으며, 재방문에는 저장한 조건의 추천 홈을 엽니다.
