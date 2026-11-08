@@ -1,0 +1,76 @@
+name: Repair strategy PPT footer after removing main slide
+on:
+  push:
+    branches: [remove-rolling-forecast-content-20261108]
+    paths:
+      - '.github/workflows/refresh-strategy-footer-temp.yml'
+permissions:
+  contents: write
+jobs:
+  footer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: remove-rolling-forecast-content-20261108
+          persist-credentials: true
+      - name: Prepare Korean PowerPoint renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-impress poppler-utils fonts-nanum fonts-noto-cjk python3-venv
+          python3 -m venv /tmp/footmate-ppt-clean
+          /tmp/footmate-ppt-clean/bin/pip install --quiet python-pptx
+      - name: Change only obsolete main-deck count in editable strategy slides
+        run: |
+          /tmp/footmate-ppt-clean/bin/python - <<'PY'
+          from pptx import Presentation
+          from pathlib import Path
+          p=Path('src/case-study/downloads/footmate_5year_strategy.pptx')
+          deck=Presentation(p)
+          assert len(deck.slides)==6
+          before='기존 10장 발표자료 보완'
+          after='기존 9장 발표자료 보완'
+          updates=[]
+          for i,slide in enumerate(deck.slides,1):
+              for sh in slide.shapes:
+                  if not sh.has_text_frame or before not in sh.text:
+                      continue
+                  for paragraph in sh.text_frame.paragraphs:
+                      if before in paragraph.text:
+                          runs=paragraph.runs
+                          if len(runs)==1:
+                              runs[0].text=runs[0].text.replace(before,after)
+                          else:
+                              result=paragraph.text.replace(before,after)
+                              if runs:
+                                  runs[0].text=result
+                                  for run in runs[1:]:run.text=''
+                              else:
+                                  paragraph.text=result
+                          updates.append(i)
+          assert len(updates)>=4,updates
+          deck.save(p)
+          check=Presentation(p)
+          assert all(before not in sh.text for slide in check.slides for sh in slide.shapes if sh.has_text_frame)
+          print('PASS updated main deck reference in strategy slides',updates)
+          PY
+      - name: Refresh only affected strategy preview slides
+        run: |
+          set -eu
+          mkdir -p /tmp/footmate-strategy-clean
+          libreoffice -env:UserInstallation=file:///tmp/lo-strategy-clean --headless --convert-to pdf --outdir /tmp/footmate-strategy-clean src/case-study/downloads/footmate_5year_strategy.pptx
+          test "$(pdfinfo /tmp/footmate-strategy-clean/footmate_5year_strategy.pdf | awk '/^Pages:/ {print $2}')" -eq 6
+          pdftoppm -f 2 -l 5 -r 105 -jpeg -jpegopt quality=88,optimize=y,progressive=y /tmp/footmate-strategy-clean/footmate_5year_strategy.pdf src/case-study/previews/strategy/slide
+          test -s src/case-study/previews/strategy/slide-2.jpg
+          test -s src/case-study/previews/strategy/slide-5.jpg
+          python3 qa/crosscheck-case-study-presentations.py
+      - name: Commit original PPT and synchronized preview images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f src/case-study/downloads/footmate_5year_strategy.pptx src/case-study/previews/strategy/slide-{2,3,4,5}.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "asset: align 5-year PPT footer and previews with nine-slide report"
+            git push origin HEAD:remove-rolling-forecast-content-20261108
+          fi
