@@ -410,6 +410,12 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261108-gallery2');
   const summary=preview.locator('summary');
   await expect(summary).toContainText('사업·IT 기획');
+  const resourceFonts=await summary.evaluate(el=>({
+    text:getComputedStyle(el).fontFamily,
+    icon:getComputedStyle(el.querySelector('.case-preview-indicator'),'::after').fontFamily
+  }));
+  expect(resourceFonts.text).toContain('Pretendard');
+  expect(resourceFonts.icon).toContain('Tossface');
   // Verify rendered palette contrast, not just hard-coded expected colors.
   const colorAudit=await documents.evaluate(root=>{
     const selectors=[
@@ -442,6 +448,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   // A preview shows the full thumbnail contact sheet, not the presentation controls.
   await expect(slides.locator('.slide-gallery-card')).toHaveCount(9,{timeout:15000});
   await expect(slides.locator('.slide-gallery')).toBeVisible();
+  await expect(slides.locator('.slide-gallery-reader .fm-icon')).toHaveCount(1);
   await expect(slides.locator('.slide-gallery-card').first()).toBeVisible();
   await expect(slides.locator('.slide-gallery-card').nth(1)).toBeVisible();
   await expect(slides.locator('.slide-gallery-card').nth(2)).toBeHidden();
