@@ -30,7 +30,12 @@ def snapshot(p):
 before = snapshot(prs)
 last = prs.slides[9]
 tables = [shape.table for shape in last.shapes if shape.has_table]
-assert len(tables) == 1, "Expected one editable five-year financial comparison table"
+if len(tables) != 1:
+    print("DIAG: page 10 table count", len(tables))
+    for i, sh in enumerate(last.shapes):
+        val = sh.text.replace("\\n", " | ")[:100] if sh.has_text_frame else ""
+        print("DIAG", i, "x", round(sh.left/prs.slide_width, 3), "y", round(sh.top/prs.slide_height, 3), "w", round(sh.width/prs.slide_width, 3), "table", sh.has_table, "text", repr(val))
+    raise AssertionError("Last slide uses alternate editable shape structure; inspect diagnostic before styling")
 table = tables[0]
 assert len(table.rows) == 6, "Expected header and five annual rows"
 assert any("4년 차" in cell.text for cell in table.rows[4].cells)
