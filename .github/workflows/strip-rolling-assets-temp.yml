@@ -1,0 +1,109 @@
+name: Regenerate presentations without Rolling Forecast
+on:
+  push:
+    branches: [remove-rolling-forecast-content-20261108]
+permissions:
+  contents: write
+jobs:
+  regenerate:
+    if: "!contains(github.event.head_commit.message, '[rolling-artifacts]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: remove-rolling-forecast-content-20261108
+          persist-credentials: true
+      - name: Install presentation tools and Korean fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-impress poppler-utils fonts-nanum fonts-noto-cjk
+          python -m pip install --quiet python-pptx
+          fc-cache -f
+      - name: Remove dedicated Rolling Forecast slide and update strategy wording
+        run: |
+          python - <<'PY'
+          from pptx import Presentation
+          from pathlib import Path
+          import re
+          root=Path('src/case-study/downloads')
+          report=root/'footmate_report.pptx'
+          deck=Presentation(report)
+          assert len(deck.slides)==10
+          old=deck.slides._sldIdLst[4]
+          deck.part.drop_rel(old.rId)
+          deck.slides._sldIdLst.remove(old)
+          assert len(deck.slides)==9
+          changes=[]
+          def replace_text(shape, original, replacement):
+              if not shape.has_text_frame: return 0
+              count=0
+              for para in shape.text_frame.paragraphs:
+                  for run in para.runs:
+                      if original in run.text:
+                          count+=run.text.count(original)
+                          run.text=run.text.replace(original,replacement)
+              if not count and original in shape.text:
+                  shape.text=shape.text.replace(original,replacement)
+                  count=1
+              return count
+          for index, slide in enumerate(deck.slides,1):
+              old_index=index if index<=4 else index+1
+              for shape in slide.shapes:
+                  replace_text(shape,f'{old_index:02d} / 10',f'{index:02d} / 09')
+                  if index==1:
+                      if replace_text(shape,'예산·손익·수정 전망을 투자 판단에 연결','예산·손익을 투자 판단에 연결'):
+                          changes.append('report cover subtitle')
+          assert changes==['report cover subtitle'],changes
+          deck.save(report)
+          strategy=root/'footmate_5year_strategy.pptx'
+          p=Presentation(strategy)
+          assert len(p.slides)==6
+          updated=0
+          for shape in p.slides[4].shapes:
+              updated+=replace_text(shape,'계획 대비 차이·분기 전망','계획 대비 차이·예산 점검')
+              updated+=replace_text(shape,'계획 대비 차이·분기 수정전망','계획 대비 차이·예산 점검')
+          assert updated==1,('strategy replacements',updated)
+          p.save(strategy)
+          for file in (report,strategy):
+              content='\n'.join(sh.text for sl in Presentation(file).slides for sh in sl.shapes if sh.has_text_frame)
+              assert not re.search(r'Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망',content,re.I),(file,'lingering Rolling Forecast text')
+              print(file,'slides',len(Presentation(file).slides),'rolling terms 0')
+          PY
+      - name: Re-render original slides for the website
+        run: |
+          set -eu
+          mkdir -p /tmp/rolling-clean src/case-study/previews/strategy
+          libreoffice -env:UserInstallation=file:///tmp/lo-rolling-main --headless --convert-to pdf --outdir /tmp/rolling-clean src/case-study/downloads/footmate_report.pptx
+          libreoffice -env:UserInstallation=file:///tmp/lo-rolling-strategy --headless --convert-to pdf --outdir /tmp/rolling-clean src/case-study/downloads/footmate_5year_strategy.pptx
+          test "$(pdfinfo /tmp/rolling-clean/footmate_report.pdf | sed -n 's/^Pages:[[:space:]]*//p')" -eq 9
+          test "$(pdfinfo /tmp/rolling-clean/footmate_5year_strategy.pdf | sed -n 's/^Pages:[[:space:]]*//p')" -eq 6
+          pdftoppm -f 1 -l 9 -r 96 -png /tmp/rolling-clean/footmate_report.pdf /tmp/rolling-clean/main
+          pdftoppm -f 1 -l 6 -r 105 -jpeg -jpegopt quality=88,optimize=y,progressive=y /tmp/rolling-clean/footmate_5year_strategy.pdf src/case-study/previews/strategy/slide
+          python - <<'PY'
+          from pathlib import Path
+          import base64, json
+          p=Path('src/case-study/report-previews.js')
+          s=p.read_text()
+          assert s.startswith('window.REPORT_SLIDES=') and s.rstrip().endswith(';')
+          old=json.loads(s[len('window.REPORT_SLIDES='):].rstrip().rstrip(';'))
+          assert len(old)==10,len(old)
+          titles=[slide['title'] for i,slide in enumerate(old) if i!=4]
+          files=sorted(Path('/tmp/rolling-clean').glob('main-*.png'), key=lambda f:int(f.stem.split('-')[-1]))
+          assert len(files)==9,[str(f) for f in files]
+          new=[{'title':title,'src':'data:image/png;base64,'+base64.b64encode(file.read_bytes()).decode('ascii')} for title,file in zip(titles,files)]
+          p.write_text('window.REPORT_SLIDES='+json.dumps(new,ensure_ascii=False,separators=(',',':'))+';\n')
+          jpegs=list(Path('src/case-study/previews/strategy').glob('slide-*.jpg'))
+          assert len(jpegs)==6,len(jpegs)
+          assert not any('Rolling Forecast' in slide['title'] for slide in new)
+          print('Main preview images',len(new),'strategy preview images',len(jpegs),'bytes',p.stat().st_size)
+          PY
+      - name: Commit cleaned presentation and preview assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f src/case-study/downloads/footmate_report.pptx src/case-study/downloads/footmate_5year_strategy.pptx src/case-study/report-previews.js src/case-study/previews/strategy/slide-*.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "asset: remove Rolling Forecast slide and regenerate preview [rolling-artifacts]"
+            git push origin HEAD:remove-rolling-forecast-content-20261108
+          fi
