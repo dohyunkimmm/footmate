@@ -65,7 +65,8 @@ if tuple(round(v) for v in before[1])!=revision:
     chart.replace_data(chart_data)
 
 def update_text(needle,value):
-    matches=[s for s in slide.shapes if s.has_text_frame and needle in s.text]
+    needles=(needle,) if isinstance(needle,str) else needle
+    matches=[s for s in slide.shapes if s.has_text_frame and any(n in s.text for n in needles)]
     assert len(matches)==1, (needle,len(matches))
     frame=matches[0].text_frame
     if matches[0].text==value:return
@@ -80,9 +81,9 @@ def update_text(needle,value):
 
 def delta(amount):
     return ("+" if amount>0 else "−" if amount<0 else "±")+f"{abs(amount):,d}원"
-update_text("계획 대비 수정 전망 차이",
+update_text(("계획 대비 수정 전망 차이","계획 대비 차이"),
     "계획 대비 차이  |  "+" · ".join(f"{m}월 {delta(revision[m-1]-plan[m-1])}" for m in (1,6,12)))
-update_text("가상 데이터 · 계획과 수정 전망 비교",
+update_text(("가상 데이터 · 계획과 수정 전망 비교","가상 데이터 · 1~6월 합성 실적 / 7~12월 재예측"),
     "가상 데이터 · 1~6월 합성 실적 / 7~12월 재예측")
 update_text("연간 현금",
     f"연간 현금운영손익 · 기존 계획 −{abs(planned_profit)/10000:,.1f}만 원 / 재예측 −{abs(revised_profit)/10000:,.1f}만 원 (합성)")
