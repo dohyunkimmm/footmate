@@ -8,7 +8,7 @@ const sections = [
     "name": "추진 배경·검토 결론",
     "title": "풋살 매칭 플랫폼의 사업성 검토 및 중장기 경영계획",
     "lead": "시장·경쟁 분석부터 수익구조 설계, 손익분기점 분석, 5개년 경영계획 및 투자 판단까지.",
-    "body": "<div class=\"case-verdict\"><span class=\"case-status\">핵심 판단</span><h2>운영자 제휴로 시작하고,<br>수익성 확인 후 투자한다.</h2><p>수수료와 결제비 부담 조건을 먼저 협상합니다.</p></div><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약 · 가정</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익 · 가정</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>예상 월 현금 손익</dt><dd class=\"is-negative\">약 −38.7<small>만 원</small></dd></div></dl><p class=\"case-scenario-note\">가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%</p><div class=\"decision-grid\" aria-label=\"문제·수행 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">검토 배경</p><h3>지역 공급과 참가 수요</h3><p>초기 생활권에서 공급 확보와 참가 완료 가능성 확인.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">수행 범위</p><h3>사업성 분석부터 경영계획까지</h3><p>시장·경쟁 분석, 수익구조·손익 모델 설계, 5개년 경영계획과 투자 판단.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h3>기존 운영자 제휴 우선</h3><p>제휴·재참가 우선 확인, 결제·정산은 후속.</p></article></div><div class=\"case-evidence-note\" aria-label=\"수행 및 확인 범위\"><p><strong>보조 구현:</strong> 웹/API·참가·취소·정원·추천 흐름.</p><p><strong>확인:</strong> 기본 사용 흐름과 화면 동작.</p><p><strong>후속:</strong> 실제 계약·매출·동시 요청·정산.</p></div><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><div class=\"case-documents-intro\"><h2 id=\"case-documents-heading\">발표자료</h2></div><div class=\"case-downloads\" aria-label=\"원본 발표자료\"><a href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">기획 자료 받기</a><a href=\"/src/case-study/downloads/footmate_5year_strategy.pptx\" download=\"footmate_5year_strategy.pptx\">전략 자료 받기</a></div></div><div class=\"case-deck-stack\"><details class=\"case-doc-preview case-report-preview\"><summary><span class=\"case-preview-summary-main\"><span class=\"case-preview-symbol\" aria-hidden=\"true\">01</span><span class=\"case-preview-summary-text\"><strong>사업성 분석·경영계획</strong><span class=\"case-preview-description\">사업성 검토 · 손익분기 · 투자 판단</span></span></span><span class=\"case-preview-summary-side\"><span class=\"case-preview-count\">9장</span><span class=\"case-preview-action\">살펴보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"사업성 분석·경영계획 슬라이드 9장\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1&viewer=20261108-copy-pruned\" loading=\"lazy\"></iframe></div></details><details class=\"case-doc-preview case-strategy-preview\"><summary><span class=\"case-preview-summary-main\"><span class=\"case-preview-symbol\" aria-hidden=\"true\">02</span><span class=\"case-preview-summary-text\"><strong>중장기 성장 전략</strong><span class=\"case-preview-description\">공급 확대 · 5개년 손익 · 성과관리</span></span></span><span class=\"case-preview-summary-side\"><span class=\"case-preview-count\">6장</span><span class=\"case-preview-action\">살펴보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"중장기 성장 전략 슬라이드 6장\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1&deck=strategy&viewer=20261108-copy-pruned\" loading=\"lazy\"></iframe></div></details></div></section>"
+    "body": "<div class=\"case-verdict\"><span class=\"case-status\">핵심 판단</span><h2>운영자 제휴로 시작하고,<br>수익성 확인 후 투자한다.</h2><p>수수료와 결제비 부담 조건을 먼저 협상합니다.</p></div><nav class=\"case-quicklinks\" aria-label=\"핵심 분석 바로가기\"><a href=\"#section-05\">수익성·손익분기 분석</a><a href=\"#section-09\">5개년 경영계획·투자 판단</a></nav><dl class=\"case-kpis\" aria-label=\"기준 시나리오 주요 수치\"><div class=\"case-kpi\"><dt>월 완료 예약 · 가정</dt><dd>626<small>건</small></dd></div><div class=\"case-kpi\"><dt>예약당 공헌이익 · 가정</dt><dd>340<small>원</small></dd></div><div class=\"case-kpi\"><dt>예상 월 현금 손익</dt><dd class=\"is-negative\">약 −38.7<small>만 원</small></dd></div></dl><p class=\"case-scenario-note\">가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%</p><div class=\"decision-grid\" aria-label=\"문제·수행 범위·핵심 판단\"><article class=\"decision-card\"><p class=\"decision-card-label\">검토 배경</p><h3>지역 공급과 참가 수요</h3><p>초기 생활권에서 공급 확보와 참가 완료 가능성 확인.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">수행 범위</p><h3>사업성 분석부터 경영계획까지</h3><p>시장·경쟁 분석, 수익구조·손익 모델 설계, 5개년 경영계획과 투자 판단.</p></article><article class=\"decision-card\"><p class=\"decision-card-label\">핵심 판단</p><h3>기존 운영자 제휴 우선</h3><p>제휴·재참가 우선 확인, 결제·정산은 후속.</p></article></div><div class=\"case-evidence-note\" aria-label=\"수행 및 확인 범위\"><p><strong>보조 구현:</strong> 웹/API·참가·취소·정원·추천 흐름.</p><p><strong>확인:</strong> 기본 사용 흐름과 화면 동작.</p><p><strong>후속:</strong> 실제 계약·매출·동시 요청·정산.</p></div><section id=\"attachments\" class=\"case-documents\" aria-labelledby=\"case-documents-heading\"><div class=\"case-documents-head\"><div class=\"case-documents-intro\"><h2 id=\"case-documents-heading\">발표자료</h2></div><div class=\"case-downloads\" aria-label=\"원본 발표자료\"><a href=\"/src/case-study/downloads/footmate_report.pptx\" download=\"footmate_report.pptx\">기획 자료 받기</a><a href=\"/src/case-study/downloads/footmate_5year_strategy.pptx\" download=\"footmate_5year_strategy.pptx\">전략 자료 받기</a></div></div><div class=\"case-deck-stack\"><details class=\"case-doc-preview case-report-preview\"><summary><span class=\"case-preview-summary-main\"><span class=\"case-preview-symbol\" aria-hidden=\"true\">01</span><span class=\"case-preview-summary-text\"><strong>사업성 분석·경영계획</strong><span class=\"case-preview-description\">사업성 검토 · 손익분기 · 투자 판단</span></span></span><span class=\"case-preview-summary-side\"><span class=\"case-preview-count\">9장</span><span class=\"case-preview-action\">살펴보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"사업성 분석·경영계획 슬라이드 9장\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1&viewer=20261108-copy-pruned\" loading=\"lazy\"></iframe></div></details><details class=\"case-doc-preview case-strategy-preview\"><summary><span class=\"case-preview-summary-main\"><span class=\"case-preview-symbol\" aria-hidden=\"true\">02</span><span class=\"case-preview-summary-text\"><strong>중장기 성장 전략</strong><span class=\"case-preview-description\">공급 확대 · 5개년 손익 · 성과관리</span></span></span><span class=\"case-preview-summary-side\"><span class=\"case-preview-count\">6장</span><span class=\"case-preview-action\">살펴보기</span><span class=\"case-preview-indicator\" aria-hidden=\"true\"></span></span></summary><div class=\"case-doc-preview-body\"><iframe class=\"case-ppt-frame\" title=\"중장기 성장 전략 슬라이드 6장\" allowfullscreen data-src=\"/src/case-study/materials.html?preview=1&deck=strategy&viewer=20261108-copy-pruned\" loading=\"lazy\"></iframe></div></details></div></section>"
   },
   {
     "name": "시장·경쟁 분석",
@@ -96,7 +96,53 @@ const sections = [
 
   const toc=document.querySelector('.toc'),track=document.querySelector('.track');
   toc.innerHTML=sections.map((s,i)=>`<a class="toc-item" href="#section-${String(i+1).padStart(2,'0')}" data-index="${i}"><span class="toc-n">${String(i+1).padStart(2,'0')}</span><span class="toc-t">${s.name}</span></a>`).join('');
-  track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-labelledby="heading-${i}"><header class="section-head"><span class="eyebrow">${String(i+1).padStart(2,'0')} / ${s.name}</span><${i===0?'h1':'h2'} class="section-title" id="heading-${i}" tabindex="-1">${s.title.replaceAll("·","&#8288;·&#8288;")}</${i===0?'h1':'h2'}>${s.lead?`<p class="lead">${s.lead}</p>`:''}</header>${s.body}</section>`).join('');
+  track.innerHTML=sections.map((s,i)=>`<section class="slide" id="section-${String(i+1).padStart(2,'0')}" aria-labelledby="heading-${i}"><header class="section-head">${i===0?'<span class="case-identity">신사업 사업성 분석·경영계획</span>':''}<span class="eyebrow">${String(i+1).padStart(2,'0')} / ${s.name}</span><${i===0?'h1':'h2'} class="section-title" id="heading-${i}" tabindex="-1">${s.title.replaceAll("·","&#8288;·&#8288;")}</${i===0?'h1':'h2'}>${s.lead?`<p class="lead">${s.lead}</p>`:''}</header>${s.body}</section>`).join('');
+  // Derive the visual comparison from the original table, not duplicated assumptions.
+  const scenarioTable=track.querySelector('#section-04 .table-wrap table');
+  if(scenarioTable){
+    const scenarioRow=[...scenarioTable.querySelectorAll('tbody tr')].find(row=>
+      row.querySelector('th')?.textContent.trim()==='월 완료 예약 · 최종 반올림');
+    const labels=[...scenarioTable.querySelectorAll('thead th')].slice(1,4).map(cell=>cell.textContent.trim());
+    const values=[...(scenarioRow?.querySelectorAll('td')||[])].slice(0,3).map(cell=>({
+      label:cell.textContent.trim(),amount:Number(cell.textContent.replace(/[^\d]/g,''))
+    }));
+    if(labels.length===3&&values.length===3&&values.every(value=>Number.isFinite(value.amount)&&value.amount>0)){
+      const max=Math.max(...values.map(value=>value.amount));
+      const figure=document.createElement('figure');
+      figure.className='case-scenario-visual';
+      figure.setAttribute('aria-label','월 완료 예약 건수: 보수·기준·확장 가정 비교');
+      const caption=document.createElement('figcaption');
+      caption.innerHTML='<strong>월 완료 예약 시나리오</strong><span>보수 · 기준 · 확장 가정 비교</span>';
+      figure.append(caption);
+      const rows=document.createElement('div');
+      rows.className='case-scenario-rows';
+      values.forEach((value,i)=>{
+        const row=document.createElement('div');
+        row.className='case-scenario-row'+(i===1?' is-baseline':'');
+        const name=document.createElement('span');
+        name.className='case-scenario-name';
+        name.textContent=labels[i];
+        const bar=document.createElement('span');
+        bar.className='case-scenario-track';
+        bar.setAttribute('aria-hidden','true');
+        const fill=document.createElement('span');
+        fill.className='case-scenario-fill';
+        fill.style.width=(value.amount/max*100).toFixed(2)+'%';
+        bar.append(fill);
+        const number=document.createElement('span');
+        number.className='case-scenario-number';
+        number.textContent=value.label;
+        row.append(name,bar,number);
+        rows.append(row);
+      });
+      figure.append(rows);
+      const note=document.createElement('p');
+      note.className='case-scenario-note';
+      note.textContent='표의 완료 예약 추정치를 시각화한 계획 시나리오이며 실제 거래 실적이 아닙니다.';
+      figure.append(note);
+      scenarioTable.closest('.table-wrap')?.before(figure);
+    }
+  }
   const cashChart=track.querySelector('.case-cash-chart svg');
   if(cashChart){
     const series=['negotiated','current'].map(key=>
