@@ -658,6 +658,23 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
  expect(failures).toEqual([]);
 });
 
+
+test('supporting resource pages omit duplicate labels but retain scenario disclosures',async({page})=>{
+ await page.goto('/src/case-study/materials.html');
+ await expect(page.locator('main > h1')).toHaveText('FootMate 분석 자료');
+ await expect(page.locator('a.back')).toHaveText('본문으로');
+ await expect(page.locator('main')).not.toContainText('본편 9장 · 5개년 전략 보완자료 6장');
+ await expect(page.locator('main')).not.toContainText('FootMate · 플랫폼 운영·경영관리');
+ await expect(page.locator('main')).not.toContainText('FootMate · 경영진 의사결정 메모');
+ await expect(page.locator('main')).not.toContainText('산정 조건을 바꿔 손익 변화를 확인하세요.');
+ await expect(page.locator('main')).toContainText('가상');
+ await expect(page.locator('main')).toContainText('월별 표에 반영되지는 않습니다.');
+ await page.goto('/src/case-study/forecast.html');
+ await expect(page.locator('main')).not.toContainText('FootMate · 플랫폼 운영·경영관리');
+ await expect(page.locator('main')).toContainText('2027년 월별 계획과 가상 거래를 구분해 비교합니다.');
+ await expect(page.locator('main')).toContainText('실제 수요와 제휴 계약은 현장에서 확인할 항목입니다.');
+});
+
 test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
  await page.goto('/');
  const texts=await page.locator('.slide p,.slide h2,.slide h3,.slide caption,.slide summary,.slide dt,.slide dd').evaluateAll(nodes=>nodes.map(node=>node.textContent.replace(/\s+/g,' ').trim()));
@@ -665,6 +682,9 @@ test('reader-facing copy avoids accidental adjacent repetition',async({page})=>{
   expect(value).not.toMatch(/(?:^|\s)([가-힣A-Za-z0-9]{2,})\s+\1(?=$|\s|[.,!?])/u);
  }
  await expect(page.locator('#section-08')).not.toContainText('30일 30일');
+ await expect(page.locator('#section-08')).not.toContainText('목표 · 충원 75% / 재참가 30%. 8주 후');
+ await expect(page.locator('#section-08')).toContainText('8주 후 현금·약정·미완료 보고.');
+ await expect(page.locator('#section-07 .flow-branches')).not.toContainText('참가·잔여 자리 동시 갱신. 반복 요청은 기존 결과 반환.');
  await expect(page.locator('.track')).not.toContainText('시간 기회비용');
  await expect(page.locator('.track')).not.toContainText('창업자 시간 기회비용');
  await expect(page.locator('#section-05 .case-profit-results')).toContainText('기회비용 포함');
