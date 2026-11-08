@@ -375,7 +375,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   const documents=page.locator('#attachments');
   await documents.scrollIntoViewIfNeeded();
   await expect(documents.getByRole('heading',{name:'발표자료',exact:true})).toBeVisible();
-  await expect(documents.locator('.case-documents-lead')).toHaveText('기획 판단과 실행 근거를 두 가지 흐름으로 정리했습니다.');
+  await expect(documents.locator('.case-documents-lead')).toHaveCount(0);
   await expect(documents).not.toContainText('PPT 10장 · Excel 손익 모델');
   await expect(page.locator('#section-01 .case-scenario-note')).toHaveText('가정 기반 월간 시나리오 · 제휴 5곳 · 수수료 10% · 결제비 3%');
   await expect(documents.locator('.case-downloads a')).toHaveCount(2);
