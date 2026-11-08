@@ -416,7 +416,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
       ['PPT CTA','summary',null],
       ['PPT download','.case-downloads a','.case-documents'],
       ['Section heading','.case-documents-head h2','.case-documents'],
-      ['Section note','.case-documents-head p','.case-documents']
+      ['Deck description','.case-preview-description','.case-documents']
     ];
     const rgb=value=>(value.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
     const luminance=value=>{
