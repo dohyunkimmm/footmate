@@ -29,10 +29,10 @@ jobs:
           root=Path('src/case-study/downloads')
           report=root/'footmate_report.pptx'
           deck=Presentation(report)
-          assert len(deck.slides)==10
-          old=deck.slides._sldIdLst[4]
-          deck.part.drop_rel(old.rId)
-          deck.slides._sldIdLst.remove(old)
+          if len(deck.slides)==10:
+              old=deck.slides._sldIdLst[4]
+              deck.part.drop_rel(old.rId)
+              deck.slides._sldIdLst.remove(old)
           assert len(deck.slides)==9
           changes=[]
           def replace_text(shape, original, replacement):
@@ -54,7 +54,36 @@ jobs:
                   if index==1:
                       if replace_text(shape,'예산·손익·수정 전망을 투자 판단에 연결','예산·손익을 투자 판단에 연결'):
                           changes.append('report cover subtitle')
-          assert changes==['report cover subtitle'],changes
+          assert len(changes)<=1,changes
+          def replace_in_table(deck):
+              updates=[]
+              replacements={
+                  '예산과 수정 전망 반영':'예산 검토와 후속 조치',
+                  '수정 전망':'예산 검토',
+                  '수정전망':'예산 검토',
+                  '재예측':'계획 대비 분석',
+                  '분기 전망':'분기별 손익 점검',
+                  'Rolling Forecast':'성과관리'
+              }
+              for slide_index, slide in enumerate(deck.slides,1):
+                  for shape in slide.shapes:
+                      if not shape.has_table: continue
+                      for row in shape.table.rows:
+                          for cell in row.cells:
+                              old=cell.text
+                              new=old
+                              for before,after in replacements.items():
+                                  new=new.replace(before,after)
+                              if new!=old:
+                                  for para in cell.text_frame.paragraphs:
+                                      for run in para.runs:
+                                          for before,after in replacements.items():
+                                              run.text=run.text.replace(before,after)
+                                  if cell.text!=new:cell.text=new
+                                  updates.append((slide_index,old,new))
+              return updates
+          table_updates=replace_in_table(deck)
+          print('Report table content adjusted:',table_updates)
           deck.save(report)
           strategy=root/'footmate_5year_strategy.pptx'
           p=Presentation(strategy)
@@ -63,10 +92,16 @@ jobs:
           for shape in p.slides[4].shapes:
               updated+=replace_text(shape,'계획 대비 차이·분기 전망','계획 대비 차이·예산 점검')
               updated+=replace_text(shape,'계획 대비 차이·분기 수정전망','계획 대비 차이·예산 점검')
-          assert updated==1,('strategy replacements',updated)
+          assert updated in (0,1),('strategy replacements',updated)
+          print('Strategy table changes:',replace_in_table(p))
           p.save(strategy)
           for file in (report,strategy):
-              content='\n'.join(sh.text for sl in Presentation(file).slides for sh in sl.shapes if sh.has_text_frame)
+              content='\n'.join(
+                  item
+                  for sl in Presentation(file).slides for sh in sl.shapes
+                  for item in ([sh.text] if sh.has_text_frame else [])
+                    +([cell.text for row in sh.table.rows for cell in row.cells] if sh.has_table else [])
+              )
               assert not re.search(r'Rolling\s*Forecast|수정\s?전망|재예측|분기\s?전망',content,re.I),(file,'lingering Rolling Forecast text')
               print(file,'slides',len(Presentation(file).slides),'rolling terms 0')
           PY
@@ -87,8 +122,8 @@ jobs:
           s=p.read_text()
           assert s.startswith('window.REPORT_SLIDES=') and s.rstrip().endswith(';')
           old=json.loads(s[len('window.REPORT_SLIDES='):].rstrip().rstrip(';'))
-          assert len(old)==10,len(old)
-          titles=[slide['title'] for i,slide in enumerate(old) if i!=4]
+          assert len(old) in (9,10),len(old)
+          titles=[slide['title'] for i,slide in enumerate(old) if len(old)==9 or i!=4]
           files=sorted(Path('/tmp/rolling-clean').glob('main-*.png'), key=lambda f:int(f.stem.split('-')[-1]))
           assert len(files)==9,[str(f) for f in files]
           new=[{'title':title,'src':'data:image/png;base64,'+base64.b64encode(file.read_bytes()).decode('ascii')} for title,file in zip(titles,files)]
