@@ -23,7 +23,7 @@ def plain(source: str) -> str:
     return unescape(re.sub(r"<[^>]*>", " ", source)).replace("\u00a0", " ").strip()
 
 def no_spaces(source: str) -> str:
-    return re.sub(r"\s+", "", source)
+    return re.sub(r"\s+", "", source).replace("-", "−")
 
 def cell_rows(markup: str) -> list[list[str]]:
     return [[no_spaces(plain(value)) for value in CELLS.findall(row)]
