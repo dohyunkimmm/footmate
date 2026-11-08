@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - .github/workflows/audit-branch-patches.yml
+      - tests/tools/branch-hygiene.cjs
   push:
     branches: [main]
     paths:
       - .github/workflows/audit-branch-patches.yml
+      - tests/tools/branch-hygiene.cjs
   workflow_dispatch:
 
 permissions:
@@ -57,6 +59,12 @@ jobs:
           set -euo pipefail
           mkdir -p verification/git-branch-audit
           node tests/tools/branch-hygiene.cjs > verification/git-branch-audit/patches.tsv
+          expected_refs="$(($(wc -l < verification/git-branch-audit/remote-heads.tsv) - 1))"
+          compared_refs="$(($(wc -l < verification/git-branch-audit/patches.tsv) - 1))"
+          if [ "$compared_refs" -ne "$expected_refs" ]; then
+            echo "::error::Branch audit covered $compared_refs refs, expected $expected_refs."
+            exit 1
+          fi
           printf 'branch\thead_sha\tidentical_tree\n' > verification/git-branch-audit/tree-equality.tsv
           while IFS= read -r branch; do
             if [ "$branch" = 'origin/main' ] || [ "$branch" = 'origin/HEAD' ]; then continue; fi
