@@ -6,11 +6,15 @@ on:
     paths:
       - .github/workflows/audit-branch-patches.yml
       - tests/tools/branch-hygiene.cjs
+      - tests/tools/branch-applicability.cjs
+      - tests/contracts/branch-applicability.test.cjs
   push:
     branches: [main]
     paths:
       - .github/workflows/audit-branch-patches.yml
       - tests/tools/branch-hygiene.cjs
+      - tests/tools/branch-applicability.cjs
+      - tests/contracts/branch-applicability.test.cjs
   workflow_dispatch:
 
 permissions:
@@ -53,6 +57,10 @@ jobs:
           count="$(wc -l < "$d/remote-heads.tsv" | tr -d '[:space:]')"
           echo "Read-only branch audit: $count current remote refs verified (including main)."
 
+      - name: Test conservative branch applicability rules
+        shell: bash
+        run: node --test tests/contracts/branch-applicability.test.cjs
+
       - name: Audit patches and exact tree equality
         shell: bash
         run: |
@@ -86,6 +94,22 @@ jobs:
           echo 'Exact-tree matches:'
           awk -F '\t' 'NR>1&&$3=="true"{print $0}' verification/git-branch-audit/tree-equality.tsv
           git count-objects -v
+
+      - name: Triage branch deltas against the current main file inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=verification/git-branch-audit
+          node tests/tools/branch-applicability.cjs "$d/patches.tsv" > "$d/applicability.tsv"
+          expected="$(($(wc -l < "$d/patches.tsv") - 1))"
+          actual="$(($(wc -l < "$d/applicability.tsv") - 1))"
+          if [ "$actual" -ne "$expected" ]; then
+            echo "::error::Applicability report covered $actual refs; expected $expected."
+            exit 1
+          fi
+          echo '### Current-main path-overlap triage (manual review only)' >> "$GITHUB_STEP_SUMMARY"
+          awk -F '\t' 'NR>1 {groups[$11]++; total++} END {for (g in groups) printf "%s: %d\\n",g,groups[g]; printf "Reviewed refs: %d\\n",total}' "$d/applicability.tsv" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo 'A file still existing on main does not prove that its historical patch is missing. Do not auto-merge or delete branches.' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload audit reports
         uses: actions/upload-artifact@v6
