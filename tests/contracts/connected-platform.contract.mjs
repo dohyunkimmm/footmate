@@ -81,10 +81,12 @@ for(const required of [
   '동시 요청',
   '기회비용',
   '데이터 정정',
-  // The current card exposes separate download and on-demand preview controls.
-  // The slide count is validated by Case Study QA, not a retired card label.
-  'PPT 다운로드',
-  'PPT 미리보기',
+  // Current cards expose separate presentation downloads and expandable previews.
+  // Slide counts remain validated by the Case Study browser tests.
+  '기획 자료 받기',
+  '전략 자료 받기',
+  '사업·IT 기획',
+  '중장기 성장 전략',
   'footmate_report.pptx'
 ])assert.ok(caseStudy.includes(required),`missing current strategy Case Study boundary copy: ${required}`);
 
