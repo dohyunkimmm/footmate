@@ -15,7 +15,7 @@ if OUT.exists():
     existing=Presentation(OUT)
     if len(existing.slides)==6 and all(
         any(label in sh.text for sh in existing.slides[3].shapes if sh.has_text_frame)
-        for label in ("공급처 28곳 기준 약 +0.6만 원", "−238.7만 원", "+0.6만 원")
+        for label in ("월 경제적 손익 · 연차별 개선 경로", "−238.7만", "+0.6만")
     ):
         print("PASS FootMate appendix exists and is aligned; keeping original file bytes")
         raise SystemExit(0)
@@ -82,14 +82,34 @@ text(sl,'추가 관리비와 인력 기회비용 반영 손익분기: 약 28곳'
 text(sl,'관리비 제외 시 약 23곳. 제휴 조건별 수익성 변화를 구분하여 판단합니다.',.81,6.2,11.6,.42,12,False,S)
 
 sl=base(4,'5개년 월 경제적 손익 시나리오','1년 차 기준 340원 · 2년 차부터 개선안 940원 · 추가 관리비·기회비용 반영')
-for i,(year,parts,val) in enumerate([(1,5,-238.7),(2,12,-139.8),(3,20,-69.6),(4,28,.6),(5,36,70.7)]):
-    x=.75+i*2.53;rect(sl,x,2.17,2.36,2.48,W)
-    text(sl,f'{year}년 차 · {parts}곳',x+.13,2.35,2.08,.4,12,True,G2)
-    text(sl,('+' if val>0 else '−')+f'{abs(val):.1f}만 원',x+.13,3.04,2.1,.62,22,True,G if val>0 else RED)
-    text(sl,'월 경제적 손익',x+.14,3.91,2.06,.35,11,False,S)
-rect(sl,.75,5.14,11.8,.87,M)
-text(sl,'28곳부터 월 경제적 손익분기 근접 · 누적 현금수지 표와 별개 지표',.96,5.28,11.2,.55,17,True,G)
-text(sl,'공급처 28곳 기준 약 +0.6만 원 · 월 경제적 손익은 원본 5개년 현금수지와 별개입니다.',.81,6.27,11.7,.4,12,False,S)
+# Replace static numeric cards with a connected, editable break-even diagram.
+from pptx.enum.shapes import MSO_CONNECTOR
+def segment(sl,x1,y1,x2,y2,color=G2,width=2):
+    sh=sl.shapes.add_connector(MSO_CONNECTOR.STRAIGHT,Inches(x1),Inches(y1),Inches(x2),Inches(y2))
+    sh.line.color.rgb=color;sh.line.width=Pt(width)
+def milestone(sl,x,y,bep=False):
+    size=.21 if bep else .16
+    sh=sl.shapes.add_shape(MSO_SHAPE.OVAL,Inches(x-size/2),Inches(y-size/2),Inches(size),Inches(size))
+    sh.fill.solid();sh.fill.fore_color.rgb=G if bep else G2
+    sh.line.color.rgb=W;sh.line.width=Pt(1.5)
+rect(sl,.77,2.03,11.75,3.78,W)
+rect(sl,.79,2.03,.07,3.78,M)
+text(sl,'월 경제적 손익 · 연차별 개선 경로',1.06,2.13,10,.33,14,True,G)
+zero_y=3.10
+segment(sl,1.08,zero_y,12.10,zero_y,M,1.5)
+text(sl,'손익분기선',1.11,zero_y-.28,1.25,.24,10,False,S)
+series=[(1,5,-238.7),(2,12,-139.8),(3,20,-69.6),(4,28,.6),(5,36,70.7)]
+xs=[1.60,4.05,6.50,8.95,11.40]
+ys=[2.55+(70.7-value)/309.4*2.55 for _,_,value in series]
+for k in range(4):segment(sl,xs[k],ys[k],xs[k+1],ys[k+1],G2,3)
+for (year,partners,value),x,y in zip(series,xs,ys):
+    milestone(sl,x,y,year==4)
+    value_text=('+' if value>0 else '−')+f'{abs(value):.1f}만'
+    text(sl,value_text,x-.83,y-.47,1.66,.34,16,True,G if value>=0 else D)
+    text(sl,f'{year}년 차 · {partners}곳',x-1.07,5.43,2.14,.35,13,True,G)
+rect(sl,.77,5.96,11.75,.60,M)
+text(sl,'4년 차 · 공급처 28곳부터 월 경제적 손익분기 근접',1.04,6.06,11.13,.39,17,True,G)
+text(sl,'건당 공헌이익 340원 → 940원 · 월 경제적 손익은 기존 연간 투자 후 현금수지와 별도 기준',.81,6.65,11.65,.26,10,False,S)
 
 sl=base(5,'경영성과 관리와 전략적 자원 배분','경영계획 수립 → 계획 대비 차이 → 투자·예산 조정')
 for i,(a,b,c) in enumerate([
