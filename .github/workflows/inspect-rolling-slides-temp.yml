@@ -61,3 +61,18 @@ jobs:
                       for ser in root.findall('.//{http://schemas.openxmlformats.org/drawingml/2006/chart}ser'):
                           print('SERIES',' '.join(x.text or '' for x in ser.iter() if x.tag.endswith(('v','f')))[:750])
           PY
+          echo '--- FORECAST COLUMNS IN EXISTING WORKBOOK ---'
+          python - <<'PY'
+          from zipfile import ZipFile
+          from xml.etree import ElementTree as ET
+          n={'m':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+          with ZipFile('src/case-study/downloads/footmate_model.xlsx') as z:
+              root=ET.fromstring(z.read('xl/worksheets/sheet3.xml'))
+              for row in root.findall('.//m:sheetData/m:row',n):
+                  if int(row.attrib['r']) not in (5,6,11,12,17,18,19):continue
+                  print('ROW',row.attrib['r'])
+                  for c in row.findall('m:c',n):
+                      if not c.attrib['r'].startswith(('M','N','O','P','Q','R','S')):continue
+                      v=c.find('m:v',n);f=c.find('m:f',n);t=c.find('m:is/m:t',n)
+                      print(c.attrib['r'],'value',t.text if t is not None else v.text if v is not None else '', 'formula',f.text if f is not None else '')
+          PY
