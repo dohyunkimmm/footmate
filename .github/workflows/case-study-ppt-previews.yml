@@ -155,21 +155,23 @@ jobs:
               echo "::warning::Preview branch created. Create a pull request through the connected GitHub account; main is protected."
             fi
           fi
-      - name: Keep previews aligned with the PPTX on same-repository review branches
+      - name: Verify review assets without bot commits that invalidate checks
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-        env:
-          REVIEW_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/case-study/report-previews.js src/case-study/downloads/footmate_report.pptx src/case-study/downloads/footmate_5year_strategy.pptx
-          if git diff --cached --quiet; then
-            echo 'PASS: review branch previews already synchronized'
-          else
-            git commit -m 'docs: align FootMate presentation and slide preview images'
-            git push origin "HEAD:refs/heads/$REVIEW_BRANCH"
-          fi
+          /tmp/footmate-slide-edit/bin/python - <<'PY'
+          from pathlib import Path
+          from pptx import Presentation
+          p=Path("src/case-study/downloads/footmate_report.pptx")
+          a=Path("src/case-study/downloads/footmate_5year_strategy.pptx")
+          assert len(Presentation(p).slides)==10, "Ten-slide original changed"
+          assert len(Presentation(a).slides)==6, "Six-slide strategy appendix changed"
+          preview=Path("src/case-study/report-previews.js")
+          text=preview.read_text(encoding="utf-8")
+          assert text.startswith("window.REPORT_SLIDES=") and "data:image/png;base64," in text
+          print("PASS generated presentation, strategy appendix, and inline preview integrity")
+          PY
+          echo 'No automatic PR branch push: review commit and QA results remain stable'
       - name: Upload presentation rendering for QA
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
