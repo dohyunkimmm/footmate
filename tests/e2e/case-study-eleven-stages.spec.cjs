@@ -8,10 +8,13 @@ for(const width of [1920,1440,800,390,320]){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');await page.evaluate(()=>document.fonts.ready);
   await expect(page.locator('.sidebar .sb-logo')).toHaveText('FootMate');
-  await expect(page.locator('.sidebar .sb-sub')).toHaveCount(0);
+  await expect(page.locator('.sidebar .sb-sub')).toHaveText('신사업 사업성 분석·경영계획');
   await expect(page.locator('.sidebar')).not.toContainText('Case Study');
   await expect(page.locator('.sidebar')).toHaveAttribute('aria-label','본문 목차');
   await expect(page.locator('.toc-item')).toHaveCount(9);
+  await expect(page.locator('#section-01 .case-identity')).toHaveText('신사업 사업성 분석·경영계획');
+  await expect(page.locator('#section-01 .case-quicklinks a')).toHaveCount(2);
+  await expect(page.locator('#section-04 .case-scenario-row')).toHaveCount(3);
   await expect(page.locator('.slide')).toHaveCount(9);
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('.cs-controls,.dot,.btn-next,.btn-prev')).toHaveCount(0);
