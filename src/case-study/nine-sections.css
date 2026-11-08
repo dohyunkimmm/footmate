@@ -813,7 +813,7 @@ tbody th{color:#263944}
  #section-01 .decision-card{padding:18px}
 }
 @media(max-width:800px){
- html{scroll-padding-top:64px}
+ html{scroll-padding-top:16px}
  body{background:#fff}
  .fm-cs-shell{display:block;width:100%;min-height:100svh;margin:0;border:0;border-radius:0;box-shadow:none}
  .viewer{border-radius:0}

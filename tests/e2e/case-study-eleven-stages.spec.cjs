@@ -529,7 +529,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     expect(control.width,control.name+' target width').toBeGreaterThanOrEqual(44);
     expect(control.height,control.name+' target height').toBeGreaterThanOrEqual(44);
   }
-  await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
+  await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(20, 44, 57)');
   expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
