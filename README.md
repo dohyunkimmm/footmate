@@ -72,7 +72,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 - **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [Case Study 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
 - **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
 - **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
-- **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-08 최신 점검](docs/REPO-CLEANUP-2026-11-08.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
+- **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-08 최신 점검](docs/REPO-CLEANUP-2026-11-08.md) · [미반영 패치·보안 후속 점검](docs/REMAINING-AUDIT-2026-11-08.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
 
 ## 자세한 문서
 
