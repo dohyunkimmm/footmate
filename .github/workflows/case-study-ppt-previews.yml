@@ -8,6 +8,7 @@ on:
       - 'qa/align-footmate-strategy-20261107.py'
       - 'qa/build-footmate-strategy-appendix-20261107.py'
       - 'qa/visual-polish-main-deck-20261108.py'
+      - 'qa/final-slide-readability-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   pull_request:
     branches: [main]
@@ -17,6 +18,7 @@ on:
       - 'qa/align-footmate-strategy-20261107.py'
       - 'qa/build-footmate-strategy-appendix-20261107.py'
       - 'qa/visual-polish-main-deck-20261108.py'
+      - 'qa/final-slide-readability-20261108.py'
       - '.github/workflows/case-study-ppt-previews.yml'
   workflow_dispatch:
 
@@ -80,6 +82,8 @@ jobs:
         run: /tmp/footmate-slide-edit/bin/python qa/align-footmate-strategy-20261107.py
       - name: Emphasize fourth-year economic transition in original 10-slide deck
         run: /tmp/footmate-slide-edit/bin/python qa/visual-polish-main-deck-20261108.py
+      - name: Improve final-slide financial table and disclosure readability
+        run: /tmp/footmate-slide-edit/bin/python qa/final-slide-readability-20261108.py
       - name: Generate separate six-slide Pretendard strategic appendix
         run: |
           /tmp/footmate-slide-edit/bin/python qa/build-footmate-strategy-appendix-20261107.py
