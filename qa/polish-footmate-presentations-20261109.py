@@ -129,9 +129,56 @@ rewrite(strategy.slides, [0], "중장기 경영전략 및 수익성 개선",
 rewrite(strategy.slides, [5], "FOOTMATE  /  경영진 의사결정",
         "FootMate  /  투자 판단", 1)
 rewrite(strategy.slides, [5], "3  월별 실적 차이와 현금수지로 5개년 계획 점검",
-        "3  월별 계획 대비 차이와 현금수지로 5개년 계획 점검", 1)
+        "3  월별 계획 차이·현금수지로 경영계획 점검", 1)
 rewrite(strategy.slides, [5], "재무값은 계획 시나리오",
         "재무 수치는 계획 시나리오", 1)
+
+
+# Slide-by-slide concision review (all nine report and six strategy slides).
+rewrite(main.slides, [3], "복합 협상안: 관리비 제외 약 23곳 · 추가 관리비 포함 약 28곳(가정)",
+        "복합안 손익분기 · 관리비 제외 약 23곳 / 포함 약 28곳(가정)", 1)
+rewrite(main.slides, [6], "36개월 비용 참고치 · 다음 장은 12개월 분석. 변동비·추가 투자·세금 별도.",
+        "36개월 비용 기준 · 다음 장은 12개월 분석. 변동비·추가 투자·세금 별도.", 1)
+rewrite(main.slides, [7], "12개월 예약 가정 · 구축 300만 원·시범 50만 원 포함\n충당률 100% = 손익률 0%",
+        "12개월 동일 예약 가정 · 구축 300만 원·시범 50만 원 포함\n충당률 100% = 손익률 0%", 1)
+rewrite(main.slides, [8], "현금수지는 매출에서 거래·운영비와 투자비를 차감한 값 · 인력 기회비용 별도",
+        "현금수지 = 매출 − 거래·운영비 − 투자비 · 기회비용 별도", 1)
+rewrite(main.slides, [8], "운영자 제휴형 우선 · 8주 검증 → 지역별 손익·가용 현금 심사 → 추가 투자",
+        "제휴형 우선 · 8주 검증 → 지역 손익·가용 현금 심사 → 추가 투자", 1)
+rewrite(strategy.slides, [0], "5개년 계획 → 수익성 개선 → KPI 관리 → 투자·자원 배분",
+        "수익성 개선 → 성과관리·예산 배분 → 단계별 투자", 1)
+rewrite(strategy.slides, [1], "관리 지표: 공급 유지율 · 월 완료 예약 · 30일 재참가 · 건당 공헌이익 · 운영비",
+        "관리 지표 · 공급 유지·완료 예약·30일 재참가·공헌이익·운영비", 1)
+rewrite(strategy.slides, [1], "공급처 수는 계획 시나리오이며, 연차별 투자규모는 계약·운영 상황에 따라 조정합니다.",
+        "공급처는 목표치이며, 투자 규모는 계약·운영 여건에 따라 조정합니다.", 1)
+rewrite(strategy.slides, [2], "관리비 제외 시 약 23곳. 제휴 조건별 수익성 변화를 구분하여 판단합니다.",
+        "관리비 제외 시 약 23곳 · 계약 조건별 수익성 비교", 1)
+rewrite(strategy.slides, [3], "1년 차 기준 340원 · 2년 차부터 개선안 940원 · 추가 관리비·기회비용 반영",
+        "1년 차 340원 · 2년 차부터 940원 · 관리비·기회비용 반영", 1)
+rewrite(strategy.slides, [3], "건당 공헌이익 340원 → 940원 · 월 경제적 손익은 기존 연간 투자 후 현금수지와 별도 기준",
+        "월 경제적 손익과 연간 투자 후 현금수지는 별도 기준", 1)
+rewrite(strategy.slides, [4], "관리 주기: 월간 성과 분석 / 분기별 경영계획·투자 재검토",
+        "관리 주기 · 월간 성과 / 분기별 계획·투자 검토", 1)
+rewrite(strategy.slides, [5], "3  월별 계획 대비 차이와 현금수지로 5개년 계획 점검",
+        "3  월별 계획 차이·현금수지로 경영계획 점검", 1)
+
+# Remove an isolated vertical bar in the strategy cover (an old placeholder).
+for shape in strategy.slides[0].shapes:
+    for run in visit_runs(shape):
+        if run.text.strip() == "|":
+            run.text = ""
+
+# Check every slide's long text runs, preserving numeric cards and actual data.
+for deck_name, deck in (("report", main), ("strategy", strategy)):
+    for index, slide in enumerate(deck.slides, 1):
+        for shape in slide.shapes:
+            for run in visit_runs(shape):
+                for line in run.text.splitlines():
+                    if len(line) > 50:
+                        raise RuntimeError(
+                            f"Long slide description {deck_name}/{index}: {len(line)} characters: {line}"
+                        )
+
 
 for deck in (main, strategy):
     for slide in deck.slides:

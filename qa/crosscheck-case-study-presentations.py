@@ -76,6 +76,10 @@ for filename,count in (("footmate_report.pptx",9),("footmate_5year_strategy.pptx
         for number in range(1,count+1):
             part=f"ppt/slides/slide{number}.xml"
             slide_xml=font_deck.read(part)
+            slide_tree=ET.fromstring(slide_xml)
+            for chunk in slide_tree.iter(A + "t"):
+                for line in (chunk.text or "").splitlines():
+                    assert len(line) <= 50, (filename, number, "description too long", line)
             families=set(re.findall(rb'<a:(?:latin|ea|cs)\b[^>]*\btypeface="([^"]+)"',slide_xml))
             assert families and families <= {b"Pretendard"}, (filename,number,families)
 # Editorial parity: public brand, slide typography and readable terminology.
@@ -88,8 +92,17 @@ assert "고객 지원·확보·IT 비용 점검" in main[4], "Expense analysis l
 assert "경유·취소·완료율" not in main[4], "Old typo returned"
 assert "36개월 운영·초기 구축비 2,460만 원" in main[6], "36-month cost scope unclear"
 assert all("5개년 경영계획" in slide for slide in strategy[1:5]), "5-year deck headers are inconsistent"
-assert "월별 계획 대비 차이" in strategy[-1], "Scenario comparison could imply actual sales"
+assert "월별 계획 차이·현금수지" in strategy[-1], "Scenario comparison must remain distinct from actual sales"
 assert "재무 수치는 계획 시나리오" in strategy[-1], "Financial scenario statement is ambiguous"
+assert "복합안 손익분기" in main[3], "Fourth-slide concise decision label missing"
+assert "현금수지 = 매출" in main[8], "Ninth-slide cash-flow calculation missing"
+assert "12개월 동일 예약 가정" in main[7], "Identical monthly booking premise must be explicit in ROI"
+assert "관리 지표 · 공급 유지" in strategy[1], "Five-year deck metric caption did not sync"
+assert "월 경제적 손익과 연간 투자 후 현금수지는 별도 기준" in strategy[3], "Economic vs cash-flow distinction missing"
+assert "월 공급·거래 시나리오" in body and "월 공급·거래 시나리오 · 플랫폼 예약·취소 반영 산정 기준" not in body, "Table caption still verbose"
+assert "추적 완료자만 분모" in body, "30-day cohort denominator disclosure missing"
+assert "인력 기회비용 월 200만 원 별도" in body, "Financial scenario assumptions missing"
+
 assert "제안 일정 · 실제 성과 아님" not in body, "Redundant negative label returned"
 assert "실제 결제·환불·운영자 정산은 아직 구축하지 않았다" not in body, "Unnecessary negative phrasing returned"
 
