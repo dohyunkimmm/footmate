@@ -620,7 +620,7 @@ details>summary{color:#145337;font-size:16px;line-height:1.6}
  .case-deck-stack .case-preview-summary-text strong{font-size:16px}
  .case-preview-description{font-size:11px}
  .case-deck-stack .case-preview-summary-side{gap:6px}
- .case-preview-count{font-size:11px;padding:2px 7px}
+ .case-preview-count{font-size:12px;padding:2px 7px}
  .case-deck-stack .case-preview-indicator{width:27px;height:27px}
 }
 @media(prefers-reduced-motion:reduce){.case-deck-stack .case-doc-preview,.case-deck-stack .case-preview-indicator::after{transition:none}}
@@ -836,7 +836,7 @@ tbody th{color:#263944}
  .slide{padding:38px 22px 56px}
  .section-title{font-size:28px;line-height:1.43;letter-spacing:-.035em}
  .section-head{padding-bottom:24px;margin-bottom:26px}
- .case-identity{margin-bottom:14px;font-size:11px;min-height:27px}
+ .case-identity{margin-bottom:14px;font-size:12px;min-height:27px}
  .lead{font-size:16px;line-height:1.7}
  .case-verdict{padding:23px 20px;border-radius:13px}
  .case-verdict h2{font-size:25px}
@@ -872,3 +872,23 @@ tbody th{color:#263944}
  .case-quicklinks a{flex-basis:100%}
 }
 @media(prefers-reduced-motion:reduce){.toc-item,.case-quicklinks a{transition:none}}
+
+
+/* Editorial density QA: reduce repetitive note spacing, preserve readable type. */
+#section-08 details .source-note{
+  max-width:860px;
+  margin:7px 0;
+  line-height:1.6;
+}
+#section-08 details .source-note + .source-note{margin-top:0}
+#section-08 details .table-wrap{margin-block:22px}
+@media(max-width:800px){
+  #section-08 details .table-wrap{margin-block:16px}
+  #section-08 details .source-note{margin-block:7px}
+}
+@media(max-width:380px){
+  .case-deck-stack .case-preview-description{
+    font-size:12px;
+    line-height:1.45;
+  }
+}
