@@ -872,3 +872,23 @@ tbody th{color:#263944}
  .case-quicklinks a{flex-basis:100%}
 }
 @media(prefers-reduced-motion:reduce){.toc-item,.case-quicklinks a{transition:none}}
+
+
+/* Editorial density QA: reduce repetitive note spacing, preserve readable type. */
+#section-08 details .source-note{
+  max-width:860px;
+  margin:7px 0;
+  line-height:1.6;
+}
+#section-08 details .source-note + .source-note{margin-top:0}
+#section-08 details .table-wrap{margin-block:22px}
+@media(max-width:800px){
+  #section-08 details .table-wrap{margin-block:16px}
+  #section-08 details .source-note{margin-block:7px}
+}
+@media(max-width:380px){
+  .case-deck-stack .case-preview-description{
+    font-size:12px;
+    line-height:1.45;
+  }
+}
