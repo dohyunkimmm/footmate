@@ -1,3 +1,9 @@
+## 2026-11-09 · 의존성 통합과 무료 보안 재검증
+
+- 최신 `main` [`895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833): 파일 345개·디렉터리 43개, 루트 파일 14개·최상위 폴더 9개. 열린 PR **0건**, 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **OPEN**. 배포 진입점·SQL 중복 이력 2쌍·증빙·파일 구조를 유지합니다.
+- [#898 setup-python v7](https://github.com/dohyunkimmm/footmate/pull/898)와 [#904 Wrangler 4.158.0 / OIDC 4.0.7](https://github.com/dohyunkimmm/footmate/pull/904)를 해당 PR 헤드의 Change Impact·Regression 36·Browser E2E + axe 모두 통과한 뒤 병합했습니다. [#894](https://github.com/dohyunkimmm/footmate/pull/894)·[#895](https://github.com/dohyunkimmm/footmate/pull/895)는 겹치는 lockfile 충돌을 피하기 위해 통합 반영 후 중복 종료. 이후 본문은 변경 당시의 기록입니다.
+- `footmate-beta` 읽기 전용 Advisor·카탈로그 재확인에서 public RLS **16/16**, SECURITY DEFINER **38개**, 익명 실행 가능 **0**, 인증 실행 가능 **21**, `raw_user_meta_data` 정책 참조 **0**. 보안 WARN **23건**, 정책 없음 INFO **2건**, 미사용 인덱스 INFO **8건**, Health **0건**입니다. 운영자 실서명 AAL1/AAL2·TOTP 및 해당 RPC의 개별 실인가 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 계속 미완료로 유지합니다. DB/권한·데이터·인덱스/마이그레이션은 수정하지 않았습니다.
+
 ## 2026-11-08 후속 · 패치 동등성 감사와 운영 보안 확인
 
 - 기존 브랜치 124개 `main` 비교 및 [읽기 전용 전체 감사 #42485591883](https://github.com/dohyunkimmm/footmate/actions/runs/42485591883) 성공. 감사 시점 비기본 125개(감사용 새 브랜치 포함) 중 8개 동등 패치 후보·117개 고유 패치·0개 완전 동일 트리. 임의 병합·브랜치/태그 삭제·강제 이력 변경하지 않았습니다. [세부 기록](REMAINING-AUDIT-2026-11-08.md)과 [#525 보존 결정](https://github.com/dohyunkimmm/footmate/issues/525)을 유지합니다.
