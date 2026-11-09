@@ -1,4 +1,5 @@
 name: FootMate one-time 15-slide description sync
+# Verification rerun for the revised closing-slide label
 on:
   push:
     branches:
