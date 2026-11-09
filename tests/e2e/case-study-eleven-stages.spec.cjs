@@ -13,6 +13,8 @@ for(const width of [1920,1440,800,390,320]){
   await expect(page.locator('.sidebar')).toHaveAttribute('aria-label','본문 목차');
   await expect(page.locator('.toc-item')).toHaveCount(9);
   await expect(page.locator('#section-01 .case-identity')).toHaveText('신사업 사업성 분석·경영계획');
+  await expect(page.locator('#section-01 .case-evidence-note')).toContainText('보조 자료:');
+  await expect(page.locator('#section-08 .case-roadmap-heading')).not.toContainText('실제 성과 아님');
   await expect(page.locator('#section-01 .case-quicklinks a')).toHaveCount(2);
   await expect(page.locator('#section-04 .case-scenario-row')).toHaveCount(3);
   await expect(page.locator('.slide')).toHaveCount(9);
@@ -179,9 +181,9 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   await expect(optionDetails.locator('table').first()).toBeVisible();
   const techCards=page.locator('#section-06 .decision-card');
   await expect(techCards).toHaveCount(3);
-  await expect(techCards.nth(0)).toContainText('기존 서비스 연결');
+  await expect(techCards.nth(0)).toContainText('보조 서비스 구현');
   await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
-  await expect(techCards.nth(2)).toContainText('실결제·환불·정산 후속 구축 대상');
+  await expect(techCards.nth(2)).toContainText('계약 조건을 확인한 뒤 결제·환불·정산 기능 구축');
   await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 후속 구축 대상');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
   await expect(page.locator('#section-06 table')).toHaveCount(4);
@@ -958,8 +960,8 @@ test('all supporting prose stays concise outside page titles and descriptions',a
  for(const item of copy){
   expect([...item.text].length,item.tag+' '+item.className+': '+item.text).toBeLessThanOrEqual(45);
  }
- await expect(page.locator('#section-02')).toContainText('시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.');
- await expect(page.locator('#section-03')).toContainText('초기 모델은 운영자 제휴형. 직접 운영·구독은 후속 대안.');
+ await expect(page.locator('#section-02')).toContainText('시장·경쟁은 공개 자료로 분석하고, 지불 의향은 면담·가격 실험으로 검증합니다.');
+ await expect(page.locator('#section-03')).toContainText('운영자 제휴형으로 시작하고, 직접 운영·구독형은 검증 후 검토한다.');
  await expect(page.locator('#section-05')).toContainText('손익분기 · 현금 1,765건 / 기회비용 포함 7,648건');
  await expect(page.locator('#section-08')).toContainText('2027 상반기 가상 데이터, 하반기 공급 전망.');
 });
@@ -968,7 +970,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
  await page.goto('/');
  const bodyParagraphs=await page.locator('.track p:not(.lead)').evaluateAll(nodes=>nodes.map(n=>n.innerText.trim()).filter(Boolean));
  expect(bodyParagraphs.filter(t=>t.length>85)).toEqual([]);
- for(const phrase of ['시장·경쟁은 공개 자료로 검토. 유료 의향은 면담·가격 실험으로 검증.','수수료 매출 차이 − 취소·노쇼 비용 − 완료 건 비용 − 고정비 차이','유지율=실제 공급처 비중. 플랫폼 예약 비중 48%(기준 −20%).','예산 · 구축 300만 / 월 기회비용 200만 / 시범 50만 원.'])await expect(page.locator('.track')).toContainText(phrase);
+ for(const phrase of ['시장·경쟁은 공개 자료로 분석하고, 지불 의향은 면담·가격 실험으로 검증합니다.','수수료 매출 차이 − 취소·노쇼 비용 − 완료 건 비용 − 고정비 차이','유지율=실제 공급처 비중. 플랫폼 예약 비중 48%(기준 −20%).','예산 · 구축 300만 / 월 기회비용 200만 / 시범 50만 원.'])await expect(page.locator('.track')).toContainText(phrase);
  for(const url of ['/src/case-study/materials.html','/src/case-study/forecast.html','/src/case-study/decision-memos.html']){
   await page.goto(url);
   const body=page.locator('body');
@@ -978,7 +980,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
   expect(longParagraphs,url).toEqual([]);
  }
  await page.goto('/src/case-study/materials.html');
- for(const phrase of ['2027년 손익 시나리오(산정 기준)','2027년 합성 예약 데이터와 월별 집계 예시입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['2027년 손익 시나리오(산정 기준)','2027년 가상 예약 데이터와 월별 집계 예시입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/forecast.html');
  for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처: 1~500곳 중 월 손익이 0 이상인 최소 수.','실제 수요와 제휴 계약은 현장에서 확인할 항목입니다.'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/decision-memos.html');
