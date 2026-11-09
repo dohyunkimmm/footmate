@@ -133,7 +133,7 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
   await expect(scenarios.locator('table')).toBeHidden();
   await scenarios.locator('summary').click();
   await expect(scenarios.locator('table')).toBeVisible();
-  const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (가상 데이터)',{exact:true})});
+  const report=page.locator('#section-08 > details').filter({has:page.getByText('월간 경영보고 예시 · KPI·손익 비교',{exact:true})});
   const reportTables = report.locator('table');
   await expect(reportTables).toHaveCount(2);
   for (const table of await reportTables.all()) await expect(table).toBeHidden();
@@ -151,7 +151,7 @@ test('05 and 08 keep one representative table visible and preserve expandable ev
  await expect(plan.getByRole('table',{name:'5개년 경영계획 · 금액 단위 만 원'})).toContainText('2,998');
  await expect(plan).toContainText('기존 수수료·결제 조건 유지 시 현금수지');
  await expect(plan).toContainText('3년차 · 제휴 운영 확대');
- const monthly=page.locator('#section-08 details').filter({has:page.getByText('월간 경영보고 · KPI·손익 비교 (가상 데이터)',{exact:true})});
+ const monthly=page.locator('#section-08 details').filter({has:page.getByText('월간 경영보고 예시 · KPI·손익 비교',{exact:true})});
  await monthly.locator('summary').click();
  await expect(monthly).toContainText('가상 실적 1,019건');
  await expect(monthly).toContainText('−217,040원');
@@ -182,7 +182,7 @@ test('recruiter scanning: 01 ownership, 03 options, 06 evidence remain concise a
   const techCards=page.locator('#section-06 .decision-card');
   await expect(techCards).toHaveCount(3);
   await expect(techCards.nth(0)).toContainText('보조 서비스 구현');
-  await expect(techCards.nth(1)).toContainText('가상 데이터로 동작 확인');
+  await expect(techCards.nth(1)).toContainText('예시 데이터로 기능 확인');
   await expect(techCards.nth(2)).toContainText('계약 조건을 확인한 뒤 결제·환불·정산 기능 구축');
   await expect(page.locator('#section-06 .architecture li').last()).toContainText('결제·정산 후속 구축 대상');
   await expect(page.locator('#section-06 > .table-wrap')).toHaveCount(1);
@@ -673,7 +673,7 @@ test('supporting resource pages omit duplicate labels but retain scenario disclo
  await expect(page.locator('main')).not.toContainText('FootMate · 경영진 의사결정 메모');
  await expect(page.locator('main')).not.toContainText('산정 조건을 바꿔 손익 변화를 확인하세요.');
  await expect(page.locator('main')).toContainText('가상');
- await expect(page.locator('main')).toContainText('월별 표에 반영되지는 않습니다.');
+ await expect(page.locator('main')).toContainText('계산기 입력값과 독립적으로 구성돼 있습니다.');
  await page.goto('/src/case-study/forecast.html');
  await expect(page.locator('main')).not.toContainText('FootMate · 플랫폼 운영·경영관리');
  await expect(page.locator('main')).toContainText('2027년 월별 계획과 가상 거래를 구분해 비교합니다.');
