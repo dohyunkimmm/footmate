@@ -1,3 +1,10 @@
+## 2026-11-09 · 현재 `main` 파일 목록 및 미반영 상태
+
+- [`main` `39bc56a`](https://github.com/dohyunkimmm/footmate/commit/39bc56a58e17c0f30e5408073b926f5e4a77652d) 재귀 트리(`truncated=false`)는 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개)입니다. 전날의 339개 파일은 당시 스냅샷이며, 최근 화면·발표자료 수정과 마이그레이션 파일 복구 뒤 수치가 달라졌습니다. 기존 공개 진입점·배포 경로·QA 파일·원본 자산은 보존합니다. 동일 blob SHA인 SQL 마이그레이션 2쌍은 실행 이력 보호를 위해 이동/삭제하지 않습니다.
+- 미병합 PR **3건**: [#894 `@vercel/oidc`](https://github.com/dohyunkimmm/footmate/pull/894), [#895 Wrangler](https://github.com/dohyunkimmm/footmate/pull/895), [#898 `actions/setup-python`](https://github.com/dohyunkimmm/footmate/pull/898). 기존 Change Impact·Regression 36·Browser E2E 검사 성공 기록은 있지만 세 PR 모두 이 스냅샷의 최신 `main`보다 뒤처져 있습니다. 최신 기준 테스트 없이 완료·병합으로 기록하지 않습니다.
+- 열린 이슈는 [#611 실서명 JWT·TOTP MFA 및 권한 검증](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. 11월 8일 브랜치 감사의 런타임 경로 접점 43개는 기능 누락 확정이 아니며, 현재 UI에서 재현되는 결함 또는 명시적 요구 비교 전까지 과거 패치를 일괄 이식하지 않습니다. 기존 9개 본문 섹션·본편 9장·전략 6장 기준을 유지합니다.
+- 이번 확인은 GitHub 트리·PR·CI 기록 대조이며, 운영 Supabase·실사용자 MFA·Vercel/Cloudflare 배포를 새로 실행하거나 승인한 결과가 아닙니다. 미사용이 입증되지 않은 파일, 브랜치, 실데이터, SQL, 증빙 자산은 삭제하지 않습니다. 이전 날짜 기록은 이력으로 둡니다.
+
 ## 2026-11-08 최종 · `main` 미반영 패치 전수 분류표
 
 - [PR #891](https://github.com/dohyunkimmm/footmate/pull/891) 병합 후 [`main` 감사 #42493941874](https://github.com/dohyunkimmm/footmate/actions/runs/42493941874) **SUCCESS**: 비기본 브랜치 124개 중 현행 런타임 파일 접점 **43**, 현행 QA 접점 **18**, 문서·생성물 **15**, 사라진 과거 경로만 수정 **40**, 패치 동등 후보 **8**. 구체적 예외·이식 기준은 [후속 보고서](REMAINING-AUDIT-2026-11-08.md)를 참조합니다. **고유 패치 보유 116개는 116개 기능 누락이 아닙니다.** 오래된 화면/자동 PPT/소스코드는 검증 없이 되살리지 않으며 remote ref 삭제·force push·이력 재작성도 하지 않았습니다.

@@ -66,6 +66,8 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
+**최신 `main` 재점검(2026-11-09):** [`39bc56a`](https://github.com/dohyunkimmm/footmate/commit/39bc56a58e17c0f30e5408073b926f5e4a77652d) 기준 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개)입니다. 공개 HTML 진입점·서비스 설정·테스트·마이그레이션과 발표자료를 유지하며, 삭제 가능한 임시 파일은 이번 트리 검사에서 확정되지 않았습니다. 동일 blob인 SQL 마이그레이션 2쌍은 적용 이력 보호를 위해 보존합니다. 열린 업데이트 PR은 [#894 OIDC](https://github.com/dohyunkimmm/footmate/pull/894)·[#895 Wrangler](https://github.com/dohyunkimmm/footmate/pull/895)·[#898 setup-python](https://github.com/dohyunkimmm/footmate/pull/898) 3건이며, 모두 최신 `main`보다 뒤처져 있어 재검증 전 병합 완료로 표시하지 않습니다. [#611 실서명 JWT·MFA 운영 검증](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료입니다. 이전 문서의 파일 수와 PR 상태는 각 날짜의 스냅샷입니다.
+
 **`main` 구조 재점검(2026-11-08):** 점검 전 기준 HEAD [`dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)에서 **파일 339개·디렉터리 43개**(루트 파일 14개·최상위 폴더 9개)를 확인했습니다. [2026-11-08 점검·보존 결정](docs/REPO-CLEANUP-2026-11-08.md)과 [현행 문서 목록](docs/README.md)을 참조합니다. 이전 날짜별 파일 수는 당시 스냅샷입니다.
 
 - **공개 진입 파일:** [사업성 분석·경영계획](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.

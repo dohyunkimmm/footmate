@@ -1,5 +1,5 @@
 """Improve final 5-year decision slide emphasis while preserving source values and editable elements.
-No numerical values, words, animations or images are added to the original 10 slides.
+No numerical values, words, animations or images are added to the nine published slides.
 """
 from pathlib import Path
 from pptx import Presentation
@@ -8,13 +8,13 @@ from pptx.util import Pt
 
 path=Path("src/case-study/downloads/footmate_report.pptx")
 prs=Presentation(path)
-assert len(prs.slides)==10
+assert len(prs.slides)==9
 # The asset renderer may run again on a PR; do not rewrite an already polished PPTX.
 VISUAL_MARKER="footmate-main-visual-20261108"
 if VISUAL_MARKER in (prs.core_properties.keywords or ""):
     print("PASS FootMate final-slide hierarchy already applied; original published bytes unchanged")
     raise SystemExit(0)
-page=prs.slides[9]
+page=prs.slides[8]
 P=RGBColor(230,244,232)
 F=RGBColor(21,81,52)
 M=RGBColor(60,117,78)
@@ -56,11 +56,11 @@ for sh in page.shapes:
                     run.font.bold=True
             changed+=1
 
-assert alltext()==before, "original ten-slide text/numbers must be identical"
+assert alltext()==before, "original nine-slide text/numbers must be identical"
 if changed:
     prs.core_properties.keywords=((prs.core_properties.keywords or "")+" "+VISUAL_MARKER).strip()
     prs.save(path)
     assert alltext()==before, "text mutated"
     print("PASS FootMate final-slide hierarchy (modified editable elements):",changed)
 else:
-    print("PASS FootMate original ten-slide design already consistent; no visual edit required")
+    print("PASS FootMate original nine-slide design already consistent; no visual edit required")
