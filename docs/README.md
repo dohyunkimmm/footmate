@@ -1,3 +1,10 @@
+## 2026-11-09 최종 · 의존성 반영·운영 감사 종료 기준
+
+- 최신 [`main` `895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833)에서 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. SQL 이력 중 동일 blob 2쌍은 의도적으로 보존하고, 사용 중이거나 참조가 불확실한 파일·브랜치는 삭제하지 않습니다.
+- [#898](https://github.com/dohyunkimmm/footmate/pull/898) setup-python v7 및 [#904](https://github.com/dohyunkimmm/footmate/pull/904) Wrangler 4.158.0·`@vercel/oidc` 4.0.7은 최신 `main` 기반으로 Change Impact·Regression 36·Browser E2E + axe 검사에 모두 통과 후 병합했습니다. #894·#895는 동일 패치가 통합 반영돼 미병합 종료했으며, 이는 변경 누락이 아닙니다. `package-lock.json` 설치 버전도 확인했습니다.
+- 운영 `footmate-beta` 읽기 전용 재점검: 공개 테이블 **16/16 RLS 활성**, SECURITY DEFINER **38개**, `anon` 실행 가능 **0개**, `authenticated` 실행 가능 **21개**, 정책에서 `raw_user_meta_data` 참조 **0개**. Security Advisor는 21+1+1 WARN, 2 INFO, Performance Advisor `unused_index` 8 INFO, Health 0건을 보고했습니다. [#611 실서명 JWT·TOTP MFA E2E](https://github.com/dohyunkimmm/footmate/issues/611)는 실제 승인된 계정/세션 증빙이 없어 미실시·OPEN입니다. 무료 요금제의 유출 암호 보호 경고는 기존 수용 예외로 유지합니다.
+- 이 기록은 GitHub/Supabase 메타데이터 및 CI의 재검증 결과입니다. 운영 DB·인증정보·권한·요금제·데이터·Cloudflare 배포 설정을 변경한 증거가 아니며, 11월 8일 이하 문단은 당시의 스냅샷입니다.
+
 ## 2026-11-09 · 현재 `main` 파일 목록 및 미반영 상태
 
 - [`main` `39bc56a`](https://github.com/dohyunkimmm/footmate/commit/39bc56a58e17c0f30e5408073b926f5e4a77652d) 재귀 트리(`truncated=false`)는 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개)입니다. 전날의 339개 파일은 당시 스냅샷이며, 최근 화면·발표자료 수정과 마이그레이션 파일 복구 뒤 수치가 달라졌습니다. 기존 공개 진입점·배포 경로·QA 파일·원본 자산은 보존합니다. 동일 blob SHA인 SQL 마이그레이션 2쌍은 실행 이력 보호를 위해 이동/삭제하지 않습니다.
