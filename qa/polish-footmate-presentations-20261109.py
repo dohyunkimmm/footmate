@@ -82,7 +82,7 @@ def replace_runs(slide, source, target):
     changed = 0
     for shape in slide.shapes:
         for run in visit_runs(shape):
-            if source in run.text:
+            if source in run.text and (source != "400원" or run.text.strip() == source):
                 changed += run.text.count(source)
                 run.text = run.text.replace(source, target)
     return changed
