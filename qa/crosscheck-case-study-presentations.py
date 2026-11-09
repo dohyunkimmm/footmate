@@ -96,6 +96,7 @@ assert "월별 계획 차이·현금수지" in strategy[-1], "Scenario compariso
 assert "재무 수치는 계획 시나리오" in strategy[-1], "Financial scenario statement is ambiguous"
 assert "복합안 손익분기" in main[3], "Fourth-slide concise decision label missing"
 assert "현금수지 = 매출" in main[8], "Ninth-slide cash-flow calculation missing"
+assert "12개월 동일 예약 가정" in main[7], "Identical monthly booking premise must be explicit in ROI"
 assert "관리 지표 · 공급 유지" in strategy[1], "Five-year deck metric caption did not sync"
 assert "월 경제적 손익과 연간 투자 후 현금수지는 별도 기준" in strategy[3], "Economic vs cash-flow distinction missing"
 assert "월 공급·거래 시나리오" in body and "월 공급·거래 시나리오 · 플랫폼 예약·취소 반영 산정 기준" not in body, "Table caption still verbose"
