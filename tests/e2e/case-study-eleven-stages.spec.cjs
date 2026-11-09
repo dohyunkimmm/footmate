@@ -673,7 +673,7 @@ test('supporting resource pages omit duplicate labels but retain scenario disclo
  await expect(page.locator('main')).not.toContainText('FootMate · 경영진 의사결정 메모');
  await expect(page.locator('main')).not.toContainText('산정 조건을 바꿔 손익 변화를 확인하세요.');
  await expect(page.locator('main')).toContainText('가상');
- await expect(page.locator('main')).toContainText('상단 계산기의 입력값은 표에 반영되지 않습니다.');
+ await expect(page.locator('main')).toContainText('계산기 입력값과는 연동되지 않습니다.');
  await page.goto('/src/case-study/forecast.html');
  await expect(page.locator('main')).not.toContainText('FootMate · 플랫폼 운영·경영관리');
  await expect(page.locator('main')).toContainText('2027년 월별 계획과 가상 거래를 구분해 비교합니다.');
