@@ -673,7 +673,7 @@ test('supporting resource pages omit duplicate labels but retain scenario disclo
  await expect(page.locator('main')).not.toContainText('FootMate · 경영진 의사결정 메모');
  await expect(page.locator('main')).not.toContainText('산정 조건을 바꿔 손익 변화를 확인하세요.');
  await expect(page.locator('main')).toContainText('가상');
- await expect(page.locator('main')).toContainText('계산기 입력값과 독립적으로 구성돼 있습니다.');
+ await expect(page.locator('main')).toContainText('상단 계산기의 입력값은 표에 반영되지 않습니다.');
  await page.goto('/src/case-study/forecast.html');
  await expect(page.locator('main')).not.toContainText('FootMate · 플랫폼 운영·경영관리');
  await expect(page.locator('main')).toContainText('2027년 월별 계획과 가상 거래를 구분해 비교합니다.');
@@ -980,7 +980,7 @@ test('case-study body copy stays concise and terminology stays consistent',async
   expect(longParagraphs,url).toEqual([]);
  }
  await page.goto('/src/case-study/materials.html');
- for(const phrase of ['2027년 손익 시나리오(산정 기준)','2027년 가상 예약 데이터와 월별 집계 예시입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
+ for(const phrase of ['2027년 손익 시나리오(산정 기준)','2027년 가상 예약·월별 집계입니다.','기회비용 포함 9,660만 원'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/forecast.html');
  for(const phrase of ['기준 5곳과 별도인 확대안입니다.','손익분기 공급처: 1~500곳 중 월 손익이 0 이상인 최소 수.','실제 수요와 제휴 계약은 현장에서 확인할 항목입니다.'])await expect(page.locator('body')).toContainText(phrase);
  await page.goto('/src/case-study/decision-memos.html');
