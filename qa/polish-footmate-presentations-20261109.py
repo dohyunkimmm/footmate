@@ -109,6 +109,9 @@ rewrite(main.slides, [0], "FootMate 경영계획·수익성·투자 판단",
         "FootMate 사업성 분석·경영계획", 1)
 rewrite(main.slides, [4], "경유·취소·완료율 점검",
         "예약·취소·완료율 점검", 1)
+rewrite(main.slides, [4], "400원", "+400원", 1)
+rewrite(main.slides, [4], "CS·획득·IT비 점검",
+        "고객 지원·확보·IT 비용 점검", 1)
 rewrite(main.slides, [6], "36개월 기본 고정현금비 2,460만원",
         "36개월 운영·초기 구축비 2,460만 원", 1)
 rewrite(main.slides, [6], "인력 기회비용 포함 9,660만원",
@@ -127,6 +130,8 @@ rewrite(strategy.slides, [5], "FOOTMATE  /  경영진 의사결정",
         "FootMate  /  투자 판단", 1)
 rewrite(strategy.slides, [5], "3  월별 실적 차이와 현금수지로 5개년 계획 점검",
         "3  월별 계획 대비 차이와 현금수지로 5개년 계획 점검", 1)
+rewrite(strategy.slides, [5], "재무값은 계획 시나리오",
+        "재무 수치는 계획 시나리오", 1)
 
 for deck in (main, strategy):
     for slide in deck.slides:
