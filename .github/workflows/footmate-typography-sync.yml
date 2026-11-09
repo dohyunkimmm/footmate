@@ -40,5 +40,7 @@ jobs:
             src/case-study/report-previews.js src/case-study/previews/strategy/
           if ! git diff --cached --quiet; then
             git commit -m "assets: sync presentation branding and rendered previews"
+            git fetch origin "polish/footmate-copy-decks-20261109"
+            git rebase FETCH_HEAD
             git push origin "HEAD:polish/footmate-copy-decks-20261109"
           fi
