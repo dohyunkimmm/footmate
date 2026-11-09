@@ -21,9 +21,9 @@ if OUT.exists():
         raise SystemExit(0)
 
 p=Presentation();p.slide_width=Inches(13.333);p.slide_height=Inches(7.5)
-G=RGBColor(15,55,44);G2=RGBColor(30,98,73);M=RGBColor(209,238,221)
-L=RGBColor(202,247,172);W=RGBColor(255,255,255);D=RGBColor(30,54,46)
-S=RGBColor(101,122,110);BG=RGBColor(248,251,248);RED=RGBColor(169,65,62)
+G=RGBColor(20,44,57);G2=RGBColor(8,123,96);M=RGBColor(234,245,241)
+L=RGBColor(205,243,93);W=RGBColor(255,255,255);D=RGBColor(27,41,49)
+S=RGBColor(82,99,109);BG=RGBColor(245,247,246);RED=RGBColor(169,65,62)
 
 def rect(sl,x,y,w,h,color):
     sh=sl.shapes.add_shape(MSO_SHAPE.RECTANGLE,Inches(x),Inches(y),Inches(w),Inches(h))
@@ -42,7 +42,7 @@ def text(sl,txt,x,y,w,h,size=16,bold=False,color=D):
 def base(i,title,lead):
     sl=p.slides.add_slide(p.slide_layouts[6]);rect(sl,0,0,13.333,7.5,BG)
     rect(sl,0,0,13.333,.09,G2)
-    text(sl,f'FOOTMATE  /  5-YEAR STRATEGY  /  {i:02d}',.73,.3,11,.3,11,True,G2)
+    text(sl,f'FootMate  /  5개년 경영계획  /  {i:02d}',.73,.3,11,.3,11,True,G2)
     text(sl,title,.73,.82,11.9,.6,28,True,G)
     text(sl,lead,.75,1.47,11.8,.42,13,False,S)
     rect(sl,.75,6.97,11.8,.018,M)
@@ -57,8 +57,8 @@ def panel(sl,x,y,w,h,label,value,desc):
     text(sl,desc,x+.18,y+1.28,w-.36,.44,11,False,S)
 
 sl=p.slides.add_slide(p.slide_layouts[6]);rect(sl,0,0,13.333,7.5,G)
-text(sl,'FOOTMATE',.85,1.36,11.5,.88,46,True,W)
-text(sl,'중장기 경영전략 및 수익성 개선',.85,2.61,11.6,.78,29,True,L)
+text(sl,'FootMate',.85,1.36,11.5,.88,46,True,W)
+text(sl,'5개년 경영계획·수익성 개선',.85,2.61,11.6,.78,29,True,L)
 text(sl,'5개년 계획 → 수익성 개선 → KPI 관리 → 투자·자원 배분',.86,4.1,11.7,.64,19,False,W)
 text(sl,'제휴 공급처 5곳 → 36곳 · 중장기 계획 시나리오',.88,5.62,11.6,.43,17,True,L)
 
@@ -124,13 +124,13 @@ rect(sl,.77,6.46,11.7,.32,G2)
 text(sl,'관리 주기: 월간 성과 분석 / 분기별 경영계획·투자 재검토',.98,6.46,11.3,.32,12,True,W)
 
 sl=p.slides.add_slide(p.slide_layouts[6]);rect(sl,0,0,13.333,7.5,G)
-text(sl,'FOOTMATE  /  경영진 의사결정',.86,1.23,10,.48,16,True,M)
+text(sl,'FootMate  /  투자 판단',.86,1.23,10,.48,16,True,M)
 text(sl,'성장 규모보다\n수익성 있는 확대를 우선',.86,1.96,11.9,1.55,35,True,W)
 rect(sl,.86,3.9,11.65,1.72,G2)
 text(sl,'1  공급·참가·재참가 성과를 기준으로 성장계획 집행',1.13,4.09,11,.45,17,False,W)
 text(sl,'2  수수료·결제비·관리비 조건에 따른 투자규모 조정',1.13,4.62,11,.45,17,False,W)
-text(sl,'3  월별 실적 차이와 현금수지로 5개년 계획 점검',1.13,5.12,11,.45,17,False,W)
-text(sl,'재무값은 계획 시나리오',.86,6.72,11.4,.34,12,False,M)
+text(sl,'3  월별 계획 대비 차이와 현금수지로 5개년 계획 점검',1.13,5.12,11,.45,17,False,W)
+text(sl,'재무 수치는 계획 시나리오',.86,6.72,11.4,.34,12,False,M)
 p.save(OUT)
 check=Presentation(OUT)
 assert len(check.slides)==6
