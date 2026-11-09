@@ -78,6 +78,18 @@ for filename,count in (("footmate_report.pptx",9),("footmate_5year_strategy.pptx
             slide_xml=font_deck.read(part)
             families=set(re.findall(rb'<a:(?:latin|ea|cs)\b[^>]*\btypeface="([^"]+)"',slide_xml))
             assert families and families <= {b"Pretendard"}, (filename,number,families)
+# Editorial parity: public brand, slide typography and readable terminology.
+assert all("FootMate · 사업성 분석·경영계획" in slide for slide in main), "Main slide footers use old branding"
+assert all("사업·IT 기획" not in slide for slide in main), "Former project label remained in main deck"
+assert "사업성 분석·경영계획" in main[0], "Main cover identity mismatch"
+assert "예약·취소·완료율 점검" in main[4], "The monthly variance typo has returned"
+assert "경유·취소·완료율" not in main[4], "Old typo returned"
+assert "36개월 운영·초기 구축비 2,460만 원" in main[6], "36-month cost scope unclear"
+assert all("5개년 경영계획" in slide for slide in strategy[1:5]), "5-year deck headers are inconsistent"
+assert "월별 계획 대비 차이" in strategy[-1], "Scenario comparison could imply actual sales"
+assert "제안 일정 · 실제 성과 아님" not in body, "Redundant negative label returned"
+assert "실제 결제·환불·운영자 정산은 아직 구축하지 않았다" not in body, "Unnecessary negative phrasing returned"
+
 print("DECKS", len(main), len(strategy), "font: Pretendard")
 assert "수익성" in main[0] and "운영자 제휴" in main[0]
 assert all(str(i) in no_spaces(main[2]) for i in ("626", "751,200"))
