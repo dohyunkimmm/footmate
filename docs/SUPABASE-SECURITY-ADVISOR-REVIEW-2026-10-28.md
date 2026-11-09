@@ -1,5 +1,14 @@
 # Supabase Security/Performance Advisor — per-item review (2026-10-28)
 
+## 2026-11-09 최신 운영 확인 — #611 인증·MFA E2E 재개 게이트
+
+- **읽기 전용 카탈로그 확인:** `public` 일반 테이블 **16/16 RLS 활성**. RLS가 활성화됐지만 정책이 없는 테이블 **2개**는 `anon`/ `authenticated`에 SELECT·INSERT·UPDATE·DELETE 권한이 **0개**입니다. `SECURITY DEFINER` 함수 **38개** 중 `anon EXECUTE` 허용은 **0개**, `authenticated EXECUTE` 허용은 **21개**입니다.
+- **운영자 권한 선행 확인:** `operator_*` 함수 **11개 전부**에서 `BEGIN` 다음 첫 실행문이 `perform public.require_beta_operator_aal2();`인 것을 현재 DB 정의에서 재검증했습니다(**11/11**). 이는 SQL 정의 순서만 확인한 것이고, 실제 서명 JWT의 접근 허용·거부 증빙을 뜻하지 않습니다.
+- **인증 환경 준비도(식별정보 제외):** Auth 계정 **4개**, 운영자 멤버십 **1개**, `verified` MFA 요소 **1개**, 기록된 세션 **2개**. 기존 계정의 테스트 용도·소유권, 실시간 JWT/세션 유효성 또는 TOTP 코드를 확인한 것은 아닙니다.
+- **스케줄러 최근 24시간:** Cron 작업 ID 1·3 각 **1,440건**, ID 2 **288건**으로 총 **3,168건** `succeeded`, 실패 **0건**. 이는 PostgreSQL 스케줄 작업의 실행 결과이며 외부 메일·푸시 도착 성공을 증명하지 않습니다. `pg_net`·Cron·인덱스는 변경하지 않았습니다.
+- **현재 E2E 선행 도구:** [`scripts/qa-real-signed-auth.mjs`](../scripts/qa-real-signed-auth.mjs)는 명시적으로 승인된 별도 사용자·운영자 테스트 계정과 실시간 TOTP, 프로젝트용 공개 API 키, 명시적 승인 플래그가 있어야 실행됩니다. 인증 서버로 서명 확인·읽기 전용 RPC·AAL1→AAL2·토큰 갱신·로그아웃 흐름을 검사하며, [모의 계약 테스트](../tests/contracts/real-signed-auth-qa.contract.mjs) 성공만으로 실제 E2E 완료로 처리하지 않습니다. 계정 비밀번호·TOTP·JWT·refresh token을 이슈·CI·문서에 남기지 않고 **승인된 별도 실행 환경에서만** 수동 실행합니다.
+- **미완료/안전 경계:** 현재 연결 관리 도구에는 허가된 실계정의 비밀번호·현행 TOTP나 새 서명 세션이 제공되지 않습니다. 따라서 [#611](https://github.com/dohyunkimmm/footmate/issues/611)의 **실계정 E2E는 미실행·OPEN 유지**. 암호 보호 유료 기능은 기존 무료 운영 예외를 유지합니다. 읽기 전용 `SELECT`/Advisor 외 운영 데이터·자격·설정·과금 변경 0건입니다.
+
 > Scope: footmate-beta production **read-only** catalog/statistics review. This is **not** real signed-JWT authentication E2E, a change approval, or a claim that the Advisor warnings are resolved. Later Data API exposure tests are documented below.
 
 ## 2026-11-08 추가 확인 — RPC 21개·인덱스 실행계획·Cron
