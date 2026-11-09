@@ -85,7 +85,7 @@ for(const required of [
   // Slide counts remain validated by the Case Study browser tests.
   '기획 자료 받기',
   '전략 자료 받기',
-  '사업·IT 기획',
+  '사업성 분석·경영계획',
   '중장기 성장 전략',
   'footmate_report.pptx'
 ])assert.ok(caseStudy.includes(required),`missing current strategy Case Study boundary copy: ${required}`);

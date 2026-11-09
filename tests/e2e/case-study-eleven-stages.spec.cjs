@@ -8,10 +8,13 @@ for(const width of [1920,1440,800,390,320]){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');await page.evaluate(()=>document.fonts.ready);
   await expect(page.locator('.sidebar .sb-logo')).toHaveText('FootMate');
-  await expect(page.locator('.sidebar .sb-sub')).toHaveCount(0);
+  await expect(page.locator('.sidebar .sb-sub')).toHaveText('신사업 사업성 분석·경영계획');
   await expect(page.locator('.sidebar')).not.toContainText('Case Study');
   await expect(page.locator('.sidebar')).toHaveAttribute('aria-label','본문 목차');
   await expect(page.locator('.toc-item')).toHaveCount(9);
+  await expect(page.locator('#section-01 .case-identity')).toHaveText('신사업 사업성 분석·경영계획');
+  await expect(page.locator('#section-01 .case-quicklinks a')).toHaveCount(2);
+  await expect(page.locator('#section-04 .case-scenario-row')).toHaveCount(3);
   await expect(page.locator('.slide')).toHaveCount(9);
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('.cs-controls,.dot,.btn-next,.btn-prev')).toHaveCount(0);
@@ -229,14 +232,14 @@ test('case study distinguishes implementation evidence from proposed business re
  await expect(page.locator('body')).not.toContainText(/2026\.06\.08|교육과정/);
  await expect(page.locator('.sidebar a[href="/demo"]')).toHaveCount(0);
  await expect(page.locator('a[href="/demo"]')).toHaveCount(1);
- await expect(page.locator('#section-06 a[href="/demo"]')).toHaveText('서비스 Demo 보기 ↗');
+ await expect(page.locator('#section-06 a[href="/demo"]')).toHaveText('보조 자료 · 서비스 데모 보기 ↗');
  await expect(page.locator('#section-06 a[href="/demo"]')).toHaveAttribute('target','_blank');
  for(const text of ['626건','340원','1,765건','7,648건','−387,160원'])await expect(page.locator('.track')).toContainText(text);
  await expect(page.locator('#section-08')).toContainText('추진 일정과 목표, 예산 및 결정 기준.');
  await expect(page.locator('#section-01')).toContainText('수행 범위');
  await expect(page.locator('.track')).not.toContainText('김도현');
  await expect(page.locator('#section-01')).not.toContainText('실제 계약·매출 실적이 아닙니다');
- await expect(page.locator('#section-01 .lead')).toHaveCount(0);
+ await expect(page.locator('#section-01 .lead')).toHaveText('시장·경쟁 분석부터 수익구조 설계, 손익분기점 분석, 5개년 경영계획 및 투자 판단까지.');
  await expect(page.locator('#section-06')).not.toContainText('직접 구축·외부 활용·후속 투자 구분. 접근·복구·비용 검토.');
  await expect(page.locator('#section-09')).toContainText('건당 공헌이익·플랫폼 예약 비중·재참가 확인.');
  await expect(page.locator('#section-06')).toContainText('구현·검증 요약');
@@ -413,7 +416,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(preview).not.toHaveAttribute('open',/.+/);
   await expect(frame).toHaveAttribute('data-src','/src/case-study/materials.html?preview=1&viewer=20261108-copy-pruned');
   const summary=preview.locator('summary');
-  await expect(summary).toContainText('사업·IT 기획');
+  await expect(summary).toContainText('사업성 분석·경영계획');
   const resourceFonts=await summary.evaluate(el=>({
     text:getComputedStyle(el).fontFamily,
     icon:getComputedStyle(el.querySelector('.case-preview-indicator'),'::after').fontFamily
@@ -476,7 +479,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
   await expect(slides.locator('.slide-gallery')).toBeHidden();
   await expect.poll(()=>slides.locator('#slide').evaluate(image=>image.complete&&image.naturalWidth>200&&image.naturalHeight>100),{timeout:15000}).toBe(true);
 
-  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업·IT 기획');
+  await expect(preview.locator('.case-preview-summary-text')).toContainText('사업성 분석·경영계획');
   await expect(preview.locator('.case-preview-symbol')).toHaveText('01');
   await expect(slides.locator('#slideSelect,.filmstrip')).toHaveCount(0);
   await expect(slides.locator('#slideTitle')).toHaveText('플랫폼 운영과 수익성 개선');
@@ -526,7 +529,7 @@ test('single resource section, inline financial model and PPT viewer',async({pag
     expect(control.width,control.name+' target width').toBeGreaterThanOrEqual(44);
     expect(control.height,control.name+' target height').toBeGreaterThanOrEqual(44);
   }
-  await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(11, 66, 49)');
+  await expect(toolbar.locator('#expand')).toHaveCSS('background-color','rgb(20, 44, 57)');
   expect(await toolbar.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);
   // Fullscreen temporarily stretches the viewer; exit must restore its natural
   // slide + toolbar height without leaving blank space inside the iframe.
@@ -661,7 +664,7 @@ test('scenario hierarchy, input guidance and responsive readability evidence',as
 
 test('supporting resource pages omit duplicate labels but retain scenario disclosures',async({page})=>{
  await page.goto('/src/case-study/materials.html');
- await expect(page.locator('main > h1')).toHaveText('FootMate 분석 자료');
+ await expect(page.locator('main > h1')).toHaveText('FootMate 사업성 분석·경영계획 자료');
  await expect(page.locator('a.back')).toHaveText('본문으로');
  await expect(page.locator('main')).not.toContainText('본편 9장 · 5개년 전략 보완자료 6장');
  await expect(page.locator('main')).not.toContainText('FootMate · 플랫폼 운영·경영관리');
