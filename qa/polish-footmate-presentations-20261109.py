@@ -129,7 +129,7 @@ rewrite(strategy.slides, [0], "중장기 경영전략 및 수익성 개선",
 rewrite(strategy.slides, [5], "FOOTMATE  /  경영진 의사결정",
         "FootMate  /  투자 판단", 1)
 rewrite(strategy.slides, [5], "3  월별 실적 차이와 현금수지로 5개년 계획 점검",
-        "3  월별 계획 대비 차이와 현금수지로 5개년 계획 점검", 1)
+        "3  월별 계획 차이·현금수지로 경영계획 점검", 1)
 rewrite(strategy.slides, [5], "재무값은 계획 시나리오",
         "재무 수치는 계획 시나리오", 1)
 
