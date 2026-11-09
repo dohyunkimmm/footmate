@@ -1078,3 +1078,53 @@ test('body and presentations retain consistent figures and necessary disclosures
  expect(result.status, (result.stdout||'')+'\n'+(result.stderr||'')).toBe(0);
  expect(result.stdout).toContain('PASS: body vs 9-slide report vs 6-slide strategy figures, copy, and decisions match');
 });
+
+
+test('final typography audit keeps preview captions and mobile controls legible',async({page})=>{
+ for(const width of [320,390,800]){
+  await page.setViewportSize({width,height:844});
+  await page.goto('/src/case-study/materials.html?preview=1');
+  await expect(page.locator('.slide-gallery-index').first()).toBeVisible();
+  const samples=await page.evaluate(()=>{
+   const rgb=value=>(value.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
+   const luminance=value=>{
+    const [r,g,b]=rgb(value).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);
+    return .2126*r+.7152*g+.0722*b;
+   };
+   const contrast=(a,b)=>{
+    const x=luminance(a),y=luminance(b);
+    return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
+   };
+   return [
+    ['Gallery description','.slide-gallery-intro p','.slide-gallery'],
+    ['Slide index','.slide-gallery-index','.slide-gallery-card']
+   ].map(([name,selector,parent])=>{
+    const element=document.querySelector(selector);
+    const computed=getComputedStyle(element);
+    const background=getComputedStyle(element.closest(parent)).backgroundColor;
+    return {name,fontSize:parseFloat(computed.fontSize),contrast:contrast(computed.color,background)};
+   });
+  });
+  for(const sample of samples){
+   expect(sample.contrast,JSON.stringify({width,...sample})).toBeGreaterThanOrEqual(4.5);
+   expect(sample.fontSize,JSON.stringify({width,...sample})).toBeGreaterThanOrEqual(sample.name==='Gallery description'?13:12);
+  }
+  await page.goto('/src/case-study/materials.html?preview=1&mode=slides');
+  await expect(page.locator('#page')).toHaveText('01 / 09');
+  const controlSizes=await page.locator('.viewer .toolbar button').evaluateAll(buttons=>buttons.map(node=>({
+   name:node.id,fontSize:parseFloat(getComputedStyle(node).fontSize),
+   width:node.getBoundingClientRect().width,height:node.getBoundingClientRect().height
+  })));
+  for(const control of controlSizes){
+   expect(control.fontSize,JSON.stringify({width,...control})).toBeGreaterThanOrEqual(12);
+   expect(control.height,JSON.stringify({width,...control})).toBeGreaterThanOrEqual(44);
+  }
+  expect(await page.locator('.viewer .toolbar').evaluate(node=>node.scrollWidth<=node.clientWidth+1),String(width)).toBe(true);
+ }
+ await page.setViewportSize({width:320,height:844});
+ await page.goto('/');
+ for(const selector of ['#section-01 .case-identity','.case-deck-stack .case-preview-count']){
+  const size=await page.locator(selector).first().evaluate(node=>parseFloat(getComputedStyle(node).fontSize));
+  expect(size,selector).toBeGreaterThanOrEqual(12);
+ }
+});
