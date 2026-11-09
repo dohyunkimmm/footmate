@@ -95,8 +95,11 @@ assert len(main.slides) == 9 and len(strategy.slides) == 6
 
 checks = []
 def rewrite(slides, targets, source, target, expected):
+    targets = tuple(targets)
     changed = sum(replace_runs(slides[i], source, target) for i in targets)
-    if changed != expected:
+    already = sum(run.text.count(target)
+                  for i in targets for shape in slides[i].shapes for run in visit_runs(shape))
+    if changed != expected and not (changed == 0 and already == expected):
         raise RuntimeError(f"Slide text mismatch ({changed}/{expected}): {source}")
     checks.append((source, target, changed))
 
