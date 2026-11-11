@@ -1,6 +1,7 @@
 const base=(process.env.FOOTMATE_PRODUCTION_URL||'https://footmate.fmate.workers.dev').replace(/\/$/,'');
 const strict=['1','true','yes'].includes(String(process.env.FOOTMATE_STRICT_PRODUCTION||'').toLowerCase());
 const release=require('../package.json').version;
+const reportOrigin='https://footmate-case-study.fmate.workers.dev';
 const {readFileSync}=require('node:fs');
 const {resolve}=require('node:path');
 function extractBetaRuntime(html){
@@ -22,22 +23,26 @@ async function runProductionSmoke(){
   const betaSource=readFileSync(resolve(__dirname,'../beta.html'),'utf8');
   const expectedBetaRuntime=extractBetaRuntime(betaSource);
   const expectedMediaRuntime=extractBetaMediaRuntime(betaSource);
-  const publicApp=await(await get('/demo')).text(),app=await(await get('/prototype')).text(),cs=await(await get('/')).text(),beta=await(await get('/beta')).text(),operator=await(await get('/beta/operator')).text(),serviceWorker=await(await get('/beta-sw.js')).text(),journey=await(await get('/src/domain/journey.js')).text(),ai=await(await get('/src/app/ai-match-assistant.js')).text(),api=await(await get('/api/ai-match-assistant')).json(),betaConfig=await(await get('/api/beta-config')).json();
-  a(publicApp.includes('id="footmate-beta"'),'public entry uses released Beta');a(publicApp.includes(expectedBetaRuntime),'public entry uses connected runtime');a(app.includes(`footmate-release\" content=\"${release}\"`),'app release');a(app.includes('/src/app/ai-match-assistant.js?v=511'),'AI runtime');a(app.includes('/src/app/ai-match-assistant.css?v=511'),'AI styles');a(app.includes('theme-color\" content=\"#f7f8f7\"'),'white-first browser chrome');a(!app.includes('id=\"fm-real-app-white-tone\"'),'white-first CSS moved out of HTML');a(!app.includes('const redundant=new Set'),'Detail cleanup runtime patch removed');a(cs.includes('footmate-case-study-release\" content=\"5.6.0\"'),'case release');a(cs.includes('/src/case-study/nine-sections.js?v=560'),'case narrative');a(beta.includes('FootMate | Demo'),'Demo app route');a(beta.includes(expectedBetaRuntime),'beta runtime matches checked-out source');a(beta.includes('/src/beta/push.js?v=1'),'beta push runtime');a(beta.includes(expectedMediaRuntime),'beta media runtime');a(operator.includes('FootMate | Closed Beta Operator'),'operator route');a(operator.includes('/src/beta/operator-mfa.js?v=1'),'operator MFA gate');a(operator.includes(expectedMediaRuntime),'operator media runtime');a(serviceWorker.includes("addEventListener('push'"),'beta push service worker');a(betaConfig.connected===true,'beta backend connected');a(journey.includes("CONNECTED_PLATFORM_VERSION='5.1.1'"),'journey version');a(ai.includes("rankingOwner:'deterministic recommendation engine'"),'deterministic ranking ownership');a(api.version==='5.1.1','AI API version');a(api.provider==='vercel-ai-gateway','AI API provider');a(api.model==='openai/gpt-5.4-nano','AI primary model');a(api.fallbackModel==='openai/gpt-5.4-mini','AI fallback model');a(api.gatewayTimeoutMs===3000,'AI server timeout');a(typeof api.configured==='boolean','AI API configuration disclosure');
+  const publicApp=await(await get('/demo')).text(),app=await(await get('/prototype')).text(),root=await(await get('/')).text(),beta=await(await get('/beta')).text(),operator=await(await get('/beta/operator')).text(),serviceWorker=await(await get('/beta-sw.js')).text(),journey=await(await get('/src/domain/journey.js')).text(),ai=await(await get('/src/app/ai-match-assistant.js')).text(),api=await(await get('/api/ai-match-assistant')).json(),betaConfig=await(await get('/api/beta-config')).json();
+  a(publicApp.includes('id="footmate-beta"'),'public entry uses released Beta');a(publicApp.includes(expectedBetaRuntime),'public entry uses connected runtime');a(app.includes(`footmate-release\" content=\"${release}\"`),'app release');a(app.includes('/src/app/ai-match-assistant.js?v=511'),'AI runtime');a(app.includes('/src/app/ai-match-assistant.css?v=511'),'AI styles');a(app.includes('theme-color\" content=\"#f7f8f7\"'),'white-first browser chrome');a(!app.includes('id=\"fm-real-app-white-tone\"'),'white-first CSS moved out of HTML');a(!app.includes('const redundant=new Set'),'Detail cleanup runtime patch removed');a(root.includes('id="footmate-beta"'),'public root redirects to released Demo');a(beta.includes('FootMate | Demo'),'Demo app route');a(beta.includes(expectedBetaRuntime),'beta runtime matches checked-out source');a(beta.includes('/src/beta/push.js?v=1'),'beta push runtime');a(beta.includes(expectedMediaRuntime),'beta media runtime');a(operator.includes('FootMate | Closed Beta Operator'),'operator route');a(operator.includes('/src/beta/operator-mfa.js?v=1'),'operator MFA gate');a(operator.includes(expectedMediaRuntime),'operator media runtime');a(serviceWorker.includes("addEventListener('push'"),'beta push service worker');a(betaConfig.connected===true,'beta backend connected');a(journey.includes("CONNECTED_PLATFORM_VERSION='5.1.1'"),'journey version');a(ai.includes("rankingOwner:'deterministic recommendation engine'"),'deterministic ranking ownership');a(api.version==='5.1.1','AI API version');a(api.provider==='vercel-ai-gateway','AI API provider');a(api.model==='openai/gpt-5.4-nano','AI primary model');a(api.fallbackModel==='openai/gpt-5.4-mini','AI fallback model');a(api.gatewayTimeoutMs===3000,'AI server timeout');a(typeof api.configured==='boolean','AI API configuration disclosure');
 for(const route of ['/demo','/next'])a((await(await get(route)).text()).includes('id="footmate-beta"'),`${route} opens Beta`);
 
-  // Verify the static Case Study cover contract on the deployed source.
-  const caseScript=await(await get('/src/case-study/nine-sections.js')).text();
-  a(!caseScript.includes('Live interaction'),'Case Study Live interaction removed');
-  a(!caseScript.includes('/demo?embed=1'),'Case Study embedded app removed');
-  a(!hasCaseStudyDemoCta(cs),'Case Study sidebar has no duplicate Demo CTA');
-  a(hasCaseStudyDemoCta(caseScript),'Case Study implementation Demo CTA route');
-  a(caseScript.includes('보조 자료 · 서비스 데모 보기 ↗'),'Case Study implementation Demo CTA copy');
-  // Verify the changed Case Study assets themselves, not only the product release marker.
-  for(const asset of ['index.html','src/case-study/nine-sections.js','src/case-study/nine-sections.css']){
-    const actual=asset==='index.html'?cs:await(await get('/'+asset)).text();
-    a(actual===readFileSync(resolve(__dirname,'..',asset),'utf8'),`Case Study asset matches checked-out SHA: ${asset}`);
+  // 이전 보고서 URL은 신규 보고서 Worker로 리디렉션되어야 합니다.
+  const legacyRoutes=[
+    ['/index.html','/'],
+    ['/report','/'],
+    ['/case-study','/'],
+    ['/src/case-study/materials.html?preview=1','/src/case-study/materials.html?preview=1'],
+    ['/src/case-study/downloads/footmate_report.pptx','/src/case-study/downloads/footmate_report.pptx']
+  ];
+  for (const [oldPath,newPath] of legacyRoutes) {
+    const response=await fetch(base+oldPath,{redirect:'manual'});
+    a(response.status===302,oldPath+' legacy redirect status');
+    a(response.headers.get('location')===reportOrigin+newPath,oldPath+' destination');
   }
+  const report=await fetch(reportOrigin+'/');
+  a(report.ok,'standalone report is available');
+  a((await report.text()).includes('footmate-case-study-release'),'standalone report version marker');
   console.log(`PASS v${release} exact Production HTTP smoke (AI configured=${api.configured}, beta connected=${betaConfig.connected})`);
 }
 
