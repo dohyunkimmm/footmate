@@ -1,6 +1,6 @@
 # Case Study 화면 근거 · 2026-10-25
 
-> **과거 서비스기획 화면 검수 기록** · 본문의 01~11 등 번호는 2026-10-25~26 당시 화면 구성 기준입니다. 현재 공개 `/`는 IT기획·전략기획 9개 섹션이며, 현행 구성·수치는 [IT기획·전략기획 Case Study](IT-STRATEGY-CASE-STUDY.md)와 `src/case-study/nine-sections.js`를 우선합니다. 캡처는 해당 시점의 화면 근거로 보존합니다.
+> **과거 서비스기획 화면 검수 기록** · 본문의 01~11 등 번호는 2026-10-25~26 당시 화면 구성 기준입니다. 현재 공개 `/`는 IT기획·전략기획 9개 섹션이며, 현행 구성·수치는 [IT기획·전략기획 Case Study]( https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)와 `src/case-study/nine-sections.js`를 우선합니다. 캡처는 해당 시점의 화면 근거로 보존합니다.
 
 ## 기본 미리보기와 본문 균형 · 2026-10-26
 

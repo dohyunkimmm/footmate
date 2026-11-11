@@ -76,7 +76,7 @@
 - **ROI 가정:** 12개월 현금비용 기준 보수 **−89.7%**, 기준 **−47.5%**, 확장 **−11.4%**, 확장·관리비 반영 **−14.6%**. 신규 사업계획 수치로서 월 운영손익과 계산 기간 및 초기비용 포함 범위를 구분한다. 비용·매출 산출표와 가정은 [현행 기획 문서](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)의 05번 참조.
 - **의사결정:** 운영자 제휴형 우선 및 수수료·결제비 복합 협상 → 건당 공헌이익·플랫폼 예약 비중·재참가 확인 → 취소·고객지원비 반영 손익·예상 ROI 재산정 → 공급 계약·수익성 기준 충족 시 단계적 투자 확대.
 - **운영 반영 근거:** [PR #803–#809](https://github.com/dohyunkimmm/footmate/pull/809)에 걸친 ROI·발표자료·본문 문구 개선의 마지막 본문/PPT 동기화는 [PR #809](https://github.com/dohyunkimmm/footmate/pull/809) 병합 SHA `5d5f62d4e70077ca4c37873481377cd97ddd9ed9`. 최종 [FootMate QA #41414549101](https://github.com/dohyunkimmm/footmate/actions/runs/41414549101)의 Case Study QA·Cloudflare Deploy·Case Study Production Smoke **SUCCESS**.
-- **현재 문서 위치:** [전체 기획 근거](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차](CASE-STUDY-ELEVEN-STAGES.md) · [공개 본문](https://footmate.fmate.workers.dev/) · [발표자료 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1). 10월에 작성된 QA·구성 문서는 당시 기록으로 보존.
+- **현재 문서 위치:** [전체 기획 근거](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차](CASE-STUDY-ELEVEN-STAGES.md) · [공개 본문](https://footmate-case-study.fmate.workers.dev/) · [발표자료 미리보기](https://footmate-case-study.fmate.workers.dev/src/case-study/materials.html?preview=1). 10월에 작성된 QA·구성 문서는 당시 기록으로 보존.
 
 ## 2026-11-01 · 무료 운영 기준 확정
 
@@ -126,7 +126,7 @@
 
 - [루트 README](../README.md) — 제품 가치, `Find → Decide → Join → Play → Return`, 공개 화면·데이터·AI 책임 경계
 - [MATCHING-DIRECTION.md](MATCHING-DIRECTION.md) — **현행 풋살 매칭 방향**: 활동 지역 → 실력·포지션·시간 → 추천 미리보기 → 참가 시 로그인 → `/beta`
-- [Case Study `/`](https://footmate.fmate.workers.dev/) — IT기획·전략기획 9개 섹션의 설명·근거. 현재 구현은 `src/case-study/nine-sections.{js,css}`이고, 파일명은 과거 호환 이름
+- [Case Study `/`](https://footmate-case-study.fmate.workers.dev/) — IT기획·전략기획 9개 섹션의 설명·근거. 현재 구현은 `src/case-study/nine-sections.{js,css}`이고, 파일명은 과거 호환 이름
 - [FootMate Demo `/demo`](https://footmate.fmate.workers.dev/demo) — 로그인 전 풋살 조건 선택·예시 경기/추천 미리보기. 인증 후 `/beta`로 진입
 - `/beta` — 인증 후 추천·내 경기·MY. 실제 서버 경기·참가를 우선하고, 실제 모집이 없을 때는 명시된 예시 경기/브라우저 기록과 분리
 - `/beta/operator` — 허용된 운영자 전용 TOTP MFA 경로
