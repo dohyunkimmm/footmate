@@ -1,6 +1,8 @@
 'use strict';
 
 // Classification for the Cloudflare Workers deployment gate.
+const docsOnly = file => file === 'README.md' || file.startsWith('docs/') || file === '.github/pull_request_template.md' || file.endsWith('.md');
+
 // Fail open on missing/empty file lists: never silently skip runtime QA or deployment.
 function classify(files) {
   if (!Array.isArray(files) || files.length === 0 ||
