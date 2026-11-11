@@ -9,7 +9,7 @@
 | [`index.html`](https://footmate-case-study.fmate.workers.dev/) | 공개 IT·전략기획 Case Study 9개 섹션 |
 | [`app.html`](../app.html) · [`beta.html`](../beta.html) · [`beta-operator.html`](../beta-operator.html) | 데모·Beta·운영자 진입 화면 |
 | [`src/app/`](../src/app/) · [`src/beta/`](../src/beta/) · [`src/platform/`](../src/platform/) | 프런트엔드 제품, Beta, 플랫폼 구현 |
-| [`src/case-study/`]( https://github.com/dohyunkimmm/footmate-case-study/tree/main/src/case-study/) | 보고서·자료실·원본 PPTX/XLSX·증빙 이미지·미리보기 스크립트 |
+| [`src/case-study/`](https://github.com/dohyunkimmm/footmate-case-study/tree/main/src/case-study/) | 보고서·자료실·원본 PPTX/XLSX·증빙 이미지·미리보기 스크립트 |
 | [`api/`](../api/) · [`worker/`](../worker/) | AI 추천 연동과 Worker 요청 라우팅 |
 | [`supabase/`](../supabase/) | 배포/운영에 연결된 함수와 **적용 이력을 보존해야 하는** SQL 마이그레이션 |
 | [`scripts/`](../scripts/) · [`tests/`](../tests/) · [`.github/workflows/`](../.github/workflows/) | 빌드·계약/회귀·브라우저 QA·Git 읽기 전용 감사 |

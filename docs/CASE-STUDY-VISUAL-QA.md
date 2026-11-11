@@ -1,6 +1,6 @@
 # Case Study UI, UX and Visual QA
 
-> **과거 시각 QA 기록** · 현재 공개 Case Study는 **9개 섹션**입니다. 현행 본문은 [IT-STRATEGY-CASE-STUDY.md]( https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)를, 자동 검사 범위는 현재 E2E를 기준으로 확인합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 파일명 호환용이며 아래 판정은 작성 당시 상태입니다.
+> **과거 시각 QA 기록** · 현재 공개 Case Study는 **9개 섹션**입니다. 현행 본문은 [IT-STRATEGY-CASE-STUDY.md](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)를, 자동 검사 범위는 현재 E2E를 기준으로 확인합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 파일명 호환용이며 아래 판정은 작성 당시 상태입니다.
 
 The nine-stage case study uses native vertical scrolling. Visual review covers content relationships, emphasis, evidence accuracy and mobile navigation in addition to typography.
 

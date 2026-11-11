@@ -1,6 +1,6 @@
 # FootMate Case Study · 9단계 재편 (과거 이력)
 
-> **과거 승인 기준 (현재 기준 아님)** · 2026-10-13 당시 공개 화면은 11개 섹션이었습니다. 현행 9개 섹션 구성과 검증 기준은 [IT기획·전략기획 Case Study]( https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) 및 [문서 안내](README.md)를 확인하세요. 이하 서술은 당시 기록으로 보존합니다.
+> **과거 승인 기준 (현재 기준 아님)** · 2026-10-13 당시 공개 화면은 11개 섹션이었습니다. 현행 9개 섹션 구성과 검증 기준은 [IT기획·전략기획 Case Study](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) 및 [문서 안내](README.md)를 확인하세요. 이하 서술은 당시 기록으로 보존합니다.
 
 PC 표시 조정: 기존 왼쪽 목차·본문·카드 구성과 색상을 유지합니다. 1920px 화면에서 전체 폭 1360px, 목차 220px, 본문 최대 1000px로 읽는 폭을 제한하고 제목·이미지·여백만 줄였습니다. 페이지 전환 후 제목으로 이동하는 포커스는 유지하며 제목의 outline만 제외합니다.
 

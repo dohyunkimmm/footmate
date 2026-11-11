@@ -18,7 +18,7 @@
 | [`.github/`](../.github/) | 보호된 `main`, CI, 의존성 자동화 구성. 유지 |
 | [`api/`](../api/) | 서버 연동 API. 유지 |
 | [`docs/`](./) | 현행/과거 전략·운영·보안·QA 기록. 이력 구분 유지 |
-| [`qa/`]( https://github.com/dohyunkimmm/footmate-case-study/tree/main/qa/) | 발표자료·차트·시각 자산 보정 도구. 유지 |
+| [`qa/`](https://github.com/dohyunkimmm/footmate-case-study/tree/main/qa/) | 발표자료·차트·시각 자산 보정 도구. 유지 |
 | [`scripts/`](../scripts/) | 배포 준비, 자동 검사, 미리보기 동기화. 유지 |
 | [`src/`](../src/) | 앱, Beta, 공통 코드, 플랫폼 및 Case Study 원본. 유지 |
 | [`supabase/`](../supabase/) | Edge Functions와 순차 적용 SQL 마이그레이션. 유지 |
