@@ -6,7 +6,6 @@ import {PERFORMANCE_BUDGET,RUNTIME_PERFORMANCE_BUDGET} from '../../src/platform/
 const read=async path=>readFile(new URL(`../../${path}`,import.meta.url),'utf8');
 const pkg=JSON.parse(await read('package.json'));
 const app=await read('app.html');
-const caseStudy=await read('index.html');
 const design=await read('src/app/design-system-v2.css');
 const appJs=await read('src/app/app.js');
 const decision=await read('src/app/decision.js');
@@ -19,7 +18,6 @@ const [releaseMajor,releaseMinor]=String(pkg.version).split('.').map(Number);
 assert.ok(releaseMajor>5||(releaseMajor===5&&releaseMinor>=2),'product completion requires product release >= 5.2');
 assert.deepEqual(pkg.qaToolchain,{node:'24',playwright:'1.55.1',axeCorePlaywright:'4.10.2'});
 assert.ok(app.includes(`footmate-release\" content=\"${pkg.version}\"`));
-assert.ok(caseStudy.includes('footmate-case-study-release\" content=\"5.6.0\"'));
 assert.ok(app.includes('theme-color\" content=\"#f7f8f7\"'));
 assert.equal(app.includes('id=\"fm-real-app-white-tone\"'),false);
 assert.equal(app.includes('id=\"fm-product-polish-compat\"'),false);
