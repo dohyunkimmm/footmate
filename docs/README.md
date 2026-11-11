@@ -1,5 +1,12 @@
 > **2026-11-11 저장소 분리:** 보고서 원본·PPTX·XLSX·QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리합니다. 아래 과거 파일·배포 기록은 작성 당시 기준의 이력입니다.
 
+## 2026-11-11 · 현행 `main` 파일·폴더 목록 및 동기화
+
+- 기준: [`main` `caadcb6`](https://github.com/dohyunkimmm/footmate/commit/caadcb6e200241286607219a830a22bab5b4edeb)의 GitHub 재귀 트리(`truncated=false`) **파일 278개·디렉터리 37개**, 루트 파일 **13개**·최상위 폴더 **8개**. 아래 11월 9일 이하의 '최신'은 기록 당시 스냅샷입니다.
+- 현행 최상위 폴더: `.github/`, `api/`, `docs/`, `scripts/`, `src/`, `supabase/`, `tests/`, `worker/`. 보고서 전용 `qa/`, `src/case-study/`와 이전 루트 `index.html`은 이 저장소의 현재 경로가 아닙니다. [상세 점검](REPO-CLEANUP-2026-11-11.md).
+- [PR #909](https://github.com/dohyunkimmm/footmate/pull/909)로 이관한 보고서 원본·PPTX·XLSX·전용 QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에 있습니다. 이 저장소에 남은 `docs/CASE-STUDY-*.md`는 당시의 안내·근거 기록이며 **현행 구현 원본이 아닙니다**.
+- 조회 시 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**. 동일 blob의 SQL 마이그레이션 두 쌍과 제품 자산·테스트는 보존합니다. 새 빌드/배포 또는 DB 보안 검증을 수행했다는 의미가 아닙니다.
+
 ## 2026-11-09 최종 · 의존성 반영·운영 감사 종료 기준
 
 - 최신 [`main` `895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833)에서 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. SQL 이력 중 동일 blob 2쌍은 의도적으로 보존하고, 사용 중이거나 참조가 불확실한 파일·브랜치는 삭제하지 않습니다.
@@ -105,7 +112,7 @@
 
 # FootMate Documentation
 
-현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 이 목록은 **2026-10-30 현행 기준과 10월 27~28일 역사적 점검** 기록이며, 별도의 실시간 운영 가용성 검증을 뜻하지 않습니다. 제품 버전 번호는 사용자 화면 이름이 아니라 릴리스·검증 이력에 사용합니다.
+현행 제품 안내는 저장소 루트 [README](../README.md), [매칭 방향](MATCHING-DIRECTION.md), 현재 `main` 코드와 검증 결과를 우선합니다. 위 2026-11-11 요약과 아래 경로 목록이 현재 탐색 기준이며, 그 이전 날짜의 배포·점검 기록은 당시 스냅샷입니다.
 
 ## 저장소 폴더 안내 (`main` 기준)
 
@@ -113,20 +120,20 @@
 | --- | --- |
 | `src/app/`, `src/platform/`, `src/domain/`, `src/shared/` | 보관 중인 프로토타입·공유 도메인·플랫폼 코드 |
 | `src/beta/` | 현재 공개 `/demo`·`/beta` 앱과 인증·서버 연동 |
-| `src/case-study/` | 현재 9개 섹션 IT기획·전략기획 Case Study와 이전 화면 근거 이미지 (`nine-sections`는 호환 파일명) |
+| 보고서 전용 소스(별도 저장소) | 현행 HTML·JS·CSS·증빙·PPTX·XLSX는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리. 이 저장소에 `src/case-study/`는 없음 |
 | `api/`, `worker/` | AI/API 구현과 Cloudflare Workers 진입점 |
 | `supabase/` | Edge Function·적용 이력이 있는 SQL 마이그레이션 (임의 삭제·이름 변경 금지) |
 | `tests/`, `scripts/`, `.github/` | 계약·브라우저 QA, 빌드/검증 스크립트, CI 워크플로 |
-| `qa/` | 발표자료·차트·시각 자산 보정 스크립트 (원본 보존) |
+| 보고서 전용 QA(별도 저장소) | 발표자료·차트·시각 QA는 [footmate-case-study/qa](https://github.com/dohyunkimmm/footmate-case-study/tree/main/qa)로 이전. 이 저장소에 `qa/`는 없음 |
 | `docs/` | 현행 안내·운영 기록·과거 검증 근거 (아래 목록으로 상태 구분) |
 
-실행 코드와 기존 링크·스냅샷·SQL 이력을 유지하기 위해 이번 정리는 폴더 이동이 아니라 문서 색인과 참조 정합성을 기준으로 합니다. 공개 Case Study에서 참조하는 원본 `docs/` 문서는 Cloudflare 정적 빌드에 포함되지 않으므로 GitHub의 `main/docs/` 원본 링크로 연결합니다.
+실행 코드와 기존 링크·스냅샷·SQL 이력을 유지하기 위해 추가 파일을 임의 삭제하지 않습니다. 위 보고서 전용 경로는 별도 저장소로 분리된 현재 위치이며, 이 저장소의 과거 `docs/` 기록을 현행 보고서 소스로 취급하지 않습니다.
 
 ## 현재 제품·운영 기준
 
 - [루트 README](../README.md) — 제품 가치, `Find → Decide → Join → Play → Return`, 공개 화면·데이터·AI 책임 경계
 - [MATCHING-DIRECTION.md](MATCHING-DIRECTION.md) — **현행 풋살 매칭 방향**: 활동 지역 → 실력·포지션·시간 → 추천 미리보기 → 참가 시 로그인 → `/beta`
-- [Case Study `/`](https://footmate-case-study.fmate.workers.dev/) — IT기획·전략기획 9개 섹션의 설명·근거. 현재 구현은 `src/case-study/nine-sections.{js,css}`이고, 파일명은 과거 호환 이름
+- [Case Study `/`](https://footmate-case-study.fmate.workers.dev/) — IT기획·전략기획 9개 섹션. 현행 구현은 [별도 저장소의 `src/case-study/`](https://github.com/dohyunkimmm/footmate-case-study/tree/main/src/case-study)에서 관리
 - [FootMate Demo `/demo`](https://footmate.fmate.workers.dev/demo) — 로그인 전 풋살 조건 선택·예시 경기/추천 미리보기. 인증 후 `/beta`로 진입
 - `/beta` — 인증 후 추천·내 경기·MY. 실제 서버 경기·참가를 우선하고, 실제 모집이 없을 때는 명시된 예시 경기/브라우저 기록과 분리
 - `/beta/operator` — 허용된 운영자 전용 TOTP MFA 경로
@@ -180,7 +187,7 @@
 
 - [SERVICE-PLANNING-EVIDENCE.md](SERVICE-PLANNING-EVIDENCE.md) — 역할·우선순위·설계 가정 및 KPI 8개 측정 설계·한계
 - [USER-TEST-EVIDENCE.md](USER-TEST-EVIDENCE.md) — 교육생 6명·가입/탐색 과업 8회의 관찰 범위와 해석 한계
-- [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) — 현행 9개 전략 섹션의 목차(과거 11개 구성 파일명 보존); 현재 E2E는 `index.html`의 9개 화면 기준
+- [CASE-STUDY-ELEVEN-STAGES.md](CASE-STUDY-ELEVEN-STAGES.md) — 이전 파일명을 유지한 9개 섹션 목차 기록. 현재 보고서 원본과 QA는 [별도 저장소](https://github.com/dohyunkimmm/footmate-case-study) 기준
 - [CASE-STUDY-SCREEN-EVIDENCE.md](CASE-STUDY-SCREEN-EVIDENCE.md) — 2026-10-25 Demo·Case Study 원본 캡처의 출처와 가독성 검증 범위
 - [TYPOGRAPHY-QA-V2.md](TYPOGRAPHY-QA-V2.md) — 타이포그래피 QA 시나리오·증거 무결성·수동 검토 경계
 
@@ -193,14 +200,14 @@
 - [CASE-STUDY-COPY-QA-CORRECTIONS.md](CASE-STUDY-COPY-QA-CORRECTIONS.md) — 과거 13단계 문구 정정
 - [CASE-STUDY-5.2-COMPOSITION.md](CASE-STUDY-5.2-COMPOSITION.md) — 과거 13단계 구성 기록
 
-Case Study의 현행 구조와 캡처는 `CASE-STUDY-ELEVEN-STAGES.md`, `CASE-STUDY-SCREEN-EVIDENCE.md`, 최근 E2E와 `main` 상태를 우선합니다. 릴리스 이력과 이미 적용된 SQL 마이그레이션은 파일명이나 내용 유사성만으로 삭제·이동하지 않습니다.
+Case Study의 현행 구조와 캡처는 [별도 보고서 저장소](https://github.com/dohyunkimmm/footmate-case-study)의 구현·검증 자료를 우선합니다. 이 저장소의 `CASE-STUDY-ELEVEN-STAGES.md`와 `CASE-STUDY-SCREEN-EVIDENCE.md`는 작성 당시 근거 기록입니다. 이미 적용된 SQL 마이그레이션 및 릴리스 이력은 이름·내용 유사성만으로 삭제하거나 이동하지 않습니다.
 
 ## Impact-aware QA
 
 GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 - runtime/product 변경: `Regression 36` + `Browser E2E + axe`를 실행하고, `main` push에서 필요한 `Production Smoke`까지 수행한다.
-- UI/UX/layout 변경: 승인된 픽셀 기준을 보유한 Product 화면은 Playwright `toHaveScreenshot()`으로 실제 화면과 비교하고, baseline 생성만으로 PASS 처리하지 않는다. 현재 9개 섹션 Case Study는 전용 E2E·geometry·axe와 캡처 수동 검토로 검증하며, 캡처만으로 픽셀 baseline 통과를 주장하지 않는다.
+- UI/UX/layout 변경: 제품 화면은 기존 Playwright 시각 회귀·E2E·접근성 검증 기준을 따릅니다. Case Study 전용 E2E·시각 QA는 [보고서 저장소의 워크플로](https://github.com/dohyunkimmm/footmate-case-study/blob/main/.github/workflows/report-qa.yml)에서 별도 관리합니다. 보고서 QA를 제품 저장소에서 실행한다고 기록하지 않습니다.
 - docs-only 변경: `README.md`·`docs/` 등의 변경은 `Change Impact`에서 non-runtime으로 분류되며, `Docs-only QA`가 `git diff --check`, README·문서의 저장소 내 링크 검사, connected-platform·release-app 문서 계약을 실행한다. 이때 Regression/Browser E2E/Production Smoke는 skip한다.
 - workflow-only 변경: `.github/workflows/qa.yml`은 현행 `classify-cloudflare-impact.cjs`에서 runtime 영향으로 분류된다. 회귀·브라우저 검사를 실행하고, 새 Cloudflare 배포 없이 기존 운영 대상 `Production Smoke`를 실행할 수 있다. 따라서 문서 전용과 동일한 경량 QA라고 표현하지 않는다.
 - `queued` / `in_progress`는 실패나 stuck을 의미하지 않으며, 실제 failure/cancel/timeout 또는 progress 정지 근거가 있을 때만 이상 상태로 판단한다.
@@ -213,7 +220,7 @@ GitHub Actions QA는 변경 영향에 맞게 실행한다.
 
 완료 사실이 새로 확정되면 과거 문서의 `별도 확인 대상`, `미검증`, `pending` 같은 표현과 충돌하지 않는지 반드시 다시 검색한다. 제품/배포 사실과 절차 문서가 모두 일치하기 전에는 최종 sync-up 완료로 표현하지 않는다. 과거 Release History 자체를 보존해야 하는 경우에는 `RELEASE-HISTORY-CORRECTIONS.md`에 supersession을 명시해 현재 해석을 분리한다.
 
-Case Study는 Product package release와 version-coupling하지 않는다. FootMate의 작은 visual polish, spacing, density, copy, screenshot baseline 변화만으로는 Case Study sync 사유로 보지 않는다. FootMate의 설명·기능 구조·핵심 flow·성과 근거·대표 화면이 materially 달라지면 Case Study sync 필요 여부를 점검한다. 사용자가 Case Study 수정을 명시적으로 요청한 경우에는 현재 9개 섹션 원본(`src/case-study/nine-sections.js`, `nine-sections.css`)을 수정하고, 변경된 `/` 화면의 동작·접근성·모바일 표시를 검증한다. 과거 13단계 생성 번들과 빌드 검사 의존성은 제거하며, 현재 9개 섹션의 진입점·버전 검사 및 E2E를 유지한다.
+Case Study는 Product package release와 버전을 묶지 않습니다. 작은 시각적 수정만으로 보고서 동기화를 요구하지 않습니다. 제품의 핵심 기능·사용자 흐름·대표 화면·근거가 실제로 바뀌었을 때 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)의 해당 원본과 전용 QA를 별도 검토합니다. 이 저장소의 과거 `src/case-study/`와 13단계 생성 번들을 현행 수정 대상으로 보지 않습니다.
 
 제품 사실을 업데이트할 때는 사용자-facing 현재 상태와 release engineering 기록을 분리합니다. 일시적인 quota, pending, canceled 같은 운영 상태는 durable 문서에 누적하지 않습니다. QA 파일도 현재 gate에서 사용하는 suite와 필요한 compatibility regression만 유지하고, 과거 release marker에 고정된 snapshot은 current parity를 이관한 뒤 제거합니다.
 
