@@ -1,3 +1,9 @@
+## 2026-11-11 · 보고서 저장소 분리 후 파일·폴더 정리
+
+- GitHub [`main` `caadcb6`](https://github.com/dohyunkimmm/footmate/commit/caadcb6e200241286607219a830a22bab5b4edeb) 재귀 트리(`truncated=false`): **파일 278개·디렉터리 37개**, 루트 파일 **13개**·최상위 폴더 **8개**. [11월 11일 파일·폴더 점검](REPO-CLEANUP-2026-11-11.md)과 [문서 목록](README.md)을 현행 인벤토리로 사용하며, 아래 11월 9일 이하 수치는 해당 시점의 이력입니다.
+- [PR #909](https://github.com/dohyunkimmm/footmate/pull/909) 이후 `qa/`, `src/case-study/` 및 보고서 원본·발표자료·독립 QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에 위치합니다. 제품 코드·배포 진입점·Supabase 마이그레이션·서비스 회귀 QA는 유지합니다. 동일 blob인 SQL 마이그레이션 2쌍도 적용 이력을 위해 보존합니다.
+- 조회 시 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**. 안전하게 제거할 추가 파일·폴더가 확정되지 않았으므로 임의 삭제·브랜치 정리·DB 변경·이력 재작성은 실행하지 않습니다. 이번 문서 동기화는 **새 서비스 QA·배포·실서명 MFA 검증 완료를 의미하지 않습니다**.
+
 ## 2026-11-09 · 의존성 통합과 무료 보안 재검증
 
 - 최신 `main` [`895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833): 파일 345개·디렉터리 43개, 루트 파일 14개·최상위 폴더 9개. 열린 PR **0건**, 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **OPEN**. 배포 진입점·SQL 중복 이력 2쌍·증빙·파일 구조를 유지합니다.
