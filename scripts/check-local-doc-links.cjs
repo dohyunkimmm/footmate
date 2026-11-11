@@ -42,17 +42,13 @@ for (const source of markdown) {
     }
   }
 }
-// Main entry points and retained Case Study pages also expose static assets.
+// Service HTML entry points expose local assets; the report is checked in its own repository.
 // The Worker serves the route aliases below; they are not filesystem paths.
 const htmlEntries = [
-  'index.html',
   'app.html',
   'beta.html',
   'beta-operator.html',
-  'beta-data-notice.html',
-  'src/case-study/materials.html',
-  'src/case-study/forecast.html',
-  'src/case-study/decision-memos.html'
+  'beta-data-notice.html'
 ];
 const routedPages = new Set([
   '/demo', '/beta', '/beta/operator', '/prototype',

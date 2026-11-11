@@ -20,7 +20,6 @@ mkdirSync(output, {
 
 // FootMate 공개 웹페이지와 정적 파일
 const publicFiles = [
-  "index.html",
   "app.html",
   "beta.html",
   "beta-operator.html",
@@ -37,12 +36,5 @@ for (const file of publicFiles) {
     recursive: true
   });
 }
-
-// 독립 Worker에서 제공하는 보고서는 서비스 배포 파일에서 제외합니다.
-// 보고서 원본은 관련 QA 이전·검증이 끝날 때까지 Git 저장소에 보존합니다.
-rmSync(`${output}/src/case-study`, {
-  recursive: true,
-  force: true
-});
 
 console.log("Cloudflare assets prepared");

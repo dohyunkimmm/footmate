@@ -3,11 +3,9 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
 const read=path=>fs.readFileSync(path,'utf8');
 const release=JSON.parse(read('package.json')).version;
 const app=read('app.html');
-const caseStudy=read('index.html');
 const meta=(source,name)=>source.match(new RegExp('<meta\\s+name="'+name+'"\\s+content="([^"]+)"'))?.[1]||null;
 assert(meta(app,'footmate-release')===release,`app release ${meta(app,'footmate-release')} != package ${release}`);
-assert(meta(caseStudy,'footmate-case-study-release')==='5.6.0',`case study release ${meta(caseStudy,'footmate-case-study-release')} != 5.6.0`);
 assert(/^\d+\.\d+\.\d+$/.test(release),'release must be semver');
-console.log('PASS product release identity',release,'with Case Study 5.6.0');
+console.log('PASS product release identity',release);
 
 
