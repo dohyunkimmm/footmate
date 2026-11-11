@@ -2,11 +2,9 @@
 const {readFileSync}=require('node:fs');
 const {resolve}=require('node:path');
 const {createHash}=require('node:crypto');
-const base=(process.env.FOOTMATE_PRODUCTION_URL||'').replace(/\/$/,'');
+const base=(process.env.FOOTMATE_CASE_STUDY_URL||'https://footmate-case-study.fmate.workers.dev').replace(/\/$/,'');
 if(!/^https:\/\/[^/]+$/.test(base))throw Error('FOOTMATE_PRODUCTION_URL requires an HTTPS origin');
 const files=[
- ['index.html','/'],
- ['src/case-study/nine-sections.js','/src/case-study/nine-sections.js'],
  ['src/case-study/nine-sections.css','/src/case-study/nine-sections.css'],
  ['src/case-study/materials.html','/src/case-study/materials.html'],
  ['src/case-study/report-previews.js','/src/case-study/report-previews.js'],
@@ -22,4 +20,16 @@ async function check([local,url]){
  if(sha(actual)!==sha(expected))throw Error(url+' differs from deployed merge commit');
  console.log('PASS '+url+' '+actual.length+' bytes');
 }
-Promise.all(files.map(check)).then(()=>console.log('PASS Case Study Production Smoke · 8 assets')).catch(e=>{console.error(e);process.exitCode=1});
+async function run(){
+ await Promise.all(files.map(check));
+ const htmlResponse=await fetch(base+'/');
+ if(!htmlResponse.ok)throw Error('Report home HTTP '+htmlResponse.status);
+ const html=await htmlResponse.text();
+ if(!html.includes('<meta name="footmate-case-study-release"'))throw Error('Report release marker missing');
+ if(!html.includes('rel="canonical" href="'+base+'/'))throw Error('Report canonical URL mismatch');
+ const jsResponse=await fetch(base+'/src/case-study/nine-sections.js');
+ if(!jsResponse.ok)throw Error('Report script HTTP '+jsResponse.status);
+ if(!(await jsResponse.text()).includes('https://footmate.fmate.workers.dev/demo'))throw Error('Report Demo link is not external');
+ console.log('PASS standalone Case Study Production Smoke · '+files.length+' identical files');
+}
+run().catch(e=>{console.error(e);process.exitCode=1});

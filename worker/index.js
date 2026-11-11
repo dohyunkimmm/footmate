@@ -148,12 +148,22 @@ if (path === "/api/ai-match-assistant") {
       return send({ error: "not_found" }, 404);
     }
 
-    // FootMate 첫 화면
+    // 기존 첫 화면을 서비스 데모로 전환하되 쿼리 문자열은 유지합니다.
     if (path === "/") {
-      url.pathname = "/index.html";
-      return env.ASSETS.fetch(
-        new Request(url.toString(), request)
+      url.pathname = "/demo";
+      return Response.redirect(url.toString(), 302);
+    }
+
+    // 과거 보고서 링크는 분리된 Case Study Worker로 이동합니다.
+    if (path === "/report" || path === "/case-study" ||
+        path === "/index" || path === "/index.html" ||
+        path.startsWith("/src/case-study/")) {
+      const destination = new URL(
+        path.startsWith("/src/case-study/") ? path : "/",
+        "https://footmate-case-study.fmate.workers.dev"
       );
+      destination.search = url.search;
+      return Response.redirect(destination.toString(), 302);
     }
 
     // 기존 리디렉션
