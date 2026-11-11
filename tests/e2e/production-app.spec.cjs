@@ -35,21 +35,9 @@ test('v5.1.1 components render inside the v6.0.0 exact Production release bounda
   expect(health.version).toBe('5.1.1');
   expect(health.provider).toBe('vercel-ai-gateway');
   expect(health.model).toBe('openai/gpt-5.4-nano');
-  if (process.env.PRODUCTION_SMOKE) {
-     await page.goto('/',{waitUntil:'domcontentloaded'});
-     await expect(page.locator('#footmate-beta')).toBeVisible();
-     expect(new URL(page.url()).pathname).toBe('/demo');
-   } else {
-     // 기존 Case Study 로컬 검사는 전용 저장소 이전 시까지 유지합니다.
-     await page.goto('/',{waitUntil:'domcontentloaded'});
-       await expect(page.locator('meta[name="footmate-case-study-release"]')).toHaveAttribute('content','5.6.0');
-       await expect(page.locator('.toc-item')).toHaveCount(9);
-       await page.locator('.toc-item').nth(2).click();
-       await page.locator('#section-03 > details summary').first().click();
-       await expect(page.locator('#section-03')).toContainText('참가·결제는 이용자 직접 승인.');
-       await page.locator('.toc-item').nth(6).click();
-       await expect(page.locator('#section-07')).toContainText('선택 조건 검증 → 실제 경기 후보 → AI 추천 순서');
-   }
+  await page.goto('/',{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#footmate-beta')).toBeVisible();
+  if (process.env.PRODUCTION_SMOKE) expect(new URL(page.url()).pathname).toBe('/demo');
 });
 
 test('retired app URLs open the released connected Beta',async({page})=>{

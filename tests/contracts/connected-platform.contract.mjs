@@ -59,36 +59,5 @@ for(const [path,repositoryName] of [
   assert.equal(source.includes('footmate:v4:'),false,`${path} must not own legacy storage keys`);
 }
 
-// The live Case Study is now a nine-section strategy report, not the retired
-// 13-slide connected-platform presentation. Verify real production copy.
-const caseStudy=await readFile(new URL('../../src/case-study/nine-sections.js',import.meta.url),'utf8');
-const caseSections=[...caseStudy.matchAll(/^\s+"name": "([^"]+)"/gm)].map(match=>match[1]);
-assert.deepEqual(caseSections,[
-  '추진 배경·검토 결론',
-  '시장·경쟁 분석',
-  '사업모델·역할',
-  '수요·공급 시나리오',
-  '수익성·손익분기점',
-  'IT 투자·시스템 구조',
-  '운영 안정성·통제',
-  '실행계획·성과관리',
-  '종합 판단·근거'
-]);
-for(const required of [
-  '운영자 제휴형으로 시작하고',
-  '결제·정산은 후속',
-  '결제·환불·정산은 유료화 단계에 구축',
-  '동시 요청',
-  '기회비용',
-  '데이터 정정',
-  // Current cards expose separate presentation downloads and expandable previews.
-  // Slide counts remain validated by the Case Study browser tests.
-  '기획 자료 받기',
-  '전략 자료 받기',
-  '사업성 분석·경영계획',
-  '중장기 성장 전략',
-  'footmate_report.pptx'
-])assert.ok(caseStudy.includes(required),`missing current strategy Case Study boundary copy: ${required}`);
-
 console.log('PASS connected platform contracts');
 

@@ -15,8 +15,6 @@ function extractBetaMediaRuntime(html){
   return match[1];
 }
 function a(condition,message){if(!condition)throw new Error(message)}
-// Case Study markup is embedded in a JavaScript string; its quotes may be escaped.
-function hasCaseStudyDemoCta(source){return /href=\\?["']\/demo\\?["']/.test(source)}
 async function get(path){const response=await fetch(base+path,{redirect:'follow',headers:{'user-agent':`FootMate-v${release}-QA`}});a(response.ok,`${path} ${response.status}`);return response}
 async function runProductionSmoke(){
   if(!strict){console.log(`SKIP v${release} exact Production HTTP smoke`);return}
@@ -49,6 +47,6 @@ for(const route of ['/demo','/next'])a((await(await get(route)).text()).includes
 if(require.main===module){
   runProductionSmoke().catch(error=>{console.error(error);process.exitCode=1});
 }
-module.exports={extractBetaRuntime,extractBetaMediaRuntime,hasCaseStudyDemoCta};
+module.exports={extractBetaRuntime,extractBetaMediaRuntime};
 
 

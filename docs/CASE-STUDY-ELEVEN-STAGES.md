@@ -2,7 +2,7 @@
 
 기준일: 2026-11-02
 
-> **경로 호환 안내:** 이 파일의 `ELEVEN-STAGES` 이름은 2026-10-12~13 당시 11개 서비스기획 섹션 문서의 참조 호환을 위해 유지합니다. **현재 공개 `/`는 IT기획·전략기획 9개 섹션**이며, 본문도 9개를 설명합니다. 현행 상세 근거는 [IT-STRATEGY-CASE-STUDY.md](IT-STRATEGY-CASE-STUDY.md)를 사용합니다. 과거 11개 구성 자체는 Git 이력의 별도 시점으로 해석합니다.
+> **경로 호환 안내:** 이 파일의 `ELEVEN-STAGES` 이름은 2026-10-12~13 당시 11개 서비스기획 섹션 문서의 참조 호환을 위해 유지합니다. **현재 공개 `/`는 IT기획·전략기획 9개 섹션**이며, 본문도 9개를 설명합니다. 현행 상세 근거는 [IT-STRATEGY-CASE-STUDY.md](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)를 사용합니다. 과거 11개 구성 자체는 Git 이력의 별도 시점으로 해석합니다.
 
 기존 서비스기획 공개 구성은 아래 9개 섹션으로 교체한다. 페르소나·여정·IA·와이어프레임·화면별 UX 소개는 공개 케이스 스터디에서 제거한다. 제품 데모와 서버 기능은 변경하지 않는다.
 
@@ -18,5 +18,5 @@
 
 05번 「수익성·손익분기점」의 **12개월 예상 ROI**는 본문 하위 분석이며 별도 섹션이 아니다. 09번 「종합 판단·근거」는 운영자 제휴형·핵심 지표·단계적 투자 기준을 정리한다. 발표자료는 **10장**으로, **9장 ROI 분석 → 10장 최종 판단** 순서다.
 
-시장·사업성 분석과 예상 ROI는 운영 가정에 따른 검토이며 과거 수행 실적으로 소급하지 않는다. 출처·가정·수식과 현재 구축 근거는 [IT-STRATEGY-CASE-STUDY.md](IT-STRATEGY-CASE-STUDY.md)를 따른다.
+시장·사업성 분석과 예상 ROI는 운영 가정에 따른 검토이며 과거 수행 실적으로 소급하지 않는다. 출처·가정·수식과 현재 구축 근거는 [IT-STRATEGY-CASE-STUDY.md](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)를 따른다.
 
