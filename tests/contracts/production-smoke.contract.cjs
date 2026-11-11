@@ -5,7 +5,7 @@ const assert=require('node:assert/strict');
 const {readFileSync}=require('node:fs');
 const {resolve}=require('node:path');
 const {spawnSync}=require('node:child_process');
-const {extractBetaRuntime,extractBetaMediaRuntime,hasCaseStudyDemoCta}=require('../production-smoke.cjs');
+const {extractBetaRuntime,extractBetaMediaRuntime}=require('../production-smoke.cjs');
 
 test('production smoke checks the actual Closed Beta application entry',()=>{
   const html=readFileSync(resolve(__dirname,'../../beta.html'),'utf8');
@@ -41,12 +41,6 @@ test('non-strict production smoke skips without making network calls',()=>{
   assert.match(result.stdout,/SKIP v/);
 });
 
-
-test('Case Study demo CTA detection accepts JS-escaped and literal HTML quotes',()=>{
-  assert.equal(hasCaseStudyDemoCta('<a href="/demo">Try demo</a>'),true);
-  assert.equal(hasCaseStudyDemoCta(String.raw`<a href=\"/demo\">Try demo</a>`),true);
-  assert.equal(hasCaseStudyDemoCta('<a href="/other">Try demo</a>'),false);
-});
 
 test('Production AI model assertions stay aligned with the API defaults',()=>{
   const root=resolve(__dirname,'../..');

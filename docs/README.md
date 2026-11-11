@@ -1,3 +1,5 @@
+> **2026-11-11 저장소 분리:** 보고서 원본·PPTX·XLSX·QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리합니다. 아래 과거 파일·배포 기록은 작성 당시 기준의 이력입니다.
+
 ## 2026-11-09 최종 · 의존성 반영·운영 감사 종료 기준
 
 - 최신 [`main` `895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833)에서 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. SQL 이력 중 동일 blob 2쌍은 의도적으로 보존하고, 사용 중이거나 참조가 불확실한 파일·브랜치는 삭제하지 않습니다.
@@ -71,10 +73,10 @@
 ## 2026-11-02 · Case Study ROI·최종 결론 문서 동기화
 
 - **현재 공개 구조:** Case Study 본문은 **9개 섹션**으로, **05번 「수익성·손익분기점」 안에 12개월 예상 ROI**, **09번 「종합 판단·근거」에 단계적 투자 결론**을 배치한다. 발표자료는 **10장**이며 **9장 ROI → 10장 「최종 판단 · 단계적 투자」** 순서다.
-- **ROI 가정:** 12개월 현금비용 기준 보수 **−89.7%**, 기준 **−47.5%**, 확장 **−11.4%**, 확장·관리비 반영 **−14.6%**. 신규 사업계획 수치로서 월 운영손익과 계산 기간 및 초기비용 포함 범위를 구분한다. 비용·매출 산출표와 가정은 [현행 기획 문서](IT-STRATEGY-CASE-STUDY.md)의 05번 참조.
+- **ROI 가정:** 12개월 현금비용 기준 보수 **−89.7%**, 기준 **−47.5%**, 확장 **−11.4%**, 확장·관리비 반영 **−14.6%**. 신규 사업계획 수치로서 월 운영손익과 계산 기간 및 초기비용 포함 범위를 구분한다. 비용·매출 산출표와 가정은 [현행 기획 문서](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)의 05번 참조.
 - **의사결정:** 운영자 제휴형 우선 및 수수료·결제비 복합 협상 → 건당 공헌이익·플랫폼 예약 비중·재참가 확인 → 취소·고객지원비 반영 손익·예상 ROI 재산정 → 공급 계약·수익성 기준 충족 시 단계적 투자 확대.
 - **운영 반영 근거:** [PR #803–#809](https://github.com/dohyunkimmm/footmate/pull/809)에 걸친 ROI·발표자료·본문 문구 개선의 마지막 본문/PPT 동기화는 [PR #809](https://github.com/dohyunkimmm/footmate/pull/809) 병합 SHA `5d5f62d4e70077ca4c37873481377cd97ddd9ed9`. 최종 [FootMate QA #41414549101](https://github.com/dohyunkimmm/footmate/actions/runs/41414549101)의 Case Study QA·Cloudflare Deploy·Case Study Production Smoke **SUCCESS**.
-- **현재 문서 위치:** [전체 기획 근거](IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차](CASE-STUDY-ELEVEN-STAGES.md) · [공개 본문](https://footmate.fmate.workers.dev/) · [발표자료 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1). 10월에 작성된 QA·구성 문서는 당시 기록으로 보존.
+- **현재 문서 위치:** [전체 기획 근거](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차](CASE-STUDY-ELEVEN-STAGES.md) · [공개 본문](https://footmate.fmate.workers.dev/) · [발표자료 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1). 10월에 작성된 QA·구성 문서는 당시 기록으로 보존.
 
 ## 2026-11-01 · 무료 운영 기준 확정
 
@@ -84,7 +86,7 @@
 
 ## 2026-10-30 · 현행 문서 동기화 기준
 
-- **현재 공개 Case Study:** [PR #728](https://github.com/dohyunkimmm/footmate/pull/728)에서 IT기획·전략기획 **9개 섹션**으로 재구성됐습니다. 런타임 `index.html`의 `data-case-study-stages="9"` 및 `scripts/sync-case-study-assets.cjs` 검사도 9개를 요구합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 링크 호환을 위해 유지된 **파일명**으로, 본문은 현행 9개를 설명합니다. 현재 내용은 [전략 Case Study 근거](IT-STRATEGY-CASE-STUDY.md)를 우선합니다.
+- **현재 공개 Case Study:** [PR #728](https://github.com/dohyunkimmm/footmate/pull/728)에서 IT기획·전략기획 **9개 섹션**으로 재구성됐습니다. 런타임 `index.html`의 `data-case-study-stages="9"` 및 `scripts/sync-case-study-assets.cjs` 검사도 9개를 요구합니다. `CASE-STUDY-ELEVEN-STAGES.md`는 과거 링크 호환을 위해 유지된 **파일명**으로, 본문은 현행 9개를 설명합니다. 현재 내용은 [전략 Case Study 근거](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md)를 우선합니다.
 - **Beta P2·P3:** [PR #727](https://github.com/dohyunkimmm/footmate/pull/727)의 실제 로그인 계정별 추천 조건 동기화와 파일럿 4종 KPI 기반이 운영 반영됐습니다. Supabase migration `20261030032856_beta_preferences_pilot_metrics` 적용·RLS 확인. 기존 7일 이벤트 통계와 21일 파일럿 KPI 기준선은 [측정 문서](BETA-MEASUREMENT-READINESS.md)에서 구분합니다. 파일럿 사용자 0명으로 실사용 개선률은 **N/A**입니다. 데모/게스트 추천 조건 및 추천 반응 전반을 기기 간 동기화하지 않습니다.
 - **운영 배포 근거:** P2·P3 병합 SHA `89dc541`의 [QA/Cloudflare/Production Smoke #40999197361](https://github.com/dohyunkimmm/footmate/actions/runs/40999197361) 및 전략 Case Study 병합 SHA `aae8f105`의 [QA/Cloudflare/Production Smoke #41001440621](https://github.com/dohyunkimmm/footmate/actions/runs/41001440621)은 모두 SUCCESS. 이 결과가 실제 인증된 테스트 계정 MFA 또는 실사용 KPI를 입증하지는 않습니다.
 - **보안 미완료:** [#611](https://github.com/dohyunkimmm/footmate/issues/611)의 실제 Supabase Auth 서명 JWT·AAL1/AAL2/TOTP·복구 실계정 E2E는 아직 검증되지 않았습니다. [PR #729](https://github.com/dohyunkimmm/footmate/pull/729)의 도구/모의 계약 QA와 실계정 수행은 구분합니다. Security Advisor의 authenticated SECURITY DEFINER 경고는 신규 KPI 함수 포함 **21건**이며 미해결입니다. 과거 20건 검토는 [2026-10-28 당시 스냅샷](SUPABASE-SECURITY-ADVISOR-REVIEW-2026-10-28.md)으로 보존합니다.

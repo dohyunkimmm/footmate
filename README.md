@@ -67,20 +67,20 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-**최신 `main` 재점검(2026-11-09):** [`39bc56a`](https://github.com/dohyunkimmm/footmate/commit/39bc56a58e17c0f30e5408073b926f5e4a77652d) 기준 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개)입니다. 공개 HTML 진입점·서비스 설정·테스트·마이그레이션과 발표자료를 유지하며, 삭제 가능한 임시 파일은 이번 트리 검사에서 확정되지 않았습니다. 동일 blob인 SQL 마이그레이션 2쌍은 적용 이력 보호를 위해 보존합니다. **의존성 미반영 PR 정리 완료:** [#898 setup-python v7](https://github.com/dohyunkimmm/footmate/pull/898)을 최신 브라우저·회귀 QA 성공 후 병합했고, Wrangler `4.158.0`·`@vercel/oidc 4.0.7`은 공통 잠금 파일을 함께 갱신한 [#904](https://github.com/dohyunkimmm/footmate/pull/904)([`main` `895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833))에서 **Change Impact·Regression 36·Browser E2E + axe 모두 성공 후 병합**했습니다. 원래 [#894](https://github.com/dohyunkimmm/footmate/pull/894)·[#895](https://github.com/dohyunkimmm/footmate/pull/895)는 패치 결과를 반영한 채 중복 방지 종료했습니다. 현재 열린 PR은 0건입니다. [#611 실서명 JWT·MFA 운영 검증](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료입니다. 이전 문서의 파일 수와 PR 상태는 각 날짜의 스냅샷입니다.
+**과거 `main` 재점검(2026-11-09):** [`39bc56a`](https://github.com/dohyunkimmm/footmate/commit/39bc56a58e17c0f30e5408073b926f5e4a77652d) 기준 **345개 파일·43개 디렉터리**(루트 파일 14개·최상위 폴더 9개)입니다. 공개 HTML 진입점·서비스 설정·테스트·마이그레이션과 발표자료를 유지하며, 삭제 가능한 임시 파일은 이번 트리 검사에서 확정되지 않았습니다. 동일 blob인 SQL 마이그레이션 2쌍은 적용 이력 보호를 위해 보존합니다. **의존성 미반영 PR 정리 완료:** [#898 setup-python v7](https://github.com/dohyunkimmm/footmate/pull/898)을 최신 브라우저·회귀 QA 성공 후 병합했고, Wrangler `4.158.0`·`@vercel/oidc 4.0.7`은 공통 잠금 파일을 함께 갱신한 [#904](https://github.com/dohyunkimmm/footmate/pull/904)([`main` `895eae6`](https://github.com/dohyunkimmm/footmate/commit/895eae676ed252481640f98fb5af06714c71f833))에서 **Change Impact·Regression 36·Browser E2E + axe 모두 성공 후 병합**했습니다. 원래 [#894](https://github.com/dohyunkimmm/footmate/pull/894)·[#895](https://github.com/dohyunkimmm/footmate/pull/895)는 패치 결과를 반영한 채 중복 방지 종료했습니다. 당시 열린 PR은 0건이었습니다. [#611 실서명 JWT·MFA 운영 검증](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료입니다. 이전 문서의 파일 수와 PR 상태는 각 날짜의 스냅샷입니다.
 
 **`main` 구조 재점검(2026-11-08):** 점검 전 기준 HEAD [`dcc98b0`](https://github.com/dohyunkimmm/footmate/commit/dcc98b0af61474265c13fad8492fa1aa6d836d8e)에서 **파일 339개·디렉터리 43개**(루트 파일 14개·최상위 폴더 9개)를 확인했습니다. [2026-11-08 점검·보존 결정](docs/REPO-CLEANUP-2026-11-08.md)과 [현행 문서 목록](docs/README.md)을 참조합니다. 이전 날짜별 파일 수는 당시 스냅샷입니다.
 
-- **공개 진입 파일:** [사업성 분석·경영계획](index.html) · [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 경로 별칭(`/demo`, `/beta`, `/prototype`)은 [Worker](worker/index.js)가 처리하므로 파일 이동 없이 보존합니다.
-- **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/) · [사업·재무 분석 및 PPTX/XLSX 원본](src/case-study/). 화면 증빙·자동 생성 미리보기는 참조 관계를 확인하기 전 삭제하지 않습니다.
+- **공개 진입 파일:** [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 첫 화면(`/`)은 [Worker](worker/index.js)가 `/demo`로 연결합니다.
+- **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/). 보고서, PPTX·XLSX 원본과 제작 스크립트는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리합니다.
 - **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
-- **검증·도구:** [테스트](tests/) · [점검·빌드 스크립트](scripts/) · [시각 자료 작업 도구](qa/) · [GitHub 자동화](.github/).
+- **검증·도구:** [서비스 테스트](tests/) · [서비스 점검·빌드 스크립트](scripts/) · [GitHub 자동화](.github/). 보고서 QA는 별도 보고서 저장소에서 실행합니다.
 - **문서:** [현행 문서 목록](docs/README.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md) · [2026-11-08 최신 점검](docs/REPO-CLEANUP-2026-11-08.md) · [미반영 패치·보안 후속 점검](docs/REMAINING-AUDIT-2026-11-08.md) · [2026-11-05 파일 점검 스냅샷](docs/REPO-CLEANUP-2026-11-05.md) · [2026-11-03 이전 점검](docs/REPO-CLEANUP-2026-11-03.md). 이전 문서의 파일 수·PR 상태는 당시 기준이며, 미완료 과제는 최신 이슈 상태를 우선합니다.
 
 ## 자세한 문서
 
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
-- [사업성·경영계획 현행 문서 · 05번 ROI·09번 최종 판단](docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md) · [기획 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
+- [사업성·경영계획 현행 문서 · 05번 ROI·09번 최종 판단](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) · [9개 섹션 목차(이전 파일명 유지)](docs/CASE-STUDY-ELEVEN-STAGES.md) · [기획 화면 근거](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
 - [릴리스 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
 - [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
 - [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
