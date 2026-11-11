@@ -23,7 +23,7 @@
 - **사업성 분석·경영계획:** 시장·경쟁, 사업모델·손익, IT 투자·운영 통제와 단계별 투자 판단을 **9개 섹션**으로 정리했습니다. **05번에 12개월 예상 ROI**(보수·기준·확장·관리비 반영), **09번에 최종 판단**을 배치했습니다. 신규 사업 가정과 구축·배포 근거를 구분합니다.
 - **데이터 경계:** 실제 경기는 기존 서버 참가·정원을 사용합니다. 실제 모집이 없는 경우 표시가 붙은 풋살 예시 경기 24개를 제공하며 예시 참가·취소는 계정별 브라우저 기록으로 격리합니다.
 
-**주요 링크:** [사업성 분석·경영계획](https://footmate.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1) · [5개년 전략 6장 미리보기](https://footmate.fmate.workers.dev/src/case-study/materials.html?preview=1&deck=strategy) · [발표자료 PPT 다운로드](https://footmate.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
+**주요 링크:** [사업성 분석·경영계획](https://footmate-case-study.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate-case-study.fmate.workers.dev/src/case-study/materials.html?preview=1) · [5개년 전략 6장 미리보기](https://footmate-case-study.fmate.workers.dev/src/case-study/materials.html?preview=1&deck=strategy) · [발표자료 PPT 다운로드](https://footmate-case-study.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
 **경영기획 중심 산출물:** 월별 예산·가상 실적·CAPEX/OPEX·인력 비용·투자 판단을 검토합니다. 기존 AI 구현은 사업계획의 실행 가능성 근거로 구분해 제시합니다.
 
