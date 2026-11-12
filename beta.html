@@ -18,8 +18,36 @@
 <link rel="stylesheet" href="/src/beta/enhancements.css?v=512">
 <link rel="stylesheet" href="/src/beta/release.css?v=15">
 <link rel="stylesheet" href="/src/shared/typography.css?v=1">
+<style>
+.footmate-demo #footmate-beta {
+  width: min(100%, 390px);
+  margin-inline: auto;
+  background: #f7f8f7;
+}
+
+@media (min-width: 431px) {
+  body.footmate-demo {
+    background: #e8eeea;
+    padding-block: 16px;
+  }
+
+  .footmate-demo #footmate-beta {
+    height: min(844px, calc(100dvh - 32px));
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: 28px;
+    box-shadow: 0 0 0 1px #d3ded6, 0 12px 48px #15352620;
+  }
+
+  .footmate-demo .fm-beta-shell {
+    padding-inline: 12px;
+  }
+}
+</style>
 </head>
 <body>
+<script>if (/^\/demo\/?$/.test(location.pathname)) document.body.classList.add("footmate-demo");</script>
 <main id="footmate-beta" class="fm-beta" data-beta-state="booting" aria-live="polite"></main>
 <noscript>FootMate Demo를 이용하려면 JavaScript를 켜주세요.</noscript>
 <script>(()=>{const u=new URL(location.href);if(u.searchParams.get("entry")==="footmate"){u.searchParams.delete("entry");history.replaceState(history.state,"",u.pathname+u.search+u.hash)}})();</script>
