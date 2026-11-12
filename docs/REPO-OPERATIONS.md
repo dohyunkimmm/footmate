@@ -1,3 +1,11 @@
+## 2026-11-13 · 메인 목록 재점검·폴더 클렌징·문서 동기화
+
+- GitHub [`main` `fc023a3`](https://github.com/dohyunkimmm/footmate/commit/fc023a33c235b6f7a422e6708544716ae2d48e48) 재귀 트리(`truncated=false`) 기준 **파일 279개·디렉터리 37개**(루트 파일 **13개**, 최상위 폴더 **8개**). 경로별 파일 수는 [루트 README](../README.md#저장소-파일폴더-안내)의 메인 목록을 기준으로 합니다. 문서 갱신 전 스냅샷이며 11월 11일의 **278개 파일**은 당시 기준입니다.
+- [PR #911~#917](https://github.com/dohyunkimmm/footmate/pulls?q=is%3Apr+is%3Amerged+sort%3Aupdated-desc)의 데모 UI·플로우·아이콘 변경이 `main`에 포함됐고, 해당 HEAD [FootMate QA #43240267898](https://github.com/dohyunkimmm/footmate/actions/runs/43240267898)는 **SUCCESS**입니다. 이 실행을 이번 문서 PR의 QA나 실제 운영 배포·DB 검증으로 간주하지 않습니다.
+- GitHub API에서 열린 PR **0건**, 이슈 **[#611](https://github.com/dohyunkimmm/footmate/issues/611) 1건**, 원격 브랜치 **126개(`main` 1·비기본 125)**를 확인했습니다. [기존 124개 브랜치 패치 전수 감사](REMAINING-AUDIT-2026-11-08.md)는 시점 스냅샷이며, 비기본 브랜치의 고유 커밋은 필요한 제품 기능의 누락이 입증된 것이 아닙니다.
+- 디렉터리 정리 검토: `qa/`, `src/case-study/`, 이전 `index.html`은 [PR #909](https://github.com/dohyunkimmm/footmate/pull/909)에서 이미 이관·제거됐습니다. 동일 blob 마이그레이션 2쌍은 적용 이력 때문에 보존합니다. 현재 트리에 명백한 임시 확장자 파일이나 안전하게 삭제 확정된 경로가 없어 **파일·폴더·브랜치 삭제 0건**입니다. [#525](https://github.com/dohyunkimmm/footmate/issues/525)의 별도 보존 결정을 변경하지 않습니다.
+- 문서만 동기화하며 런타임 코드·테스트·SQL·배포 설정·Git refs는 변경하지 않습니다. 신규 PR 검사는 별도로 확인해야 합니다.
+
 ## 2026-11-11 · 보고서 저장소 분리 후 파일·폴더 정리
 
 - GitHub [`main` `caadcb6`](https://github.com/dohyunkimmm/footmate/commit/caadcb6e200241286607219a830a22bab5b4edeb) 재귀 트리(`truncated=false`): **파일 278개·디렉터리 37개**, 루트 파일 **13개**·최상위 폴더 **8개**. [11월 11일 파일·폴더 점검](REPO-CLEANUP-2026-11-11.md)과 [문서 목록](README.md)을 현행 인벤토리로 사용하며, 아래 11월 9일 이하 수치는 해당 시점의 이력입니다.
