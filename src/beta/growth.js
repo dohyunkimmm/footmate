@@ -200,7 +200,7 @@ function choices(name,label,values,p,prefix=''){
 function quickFilters(p){
  const selectedCount=['region','level','position','afterTime','beforeTime','dateWindow'].filter(name=>p[name]).length;
  const ai=selectedCount&&aiOrder.length?'<span class="fm-beta-ai-label">AI 추천</span>':'';
- return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><div><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개`:(isDemoEntry?'조건 없음':'추천 필터')}</span>${ai}</div><div>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}<button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button></div></div>
+ return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><div><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개 선택됨`:'추천 필터'}</span>${ai}</div><div>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}<button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button></div></div>
  ${Object.entries(FILTERS).filter(([name])=>!['dateWindow','beforeTime'].includes(name)).map(([name,filter])=>{
   const values=name==='region'?regionChoices():filter.values;
   const dates=name==='afterTime';
