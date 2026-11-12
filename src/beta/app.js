@@ -400,7 +400,7 @@ if(root){
     const exhausted=visible.every(match=>seenRecommendations.has(match.id));
     const discovery=visible.length>1?`<div class="fm-beta-discovery">${exhausted?'<p role="status">모든 추천을 봤어요.</p>':''}<button class="fm-beta-button" type="button" data-action="${exhausted?'restart-discovery':'random-recommendation'}">${exhausted?'다시 둘러보기':'다른 경기 추천'}</button></div>`:'<p class="fm-beta-discovery-note">추천 1개</p>';
     const gatedNext=guest&&!previewExpanded&&demoPage===preview.length-1&&visible.length>preview.length;
-    return `${rankingStatus}${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${previewExpanded?'전체 보기':`${preview.length}개 미리보기`}</span></div>`:''}<div class="fm-beta-match-list">${renderMatch(current)}</div>${comparisonIds.length?`<div class="fm-beta-compare-tray"><span>비교 ${comparisonIds.length} / 2</span><button type="button" class="fm-beta-button" data-action="compare-open" ${comparisonIds.length<2?'disabled':''}>두 경기 비교</button><button type="button" class="fm-beta-link" data-action="compare-clear">비우기</button></div>`:''}<div class="fm-beta-browse-controls">${discovery}${preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'expand-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'전체 추천 보기':'다음'}</button></nav>`:''}</div>`;
+    return `${rankingStatus}${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${previewExpanded?'전체 보기':`${preview.length}개 미리보기`}</span></div>`:''}<div class="fm-beta-match-list">${renderMatch(current)}</div>${comparisonIds.length?`<div class="fm-beta-compare-tray"><span>비교 ${comparisonIds.length} / 2</span><ul class="fm-beta-compare-picks">${matches.filter(match=>comparisonIds.includes(match.id)).map(match=>`<li><span>${esc(match.title)}</span><button type="button" class="fm-beta-link" data-action="compare-remove" data-match-id="${esc(match.id)}" aria-label="${esc(match.title)} 비교에서 빼기">×</button></li>`).join('')}</ul><button type="button" class="fm-beta-button" data-action="compare-open" ${comparisonIds.length<2?'disabled':''}>두 경기 비교</button><button type="button" class="fm-beta-link" data-action="compare-clear">비우기</button></div>`:''}<div class="fm-beta-browse-controls">${discovery}${preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'expand-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'다음 경기':'다음'}</button></nav>`:''}</div>`;
   }
 
 
@@ -408,7 +408,11 @@ if(root){
   function renderComparison(){
     const selected=comparisonIds.map(id=>matches.find(m=>m.id===id)).filter(Boolean);
     const fields=[['일시',m=>formatStart(m.startsAt)],['장소',m=>m.place],['실력',m=>betaLevelLabel(m.level)],['경기 방식',m=>m.format+' · '+m.durationMin+'분'],['잔여 자리',m=>m.remaining+'자리'],['선택 포지션',m=>selectedPreferences().position?selectedPreferences().position+' '+Number(m.positionSlots[selectedPreferences().position]||0)+'자리':'포지션 제한 없음'],['참가비',m=>m.price===0?'무료 참가':new Intl.NumberFormat('ko-KR').format(m.price)+'원']];
-    return `<div class="fm-beta-shell fm-beta-comparison"><header class="fm-beta-detail-header"><button type="button" class="fm-beta-link" data-action="compare-back" aria-label="추천으로 돌아가기">←</button><h1 tabindex="-1">경기 비교</h1><span></span></header><div class="fm-beta-compare-content"><table><caption>선택한 두 경기 비교</caption><thead><tr><th scope="col">기준</th>${selected.map(m=>`<th scope="col">${esc(m.title)}${m.isDemo?'<small>데모 경기</small>':''}</th>`).join('')}</tr></thead><tbody>${fields.map(([label,value])=>`<tr><th scope="row">${label}</th>${selected.map(m=>`<td>${esc(value(m))}</td>`).join('')}</tr>`).join('')}<tr><th scope="row">자세히</th>${selected.map(m=>`<td><button class="fm-beta-button" type="button" data-action="compare-detail" data-match-id="${esc(m.id)}" aria-label="${esc(m.title)} 상세 보기">상세 보기</button></td>`).join('')}</tr></tbody></table></div></div>`;
+    return `<div class="fm-beta-shell fm-beta-comparison"><header class="fm-beta-detail-header"><button type="button" class="fm-beta-link" data-action="compare-back" aria-label="추천으로 돌아가기">←</button><h1 tabindex="-1">경기 비교</h1><span></span></header><div class="fm-beta-compare-content"><table><caption>선택한 두 경기 비교</caption><thead><tr><th scope="col">기준</th>${selected.map(m=>`<th scope="col">${esc(m.title)}${m.isDemo?'<small>데모 경기</small>':''}</th>`).join('')}</tr></thead><tbody>${fields.map(([label,value])=>{
+      const values=selected.map(value);
+      const differs=values.length===2&&values[0]!==values[1];
+      return `<tr${differs?' class="fm-beta-compare-difference"':''}><th scope="row">${label}</th>${values.map(cell=>`<td>${esc(cell)}</td>`).join('')}</tr>`;
+    }).join('')}<tr><th scope="row">자세히</th>${selected.map(m=>`<td><button class="fm-beta-button" type="button" data-action="compare-detail" data-match-id="${esc(m.id)}" aria-label="${esc(m.title)} 상세 보기">상세 보기</button></td>`).join('')}</tr></tbody></table></div></div>`;
   }
 
   function renderDetail(match){
@@ -679,6 +683,12 @@ if(root){
       else{setNotice('비교는 두 경기까지 가능해요. 선택한 경기를 해제한 뒤 담아주세요.');render();focusScreen('[data-action="compare-open"]');return}
       const scroll=root.querySelector('[data-beta-main]')?.scrollTop||0;render();requestAnimationFrame(()=>{const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=scroll;root.querySelector('[data-action="compare-toggle"]')?.focus({preventScroll:true})});return;
     }
+    if(action==='compare-remove'){
+      comparisonIds=comparisonIds.filter(id=>id!==target.dataset.matchId);
+      render();
+      focusScreen(comparisonIds.length?'[data-action="compare-remove"]':'[data-action="compare-toggle"]');
+      return;
+    }
     if(action==='compare-clear'){comparisonIds=[];render();focusScreen('[data-action="compare-toggle"]');return}
     if(action==='compare-open'){if(comparisonIds.length!==2)return;rememberResults();comparisonOpen=true;render();focusScreen('h1');return}
     if(action==='compare-back'){comparisonOpen=false;closeDetail();restoreResults();return}
@@ -722,7 +732,7 @@ if(root){
     if(action==='navigate'){setView(target.dataset.view);return}
     if(action==='more-matches'){visibleLimit+=8;render();return}
     if(action==='toggle-auth'){authMode=authMode==='signin'?'signup':'signin';setNotice(null);render();return}
-    if(action==='expand-preview'){previewExpanded=true;render();return}
+    if(action==='expand-preview'){previewExpanded=true;demoPage++;render();focusScreen('.fm-beta-match h3');return}
     if(action==='unlock-preview'){authEntry='results';authOpen=true;render();root.querySelector('#beta-auth-panel h2, #beta-auth-panel input')?.focus();return}
     if(action==='open-account'||action==='focus-auth'){
       comparisonOpen=false;authEntry='results';
