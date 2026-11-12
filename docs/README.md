@@ -1,3 +1,9 @@
+## 2026-11-13 · 최신 `main` 목록·정리 판정
+
+- GitHub [`main` `fc023a3`](https://github.com/dohyunkimmm/footmate/commit/fc023a33c235b6f7a422e6708544716ae2d48e48) 재귀 트리(`truncated=false`): **파일 279개·디렉터리 37개**(루트 파일 13개·최상위 폴더 8개). `.github/` 5, `api/` 2, `docs/` 34, `scripts/` 11, `src/` 87, `supabase/` 36, `tests/` 89, `worker/` 2, 루트 13개입니다. [루트 파일 목록](../README.md#저장소-파일폴더-안내) 및 [운영 판정](REPO-OPERATIONS.md)을 참조합니다.
+- [PR #911~#917](https://github.com/dohyunkimmm/footmate/pulls?q=is%3Apr+is%3Amerged+sort%3Aupdated-desc) 반영 및 최신 `main` [FootMate QA 성공](https://github.com/dohyunkimmm/footmate/actions/runs/43240267898). 열린 PR 0건, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) 1건. 오래된 비기본 브랜치는 125개이며 [기존 감사와 보존 결정](REMAINING-AUDIT-2026-11-08.md)에 따라 임의 이식·삭제하지 않습니다.
+- `qa/`, `src/case-study/`는 [별도 보고서 저장소](https://github.com/dohyunkimmm/footmate-case-study)로 이관된 경로입니다. SQL 적용 이력 2쌍·증빙·회귀 자산은 보존하고 **추가 삭제 확정 0건**으로 판정했습니다. 아래 11월 11일 이하 수량은 해당 시점의 기록입니다. 운영 배포·DB/실계정 보안 검증을 새로 수행했다는 의미는 아닙니다.
+
 > **2026-11-11 저장소 분리:** 보고서 원본·PPTX·XLSX·QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리합니다. 아래 과거 파일·배포 기록은 작성 당시 기준의 이력입니다.
 
 ## 2026-11-11 · 현행 `main` 파일·폴더 목록 및 동기화

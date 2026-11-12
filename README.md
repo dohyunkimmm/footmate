@@ -67,9 +67,24 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-**현재 `main` 파일·폴더 점검(2026-11-11):** [`caadcb6`](https://github.com/dohyunkimmm/footmate/commit/caadcb6e200241286607219a830a22bab5b4edeb) 기준 GitHub 재귀 트리(`truncated=false`)는 **278개 파일·37개 디렉터리**(루트 파일 13개·최상위 폴더 8개)입니다. [PR #909](https://github.com/dohyunkimmm/footmate/pull/909)로 보고서 원본·발표자료·독립 QA가 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)로 분리되어 `qa/`와 `src/case-study/`는 더 이상 이 저장소의 현행 경로가 아닙니다. 제품·서버·데이터베이스 마이그레이션·서비스 테스트는 보존합니다. 같은 내용의 SQL 마이그레이션 2쌍도 적용 이력 때문에 유지하며, **안전한 추가 삭제 대상은 확인되지 않았습니다**. [최신 파일·폴더 점검](docs/REPO-CLEANUP-2026-11-11.md)을 참조합니다.
+**현재 `main` 파일·폴더 점검(2026-11-13, 문서 수정 전):** [`fc023a3`](https://github.com/dohyunkimmm/footmate/commit/fc023a33c235b6f7a422e6708544716ae2d48e48) 기준 GitHub 재귀 트리(`truncated=false`)는 **파일 279개·디렉터리 37개**(루트 파일 13개·최상위 폴더 8개)입니다. 최근 [PR #911~#917](https://github.com/dohyunkimmm/footmate/pulls?q=is%3Apr+is%3Amerged+sort%3Aupdated-desc)의 데모 프레임·필터·문구·추천 비교·아이콘 변경이 `main`에 반영됐고, 해당 HEAD의 [FootMate QA](https://github.com/dohyunkimmm/footmate/actions/runs/43240267898)는 성공했습니다. 보고서 원본·발표자료·전용 QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)로 분리된 상태입니다.
 
-**과거 점검 수치:** 2026-11-09의 345개 파일·43개 디렉터리와 2026-11-08의 339개 파일·43개 디렉터리는 각 날짜의 스냅샷입니다. 실제 서명 JWT·운영자 MFA 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료입니다.
+| 현재 최상위 경로 | 파일 수 | 관리 범위 |
+| --- | ---: | --- |
+| `.github/` | 5 | 자동 검사·설정 |
+| `api/` | 2 | AI/API |
+| `docs/` | 34 | 현행 문서 및 과거 감사 기록 |
+| `scripts/` | 11 | 빌드·검사 |
+| `src/` | 87 | 앱·Beta·플랫폼 |
+| `supabase/` | 36 | Edge Functions·마이그레이션 |
+| `tests/` | 89 | 계약·브라우저·회귀 검사 |
+| `worker/` | 2 | 공개 경로·Worker |
+| 루트 파일 | 13 | 진입점·설정·자산 |
+| **합계** | **279** | **디렉터리 37개** |
+
+**정리 판정:** 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. 원격 브랜치 **126개(비기본 125개)**는 기존 [패치 감사](docs/REMAINING-AUDIT-2026-11-08.md) 및 [보존 결정 #525](https://github.com/dohyunkimmm/footmate/issues/525)에 따라 일괄 병합·삭제하지 않습니다. 동일 blob SQL 마이그레이션 2쌍은 적용 이력 보존 대상이며, 임시 파일 및 안전한 추가 삭제 대상은 확인되지 않았습니다. 과거 파일·폴더 수는 날짜별 스냅샷으로 유지하고 [11월 11일 기록](docs/REPO-CLEANUP-2026-11-11.md)을 이전 기준으로 참조합니다.
+
+**과거 점검 수치:** 2026-11-11 기준 278개 파일·37개 디렉터리, 2026-11-09의 345개 파일·43개 디렉터리와 2026-11-08의 339개 파일·43개 디렉터리는 각 날짜의 스냅샷입니다. 실제 서명 JWT·운영자 MFA 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료입니다.
 
 - **공개 진입 파일:** [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 첫 화면(`/`)은 [Worker](worker/index.js)가 `/demo`로 연결합니다.
 - **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/). 보고서, PPTX·XLSX 원본과 제작 스크립트는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리합니다.
