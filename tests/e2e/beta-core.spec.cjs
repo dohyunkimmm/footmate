@@ -405,11 +405,14 @@ test('FootMate results expand without signup and participation retains preferenc
   const pager=page.getByRole('navigation',{name:'추천 경기 페이지'});
   await pager.getByRole('button',{name:'다음',exact:true}).click();
   await pager.getByRole('button',{name:'다음',exact:true}).click();
-  await expect(pager.getByRole('button',{name:'전체 추천 보기',exact:true})).toBeVisible();
-  const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
+  await expect(pager.getByRole('button',{name:'다음 경기',exact:true})).toBeVisible();
+  const previewMatch=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.screenshot({path:testInfo.outputPath('recommendation-preview-390.png'),fullPage:true});
-  await pager.getByRole('button',{name:'전체 추천 보기',exact:true}).click();
+  await pager.getByRole('button',{name:'다음 경기',exact:true}).click();
   await expect(page.locator('.fm-beta-preview-note')).toContainText('전체 보기');
+  await expect(pager.getByRole('status')).toHaveText(/^4 \/ /);
+  await expect(page.locator('.fm-beta-match')).not.toHaveAttribute('data-match-id',previewMatch);
+  const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await expect(page.getByLabel('이메일',{exact:true})).toBeHidden();
   await page.getByRole('button',{name:'참가하기',exact:true}).click();
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeVisible();
