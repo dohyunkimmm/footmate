@@ -225,7 +225,7 @@ function quickFilters(p){
     <div class="fm-beta-filter-panel-head"><strong>${esc(dates?'날짜와 시간':filter.label)}</strong><button type="button" class="fm-beta-filter-close" data-growth-action="close-quick-filter" aria-label="빠른 필터 닫기">×</button></div>${choices(name,filter.label,values,p,'빠른 ')}${dates?choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p,'빠른 ')+choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p,'빠른 '):''}
     ${dates&&message===TIME_RANGE_ERROR?`<p role="alert">${esc(message)}</p>`:''}
    </form></details>`;
- }).join('')}</div>`;
+ }).join('')}${isDemoEntry?`<p class="fm-beta-active-filters">${selectedCount?`적용 조건 · ${esc([p.region,p.level,p.position,p.dateWindow&&FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1],p.afterTime&&`${p.afterTime} 이후`,p.beforeTime&&`${p.beforeTime} 전`].filter(Boolean).join(' · '))}`:'선택한 조건 없음 · 전체 경기 추천'}</p>`:''}</div>`;
 }
 function wizardPanel(){
  const p={...DEFAULT_PREFERENCES,...(draft||{})};
