@@ -200,7 +200,7 @@ function choices(name,label,values,p,prefix=''){
 function quickFilters(p){
  const selectedCount=['region','level','position','afterTime','beforeTime','dateWindow'].filter(name=>p[name]).length;
  const ai=selectedCount&&aiOrder.length?'<span class="fm-beta-ai-label">AI 추천</span>':'';
- return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><div><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개 선택됨`:'추천 필터'}</span>${ai}</div><div>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}<button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button></div></div>
+ return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><div><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개`:(isDemoEntry?'조건 없음':'추천 필터')}</span>${ai}</div><div>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}<button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button></div></div>
  ${Object.entries(FILTERS).filter(([name])=>!['dateWindow','beforeTime'].includes(name)).map(([name,filter])=>{
   const values=name==='region'?regionChoices():filter.values;
   const dates=name==='afterTime';
@@ -225,7 +225,7 @@ function quickFilters(p){
     <div class="fm-beta-filter-panel-head"><strong>${esc(dates?'날짜와 시간':filter.label)}</strong><button type="button" class="fm-beta-filter-close" data-growth-action="close-quick-filter" aria-label="빠른 필터 닫기">×</button></div>${choices(name,filter.label,values,p,'빠른 ')}${dates?choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p,'빠른 ')+choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p,'빠른 '):''}
     ${dates&&message===TIME_RANGE_ERROR?`<p role="alert">${esc(message)}</p>`:''}
    </form></details>`;
- }).join('')}${isDemoEntry?`<p class="fm-beta-active-filters">${selectedCount?`적용 조건 · ${esc([p.region,p.level,p.position,p.dateWindow&&FILTERS.dateWindow.values.find(([value])=>value===p.dateWindow)?.[1],p.afterTime&&`${p.afterTime} 이후`,p.beforeTime&&`${p.beforeTime} 전`].filter(Boolean).join(' · '))}`:'선택한 조건 없음 · 전체 경기 추천'}</p>`:''}</div>`;
+ }).join('')}</div>`;
 }
 function wizardPanel(){
  const p={...DEFAULT_PREFERENCES,...(draft||{})};
