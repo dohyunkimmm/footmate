@@ -197,8 +197,9 @@ function regionChoices(){
 function choices(name,label,values,p,prefix=''){
  return `<fieldset class="fm-beta-choice-group"><legend>${esc(prefix+label)}</legend><div>${values.map(([value,text])=>`<label><input type="radio" name="${name}" value="${esc(value)}" aria-label="${esc(text)}" ${p[name]===value?'checked':''}><span>${esc(text)}</span></label>`).join('')}</div></fieldset>`;
 }
+const compactDemo=isDemoEntry&&!['control','quick','compare'].includes(new URL(location.href).searchParams.get('opening'));
 function quickFilters(p){
- if(isDemoEntry){
+ if(compactDemo){
   const selected=Object.entries(FILTERS).filter(([name])=>p[name]);
   return `<div class="fm-beta-compact-filters"><button type="button" class="fm-beta-button" data-growth-action="edit-preferences">${selected.length?'조건 변경':'조건 설정'}</button>
    ${selected.map(([name,filter])=>{
@@ -246,8 +247,8 @@ function recoveryPanel(p){
  return `<section class="fm-beta-filter-recovery" aria-label="추천 조건 조정"><p>조건 하나를 바꿔보세요.</p>${alternatives.map(item=>`<button class="fm-beta-button" type="button" data-growth-action="recover-condition" data-recovery-key="${item.key}">${esc(item.label)} · ${item.count}개</button>`).join('')}${!alternatives.length?'<p>조건을 다시 선택하거나 전체 해제하세요.</p>':''}</section>`;
 }
 function recommendPanel(){
- if(!preferences)return wizardPanel();
- return `<section class="fm-beta-preferences-summary" aria-label="추천 조건">${quickFilters(preferences)}${!busy&&recommendation?.ranked.length===0?recoveryPanel(preferences):''}${message&&message!==TIME_RANGE_ERROR?`<div class="fm-beta-search-status"><span role="status">${esc(message)}</span>${message==='기본 추천'?'<button type="button" class="fm-beta-link" data-growth-action="retry-ranking">AI 다시 시도</button>':''}</div>`:''}</section>`;
+ if(!preferences&&!compactDemo)return wizardPanel();
+ return `<section class="fm-beta-preferences-summary" aria-label="추천 조건">${quickFilters(preferences||DEFAULT_PREFERENCES)}${!busy&&recommendation?.ranked.length===0?recoveryPanel(preferences):''}${message&&message!==TIME_RANGE_ERROR?`<div class="fm-beta-search-status"><span role="status">${esc(message)}</span>${message==='기본 추천'?'<button type="button" class="fm-beta-link" data-growth-action="retry-ranking">AI 다시 시도</button>':''}</div>`:''}</section>`;
 }
 function preferenceSheet(){
  const p=draft||preferences;
@@ -258,10 +259,13 @@ function preferenceSheet(){
  <form data-growth-form="recommend" class="fm-beta-preference-form"><div class="fm-beta-condition-fields"><div class="fm-beta-condition-selects">
  <label class="fm-beta-field"><span>활동 지역</span><select name="region" aria-label="활동 지역">${options(regions.map(v=>[v,v]),p.region,'지역 전체')}</select></label>
  <label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(FILTERS.level.values.slice(1),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label>
- </div><fieldset class="fm-beta-time-range"><legend>경기 시간</legend>
+${compactDemo?` </div><fieldset class="fm-beta-time-range"><legend>경기 시간</legend>
  <label class="fm-beta-field"><span>시작 시각부터</span><select name="afterTime" aria-label="시작 시각부터">${options([['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']],p.afterTime,'제한 없음')}</select></label>
  <label class="fm-beta-field"><span>시작 시각까지</span><select name="beforeTime" aria-label="시작 시각까지">${options(FILTERS.beforeTime.values.slice(1),p.beforeTime,'제한 없음')}</select></label></fieldset>
  ${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}
+`:` <label class="fm-beta-field"><span>선호 시간</span><select name="afterTime" aria-label="선호 시간">${options([['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']],p.afterTime,'시간 전체')}</select></label></div>
+ ${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}${choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p)}
+`}
  <div role="alert" data-time-range-error>${hasInvalidTimeRange(p)?TIME_RANGE_ERROR:''}</div>
  </div><div class="fm-beta-condition-actions"><button class="fm-beta-button fm-beta-button--primary">추천 경기 보기</button></div></form></dialog>`;
 }
