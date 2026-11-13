@@ -78,7 +78,7 @@ test('closed beta signs in, joins atomically, restores session and cancels',asyn
 
   await page.getByRole('button',{name:'MF로 참가'}).click();
   await expect(page.getByText('MF 포지션으로 참가가 확정됐습니다.')).toBeVisible();
-  expect(backend.isJoined()).toBe(true);
+  await expect.poll(()=>backend.isJoined()).toBe(true);
   await expect(page.getByRole('navigation',{name:'Beta 메뉴'})).toBeVisible();
   await expect(page.locator('.fm-beta-participation a[href^="https://calendar.google.com/"]')).toBeVisible();
   const calendar=await page.locator('.fm-beta-participation a[href^="https://calendar.google.com/"]').getAttribute('href');
@@ -472,7 +472,7 @@ test('mobile match detail keeps selection through login and returns to app navig
   await expect(page.getByRole('heading',{name:'추천 경기',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'상세 보기',exact:true}).click();
   await page.getByRole('button',{name:'MF로 참가',exact:true}).click();
-  expect(backend.isJoined()).toBe(true);
+  await expect.poll(()=>backend.isJoined()).toBe(true);
   await expect(page.getByRole('navigation',{name:'Beta 메뉴',exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'참가 취소',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'MY',exact:true}).click();
@@ -1094,7 +1094,7 @@ test('new live venue region appears in the first-step location choices',async({p
   await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
 });
 
-test('default demo opens a compact list with unified details and removable conditions',async({page})=>{
+test('choice-first recommendations keep the default demo as a compact list with unified details and removable conditions',async({page})=>{
   await mockBackend(page,{preferences:false,empty:true});
   await page.goto('/demo');
   const cards=page.locator('.fm-beta-compact-card');
