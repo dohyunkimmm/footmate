@@ -18,7 +18,8 @@ const PREF_DIRTY_KEY='footmate:beta:preferences-dirty:v1';
 let syncedUser='',preferenceRevision=0;
 const TIME_RANGE_ERROR='시작 시간 상한은 선호 시간보다 늦게 골라주세요.';
 const DEFAULT_PREFERENCES={sport:'futsal',region:'',level:'',position:'',afterTime:'',beforeTime:'',dateWindow:''};
-let preferences=null,draft=null,editing=true,wizardStep=1,aiOrder=[],initialRecommendationRequested=false,activeRecommendationController=null,recommendationRequestId=0;
+const compactDemo=isDemoEntry&&!['control','quick','compare'].includes(new URL(location.href).searchParams.get('opening'));
+let preferences=null,draft=null,editing=!compactDemo,wizardStep=1,aiOrder=[],initialRecommendationRequested=false,activeRecommendationController=null,recommendationRequestId=0;
 try{const saved=JSON.parse(localStorage.getItem(PREFERENCES_KEY)||'null');if(saved&&['football','futsal',''].includes(saved.sport)&&['','입문','초중급','중급','중급+'].includes(saved.level)&&['','MF','FW','DF','GK'].includes(saved.position)&&['','09:00','14:00','18:00','20:00'].includes(saved.afterTime)&&typeof saved.region==='string'){preferences={...DEFAULT_PREFERENCES,...saved,sport:'futsal',dateWindow:['','today','tomorrow','weekend'].includes(saved.dateWindow)?saved.dateWindow:'',beforeTime:['','12:00','18:00','22:00'].includes(saved.beforeTime)?saved.beforeTime:''};editing=false}}catch{}
 let realtimeState='connecting',socket=null,heartbeat=null,reconnectTimer=null,busy=false,message='',refreshTimer=null;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]||c));
@@ -74,7 +75,7 @@ async function syncAccountPreferences(){
    preferences=remote;editing=false;draft=null;
    try{localStorage.setItem(PREFERENCES_KEY,JSON.stringify(remote))}catch{}
   }else if(localStorage.getItem(PREF_OWNER_KEY)&&localStorage.getItem(PREF_OWNER_KEY)!==userId){
-   preferences=null;editing=true;draft=null;
+   preferences=null;editing=!compactDemo;draft=null;
    try{localStorage.removeItem(PREFERENCES_KEY)}catch{}
   }
   try{localStorage.setItem(PREF_OWNER_KEY,userId)}catch{}
@@ -197,7 +198,6 @@ function regionChoices(){
 function choices(name,label,values,p,prefix=''){
  return `<fieldset class="fm-beta-choice-group"><legend>${esc(prefix+label)}</legend><div>${values.map(([value,text])=>`<label><input type="radio" name="${name}" value="${esc(value)}" aria-label="${esc(text)}" ${p[name]===value?'checked':''}><span>${esc(text)}</span></label>`).join('')}</div></fieldset>`;
 }
-const compactDemo=isDemoEntry&&!['control','quick','compare'].includes(new URL(location.href).searchParams.get('opening'));
 function quickFilters(p){
  if(compactDemo){
   const selected=Object.entries(FILTERS).filter(([name])=>p[name]);
