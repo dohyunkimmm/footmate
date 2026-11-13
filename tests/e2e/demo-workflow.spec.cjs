@@ -136,7 +136,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await expect(start).toHaveCSS('background-color','rgb(9, 46, 33)');
  await expect(start).toHaveCSS('color','rgb(255, 255, 255)');
  await page.screenshot({path:test.info().outputPath('compact-opening-320.png')});
- expect(await start.evaluate(el=>el.getBoundingClientRect().bottom<=document.querySelector('.fm-beta-opening-preview').getBoundingClientRect().top)).toBe(true);
+ expect(await start.evaluate(el=>document.querySelector('.fm-beta-opening-preview').getBoundingClientRect().bottom<=el.getBoundingClientRect().top)).toBe(true);
  await start.click();
  await expect(page.getByRole('heading',{name:'어디서 뛸까요?'})).toBeFocused();
  await page.getByRole('radio',{name:'수원 · 영통',exact:true}).click();
