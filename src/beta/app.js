@@ -389,7 +389,7 @@ if(root){
     const conditions=selectedPreferences();
     const available=matches.filter(match=>isFutsalMatch(match)&&(!freshMatches||freshMatches.ids.has(match.id))&&eligibleMatch(match,conditions));
     const ordered=recommendedIds===null?available:recommendedIds.map(id=>available.find(match=>match.id===id)).filter(Boolean);
-    if(freshMatches&&recommendedIds!==null){
+    if((freshMatches||compactDemo)&&recommendedIds!==null){
       const ranked=new Set(ordered.map(match=>match.id));
       ordered.push(...available.filter(match=>!ranked.has(match.id)));
     }
