@@ -94,16 +94,19 @@
 }
 
 .footmate-app .fm-beta-opening .fm-beta-opening-preview {
-  border-color: #e0e7e2;
-  background: #fff;
+  padding: 0;
+  border: 1px solid #cfded3;
+  border-radius: 16px;
+  background: #eaf2eb;
   color: #1d2923;
-  box-shadow: 0 4px 16px #203d2d0a;
+  box-shadow: none;
+  text-align: left;
 }
 
 .footmate-app .fm-beta-opening-preview .fm-beta-preview-card {
-  border: 1px solid #e1ebe4;
-  border-radius: 12px;
-  background: #f5f8f6;
+  padding: 12px 14px 8px;
+  border: 0;
+  background: transparent;
 }
 
 .footmate-app .fm-beta-preview-card small {
@@ -112,16 +115,28 @@
 }
 
 .footmate-app .fm-beta-preview-card h2 {
+  margin: 4px 0;
   color: #1d2923;
   letter-spacing: -0.02em;
 }
 
-.footmate-app .fm-beta-preview-card p,
-.footmate-app .fm-beta-preview-controls {
+.footmate-app .fm-beta-preview-card p {
+  margin: 2px 0 0;
   color: #4f6257;
 }
 
+.footmate-app .fm-beta-opening-preview .fm-beta-preview-controls {
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 14px;
+  border-top: 1px solid #cfded3;
+  color: #4f6257;
+  font-variant-numeric: tabular-nums;
+}
+
 .footmate-app .fm-beta-preview-controls .fm-beta-link {
+  min-height: 44px;
+  padding: 0;
   color: #326047;
 }
 </style>
