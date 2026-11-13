@@ -469,7 +469,7 @@ if(root){
   }
 
   function render(){
-    try{root.dataset.betaOnboarding=String(!JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null'))}catch{root.dataset.betaOnboarding='true'}
+    try{root.dataset.betaOnboarding=String(!compactDemo&&!JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')||'null'))}catch{root.dataset.betaOnboarding='true'}
     root.dataset.betaConnection=backendState;
     root.dataset.betaCatalogSource=matches.some(m=>m.isDemo)?'demo':'server';
     root.dataset.betaView=view;
