@@ -155,8 +155,18 @@
 }
 
 .footmate-app .fm-beta-opening .fm-next-actions {
-  margin-block: auto 0;
-  padding-top: 16px;
+  margin-block: 12px 0;
+}
+
+@media (min-width: 431px) {
+  .footmate-app #footmate-beta[data-beta-opening="true"] {
+    height: auto;
+    max-height: var(--demo-frame-height);
+  }
+
+  .footmate-app .fm-beta-opening .fm-app-entry {
+    height: auto;
+  }
 }
 </style>
 </head>
