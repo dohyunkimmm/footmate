@@ -129,7 +129,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await page.clock.setFixedTime(new Date('2026-11-06T03:00:00Z'));
  await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo?opening=control');
+ await page.goto('/demo');
  const start=page.getByRole('button',{name:'내 조건으로 추천받기'});
  await expect(page.getByRole('region',{name:'추천 예시'})).toBeVisible();
  await expect(start).toBeInViewport();
@@ -194,7 +194,7 @@ test('demo level selection keeps recommendations and stored filters consistent',
  await page.clock.setFixedTime(new Date('2026-11-07T03:00:00Z'));
  await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo?opening=control');
+ await page.goto('/demo');
  await page.getByRole('button',{name:'내 조건으로 추천받기'}).click();
  await page.getByRole('radio',{name:'서울 · 강남',exact:true}).click();
  await page.getByRole('button',{name:'다음',exact:true}).click();
@@ -223,7 +223,7 @@ test('saved demo conditions show and open only new eligible matches',async({page
  });
  await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo?opening=control');
+ await page.goto('/demo');
  const menu=page.locator('#preset-menu');
  await menu.click();
  await page.getByRole('button',{name:'현재 조건 저장'}).click();
@@ -297,7 +297,7 @@ test('compact visual keeps one connection message and readable cards with 200 pe
  });
  await page.route('**/api/beta-config',route=>route.fulfill({status:503,json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo?opening=control');
+ await page.goto('/demo');
  await expect(page.locator('.fm-beta-connection')).toHaveCount(1);
  await expect(page.getByText('연결 실패',{exact:true})).toBeVisible();
  await expect(page.locator('[data-readiness-notice]')).toHaveCount(0);
@@ -333,7 +333,7 @@ for(const path of ['/demo','/beta']){
  test('current typography loads and falls back on '+path,async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await setup(page);
-  await page.goto(path==='/demo'?'/demo?opening=control':path);
+  await page.goto(path);
   const card=page.locator('.fm-beta-catalog .fm-beta-match');
   await expect(card).toBeVisible();
   await expect(card.locator('h3')).toHaveCSS('font-family',/Pretendard Variable/);
