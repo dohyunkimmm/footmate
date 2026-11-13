@@ -146,28 +146,18 @@
 }
 
 .footmate-app .fm-beta-opening .fm-app-entry {
-  justify-content: flex-start;
-  padding-block: clamp(24px, 6vh, 48px) max(20px, env(safe-area-inset-bottom));
+  justify-content: space-evenly;
+  padding-block: clamp(20px, 4vh, 32px) max(20px, env(safe-area-inset-bottom));
 }
 
 .footmate-app .fm-beta-opening .fm-next-intro-copy {
-  margin-block: 20px 12px;
+  margin-block: 12px;
 }
 
 .footmate-app .fm-beta-opening .fm-next-actions {
   margin-block: 12px 0;
 }
 
-@media (min-width: 431px) {
-  .footmate-app #footmate-beta[data-beta-opening="true"] {
-    height: auto;
-    max-height: var(--demo-frame-height);
-  }
-
-  .footmate-app .fm-beta-opening .fm-app-entry {
-    height: auto;
-  }
-}
 </style>
 </head>
 <body>
