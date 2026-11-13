@@ -547,7 +547,7 @@ test('participation login explains selected match and stays scrollable on a shor
  await page.getByRole('button',{name:'참가하기',exact:true}).click();
  const context=page.getByRole('region',{name:'참가할 경기',exact:true});
  await expect(context).toContainText(baseMatch.title);
- await expect(context).toContainText('로그인 후 참가 버튼을 눌러주세요.');
+ await expect(context).toContainText('로그인하면 참가 확인 화면으로 이어집니다.');
  await expect(context).toContainText('9월');
  await page.getByRole('button',{name:'로그인',exact:true}).scrollIntoViewIfNeeded();
  await expect(page.getByRole('button',{name:'로그인',exact:true})).toBeInViewport();
