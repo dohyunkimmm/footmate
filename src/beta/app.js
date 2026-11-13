@@ -431,8 +431,8 @@ if(root){
     return `<div class="fm-beta-shell fm-beta-opening" data-screen="welcome" data-welcome-entry="app"><div class="fm-app-entry">
       <div class="fm-app-entry-brand"><img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate 축구공 로고"><strong class="fm-app-entry-name">FootMate</strong></div>
       <div class="fm-next-intro-copy"><h1>내 조건에 맞는 풋살</h1></div>
-      <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'계속하기':'내 조건으로 추천받기'}</button></div>
       ${example?`<section class="fm-beta-opening-preview" aria-label="추천 예시"><div class="fm-beta-preview-card" data-match-tone="${matchVisual(example).tone}" role="status" aria-live="polite"><small>추천 예시</small><h2>${esc(example.title)}</h2><p>${esc(example.place)} · ${esc(betaLevelLabel(example.level))}</p><p>${esc(formatStart(example.startsAt))}</p></div>${examples.length>1?`<div class="fm-beta-preview-controls"><span>${openingPreviewPage%examples.length+1} / ${examples.length}</span><button type="button" class="fm-beta-link" data-action="opening-preview-next" aria-label="다른 추천 예시 보기">다른 예시 <i class="fm-icon fm-beta-ui-icon" aria-hidden="true">➡</i></button></div>`:''}</section>`:''}
+      <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'계속하기':'내 조건으로 추천받기'}</button></div>
     </div></div>`;
   }
 
