@@ -232,7 +232,7 @@
 }
 
 .footmate-app [data-auto-launch="true"] .fm-app-entry {
-  visibility: hidden;
+  display: none;
 }
 
 .footmate-app [data-combined-discovery] > .fm-beta-opening-preview {
@@ -245,6 +245,27 @@
 
 .footmate-app [data-combined-discovery] .fm-beta-preview-note {
   display: none;
+}
+
+.footmate-app [data-combined-discovery] > .fm-beta-opening-preview {
+  border: 1px solid #d9ddda;
+  border-radius: 16px;
+  color: #222724;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-preview-card {
+  padding: 9px 14px 5px;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-preview-controls {
+  margin: 0 14px;
+  border-top: 1px solid #d9ddda;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-preview-controls .fm-beta-link {
+  min-height: 44px;
+  padding: 0;
+  color: #326047;
 }
 </style>
 </head>
