@@ -48,7 +48,8 @@ if(root){
   sessionStorage.setItem('footmate:beta:opening-variant:v1',activeOpeningVariant);
   const entryStartedAt=Date.now();
   let serverReactions=[];
-  let openingOpen=openingVariant!=='quick'&&(isDemoEntry||openingExperiment)&&(comparisonEntry||sessionStorage.getItem('footmate:beta:entered:v1')!=='1');
+  const demoReload=isDemoEntry&&performance.getEntriesByType('navigation')[0]?.type==='reload';
+  let openingOpen=openingVariant!=='quick'&&(isDemoEntry||openingExperiment)&&(demoReload||comparisonEntry||sessionStorage.getItem('footmate:beta:entered:v1')!=='1');
   let joinedPage=0;
   let matchesTab='joined';
   let authEntry='results';
