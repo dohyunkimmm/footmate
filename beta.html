@@ -336,6 +336,23 @@
 ) {
   display: none;
 }
+
+.footmate-app [data-combined-discovery] .fm-beta-catalog:has(.fm-beta-browse-controls) {
+  justify-content: flex-start;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-match-list {
+  flex: 0 0 auto;
+  margin-block: auto 0;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-match-list > .fm-beta-match {
+  min-height: clamp(220px, 36dvh, 300px);
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-browse-controls {
+  margin-block: 12px auto;
+}
 </style>
 </head>
 <body>
