@@ -29,8 +29,8 @@ test('closed beta operator production route is connected but gated without a ses
 
 test('public demo uses the existing Beta OAuth providers',async({page,request})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
- await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('#footmate-next')).toHaveCount(0);
   const configResponse=await request.get('/api/beta-config');expect(configResponse.ok()).toBe(true);
@@ -41,9 +41,8 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
   expect(settings.external.google).toBe(true);expect(settings.external.kakao).toBe(true);
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
   await expect(page.getByRole('region',{name:'추천 예시',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'다음',exact:true}).click();
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
-  await expect(page.locator('.fm-beta-preview-note')).toBeVisible();
   await expect(page.getByRole('button',{name:'상세 보기',exact:true})).toBeVisible();
   await page.screenshot({path:'test-results/production-design/production-design-home-390.png',fullPage:true});
   await page.getByRole('button',{name:'상세 보기',exact:true}).click();
@@ -61,15 +60,13 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
 
 test('production demo keeps exact level and region from onboarding through quick filters',async({page})=>{
   await page.setViewportSize({width:390,height:844});
-  const response=await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
- await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+  const response=await page.goto('/demo',{waitUntil:'domcontentloaded'});
+
   expect(response?.status()).toBe(200);
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
-  await page.getByRole('radio',{name:'서울 · 강남',exact:true}).check();
-  await page.getByRole('button',{name:'다음',exact:true}).click();
-  const level=page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:'중급',exact:true});
-  await level.check();
-  await expect(level).toBeChecked();
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+  await page.getByRole('combobox',{name:'활동 지역'}).selectOption('서울 · 강남');
+  await page.getByRole('combobox',{name:'실력',exact:true}).selectOption('중급');
   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
   await expect(page.locator('#quick-filter-level')).toContainText('중급');
   await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 중급 저녁 풋살');
@@ -104,14 +101,12 @@ for(const [region,area] of demoRegionMatrix){
  for(const [level,label] of demoLevelMatrix){
   test(`production demo preserves ${region} / ${label} through reload`,async({page})=>{
    await page.setViewportSize({width:390,height:844});
-   await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
- await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+   await page.goto('/demo',{waitUntil:'domcontentloaded'});
+
    await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
-    await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:region,exact:true}).check();
-   await page.getByRole('button',{name:'다음',exact:true}).click();
-   const selected=page.getByRole('group',{name:'실력',exact:true}).getByRole('radio',{name:label,exact:true});
-   await selected.check();
-   await expect(selected).toBeChecked();
+   await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+   await page.getByRole('combobox',{name:'활동 지역'}).selectOption(region);
+   await page.getByRole('combobox',{name:'실력',exact:true}).selectOption(level);
    await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
    const verify=async()=>{
     await expect(page.locator('#quick-filter-region')).toHaveAttribute('title',region);
