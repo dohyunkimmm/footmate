@@ -165,22 +165,59 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-app-entry-brand {
-    animation: fm-welcome-enter 360ms ease-out both;
+  .footmate-app #footmate-beta:has(.fm-beta-opening[data-preview-motion="true"]) {
+    position: relative;
+    isolation: isolate;
   }
 
-  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-beta-opening-preview {
-    animation: fm-welcome-enter 300ms ease-out 600ms both;
+  .footmate-app #footmate-beta:has(.fm-beta-opening[data-preview-motion="true"])::after {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    inset: 0;
+    pointer-events: none;
+    background: #092e21 url("/src/app/assets/footmate-original.png") center / 112px 112px no-repeat;
+    animation: fm-launch-splash 900ms ease-out both;
   }
 
-  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-next-actions {
-    animation: fm-welcome-enter 280ms ease-out 670ms both;
+  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-app-entry {
+    animation: fm-launch-reveal 900ms ease-out both;
   }
 }
 
-@keyframes fm-welcome-enter {
-  from { opacity: 0; translate: 0 8px; }
-  to { opacity: 1; translate: 0 0; }
+@keyframes fm-launch-splash {
+  0%, 72% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes fm-launch-reveal {
+  0%, 67% { visibility: hidden; opacity: 0; }
+  68% { visibility: visible; opacity: 0; }
+  100% { visibility: visible; opacity: 1; }
+}
+
+.footmate-app .fm-beta-opening-preview h3 {
+  margin: 4px 0;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.footmate-app [data-beta-main] > .fm-beta-opening-preview {
+  display: none;
+}
+
+.footmate-app [data-beta-main]:has(.fm-beta-onboarding) > .fm-beta-opening-preview {
+  display: block;
+  max-width: none;
+  margin: 8px 0 12px;
+  padding: 0;
+  border-color: #d9ddda;
+  background: transparent;
+}
+
+.footmate-app [data-beta-main] .fm-beta-preview-card {
+  border: 0;
+  background: transparent;
 }
 </style>
 </head>
@@ -191,7 +228,7 @@
 <script>(()=>{const u=new URL(location.href);if(u.searchParams.get("entry")==="footmate"){u.searchParams.delete("entry");history.replaceState(history.state,"",u.pathname+u.search+u.hash)}})();</script>
 <script src="/src/beta/recovery-bootstrap.js?v=1"></script>
 <script src="/src/beta/social-auth-bootstrap.js?v=1"></script>
-<script type="module" src="/src/beta/app.js?v=539"></script>
+<script type="module" src="/src/beta/app.js?v=540"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
