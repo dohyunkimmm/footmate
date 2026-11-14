@@ -378,7 +378,7 @@ test('choice-first recommendations keep OAuth login in Beta home with the select
   const token='e30.'+Buffer.from(JSON.stringify({sub:userId})).toString('base64url')+'.sig';
   await page.goto('/beta#access_token='+token+'&refresh_token=test-refresh&expires_in=3600');
   await page.waitForURL('**/beta');
-  await expect(page.getByRole('navigation',{name:'Beta 메뉴'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'경기 상세'})).toBeVisible();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
   await expect(page.locator(`.fm-beta-match[data-match-id="${selected}"][data-pending-match="true"]`)).toBeVisible();
   expect(backend.isJoined()).toBe(false);
@@ -595,7 +595,7 @@ test('random discovery keeps filters, avoids repeats and never calls AI for anot
   const seen=new Set(['random-0']);
   const conditions=await page.evaluate(()=>localStorage.getItem('footmate:beta:preferences:v1'));
   for(let i=0;i<3;i++){
-    await page.getByRole('button',{name:'다른 경기',exact:true}).click();
+    await page.getByRole('button',{name:'다른 경기 추천',exact:true}).click();
     const id=await page.locator('.fm-beta-match').getAttribute('data-match-id');
     expect(seen.has(id)).toBe(false);expect(eligible.map(m=>m.id)).toContain(id);seen.add(id);
   }
