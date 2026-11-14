@@ -293,7 +293,8 @@ test('choice-first recommendations keep demo home populated and participation is
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
   await page.route('**/api/ai-match-assistant',route=>{const body=route.request().postDataJSON();return fulfill(route,{mode:'connected-ai',rankedMatchIds:body.candidates.map(m=>m.id).reverse()})});
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo');
+  await page.goto('/demo?opening=control');
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
   await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
@@ -390,6 +391,7 @@ test('FootMate results expand without signup and participation retains preferenc
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
   await page.setViewportSize({width:390,height:844});
   await page.goto('/demo?opening=control');
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   const opening=page.locator('[data-screen="welcome"]');
   await expect(opening.getByRole('img',{name:'FootMate',exact:true})).toBeVisible();
   await expect(opening.locator('.fm-app-entry-name')).toHaveCount(0);
@@ -1043,7 +1045,8 @@ test('demo recommendation preview survives an unavailable backend config',async(
   await page.addInitScript(()=>sessionStorage.setItem('footmate:beta:entered:v1','1'));
   await page.route('**/api/beta-config',route=>fulfill(route,{connected:false,code:'BETA_BACKEND_NOT_CONFIGURED'},503));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-catalog-source','demo');
   await page.getByRole('button',{name:'다음',exact:true}).click();
@@ -1063,7 +1066,8 @@ test('selected demo match stays available after sign-in even when live matches e
   const backend=await mockBackend(page,{preferences:false});
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
   await page.route(origin+'/auth/v1/settings',route=>fulfill(route,{external:{google:true,kakao:true}}));
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:'수원 · 영통',exact:true}).check();
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
