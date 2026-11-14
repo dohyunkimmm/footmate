@@ -177,18 +177,17 @@
     inset: 0;
     pointer-events: none;
     background: #092e21 url("/src/app/assets/footmate-original.png") center / 112px 112px no-repeat;
-    animation: fm-launch-splash 1.2s ease-out both;
+    animation: fm-launch-splash 900ms ease-out both;
   }
 
   .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-app-entry {
-    animation: fm-launch-reveal 1.2s ease-out both;
+    animation: fm-launch-reveal 900ms ease-out both;
   }
 }
 
 @keyframes fm-launch-splash {
-  0% { background-size: 88px 88px; opacity: 1; }
-  35%, 68% { background-size: 112px 112px; opacity: 1; }
-  100% { background-size: 118px 118px; opacity: 0; visibility: hidden; }
+  0%, 72% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
 }
 
 @keyframes fm-launch-reveal {
