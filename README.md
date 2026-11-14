@@ -67,30 +67,28 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-**현재 `main` 파일·폴더 점검(2026-11-13, 문서 수정 전):** [`fc023a3`](https://github.com/dohyunkimmm/footmate/commit/fc023a33c235b6f7a422e6708544716ae2d48e48) 기준 GitHub 재귀 트리(`truncated=false`)는 **파일 279개·디렉터리 37개**(루트 파일 13개·최상위 폴더 8개)입니다. 최근 [PR #911~#917](https://github.com/dohyunkimmm/footmate/pulls?q=is%3Apr+is%3Amerged+sort%3Aupdated-desc)의 데모 프레임·필터·문구·추천 비교·아이콘 변경이 `main`에 반영됐고, 해당 HEAD의 [FootMate QA](https://github.com/dohyunkimmm/footmate/actions/runs/43240267898)는 성공했습니다. 보고서 원본·발표자료·전용 QA는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)로 분리된 상태입니다.
+**점검 기준(2026-11-15):** [`main` `349a9fa`](https://github.com/dohyunkimmm/footmate/commit/349a9fab33f9c117c5a7aca5ac81e91b58a9db9d) 재귀 트리(`truncated=false`)에서 **파일 279개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개를 확인했습니다. 아래 표는 이 문서 정리로 [과거 점검 이력](docs/REPO-AUDIT-TIMELINE.md) 1개를 추가한 **반영 예정 구조(파일 280개)**입니다. 11월 13일·11일 등 이전 수치는 [당시 기록](docs/REPO-AUDIT-TIMELINE.md)으로 보존합니다.
 
-| 현재 최상위 경로 | 파일 수 | 관리 범위 |
+| 최상위 경로 | 반영 예정 파일 수 | 역할 |
 | --- | ---: | --- |
-| `.github/` | 5 | 자동 검사·설정 |
+| `.github/` | 5 | CI·설정 |
 | `api/` | 2 | AI/API |
-| `docs/` | 34 | 현행 문서 및 과거 감사 기록 |
-| `scripts/` | 11 | 빌드·검사 |
-| `src/` | 87 | 앱·Beta·플랫폼 |
-| `supabase/` | 36 | Edge Functions·마이그레이션 |
-| `tests/` | 89 | 계약·브라우저·회귀 검사 |
-| `worker/` | 2 | 공개 경로·Worker |
+| `docs/` | 35 | 현행 문서 목록·운영 근거·보존 이력 |
+| `scripts/` | 11 | 빌드·검사 도구 |
+| `src/` | 87 | 앱·Beta·플랫폼 코드 |
+| `supabase/` | 36 | 함수·마이그레이션 |
+| `tests/` | 89 | 계약·E2E·회귀 검사 |
+| `worker/` | 2 | Worker 라우팅 |
 | 루트 파일 | 13 | 진입점·설정·자산 |
-| **합계** | **279** | **디렉터리 37개** |
+| **합계** | **280** | **디렉터리 37개** |
 
-**정리 판정:** 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**입니다. 원격 브랜치 **126개(비기본 125개)**는 기존 [패치 감사](docs/REMAINING-AUDIT-2026-11-08.md) 및 [보존 결정 #525](https://github.com/dohyunkimmm/footmate/issues/525)에 따라 일괄 병합·삭제하지 않습니다. 동일 blob SQL 마이그레이션 2쌍은 적용 이력 보존 대상이며, 임시 파일 및 안전한 추가 삭제 대상은 확인되지 않았습니다. 과거 파일·폴더 수는 날짜별 스냅샷으로 유지하고 [11월 11일 기록](docs/REPO-CLEANUP-2026-11-11.md)을 이전 기준으로 참조합니다.
+**클렌징 결과:** 기존 `qa/`·`src/case-study/`와 보고서 원본은 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)로 이미 이전됐습니다. 루트 HTML 진입점·마이그레이션 이력 2쌍·테스트 스냅샷은 삭제 시 영향 또는 이력 보존 필요가 있어 유지했습니다. 검증 없이 제거할 추가 파일·폴더는 확정되지 않았으며 **삭제 0건**입니다.
 
-**과거 점검 수치:** 2026-11-11 기준 278개 파일·37개 디렉터리, 2026-11-09의 345개 파일·43개 디렉터리와 2026-11-08의 339개 파일·43개 디렉터리는 각 날짜의 스냅샷입니다. 실제 서명 JWT·운영자 MFA 검증 [#611](https://github.com/dohyunkimmm/footmate/issues/611)은 미완료입니다.
+**미완료 상태:** 열린 PR [#938](https://github.com/dohyunkimmm/footmate/pull/938)·[#946](https://github.com/dohyunkimmm/footmate/pull/946) **2건은 현재 `main`과 충돌**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**의 실제 서명 JWT·MFA 검증은 미완료입니다. 기준 `main`의 [FootMate QA #43650979599](https://github.com/dohyunkimmm/footmate/actions/runs/43650979599)는 성공했지만 문서 변경 후 QA·운영 배포·실계정 E2E를 대신하지 않습니다.
 
-- **공개 진입 파일:** [이전 프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). 첫 화면(`/`)은 [Worker](worker/index.js)가 `/demo`로 연결합니다.
-- **화면·원본 자료:** [앱·Beta·플랫폼·공용 코드](src/). 보고서, PPTX·XLSX 원본과 제작 스크립트는 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)에서 관리합니다.
-- **서버·데이터:** [API](api/) · [Worker](worker/) · [Supabase 함수/마이그레이션](supabase/). 적용 가능한 SQL 이력은 동일 내용이라도 보존합니다.
-- **검증·도구:** [서비스 테스트](tests/) · [서비스 점검·빌드 스크립트](scripts/) · [GitHub 자동화](.github/). 보고서 QA는 별도 보고서 저장소에서 실행합니다.
-- **문서:** [현행 문서 목록](docs/README.md) · [2026-11-11 파일·폴더 점검](docs/REPO-CLEANUP-2026-11-11.md) · [저장소 운영 및 미완료 확인](docs/REPO-OPERATIONS.md). 11월 8일·5일·3일 정리 보고서는 과거 스냅샷으로 보존합니다.
+- **공개 진입 파일:** [프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). `/` 경로는 [Worker](worker/index.js)가 `/demo`로 연결합니다.
+- **앱·서버·검증:** [제품 소스](src/) · [API](api/) · [Worker](worker/) · [Supabase](supabase/) · [테스트](tests/) · [도구](scripts/) · [자동화](.github/).
+- **문서:** [현행 문서 안내](docs/README.md) · [과거 점검 이력](docs/REPO-AUDIT-TIMELINE.md) · [저장소 운영](docs/REPO-OPERATIONS.md) · [2026-11-11 정리 스냅샷](docs/REPO-CLEANUP-2026-11-11.md).
 
 ## 자세한 문서
 
