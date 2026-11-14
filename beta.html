@@ -242,6 +242,10 @@
   padding: 0;
   background: transparent;
 }
+
+.footmate-app [data-combined-discovery] .fm-beta-preview-note {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -256,7 +260,7 @@
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
   await import('/src/beta/readiness.js?v=2');
-  await import('/src/beta/growth.js?v=18');
+  await import('/src/beta/growth.js?v=20');
   await import('/src/beta/social-auth.js?v=2');
   await import('/src/beta/push.js?v=1');
   await import('/src/beta/media.js?v=2');

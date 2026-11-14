@@ -29,7 +29,8 @@ test('closed beta operator production route is connected but gated without a ses
 
 test('public demo uses the existing Beta OAuth providers',async({page,request})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('#footmate-next')).toHaveCount(0);
   const configResponse=await request.get('/api/beta-config');expect(configResponse.ok()).toBe(true);
@@ -60,7 +61,8 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
 
 test('production demo keeps exact level and region from onboarding through quick filters',async({page})=>{
   await page.setViewportSize({width:390,height:844});
-  const response=await page.goto('/demo',{waitUntil:'domcontentloaded'});
+  const response=await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
   expect(response?.status()).toBe(200);
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await page.getByRole('radio',{name:'서울 · 강남',exact:true}).check();
@@ -102,7 +104,8 @@ for(const [region,area] of demoRegionMatrix){
  for(const [level,label] of demoLevelMatrix){
   test(`production demo preserves ${region} / ${label} through reload`,async({page})=>{
    await page.setViewportSize({width:390,height:844});
-   await page.goto('/demo',{waitUntil:'domcontentloaded'});
+   await page.goto('/demo?opening=control',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
    await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
     await page.getByRole('group',{name:'활동 지역',exact:true}).getByRole('radio',{name:region,exact:true}).check();
    await page.getByRole('button',{name:'다음',exact:true}).click();
