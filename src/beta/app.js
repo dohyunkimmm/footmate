@@ -718,7 +718,7 @@ if(root){
     }
     if(action==='detail-tab'){detailTab=target.dataset.tab;render();return}
     if(action==='setup-position'){pendingMatchId=target.dataset.matchId||detailMatchId;sessionStorage.setItem('footmate:beta:pending-match:v1',pendingMatchId);setView('my');accountTab='profile';render();focusScreen('[name="position"]');return}
-    if(action==='opening'){closeDetail();openingOpen=true;authOpen=false;render();return}
+    if(action==='opening'){closeDetail();openingOpen=!autoLaunch;authOpen=false;if(autoLaunch){setView('home');return}render();return}
     if(action==='opening-preview-next'){openingPreviewPage++;render();root.querySelector('[data-action="opening-preview-next"]')?.focus();return;}
     if(action==='opening-start'||action==='opening-login'){
       openingOpen=false;sessionStorage.setItem('footmate:beta:entered:v1','1');
