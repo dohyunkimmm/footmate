@@ -435,7 +435,7 @@ if(root){
 
   function renderOpening(){
     return `<div class="fm-beta-shell fm-beta-opening" data-screen="welcome" data-auto-launch="${launchPending}" data-welcome-entry="app" data-preview-motion="${openingPreviewPage===0}"><div class="fm-app-entry">
-      <div class="fm-app-entry-brand"><img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="FootMate"></div>
+      <div class="fm-app-entry-brand"><img class="fm-app-entry-logo" src="/src/app/assets/footmate-original.png" width="112" height="112" alt="Footmate"></div>
       ${renderRecommendationExample('h2')}
       <div class="fm-next-actions"><button class="fm-beta-button fm-beta-button--primary" type="button" data-action="opening-start">${session&&user?'계속하기':'내 조건으로 추천받기'}</button></div>
     </div></div>`;
