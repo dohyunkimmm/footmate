@@ -1,3 +1,12 @@
+## 2026-11-15 · `main` 파일·폴더 정리 및 문서 현행화
+
+- 기준: [`main` `349a9fa`](https://github.com/dohyunkimmm/footmate/commit/349a9fab33f9c117c5a7aca5ac81e91b58a9db9d) 재귀 트리(`truncated=false`) **279개 파일·37개 디렉터리**(루트 파일 13개·최상위 폴더 8개). 날짜별 감사 기록을 [별도 이력 문서](REPO-AUDIT-TIMELINE.md)로 옮긴 후 **280개 파일·37개 디렉터리 예상**(`docs/` 35개)이며, 새 변경의 CI 및 병합 확인은 별도입니다.
+- 최신 확인: 열린 PR [#938](https://github.com/dohyunkimmm/footmate/pull/938)·[#946](https://github.com/dohyunkimmm/footmate/pull/946) **2건**, 모두 `mergeable_state=dirty`(충돌). 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**의 실서명 JWT·MFA 검증은 아직 미실행입니다.
+- 기준 SHA의 [FootMate QA #43650979599](https://github.com/dohyunkimmm/footmate/actions/runs/43650979599)는 **SUCCESS**. 이번 문서 변경의 CI 또는 Cloudflare/Supabase 운영 검증으로 간주하지 않습니다.
+- 폴더 판정: 보고서 전용 소스·QA는 이미 [별도 저장소](https://github.com/dohyunkimmm/footmate-case-study)로 분리됐습니다. 중복 blob 마이그레이션 2쌍은 적용 이력 보존, 루트 HTML·시각 스냅샷은 서비스/회귀 참조 때문에 유지합니다. **새 삭제 확정 0건**, 브랜치·SQL·배포 설정 변경 0건입니다.
+- [루트 목록](../README.md#저장소-파일폴더-안내)과 [문서 목록](README.md)을 현행 탐색 경로로 사용하고, 이전 날짜 점검 숫자는 [이력 문서](REPO-AUDIT-TIMELINE.md) 및 아래 당시 기록으로만 해석합니다.
+
+---
 ## 2026-11-13 · 메인 목록 재점검·폴더 클렌징·문서 동기화
 
 - GitHub [`main` `fc023a3`](https://github.com/dohyunkimmm/footmate/commit/fc023a33c235b6f7a422e6708544716ae2d48e48) 재귀 트리(`truncated=false`) 기준 **파일 279개·디렉터리 37개**(루트 파일 **13개**, 최상위 폴더 **8개**). 경로별 파일 수는 [루트 README](../README.md#저장소-파일폴더-안내)의 메인 목록을 기준으로 합니다. 문서 갱신 전 스냅샷이며 11월 11일의 **278개 파일**은 당시 기준입니다.
