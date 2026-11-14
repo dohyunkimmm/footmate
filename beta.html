@@ -165,22 +165,36 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-app-entry-brand {
-    animation: fm-welcome-enter 360ms ease-out both;
+  .footmate-app #footmate-beta:has(.fm-beta-opening[data-preview-motion="true"]) {
+    position: relative;
+    isolation: isolate;
   }
 
-  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-beta-opening-preview {
-    animation: fm-welcome-enter 300ms ease-out 600ms both;
+  .footmate-app #footmate-beta:has(.fm-beta-opening[data-preview-motion="true"])::after {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    inset: 0;
+    pointer-events: none;
+    background: #092e21 url("/src/app/assets/footmate-original.png") center / 112px 112px no-repeat;
+    animation: fm-launch-splash 1.2s ease-out both;
   }
 
-  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-next-actions {
-    animation: fm-welcome-enter 280ms ease-out 670ms both;
+  .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-app-entry {
+    animation: fm-launch-reveal 1.2s ease-out both;
   }
 }
 
-@keyframes fm-welcome-enter {
-  from { opacity: 0; translate: 0 8px; }
-  to { opacity: 1; translate: 0 0; }
+@keyframes fm-launch-splash {
+  0% { background-size: 88px 88px; opacity: 1; }
+  35%, 68% { background-size: 112px 112px; opacity: 1; }
+  100% { background-size: 118px 118px; opacity: 0; visibility: hidden; }
+}
+
+@keyframes fm-launch-reveal {
+  0%, 67% { visibility: hidden; opacity: 0; }
+  68% { visibility: visible; opacity: 0; }
+  100% { visibility: visible; opacity: 1; }
 }
 </style>
 </head>
