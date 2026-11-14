@@ -389,7 +389,7 @@ test('FootMate results expand without signup and participation retains preferenc
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
   await page.route('**/api/ai-match-assistant',route=>fulfill(route,{mode:'connected-ai',rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/demo');
+  await page.goto('/demo?opening=control');
   const opening=page.locator('[data-screen="welcome"]');
   await expect(opening.getByRole('img',{name:'FootMate',exact:true})).toBeVisible();
   await expect(opening.locator('.fm-app-entry-name')).toHaveCount(0);
