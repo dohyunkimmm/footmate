@@ -463,7 +463,7 @@ if(root){
       if(launchPending&&root.querySelector('[data-auto-launch="true"]'))return;
       root.innerHTML=renderOpening();
       if(launchPending){
-        const delay=matchMedia('(prefers-reduced-motion: reduce)').matches?0:900;
+        const delay=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1600;
         setTimeout(()=>{launchPending=false;openingOpen=false;render()},delay);
       }
       return;
