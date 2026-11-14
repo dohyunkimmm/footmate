@@ -57,7 +57,7 @@ async function serious(page){
 test('closed beta signs in, joins atomically, restores session and cancels',async({page})=>{
   const backend=await mockBackend(page);
   await page.goto('/beta',{waitUntil:'domcontentloaded'});
-  await expect(page).toHaveTitle('FootMate | Demo');
+  await expect(page).toHaveTitle('FOOTMATE | Demo');
   await expect(page.locator('#footmate-beta')).toHaveAttribute('data-beta-state','ready');
   await expect(page.locator('[data-beta-backend]')).toHaveAttribute('data-beta-backend','connected');
   await expect(page.getByText('영통 금요일 저녁 경기')).toBeVisible();
@@ -391,7 +391,7 @@ test('FootMate results expand without signup and participation retains preferenc
   await page.setViewportSize({width:390,height:844});
   await page.goto('/demo?opening=control');
   const opening=page.locator('[data-screen="welcome"]');
-  await expect(opening.getByRole('img',{name:'FootMate',exact:true})).toBeVisible();
+  await expect(opening.getByRole('img',{name:'FOOTMATE',exact:true})).toBeVisible();
   await expect(opening.locator('.fm-app-entry-name')).toHaveCount(0);
   await expect(opening.getByRole('button',{name:'내 조건으로 추천받기',exact:true})).toHaveCount(1);
   await expect(opening.getByRole('button',{name:'다른 추천 예시 보기'})).toBeVisible();
