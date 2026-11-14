@@ -294,6 +294,20 @@
 .footmate-app [data-combined-discovery] .fm-beta-browse-controls {
   margin-top: 8px;
 }
+
+.footmate-app .fm-beta-live[data-beta-backend="connected"],
+.footmate-app .fm-beta-live[data-beta-backend="preview"] {
+  display: none;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-filter-count,
+.footmate-app [data-combined-discovery] #recommendation-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
 </style>
 </head>
 <body>
