@@ -195,7 +195,7 @@ test('demo level selection keeps recommendations and stored filters consistent',
  await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
  await page.goto('/demo?opening=control');
- await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).filter({visible:true}).count() && await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
+ await page.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
  await expect(page.getByRole('region',{name:'추천 예시',exact:true})).toBeVisible();
  await expect(page.getByRole('heading',{name:'어디서 뛸까요?',exact:true})).toBeVisible();
  await page.getByRole('radio',{name:'서울 · 강남',exact:true}).click();
