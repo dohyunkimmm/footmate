@@ -720,7 +720,7 @@ test('filter overlays leave the mobile recommendation layout in place',async({pa
  await mockBackend(page);
  await page.route('**/api/ai-match-assistant',route=>fulfill(route,{rankedMatchIds:route.request().postDataJSON().candidates.map(m=>m.id)}));
  await page.setViewportSize({width:320,height:560});
- await page.goto('/demo');
+ await page.goto('/demo?opening=quick');
  const main=page.locator('[data-beta-main]');
  const layout=()=>main.evaluate(el=>({height:el.scrollHeight,catalogTop:el.querySelector('.fm-beta-catalog').getBoundingClientRect().top}));
  const timeChip=page.locator('#quick-filter-afterTime');
