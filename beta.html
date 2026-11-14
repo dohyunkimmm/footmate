@@ -171,12 +171,18 @@
   }
 
   .footmate-app #footmate-beta:has(.fm-beta-opening[data-preview-motion="true"])::after {
-    content: "";
+    content: "FootMate";
     position: absolute;
     z-index: 10;
     inset: 0;
     pointer-events: none;
-    background: #f2f5fa url("/src/app/assets/footmate-original.png") center / 112px 112px no-repeat;
+    display: grid;
+    place-items: center;
+    background: #f2f5fa;
+    color: #173663;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
     animation: fm-launch-splash 900ms ease-out both;
   }
 
