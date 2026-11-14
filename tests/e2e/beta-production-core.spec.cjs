@@ -40,7 +40,7 @@ test('public demo uses the existing Beta OAuth providers',async({page,request})=
   const settings=await settingsResponse.json();
   expect(settings.external.google).toBe(true);expect(settings.external.kakao).toBe(true);
   await expect(page.getByRole('button',{name:'Google로 계속하기'})).toBeHidden();
-  await expect(page.getByRole('region',{name:'추천 예시',exact:true})).toBeVisible();
+  await expect(page.locator('.fm-beta-catalog .fm-beta-match')).toBeVisible();
   await page.getByRole('button',{name:'조건 변경',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
   await expect(page.getByRole('button',{name:'상세 보기',exact:true})).toBeVisible();
@@ -74,8 +74,9 @@ test('production demo keeps exact level and region from onboarding through quick
   await expect.poll(async()=> (await stored())?.level).toBe('중급');
   expect((await stored()).region).toBe('서울 · 강남');
 
-  await page.locator('#quick-filter-level').click();
-  await page.getByRole('group',{name:'빠른 실력',exact:true}).getByRole('radio',{name:'고급',exact:true}).click();
+  await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+  await page.getByRole('combobox',{name:'실력',exact:true}).selectOption('중급+');
+  await page.getByRole('button',{name:'추천 경기 보기',exact:true}).click();
   await expect(page.locator('#quick-filter-level')).toContainText('고급');
   await expect(page.locator('.fm-beta-match h3')).toHaveText('강남 고급 저녁 풋살');
   await expect.poll(async()=> (await stored())?.level).toBe('중급+');

@@ -225,7 +225,7 @@ test('saved demo conditions show and open only new eligible matches',async({page
  });
  await page.route('**/api/beta-config',route=>route.fulfill({json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo');
+ await page.goto('/demo?opening=quick');
  const menu=page.locator('#preset-menu');
  await menu.click();
  await page.getByRole('button',{name:'현재 조건 저장'}).click();
@@ -299,7 +299,7 @@ test('compact visual keeps one connection message and readable cards with 200 pe
  });
  await page.route('**/api/beta-config',route=>route.fulfill({status:503,json:{connected:false}}));
  await page.route('**/api/ai-match-assistant',route=>route.fulfill({json:{rankedMatchIds:[]}}));
- await page.goto('/demo');
+ await page.goto('/demo?opening=quick');
  await expect(page.locator('.fm-beta-connection')).toHaveCount(1);
  await expect(page.getByText('연결 실패',{exact:true})).toBeVisible();
  await expect(page.locator('[data-readiness-notice]')).toHaveCount(0);
@@ -331,7 +331,7 @@ test('compact visual keeps one connection message and readable cards with 200 pe
  await expect(page.locator('.fm-beta-detail .fm-beta-slots')).toBeVisible();
 });
 
-for(const path of ['/demo','/beta']){
+for(const path of ['/demo?opening=quick','/beta']){
  test('current typography loads and falls back on '+path,async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await setup(page);
@@ -339,7 +339,7 @@ for(const path of ['/demo','/beta']){
   const card=page.locator('.fm-beta-catalog .fm-beta-match');
   await expect(card).toBeVisible();
   await expect(card.locator('h3')).toHaveCSS('font-family',/Pretendard Variable/);
-  if(path==='/demo'){
+  if(path==='/demo?opening=quick'){
    await card.getByRole('button',{name:'경기 저장',exact:true}).click();
    await expect(page.getByRole('region',{name:'저장한 경기'}).locator('summary')).toHaveCSS('font-family',/Pretendard Variable/);
   }
