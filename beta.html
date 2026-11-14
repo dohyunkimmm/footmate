@@ -171,7 +171,7 @@
   }
 
   .footmate-app #footmate-beta:has(.fm-beta-opening[data-preview-motion="true"])::after {
-    content: "FootMate";
+    content: "FOOTMATE";
     position: absolute;
     z-index: 10;
     inset: 0;
@@ -182,13 +182,18 @@
     color: #173663;
     font-size: 36px;
     font-weight: 800;
-    letter-spacing: -0.04em;
-    animation: fm-launch-splash 900ms ease-out both;
+    letter-spacing: 0.1em;
+    animation: fm-wordmark-in 250ms ease-out both, fm-launch-splash 900ms ease-out both;
   }
 
   .footmate-app .fm-beta-opening[data-preview-motion="true"] .fm-app-entry {
     animation: fm-launch-reveal 900ms ease-out both;
   }
+}
+
+@keyframes fm-wordmark-in {
+  from { text-indent: 0; padding-top: 8px; color: transparent; }
+  to { padding-top: 0; color: #173663; }
 }
 
 @keyframes fm-launch-splash {
