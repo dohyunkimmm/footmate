@@ -343,15 +343,29 @@
 
 .footmate-app [data-combined-discovery] .fm-beta-match-list {
   flex: 0 0 auto;
-  margin-block: auto 0;
+  margin-block: 8px 0;
 }
 
 .footmate-app [data-combined-discovery] .fm-beta-match-list > .fm-beta-match {
-  min-height: clamp(220px, 36dvh, 300px);
+  min-height: clamp(240px, 40dvh, 320px);
+  border-radius: 20px;
+  border-color: #dbe6de;
+  background: linear-gradient(155deg, #f0f7f2, #fff 72%);
+  box-shadow: 0 6px 18px #1535260b;
 }
 
 .footmate-app [data-combined-discovery] .fm-beta-browse-controls {
-  margin-block: 12px env(safe-area-inset-bottom);
+  margin-block: auto env(safe-area-inset-bottom);
+  padding-block: 12px 0;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-discovery {
+  width: 100%;
+}
+
+.footmate-app [data-combined-discovery] .fm-beta-discovery > button {
+  flex: 1;
+  border-radius: 14px;
 }
 </style>
 </head>
