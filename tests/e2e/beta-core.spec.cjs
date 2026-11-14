@@ -391,8 +391,8 @@ test('FootMate results expand without signup and participation retains preferenc
   await page.setViewportSize({width:390,height:844});
   await page.goto('/demo');
   const opening=page.locator('[data-screen="welcome"]');
-  await expect(opening.locator('.fm-app-entry-name')).toHaveText('FootMate');
-  await expect(opening.locator('.fm-app-entry-name')).toHaveCSS('font-size','32px');
+  await expect(opening.getByRole('img',{name:'FootMate',exact:true})).toBeVisible();
+  await expect(opening.locator('.fm-app-entry-name')).toHaveCount(0);
   await expect(opening.getByRole('button',{name:'내 조건으로 추천받기',exact:true})).toHaveCount(1);
   await expect(opening.getByRole('button',{name:'다른 추천 예시 보기'})).toBeVisible();
   await opening.getByRole('button',{name:'내 조건으로 추천받기',exact:true}).click();
