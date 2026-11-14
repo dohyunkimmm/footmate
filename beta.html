@@ -146,8 +146,8 @@
 }
 
 .footmate-app .fm-beta-opening .fm-app-entry {
-  justify-content: space-evenly;
-  padding-block: clamp(20px, 4vh, 32px) max(20px, env(safe-area-inset-bottom));
+  justify-content: space-between;
+  padding-block: max(32px, env(safe-area-inset-top)) max(32px, env(safe-area-inset-bottom));
 }
 
 .footmate-app .fm-beta-opening .fm-next-intro-copy {
@@ -158,9 +158,9 @@
   margin-block: 12px 0;
 }
 
-@media (min-height: 700px) {
-  .footmate-app .fm-beta-opening .fm-app-entry-brand {
-    transform: translateY(-20px);
+@media (max-height: 700px) {
+  .footmate-app .fm-beta-opening .fm-app-entry {
+    padding-block: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-bottom));
   }
 }
 </style>
