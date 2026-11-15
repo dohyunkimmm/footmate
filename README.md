@@ -84,7 +84,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 **클렌징 결과:** 기존 `qa/`·`src/case-study/`와 보고서 원본은 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)로 이미 이전됐습니다. 루트 HTML 진입점·마이그레이션 이력 2쌍·테스트 스냅샷은 삭제 시 영향 또는 이력 보존 필요가 있어 유지했습니다. 검증 없이 제거할 추가 파일·폴더는 확정되지 않았으며 **삭제 0건**입니다.
 
-**미완료 상태:** 열린 PR [#938](https://github.com/dohyunkimmm/footmate/pull/938)·[#946](https://github.com/dohyunkimmm/footmate/pull/946) **2건은 현재 `main`과 충돌**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**의 실제 서명 JWT·MFA 검증은 미완료입니다. 기준 `main`의 [FootMate QA #43650979599](https://github.com/dohyunkimmm/footmate/actions/runs/43650979599)는 성공했지만 문서 변경 후 QA·운영 배포·실계정 E2E를 대신하지 않습니다.
+**잔여 처리 현황(2026-11-15 후속):** [PR #946](https://github.com/dohyunkimmm/footmate/pull/946)은 이후 `main`에 구현이 반영되어 중복 미병합 종료했습니다. [PR #938](https://github.com/dohyunkimmm/footmate/pull/938)의 화면 전환 변경은 최신 UI에 맞춘 [PR #951](https://github.com/dohyunkimmm/footmate/pull/951)에서 별도 검증 중입니다. [보안 이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)은 최신 운영 권한·Advisor를 읽기 전용 재점검했으나 **실서명 JWT·MFA E2E는 테스트 전용 인증 세션 부재로 미완료**입니다. 앞선 2건의 미해결 PR 표기는 11월 15일 정리 전 스냅샷입니다.
 
 - **공개 진입 파일:** [프로토타입](app.html) · [Demo/Beta](beta.html) · [운영자](beta-operator.html) · [개인정보 안내](beta-data-notice.html). `/` 경로는 [Worker](worker/index.js)가 `/demo`로 연결합니다.
 - **앱·서버·검증:** [제품 소스](src/) · [API](api/) · [Worker](worker/) · [Supabase](supabase/) · [테스트](tests/) · [도구](scripts/) · [자동화](.github/).
