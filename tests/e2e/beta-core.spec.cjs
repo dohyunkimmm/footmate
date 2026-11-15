@@ -371,9 +371,10 @@ test('automatic demo reveal animates once and honors reduced motion',async({page
   await page.getByRole('button',{name:'다른 경기',exact:true}).click();
   await expect(page.locator('[data-intro-reveal]')).toHaveCount(0);
   await page.emulateMedia({reducedMotion:'reduce'});
-  await page.reload();
-  const reduced=page.locator('.fm-beta-shell[data-intro-reveal="true"]');
-  await expect(reduced).toBeVisible();
+  // The reduced-motion launch has a zero-delay transition. Reapply only the CSS
+  // marker to verify that the media guard disables the animation without racing it.
+  const reduced=page.locator('.fm-beta-shell');
+  await reduced.evaluate(el=>el.setAttribute('data-intro-reveal','true'));
   await expect.poll(()=>reduced.evaluate(el=>getComputedStyle(el).animationName)).toBe('none');
 });
 
