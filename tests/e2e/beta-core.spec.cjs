@@ -361,6 +361,23 @@ test('choice-first recommendations keep demo home populated and participation is
   }
 });
 
+test('automatic demo reveal animates once and honors reduced motion',async({page})=>{
+  await mockBackend(page,{empty:true});
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.goto('/demo');
+  const initial=page.locator('.fm-beta-shell[data-intro-reveal="true"]');
+  await expect(initial).toBeVisible();
+  await expect.poll(()=>initial.evaluate(el=>getComputedStyle(el).animationName)).toBe('fm-discovery-reveal');
+  await page.getByRole('button',{name:'다른 경기',exact:true}).click();
+  await expect(page.locator('[data-intro-reveal]')).toHaveCount(0);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  // The reduced-motion launch has a zero-delay transition. Reapply only the CSS
+  // marker to verify that the media guard disables the animation without racing it.
+  const reduced=page.locator('.fm-beta-shell');
+  await reduced.evaluate(el=>el.setAttribute('data-intro-reveal','true'));
+  await expect.poll(()=>reduced.evaluate(el=>getComputedStyle(el).animationName)).toBe('none');
+});
+
 test('choice-first recommendations keep OAuth login in Beta home with the selected game',async({page})=>{
   const backend=await mockBackend(page,{empty:true});
   await page.route(origin+'/auth/v1/settings',r=>fulfill(r,{external:{google:true,kakao:true}}));
