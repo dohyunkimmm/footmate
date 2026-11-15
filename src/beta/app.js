@@ -50,6 +50,7 @@ if(root){
   let serverReactions=[];
   const autoLaunch=isDemoEntry&&!requestedOpening;
   let launchPending=autoLaunch;
+  let introRevealPending=autoLaunch;
   let openingOpen=openingVariant!=='quick'&&(isDemoEntry||openingExperiment)&&(autoLaunch||comparisonEntry||sessionStorage.getItem('footmate:beta:entered:v1')!=='1');
   let joinedPage=0;
   let matchesTab='joined';
@@ -469,7 +470,9 @@ if(root){
     }
     if(comparisonOpen&&!authOpen&&view==='home'){root.innerHTML=renderComparison();return}
     if(detailVisible){root.innerHTML=renderDetail(detailMatch);return}
-    root.innerHTML=`<div class="fm-beta-shell">
+    const showIntroReveal=introRevealPending&&autoLaunch&&view==='home'&&!authOpen;
+    introRevealPending=false;
+    root.innerHTML=`<div class="fm-beta-shell" ${showIntroReveal?'data-intro-reveal="true"':''}>
       <header class="fm-beta-topbar"><div class="fm-beta-brand">${autoLaunch?'':`<button class="fm-beta-brand-home" type="button" data-action="opening" aria-label="앱 시작 화면"><img src="/src/app/assets/footmate-original.png" width="36" height="36" alt=""></button>`}<h1>${view==='home'&&!authOpen?'FootMate':''}</h1><span class="fm-beta-live" data-beta-backend="${connected?'connected':backendState==='error'?'error':'connecting'}">${backendState==='error'?'연결 오류':'Demo'}</span></div><button class="fm-beta-link" type="button" data-action="open-account" ${authOpen?'hidden':''}>${session&&user?esc(profile?.display_name||'내 정보'):'로그인'}</button></header>
       
       ${session&&user&&view==='matches'?`<nav class="fm-beta-account-tabs" aria-label="내 경기 메뉴">${[['joined','참가 경기'],['waitlist','대기'],['history','참석 이력']].map(([tab,label])=>`<button class="fm-beta-button" type="button" data-action="matches-tab" data-tab="${tab}" ${matchesTab===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`:''}
