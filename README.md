@@ -90,7 +90,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 - **앱·서버·검증:** [제품 소스](src/) · [API](api/) · [Worker](worker/) · [Supabase](supabase/) · [테스트](tests/) · [도구](scripts/) · [자동화](.github/).
 - **문서:** [현행 문서 안내](docs/README.md) · [과거 점검 이력](docs/REPO-AUDIT-TIMELINE.md) · [저장소 운영](docs/REPO-OPERATIONS.md) · [2026-11-11 정리 스냅샷](docs/REPO-CLEANUP-2026-11-11.md).
 
-**2026-11-17 후속:** [Wrangler PR #954](https://github.com/dohyunkimmm/footmate/pull/954)는 필수 회귀·브라우저 QA 성공 후 `main`에 병합됐습니다. [OIDC PR #955](https://github.com/dohyunkimmm/footmate/pull/955)는 새 기준 `main`에 재기반화됐으며 재실행 중인 QA 완료 전까지 병합하지 않았습니다. 동일한 파일 변경을 제출했던 [중복 PR #956](https://github.com/dohyunkimmm/footmate/pull/956)은 미병합 종료했습니다. [실서명 MFA 이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)은 승인된 테스트 세션/증빙이 없어 미완료입니다. 보고서 문서 [PR #58](https://github.com/dohyunkimmm/footmate-case-study/pull/58)은 보고서 QA 성공 후 별도 저장소 `main`에 병합했습니다. 이번 목록 점검은 운영 배포·운영 DB·실계정 보안 검증을 새로 완료했다는 의미가 아닙니다.
+**2026-11-17 후속:** [Wrangler PR #954](https://github.com/dohyunkimmm/footmate/pull/954)와 [OIDC PR #955](https://github.com/dohyunkimmm/footmate/pull/955)는 각각 최신 기준 회귀·브라우저 QA 통과 후 `main`에 병합됐습니다([#954 QA](https://github.com/dohyunkimmm/footmate/actions/runs/43779402635) · [#955 QA](https://github.com/dohyunkimmm/footmate/actions/runs/44023302859)). 동일 파일 변경의 [중복 PR #956](https://github.com/dohyunkimmm/footmate/pull/956)은 미병합 종료했습니다. [실서명 MFA 이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)은 승인된 테스트 세션/증빙이 없어 미완료입니다. 보고서 문서 [PR #58](https://github.com/dohyunkimmm/footmate-case-study/pull/58)은 보고서 QA 성공 후 별도 저장소 `main`에 병합했습니다. 이번 목록 점검은 운영 DB·실계정 보안 검증을 새로 완료했다는 의미가 아닙니다.
 
 ## 자세한 문서
 
