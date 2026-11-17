@@ -1,6 +1,14 @@
 # FootMate Documentation
 
-## 현재 기준 · 2026-11-15
+## 현재 기준 · 2026-11-17
+
+- [제품 `main` `bf01a25`](https://github.com/dohyunkimmm/footmate/commit/bf01a25ad098b55cd4922141e8a5823edc1d8293)의 잘리지 않은 재귀 트리에서 **280개 파일·37개 디렉터리**(루트 파일 13개·최상위 폴더 8개)를 확인했습니다. [루트 목록](../README.md#저장소-파일폴더-안내)의 경로별 합계도 실제 트리와 일치합니다. 아래 2026-11-15 `279개/280개 예상`은 작성 당시의 기록입니다.
+- [#954 Wrangler 갱신](https://github.com/dohyunkimmm/footmate/pull/954)과 [#955 OIDC 갱신](https://github.com/dohyunkimmm/footmate/pull/955)은 각 PR의 Change Impact·Regression 36·Browser E2E + axe **SUCCESS**([#954](https://github.com/dohyunkimmm/footmate/actions/runs/43779402635) · [#955](https://github.com/dohyunkimmm/footmate/actions/runs/44023302859)) 후 `main`에 병합됐습니다. 파일 변경이 동일한 중복 [#956](https://github.com/dohyunkimmm/footmate/pull/956)은 미병합 종료했습니다. 이는 새 운영 DB·실서명 MFA 검증의 완료를 뜻하지 않습니다.
+- 운영의 실제 서명 JWT·TOTP MFA 보안 검증은 [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611) **OPEN·미실시** 상태입니다. DB·권한·운영 세션·Cloudflare 설정 변경 없음.
+- 보고서 원본은 [별도 저장소](https://github.com/dohyunkimmm/footmate-case-study)에서 관리하며, 그 저장소 `main` [`7df5503`](https://github.com/dohyunkimmm/footmate-case-study/commit/7df5503e9028e4f20075b591f30e12c5b553b977)은 **파일 114개·디렉터리 15개**입니다. 최근 전략 6장·전략 문서의 상태는 보고서 저장소가 정본입니다. 서비스 저장소의 보고서 기록은 과거 근거로 보존합니다.
+- SQL 마이그레이션 동일 blob 2쌍은 적용 이력 때문에 유지합니다. 검증된 신규 삭제 대상은 **0건**이며, Git ref/이력·스냅샷·제품 자산을 삭제하지 않습니다. [저장소 운영 기록](REPO-OPERATIONS.md)에 근거를 남깁니다.
+
+## 이전 기준 · 2026-11-15 (당시 스냅샷)
 
 - 점검 기준: [`main` `349a9fa`](https://github.com/dohyunkimmm/footmate/commit/349a9fab33f9c117c5a7aca5ac81e91b58a9db9d)의 재귀 트리(`truncated=false`) **파일 279개·디렉터리 37개**. 루트 파일 13개·최상위 폴더 8개입니다. 이 문서 정리로 이력 파일 1개를 추가하므로 **변경 반영 시 파일 280개(`docs/` 35개) 예상**입니다. [루트 목록](../README.md#저장소-파일폴더-안내)을 참조하세요.
 - **2026-11-15 후속 최종:** [PR #946](https://github.com/dohyunkimmm/footmate/pull/946)은 반영된 기능과 중복되어 미병합 종료, [PR #938](https://github.com/dohyunkimmm/footmate/pull/938)은 충돌하는 구형 diff를 재사용하지 않고 [후속 PR #951](https://github.com/dohyunkimmm/footmate/pull/951)로 대체·종료했습니다. #951은 [전체 QA SUCCESS](https://github.com/dohyunkimmm/footmate/actions/runs/43658590778) 후 `main` [`ca75408`](https://github.com/dohyunkimmm/footmate/commit/ca754081f26b047cf4afb17dab63c5eed2289e64)에 병합됐습니다. 이전 '열린 PR 2건'은 정리 전 스냅샷입니다. [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)은 실서명 JWT·운영자 MFA 검증 증빙이 없어 OPEN 유지합니다.
@@ -29,8 +37,8 @@
 ## 현재 제품·운영 기준
 
 - [루트 README](../README.md) — 제품 가치, `Find → Decide → Join → Play → Return`, 공개 화면·데이터·AI 책임 경계
-- [MATCHING-DIRECTION.md](MATCHING-DIRECTION.md) — **현행 풋살 매칭 방향**: 활동 지역 → 실력·포지션·시간 → 추천 미리보기 → 참가 시 로그인 → `/beta`
-- [Case Study `/`](https://footmate-case-study.fmate.workers.dev/) — IT기획·전략기획 9개 섹션. 현행 구현은 [별도 저장소의 `src/case-study/`](https://github.com/dohyunkimmm/footmate-case-study/tree/main/src/case-study)에서 관리
+- [MATCHING-DIRECTION.md](MATCHING-DIRECTION.md) — **현행 풋살 매칭 방향**: 로고 오프닝 → 추천 카드·빠른 필터 한 화면 → 필요 시 지역·실력·포지션·시간 변경 → 참가 시 로그인 → `/beta`. 이전 2단계 온보딩은 기본 `/demo` 진입 흐름이 아님
+- [Case Study `/`](https://footmate-case-study.fmate.workers.dev/) — 사업성·경영계획 9개 섹션과 본편 9장·5개년 전략 6장·[사업 전략 6장](https://footmate-case-study.fmate.workers.dev/src/case-study/strategy-brief.html). 현행 구현·전략 자료는 [별도 저장소](https://github.com/dohyunkimmm/footmate-case-study) 기준
 - [FootMate Demo `/demo`](https://footmate.fmate.workers.dev/demo) — 로그인 전 풋살 조건 선택·예시 경기/추천 미리보기. 인증 후 `/beta`로 진입
 - `/beta` — 인증 후 추천·내 경기·MY. 실제 서버 경기·참가를 우선하고, 실제 모집이 없을 때는 명시된 예시 경기/브라우저 기록과 분리
 - `/beta/operator` — 허용된 운영자 전용 TOTP MFA 경로
