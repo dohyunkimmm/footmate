@@ -3,7 +3,7 @@
 ## 현재 기준 · 2026-11-17
 
 - [제품 `main` `bf01a25`](https://github.com/dohyunkimmm/footmate/commit/bf01a25ad098b55cd4922141e8a5823edc1d8293)의 잘리지 않은 재귀 트리에서 **280개 파일·37개 디렉터리**(루트 파일 13개·최상위 폴더 8개)를 확인했습니다. [루트 목록](../README.md#저장소-파일폴더-안내)의 경로별 합계도 실제 트리와 일치합니다. 아래 2026-11-15 `279개/280개 예상`은 작성 당시의 기록입니다.
-- [#954 Wrangler 갱신](https://github.com/dohyunkimmm/footmate/pull/954)은 개별 Change Impact·Regression 36·Browser E2E + axe 성공 후 `main`에 병합했습니다. [#955 OIDC 갱신](https://github.com/dohyunkimmm/footmate/pull/955)은 뒤처진 base의 필수 상태 검사 때문에 미병합이며, 통합 잠금 파일은 [#956](https://github.com/dohyunkimmm/footmate/pull/956)에서 신규 QA 검증 중입니다. 녹색 과거 QA를 새 조합의 통과로 대체하지 않습니다.
+- [#954 Wrangler 갱신](https://github.com/dohyunkimmm/footmate/pull/954)은 Change Impact·Regression 36·Browser E2E + axe 성공 후 `main`에 병합했습니다. [#955 OIDC 갱신](https://github.com/dohyunkimmm/footmate/pull/955)은 `main`에 재기반화됐으나 신규 QA 검증 중이므로 아직 미병합 상태입니다. 파일 내용이 동일한 중복 [#956](https://github.com/dohyunkimmm/footmate/pull/956)은 미병합 종료했습니다. 과거 QA를 새 조합의 통과로 대체하지 않습니다.
 - 운영의 실제 서명 JWT·TOTP MFA 보안 검증은 [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611) **OPEN·미실시** 상태입니다. DB·권한·운영 세션·Cloudflare 설정 변경 없음.
 - 보고서 원본은 [별도 저장소](https://github.com/dohyunkimmm/footmate-case-study)에서 관리하며, 그 저장소 `main` [`7df5503`](https://github.com/dohyunkimmm/footmate-case-study/commit/7df5503e9028e4f20075b591f30e12c5b553b977)은 **파일 114개·디렉터리 15개**입니다. 최근 전략 6장·전략 문서의 상태는 보고서 저장소가 정본입니다. 서비스 저장소의 보고서 기록은 과거 근거로 보존합니다.
 - SQL 마이그레이션 동일 blob 2쌍은 적용 이력 때문에 유지합니다. 검증된 신규 삭제 대상은 **0건**이며, Git ref/이력·스냅샷·제품 자산을 삭제하지 않습니다. [저장소 운영 기록](REPO-OPERATIONS.md)에 근거를 남깁니다.
