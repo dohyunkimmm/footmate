@@ -1,3 +1,13 @@
+## 2026-11-17 · `main` 재확인·의존성·연결 문서 동기화
+
+- [제품 `main` `bf01a25`](https://github.com/dohyunkimmm/footmate/commit/bf01a25ad098b55cd4922141e8a5823edc1d8293) 재귀 트리(`truncated=false`): **파일 280개·디렉터리 37개**, 루트 파일 **13개**·최상위 폴더 **8개**. 경로별 `.github/` 5·`api/` 2·`docs/` 35·`scripts/` 11·`src/` 87·`supabase/` 36·`tests/` 89·`worker/` 2·루트 13. 11월 15일의 `279개→280개 예상`은 당시 스냅샷이며 [루트 README](../README.md#저장소-파일폴더-안내)와 [문서 인덱스](README.md)를 현행 목록으로 사용합니다.
+- **클렌징 판정:** 보고서 전용 소스·QA는 이미 [별도 저장소](https://github.com/dohyunkimmm/footmate-case-study)로 이전했습니다. 동일 Git blob SHA 2쌍은 `supabase/migrations/20260922012426_beta_push_media.sql`/`20260922013306_beta_push_media.sql` 및 `20260922012607_beta_push_worker_schedule.sql`/`20260922013447_beta_push_worker_schedule.sql`이며 적용 이력 때문에 보존합니다. 나머지 HTML·Worker·테스트·회귀 스냅샷은 사용 또는 보존 근거가 있어 삭제 대상이 아닙니다. **신규 삭제 0건·브랜치 삭제 0건·이력 재작성 0건**.
+- **미반영 PR:** [#954](https://github.com/dohyunkimmm/footmate/pull/954) Wrangler 4.161.0은 [PR QA #43779402635](https://github.com/dohyunkimmm/footmate/actions/runs/43779402635) Change Impact·Regression 36·Browser E2E + axe 모두 성공 후 병합됐습니다. [#955](https://github.com/dohyunkimmm/footmate/pull/955)는 새 base 필수 상태 검사 미충족으로 미병합이며 통합 변경 [#956](https://github.com/dohyunkimmm/footmate/pull/956)에 `@vercel/oidc` 4.0.9와 Wrangler 4.161.0 잠금 파일을 재조합했습니다. #956의 신규 QA 결과를 확인하기 전 완료로 표기하지 않습니다.
+- **미완료 증빙:** [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)은 무료 운영 범위 내 실서명 JWT·운영자 TOTP MFA E2E를 승인된 격리 계정/세션으로 검증하지 못한 상태입니다. 보안 Advisor 과거 결과와 CI는 실제 인증 검증을 대체하지 않습니다. 변경 범위는 문서와 의존성 PR이며 SQL·데이터·권한·배포 설정·요금제는 변경하지 않았습니다.
+- **연결 문서:** [보고서 저장소 `main` `7df5503`](https://github.com/dohyunkimmm/footmate-case-study/commit/7df5503e9028e4f20075b591f30e12c5b553b977)은 **114개 파일·15개 디렉터리**로 확인했습니다. 본편 9장·5개년 전략 6장 외 별도 사업 전략 6장과 전략 문서가 추가된 상태로 관련 링크를 갱신했습니다. 보고서 사업 가정·배포·원본 자료를 제품 저장소로 다시 복사하지 않습니다.
+
+---
+
 ## 2026-11-15 · `main` 파일·폴더 정리 및 문서 현행화
 
 - 기준: [`main` `349a9fa`](https://github.com/dohyunkimmm/footmate/commit/349a9fab33f9c117c5a7aca5ac81e91b58a9db9d) 재귀 트리(`truncated=false`) **279개 파일·37개 디렉터리**(루트 파일 13개·최상위 폴더 8개). 날짜별 감사 기록을 [별도 이력 문서](REPO-AUDIT-TIMELINE.md)로 옮긴 후 **280개 파일·37개 디렉터리 예상**(`docs/` 35개)이며, 새 변경의 CI 및 병합 확인은 별도입니다.
