@@ -391,6 +391,23 @@
   min-height: 44px;
 }
 .footmate-app [data-combined-discovery] .fm-beta-discovery { flex-wrap: wrap; }
+.footmate-app .fm-beta-live-label,
+.footmate-app .fm-beta-auth-match .fm-beta-sample-label,
+.footmate-app .fm-beta-match-cover .fm-beta-sample-label {
+  display: inline-block; width: fit-content; border-radius: 6px;
+  padding: 3px 8px; font-size: .8125rem; font-weight: 700;
+  background: #e8eef4; color: #33475a;
+}
+.footmate-app .fm-beta-live-label { background: #dff3e6; color: #155232; }
+.footmate-app :is(.fm-beta-auth-match,.fm-beta-resume) {
+  border-inline-start: 3px solid #387351; padding: 10px 14px;
+  background: #f2f7f3; border-radius: 10px; color: #163a27;
+}
+.footmate-app .fm-beta-resume { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.footmate-app .fm-beta-resume strong { display: block; overflow-wrap: anywhere; }
+.footmate-app .fm-beta-detail-facts dt { color: #435448; }
+.footmate-app .fm-beta-detail-facts dd { font-weight: 650; }
+.footmate-app .fm-beta-auth-card input:focus-visible { outline: 2px solid #285f40; outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -400,7 +417,7 @@
 <script>(()=>{const u=new URL(location.href);if(u.searchParams.get("entry")==="footmate"){u.searchParams.delete("entry");history.replaceState(history.state,"",u.pathname+u.search+u.hash)}})();</script>
 <script src="/src/beta/recovery-bootstrap.js?v=1"></script>
 <script src="/src/beta/social-auth-bootstrap.js?v=1"></script>
-<script type="module" src="/src/beta/app.js?v=549"></script>
+<script type="module" src="/src/beta/app.js?v=550"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
