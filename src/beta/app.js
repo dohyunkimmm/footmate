@@ -438,6 +438,7 @@ if(root){
     return `<div class="fm-beta-shell fm-beta-detail" data-detail-tab="${detailTab}">
       <header class="fm-beta-detail-header"><button class="fm-beta-link" type="button" data-action="detail-back" aria-label="${detailOrigin==='comparison'?'비교로 돌아가기':detailOrigin==='history'?'참석 이력으로 돌아가기':'추천으로 돌아가기'}"><i class="fm-icon fm-beta-ui-icon" aria-hidden="true">⬅</i></button><h1>경기 상세</h1><span aria-hidden="true"></span></header>
       <nav class="fm-beta-account-tabs" aria-label="경기 상세 메뉴">${[['info','경기 정보'],['slots','모집 포지션']].map(([id,label])=>`<button class="fm-beta-button" type="button" data-action="detail-tab" data-tab="${id}" ${detailTab===id?'aria-current="page"':''}>${label}</button>`).join('')}</nav>
+      ${session&&user&&match.id===pendingMatchId&&!participationFor(match.id)?'<p class="fm-beta-resume" role="status">선택한 경기입니다. 포지션을 확인하고 참가를 확정하세요.</p>':''}
       ${card}
       ${notice?`<div role="status" class="fm-beta-note" data-tone="${esc(notice.tone)}">${esc(notice.message)}</div>`:''}
     </div>`;
