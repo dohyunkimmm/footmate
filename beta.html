@@ -330,7 +330,8 @@
   }
 
   .footmate-app [data-combined-discovery] .fm-beta-recommendation-body {
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    gap: 8px;
   }
 }
 .footmate-app [data-combined-discovery] .fm-beta-catalog {
@@ -358,7 +359,7 @@
 }
 
 .footmate-app [data-combined-discovery] .fm-beta-match-list > .fm-beta-match {
-  min-height: clamp(240px, 40dvh, 320px);
+  min-height: auto;
   border-radius: 20px;
   border-color: #dbe6de;
   background: linear-gradient(155deg, #f0f7f2, #fff 72%);
@@ -366,7 +367,7 @@
 }
 
 .footmate-app [data-combined-discovery] .fm-beta-browse-controls {
-  margin-block: auto env(safe-area-inset-bottom);
+  margin-block: 0 env(safe-area-inset-bottom);
   padding-block: 12px 0;
 }
 
@@ -408,6 +409,14 @@
 .footmate-app .fm-beta-detail-facts dt { color: #435448; }
 .footmate-app .fm-beta-detail-facts dd { font-weight: 650; }
 .footmate-app .fm-beta-auth-card input:focus-visible { outline: 2px solid #285f40; outline-offset: 2px; }
+.footmate-app .fm-beta-more > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-block: 6px; }
+.footmate-app :is(.fm-beta-more,.fm-beta-hidden-controls) summary { cursor: pointer; padding-block: 6px; font-weight: 600; }
+.footmate-app .fm-beta-hidden-controls { margin-block: 8px; }
+.footmate-app .fm-beta-hidden-controls li { margin-block: 6px; overflow-wrap: anywhere; }
+@media (max-width: 430px) {
+  .footmate-app .fm-beta-comparison tr > :first-child { width: 4rem; }
+  .footmate-app .fm-beta-comparison :is(td,th) { padding: 8px 6px; }
+}
 </style>
 </head>
 <body>
@@ -417,7 +426,7 @@
 <script>(()=>{const u=new URL(location.href);if(u.searchParams.get("entry")==="footmate"){u.searchParams.delete("entry");history.replaceState(history.state,"",u.pathname+u.search+u.hash)}})();</script>
 <script src="/src/beta/recovery-bootstrap.js?v=1"></script>
 <script src="/src/beta/social-auth-bootstrap.js?v=1"></script>
-<script type="module" src="/src/beta/app.js?v=550"></script>
+<script type="module" src="/src/beta/app.js?v=551"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
