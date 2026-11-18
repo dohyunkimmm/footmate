@@ -735,11 +735,18 @@ test('random discovery keeps the drawn demo match through participation login',a
   const selected=await page.locator('.fm-beta-match').getAttribute('data-match-id');
   await page.getByRole('button',{name:'경기 자세히',exact:true}).click();
   await page.getByRole('button',{name:'참가하기',exact:true}).click();
+  await expect(page.getByRole('region',{name:'참가할 경기'})).toContainText('데모 경기');
   await page.getByLabel('이메일').fill('beta@example.com');
   await page.getByLabel('비밀번호').fill('safe-password');
   await page.getByRole('button',{name:'로그인',exact:true}).click();
   await page.waitForURL('**/beta');
   await expect(page.locator('.fm-beta-match')).toHaveAttribute('data-match-id',selected);
+  expect(backend.isJoined()).toBe(false);
+  await expect(page.locator('.fm-beta-detail article')).toHaveAttribute('data-match-id',selected);
+  await page.getByRole('button',{name:'추천으로 돌아가기',exact:true}).click();
+  await page.getByRole('button',{name:'참가 이어가기',exact:true}).click();
+  await expect(page.locator('.fm-beta-detail article')).toHaveAttribute('data-match-id',selected);
+  await expect(page.locator('.fm-beta-detail .fm-beta-match-cover')).toContainText('데모 경기');
   expect(backend.isJoined()).toBe(false);
 });
 
