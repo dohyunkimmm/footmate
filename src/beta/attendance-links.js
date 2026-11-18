@@ -34,3 +34,25 @@ export function betaCalendarUrl(match){
   });
   return 'https://calendar.google.com/calendar/render?'+params.toString();
 }
+
+export function betaCalendarFile(match){
+  const url=betaCalendarUrl(match);
+  if(!url||!match.id)return null;
+  const params=new URL(url).searchParams;
+  const [start,end]=params.get('dates').split('/');
+  const escapeText=value=>String(value).replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/[,;]/g,'\\$&');
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FootMate//Calendar//KO','BEGIN:VEVENT',
+    'UID:'+escapeText(match.id)+'@footmate','DTSTAMP:'+calendarUtc(Date.now()),'DTSTART:'+start,'DTEND:'+end,
+    'SUMMARY:'+escapeText(params.get('text')),'LOCATION:'+escapeText(params.get('location')),'END:VEVENT','END:VCALENDAR'];
+  const encoder=new TextEncoder();
+  const folded=lines.map(line=>{
+    let result='',bytes=0;
+    for(const char of line){
+      const size=encoder.encode(char).length;
+      if(bytes+size>75){result+='\r\n ';bytes=1;}
+      result+=char;bytes+=size;
+    }
+    return result;
+  });
+  return 'data:text/calendar;charset=utf-8,'+encodeURIComponent(folded.join('\r\n')+'\r\n');
+}

@@ -378,6 +378,19 @@
   flex: 1;
   border-radius: 14px;
 }
+ .footmate-app [data-combined-discovery] .fm-beta-recommendation-body > .fm-beta-meta:first-child > span {
+  font-size: clamp(1.25rem, 5vw, 1.65rem);
+  font-weight: 750;
+  color: #183d2b;
+}
+.footmate-app [data-combined-discovery] .fm-beta-meta { flex-wrap: wrap; }
+.footmate-app [data-combined-discovery] .fm-beta-match-actions [data-action="match-detail"] {
+  background: #205838;
+  color: white;
+  font-weight: 700;
+  min-height: 44px;
+}
+.footmate-app [data-combined-discovery] .fm-beta-discovery { flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -387,12 +400,12 @@
 <script>(()=>{const u=new URL(location.href);if(u.searchParams.get("entry")==="footmate"){u.searchParams.delete("entry");history.replaceState(history.state,"",u.pathname+u.search+u.hash)}})();</script>
 <script src="/src/beta/recovery-bootstrap.js?v=1"></script>
 <script src="/src/beta/social-auth-bootstrap.js?v=1"></script>
-<script type="module" src="/src/beta/app.js?v=548"></script>
+<script type="module" src="/src/beta/app.js?v=549"></script>
 <script type="module">
 const root=document.getElementById('footmate-beta');
 const launch=async()=>{
   await import('/src/beta/readiness.js?v=2');
-  await import('/src/beta/growth.js?v=21');
+  await import('/src/beta/growth.js?v=22');
   await import('/src/beta/social-auth.js?v=2');
   await import('/src/beta/push.js?v=1');
   await import('/src/beta/media.js?v=2');
