@@ -369,3 +369,29 @@ for(const path of ['/demo?opening=quick','/beta']){
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  });
 }
+
+test('default demo offers comparison, saving and reversible hiding',async({page})=>{
+ await setup(page);
+ await page.setViewportSize({width:320,height:568});
+ await page.goto('/demo');
+ const card=page.locator('.fm-beta-match-list article');
+ const more=card.locator('summary',{hasText:'더보기'});
+ await more.click();
+ await expect(card.getByRole('button',{name:'경기 저장'})).toBeVisible();
+ const first=await card.getAttribute('data-match-id');
+ await card.getByRole('button',{name:'이 경기 숨기기'}).click();
+ await expect(card).not.toHaveAttribute('data-match-id',first);
+ await page.getByRole('button',{name:'되돌리기'}).click();
+ await expect(card).toHaveAttribute('data-match-id',first);
+ await more.click();
+ await card.getByRole('button',{name:'비교에 담기'}).click();
+ await page.getByRole('button',{name:'다른 경기',exact:true}).click();
+ await more.click();
+ await card.getByRole('button',{name:'비교에 담기'}).click();
+ await page.getByRole('button',{name:'두 경기 비교'}).click();
+ const table=page.getByRole('table');
+ await expect(table).toBeVisible();
+ await page.addStyleTag({content:'.fm-beta-comparison table {font-size:26px}'});
+ await table.locator('thead th').nth(1).evaluate(el=>{el.textContent='수원 영통역 실내 풋살장 주말 저녁 초중급 경기'});
+ expect(await table.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
+});
