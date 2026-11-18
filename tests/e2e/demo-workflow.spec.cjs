@@ -87,7 +87,7 @@ test('demo workflow empty recovery changes only the requested condition',async({
  await setup(page);await page.goto('/beta');await expect(page.locator('.fm-beta-match')).toBeVisible();
  await page.locator('#quick-filter-region').click();await page.getByRole('radio',{name:'서울 · 강남',exact:true}).click();
  await expect(page.getByText('조건에 맞는 경기가 없어요.',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'지역 조건 해제 · 4개'}).click();
+ await page.getByRole('button',{name:'지역 조건을 풀면 4경기'}).click();
  await expect(page.locator('.fm-beta-match')).toBeVisible();
  const p=await page.evaluate(()=>JSON.parse(localStorage.getItem('footmate:beta:preferences:v1')));expect(p.region).toBe('');expect(p.position).toBe('MF');
 });
