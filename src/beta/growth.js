@@ -235,7 +235,7 @@ function wizardPanel(){
 function moveWizard(form,step){draft={...DEFAULT_PREFERENCES,...(draft||{}),...Object.fromEntries(new FormData(form))};wizardStep=step;render()}
 function recoveryPanel(p){
  const alternatives=discoveryRecoveryOptions(matches,p);
- return `<section class="fm-beta-filter-recovery" aria-label="추천 조건 조정"><p>조건 하나를 바꿔보세요.</p>${alternatives.map(item=>`<button class="fm-beta-button" type="button" data-growth-action="recover-condition" data-recovery-key="${item.key}">${esc(item.label)} · ${item.count}개</button>`).join('')}${!alternatives.length?'<p>조건을 다시 선택하거나 전체 해제하세요.</p>':''}</section>`;
+ return `<section class="fm-beta-filter-recovery" aria-label="추천 조건 조정"><p>조건 하나를 바꿔보세요.</p>${alternatives.map(item=>`<button class="fm-beta-button" type="button" data-growth-action="recover-condition" data-recovery-key="${item.key}">${esc(item.label.replace(/ 조건 해제$/, ''))} 조건을 풀면 ${item.count}경기</button>`).join('')}${!alternatives.length?'<p>조건을 다시 선택하거나 전체 해제하세요.</p>':''}</section>`;
 }
 function combinedDiscovery(){return Boolean(root.querySelector('[data-combined-discovery]'))}
 function recommendPanel(){
