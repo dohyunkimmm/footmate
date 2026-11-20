@@ -1,3 +1,11 @@
+## 2026-11-20 · 브랜치 전수 감사 및 과거 PR 원본 보존
+
+- [PR #963](https://github.com/dohyunkimmm/footmate/pull/963) 문서 동기화와 [PR #964](https://github.com/dohyunkimmm/footmate/pull/964) 원본 SHA 보존 워크플로는 **필수 QA 통과 후 `main` 병합**됐습니다. [최신 전수 Git 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167) 결과: 실행 시 비기본 브랜치 132개(임시 PR 브랜치 포함), 패치 동등 8개(병합 PR 6개·미병합 종료 PR 2개), 고유 패치 124개, 조상 관계로 정리 가능한 브랜치 0개, 현재 `main`과 정확히 동일한 tip tree 0개.
+- [태그 보존 Actions #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487) **SUCCESS**. 병합된 PR #5·#7·#8·#9·#12·#13의 각 HEAD SHA를 `archive/merged/20261120/pr-<번호>/<브랜치>` 경로에 **여섯 개 검증 태그**로 보존했습니다. 태그 값과 각 기존 브랜치의 SHA가 일치했고, 기존 브랜치는 삭제하지 않았습니다. 서비스 코드·SQL·배포 소스 변경 0건.
+- 이 정리 작업은 일회성 워크플로 `.github/workflows/archive-merged-six-once.yml`을 완료 뒤 제거합니다. **오프-GitHub 영구 bundle 백업과 외부 참조 확인은 여전히 미완료**이므로 자동 ref 대량 삭제·force rewrite는 하지 않습니다. 상세 원본/보존 결정은 [현황](REPOSITORY-STATUS-20261120.md)을 참조합니다.
+
+---
+
 ## 2026-11-20 · 제품 저장소·운영 배포·외부 보고서 정합성
 
 - [`main` `720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a) 재귀 트리 `truncated=false`: 파일 **280개·디렉터리 37개**, 상위 `.github/` 5·`api/` 2·`docs/` 35·`scripts/` 11·`src/` 87·`supabase/` 36·`tests/` 89·`worker/` 2·루트 13. [현황 문서](REPOSITORY-STATUS-20261120.md) 추가 후 파일 **281개**, 그 외 경로 수 동일. 정확히 중복된 blob 2쌍은 적용 이력 SQL이라 보존하며 임시·중복 삭제 확정 0건입니다.
