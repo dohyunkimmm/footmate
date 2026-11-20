@@ -8,6 +8,12 @@
 
 보조 구현 화면의 이름은 **FootMate Demo**입니다. 로그인 후에도 Demo 표기를 유지하며, `/beta`는 기존 인증·연동 기능의 경로 이름으로 구분합니다.
 
+## 2026-11-20 후속 · 브랜치 감사·원본 SHA 보존 완료
+
+- [현행 Git 전수 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167) **성공**: 감사 실행 중 작업 브랜치를 포함한 비기본 브랜치 **132개**, 패치 동등 검토 대상 **8개**, 고유 패치 **124개**, 조상 관계만으로 정리 가능한 브랜치 **0개**. 아래 132개 원격 브랜치는 **작업 PR 생성 전**의 점검 시점 숫자입니다.
+- [문서 동기화 #963](https://github.com/dohyunkimmm/footmate/pull/963)과 [SHA 보존 #964](https://github.com/dohyunkimmm/footmate/pull/964)은 전체 필수 QA 성공 후 병합했습니다. [보존 Actions #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487)이 과거 **병합 PR 6개 원본 커밋을 `archive/merged/20261120/` 태그로 보존**했고, **태그 SHA 6/6과 원본 브랜치 6/6 유지**를 재검증했습니다. 2개 미병합 종료 브랜치와 고유 변경 브랜치는 보존합니다.
+- 소유자 관리 **오프-GitHub 영구 Git 백업 및 외부 참조 확인이 완료되지 않아 브랜치 삭제 0건**입니다. 한 번 실행된 태그 보존용 워크플로는 후속 정리 PR에서 제거하며, 제품·DB·운영 배포 코드는 변경하지 않습니다. 상세 사항은 [현재 점검 기록](docs/REPOSITORY-STATUS-20261120.md) 기준입니다.
+
 ## 2026-11-20 `main`·QA·브랜치 점검
 
 - GitHub `main` [`720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a)의 파일 **280개·디렉터리 37개**, 루트 13개·최상위 8개를 확인했습니다. 새 [현황 문서](docs/REPOSITORY-STATUS-20261120.md)를 병합하면 **파일 281개·디렉터리 37개**입니다. 아래 2026-11-17 숫자는 당시 기준입니다.
