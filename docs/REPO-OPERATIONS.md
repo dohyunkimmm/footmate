@@ -1,3 +1,12 @@
+## 2026-11-20 · 제품 저장소·운영 배포·외부 보고서 정합성
+
+- [`main` `720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a) 재귀 트리 `truncated=false`: 파일 **280개·디렉터리 37개**, 상위 `.github/` 5·`api/` 2·`docs/` 35·`scripts/` 11·`src/` 87·`supabase/` 36·`tests/` 89·`worker/` 2·루트 13. [현황 문서](REPOSITORY-STATUS-20261120.md) 추가 후 파일 **281개**, 그 외 경로 수 동일. 정확히 중복된 blob 2쌍은 적용 이력 SQL이라 보존하며 임시·중복 삭제 확정 0건입니다.
+- 원격 브랜치 **132개**, 열린 PR **0건** 확인. 2026-10-28 감사의 패치 등가 8개/고유 112개는 **과거 스냅샷**입니다. 병합 이력 확인된 브랜치 6개라도 현재 ref·패치/태그 보존·소유자 외부 영구 백업·외부 참조 확인 없이 삭제하지 않습니다. 최신 점검은 [상세 기록](REPOSITORY-STATUS-20261120.md)을 참조합니다.
+- 2026-11-18 [`main` QA #44263406614](https://github.com/dohyunkimmm/footmate/actions/runs/44263406614): Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke **성공**. Cloudflare Worker `footmate` 최신 배포 조회는 `85dd335f-79ad-4342-8d35-c371a24f1ad5`, 버전 `930addaf-849d-4785-93d0-b8408e9f4903`, 100% 트래픽이었습니다. GitHub CI 배포 성공과 Cloudflare 개별 배포 객체의 독립 SHA 인증은 구분합니다.
+- [FootMate 보고서 `main` `53d7e64`](https://github.com/dohyunkimmm/footmate-case-study/commit/53d7e64c24bc828caf8e6949aa877cd932fc5f7a)는 117파일/15폴더(보고서 전용 정본)입니다. 제품 저장소에 보고서 원본을 재복사하지 않습니다. [#611](https://github.com/dohyunkimmm/footmate/issues/611) 실서명 JWT/TOTP MFA E2E는 **미완료 OPEN**입니다. DB·권한·Cron·요금제·운영 세션 및 서비스/배포 소스 변경 없이 문서만 정리합니다.
+
+---
+
 ## 2026-11-17 · `main` 재확인·의존성·연결 문서 동기화
 
 - [제품 `main` `bf01a25`](https://github.com/dohyunkimmm/footmate/commit/bf01a25ad098b55cd4922141e8a5823edc1d8293) 재귀 트리(`truncated=false`): **파일 280개·디렉터리 37개**, 루트 파일 **13개**·최상위 폴더 **8개**. 경로별 `.github/` 5·`api/` 2·`docs/` 35·`scripts/` 11·`src/` 87·`supabase/` 36·`tests/` 89·`worker/` 2·루트 13. 11월 15일의 `279개→280개 예상`은 당시 스냅샷이며 [루트 README](../README.md#저장소-파일폴더-안내)와 [문서 인덱스](README.md)를 현행 목록으로 사용합니다.
