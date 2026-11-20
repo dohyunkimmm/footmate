@@ -1,5 +1,11 @@
 # FootMate Documentation
 
+## 2026-11-20 후속 감사·SHA 태그 보존
+
+- [Git 패치 전수 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167)는 **SUCCESS**. 검사 실행 중 비기본 브랜치 132개 중 패치 동등 **8개**, 고유 패치 **124개**, ancestry-contained **0개**였습니다. 실행 시 임시 작업 브랜치를 포함한 숫자이므로 아래 기본 점검 시점의 132개 총 브랜치 수와 구분합니다.
+- [보존 작업 #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487) **SUCCESS**. 과거 병합 PR #5·#7·#8·#9·#12·#13의 원본 SHA를 Git `archive/merged/20261120/` 태그로 각각 검증했습니다. 원격 브랜치는 **한 건도 삭제하지 않았고**, 미병합 종료 2개 및 나머지 고유 변경 브랜치는 유지했습니다.
+- 태그는 **오프-GitHub 영구 백업을 대체하지 않습니다**. 외부 백업과 참조 검증 전에는 브랜치를 삭제하지 않는 [보존 기준](BRANCH-PATCH-AUDIT-2026-10-28.md)을 유지합니다. 완료된 일회성 태그 워크플로는 후속 PR에서 제거합니다.
+
 ## 현재 기준 · 2026-11-20
 
 - 제품 [`main` `720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a) 실제 트리 **파일 280개·디렉터리 37개**. [새 상태 기록](REPOSITORY-STATUS-20261120.md)을 추가하는 변경이 병합되면 **파일 281개**이며, `docs/`는 36개입니다. 아래 11월 17일 기록은 당일 스냅샷입니다.
