@@ -8,6 +8,13 @@
 
 보조 구현 화면의 이름은 **FootMate Demo**입니다. 로그인 후에도 Demo 표기를 유지하며, `/beta`는 기존 인증·연동 기능의 경로 이름으로 구분합니다.
 
+## 2026-11-20 `main`·QA·브랜치 점검
+
+- GitHub `main` [`720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a)의 파일 **280개·디렉터리 37개**, 루트 13개·최상위 8개를 확인했습니다. 새 [현황 문서](docs/REPOSITORY-STATUS-20261120.md)를 병합하면 **파일 281개·디렉터리 37개**입니다. 아래 2026-11-17 숫자는 당시 기준입니다.
+- 원격 브랜치 **132개**(`main` 포함), 열린 PR **0건**. 일부 이전 브랜치는 독자적 패치가 있어 일괄 삭제하지 않습니다. 오래된 검토 브랜치는 **SHA 보존·최신 패치 감사·오프-GitHub 백업 확인** 없이 삭제하지 않습니다.
+- 최신 [`main` QA #44263406614](https://github.com/dohyunkimmm/footmate/actions/runs/44263406614)는 회귀·브라우저·Cloudflare 배포·운영 스모크 **모두 성공**했습니다. 운영 보안 [이슈 #611](https://github.com/dohyunkimmm/footmate/issues/611)의 실서명 인증/MFA E2E는 별도 미검증입니다.
+- [별도 FootMate 보고서 저장소](https://github.com/dohyunkimmm/footmate-case-study)의 `main`은 [`53d7e64`](https://github.com/dohyunkimmm/footmate-case-study/commit/53d7e64c24bc828caf8e6949aa877cd932fc5f7a)(파일 117개·디렉터리 15개)입니다. 보고서와 제품 소스는 중복 저장하지 않습니다.
+
 ## 화면 구성
 
 | 경로 | 설명 |

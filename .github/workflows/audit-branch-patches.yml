@@ -8,6 +8,7 @@ on:
       - tests/tools/branch-hygiene.cjs
       - tests/tools/branch-applicability.cjs
       - tests/contracts/branch-applicability.test.cjs
+      - docs/REPOSITORY-STATUS-20261120.md
   push:
     branches: [main]
     paths:
@@ -15,6 +16,7 @@ on:
       - tests/tools/branch-hygiene.cjs
       - tests/tools/branch-applicability.cjs
       - tests/contracts/branch-applicability.test.cjs
+      - docs/REPOSITORY-STATUS-20261120.md
   workflow_dispatch:
 
 permissions:
