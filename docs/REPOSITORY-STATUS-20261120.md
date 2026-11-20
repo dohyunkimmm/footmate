@@ -1,5 +1,22 @@
 # FootMate 제품 저장소 `main`·브랜치 점검 — 2026-11-20
 
+## 후속 검증 결과 · 2026-11-20
+
+- [문서 PR #963](https://github.com/dohyunkimmm/footmate/pull/963)은 전체 QA·읽기 전용 Git 감사 성공 후 `main` [`382bbcd`](https://github.com/dohyunkimmm/footmate/commit/382bbcd19dd163cd3b05953da492ac13ea5d1f3c)로 병합됐습니다. [원본 태그 PR #964](https://github.com/dohyunkimmm/footmate/pull/964)도 최신 `main` 기준 [전체 QA #44696140505](https://github.com/dohyunkimmm/footmate/actions/runs/44696140505) 성공 후 [`439e865`](https://github.com/dohyunkimmm/footmate/commit/439e865c05dd321f90bbea16c90f66428caf9747)로 병합됐습니다.
+- [최신 읽기 전용 Git 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167)는 **SUCCESS**였습니다. 실행 중 임시 PR 브랜치를 포함한 총 원격 133개(비기본 132개) 중 **패치 동등 8개(과거 병합 PR 6개·미병합 종료 2개), 고유 패치 124개, ancestry-contained 0개, `main`과 동일한 tip tree 0개**였습니다. 별도 브랜치 삭제 판단은 이 수치만으로 하지 않습니다.
+- [태그 보존 실행 #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487)이 **SUCCESS**: 원본 Git SHA를 아래 태그들로 만들고 **각 태그·원본 브랜치의 SHA 동일성 6/6을 재검증**했습니다. 이력, 운영 서버·SQL·보고서 산출물 변경은 없습니다.
+
+| 과거 병합 PR | 기존 브랜치 | 보존한 정확한 HEAD SHA |
+| --- | --- | --- |
+| [#5](https://github.com/dohyunkimmm/footmate/pull/5) | `docs/sync-final-qa` | `e051486c6c2fc5b2826bdd1eee3e08331a443e29` |
+| [#7](https://github.com/dohyunkimmm/footmate/pull/7) | `docs/sync-qa-record` | `56c716e36fcc30d6cab9fbe2a7cc157bc08d3e1e` |
+| [#8](https://github.com/dohyunkimmm/footmate/pull/8) | `docs/add-verification-matrix` | `afd0e049a010f4128ba05f2ef6cbe4cae1615f60` |
+| [#9](https://github.com/dohyunkimmm/footmate/pull/9) | `docs/add-evidence-index` | `2b3ff9efece25c66c8b5bb0959a24091a1739bd8` |
+| [#12](https://github.com/dohyunkimmm/footmate/pull/12) | `chore/retry-vercel-deploy` | `75c390b648542780ca0515e7637a0fbb0d28c99c` |
+| [#13](https://github.com/dohyunkimmm/footmate/pull/13) | `docs/footmate-closeout` | `febb351d477950971365a708caa6b3aeca073bcf` |
+
+태그명 규칙: `archive/merged/20261120/pr-<PR 번호>/<원본 브랜치>`. **GitHub 태그는 오프-GitHub 소유자 영구 백업을 대신하지 않습니다.** 기존 6개 브랜치, 미병합 종료 2개 브랜치, 고유 패치가 있는 모든 브랜치를 보존했으며, **브랜치 삭제 0건**입니다. 영구 외부 bundle 백업·외부 브랜치 참조 검증이 끝나기 전에는 삭제하지 않습니다. 완료된 일회성 `archive-merged-six-once.yml`은 후속 클렌징 PR에서 제거합니다.
+
 ## 기준과 변경 범위
 
 - GitHub 기본 브랜치: [`main` `720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a). 2026-11-20 GitHub API 재귀 트리는 `truncated=false`였습니다.
