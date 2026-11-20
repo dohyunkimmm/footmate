@@ -1,0 +1,77 @@
+# One-time, non-destructive exact-SHA archive of six historically merged,
+# current-patch-equivalent FootMate branches. DO NOT DELETE ANY SOURCE BRANCH.
+name: Archive six reviewed merged FootMate refs (tags only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/archive-merged-six-once.yml'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: footmate-legacy-six-tag-archive
+  cancel-in-progress: false
+
+jobs:
+  preserve:
+    if: github.repository == 'dohyunkimmm/footmate' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Verify six merged PRs, exact SHA refs, then preserve SHA tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="${GITHUB_REPOSITORY}"
+          api="repos/${repo}"
+          opens="$(gh api "${api}/pulls?state=open&per_page=100")"
+          [[ "$(jq length <<< "${opens}")" -lt 100 ]] || exit 1
+          while IFS='|' read -r number branch sha; do
+            [[ "${number}" =~ ^[0-9]+$ && "${sha}" =~ ^[0-9a-f]{40}$ ]] || exit 1
+            [[ "${branch}" =~ ^[a-zA-Z0-9._/-]+$ && "${branch}" != *..* ]] || exit 1
+            echo "::notice::Validating merged PR #${number} branch ${branch}"
+            pr="$(gh api "${api}/pulls/${number}")"
+            jq -e --argjson n "${number}" --arg branch "${branch}" --arg sha "${sha}" --arg repo "${repo}" '
+              .number == $n and .merged == true and .state == "closed"
+              and .head.ref == $branch and .head.sha == $sha
+              and .head.repo.full_name == $repo and .base.ref == "main"
+            ' <<< "${pr}" >/dev/null || exit 1
+            if jq -e --arg branch "${branch}" 'any(.[]; .head.ref == $branch)' <<< "${opens}" >/dev/null; then
+              echo "::error::Branch belongs to an open PR"; exit 1
+            fi
+            current="$(gh api "${api}/git/ref/heads/${branch}" --jq .object.sha)"
+            [[ "${current}" == "${sha}" ]] || {
+              echo "::error::Original branch HEAD moved"; exit 1
+            }
+            tag="archive/merged/20261120/pr-${number}/${branch}"
+            refs="$(gh api "${api}/git/matching-refs/tags/${tag}")"
+            existing="$(jq -r --arg ref "refs/tags/${tag}" '[.[] | select(.ref == $ref) | .object.sha] | first // empty' <<< "${refs}")"
+            if [[ -z "${existing}" ]]; then
+              gh api -X POST "${api}/git/refs" -f ref="refs/tags/${tag}" -f sha="${sha}" >/dev/null
+            else
+              [[ "${existing}" == "${sha}" ]] || exit 1
+            fi
+            refs="$(gh api "${api}/git/matching-refs/tags/${tag}")"
+            verified="$(jq -r --arg ref "refs/tags/${tag}" '[.[] | select(.ref == $ref) | .object.sha] | first // empty' <<< "${refs}")"
+            [[ "${verified}" == "${sha}" ]] || {
+              echo "::error::Tag does not match original SHA"; exit 1
+            }
+            last="$(gh api "${api}/git/ref/heads/${branch}" --jq .object.sha)"
+            [[ "${last}" == "${sha}" ]] || {
+              echo "::error::Original branch changed during tagging"; exit 1
+            }
+            echo "PASS exact SHA preserved at refs/tags/${tag}; original branch remains intact"
+          done <<'CANDIDATES'
+          12|chore/retry-vercel-deploy|75c390b648542780ca0515e7637a0fbb0d28c99c
+          9|docs/add-evidence-index|2b3ff9efece25c66c8b5bb0959a24091a1739bd8
+          8|docs/add-verification-matrix|afd0e049a010f4128ba05f2ef6cbe4cae1615f60
+          13|docs/footmate-closeout|febb351d477950971365a708caa6b3aeca073bcf
+          5|docs/sync-final-qa|e051486c6c2fc5b2826bdd1eee3e08331a443e29
+          7|docs/sync-qa-record|56c716e36fcc30d6cab9fbe2a7cc157bc08d3e1e
+          CANDIDATES
+          echo "PASS six SHA-locked merged refs archived. No branch deletion, no history rewrite."
