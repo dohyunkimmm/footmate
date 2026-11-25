@@ -252,8 +252,10 @@ function preferenceSheet(){
  <form data-growth-form="recommend" class="fm-beta-preference-form"><div class="fm-beta-condition-fields">${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}<div class="fm-beta-condition-selects">
  <label class="fm-beta-field"><span>활동 지역</span><select name="region" aria-label="활동 지역">${options(regions.map(v=>[v,v]),p.region,'지역 전체')}</select></label>
  <label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(FILTERS.level.values.slice(1),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label>
- <label class="fm-beta-field"><span>선호 시간</span><select name="afterTime" aria-label="선호 시간">${options([['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']],p.afterTime,'시간 전체')}</select></label></div>
- ${choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p)}
+ </div><fieldset class="fm-beta-time-range"><legend>경기 시작 시간</legend><div class="fm-beta-condition-selects">
+ <label class="fm-beta-field"><span>이후</span><select name="afterTime" aria-label="선호 시간">${options(FILTERS.afterTime.values.slice(1),p.afterTime,'하한 없음')}</select></label>
+ <label class="fm-beta-field"><span>이전</span><select name="beforeTime" aria-label="시작 시간 상한">${options(FILTERS.beforeTime.values.slice(1),p.beforeTime,'상한 없음')}</select></label>
+ </div></fieldset>
  <div role="alert" data-time-range-error>${hasInvalidTimeRange(p)?TIME_RANGE_ERROR:''}</div>
  </div><div class="fm-beta-condition-actions"><button class="fm-beta-button fm-beta-button--primary">추천 경기 보기</button></div></form></dialog>`;
 }
