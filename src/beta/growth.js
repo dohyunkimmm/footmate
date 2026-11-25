@@ -199,8 +199,9 @@ function choices(name,label,values,p,prefix=''){
 }
 function quickFilters(p){
  const selectedCount=['region','level','position','afterTime','beforeTime','dateWindow'].filter(name=>p[name]).length;
+ const summary=[FILTERS.dateWindow.values.find(([v])=>v&&v===p.dateWindow)?.[1],p.region,p.level&&betaLevelLabel(p.level),POSITIONS[p.position],p.afterTime&&p.afterTime+' 이후',p.beforeTime&&p.beforeTime+' 전'].filter(Boolean).join(' · ');
  const ai=selectedCount&&aiOrder.length?'<span class="fm-beta-ai-label">AI 추천</span>':'';
- return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><div><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개 선택됨`:'추천 필터'}</span>${ai}</div><div>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}<button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button></div></div>
+ return `<div class="fm-beta-quick-filters" aria-label="추천 필터"><div class="fm-beta-filter-toolbar"><div><span class="fm-beta-filter-count">${selectedCount?`조건 ${selectedCount}개 선택됨`:'추천 필터'}</span>${ai}${summary?`<span class="fm-beta-condition-summary">${esc(summary)}</span>`:''}</div><div>${selectedCount?'<button type="button" class="fm-beta-link" data-growth-action="clear-filters">전체 조건 해제</button>':''}<button class="fm-beta-link" type="button" data-growth-action="edit-preferences">조건 변경</button></div></div>
  ${Object.entries(FILTERS).filter(([name])=>!['dateWindow','beforeTime'].includes(name)).map(([name,filter])=>{
   const values=name==='region'?regionChoices():filter.values;
   const dates=name==='afterTime';
@@ -248,11 +249,13 @@ function preferenceSheet(){
  const regions=[...new Set([p.region,'수원 · 영통','수원 · 인계','용인 · 기흥','서울 · 강남',...matches.map(m=>m.region)].filter(Boolean))].sort();
  return `<dialog class="fm-beta-condition-sheet" aria-labelledby="beta-conditions-title">
  <div class="fm-beta-filter-panel-head"><h2 id="beta-conditions-title">추천 조건</h2><button class="fm-beta-filter-close" type="button" data-growth-action="close-preferences" aria-label="닫기">×</button></div>
- <form data-growth-form="recommend" class="fm-beta-preference-form"><div class="fm-beta-condition-fields"><div class="fm-beta-condition-selects">
+ <form data-growth-form="recommend" class="fm-beta-preference-form"><div class="fm-beta-condition-fields">${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}<div class="fm-beta-condition-selects">
  <label class="fm-beta-field"><span>활동 지역</span><select name="region" aria-label="활동 지역">${options(regions.map(v=>[v,v]),p.region,'지역 전체')}</select></label>
  <label class="fm-beta-field"><span>실력</span><select name="level" aria-label="실력">${options(FILTERS.level.values.slice(1),p.level,'상관없음')}</select></label><label class="fm-beta-field"><span>포지션</span><select name="position" aria-label="포지션">${options(Object.entries(POSITIONS),p.position,'상관없음')}</select></label>
- <label class="fm-beta-field"><span>선호 시간</span><select name="afterTime" aria-label="선호 시간">${options([['09:00','오전 9시 이후'],['14:00','오후 2시 이후'],['18:00','저녁 6시 이후'],['20:00','저녁 8시 이후']],p.afterTime,'시간 전체')}</select></label></div>
- ${choices('dateWindow',FILTERS.dateWindow.label,FILTERS.dateWindow.values,p)}${choices('beforeTime',FILTERS.beforeTime.label,FILTERS.beforeTime.values,p)}
+ </div><fieldset class="fm-beta-time-range"><legend>경기 시작 시간</legend><div class="fm-beta-condition-selects">
+ <label class="fm-beta-field"><span>이후</span><select name="afterTime" aria-label="선호 시간">${options(FILTERS.afterTime.values.slice(1),p.afterTime,'하한 없음')}</select></label>
+ <label class="fm-beta-field"><span>이전</span><select name="beforeTime" aria-label="시작 시간 상한">${options(FILTERS.beforeTime.values.slice(1),p.beforeTime,'상한 없음')}</select></label>
+ </div></fieldset>
  <div role="alert" data-time-range-error>${hasInvalidTimeRange(p)?TIME_RANGE_ERROR:''}</div>
  </div><div class="fm-beta-condition-actions"><button class="fm-beta-button fm-beta-button--primary">추천 경기 보기</button></div></form></dialog>`;
 }

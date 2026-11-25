@@ -223,7 +223,7 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await expect.poll(()=>requests.length).toBe(1);
   expect(requests[0].task).toBe('recommend');expect(requests[0].candidates[0].id).toBe(matchId);
-  await expect(page.locator('.fm-beta-own-slot')).toHaveText('FW 1자리');
+  await expect(page.locator('.fm-beta-own-slot')).toHaveText('공격수 1자리');
   await expect(page.getByLabel('이메일')).toBeHidden();
   expect(await serious(page)).toEqual([]);
   await page.screenshot({path:testInfo.outputPath('recommendations-390.png'),fullPage:true});
@@ -792,13 +792,13 @@ test('condition editor explains conflicting times and accepts the corrected rang
  const afterTime=page.getByRole('combobox',{name:'선호 시간',exact:true});
  const submit=page.getByRole('button',{name:'추천 경기 보기',exact:true});
  await afterTime.selectOption('20:00');
- await page.getByRole('radio',{name:'낮 12시 전 시작',exact:true}).check();
+ await page.getByRole('combobox',{name:'시작 시간 상한'}).selectOption('12:00');
  await submit.click();
  const error=page.getByRole('alert').filter({hasText:'시작 시간 상한은 선호 시간보다 늦게 골라주세요.'});
  await expect(error).toBeVisible();
  await expect(afterTime).toBeFocused();
  await expect(afterTime).toHaveValue('20:00');
- await page.getByRole('radio',{name:'밤 10시 전 시작',exact:true}).check();
+ await page.getByRole('combobox',{name:'시작 시간 상한'}).selectOption('22:00');
  await expect(error).toHaveCount(0);
  await submit.click();
  await expect(page.getByRole('region',{name:'추천 조건',exact:true})).toBeVisible();

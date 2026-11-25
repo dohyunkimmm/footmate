@@ -144,7 +144,7 @@ test('compact demo opens, saves an occurrence, and restores it the next day',asy
  await page.getByRole('group',{name:'포지션',exact:true}).getByRole('radio',{name:'MF · 미드필더',exact:true}).check();
  await page.getByRole('button',{name:'추천 경기 보기'}).click();
  const card=page.locator('.fm-beta-catalog .fm-beta-match');
- await expect(card.locator('.fm-beta-own-slot')).toContainText('MF');
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('미드필더');
  const title=await card.locator('h3').innerText();
  const save=card.getByRole('button',{name:'경기 저장'});
  await save.click();
@@ -248,7 +248,7 @@ test('saved demo conditions show and open only new eligible matches',async({page
  await expect(page.locator('#recommendation-title')).toHaveText('새 경기');
  const card=page.locator('.fm-beta-catalog .fm-beta-match');
  await expect(card).not.toHaveAttribute('data-match-id',original);
- await expect(card.locator('.fm-beta-own-slot')).toContainText('MF');
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('미드필더');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.getByRole('button',{name:'전체 보기',exact:true}).click();
  await expect(menu).not.toContainText('새 경기');
@@ -304,7 +304,7 @@ test('compact visual keeps one connection message and readable cards with 200 pe
  await expect(page.getByText('연결 실패',{exact:true})).toBeVisible();
  await expect(page.locator('[data-readiness-notice]')).toHaveCount(0);
  const card=page.locator('.fm-beta-catalog .fm-beta-match');
- await expect(card.locator('.fm-beta-own-slot')).toContainText('MF');
+ await expect(card.locator('.fm-beta-own-slot')).toContainText('미드필더');
  await expect(card.locator('.fm-beta-demo-slots')).toHaveCount(0);
  await expect(card).not.toContainText('인조잔디');
  await page.locator('.fm-beta-catalog :is(button,h3,span,summary,.fm-beta-match-place)').evaluateAll(nodes=>{
@@ -394,4 +394,30 @@ test('default demo offers comparison, saving and reversible hiding',async({page}
  await page.addStyleTag({content:'.fm-beta-comparison table {font-size:26px}'});
  await table.locator('thead th').nth(1).evaluate(el=>{el.textContent='수원 영통역 실내 풋살장 주말 저녁 초중급 경기'});
  expect(await table.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
+});
+
+test('demo compares position availability on desktop and keeps a compact mobile card',async({page})=>{
+ await setup(page);
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto('/demo');
+ await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+ const sheet=page.getByRole('dialog');
+ await sheet.getByLabel('포지션',{exact:true}).selectOption('MF');
+ const lower=await sheet.getByLabel('선호 시간').boundingBox();
+ const upper=await sheet.getByLabel('시작 시간 상한').boundingBox();
+ expect(lower.y).toBe(upper.y);
+ await sheet.getByRole('button',{name:'추천 경기 보기'}).click();
+ const others=page.getByRole('region',{name:'다른 추천 경기'});
+ await expect(others.getByRole('button').first()).toContainText('미드필더');
+ await expect(page.locator('.fm-beta-own-slot')).toContainText('미드필더');
+ await others.getByRole('button').first().click();
+ await page.getByRole('button',{name:'모집 포지션'}).click();
+ await expect(page.locator('.fm-beta-slot[data-position="MF"]')).toContainText('내 포지션');
+ await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
+ for(const width of [390,320]){
+  await page.setViewportSize({width,height:700});
+  await expect(others).toBeHidden();
+  await expect(page.getByRole('button',{name:'경기 자세히'})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ }
 });
