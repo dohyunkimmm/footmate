@@ -223,7 +223,7 @@ test('choice-first recommendations keep the selected match and position through 
   await expect(page.locator('.fm-beta-match')).toHaveCount(1);
   await expect.poll(()=>requests.length).toBe(1);
   expect(requests[0].task).toBe('recommend');expect(requests[0].candidates[0].id).toBe(matchId);
-  await expect(page.locator('.fm-beta-own-slot')).toHaveText('FW 1자리');
+  await expect(page.locator('.fm-beta-own-slot')).toHaveText('공격수 1자리');
   await expect(page.getByLabel('이메일')).toBeHidden();
   expect(await serious(page)).toEqual([]);
   await page.screenshot({path:testInfo.outputPath('recommendations-390.png'),fullPage:true});
@@ -792,13 +792,13 @@ test('condition editor explains conflicting times and accepts the corrected rang
  const afterTime=page.getByRole('combobox',{name:'선호 시간',exact:true});
  const submit=page.getByRole('button',{name:'추천 경기 보기',exact:true});
  await afterTime.selectOption('20:00');
- await page.getByRole('radio',{name:'낮 12시 전 시작',exact:true}).check();
+ await page.getByRole('combobox',{name:'시작 시간 상한'}).selectOption('12:00');
  await submit.click();
  const error=page.getByRole('alert').filter({hasText:'시작 시간 상한은 선호 시간보다 늦게 골라주세요.'});
  await expect(error).toBeVisible();
  await expect(afterTime).toBeFocused();
  await expect(afterTime).toHaveValue('20:00');
- await page.getByRole('radio',{name:'밤 10시 전 시작',exact:true}).check();
+ await page.getByRole('combobox',{name:'시작 시간 상한'}).selectOption('22:00');
  await expect(error).toHaveCount(0);
  await submit.click();
  await expect(page.getByRole('region',{name:'추천 조건',exact:true})).toBeVisible();
@@ -1132,4 +1132,31 @@ test('new live venue region appears in the first-step location choices',async({p
   await page.getByRole('button',{name:'다음',exact:true}).click();
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
+});
+
+
+test('demo compares position availability on desktop and keeps a compact mobile card',async({page})=>{
+ await mockBackend(page,{empty:true});
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto('/demo');
+ await page.getByRole('button',{name:'조건 변경',exact:true}).click();
+ const sheet=page.getByRole('dialog');
+ await sheet.getByLabel('포지션',{exact:true}).selectOption('GK');
+ const lower=await sheet.getByLabel('선호 시간').boundingBox();
+ const upper=await sheet.getByLabel('시작 시간 상한').boundingBox();
+ expect(lower.y).toBe(upper.y);
+ await sheet.getByRole('button',{name:'추천 경기 보기'}).click();
+ const others=page.getByRole('region',{name:'다른 추천 경기'});
+ await expect(others.getByRole('button').first()).toContainText('골키퍼');
+ await expect(page.locator('.fm-beta-own-slot')).toContainText('골키퍼');
+ await others.getByRole('button').first().click();
+ await page.getByRole('button',{name:'모집 포지션'}).click();
+ await expect(page.locator('.fm-beta-slot[data-position="GK"]')).toContainText('내 포지션');
+ await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
+ for(const width of [390,320]){
+  await page.setViewportSize({width,height:700});
+  await expect(others).toBeHidden();
+  await expect(page.getByRole('button',{name:'경기 자세히'})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ }
 });
