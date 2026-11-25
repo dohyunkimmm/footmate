@@ -429,17 +429,11 @@
 .footmate-app [data-combined-discovery] .fm-beta-browse-controls { padding-top: 8px; }
 .footmate-app [data-combined-discovery] .fm-beta-recommendation-body { gap: 6px; }
 @media (min-width: 900px) {
-  body.footmate-app:has([data-combined-discovery] .fm-beta-alternatives) {
-    --demo-frame-side: calc((100vw - 760px) / 2);
-  }
-  .footmate-app #footmate-beta:has([data-combined-discovery] .fm-beta-alternatives) {
-    width: 760px;
-  }
   .footmate-app #footmate-beta:has(.fm-beta-alternatives) .fm-beta-condition-sheet::backdrop {
     clip-path: inset(var(--demo-frame-gap) var(--demo-frame-side) round 28px);
   }
   .footmate-app [data-combined-discovery] .fm-beta-match-list:has(.fm-beta-alternatives) {
-    display: grid; grid-template-columns: 3fr 2fr; gap: 16px; align-items: start;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start;
   }
   .fm-beta-alternatives { display: grid; gap: 8px; }
   .fm-beta-alternatives h2 { margin: 0; font-size: 1rem; }
