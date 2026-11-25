@@ -330,6 +330,12 @@ if(root){
     window.dispatchEvent(new CustomEvent('footmate:beta:apply-preset',{detail:row.conditions}));
     focusScreen('#recommendation-title',{scroll:true});
   }
+  function ownSlotLabel(match, position){
+    if(!POSITION_LABELS[position])return '';
+    const name=POSITION_LABELS[position].split(' · ').at(-1);
+    const count=Number(match.positionSlots[position]||0);
+    return name+' '+(count>0?count+'자리':'마감');
+  }
   function renderMatch(match,{detail=false}={}){
     const p=profile||{};
     const preferredPosition=selectedPreferences().position||p.position;
@@ -352,7 +358,7 @@ if(root){
     const reasons=(recommendationReasons[match.id]||[]).filter(reason=>reason!=='무료 참가');
     const discoveryContext=reasons.length?reasons.slice(0,2).join(' · '):'';
     const availability=match.status==='full'||match.remaining<=0?'마감':`${match.remaining}자리 남음`;
-    const positionAvailability=preferredPosition?`${POSITION_LABELS[preferredPosition]?.split(' · ').at(-1)||preferredPosition} ${slot>0?`${slot}자리`:'마감'}`:'';
+    const positionAvailability=ownSlotLabel(match,preferredPosition);
     const place=`<div class="fm-beta-match-place"><i class="fm-icon fm-beta-ui-icon" aria-hidden="true">📍</i>${esc(match.place)}${match.area&&!match.place.includes(match.area)?` · ${esc(match.area)}`:''}</div>`;
     const saveButton=isDemoEntry&&match.isDemo?`<button class="fm-beta-button fm-beta-save-toggle" type="button" data-action="save-demo-match" data-match-id="${esc(match.id)}" aria-label="경기 저장" aria-pressed="${saved}">${saved?'저장됨':'경기 저장'}</button>`:'';
     return `<article class="fm-beta-match ${match.isDemo?'fm-beta-match--demo':''}" data-match-id="${esc(match.id)}" data-match-tone="${visual.tone}" ${pendingMatchId===match.id?'data-pending-match="true"':''}>
@@ -363,7 +369,7 @@ if(root){
       ${detail?`${place}${discoveryContext?`<p class="fm-beta-match-reason">${esc(discoveryContext)}</p>`:''}`:
       `<div class="fm-beta-card-venue">${place}<span>${esc(betaLevelLabel(match.level))}</span></div>
       <div class="fm-beta-meta">${autoLaunch?'':`<span>${esc(formatStart(match.startsAt))}</span>`}${positionAvailability?`<span class="fm-beta-own-slot" role="group" aria-label="내 포지션">${esc(positionAvailability)}</span><span>전체 ${esc(availability)}</span>`:`<span class="fm-beta-badge">${esc(availability)}</span>`}</div>`}
-      ${detail?`<details class="fm-beta-demo-slots" open><summary>모집 포지션</summary><div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot" data-preferred="${item===preferredPosition}"><b>${({MF:"미드필더",FW:"공격수",DF:"수비수",GK:"골키퍼"})[item]} <small>${item}</small>${item===preferredPosition?' · 내 포지션':''}</b><span><strong>${Number(match.positionSlots[item]||0)}</strong>자리</span></div>`).join('')}</div>
+      ${detail?`<details class="fm-beta-demo-slots" open><summary>모집 포지션</summary><div class="fm-beta-slots">${BETA_MATCH_POSITIONS.map(item=>`<div class="fm-beta-slot" data-position="${item}" data-preferred="${item===preferredPosition}"><b>${({MF:"미드필더",FW:"공격수",DF:"수비수",GK:"골키퍼"})[item]} <small>${item}</small>${item===preferredPosition?' · 내 포지션':''}</b><span><strong>${Number(match.positionSlots[item]||0)}</strong>자리</span></div>`).join('')}</div>
       </details>${attendanceLinks(match,Boolean(joined))}`:''}
       ${detail?`<dl class="fm-beta-detail-facts"><div><dt>경기 일시</dt><dd>${esc(formatStart(match.startsAt))}</dd></div><div><dt>경기 방식</dt><dd>${esc(match.format||'경기')} · ${match.durationMin}분 · ${esc(match.surface||'구장')}</dd></div><div><dt>권장 실력</dt><dd>${esc(betaLevelLabel(match.level))}</dd></div></dl>${reactionPanel(match)}`:''}
       ${detail?saveButton:(autoLaunch?`<details class="fm-beta-more"><summary>더보기</summary><div><button type="button" class="fm-beta-link fm-beta-compare-toggle" data-action="compare-toggle" data-match-id="${esc(match.id)}" aria-pressed="${comparisonIds.includes(match.id)}">${comparisonIds.includes(match.id)?'비교 선택됨':'비교에 담기'}</button>${saveButton}<button type="button" class="fm-beta-link" data-action="hide-match" data-match-id="${esc(match.id)}">이 경기 숨기기</button></div></details>`:`<div class="fm-beta-card-tools"><button type="button" class="fm-beta-link fm-beta-compare-toggle" data-action="compare-toggle" data-match-id="${esc(match.id)}" aria-pressed="${comparisonIds.includes(match.id)}">${comparisonIds.includes(match.id)?'비교 선택됨':'비교에 담기'}</button>${saveButton}</div>`)}
@@ -438,7 +444,8 @@ if(root){
     const previous=autoLaunch&&visible.some(match=>match.id===previousRecommendationId&&match.id!==current.id)?'<button type="button" class="fm-beta-link" data-action="previous-recommendation">이전 경기</button>':'';
     const discovery=visible.length>1?`<div class="fm-beta-discovery">${previous}${exhausted?'<p role="status">모든 추천을 봤어요.</p>':''}<button class="fm-beta-button" type="button" data-action="${exhausted?'restart-discovery':'random-recommendation'}">${exhausted?'다시 둘러보기':autoLaunch?'다른 경기':'다른 경기 추천'}</button></div>`:'<p class="fm-beta-discovery-note">추천 1개</p>';
     const alternatives=autoLaunch?visible.filter(match=>match.id!==current.id).slice(0,2):[];
-    const choices=alternatives.length?`<section class="fm-beta-alternatives" aria-label="다른 추천 경기"><h2>다른 추천 경기</h2>${alternatives.map(match=>`<button type="button" data-action="match-detail" data-match-id="${esc(match.id)}"><strong>${esc(match.title)}</strong><span>${esc(formatStart(match.startsAt))}</span><span>${esc(match.place)} · ${match.remaining}자리 남음</span></button>`).join('')}</section>`:'';
+    const preferredPosition=selectedPreferences().position||profile?.position;
+    const choices=alternatives.length?`<section class="fm-beta-alternatives" aria-label="다른 추천 경기"><h2>다른 추천 경기</h2>${alternatives.map(match=>`<button type="button" data-action="match-detail" data-match-id="${esc(match.id)}"><strong>${esc(match.title)}</strong><span>${esc(formatStart(match.startsAt))}</span><span>${esc(match.place)}</span><span>${preferredPosition?esc(ownSlotLabel(match,preferredPosition))+' · 전체 ':''}${match.remaining}자리 남음</span></button>`).join('')}</section>`:'';
     const gatedNext=guest&&!previewExpanded&&demoPage===preview.length-1&&visible.length>preview.length;
     return `${rankingStatus}${guest?`<div class="fm-beta-preview-note"><span>조건에 맞는 경기 <b>${visible.length}개</b> · ${previewExpanded?'전체 보기':`${preview.length}개 미리보기`}</span></div>`:''}<div class="fm-beta-match-list">${renderMatch(current)}${choices}</div>${comparisonIds.length?`<div class="fm-beta-compare-tray"><span>비교 ${comparisonIds.length} / 2</span><ul class="fm-beta-compare-picks">${matches.filter(match=>comparisonIds.includes(match.id)).map(match=>`<li><span>${esc(match.title)}</span><button type="button" class="fm-beta-link" data-action="compare-remove" data-match-id="${esc(match.id)}" aria-label="${esc(match.title)} 비교에서 빼기">×</button></li>`).join('')}</ul><button type="button" class="fm-beta-button" data-action="compare-open" ${comparisonIds.length<2?'disabled':''}>두 경기 비교</button><button type="button" class="fm-beta-link" data-action="compare-clear">비우기</button></div>`:''}<div class="fm-beta-browse-controls">${discovery}${!autoLaunch&&preview.length>1?`<nav class="fm-beta-demo-pager" aria-label="추천 경기 페이지"><button class="fm-beta-button" type="button" data-action="demo-prev" ${demoPage===0?'disabled':''}>이전</button><span role="status">${demoPage+1} / ${preview.length}</span><button class="fm-beta-button" type="button" data-action="${gatedNext?'expand-preview':'demo-next'}" ${!gatedNext&&demoPage===preview.length-1?'disabled':''}>${gatedNext?'다음 경기':'다음'}</button></nav>`:''}</div>`;
   }
