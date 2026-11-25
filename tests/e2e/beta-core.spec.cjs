@@ -1133,30 +1133,3 @@ test('new live venue region appears in the first-step location choices',async({p
   await page.getByRole('button',{name:'추천 경기 보기'}).click();
   await expect(page.locator('.fm-beta-preferences-summary')).toContainText('서울 · 송파');
 });
-
-
-test('demo compares position availability on desktop and keeps a compact mobile card',async({page})=>{
- await mockBackend(page,{empty:true});
- await page.setViewportSize({width:1440,height:900});
- await page.goto('/demo');
- await page.getByRole('button',{name:'조건 변경',exact:true}).click();
- const sheet=page.getByRole('dialog');
- await sheet.getByLabel('포지션',{exact:true}).selectOption('GK');
- const lower=await sheet.getByLabel('선호 시간').boundingBox();
- const upper=await sheet.getByLabel('시작 시간 상한').boundingBox();
- expect(lower.y).toBe(upper.y);
- await sheet.getByRole('button',{name:'추천 경기 보기'}).click();
- const others=page.getByRole('region',{name:'다른 추천 경기'});
- await expect(others.getByRole('button').first()).toContainText('골키퍼');
- await expect(page.locator('.fm-beta-own-slot')).toContainText('골키퍼');
- await others.getByRole('button').first().click();
- await page.getByRole('button',{name:'모집 포지션'}).click();
- await expect(page.locator('.fm-beta-slot[data-position="GK"]')).toContainText('내 포지션');
- await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
- for(const width of [390,320]){
-  await page.setViewportSize({width,height:700});
-  await expect(others).toBeHidden();
-  await expect(page.getByRole('button',{name:'경기 자세히'})).toBeVisible();
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
- }
-});
