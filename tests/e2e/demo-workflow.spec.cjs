@@ -410,10 +410,14 @@ test('demo compares position availability on desktop and keeps a compact mobile 
  const others=page.getByRole('region',{name:'다른 추천 경기'});
  await expect(others.getByRole('button').first()).toContainText('미드필더');
  await expect(page.locator('.fm-beta-own-slot')).toContainText('미드필더');
- await others.getByRole('button').first().click();
+ const candidate=others.getByRole('button').nth(1);
+ const candidateId=await candidate.getAttribute('data-match-id');
+ await candidate.focus();
+ await candidate.press('Enter');
  await page.getByRole('button',{name:'모집 포지션'}).click();
  await expect(page.locator('.fm-beta-slot[data-position="MF"]')).toContainText('내 포지션');
  await page.getByRole('button',{name:'추천으로 돌아가기'}).click();
+ await expect(others.locator('[data-match-id="'+candidateId+'"]')).toBeFocused();
  for(const width of [390,320]){
   await page.setViewportSize({width,height:700});
   await expect(others).toBeHidden();
