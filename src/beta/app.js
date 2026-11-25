@@ -66,14 +66,15 @@ if(root){
   let presetsOpen=false;
   let savedMatchesOpen=false;
   function focusScreen(selector,{scroll=false}={}){requestAnimationFrame(()=>{const node=root.querySelector(selector);if(node){if(!node.hasAttribute('tabindex'))node.tabIndex=-1;node.focus({preventScroll:!scroll})}})}
-  function restoreResults(){
+  function restoreResults(matchId=''){
     const savedId=savedDetailOrigin;
     savedDetailOrigin='';
     render();
     requestAnimationFrame(()=>{
       const main=root.querySelector('[data-beta-main]');if(main)main.scrollTop=resultsScrollTop;
       const savedButton=[...root.querySelectorAll('[data-saved-entry]')].find(button=>button.dataset.matchId===savedId&&!button.closest('details:not([open])')&&button.getClientRects().length);
-      (savedButton||root.querySelector('.fm-beta-match [data-action="match-detail"]'))?.focus({preventScroll:true});
+      const alternative=matchId&&[...root.querySelectorAll('.fm-beta-alternatives [data-action="match-detail"]')].find(button=>button.dataset.matchId===matchId&&button.getClientRects().length);
+      (savedButton||alternative||root.querySelector('.fm-beta-match [data-action="match-detail"]'))?.focus({preventScroll:true});
     });
   }
   function rememberResults(){resultsScrollTop=root.querySelector('[data-beta-main]')?.scrollTop||0}
@@ -774,12 +775,12 @@ if(root){
     if(action==='compare-detail'){comparisonOpen=false;detailOrigin='comparison';detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
     if(action==='match-detail'){savedDetailOrigin=target.hasAttribute('data-saved-entry')?target.dataset.matchId:'';rememberResults();emitDiscoveryMeasurement('match_detail_opened',{isDemo:matches.find(m=>m.id===target.dataset.matchId)?.isDemo,matchId:target.dataset.matchId});detailMatchId=target.dataset.matchId;detailTab='info';sessionStorage.setItem('footmate:beta:detail-match:v1',detailMatchId);render();focusScreen('h1');return}
     if(action==='detail-back'){
-      const origin=detailOrigin;closeDetail();
+      const origin=detailOrigin,returnMatchId=detailMatchId;closeDetail();
       if(origin==='comparison'&&comparisonIds.length===2){comparisonOpen=true;render();focusScreen('h1')}
       else if(origin==='history'){
         const id=venueOriginId;venueOriginId='';render();
         requestAnimationFrame(()=>[...root.querySelectorAll('[data-growth-action="same-venue"]')].find(button=>button.dataset.matchId===id)?.focus());
-      }else restoreResults();
+      }else restoreResults(returnMatchId);
       return;
     }
     if(action==='detail-tab'){detailTab=target.dataset.tab;render();return}
