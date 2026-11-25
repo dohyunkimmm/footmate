@@ -450,6 +450,26 @@
   }
   .fm-beta-alternatives button span { font-size: .875rem; }
 }
+.fm-beta-time-range { min-width: 0; margin: 0; padding: 0; border: 0; }
+.fm-beta-time-range legend { margin-bottom: 6px; font-weight: 700; }
+.footmate-app .fm-beta-detail[data-detail-tab="slots"] .fm-beta-slots {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+  grid-template-areas: "FW FW" "MF DF" "GK GK"; gap: 10px; padding: 12px;
+  border: 2px solid #658575; border-radius: 10px;
+  background: radial-gradient(circle at center, transparent 24px,#a5bbae 25px,transparent 27px),
+    linear-gradient(to bottom,#e4efe7 49.5%,#a5bbae 50%,#e4efe7 50.5%);
+}
+.fm-beta-slots [data-position="FW"] { grid-area: FW; }
+.fm-beta-slots [data-position="MF"] { grid-area: MF; }
+.fm-beta-slots [data-position="DF"] { grid-area: DF; }
+.fm-beta-slots [data-position="GK"] { grid-area: GK; }
+.footmate-app .fm-beta-detail[data-detail-tab="slots"] .fm-beta-slot {
+  display: grid; justify-self: center; width: fit-content; max-width: 100%;
+  gap: 2px; padding: 5px 9px; border-radius: 8px; background: white;
+}
+.footmate-app .fm-beta-detail[data-detail-tab="slots"] .fm-beta-slot[data-preferred="true"] {
+  background: #d5ebdb; outline: 2px solid #326047;
+}
 </style>
 </head>
 <body>
