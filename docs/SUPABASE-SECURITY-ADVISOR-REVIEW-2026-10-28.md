@@ -1,5 +1,13 @@
 # Supabase Security/Performance Advisor — per-item review (2026-10-28)
 
+## 2026-11-26 · 읽기 전용 DB 회귀 및 감사 도구 오탐 정정
+
+- 운영 `footmate-beta` ACTIVE_HEALTHY. `public` RLS 16/16, SECURITY DEFINER 38개 전부 search_path 지정, 익명 EXECUTE 0개, 인증 EXECUTE 21개, 사용자 수정 가능 raw_user_meta_data 정책 참조 0개, 활성 Cron 3개.
+- 기존 읽기 전용 DB 회귀 검사 `definer-rpc-readonly-guards.sql`, `rls-operator-readonly-roles.sql`, `pgnet-boundary-readonly.sql`의 마지막 PASS 표식을 확인했습니다(모의 JWT claims/실제 DB 역할, 트랜잭션 rollback). 운영자 RPC 11개씩 비운영자 AAL2·운영자 AAL1 거부, auth.uid 누락 8개 거부, RLS 읽기 경계 및 Cron/확장 카탈로그 검증. 식별자 출력은 억제했습니다. 실제 서명 Auth 세션 검증은 아닙니다.
+- `rls-advisor-readonly.sql`의 기존 대소문자 구분 정규식은 PostgreSQL의 `SELECT auth.jwt() AS jwt`를 직접 호출로 잘못 분류(11건)했습니다. 대소문자 무시로 래핑된 호출을 먼저 제거한 뒤 남은 직접 호출을 탐지하도록 수정했습니다. 운영 읽기 전용 재검사: 실행 가능 definer 21개 중 flag 0, 운영자 guard 11개 중 flag 0, 대상 정책 14개 중 직접 JWT 호출 flag 0. 대문자·소문자 래핑, 직접 호출, 혼합 호출 합성 사례 4/4 예상값 일치. 이 검사는 문자열 기반 보조 지표이며 Advisor 또는 인가 E2E를 대체하지 않습니다.
+- Security Advisor WARN 23(인증 SECURITY DEFINER 21, pg_net 1, 유출 비밀번호 보호 1), INFO 2(정책 없는 RLS); Performance INFO 8(미사용 인덱스); Health 0. 기존 무료 플랜 제약 예외 유지. 경고 자체는 미해결.
+- [#611](https://github.com/dohyunkimmm/footmate/issues/611) 실서명 JWT/TOTP, refresh·회복 검증은 승인된 전용 계정과 현행 TOTP/실제 세션 증빙 부재로 OPEN 유지합니다. 운영 DB·스키마·데이터·권한·Cron·요금제 변경 없음.
+
 ## 2026-11-09 최신 운영 확인 — #611 인증·MFA E2E 재개 게이트
 
 - **읽기 전용 카탈로그 확인:** `public` 일반 테이블 **16/16 RLS 활성**. RLS가 활성화됐지만 정책이 없는 테이블 **2개**는 `anon`/ `authenticated`에 SELECT·INSERT·UPDATE·DELETE 권한이 **0개**입니다. `SECURITY DEFINER` 함수 **38개** 중 `anon EXECUTE` 허용은 **0개**, `authenticated EXECUTE` 허용은 **21개**입니다.
