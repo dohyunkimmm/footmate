@@ -41,11 +41,13 @@ select 'operator_definer_missing_mfa_guard', count(*),
   )
 from operator_definers
 union all
+-- PostgreSQL deparses SELECT in uppercase; remove wrapped calls first so
+-- a mixed wrapped/direct policy still flags the remaining direct call.
 select 'rls_policies_direct_jwt_call', count(*),
   count(*) filter (
-    where (coalesce(qual, '') || coalesce(with_check, '')) ~
-      '(^|[^a-z_.])auth\.jwt\(\)'
-      and (coalesce(qual, '') || coalesce(with_check, '')) !~
-      'select[[:space:]]+auth\.jwt\(\)'
+    where regexp_replace(
+      coalesce(qual, '') || ' ' || coalesce(with_check, ''),
+      '\mselect[[:space:]]+auth\.jwt\(\)', '', 'gi'
+    ) ~* '(^|[^a-z_.])auth\.jwt\(\)'
   )
 from affected_policies;
