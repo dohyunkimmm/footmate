@@ -1,4 +1,4 @@
-# 풋살 개인 → 경기 매칭 · 2026-11-17
+# 풋살 개인 → 경기 매칭 · 2026-11-26
 
 현재 기본 `/demo`는 로고 오프닝 → 추천 카드·빠른 필터를 함께 표시 → 필요할 때 활동 지역·실력·포지션·시간 변경 → 참가 시 로그인 → `/beta` 홈 → 직접 참가·내 경기 흐름이다. WIPPY에서 참고한 것은 로그인 후 추천을 중심으로 활동·프로필로 이어지는 앱 구조이며 축구나 사람 간 궁합 매칭으로 범위를 넓히지 않는다.
 
@@ -24,6 +24,8 @@
 - 이전 /prototype은 과거 구현·검증 기록으로 보존한다.
 
 ## 화면·검증 기준
+
+추천 카드에는 선호 포지션 및 전체 잔여석과 적용 조건 요약을 표시합니다. 데스크톱에서도 기존 390px 폰 프레임을 유지하며 추가 후보는 카드 아래에 배치합니다. 기본 프레임에서 후보 사이 여백을 줄였고, 후보 상세에서 돌아오면 동일 경기 버튼에 키보드 초점을 복원합니다. [#967](https://github.com/dohyunkimmm/footmate/pull/967)·[#968](https://github.com/dohyunkimmm/footmate/pull/968)·[#970](https://github.com/dohyunkimmm/footmate/pull/970)·[#971](https://github.com/dohyunkimmm/footmate/pull/971) 및 [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525) 참조.
 
 현재 공개 `/demo`는 데스크톱에서 폭 390px·최대 높이 844px의 폰 프레임 안에 표시하고 좁은 모바일 화면에서는 화면 너비를 사용한다. 이전 `/prototype` 및 별도 Case Study의 화면 규칙과 구분한다. 텍스트·버튼·입력은 Pretendard, 의미 아이콘은 Tossface를 사용한다.
 

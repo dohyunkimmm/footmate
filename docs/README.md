@@ -1,18 +1,27 @@
 # FootMate Documentation
 
+## 현재 기준 · 2026-11-26
+
+- [제품 `main` `c24ee256`](https://github.com/dohyunkimmm/footmate/commit/c24ee256b0fc9c980795792cab38ce871fe4c840)의 잘리지 않은 재귀 트리: **파일 281개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개. `docs/` 36개. 이 문서 변경은 기존 파일만 수정하므로 파일 수는 변하지 않습니다.
+- 작업 브랜치 생성 전 원격 브랜치 **133개**(main 포함), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**. 11월 20일 패치 감사는 당시 기록으로 유지하며 새로운 전체 패치 동등성 판정이나 외부 영구 백업을 완료했다고 주장하지 않습니다.
+- [#967](https://github.com/dohyunkimmm/footmate/pull/967) 추천 카드·조건 요약·포지션/전체 잔여석, [#968](https://github.com/dohyunkimmm/footmate/pull/968) 후보 상세 복귀 초점, [#969](https://github.com/dohyunkimmm/footmate/pull/969) Wrangler 4.165.0, [#970](https://github.com/dohyunkimmm/footmate/pull/970) 데스크톱 390px 폰 프레임 유지, [#971](https://github.com/dohyunkimmm/footmate/pull/971) 기본 높이의 후보 간격 개선이 병합됐습니다. 중복 의존성 PR [#966](https://github.com/dohyunkimmm/footmate/pull/966)은 미병합 종료이며 #969로 반영됐습니다.
+- 기준 SHA의 [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525): Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke **SUCCESS**, Docs-only QA **SKIPPED**. 이번 문서 PR의 별도 QA나 Cloudflare 배포 객체의 독립 SHA 검증을 대신하지 않습니다.
+- 동일 blob은 적용 이력 SQL 2쌍뿐이며 명백한 임시 확장자 파일은 없습니다. 보고서 전용 `qa/`·`src/case-study/`는 분리 유지. 파일·폴더·브랜치 삭제, 이력 재작성, DB·권한·요금제 변경 **0건**. 일회성 원본 보존 워크플로는 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 이미 제거했습니다.
+- [보고서 `main` `f5b99ca`](https://github.com/dohyunkimmm/footmate-case-study/commit/f5b99cafff2e964c5d6d4d8dd148ce72753be637): **117개 파일·15개 디렉터리**. 보고서 원본·발표자료는 별도 저장소가 정본입니다. 실서명 JWT·운영자 TOTP MFA E2E는 승인된 테스트 세션 증빙 부재로 #611 미완료 유지. 새 운영 DB/Advisor 조회는 수행하지 않았습니다.
+
 ## 2026-11-20 후속 감사·SHA 태그 보존
 
 - [Git 패치 전수 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167)는 **SUCCESS**. 검사 실행 중 비기본 브랜치 132개 중 패치 동등 **8개**, 고유 패치 **124개**, ancestry-contained **0개**였습니다. 실행 시 임시 작업 브랜치를 포함한 숫자이므로 아래 기본 점검 시점의 132개 총 브랜치 수와 구분합니다.
 - [보존 작업 #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487) **SUCCESS**. 과거 병합 PR #5·#7·#8·#9·#12·#13의 원본 SHA를 Git `archive/merged/20261120/` 태그로 각각 검증했습니다. 원격 브랜치는 **한 건도 삭제하지 않았고**, 미병합 종료 2개 및 나머지 고유 변경 브랜치는 유지했습니다.
-- 태그는 **오프-GitHub 영구 백업을 대체하지 않습니다**. 외부 백업과 참조 검증 전에는 브랜치를 삭제하지 않는 [보존 기준](BRANCH-PATCH-AUDIT-2026-10-28.md)을 유지합니다. 완료된 일회성 태그 워크플로는 후속 PR에서 제거합니다.
+- 태그는 **오프-GitHub 영구 백업을 대체하지 않습니다**. 외부 백업과 참조 검증 전에는 브랜치를 삭제하지 않는 [보존 기준](BRANCH-PATCH-AUDIT-2026-10-28.md)을 유지합니다. 완료된 일회성 태그 워크플로는 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 제거했습니다.
 
-## 현재 기준 · 2026-11-20
+## 이전 기준 · 2026-11-20 (당시 스냅샷)
 
 - 제품 [`main` `720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a) 실제 트리 **파일 280개·디렉터리 37개**. [새 상태 기록](REPOSITORY-STATUS-20261120.md)을 추가하는 변경이 병합되면 **파일 281개**이며, `docs/`는 36개입니다. 아래 11월 17일 기록은 당일 스냅샷입니다.
 - [`main` QA #44263406614](https://github.com/dohyunkimmm/footmate/actions/runs/44263406614)는 회귀·브라우저·Cloudflare 배포·운영 스모크 **SUCCESS**입니다. 열린 PR 0건, 브랜치 132개(`main` 포함)를 확인했습니다. 2026-10-28 패치 감사 수치는 현재 분류가 아니며, 원본 보존·외부 백업 없이 일괄 브랜치 삭제하지 않습니다.
 - [보고서 저장소 `main` `53d7e64`](https://github.com/dohyunkimmm/footmate-case-study/commit/53d7e64c24bc828caf8e6949aa877cd932fc5f7a)는 117개 파일·15개 디렉터리이며 보고서 원본/발표자료는 그 저장소가 정본입니다. 실서명 JWT 및 운영자 MFA 실계정 검증은 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **OPEN**입니다.
 
-## 현재 기준 · 2026-11-17
+## 이전 기준 · 2026-11-17 (당시 스냅샷)
 
 - [제품 `main` `bf01a25`](https://github.com/dohyunkimmm/footmate/commit/bf01a25ad098b55cd4922141e8a5823edc1d8293)의 잘리지 않은 재귀 트리에서 **280개 파일·37개 디렉터리**(루트 파일 13개·최상위 폴더 8개)를 확인했습니다. [루트 목록](../README.md#저장소-파일폴더-안내)의 경로별 합계도 실제 트리와 일치합니다. 아래 2026-11-15 `279개/280개 예상`은 작성 당시의 기록입니다.
 - [#954 Wrangler 갱신](https://github.com/dohyunkimmm/footmate/pull/954)과 [#955 OIDC 갱신](https://github.com/dohyunkimmm/footmate/pull/955)은 각 PR의 Change Impact·Regression 36·Browser E2E + axe **SUCCESS**([#954](https://github.com/dohyunkimmm/footmate/actions/runs/43779402635) · [#955](https://github.com/dohyunkimmm/footmate/actions/runs/44023302859)) 후 `main`에 병합됐습니다. 파일 변경이 동일한 중복 [#956](https://github.com/dohyunkimmm/footmate/pull/956)은 미병합 종료했습니다. 이는 새 운영 DB·실서명 MFA 검증의 완료를 뜻하지 않습니다.
@@ -64,7 +73,7 @@
 
 - [SUPABASE-SECURITY-ADVISOR-2026-10-27.md](SUPABASE-SECURITY-ADVISOR-2026-10-27.md) — 남은 Auth·RPC·pg_net 보안 경고와 운영별 제약·검증 범위
 - [BRANCH-HYGIENE-2026-10-27.md](BRANCH-HYGIENE-2026-10-27.md) — 121개 비기본 브랜치 전수 비교, 미삭제 안전 후보 및 용량 조사 한계
-- [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — **2026-10-22~23 당시** GitHub Ruleset·Vercel 배포·WAF·마이그레이션 보존 기록. **현행 Cloudflare 운영 상태의 최신 보고서가 아님**
+- [REPO-OPERATIONS.md](REPO-OPERATIONS.md) — 최신 저장소 점검·GitHub QA 및 과거 GitHub Ruleset·Vercel·WAF 기록. Cloudflare 독립 배포 객체 조회와 GitHub QA를 구분
 - [RELEASE-HISTORY.md](RELEASE-HISTORY.md) — 날짜·PR·SHA별 구현·검증·배포 기록. 이전 Vercel/Render 및 이후 변경 기록을 각각의 시점 기준으로 해석
 - [RELEASE-HISTORY-CORRECTIONS.md](RELEASE-HISTORY-CORRECTIONS.md) — 당시 기록을 보존하며 이후 바뀐 승인·해석 기준 구분
 - [BETA-PILOT-RUNBOOK.md](BETA-PILOT-RUNBOOK.md) — 연결된 Beta 운영·알림 복구·QA 데이터 정리
