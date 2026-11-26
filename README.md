@@ -10,13 +10,22 @@
 
 **주요 링크:** [사업성 분석·경영계획](https://footmate-case-study.fmate.workers.dev/) · [발표자료 9장 미리보기](https://footmate-case-study.fmate.workers.dev/src/case-study/materials.html?preview=1) · [5개년 전략 6장 미리보기](https://footmate-case-study.fmate.workers.dev/src/case-study/materials.html?preview=1&deck=strategy) · [사업 전략 6장](https://footmate-case-study.fmate.workers.dev/src/case-study/strategy-brief.html) · [발표자료 PPT 다운로드](https://footmate-case-study.fmate.workers.dev/src/case-study/downloads/footmate_report.pptx) · [FootMate Demo](https://footmate.fmate.workers.dev/demo)
 
-## 2026-11-20 후속 · 브랜치 감사·원본 SHA 보존 완료
+## 현재 기준 · 2026-11-26
+
+- [제품 `main` `c24ee256`](https://github.com/dohyunkimmm/footmate/commit/c24ee256b0fc9c980795792cab38ce871fe4c840)의 잘리지 않은 재귀 트리: **파일 281개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개. `docs/` 36개. 이 문서 변경은 기존 파일만 수정하므로 파일 수는 변하지 않습니다.
+- 작업 브랜치 생성 전 원격 브랜치 **133개**(main 포함), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**. 11월 20일 패치 감사는 당시 기록으로 유지하며 새로운 전체 패치 동등성 판정이나 외부 영구 백업을 완료했다고 주장하지 않습니다.
+- [#967](https://github.com/dohyunkimmm/footmate/pull/967) 추천 카드·조건 요약·포지션/전체 잔여석, [#968](https://github.com/dohyunkimmm/footmate/pull/968) 후보 상세 복귀 초점, [#969](https://github.com/dohyunkimmm/footmate/pull/969) Wrangler 4.165.0, [#970](https://github.com/dohyunkimmm/footmate/pull/970) 데스크톱 390px 폰 프레임 유지, [#971](https://github.com/dohyunkimmm/footmate/pull/971) 기본 높이의 후보 간격 개선이 병합됐습니다. 중복 의존성 PR [#966](https://github.com/dohyunkimmm/footmate/pull/966)은 미병합 종료이며 #969로 반영됐습니다.
+- 기준 SHA의 [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525): Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke **SUCCESS**, Docs-only QA **SKIPPED**. 이번 문서 PR의 별도 QA나 Cloudflare 배포 객체의 독립 SHA 검증을 대신하지 않습니다.
+- 동일 blob은 적용 이력 SQL 2쌍뿐이며 명백한 임시 확장자 파일은 없습니다. 보고서 전용 `qa/`·`src/case-study/`는 분리 유지. 파일·폴더·브랜치 삭제, 이력 재작성, DB·권한·요금제 변경 **0건**. 일회성 원본 보존 워크플로는 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 이미 제거했습니다.
+- [보고서 `main` `f5b99ca`](https://github.com/dohyunkimmm/footmate-case-study/commit/f5b99cafff2e964c5d6d4d8dd148ce72753be637): **117개 파일·15개 디렉터리**. 보고서 원본·발표자료는 별도 저장소가 정본입니다. 실서명 JWT·운영자 TOTP MFA E2E는 승인된 테스트 세션 증빙 부재로 #611 미완료 유지. 새 운영 DB/Advisor 조회는 수행하지 않았습니다.
+
+## 2026-11-20 후속 · 브랜치 감사·원본 SHA 보존 완료 (당시 기록)
 
 - [현행 Git 전수 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167) **성공**: 감사 실행 중 작업 브랜치를 포함한 비기본 브랜치 **132개**, 패치 동등 검토 대상 **8개**, 고유 패치 **124개**, 조상 관계만으로 정리 가능한 브랜치 **0개**. 아래 132개 원격 브랜치는 **작업 PR 생성 전**의 점검 시점 숫자입니다.
 - [문서 동기화 #963](https://github.com/dohyunkimmm/footmate/pull/963)과 [SHA 보존 #964](https://github.com/dohyunkimmm/footmate/pull/964)은 전체 필수 QA 성공 후 병합했습니다. [보존 Actions #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487)이 과거 **병합 PR 6개 원본 커밋을 `archive/merged/20261120/` 태그로 보존**했고, **태그 SHA 6/6과 원본 브랜치 6/6 유지**를 재검증했습니다. 2개 미병합 종료 브랜치와 고유 변경 브랜치는 보존합니다.
-- 소유자 관리 **오프-GitHub 영구 Git 백업 및 외부 참조 확인이 완료되지 않아 브랜치 삭제 0건**입니다. 한 번 실행된 태그 보존용 워크플로는 후속 정리 PR에서 제거하며, 제품·DB·운영 배포 코드는 변경하지 않습니다. 상세 사항은 [현재 점검 기록](docs/REPOSITORY-STATUS-20261120.md) 기준입니다.
+- 소유자 관리 **오프-GitHub 영구 Git 백업 및 외부 참조 확인이 완료되지 않아 브랜치 삭제 0건**입니다. 한 번 실행된 태그 보존용 워크플로는 [후속 정리 PR #965](https://github.com/dohyunkimmm/footmate/pull/965)에서 제거했으며, 제품·DB·운영 배포 코드는 변경하지 않습니다. 상세 사항은 [현재 점검 기록](docs/REPOSITORY-STATUS-20261120.md) 기준입니다.
 
-## 2026-11-20 `main`·QA·브랜치 점검
+## 2026-11-20 `main`·QA·브랜치 점검 (당시 기록)
 
 - GitHub `main` [`720ffc4`](https://github.com/dohyunkimmm/footmate/commit/720ffc45948b0b2d8e95f658f65b4883e8af246a)의 파일 **280개·디렉터리 37개**, 루트 13개·최상위 8개를 확인했습니다. 새 [현황 문서](docs/REPOSITORY-STATUS-20261120.md)를 병합하면 **파일 281개·디렉터리 37개**입니다. 아래 2026-11-17 숫자는 당시 기준입니다.
 - 원격 브랜치 **132개**(`main` 포함), 열린 PR **0건**. 일부 이전 브랜치는 독자적 패치가 있어 일괄 삭제하지 않습니다. 오래된 검토 브랜치는 **SHA 보존·최신 패치 감사·오프-GitHub 백업 확인** 없이 삭제하지 않습니다.
@@ -52,6 +61,8 @@
 
 재방문 시 브라우저의 추천 순서와 기존 Beta 계정·서버 기록을 복구합니다. **실제 로그인 계정의 추천 조건은 Supabase에 사용자별로 동기화**하며 연결 실패 시 이 기기의 저장값을 사용합니다. 데모·게스트의 조건 및 예시 참가 기록은 브라우저에만 남습니다. 체험 선택·중복 시작 메뉴는 공개 앱에 두지 않습니다.
 
+추천 카드에는 선호 포지션 및 전체 잔여석과 적용 조건 요약을 표시합니다. 데스크톱에서도 기존 390px 폰 프레임을 유지하며 추가 후보는 카드 아래에 배치합니다. 기본 프레임에서 후보 사이 여백을 줄였고, 후보 상세에서 돌아오면 동일 경기 버튼에 키보드 초점을 복원합니다. [#967](https://github.com/dohyunkimmm/footmate/pull/967)·[#968](https://github.com/dohyunkimmm/footmate/pull/968)·[#970](https://github.com/dohyunkimmm/footmate/pull/970)·[#971](https://github.com/dohyunkimmm/footmate/pull/971) 및 [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525) 참조.
+
 ## AI 설계 원칙
 
 `Context → Plan → Tools → Guardrail → Observe`
@@ -82,20 +93,20 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 
 ## 저장소 파일·폴더 안내
 
-**점검 기준(2026-11-17):** [#954 병합 후 `main` `bf01a25`](https://github.com/dohyunkimmm/footmate/commit/bf01a25ad098b55cd4922141e8a5823edc1d8293) 재귀 트리(`truncated=false`)에서 **파일 280개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개를 확인했습니다. 아래 표는 확인된 **실제 구조**입니다. 11월 15일의 `279개 → 280개 반영 예정` 및 이전 수치는 [당시 기록](docs/REPO-AUDIT-TIMELINE.md)으로 보존합니다.
+**점검 기준(2026-11-26):** [제품 `main` `c24ee256`](https://github.com/dohyunkimmm/footmate/commit/c24ee256b0fc9c980795792cab38ce871fe4c840) 재귀 트리(`truncated=false`)의 **파일 281개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개입니다. 이전 수치는 [당시 기록](docs/REPO-AUDIT-TIMELINE.md)으로 보존합니다.
 
 | 최상위 경로 | 현재 파일 수 | 역할 |
 | --- | ---: | --- |
 | `.github/` | 5 | CI·설정 |
 | `api/` | 2 | AI/API |
-| `docs/` | 35 | 현행 문서 목록·운영 근거·보존 이력 |
+| `docs/` | 36 | 현행 문서 목록·운영 근거·보존 이력 |
 | `scripts/` | 11 | 빌드·검사 도구 |
 | `src/` | 87 | 앱·Beta·플랫폼 코드 |
 | `supabase/` | 36 | 함수·마이그레이션 |
 | `tests/` | 89 | 계약·E2E·회귀 검사 |
 | `worker/` | 2 | Worker 라우팅 |
 | 루트 파일 | 13 | 진입점·설정·자산 |
-| **합계** | **280** | **디렉터리 37개** |
+| **합계** | **281** | **디렉터리 37개** |
 
 **클렌징 결과:** 보고서 전용 `qa/`·`src/case-study/` 원본은 [footmate-case-study](https://github.com/dohyunkimmm/footmate-case-study)로 이관된 상태입니다. 실제 `main`에서 중복 Git blob은 적용 이력이 있는 SQL 마이그레이션 **2쌍**뿐이며, 루트 HTML·테스트 스냅샷·배포/QA 자산도 사용 또는 보존 근거가 있습니다. **추가 삭제 확정 0건**(브랜치/SQL/이력 미삭제)입니다.
 
@@ -112,7 +123,7 @@ Google/Kakao OAuth는 기존 `/beta` 인증 복귀 경로를 사용합니다. �
 - [문서 전체 목록](docs/README.md) · [현재 풋살 매칭 방향](docs/MATCHING-DIRECTION.md)
 - [사업성·경영계획 현행 문서 · 05번 ROI·09번 최종 판단](https://github.com/dohyunkimmm/footmate-case-study/blob/main/docs/IT-STRATEGY-CASE-STUDY.md) · [보고서 원본·QA 저장소](https://github.com/dohyunkimmm/footmate-case-study) · [이전 구성 목차 기록](docs/CASE-STUDY-ELEVEN-STAGES.md) · [기획 화면 근거(역사 기록)](docs/CASE-STUDY-SCREEN-EVIDENCE.md)
 - [릴리스 이력](docs/RELEASE-HISTORY.md) · [Closed Beta 운영](docs/BETA-PILOT-RUNBOOK.md)
-- [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 2026-10-22~23 Vercel 당시 검증 스냅샷
+- [저장소 운영 기록](docs/REPO-OPERATIONS.md) — 최신 저장소 점검 및 과거 Vercel 검증 이력
 - [이전 프로토타입 Release App 기록](docs/RELEASE-APP.md)
 
 

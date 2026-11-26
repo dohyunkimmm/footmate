@@ -2,6 +2,15 @@
 
 > 이 문서는 기존 `docs/README.md`에 누적되어 있던 날짜별 점검·외부 문서 동기화 기록을 경로 변경 없이 옮긴 보존 자료입니다. 각 수치·CI·보안 판정은 **작성 당시 스냅샷**이며 현재 상태를 의미하지 않습니다. 최신 상태는 [문서 목록](README.md), [루트 안내](../README.md), [운영 기록](REPO-OPERATIONS.md)을 우선합니다.
 
+## 2026-11-26 · main 목록 재확인
+
+- [제품 `main` `c24ee256`](https://github.com/dohyunkimmm/footmate/commit/c24ee256b0fc9c980795792cab38ce871fe4c840)의 잘리지 않은 재귀 트리: **파일 281개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개. `docs/` 36개. 이 문서 변경은 기존 파일만 수정하므로 파일 수는 변하지 않습니다.
+- 작업 브랜치 생성 전 원격 브랜치 **133개**(main 포함), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**. 11월 20일 패치 감사는 당시 기록으로 유지하며 새로운 전체 패치 동등성 판정이나 외부 영구 백업을 완료했다고 주장하지 않습니다.
+- [#967](https://github.com/dohyunkimmm/footmate/pull/967) 추천 카드·조건 요약·포지션/전체 잔여석, [#968](https://github.com/dohyunkimmm/footmate/pull/968) 후보 상세 복귀 초점, [#969](https://github.com/dohyunkimmm/footmate/pull/969) Wrangler 4.165.0, [#970](https://github.com/dohyunkimmm/footmate/pull/970) 데스크톱 390px 폰 프레임 유지, [#971](https://github.com/dohyunkimmm/footmate/pull/971) 기본 높이의 후보 간격 개선이 병합됐습니다. 중복 의존성 PR [#966](https://github.com/dohyunkimmm/footmate/pull/966)은 미병합 종료이며 #969로 반영됐습니다.
+- 기준 SHA의 [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525): Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke **SUCCESS**, Docs-only QA **SKIPPED**. 이번 문서 PR의 별도 QA나 Cloudflare 배포 객체의 독립 SHA 검증을 대신하지 않습니다.
+- 동일 blob은 적용 이력 SQL 2쌍뿐이며 명백한 임시 확장자 파일은 없습니다. 보고서 전용 `qa/`·`src/case-study/`는 분리 유지. 파일·폴더·브랜치 삭제, 이력 재작성, DB·권한·요금제 변경 **0건**. 일회성 원본 보존 워크플로는 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 이미 제거했습니다.
+- [보고서 `main` `f5b99ca`](https://github.com/dohyunkimmm/footmate-case-study/commit/f5b99cafff2e964c5d6d4d8dd148ce72753be637): **117개 파일·15개 디렉터리**. 보고서 원본·발표자료는 별도 저장소가 정본입니다. 실서명 JWT·운영자 TOTP MFA E2E는 승인된 테스트 세션 증빙 부재로 #611 미완료 유지. 새 운영 DB/Advisor 조회는 수행하지 않았습니다.
+
 ## 2026-11-13 · 최신 `main` 목록·정리 판정
 
 - GitHub [`main` `fc023a3`](https://github.com/dohyunkimmm/footmate/commit/fc023a33c235b6f7a422e6708544716ae2d48e48) 재귀 트리(`truncated=false`): **파일 279개·디렉터리 37개**(루트 파일 13개·최상위 폴더 8개). `.github/` 5, `api/` 2, `docs/` 34, `scripts/` 11, `src/` 87, `supabase/` 36, `tests/` 89, `worker/` 2, 루트 13개입니다. [루트 파일 목록](../README.md#저장소-파일폴더-안내) 및 [운영 판정](REPO-OPERATIONS.md)을 참조합니다.

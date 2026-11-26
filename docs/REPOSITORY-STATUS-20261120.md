@@ -1,5 +1,7 @@
 # FootMate 제품 저장소 `main`·브랜치 점검 — 2026-11-20
 
+> 2026-11-26 재점검: 이 문서는 11월 20일 감사 스냅샷입니다. 최신 파일 목록은 [루트 README](../README.md#저장소-파일폴더-안내), 최신 상태는 [운영 기록](REPO-OPERATIONS.md)과 [문서 목록](README.md)을 참조합니다. 일회성 보존 워크플로는 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 이미 제거됐습니다.
+
 ## 후속 검증 결과 · 2026-11-20
 
 - [문서 PR #963](https://github.com/dohyunkimmm/footmate/pull/963)은 전체 QA·읽기 전용 Git 감사 성공 후 `main` [`382bbcd`](https://github.com/dohyunkimmm/footmate/commit/382bbcd19dd163cd3b05953da492ac13ea5d1f3c)로 병합됐습니다. [원본 태그 PR #964](https://github.com/dohyunkimmm/footmate/pull/964)도 최신 `main` 기준 [전체 QA #44696140505](https://github.com/dohyunkimmm/footmate/actions/runs/44696140505) 성공 후 [`439e865`](https://github.com/dohyunkimmm/footmate/commit/439e865c05dd321f90bbea16c90f66428caf9747)로 병합됐습니다.
@@ -15,7 +17,7 @@
 | [#12](https://github.com/dohyunkimmm/footmate/pull/12) | `chore/retry-vercel-deploy` | `75c390b648542780ca0515e7637a0fbb0d28c99c` |
 | [#13](https://github.com/dohyunkimmm/footmate/pull/13) | `docs/footmate-closeout` | `febb351d477950971365a708caa6b3aeca073bcf` |
 
-태그명 규칙: `archive/merged/20261120/pr-<PR 번호>/<원본 브랜치>`. **GitHub 태그는 오프-GitHub 소유자 영구 백업을 대신하지 않습니다.** 기존 6개 브랜치, 미병합 종료 2개 브랜치, 고유 패치가 있는 모든 브랜치를 보존했으며, **브랜치 삭제 0건**입니다. 영구 외부 bundle 백업·외부 브랜치 참조 검증이 끝나기 전에는 삭제하지 않습니다. 완료된 일회성 `archive-merged-six-once.yml`은 후속 클렌징 PR에서 제거합니다.
+태그명 규칙: `archive/merged/20261120/pr-<PR 번호>/<원본 브랜치>`. **GitHub 태그는 오프-GitHub 소유자 영구 백업을 대신하지 않습니다.** 기존 6개 브랜치, 미병합 종료 2개 브랜치, 고유 패치가 있는 모든 브랜치를 보존했으며, **브랜치 삭제 0건**입니다. 영구 외부 bundle 백업·외부 브랜치 참조 검증이 끝나기 전에는 삭제하지 않습니다. 완료된 일회성 `archive-merged-six-once.yml`은 후속 클렌징 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 제거했습니다.
 
 ## 기준과 변경 범위
 

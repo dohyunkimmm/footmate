@@ -1,8 +1,19 @@
+## 2026-11-26 · main 목록·미반영 사항·운영 근거 동기화
+
+- [제품 `main` `c24ee256`](https://github.com/dohyunkimmm/footmate/commit/c24ee256b0fc9c980795792cab38ce871fe4c840)의 잘리지 않은 재귀 트리: **파일 281개·디렉터리 37개**, 루트 파일 13개·최상위 폴더 8개. `docs/` 36개. 이 문서 변경은 기존 파일만 수정하므로 파일 수는 변하지 않습니다.
+- 작업 브랜치 생성 전 원격 브랜치 **133개**(main 포함), 열린 PR **0건**, 열린 이슈 [#611](https://github.com/dohyunkimmm/footmate/issues/611) **1건**. 11월 20일 패치 감사는 당시 기록으로 유지하며 새로운 전체 패치 동등성 판정이나 외부 영구 백업을 완료했다고 주장하지 않습니다.
+- [#967](https://github.com/dohyunkimmm/footmate/pull/967) 추천 카드·조건 요약·포지션/전체 잔여석, [#968](https://github.com/dohyunkimmm/footmate/pull/968) 후보 상세 복귀 초점, [#969](https://github.com/dohyunkimmm/footmate/pull/969) Wrangler 4.165.0, [#970](https://github.com/dohyunkimmm/footmate/pull/970) 데스크톱 390px 폰 프레임 유지, [#971](https://github.com/dohyunkimmm/footmate/pull/971) 기본 높이의 후보 간격 개선이 병합됐습니다. 중복 의존성 PR [#966](https://github.com/dohyunkimmm/footmate/pull/966)은 미병합 종료이며 #969로 반영됐습니다.
+- 기준 SHA의 [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525): Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke **SUCCESS**, Docs-only QA **SKIPPED**. 이번 문서 PR의 별도 QA나 Cloudflare 배포 객체의 독립 SHA 검증을 대신하지 않습니다.
+- 동일 blob은 적용 이력 SQL 2쌍뿐이며 명백한 임시 확장자 파일은 없습니다. 보고서 전용 `qa/`·`src/case-study/`는 분리 유지. 파일·폴더·브랜치 삭제, 이력 재작성, DB·권한·요금제 변경 **0건**. 일회성 원본 보존 워크플로는 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 이미 제거했습니다.
+- [보고서 `main` `f5b99ca`](https://github.com/dohyunkimmm/footmate-case-study/commit/f5b99cafff2e964c5d6d4d8dd148ce72753be637): **117개 파일·15개 디렉터리**. 보고서 원본·발표자료는 별도 저장소가 정본입니다. 실서명 JWT·운영자 TOTP MFA E2E는 승인된 테스트 세션 증빙 부재로 #611 미완료 유지. 새 운영 DB/Advisor 조회는 수행하지 않았습니다.
+
+---
+
 ## 2026-11-20 · 브랜치 전수 감사 및 과거 PR 원본 보존
 
 - [PR #963](https://github.com/dohyunkimmm/footmate/pull/963) 문서 동기화와 [PR #964](https://github.com/dohyunkimmm/footmate/pull/964) 원본 SHA 보존 워크플로는 **필수 QA 통과 후 `main` 병합**됐습니다. [최신 전수 Git 감사 #44694618167](https://github.com/dohyunkimmm/footmate/actions/runs/44694618167) 결과: 실행 시 비기본 브랜치 132개(임시 PR 브랜치 포함), 패치 동등 8개(병합 PR 6개·미병합 종료 PR 2개), 고유 패치 124개, 조상 관계로 정리 가능한 브랜치 0개, 현재 `main`과 정확히 동일한 tip tree 0개.
 - [태그 보존 Actions #44697137487](https://github.com/dohyunkimmm/footmate/actions/runs/44697137487) **SUCCESS**. 병합된 PR #5·#7·#8·#9·#12·#13의 각 HEAD SHA를 `archive/merged/20261120/pr-<번호>/<브랜치>` 경로에 **여섯 개 검증 태그**로 보존했습니다. 태그 값과 각 기존 브랜치의 SHA가 일치했고, 기존 브랜치는 삭제하지 않았습니다. 서비스 코드·SQL·배포 소스 변경 0건.
-- 이 정리 작업은 일회성 워크플로 `.github/workflows/archive-merged-six-once.yml`을 완료 뒤 제거합니다. **오프-GitHub 영구 bundle 백업과 외부 참조 확인은 여전히 미완료**이므로 자동 ref 대량 삭제·force rewrite는 하지 않습니다. 상세 원본/보존 결정은 [현황](REPOSITORY-STATUS-20261120.md)을 참조합니다.
+- 이 정리 작업은 일회성 워크플로 `.github/workflows/archive-merged-six-once.yml`을 완료 뒤 [#965](https://github.com/dohyunkimmm/footmate/pull/965)에서 제거했습니다. **오프-GitHub 영구 bundle 백업과 외부 참조 확인은 여전히 미완료**이므로 자동 ref 대량 삭제·force rewrite는 하지 않습니다. 상세 원본/보존 결정은 [현황](REPOSITORY-STATUS-20261120.md)을 참조합니다.
 
 ---
 

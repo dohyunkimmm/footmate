@@ -1,5 +1,17 @@
 # FootMate Release History
 
+## 2026-11-25 — 추천 탐색·프레임·접근성 및 의존성
+
+- [#967](https://github.com/dohyunkimmm/footmate/pull/967): 선호 포지션 및 전체 잔여석, 적용 조건 요약, 후보 비교 및 화면 밀도 개선.
+- [#968](https://github.com/dohyunkimmm/footmate/pull/968): 후보 상세에서 돌아오면 동일 경기 버튼에 키보드 초점을 복원하고 두 번째 후보 경로를 검사.
+- [#969](https://github.com/dohyunkimmm/footmate/pull/969): Wrangler 4.165.0 반영. 중복 [#966](https://github.com/dohyunkimmm/footmate/pull/966) 미병합 종료. @vercel/oidc 4.0.9 유지.
+- [#970](https://github.com/dohyunkimmm/footmate/pull/970)·[#971](https://github.com/dohyunkimmm/footmate/pull/971): 390px 데스크톱 폰 프레임 유지, 추가 후보는 카드 아래 배치, 기본 높이의 불필요한 세로 스크롤 개선.
+- [제품 `main` `c24ee256`](https://github.com/dohyunkimmm/footmate/commit/c24ee256b0fc9c980795792cab38ce871fe4c840) [FootMate QA #45608267525](https://github.com/dohyunkimmm/footmate/actions/runs/45608267525): Change Impact·Regression 36·Browser E2E + axe·Deploy Cloudflare·Production Smoke **SUCCESS**, Docs-only QA **SKIPPED**. 제품 식별자 v6.0.0 유지. 운영 실서명 JWT/MFA 및 실사용 성과 검증 완료를 뜻하지 않습니다.
+
+## 2026-11-18 — 데모 탐색 및 참가 흐름 보완
+
+- [#959](https://github.com/dohyunkimmm/footmate/pull/959) 추천 카드·탐색·일정 파일, [#960](https://github.com/dohyunkimmm/footmate/pull/960) 운영 데모 상세 버튼 검사, [#961](https://github.com/dohyunkimmm/footmate/pull/961) 로그인 후 선택 경기 참가 이어가기·실제/예시 경기 구분, [#962](https://github.com/dohyunkimmm/footmate/pull/962) 카드 메뉴·숨김 복원·모바일 비교표 여백 개선이 병합됐습니다. [당시 main QA #44263406614](https://github.com/dohyunkimmm/footmate/actions/runs/44263406614) 회귀·브라우저·배포·운영 스모크 성공.
+
 ## 2026-11-08 — 본편 9장·전략 6장 및 Case Study 문구·미리보기 정리
 
 - **현재 공개 구성:** Case Study 본문 **9개 섹션**, 사업·IT 기획 본편 PPT **9장**, 5개년 성장 전략 PPT **6장**. [#876](https://github.com/dohyunkimmm/footmate/pull/876)에서 Rolling Forecast 관련 본문·계산·발표자료를 제거하고 본편을 10장에서 9장으로 변경. 이전 11월 2일 '10장' 기록은 그 날짜의 이력으로 보존합니다.
